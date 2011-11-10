@@ -11,6 +11,7 @@ class TemplatedMultiContent(StringList):
 		del l["args"]
 
 		self.active_style = None
+		self.active_buildfunc = None
 		self.template = eval(args, {}, l)
 		assert "fonts" in self.template
 		assert "itemHeight" in self.template
@@ -33,7 +34,7 @@ class TemplatedMultiContent(StringList):
 				index += 1
 
 		# if only template changed, don't reload list
-		if what[0] == self.CHANGED_SPECIFIC and what[1] == "style":
+		if what[0] == self.CHANGED_SPECIFIC and what[1] in ("style", "buildfunc"):
 			pass
 		elif self.source:
 			self.content.setList(self.source.list)
@@ -43,6 +44,11 @@ class TemplatedMultiContent(StringList):
 
 	def setTemplate(self):
 		if self.source:
+			buildfunc = self.source.buildfunc
+			if buildfunc != self.active_buildfunc:
+				self.active_buildfunc = buildfunc
+				self.content.setBuildFunc(buildfunc)
+
 			style = self.source.style
 
 			if style == self.active_style:

@@ -8,8 +8,8 @@ from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.language_cache import LANG_TEXT
 
-def _cached(x):
-	return LANG_TEXT.get(config.osd.language.value, {}).get(x, "")
+def _cached(x, lang=None):
+	return LANG_TEXT.get(lang or config.osd.language.value, {}).get(x, "")
 
 from Screens.Rc import Rc
 
@@ -17,22 +17,27 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 
 from Tools.LoadPixmap import LoadPixmap
 
-def LanguageEntryComponent(file, name, index):
-	png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + file + ".png"))
-	if png == None:
-		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/missing.png"))
-	res = (index, name, png)
-	return res
+def LanguageEntryComponent(file, name, index, png_cache):
+	png = png_cache.get(file, None)
+	if png is None:
+		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + file + ".png"))
+		png_cache[file] = png
+	if png is None:
+		png = png_cache.get("missing", None)
+		if png is None:
+			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/missing.png"))
+			png_cache["missing"] = png
+	return (index, name, png)
 
 class LanguageSelection(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
-		self.oldActiveLanguage = language.getActiveLanguage()
-
 		self.list = []
 		self["languages"] = List(self.list)
 		self["languages"].onSelectionChanged.append(self.changed)
+
+		self.png_cache = { }
 
 		self.updateList()
 		self.onLayoutFinish.append(self.selectActiveLanguage)
@@ -43,6 +48,7 @@ class LanguageSelection(Screen):
 			"cancel": self.cancel,
 		}, -1)
 
+	 # called from external Components/SetupDevices.py!!
 	def selectActiveLanguage(self):
 		activeLanguage = language.getActiveLanguage()
 		pos = 0
@@ -53,41 +59,35 @@ class LanguageSelection(Screen):
 			pos += 1
 
 	def save(self):
-		self.run()
+		lang = self["languages"].getCurrent()[0]
+		config.osd.language.value = lang
+		config.osd.language.save() # see comment above... selectActiveLanguage
 		self.close()
 
 	def cancel(self):
-		language.activateLanguage(self.oldActiveLanguage)
 		self.close()
 
-	def run(self, justlocal = False):
-		print "updating language..."
-		lang = self["languages"].getCurrent()[0]
-		config.osd.language.value = lang
-		config.osd.language.save()
-		self.setTitle(_cached("T2"))
-		
-		if justlocal:
-			return
-
-		language.activateLanguage(lang)
-		config.misc.languageselected.value = 0
-		config.misc.languageselected.save()
-		print "ok"
+	def run(self):
+		pass
 
 	def updateList(self):
+		print "update list"
 		first_time = not self.list
+
+		if first_time:
+			lang = config.osd.language.value
+		else:
+			lang = self["languages"].getCurrent()[0]
+
+		self.setTitle(_cached("T2", lang))
 
 		languageList = language.getLanguageList()
 		if not languageList: # no language available => display only english
-			list = [ LanguageEntryComponent("en", _cached("en_EN"), "en_EN") ]
+			list = [ LanguageEntryComponent("en", _cached("en_EN", lang), "en_EN", self.png_cache) ]
 		else:
-			list = [ LanguageEntryComponent(file = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3]), index = x[0]) for x in languageList]
+			list = [ LanguageEntryComponent(file = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3], lang), index = x[0], png_cache = self.png_cache) for x in languageList]
 		self.list = list
 
-		#list.sort(key=lambda x: x[1][7])
-
-		print "updateList"
 		if first_time:
 			self["languages"].list = list
 		else:
@@ -95,7 +95,6 @@ class LanguageSelection(Screen):
 		print "done"
 
 	def changed(self):
-		self.run(justlocal = True)
 		self.updateList()
 
 class LanguageWizard(LanguageSelection, Rc):
@@ -103,21 +102,23 @@ class LanguageWizard(LanguageSelection, Rc):
 		LanguageSelection.__init__(self, session)
 		Rc.__init__(self)
 		self.onLayoutFinish.append(self.selectKeys)
-				
 		self["wizard"] = Pixmap()
 		self["text"] = Label()
-		self.setText()
-		
+		self.setText(config.osd.language.value)
+
 	def selectKeys(self):
 		self.clearSelectedKeys()
 		self.selectKey("UP")
 		self.selectKey("DOWN")
-		
+
 	def changed(self):
-		self.run(justlocal = True)
 		self.updateList()
 		self.setText()
-		
-	def setText(self):
-		
-		self["text"].setText(_cached("T1"))
+
+	def setText(self, lang=None):
+		self["text"].setText(_cached("T1", lang or self["languages"].getCurrent()[0]))
+
+	def save(self):
+		LanguageSelection.save(self)
+		config.misc.languageselected.value = 0
+		config.misc.languageselected.save()

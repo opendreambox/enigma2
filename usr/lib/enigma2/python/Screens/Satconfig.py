@@ -58,19 +58,18 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		
 	def createConfigMode(self):
 		if self.nim.isCompatible("DVB-S"):
-			choices = { "nothing": _("not configured"),
-						"simple": _("simple"),
-						"advanced": _("advanced")}
+			getConfigModeTuple = nimmanager.getConfigModeTuple
+			choices = [ getConfigModeTuple("nothing"), getConfigModeTuple("simple"), getConfigModeTuple("advanced") ]
 			#if len(nimmanager.getNimListOfType(nimmanager.getNimType(self.slotid), exception = x)) > 0:
-			#	choices["equal"] = _("equal to")
-			#	choices["satposdepends"] = _("second cable of motorized LNB")
+			#	choices.append(getConfigModeTuple("equal"))
+			#	choices.append(getConfigModeTuple("satposdepends"))
 			if len(nimmanager.canEqualTo(self.slotid)) > 0:
-				choices["equal"] = _("equal to")
+				choices.append(getConfigModeTuple("equal"))
 			if len(nimmanager.canDependOn(self.slotid)) > 0:
-				choices["satposdepends"] = _("second cable of motorized LNB")
+				choices.append(getConfigModeTuple("satposdepends"))
 			if len(nimmanager.canConnectTo(self.slotid)) > 0:
-				choices["loopthrough"] = _("loopthrough to")
-			self.nimConfig.configMode.setChoices(choices, default = "nothing")
+				choices.append(getConfigModeTuple("loopthrough"))
+			self.nimConfig.configMode.setChoices(dict(choices), default = "nothing")
 
 	def createSetup(self):
 		print "Creating setup"
@@ -138,8 +137,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				for id in connectable:
 					choices.append((str(id), nimmanager.getNimDescription(id)))
 				self.nimConfig.connectedTo.setChoices(choices)
+				self.nimConfig.configMode.connectedToChanged(self.nimConfig.connectedTo) # call connectedTo Notifier
 				#self.nimConfig.connectedTo = updateConfigElement(self.nimConfig.connectedTo, ConfigSelection(choices = choices))
-				self.list.append(getConfigListEntry(_("Connected to"), self.nimConfig.connectedTo))
+				self.list.append(getConfigListEntry(_("Tuner"), self.nimConfig.connectedTo))
 			elif self.nimConfig.configMode.value == "nothing":
 				pass
 			elif self.nimConfig.configMode.value == "advanced": # advanced
@@ -210,10 +210,10 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.uncommittedDiseqcCommand, self.cableScanType, self.multiType)
 		if self["config"].getCurrent() == self.multiType:
 			from Components.NimManager import InitNimManager
-			InitNimManager(nimmanager)
+			InitNimManager(nimmanager, self.slotid)
 			self.nim = nimmanager.nim_slots[self.slotid]
 			self.nimConfig = self.nim.config
-			
+
 		for x in checkList:
 			if self["config"].getCurrent() == x:
 				self.createSetup()
@@ -502,15 +502,14 @@ class NimSelection(Screen):
 			nimConfig = nimmanager.getNimConfig(x.slot)
 			text = nimConfig.configMode.value
 			if self.showNim(x):
+				configMode = nimConfig.configMode.value
 				if x.isCompatible("DVB-S"):
-					if nimConfig.configMode.value in ("loopthrough", "equal", "satposdepends"):
-						text = { "loopthrough": _("loopthrough to"),
-								 "equal": _("equal to"),
-								 "satposdepends": _("second cable of motorized LNB") } [nimConfig.configMode.value]
+					if configMode in ("loopthrough", "equal", "satposdepends"):
+						text = nimmanager.config_mode_str[configMode]
 						text += " " + _("Tuner") + " " + ["A", "B", "C", "D"][int(nimConfig.connectedTo.value)]
-					elif nimConfig.configMode.value == "nothing":
+					elif configMode == "nothing":
 						text = _("not configured")
-					elif nimConfig.configMode.value == "simple":
+					elif configMode == "simple":
 						if nimConfig.diseqcMode.value in ("single", "toneburst_a_b", "diseqc_a_b", "diseqc_a_b_c_d"):
 							text = {"single": _("Single"), "toneburst_a_b": _("Toneburst A/B"), "diseqc_a_b": _("DiSEqC A/B"), "diseqc_a_b_c_d": _("DiSEqC A/B/C/D")}[nimConfig.diseqcMode.value] + "\n"
 							text += _("Sats") + ": " 
@@ -539,7 +538,7 @@ class NimSelection(Screen):
 								text += _("manual")
 						else:	
 							text = _("simple")
-					elif nimConfig.configMode.value == "advanced":
+					elif configMode == "advanced":
 						text = _("advanced")
 				elif x.isCompatible("DVB-T") or x.isCompatible("DVB-C"):
 					if nimConfig.configMode.value == "nothing":

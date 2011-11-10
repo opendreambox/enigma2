@@ -20,11 +20,13 @@ from Screens.InfoBarGenerics import InfoBarShowHide, \
 
 profile("LOAD:InitBar_Components")
 from Components.ActionMap import HelpableActionMap
-from Components.config import config
+from Components.config import config, ConfigBoolean
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 
 profile("LOAD:HelpableScreen")
 from Screens.HelpMenu import HelpableScreen
+
+config.misc.initialharddisknotification = ConfigBoolean(True)
 
 class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder,
@@ -70,6 +72,26 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		self.current_begin_time=0
 		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
 		InfoBar.instance = self
+
+		self.showHarddiskPopup()
+
+	def showHarddiskPopup(self):
+		if config.misc.initialharddisknotification.value:
+			from Components.Harddisk import harddiskmanager
+			from Tools import Notifications
+			from Screens.MessageBox import MessageBox
+			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
+				Notifications.AddPopup(_("Please make sure to set up your hard drives with the improved storage management in menu -> system -> harddisk."),
+					type = MessageBox.TYPE_INFO, timeout = 0, id = "HarddiskNotification")
+				config.misc.initialharddisknotification.value = False
+				config.misc.initialharddisknotification.save()
+				if self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
+					harddiskmanager.delayed_device_Notifier.remove(self.HDDDetectedCB)
+			elif not self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
+				harddiskmanager.delayed_device_Notifier.append(self.HDDDetectedCB)
+
+	def HDDDetectedCB(self, dev, media_state):
+		self.showHarddiskPopup()
 
 	def __onClose(self):
 		InfoBar.instance = None

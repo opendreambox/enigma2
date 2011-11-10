@@ -77,9 +77,12 @@ struct eListboxStyle
 class eListbox: public eWidget
 {
 	void updateScrollBar();
+	static bool wrap_around_default;
 public:
 	eListbox(eWidget *parent);
 	~eListbox();
+
+	static void setWrapAroundDefault(bool on);
 
 	PSignal0<void> selectionChanged;
 

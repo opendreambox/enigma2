@@ -1,9 +1,11 @@
 from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access
 from Tools.Directories import SCOPE_HDD, resolveFilename
+from Tools.BoundFunction import boundFunction
 from Tools.CList import CList
 from SystemInfo import SystemInfo
 import time
 from Components.Console import Console
+from config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict
 
 def MajorMinor(path):
 	rdev = stat(path).st_rdev
@@ -94,6 +96,45 @@ class Harddisk:
 			ret = "External"
 		return ret
 
+	def bus_type(self):
+		# CF (7025 specific)
+		if self.type == DEVTYPE_UDEV:
+			ide_cf = False	# FIXME
+		elif self.type == DEVTYPE_DEVFS:
+			ide_cf = self.device[:2] == "hd" and "host0" not in self.dev_path
+			
+		sata = "pci" in self.phys_path
+		sata_desc = self.bus_description()
+		usb = "usb" in self.phys_path
+
+		if ide_cf:
+			ret = "IDE"
+		elif sata:
+			if sata_desc is not None:
+				ret = sata_desc
+			else:
+				ret = "SATA"
+		else:
+			ret = "USB"
+		return ret
+
+	def bus_description(self):
+		phys = self.phys_path[4:]
+		from Tools.HardwareInfo import HardwareInfo
+		if self.device.find('sr') == 0 and self.device[2].isdigit():
+			devicedb = DEVICEDB_SR
+		else:
+			devicedb = DEVICEDB
+
+		for physdevprefix, pdescription in devicedb.get(HardwareInfo().device_name,{}).items():
+			if phys.startswith(physdevprefix):
+				return pdescription
+		if phys.find('pci') != -1:
+			return "SATA?"
+		elif phys.find('usb') != -1:
+			return "USB?"
+		return "BUS?"
+
 	def diskSize(self):
 		line = readFile(self.sysfsPath('size'))
 		try:
@@ -108,13 +149,18 @@ class Harddisk:
 			return ""
 		return "%d.%03d GB" % (cap/1000, cap%1000)
 
-	def model(self):
+	def model(self, model_only = False, vendor_only = False):
 		if self.device[:2] == "hd":
 			return readFile('/proc/ide/' + self.device + '/model')
 		elif self.device[:2] == "sd":
 			vendor = readFile(self.sysfsPath('device/vendor'))
 			model = readFile(self.sysfsPath('device/model'))
-			return vendor + '(' + model + ')'
+			if vendor_only:
+				return vendor
+			if model_only:
+				return model
+			#return vendor + ' (' + model + ')'
+			return vendor + '-' + model
 		else:
 			assert False, "no hdX or sdX"
 
@@ -173,19 +219,17 @@ class Harddisk:
 		mounts.close()
 
 		cmd = "umount"
-
-                for line in lines:                                                                          
-                        parts = line.strip().split(" ")                                                     
-                        real_path = path.realpath(parts[0])                                                 
-                        if not real_path[-1].isdigit():                                                     
-                                continue                                                                    
-                        try:                                                                                
-                                if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
+		for line in lines:                                                     
+			parts = line.strip().split(" ")
+			real_path = path.realpath(parts[0])
+			if not real_path[-1].isdigit():                                                     
+				continue
+			try:
+				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
 					cmd = ' ' . join([cmd, parts[1]])
 					break
 			except OSError:
 				pass
-
 		res = system(cmd)
 		return (res >> 8)
 
@@ -214,11 +258,11 @@ class Harddisk:
 		res = -1
 		for line in lines:
 			parts = line.strip().split(" ")
-                        real_path = path.realpath(parts[0])                                                 
-                        if not real_path[-1].isdigit():                                                     
-                                continue                                                                    
-                        try:                                                                                
-                                if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
+			real_path = path.realpath(parts[0])
+			if not real_path[-1].isdigit():
+				continue
+			try:
+				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
 					cmd = "mount -t ext3 " + parts[0]
 					res = system(cmd)
 					break
@@ -254,7 +298,7 @@ class Harddisk:
 
 	errorList = [ _("Everything is fine"), _("Creating partition failed"), _("Mkfs failed"), _("Mount failed"), _("Create movie folder failed"), _("Fsck failed"), _("Please Reboot"), _("Filesystem contains uncorrectable errors"), _("Unmount failed")]
 
-	def initialize(self):
+	def initialize(self, isFstabMounted = False):
 		self.unmount()
 
 		# Udev tries to mount the partition immediately if there is an
@@ -266,19 +310,20 @@ class Harddisk:
 
 		if self.createPartition() != 0:
 			return -1
-
+		
 		if self.mkfs() != 0:
 			return -2
 
-		if self.mount() != 0:
-			return -3
-
-		if self.createMovieFolder() != 0:
-			return -4
+		if isFstabMounted:
+			if self.mount() != 0:
+				return -3
+	
+			if self.createMovieFolder() != 0:
+				return -4
 
 		return 0
 
-	def check(self):
+	def check(self, isFstabMounted = False):
 		self.unmount()
 
 		res = self.fsck()
@@ -291,9 +336,10 @@ class Harddisk:
 		if res != 0 and res != 1:
 			# A sum containing 1 will also include a failure
 			return -5
-
-		if self.mount() != 0:
-			return -3
+		
+		if isFstabMounted:
+			if self.mount() != 0:
+				return -3
 
 		return 0
 
@@ -323,7 +369,10 @@ class Harddisk:
 		from enigma import eTimer
 
 		# disable HDD standby timer
-		Console().ePopen(("hdparm", "hdparm", "-S0", self.disk_path))
+		if self.bus() == "External":
+			Console().ePopen(("sdparm", "sdparm", "--set=SCT=0", self.disk_path))
+		else:
+			Console().ePopen(("hdparm", "hdparm", "-S0", self.disk_path))
 		self.timer = eTimer()
 		self.timer.callback.append(self.runIdle)
 		self.idle_running = True
@@ -379,6 +428,8 @@ class Partition:
 		self.force_mounted = force_mounted
 		self.is_hotplug = force_mounted # so far; this might change.
 		self.device = device
+		self.disc_path = None
+		self.uuid = None
 
 	def stat(self):
 		return statvfs(self.mountpoint)
@@ -415,7 +466,8 @@ class Partition:
 			if line.split(' ')[1] == self.mountpoint:
 				return True
 		return False
-
+			
+		
 DEVICEDB_SR = \
 	{"dm8000":
 		{
@@ -434,17 +486,38 @@ DEVICEDB_SR = \
 DEVICEDB = \
 	{"dm8000":
 		{
+			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("SATA"),
 			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": _("Front USB Slot"),
 			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.2/1-1.2:1.0": _("Back, upper USB Slot"),
 			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.3/1-1.3:1.0": _("Back, lower USB Slot"),
-			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": _("Front USB Slot"),
 			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/": _("Internal USB Slot"),
 			"/devices/platform/brcm-ohci-1.1/usb4/4-1/4-1:1.0/": _("Internal USB Slot"),
 		},
+	"dm7020hd":
+	{
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0": _("Front USB Slot"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Back, upper USB Slot"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Back, lower USB Slot"),
+	},
 	"dm800":
 	{
-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": "Upper USB Slot",
-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": "Lower USB Slot",
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB Slot"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB Slot"),
+	},
+	"dm800se":
+	{
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB Slot"),
+		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB Slot"),
+	},
+	"dm500hd":
+	{
+		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
+		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA"),
 	},
 	"dm7025":
 	{
@@ -455,15 +528,16 @@ DEVICEDB = \
 
 class HarddiskManager:
 	def __init__(self):
+		config.storage = ConfigSubDict()
 		self.hdd = [ ]
 		self.cd = ""
 		self.partitions = [ ]
 		self.devices_scanned_on_init = [ ]
+		self.delayed_device_add = { }
+		self.delayed_device_Notifier = [ ]
 
 		self.on_partition_list_change = CList()
-
-		self.enumerateBlockDevices()
-
+		
 		# currently, this is just an enumeration of what's possible,
 		# this probably has to be changed to support automount stuff.
 		# still, if stuff is mounted into the correct mountpoints by
@@ -479,8 +553,11 @@ class HarddiskManager:
 					("/media/usb", _("USB Stick")),
 					("/", _("Internal Flash"))
 				]
-
 		self.partitions.extend([ Partition(mountpoint = x[0], description = x[1]) for x in p ])
+		
+		self.setupConfigEntries(initial_call = True)
+		
+		self.enumerateBlockDevices()
 
 	def getBlockDevInfo(self, blockdev):
 		devpath = "/sys/block/" + blockdev
@@ -520,7 +597,6 @@ class HarddiskManager:
 		except IOError, err:
 			if err.errno == 159: # no medium present
 				medium_found = False
-
 		return error, blacklisted, removable, is_cdrom, partitions, medium_found
 
 	def enumerateBlockDevices(self):
@@ -532,6 +608,7 @@ class HarddiskManager:
 					for part in partitions:
 						self.addHotplugPartition(part)
 				self.devices_scanned_on_init.append((blockdev, removable, is_cdrom, medium_found))
+				print "[enumerateBlockDevices] devices_scanned_on_init:",self.devices_scanned_on_init
 
 	def getAutofsMountpoint(self, device):
 		return "/autofs/%s/" % (device)
@@ -540,8 +617,73 @@ class HarddiskManager:
 		mounts = file('/proc/mounts').read().split('\n')
 		for x in mounts:
 			if x.find('/autofs') == -1 and x.find(device) != -1:
+				#print "is_hard_mounted:",device
 				return True
 		return False
+
+	def is_fstab_mountpoint(self, device, mountpoint):
+		mounts = file('/etc/fstab').read().split('\n')
+		for x in mounts:
+			if not x.startswith('/'):
+				continue
+			dev, mp = x.split()[0:2]
+			if (dev == device and mp == mountpoint):
+				#print "is_fstab_mountpoint:'%s' for: %s " % (mp, dev)
+				return True
+		return False
+
+	def get_fstab_mountstate(self, device, mountpoint):
+		mounts = file('/etc/fstab').read().split('\n')
+		for x in mounts:
+			if not x.startswith('/'):
+				continue
+			dev, mp, ms = x.split()[0:3]
+			if (dev == device and mp == mountpoint):
+				#print "got_fstab_mountstate:'%s' for: %s - %s" % (ms, dev, mp)
+				return ms
+		return False
+
+	def get_fstab_mountpoint(self, device):
+		mounts = file('/etc/fstab').read().split('\n')
+		for x in mounts:
+			if not x.startswith('/'):
+				continue
+			dev, mp = x.split()[0:2]
+			if device == dev:
+				#print "got_fstab_mountpoint:'%s' for: %s" % (mp, dev)
+				return mp
+		return None
+
+	def modifyFstabEntry(self, partitionPath, mountpoint, mode = "add_deactivated"):
+		try:
+			alreadyAdded = self.is_fstab_mountpoint(partitionPath, mountpoint)
+			oldLine = None
+			mounts = file('/etc/fstab').read().split('\n')
+			fp = file("/etc/fstab", 'w')
+			fp.write("#automatically edited by enigma2, " + str(time.strftime( "%a" + ", " + "%d " + "%b" + " %Y %H:%M:%S", time.localtime(time.time() ))) + "\n")
+			for x in mounts:
+				if (x.startswith(partitionPath) and mountpoint in x):
+					oldLine = x
+					continue
+				if len(x):
+					if x.startswith('#automatically'):
+						continue
+					fp.write(x + "\n")
+			if not alreadyAdded:
+				if mode == "add_deactivated":
+					print "modifyFstabEntry - add_deactivated:", partitionPath, mountpoint
+					fp.write(partitionPath + "\t" + mountpoint + "\tnoauto\tdefaults\t0 0\n")
+			else:
+				if mode == "add_deactivated":
+					if oldLine is not None:
+						if "noauto" in oldLine:
+							fp.write(oldLine + "\n")
+						else:
+							print "modifyFstabEntry - add_deactivated - changed:", partitionPath, mountpoint
+							fp.write(oldLine.replace("auto","noauto") + "\n")
+			fp.close()
+		except:
+			print "error adding fstab entry for: %s" % (partitionPath)
 
 	def addHotplugPartition(self, device, physdev = None):
 		if not physdev:
@@ -569,26 +711,45 @@ class HarddiskManager:
 			if l:
 				# see if this is a harddrive
 				if not device[l-1].isdigit() and not removable and not is_cdrom:
-					self.hdd.append(Harddisk(device))
+					if self.getHDD(device) is None:
+						self.hdd.append(Harddisk(device))
 					self.hdd.sort()
 					SystemInfo["Harddisk"] = len(self.hdd) > 0
-
 				if (not removable or medium_found) and not self.is_hard_mounted(device):
-					# device is the device name, without /dev
-					# physdev is the physical device path, which we (might) use to determine the userfriendly name
-					description = self.getUserfriendlyDeviceName(device, physdev)
-					p = Partition(mountpoint = self.getAutofsMountpoint(device), description = description, force_mounted = True, device = device)
-					self.partitions.append(p)
-					self.on_partition_list_change("add", p)
+					uuid = self.getPartitionUUID(device)
+					if (uuid is not None and self.getHDD(device) is not None):
+						self.addDevicePartition(device, physdev)
+					else:
+						removable = False
+						if (removable and medium_found) or (medium_found and self.getHDD(device) is None):
+							removable = True
+						from enigma import eTimer
+						tmr = eTimer()
+						tmr.callback.append(boundFunction(self.delayedDeviceAdd, device, physdev, removable))
+						self.delayed_device_add[device] = tmr
+						tmr.start(2000, True)
 
 		return error, blacklisted, removable, is_cdrom, partitions, medium_found
 
 	def removeHotplugPartition(self, device):
 		mountpoint = self.getAutofsMountpoint(device)
-		for x in self.partitions[:]:
-			if x.mountpoint == mountpoint:
-				self.partitions.remove(x)
-				self.on_partition_list_change("remove", x)
+		uuid = self.getPartitionUUID(device)
+		print "[removeHotplugPartition] for device:'%s'" % (device)
+		p = self.getPartitionbyMountpoint(mountpoint)
+		if p is None:
+			p = self.getPartitionbyDevice(device)
+		if p is not None:
+			if uuid is not None:
+				if config.storage.get(uuid, None) is not None:
+					self.unmountPartitionbyUUID(uuid)
+					if not config.storage[uuid]['enabled'].value:
+						del config.storage[uuid]
+						print "[removeHotplugPartition] - remove uuid %s from temporary drive add" % (uuid)
+			self.partitions.remove(p)
+			self.on_partition_list_change("remove", p)
+			if self.delayed_device_add.get(device, None) is not None:
+				del self.delayed_device_add[device]
+			
 		l = len(device)
 		if l and not device[l-1].isdigit():
 			for hdd in self.hdd:
@@ -597,6 +758,62 @@ class HarddiskManager:
 					self.hdd.remove(hdd)
 					break
 			SystemInfo["Harddisk"] = len(self.hdd) > 0
+			
+			#call the notifier only after we have fully removed the disconnected drive
+			for callback in self.delayed_device_Notifier:
+				try:
+					callback(device, "remove_delayed" )
+				except AttributeError:
+					self.delayed_device_Notifier.remove(callback)
+
+	def addDevicePartition(self, device, physdev):
+		# device is the device name, without /dev
+		# physdev is the physical device path, which we (might) use to determine the userfriendly name
+		description = self.getUserfriendlyDeviceName(device, physdev)
+		device_mountpoint = self.getAutofsMountpoint(device)
+		uuid = self.getPartitionUUID(device)
+		if config.storage.get(uuid, None) is not None:
+			if config.storage[uuid]['mountpoint'].value != "":
+				device_mountpoint = config.storage[uuid]['mountpoint'].value
+
+		if uuid is not None: 
+			self.setupConfigEntries(initial_call = False, dev = device)
+		
+		p = self.getPartitionbyMountpoint(device_mountpoint)
+		if p is not None:
+			if p.uuid is not None and p.uuid != uuid:
+				if config.storage.get(p.uuid, None) is not None:
+					del config.storage[p.uuid] #delete old uuid reference entries
+			p.mountpoint = device_mountpoint
+			p.force_mounted = False
+			p.device = device
+			p.uuid = uuid
+			self.on_partition_list_change("add", p)
+		else:
+			p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = False, device = device)
+			p.uuid = uuid
+			self.partitions.append(p)
+			self.on_partition_list_change("add", p)
+
+		if self.delayed_device_add.get(device, None) is not None:
+			del self.delayed_device_add[device]
+		
+		for callback in self.delayed_device_Notifier:
+			try:
+				callback(device, "add_delayed" )
+			except AttributeError:
+				self.delayed_device_Notifier.remove(callback)
+
+	def delayedDeviceAdd(self, device, physdev, removable = False):
+		if removable:
+			description = self.getUserfriendlyDeviceName(device, physdev)
+			print "[delayedDeviceAdd] for removable storage: ",device, description
+			p = Partition(mountpoint = self.getAutofsMountpoint(device), description = description, force_mounted = True, device = device)
+			self.partitions.append(p)
+			self.on_partition_list_change("add", p)			
+		else:
+			print "[delayedDeviceAdd] for (harddisk) storage: ",device
+			self.addDevicePartition(device, physdev)
 
 	def HDDCount(self):
 		return len(self.hdd)
@@ -610,6 +827,20 @@ class HarddiskManager:
 				hdd += " (" + cap + ")"
 			list.append((hdd, hd))
 		return list
+
+	def HDDEnabledCount(self):
+		cnt = 0
+		for uuid, cfg in config.storage.items():
+			print "uuid", uuid, "cfg", cfg
+			if cfg["enabled"].value:
+				cnt += 1
+		return cnt
+
+	def getHDD(self, part):
+		for hdd in self.hdd:
+			if hdd.device == part[:3]:
+				return hdd
+		return None
 
 	def getCD(self):
 		return self.cd
@@ -674,5 +905,161 @@ class HarddiskManager:
 			if x.mountpoint == mountpoint:
 				self.partitions.remove(x)
 				self.on_partition_list_change("remove", x)
+
+	def removeMountedPartitionbyDevice(self, device):
+		p = self.getPartitionbyDevice(device)
+		if p is not None:
+			self.partitions.remove(p)
+			self.on_partition_list_change("remove", p)
+
+	def trigger_udev(self):
+		# We have to trigger udev to rescan sysfs 
+		cmd = "udevadm trigger"
+		res = system(cmd)
+		return (res >> 8)
+
+	def getPartitionbyDevice(self, dev):
+		for x in self.partitions[:]:
+			if x.device == dev:
+				#print "[getPartitionbyDevice] '%s', '%s', '%s', '%s', '%s'" % (x.mountpoint,x.description,x.device,x.force_mounted,x.uuid)
+				return x
+		return None
+
+	def getPartitionbyMountpoint(self, mountpoint):
+		for x in self.partitions[:]:
+			if x.mountpoint == mountpoint:
+				#print "[getPartitionbyMountpoint] '%s', '%s', '%s', '%s', '%s'" % (x.mountpoint,x.description,x.device,x.force_mounted,x.uuid)
+				return x
+		return None
+
+	def getDeviceNamebyUUID(self, uuid):
+		if path.exists("/dev/disk/by-uuid/" + uuid):
+			return path.basename(path.realpath("/dev/disk/by-uuid/" + uuid))
+		return None
+	
+	def getPartitionUUID(self, part):
+		if not path.exists("/dev/disk/by-uuid"):
+			return None
+		for uuid in listdir("/dev/disk/by-uuid/"):
+			if path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) == part:
+				#print "[getPartitionUUID] '%s' - '%s'" % (uuid, path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) )
+				return uuid
+		return None
+
+	def unmountPartitionbyMountpoint(self, mountpoint, device = None):
+		if path.exists(mountpoint) and path.ismount(mountpoint):
+			cmd = "umount" + " " + mountpoint
+			print "[unmountPartitionbyMountpoint] %s:" % (mountpoint)
+			system(cmd)
+			if (device is not None and not path.ismount(mountpoint)):
+				self.removeMountedPartitionbyDevice(device)
+	
+	def unmountPartitionbyUUID(self, uuid):
+		mountpoint = config.storage[uuid]['mountpoint'].value
+		if mountpoint != "":
+			if path.exists(mountpoint) and path.ismount(mountpoint):
+				partitionPath = "/dev/disk/by-uuid/" + uuid
+				mountpoint = config.storage[uuid]['mountpoint'].value
+				if (self.is_hard_mounted(partitionPath) and self.is_fstab_mountpoint(partitionPath, mountpoint) and self.get_fstab_mountstate(partitionPath, mountpoint) == 'auto'):
+					config.storage[uuid]["enabled"].value = False
+					config.storage.save()
+				else:
+					cmd = "umount" + " " + mountpoint
+					print "[unmountPartitionbyUUID] %s:" % (mountpoint)
+					system(cmd)
+
+	def mountPartitionbyUUID(self, uuid):
+		if path.exists("/dev/disk/by-uuid/" + uuid):
+			partitionPath = "/dev/disk/by-uuid/" + uuid
+			mountpoint = config.storage[uuid]['mountpoint'].value
+			if (self.is_hard_mounted(partitionPath) and self.is_fstab_mountpoint(partitionPath, mountpoint)):
+				if self.get_fstab_mountstate(partitionPath, mountpoint) == 'auto':
+					config.storage[uuid]["enabled"].value = False
+					config.storage.save()
+
+			if config.storage[uuid]['enabled'].value:
+				mountpoint = config.storage[uuid]['mountpoint'].value
+				if mountpoint != "":
+					print "[mountPartitionbyUUID] mountpoint:",mountpoint
+					if not path.exists(mountpoint):
+						try:
+							makedirs(mountpoint)
+						except OSError:
+							print "[mountPartitionbyUUID] could not create mountdir:",mountpoint
+					
+					if path.exists(mountpoint) and not path.ismount(mountpoint):
+						cmd = "mount -t ext3 -o noatime /dev/disk/by-uuid/" + uuid + " " + mountpoint
+						system(cmd)
+						moviedir = mountpoint + "/movie"
+						if not path.exists(moviedir):
+							try:
+								makedirs(moviedir)
+							except OSError:
+								print "[mountPartitionbyUUID] could not create moviedir:",moviedir
+					
+					dev = self.getDeviceNamebyUUID(uuid)
+					if dev is not None:
+						p = self.getPartitionbyMountpoint(mountpoint)
+						if p is not None:
+							x = self.getPartitionbyDevice(dev)
+							if x is not None and x.mountpoint.startswith('/autofs'):
+								self.removeMountedPartitionbyDevice(dev)
+							p.mountpoint = mountpoint
+							p.uuid = uuid
+							p.device = dev
+							p.force_mounted = False
+						else:
+							p = self.getPartitionbyDevice(dev)
+							if p is not None:
+								p.mountpoint = mountpoint
+								p.uuid = uuid
+								p.device = dev
+								p.force_mounted = False
+
+	def storageDeviceChanged(self, uuid):
+		print "[storageDeviceChanged] for UUID:'%s'" % (uuid)
+		if config.storage[uuid]["enabled"].value:
+			self.mountPartitionbyUUID(uuid)
+		else:
+			self.unmountPartitionbyUUID(uuid)
+
+	def setupConfigEntries(self, initial_call = False, dev = None):
+		if initial_call and not dev:
+			for uuid in config.storage.stored_values:
+				print "[setupConfigEntries] initial_call for stored uuid:",uuid,config.storage.stored_values[uuid]
+				config.storage[uuid] = ConfigSubDict()
+				config.storage[uuid]["enabled"] = ConfigYesNo(default = False)
+				config.storage[uuid]["mountpoint"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
+				config.storage[uuid]["device_description"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
+				config.storage[uuid]["device_info"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
+				self.storageDeviceChanged(uuid)
+		if dev is not None:
+			uuid = self.getPartitionUUID(dev)
+			if uuid is not None:
+				if config.storage.get(uuid, None) is None: #new unconfigured device added
+					print "[setupConfigEntries] new device add for '%s' with uuid:'%s'" % (dev, uuid)
+					hdd = self.getHDD(dev)
+					if hdd is not None:
+						hdd_description = hdd.model()
+						cap = hdd.capacity()
+						if cap != "":
+							hdd_description += " (" + cap + ")"
+						device_info =  hdd.bus_description()
+					else:
+						device_info = dev
+						hdd_description = "External Storage"
+					config.storage[uuid] = ConfigSubDict()
+					config.storage[uuid]["enabled"] = ConfigYesNo(default = False)
+					config.storage[uuid]["mountpoint"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
+					config.storage[uuid]["device_description"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
+					config.storage[uuid]["device_info"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
+					config.storage[uuid]["device_description"].setValue(hdd_description)
+					config.storage[uuid]["device_info"].setValue(device_info)
+					self.storageDeviceChanged(uuid)
+				else:
+					print "[setupConfigEntries] new device add for '%s' with uuid:'%s'" % (dev, uuid)
+					self.storageDeviceChanged(uuid)
+			else:
+				"[setupConfigEntries] device add for '%s' without uuid !!!" % (dev)
 
 harddiskmanager = HarddiskManager()

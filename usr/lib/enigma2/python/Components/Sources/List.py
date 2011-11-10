@@ -9,7 +9,7 @@ setup the "fonts".
 
 This has been done so another converter could convert the list to a different format, for example
 to generate HTML."""
-	def __init__(self, list = [ ], enableWrapAround = False, item_height = 25, fonts = [ ]):
+	def __init__(self, list = [ ], enableWrapAround = False, item_height = 25, fonts = [ ], buildfunc = None):
 		Source.__init__(self)
 		self.__list = list
 		self.onSelectionChanged = [ ]
@@ -18,6 +18,7 @@ to generate HTML."""
 		self.disable_callbacks = False
 		self.enableWrapAround = enableWrapAround
 		self.__style = "default" # style might be an optional string which can be used to define different visualisations in the skin
+		self.__buildfunc = buildfunc
 
 	def setList(self, list):
 		self.__list = list
@@ -96,6 +97,17 @@ to generate HTML."""
 			self.changed((self.CHANGED_SPECIFIC, "style"))
 
 	style = property(getStyle, setStyle)
+
+	@cached
+	def getBuildFunc(self):
+		return self.__buildfunc
+
+	def setBuildFunc(self, buildfunc):
+		if self.__buildfunc != buildfunc:
+			self.__buildfunc = buildfunc
+			self.changed((self.CHANGED_SPECIFIC, "buildfunc"))
+
+	buildfunc = property(getBuildFunc, setBuildFunc)
 
 	def updateList(self, list):
 		"""Changes the list without changing the selection or emitting changed Events"""

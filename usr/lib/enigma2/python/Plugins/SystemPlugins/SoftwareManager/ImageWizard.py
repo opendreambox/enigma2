@@ -23,10 +23,10 @@ config.plugins.configurationbackup.backupdirs = ConfigLocations(default=[eEnv.re
 backupfile = "enigma2settingsbackup.tar.gz"
 
 def checkConfigBackup():
-	parts = [ (r.description, r.mountpoint) for r in harddiskmanager.getMountedPartitions(onlyhotplug = False)]
-	for x in parts:
-		if x[1] == '/':
-			parts.remove(x)
+	parts = [ (p.description, p.mountpoint) for p in harddiskmanager.getMountedPartitions() if p.mountpoint != "/"]
+	if not parts:
+		parts.extend([ ( hd.model(), harddiskmanager.getAutofsMountpoint(hd.device + str(hd.numPartitions())) ) for hd in harddiskmanager.hdd ])
+
 	if len(parts):
 		for x in parts:
 			if x[1].endswith('/'):
@@ -43,7 +43,8 @@ def checkConfigBackup():
 					config.plugins.configurationbackup.backuplocation.save()
 					config.plugins.configurationbackup.save()
 					return x
-		return None		
+		return None
+	return None		
 
 def checkBackupFile():
 	backuplocation = config.plugins.configurationbackup.backuplocation.value

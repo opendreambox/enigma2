@@ -85,14 +85,14 @@ class Language:
 
 	def getActiveLanguage(self):
 		return self.activeLanguage
-	
+
 	def getActiveLanguageIndex(self):
 		idx = 0
 		for x in self.langlist:
 			if x == self.activeLanguage:
 				return idx
 			idx += 1
-		return None			
+		return None
 
 	def getLanguage(self):
 		try:

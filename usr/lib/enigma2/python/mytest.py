@@ -448,9 +448,6 @@ from Components.VolumeControl import VolumeControl
 def runScreenTest():
 	config.misc.startCounter.value += 1
 
-	profile("readPluginList")
-	plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
-
 	profile("Init:Session")
 	nav = Navigation(config.misc.isNextRecordTimerAfterEventActionAuto.value)
 	session = Session(desktop = getDesktop(0), summary_desktop = getDesktop(1), navigation = nav)

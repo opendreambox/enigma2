@@ -1389,6 +1389,7 @@ class eListbox(eWidget):
     def __init__(self, *args): 
         _enigma.eListbox_swiginit(self,_enigma.new_eListbox(*args))
     __swig_destroy__ = _enigma.delete_eListbox
+    setWrapAroundDefault = staticmethod(_enigma.eListbox_setWrapAroundDefault)
     selectionChanged = _swig_property(_enigma.eListbox_selectionChanged_get)
     showOnDemand = _enigma.eListbox_showOnDemand
     showAlways = _enigma.eListbox_showAlways
@@ -1419,6 +1420,10 @@ eListbox.setBackgroundPicture = new_instancemethod(_enigma.eListbox_setBackgroun
 eListbox.setSelectionPicture = new_instancemethod(_enigma.eListbox_setSelectionPicture,None,eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
+
+def eListbox_setWrapAroundDefault(*args):
+  return _enigma.eListbox_setWrapAroundDefault(*args)
+eListbox_setWrapAroundDefault = _enigma.eListbox_setWrapAroundDefault
 
 class eListboxPythonStringContent(iListboxContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

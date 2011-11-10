@@ -257,6 +257,7 @@ private:
         sourceStream m_sourceinfo;
 	eSingleLock m_subs_to_pull_lock;
 	gulong m_subs_to_pull_handler_id;
+	bool m_coverart_written;
 
 	RESULT seekToImpl(pts_t to);
 

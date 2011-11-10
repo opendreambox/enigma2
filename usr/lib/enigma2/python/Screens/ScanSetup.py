@@ -408,43 +408,47 @@ class SatelliteTransponderSearchSupport:
 					fstr += "R KHz SR"
 				sr = d["symbol_rate"]
 #				print "SR before round", sr
-				sr_rounded = round(float(sr*2L) / 1000) * 1000
-				sr_rounded /= 2
-#				print "SR after round", sr_rounded
-				parm.symbol_rate = int(sr_rounded)
-				fstr += str(parm.symbol_rate/1000)
-				parm.fec = d["fec_inner"]
-				fstr += " "
-				fstr += r["fec_inner"]
-				parm.inversion = d["inversion"]
-				parm.polarisation = d["polarization"]
-				parm.orbital_position = d["orbital_position"]
-				parm.system = d["system"]
-				fstr += " "
-				fstr += r["system"]
-				parm.modulation = d["modulation"]
-				fstr += " "
-				fstr += r["modulation"]
-
-				if parm.system == eDVBFrontendParametersSatellite.System_DVB_S2:
-					parm.rolloff = d["rolloff"]
-					parm.pilot = d["pilot"]
-				self.__tlist.append(parm)
-
-				print "LOCKED at", freq, "SEARCHED at", self.parm.frequency, "half bw", (135L*((sr+1000)/1000)/200), "half search range", (self.parm.symbol_rate/2)
-				self.parm.frequency = freq
-				self.parm.frequency += (135L*((sr+999)/1000)/200)
-				self.parm.frequency += self.parm.symbol_rate/2
-
-				bm = state.getConstellationBitmap(5)
-				self.tp_found.append((fstr, bm))
-				state.updateConstellation(bm)
-
-				if len(self.tp_found):
-					state["list"].updateList(self.tp_found)
+				if sr < 0:
+					print "WARNING blind SR is < 0... skip"
+					self.parm.frequency += self.parm.symbol_rate
 				else:
-					state["list"].setList(self.tp_found)
-					state["list"].setIndex(0)
+					sr_rounded = round(float(sr*2L) / 1000) * 1000
+					sr_rounded /= 2
+#					print "SR after round", sr_rounded
+					parm.symbol_rate = int(sr_rounded)
+					fstr += str(parm.symbol_rate/1000)
+					parm.fec = d["fec_inner"]
+					fstr += " "
+					fstr += r["fec_inner"]
+					parm.inversion = d["inversion"]
+					parm.polarisation = d["polarization"]
+					parm.orbital_position = d["orbital_position"]
+					parm.system = d["system"]
+					fstr += " "
+					fstr += r["system"]
+					parm.modulation = d["modulation"]
+					fstr += " "
+					fstr += r["modulation"]
+
+					if parm.system == eDVBFrontendParametersSatellite.System_DVB_S2:
+						parm.rolloff = d["rolloff"]
+						parm.pilot = d["pilot"]
+					self.__tlist.append(parm)
+
+					print "LOCKED at", freq, "SEARCHED at", self.parm.frequency, "half bw", (135L*((sr+1000)/1000)/200), "half search range", (self.parm.symbol_rate/2)
+					self.parm.frequency = freq
+					self.parm.frequency += (135L*((sr+999)/1000)/200)
+					self.parm.frequency += self.parm.symbol_rate/2
+
+					bm = state.getConstellationBitmap(5)
+					self.tp_found.append((fstr, bm))
+					state.updateConstellation(bm)
+
+					if len(self.tp_found):
+						state["list"].updateList(self.tp_found)
+					else:
+						state["list"].setList(self.tp_found)
+						state["list"].setIndex(0)
 			else:
 				self.parm.frequency += self.parm.symbol_rate
 

@@ -21,10 +21,10 @@ def InitSetupDevices():
 
 	def languageNotifier(configElement):
 		language.activateLanguage(configElement.value)
-	
+
 	config.osd = ConfigSubsection()
 	config.osd.language = ConfigText(default = "en_EN");
-	config.osd.language.addNotifier(languageNotifier)
+	config.osd.language.addNotifier(languageNotifier, immediate_feedback=False, call_on_save_or_cancel=True, initial_call=True)
 
 	config.parental = ConfigSubsection();
 	config.parental.lock = ConfigOnOff(default = False)

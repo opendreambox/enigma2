@@ -1,7 +1,6 @@
 from enigma import getPrevAsciiCode
 from Tools.NumericalTextInput import NumericalTextInput
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
-from Components.Harddisk import harddiskmanager
 from copy import copy as copy_copy
 from os import path as os_path
 from time import localtime, strftime
@@ -196,6 +195,15 @@ class choicesList(object): # XXX: we might want a better name for this
 
 	def __len__(self):
 		return len(self.choices) or 1
+
+	def updateItemDescription(self, index, descr):
+		if self.type == choicesList.LIST_TYPE_LIST:
+			orig = self.choices[index]
+			assert isinstance(orig, tuple)
+			self.choices[index] = (orig[0], descr)
+		else:
+			key = self.choices.keys()[index]
+			self.choices[key] = descr
 
 	def __getitem__(self, index):
 		if self.type == choicesList.LIST_TYPE_LIST:
@@ -1083,7 +1091,7 @@ class ConfigNumber(ConfigText):
 					return
 			else:
 				ascii = getKeyNumber(key) + 48
-  			newChar = unichr(ascii)
+			newChar = unichr(ascii)
 			if self.allmarked:
 				self.deleteAllChars()
 				self.allmarked = False
@@ -1700,6 +1708,7 @@ def NoSave(element):
 configfile = ConfigFile()
 
 configfile.load()
+from Components.Harddisk import harddiskmanager
 
 def getConfigListEntry(*args):
 	assert len(args) > 1, "getConfigListEntry needs a minimum of two arguments (descr, configElement)"
