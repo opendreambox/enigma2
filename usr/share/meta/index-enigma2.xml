@@ -1,0 +1,174 @@
+<index>
+	<package details="plugin_cutlisteditor.xml" name="CutListEditor" packagename="enigma2-plugin-extensions-cutlisteditor" shortdescription="CutListEditor allows you to edit your movies">
+		<prerequisites>
+			<tag type="Recording" />
+		</prerequisites>
+	</package>
+	<package details="plugin_dvdburn.xml" name="DVDBurn" packagename="enigma2-plugin-extensions-dvdburn" shortdescription="Burn your recordings to DVD">
+		<prerequisites>
+			<tag type="Recording" />
+			<tag type="Software" />
+		</prerequisites>
+	</package>
+	<package details="plugin_dvdplayer.xml" name="DVDPlayer" packagename="enigma2-plugin-extensions-dvdplayer" shortdescription="DVDPlayer plays your DVDs on your Dreambox">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
+	<package details="plugin_graphmultiepg.xml" name="GraphMultiEPG" packagename="enigma2-plugin-extensions-graphmultiepg" shortdescription="GraphMultiEPG shows a graphical timeline EPG">
+		<prerequisites>
+			<tag type="EPG" />
+			<tag type="Recording" />
+		</prerequisites>
+	</package>
+	<package details="plugin_mediaplayer.xml" name="MediaPlayer" packagename="enigma2-plugin-extensions-mediaplayer" shortdescription="Plays your favorite music and videos">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
+	<package details="plugin_mediascanner.xml" name="MediaScanner" packagename="enigma2-plugin-extensions-mediascanner" shortdescription="Scan devices for playable media files">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_pictureplayer.xml" name="PicturePlayer" packagename="enigma2-plugin-extensions-pictureplayer" shortdescription="Display your photos on the TV">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
+	<package details="plugin_socketmmi.xml" name="SocketMMI" packagename="enigma2-plugin-extensions-socketmmi" shortdescription="Frontend for /tmp/mmi.socket">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_tuxboxplugins.xml" name="TuxboxPlugins" packagename="TuxboxPlugins" shortdescription="Execute TuxboxPlugins">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_cleanupwizard.xml" name="CleanupWizard" packagename="enigma2-plugin-systemplugins-cleanupwizard" shortdescription="Automatically informs you on low internal memory">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_commoninterfaceassignment.xml" name="CommonInterfaceAssignment" packagename="enigma2-plugin-systemplugins-commoninterfaceassignment" shortdescription="Assigning providers/services/caids to a CI module">
+		<prerequisites>
+			<hardware type="dm8000" />
+			<tag type="CI" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_crashlogautosubmit.xml" name="CrashlogAutoSubmit" packagename="enigma2-plugin-systemplugins-crashlogautosubmit" shortdescription="Automatically send crashlogs to Dream Multimedia">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_defaultservicesscanner.xml" name="DefaultServicesScanner" packagename="enigma2-plugin-systemplugins-defaultservicesscanner" shortdescription="Scans default lamedbs sorted by satellite">
+		<prerequisites>
+			<tag type="SAT" />
+			<tag type="Default" />
+		</prerequisites>
+	</package>
+	<package details="plugin_diseqctester.xml" name="DiseqcTester" packagename="enigma2-plugin-systemplugins-diseqctester" shortdescription="Test your DiSEqC equipment">
+		<prerequisites>
+			<tag type="SAT" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_frontprocessorupgrade.xml" name="FrontprocessorUpgrade" packagename="enigma2-plugin-systemplugins-frontprocessorupgrade" packagetype="internal" shortdescription="Internal firmware updater">
+		<prerequisites>
+			<hardware type="dm8000" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_hotplug.xml" name="Hotplug" packagename="enigma2-plugin-systemplugins-hotplug" shortdescription="Hotplugging for removeable devices">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_nfiflash.xml" name="NFIFlash" packagename="enigma2-plugin-systemplugins-nfiflash" shortdescription="Restore your Dreambox with a USB stick">
+		<prerequisites>
+			<hardware type="dm8000" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_networksetup.xml" name="NetworkSetup" packagename="enigma2-plugin-systemplugins-networksetup" packagetype="internal" shortdescription="Internal network setup plugin">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_networkwizard.xml" name="NetworkWizard" packagename="enigma2-plugin-systemplugins-networkwizard" shortdescription="Step by step network configuration">
+		<prerequisites>
+			<tag type="Network" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_positionersetup.xml" name="PositionerSetup" packagename="enigma2-plugin-systemplugins-positionersetup" shortdescription="PositionerSetup helps you installing a motorized dish">
+		<prerequisites>
+			<tag type="SAT" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_satelliteequipmentcontrol.xml" name="SatelliteEquipmentControl" packagename="enigma2-plugin-systemplugins-satelliteequipmentcontrol" shortdescription="SatelliteEquipmentControl allows you to fine-tune DiSEqC-settings">
+		<prerequisites>
+			<tag type="SAT" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_satfinder.xml" name="Satfinder" packagename="enigma2-plugin-systemplugins-satfinder" shortdescription="Satfinder helps you to align your dish">
+		<prerequisites>
+			<tag type="SAT" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_skinselector.xml" name="SkinSelector" packagename="enigma2-plugin-systemplugins-skinselector" shortdescription="SkinSelector shows a menu with selectable skins">
+		<prerequisites>
+			<tag type="Display" />
+			<tag type="Skin" />
+		</prerequisites>
+	</package>
+	<package details="plugin_softwaremanager.xml" name="SoftwareManager" packagename="enigma2-plugin-systemplugins-softwaremanager" shortdescription="SoftwareManager manages your Dreambox software">
+		<prerequisites>
+			<tag type="Software" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_tempfancontrol.xml" name="TempFanControl" packagename="enigma2-plugin-systemplugins-tempfancontrol" shortdescription="Control your system fan">
+		<prerequisites>
+			<hardware type="dm8000" />
+			<hardware type="dm500hd" />
+			<hardware type="dm800se" />
+			<hardware type="dm7020hd" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_videoenhancement.xml" name="VideoEnhancement" packagename="enigma2-plugin-systemplugins-videoenhancement" shortdescription="VideoEnhancement provides advanced video enhancement settings">
+		<prerequisites>
+			<hardware type="dm8000" />
+			<hardware type="dm800" />
+			<hardware type="dm500hd" />
+			<hardware type="dm800se" />
+			<hardware type="dm7020hd" />
+			<tag type="Display" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_videotune.xml" name="VideoTune" packagename="enigma2-plugin-systemplugins-videotune" shortdescription="VideoTune helps fine-tuning your tv display">
+		<prerequisites>
+			<tag type="Display" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_videomode.xml" name="Videomode" packagename="enigma2-plugin-systemplugins-videomode" shortdescription="Videomode provides advanced video mode settings">
+		<prerequisites>
+			<tag type="Display" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_wirelesslan.xml" name="WirelessLan" packagename="enigma2-plugin-systemplugins-wirelesslan" shortdescription="Configure your WLAN network interface">
+		<prerequisites>
+			<tag type="Network" />
+			<tag type="System" />
+		</prerequisites>
+	</package>
+</index>

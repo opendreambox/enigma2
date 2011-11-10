@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: enigma2
+Description: Enigma2
+Version: 3.0.0
+Cflags: -I${includedir}/enigma2 -fno-rtti -fno-exceptions
+Requires.private: sigc++-1.2

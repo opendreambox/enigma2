@@ -1,0 +1,11 @@
+*.a
+*.la
+*.so*
+*.pyo
+*.pyc
+*.png
+*.ttf
+*.kmap
+*.mo
+*.mvi
+/usr/bin/enigma2

@@ -1,0 +1,18 @@
+<default>
+	  <prerequisites>
+                    <tag type="System" />
+	  </prerequisites>
+          <info>
+                    <author>Dream Multimedia</author>
+                    <name>NetworkSetup</name>
+                    <packagename>enigma2-plugin-systemplugins-networksetup</packagename>
+		    <packagetype>internal</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->
+                    <shortdescription>Internal network setup plugin</shortdescription>
+                    <description>This plugin is used to setup the network on your genuine dreambox.</description>
+	  </info>
+
+	  <files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-networksetup" />
+	</files>
+
+</default>
