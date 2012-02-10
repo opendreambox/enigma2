@@ -9,7 +9,8 @@ from Components.Button import Button
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.SystemInfo import SystemInfo
-from Components.UsageConfig import defaultMoviePath
+from Components.UsageConfig import defaultMoviePath, defaultStorageDevice
+from Components.Harddisk import harddiskmanager
 from Screens.MovieSelection import getPreferredTagEditor
 from Screens.LocationBox import MovieLocationBox
 from Screens.ChoiceBox import ChoiceBox
@@ -18,6 +19,7 @@ from RecordTimer import AFTEREVENT
 from enigma import eEPGCache, eServiceReference
 from time import localtime, mktime, time, strftime
 from datetime import datetime
+from os import path
 
 class TimerEntry(Screen, ConfigListScreen):
 	def __init__(self, session, timer):
@@ -94,7 +96,12 @@ class TimerEntry(Screen, ConfigListScreen):
 				weekday = (int(strftime("%w", localtime(self.timer.begin))) - 1) % 7
 				day[weekday] = 1
 
-			self.timerentry_justplay = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record"))], default = {0: "record", 1: "zap"}[justplay])
+			justplay_default = {0: "record", 1: "zap"}[justplay]
+			tmp_dir = self.timer.dirname or defaultMoviePath()
+			if not path.exists(tmp_dir):
+				justplay_default = {0: "record", 1: "zap"}[True]
+			self.timerentry_justplay = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record"))], default = justplay_default)
+
 			if SystemInfo["DeepstandbySupport"]:
 				shutdownString = _("go to deep standby")
 			else:
@@ -281,12 +288,34 @@ class TimerEntry(Screen, ConfigListScreen):
 		if not self.timerentry_service_ref.isRecordable():
 			self.session.openWithCallback(self.selectChannelSelector, MessageBox, _("You didn't select a channel to record from."), MessageBox.TYPE_ERROR)
 			return
+		if self.timerentry_justplay.value == 'record':
+			if not path.exists(self.timerentry_dirname.value):
+				if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
+					self.session.open(MessageBox, _("Unconfigured storage devices found!") + "\n" \
+						+ _("Please make sure to set up your storage devices with the improved storage management in menu -> setup -> system -> storage devices."), MessageBox.TYPE_ERROR)
+					return
+				elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() == "<undefined>":
+					self.session.open(MessageBox, _("No default storage device found!") + "\n" \
+						+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
+					return
+				elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
+					part = harddiskmanager.getdefaultStorageDevicebyUUID(defaultStorageDevice())
+					if part is None:
+						self.session.open(MessageBox, _("Default storage device is not available!") + "\n" \
+							+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
+						return
+				else:
+					self.session.open(MessageBox, _("Recording destination for this timer does not exists."), MessageBox.TYPE_ERROR)
+					return
+
 		self.timer.name = self.timerentry_name.value
 		self.timer.description = self.timerentry_description.value
 		self.timer.justplay = self.timerentry_justplay.value == "zap"
 		if self.timerentry_justplay.value == "zap":
 			if not self.timerentry_showendtime.value:
 				self.timerentry_endtime.value = self.timerentry_starttime.value
+		
+
 		self.timer.resetRepeated()
 		self.timer.afterEvent = {
 			"nothing": AFTEREVENT.NONE,

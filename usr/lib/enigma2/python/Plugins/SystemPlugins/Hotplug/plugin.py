@@ -1,12 +1,15 @@
 from Plugins.Plugin import PluginDescriptor
 from Components.Harddisk import harddiskmanager
 from Tools.Directories import fileExists
+from Tools.BoundFunction import boundFunction
 
 hotplugNotifier = [ ]
 bdpoll = None
+delayed_HotplugData = { }
+
 
 def processHotplugData(self, v):
-	print "hotplug:", v
+	#print "hotplug:", v
 	action = v.get("ACTION")
 	device = v.get("DEVPATH")
 	physdevpath = v.get("PHYSDEVPATH")
@@ -16,6 +19,7 @@ def processHotplugData(self, v):
 
 	if action is not None and action == "add":
 		error, blacklisted, removable, is_cdrom, partitions, medium_found = harddiskmanager.addHotplugPartition(dev, physdevpath)
+	
 		if bdpoll and removable or is_cdrom:
 			bdpoll.addDevice(dev, is_cdrom, medium_found)
 	elif action is not None and action == "remove":
@@ -34,6 +38,10 @@ def processHotplugData(self, v):
 			callback(dev, action or media_state)
 		except AttributeError:
 			hotplugNotifier.remove(callback)
+	
+	if delayed_HotplugData.get(device, None) is not None:
+		del delayed_HotplugData[device]
+
 
 CDROM_DRIVE_STATUS = 0x5326
 CDROM_MEDIA_CHANGED = 0x5325
@@ -53,7 +61,6 @@ def autostart(reason, **kwargs):
 	global bdpoll
 	if reason == 0:
 		print "starting hotplug handler"
-
 		if fileExists('/dev/.udev'):
 			global netlink
 			from enigma import eSocketNotifier, eTimer, ePythonMessagePump
@@ -70,22 +77,28 @@ def autostart(reason, **kwargs):
 					self.sn.callback.append(self.dataAvail)
 
 				def dataAvail(self, what):
-					received = self.netlink.recvfrom(16384)
-#					print "HOTPLUG(%d):" %(what), received
-
-					data = received[0].split('\0')[:-1]
-					v = {}
-
-					for x in data:
-						i = x.find('=')
-						var, val = x[:i], x[i+1:]
-						v[var] = val
-
-					if v['SUBSYSTEM'] == 'block' and v['ACTION'] in ('add', 'remove'):
-						processHotplugData(self, v)
+					#catch socket.error exception
+					try:
+						received = self.netlink.recvfrom(16384)
+					except socket.error, err:
+						print "hotplug: receive from netlink socket failed.", os.strerror(err.errno)
+					else:
+#						print "HOTPLUG(%d):" %(what), received
+						data = received[0].split('\0')[:-1]
+						v = {}
+	
+						for x in data:
+							i = x.find('=')
+							var, val = x[:i], x[i+1:]
+							v[var] = val
+	
+						if v['SUBSYSTEM'] == 'block' and v['ACTION'] in ('add', 'remove'):
+							tmr = eTimer()
+							tmr.callback.append(boundFunction(processHotplugData, self, v))
+							delayed_HotplugData[str(v.get("DEVPATH"))] = tmr
+							tmr.start(2000, True)
 
 			from threading import Thread, Semaphore, Lock
-
 			class ThreadQueue:
 				def __init__(self):
 					self.__list = [ ]
@@ -190,7 +203,11 @@ def autostart(reason, **kwargs):
 										#todo new kernels support events to userspace event on media change
 										#but not 2.6.18.... see hotplug-ng bdpoll.c
 										got_media = True
-								os.close(fd)
+								#catch exception if the cdrom was removed and we dont have a valid fs anymore
+								try:
+									os.close(fd)
+								except (IOError, OSError), err:
+									print "close cdrom failed", os.strerror(err.errno)	
 							else:
 								try:
 									fd = os.open("/dev/" + device, os.O_RDONLY)

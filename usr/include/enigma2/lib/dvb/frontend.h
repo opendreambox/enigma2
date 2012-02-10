@@ -100,6 +100,7 @@ private:
 	ePtr<eSocketNotifier> m_sn;
 	int m_tuning;
 	ePtr<eTimer> m_timeout, m_tuneTimer;
+	unsigned int m_sec_lock; // this is a bitmask (1 << m_dvbid)
 
 	eSecCommandList m_sec_sequence;
 
@@ -156,6 +157,7 @@ public:
 	void reopenFrontend();
 	int openFrontend();
 	int closeFrontend(bool force=false, bool no_delayed=false);
+	void preClose();
 	const char *getDescription() const { return m_description; }
 	bool is_simulate() const { return m_simulate; }
 };

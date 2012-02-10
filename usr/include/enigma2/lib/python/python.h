@@ -422,6 +422,64 @@ public:
 private:
 };
 
+inline long Impl_PyInt_AS_LONG(PyObject *o)
+{
+	return PyInt_AS_LONG(o);
+}
+
+#undef PyInt_AS_LONG
+#define PyInt_AS_LONG(o) Impl_PyInt_AS_LONG(o)
+
+#define PyInt_AsLongSafe(ob) __extension__ \
+({ \
+	long ret = PyInt_AsLong(ob); \
+	if (PyErr_Occurred()) \
+	{ \
+		PyErr_Print(); \
+		ASSERT(0); \
+	} \
+	ret; \
+} )
+
+#define PyInt_AsUnsignedLongMaskSafe(ob) __extension__ \
+({ \
+	unsigned long ret = PyInt_AsUnsignedLongMask(ob); \
+	if (PyErr_Occurred()) \
+	{ \
+		PyErr_Print(); \
+		ASSERT(0); \
+	} \
+	ret; \
+} )
+
+#define PyLong_AsLongSafe(ob) __extension__ \
+({ \
+	long ret = PyLong_AsLong(ob); \
+	if (PyErr_Occurred()) \
+	{ \
+		PyErr_Print(); \
+		ASSERT(0); \
+	} \
+	ret; \
+} )
+
+#define PyLong_AsLongLongSafe(ob) __extension__ \
+({ \
+	long long ret = PyLong_AsLongLong(ob); \
+	if (PyErr_Occurred()) \
+	{ \
+		PyErr_Print(); \
+		ASSERT(0); \
+	} \
+	ret; \
+} )
+
+#define PyString_AsStringSafe(ob) __extension__ \
+({ \
+	ASSERT(PyString_Check(ob)); \
+	PyString_AS_STRING(ob); \
+} )
+
 #endif // SWIG
 #endif // SKIP_PART2
 #endif // __lib_python_python_class_h

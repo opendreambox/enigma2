@@ -60,7 +60,7 @@ class NetworkAdapterSelection(Screen,HelpableScreen):
 			"yellow": (self.setDefaultInterface, [_("Set interface as default Interface"),_("* Only available if more than one interface is active.")] ),
 			})
 
-		self.adapters = [(iNetwork.getFriendlyAdapterName(x),x) for x in iNetwork.getAdapterList()]
+		self.adapters = [(iNetwork.getFriendlyAdapterName(x),x) for x in iNetwork.getAdapterList() if x in iNetwork.getInstalledAdapters()]
 
 		if not self.adapters:
 			self.adapters = [(iNetwork.getFriendlyAdapterName(x),x) for x in iNetwork.getConfiguredAdapters()]

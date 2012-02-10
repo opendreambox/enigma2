@@ -102,7 +102,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		
 		assert isinstance(serviceref, ServiceReference)
 		
-		if serviceref.isRecordable():
+		if serviceref is not None and serviceref.isRecordable():
 			self.service_ref = serviceref
 		else:
 			self.service_ref = ServiceReference(None)

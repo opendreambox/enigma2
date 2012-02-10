@@ -7,22 +7,19 @@ from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Tools.Directories import fileExists
 from Components.UsageConfig import preferredPath
+from Components.Harddisk import harddiskmanager
 
 class RecordPathsSettings(Screen,ConfigListScreen):
-	skin = """
-		<screen name="RecordPathsSettings" position="160,150" size="450,200" title="Recording paths">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="300,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="10,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="300,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="config" position="10,44" size="430,146" />
-		</screen>"""
 
 	def __init__(self, session):
 		from Components.Sources.StaticText import StaticText
 		Screen.__init__(self, session)
+		self.skinName = "RecordPathsSettings"
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Save"))
+		self["key_yellow"] = StaticText()
+		self["key_blue"] = StaticText()
+		self["introduction"] = StaticText()
 
 		ConfigListScreen.__init__(self, [])
 		self.initConfigList()
@@ -37,7 +34,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 
 	def checkReadWriteDir(self, configele):
 		print "checkReadWrite: ", configele.value
-		if configele.value in [x[0] for x in self.styles] or fileExists(configele.value, "w"):
+		if configele.value in [x[0] for x in self.styles] or configele.value in [x[0] for x in self.storage_styles] or fileExists(configele.value, "w"):
 			configele.last_value = configele.value
 			return True
 		else:
@@ -53,6 +50,35 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 	def initConfigList(self):
 		self.styles = [ ("<default>", _("<Default movie location>")), ("<current>", _("<Current movielist location>")), ("<timer>", _("<Last timer location>")) ]
 		styles_keys = [x[0] for x in self.styles]
+
+		harddiskmanager.verifyDefaultStorageDevice()
+		mountpoints = [ (p.mountpoint, p.description) for p in harddiskmanager.getConfiguredStorageDevices()]
+		mountpoints.sort(reverse = True)
+		self.storage_styles = [ ("<undefined>", _("<No default storage device selected.>"))]
+		self.storage_styles += mountpoints
+		storage_styles_keys = [x[0] for x in self.storage_styles]
+		default = config.storage_options.default_device.value
+		if default not in storage_styles_keys:
+			p = harddiskmanager.getdefaultStorageDevicebyUUID(default)
+			if p is not None:
+				default = p.mountpoint
+				if p.mountpoint not in storage_styles_keys:
+					self.storage_styles.append((p.mountpoint, p.description))
+			else:
+				cfg_uuid = config.storage.get(default, None)
+				if cfg_uuid is not None:
+					if cfg_uuid["enabled"].value:
+						default = cfg_uuid["mountpoint"].value
+						if default not in storage_styles_keys:
+							description = cfg_uuid["device_description"].value.split()[0] or ""
+							description += " ( " + _("Offline") + " )"
+							self.storage_styles.append((default, description ))
+					else:
+						default = "<undefined>"
+				else:
+					default = "<undefined>"
+		print "DefaultDevice: ", default, self.storage_styles
+		self.default_device = ConfigSelection(default = default, choices = self.storage_styles)
 		tmp = config.movielist.videodirs.value
 		default = config.usage.default_path.value
 		if default not in tmp:
@@ -92,6 +118,8 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 		self.timeshift_dirname.last_value = self.timeshift_dirname.value
 
 		self.list = []
+		self.device_entry = getConfigListEntry(_("Default storage device"), self.default_device)
+		self.list.append(self.device_entry)
 		if config.usage.setup_level.index >= 2:
 			self.default_entry = getConfigListEntry(_("Default movie location"), self.default_dirname)
 			self.list.append(self.default_entry)
@@ -105,6 +133,22 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 		self.timeshift_entry = getConfigListEntry(_("Timeshift location"), self.timeshift_dirname)
 		self.list.append(self.timeshift_entry)
 		self["config"].setList(self.list)
+		if not self.selectionChanged in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
+
+	def selectionChanged(self):
+		currentry = self["config"].getCurrent()
+		if currentry == self.device_entry:
+			self["introduction"].setText(_("Please select the default storage device you want to use for recordings. This device gets linked to /media/hdd."))
+		elif currentry == self.default_entry:
+			self["introduction"].setText(_("Please select the default movielist location which is used for recordings."))
+		elif currentry == self.timeshift_entry:
+			self["introduction"].setText(_("Please select the timeshift location which is used for storing timeshift recordings."))
+		if config.usage.setup_level.index >= 2:
+			if currentry == self.timer_entry:
+				self["introduction"].setText(_("Please select the default timer record location which is used for timer based recordings."))
+			elif currentry == self.instantrec_entry:
+				self["introduction"].setText(_("Please select the default instant record location which is used for instant recordings."))
 
 	def ok(self):
 		currentry = self["config"].getCurrent()
@@ -192,6 +236,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 			config.usage.timer_path.save()
 			config.usage.instantrec_path.save()
 			config.usage.timeshift_path.save()
+			harddiskmanager.defaultStorageDeviceChanged(self.default_device.value)
 			self.close()
 
 	def cancel(self):

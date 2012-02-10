@@ -43,6 +43,7 @@ public:
 		if (!--m_inuse)
 		{
 			/* emit */ stateChanged();
+			m_frontend->preClose();
 			disable->start(3000, true);
 		}
 	}
@@ -66,7 +67,10 @@ public:
 	iDVBAdapter *m_adapter;
 	ePtr<eDVBDemux> m_demux;
 	int m_inuse;
-	eDVBRegisteredDemux(eDVBDemux *demux, iDVBAdapter *adap): m_adapter(adap), m_demux(demux), m_inuse(0) { }
+	bool m_have_descrambler;
+	eDVBRegisteredDemux(eDVBDemux *demux, iDVBAdapter *adap, bool have_descrambler)
+		:m_adapter(adap), m_demux(demux), m_inuse(0), m_have_descrambler(have_descrambler)
+	{ }
 };
 
 class eDVBAllocatedFrontend
@@ -104,9 +108,13 @@ class iDVBAdapter: public iObject
 public:
 	virtual int getNumDemux() = 0;
 	virtual RESULT getDemux(ePtr<eDVBDemux> &demux, int nr) = 0;
-	
+
 	virtual int getNumFrontends() = 0;
 	virtual RESULT getFrontend(ePtr<eDVBFrontend> &fe, int nr, bool simulate=false) = 0;
+
+	virtual int getNumDecodersAudio() = 0;
+	virtual int getNumDecodersVideo() = 0;
+	virtual int getNumDescramblers() = 0;
 };
 
 class eDVBAdapterLinux: public iDVBAdapter
@@ -121,9 +129,16 @@ public:
 	int getNumFrontends();
 	RESULT getFrontend(ePtr<eDVBFrontend> &fe, int nr, bool simulate=false);
 	
+	int getNumDecodersAudio();
+	int getNumDecodersVideo();
+	int getNumDescramblers();
+	
 	static int exist(int nr);
 private:
 	int m_nr;
+	int m_nr_decoders_audio;
+	int m_nr_decoders_video;
+	int m_nr_descramblers;
 	eSmartPtrList<eDVBFrontend> m_frontend, m_simulate_frontend;
 	eSmartPtrList<eDVBDemux>    m_demux;
 };

@@ -81,14 +81,21 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			from Tools import Notifications
 			from Screens.MessageBox import MessageBox
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
-				Notifications.AddPopup(_("Please make sure to set up your hard drives with the improved storage management in menu -> system -> harddisk."),
-					type = MessageBox.TYPE_INFO, timeout = 0, id = "HarddiskNotification")
+				Notifications.AddNotificationWithCallback(self.HDDDetectedAnswer, MessageBox, _("Unconfigured storage devices found!")  + "\n" \
+					+ _("Please make sure to set up your storage devices with the storage management in menu -> setup -> system -> storage devices.") + "\n\n" \
+					+ _("Set up your storage device now?"), type = MessageBox.TYPE_YESNO, timeout = 15, default = False)
 				config.misc.initialharddisknotification.value = False
 				config.misc.initialharddisknotification.save()
 				if self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
 					harddiskmanager.delayed_device_Notifier.remove(self.HDDDetectedCB)
 			elif not self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
 				harddiskmanager.delayed_device_Notifier.append(self.HDDDetectedCB)
+
+	def HDDDetectedAnswer(self, answer):
+		if answer is not None:
+			if answer:
+				from Screens.HarddiskSetup import HarddiskDriveSelection
+				self.session.open(HarddiskDriveSelection)
 
 	def HDDDetectedCB(self, dev, media_state):
 		self.showHarddiskPopup()

@@ -29,7 +29,9 @@ public:
 		START_TUNE_TIMEOUT,
 		SET_ROTOR_MOVING,
 		SET_ROTOR_STOPPED,
-		DELAYED_CLOSE_FRONTEND
+		DELAYED_CLOSE_FRONTEND,
+		IF_ACQUIRE_SEC_LOCK_GOTO,
+		CLEAR_SEC_LOCK
 	};
 	int cmd;
 	struct rotor
@@ -271,10 +273,12 @@ public:
 	unsigned int SatCRvco;
 	unsigned int UnicableTuningWord;
 	unsigned int UnicableConfigWord;
+/*
 	int old_frequency;
 	int old_polarisation;
 	int old_orbital_position;
 	int guard_offset_old;
+*/
 	int guard_offset;
 	int LNBNum;
 };
@@ -376,6 +380,7 @@ public:
 	RESULT setTunerDepends(int from, int to);
 	void setSlotNotLinked(int tuner_no);
 
+	SWIG_PYOBJECT(ePyObject) getFrequencyRangeList(int slot_no, int orb_pos);
 	void setRotorMoving(int, bool); // called from the frontend's
 	bool isRotorMoving();
 	bool canMeasureInputPower() { return m_canMeasureInputPower; }

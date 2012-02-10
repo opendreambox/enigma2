@@ -170,7 +170,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 		))
 
 		self.onLayoutFinish.append(self.switchToFileListOnStart)
- 
+
 		# Make sure we remove our callback
 		self.onClose.append(self.disableTimer)
 
@@ -180,6 +180,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 			currDir = self["filelist"].current_directory
 			if currDir in self.bookmarks:
 				self["booklist"].moveToIndex(self.bookmarks.index(currDir))
+			self["filelist"].selectionEnabled(0)
 		else:
 			self.switchToFileList()
 

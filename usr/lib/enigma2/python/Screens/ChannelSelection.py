@@ -152,7 +152,7 @@ class ChannelContextMenu(Screen):
 					append_when_current_valid(current, menu, (_("remove entry"), self.removeCurrentService), level = 0)
 				if current_root and current_root.getPath().find("flags == %d" %(FLAG_SERVICE_NEW_FOUND)) != -1:
 					append_when_current_valid(current, menu, (_("remove new found flag"), self.removeNewFoundFlag), level = 0)
-				if isPlayable and SystemInfo.get("NumVideoDecoders", 1) > 1:
+				if isPlayable and SystemInfo.get("NumVideoDecoders", 1) > 1 and not isinstance(self.csel, ChannelSelectionRadio):
 					append_when_current_valid(current, menu, (_("Activate Picture in Picture"), self.showServiceInPiP), level = 0, key = "blue")
 					self.pipAvailable = True
 			else:

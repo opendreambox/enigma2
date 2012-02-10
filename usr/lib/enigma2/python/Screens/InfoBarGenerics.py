@@ -10,7 +10,7 @@ from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
 from Components.config import config, ConfigBoolean, ConfigClock
 from Components.SystemInfo import SystemInfo
-from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath
+from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath, defaultStorageDevice
 from EpgSelection import EPGSelection
 from Plugins.Plugin import PluginDescriptor
 
@@ -1211,9 +1211,24 @@ class InfoBarTimeshift:
 		print "enable timeshift"
 		ts = self.getTimeshift()
 		if ts is None:
-			self.session.open(MessageBox, _("Timeshift not possible!"), MessageBox.TYPE_ERROR)
-			print "no ts interface"
-			return 0
+			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
+				self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
+					+ _("Please make sure to set up your storage devices with the storage management in menu -> setup -> system -> storage devices."), MessageBox.TYPE_ERROR)
+				return 0
+			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() == "<undefined>":
+				self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
+					+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
+				return 0
+			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
+				part = harddiskmanager.getdefaultStorageDevicebyUUID(defaultStorageDevice())
+				if part is None:
+					self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
+						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
+					return 0
+			else:			
+				self.session.open(MessageBox, _("Timeshift not possible!"), MessageBox.TYPE_ERROR)
+				print "no ts interface"
+				return 0
 
 		if self.timeshift_enabled:
 			print "hu, timeshift already enabled?"
@@ -1388,9 +1403,9 @@ class InfoBarPlugins:
 	def getPluginList(self):
 		l = []
 		for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EXTENSIONSMENU):
-		  args = inspect.getargspec(p.__call__)[0]
-		  if len(args) == 1 or len(args) == 2 and isinstance(self, InfoBarChannelSelection):
-			  l.append(((boundFunction(self.getPluginName, p.name), boundFunction(self.runPlugin, p), lambda: True), None, p.name))
+			args = inspect.getargspec(p.__call__)[0]
+			if len(args) == 1 or len(args) == 2 and isinstance(self, InfoBarChannelSelection):
+				l.append(((boundFunction(self.getPluginName, p.name), boundFunction(self.runPlugin, p), lambda: True), None, p.name))
 		l.sort(key = lambda e: e[2]) # sort by name
 		return l
 
@@ -1656,9 +1671,24 @@ class InfoBarInstantRecord:
 		try:
 			stat = os_stat(dir)
 		except:
-			# XXX: this message is a little odd as we might be recording to a remote device
-			self.session.open(MessageBox, _("No HDD found or HDD not initialized!"), MessageBox.TYPE_ERROR)
-			return
+			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
+				self.session.open(MessageBox, _("Unconfigured storage devices found!") + "\n" \
+					+ _("Please make sure to set up your storage devices with the storage management in menu -> setup -> system -> storage devices."), MessageBox.TYPE_ERROR)
+				return
+			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() == "<undefined>":
+				self.session.open(MessageBox, _("No default storage device found!") + "\n" \
+					+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
+				return
+			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
+				part = harddiskmanager.getdefaultStorageDevicebyUUID(defaultStorageDevice())
+				if part is None:
+					self.session.open(MessageBox, _("Default storage device is not available!") + "\n" \
+						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
+					return
+			else:
+				# XXX: this message is a little odd as we might be recording to a remote device
+				self.session.open(MessageBox, _("No HDD found or HDD not initialized!"), MessageBox.TYPE_ERROR)
+				return
 
 		if self.isInstantRecordRunning():
 			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox, \
@@ -1976,13 +2006,12 @@ class InfoBarCueSheetSupport:
 	def jumpPreviousNextMark(self, cmp, start=False):
 		current_pos = self.cueGetCurrentPosition()
 		if current_pos is None:
- 			return False
+			return False
 		mark = self.getNearestCutPoint(current_pos, cmp=cmp, start=start)
 		if mark is not None:
 			pts = mark[0]
 		else:
 			return False
-
 		self.doSeek(pts)
 		return True
 

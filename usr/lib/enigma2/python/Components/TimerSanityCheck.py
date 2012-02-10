@@ -33,22 +33,22 @@ class TimerSanityCheck:
 		if self.newtimer is not None and self.newtimer.service_ref.ref.valid():
 			self.simultimer = [ self.newtimer ]
 			for timer in self.timerlist:
-				if (timer == self.newtimer):
-					return True
-				else:
-					if timer.begin == self.newtimer.begin:
-						fl1 = timer.service_ref.ref.flags & eServiceReference.isGroup
-						fl2 = self.newtimer.service_ref.ref.flags & eServiceReference.isGroup
-						if fl1 != fl2:
-							return False
-						if fl1: #is group
-							return timer.service_ref.ref.getPath() == self.newtimer.service_ref.ref.getPath()
-						getUnsignedDataRef1 = timer.service_ref.ref.getUnsignedData
-						getUnsignedDataRef2 = self.newtimer.service_ref.ref.getUnsignedData
-						for x in (1, 2, 3, 4):
-							if getUnsignedDataRef1(x) != getUnsignedDataRef2(x):
-								break;
-						else:
+				if timer.begin == self.newtimer.begin:
+					fl1 = timer.service_ref.ref.flags & eServiceReference.isGroup
+					fl2 = self.newtimer.service_ref.ref.flags & eServiceReference.isGroup
+					if fl1 != fl2:
+						return False
+					if fl1: #is group
+						return timer.service_ref.ref.getPath() == self.newtimer.service_ref.ref.getPath()
+					getUnsignedDataRef1 = timer.service_ref.ref.getUnsignedData
+					getUnsignedDataRef2 = self.newtimer.service_ref.ref.getUnsignedData
+					for x in (1, 2, 3, 4):
+						if getUnsignedDataRef1(x) != getUnsignedDataRef2(x):
+							break;
+					else: # same service and same start time
+						# we would allow two timers with same start time on same service when one is repeated and one is non repeated
+						# and the duration is not equal
+						if timer.repeated == self.newtimer.repeated or timer.end == self.newtimer.end:
 							return True
 		return False
 

@@ -96,8 +96,10 @@ class TimerEntry:
 			self.timeChanged()
 
 	def __lt__(self, o):
+		if self.getNextActivation() == o.getNextActivation():
+			return id(self) < id(o)
 		return self.getNextActivation() < o.getNextActivation()
-	
+
 	# must be overridden
 	def activate(self):
 		pass

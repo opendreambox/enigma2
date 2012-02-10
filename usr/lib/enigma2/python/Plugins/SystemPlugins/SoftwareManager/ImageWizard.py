@@ -24,8 +24,8 @@ backupfile = "enigma2settingsbackup.tar.gz"
 
 def checkConfigBackup():
 	parts = [ (p.description, p.mountpoint) for p in harddiskmanager.getMountedPartitions() if p.mountpoint != "/"]
-	if not parts:
-		parts.extend([ ( hd.model(), harddiskmanager.getAutofsMountpoint(hd.device + str(hd.numPartitions())) ) for hd in harddiskmanager.hdd ])
+	parts.extend([ ( hd.model(), harddiskmanager.getAutofsMountpoint(hd.device + str(hd.numPartitions())) ) for hd in harddiskmanager.hdd if harddiskmanager.getAutofsMountpoint(hd.device + str(hd.numPartitions())) not in parts ])
+
 
 	if len(parts):
 		for x in parts:
