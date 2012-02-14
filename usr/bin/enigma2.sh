@@ -24,7 +24,7 @@ if [ -e /usr/lib/libpassthrough.so ]; then
 	LIBS="$LIBS /usr/lib/libpassthrough.so"
 fi
 
-PAGECACHE_FLUSH_INTERVAL=$((512*1024)) LD_PRELOAD=$LIBS /usr/bin/enigma2
+LD_PRELOAD=$LIBS /usr/bin/enigma2
 
 # enigma2 exit codes:
 #

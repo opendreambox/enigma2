@@ -119,7 +119,7 @@ class UpdatePluginMenu(Screen):
 		self.menu = args
 		self.list = []
 		self.oktext = _("\nPress OK on your remote control to continue.")
-		self.menutext = _("Press MENU on your remote control for additional options.")
+		self.menutext = "" #_("Press MENU on your remote control for additional options.")
 		self.infotext = _("Press INFO on your remote control for additional information.")
 		self.text = ""
 		self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs.value )
@@ -176,7 +176,7 @@ class UpdatePluginMenu(Screen):
 			"ok": self.go,
 			"back": self.close,
 			"red": self.close,
-			"menu": self.handleMenu,
+			#"menu": self.handleMenu,
 			"showEventInfo": self.handleInfo,
 		}, -1)
 		self.onLayoutFinish.append(self.layoutFinished)
@@ -1350,6 +1350,7 @@ class UpdatePlugin(Screen):
 		self.packages = 0
 		self.error = 0
 		self.processed_packages = []
+		self.modified_packages = []
 
 		self.activity = 0
 		self.activityTimer = eTimer()
@@ -1416,16 +1417,18 @@ class UpdatePlugin(Screen):
 		elif event == IpkgComponent.EVENT_CONFIGURING:
 			self.package.setText(param)
 			self.status.setText(_("Configuring"))
-			
 		elif event == IpkgComponent.EVENT_MODIFIED:
-			if config.plugins.softwaremanager.overwriteConfigFiles.value in ("N", "Y"):
-				self.ipkg.write(True and config.plugins.softwaremanager.overwriteConfigFiles.value)
-			else:
-				self.session.openWithCallback(
-					self.modificationCallback,
-					MessageBox,
-					_("A configuration file (%s) was modified since Installation.\nDo you want to keep your version?") % (param)
-				)
+			self.ipkg.write("Y")
+			"""if not param in self.modified_packages:
+				self.modified_packages.append(param)
+				if config.plugins.softwaremanager.overwriteConfigFiles.value in ("N", "Y"):
+					self.ipkg.write(True and config.plugins.softwaremanager.overwriteConfigFiles.value)
+				else:
+					self.session.openWithCallback(
+						self.modificationCallback,
+						MessageBox,
+						_("A configuration file (%s) was modified since Installation.\nDo you want to keep your version?") % (param)
+					)"""
 		elif event == IpkgComponent.EVENT_ERROR:
 			self.error += 1
 		elif event == IpkgComponent.EVENT_DONE:

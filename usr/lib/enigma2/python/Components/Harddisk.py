@@ -33,6 +33,7 @@ class Harddisk:
 		else:
 			print "Unable to determine structure of /dev"
 
+		self.is_sleeping = False
 		self.max_idle_time = 0
 		self.idle_running = False
 		self.timer = None
@@ -414,7 +415,6 @@ class Harddisk:
 	def startIdle(self):
 		self.last_access = time.time()
 		self.last_stat = 0
-		self.is_sleeping = False
 		from enigma import eTimer
 
 		# disable HDD standby timer
@@ -422,6 +422,7 @@ class Harddisk:
 			Console().ePopen(("sdparm", "sdparm", "--set=SCT=0", self.disk_path))
 		else:
 			Console().ePopen(("hdparm", "hdparm", "-S0", self.disk_path))
+
 		self.timer = eTimer()
 		self.timer.callback.append(self.runIdle)
 		self.idle_running = True
@@ -451,13 +452,13 @@ class Harddisk:
 		print "[IDLE]", idle_time, self.max_idle_time, self.is_sleeping
 		if idle_time >= self.max_idle_time and not self.is_sleeping:
 			self.setSleep()
-			self.is_sleeping = True
 
 	def setSleep(self):
 		if self.bus() == "External":
 			Console().ePopen(("sdparm", "sdparm", "--command=stop", self.disk_path))
 		else:
 			Console().ePopen(("hdparm", "hdparm", "-y", self.disk_path))
+		self.is_sleeping = True
 
 	def setIdleTime(self, idle):
 		self.max_idle_time = idle

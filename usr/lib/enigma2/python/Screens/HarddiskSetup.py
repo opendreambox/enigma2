@@ -1126,24 +1126,24 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 					titletext = _("Storage device already configured!")
 
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
-				choises = defaultmsg + mountmsg + manualmsg
+				choices = defaultmsg + mountmsg + manualmsg
 			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() == "<undefined>":
-				choises = defaultmsg + unmountmsg + manualmsg
+				choices = defaultmsg + unmountmsg + manualmsg
 			elif uuid_cfg is not None and uuid_cfg['enabled'].value and defaultStorageDevice() == "<undefined>":
-				choises = defaultmsg + unmountmsg + manualmsg
+				choices = defaultmsg + unmountmsg + manualmsg
 			elif uuid_cfg is not None and uuid_cfg['enabled'].value and defaultStorageDevice() == uuid:
-				choises = unmountmsg + manualmsg
+				choices = unmountmsg + manualmsg
 			elif uuid_cfg is not None and not uuid_cfg['enabled'].value and defaultStorageDevice() == uuid:
-				choises = mountmsg + manualmsg
+				choices = mountmsg + manualmsg
 			elif uuid_cfg is not None and not uuid_cfg['enabled'].value and defaultStorageDevice() == "<undefined>":
-				choises = defaultmsg + unmountmsg + manualmsg
+				choices = defaultmsg + unmountmsg + manualmsg
 			elif uuid_cfg is not None and uuid_cfg['enabled'].value and defaultStorageDevice() != uuid:
-				choises = unmountmsg + manualmsg + defaultmsg
+				choices = unmountmsg + manualmsg + defaultmsg
 			elif uuid_cfg is not None and not uuid_cfg['enabled'].value and defaultStorageDevice() != uuid:
-				choises = mountmsg + manualmsg + defaultmsg
+				choices = mountmsg + manualmsg + defaultmsg
 			else:
-				choises = ()
-			choises += ( (_("Do nothing."), "nothing"),)
+				choices = ()
+			choices += ( (_("Do nothing."), "nothing"),)
 
 			if numpart >= 2 and partitionNum is False:
 				self.updatePartitionList(selection[1])
