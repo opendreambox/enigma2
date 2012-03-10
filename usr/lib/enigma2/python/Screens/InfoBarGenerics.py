@@ -1220,7 +1220,7 @@ class InfoBarTimeshift:
 					+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
 				return 0
 			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
-				part = harddiskmanager.getdefaultStorageDevicebyUUID(defaultStorageDevice())
+				part = harddiskmanager.getDefaultStorageDevicebyUUID(defaultStorageDevice())
 				if part is None:
 					self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
 						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
@@ -1668,9 +1668,7 @@ class InfoBarInstantRecord:
 		dir = preferredInstantRecordPath()
 		if not dir or not fileExists(dir, 'w'):
 			dir = defaultMoviePath()
-		try:
-			stat = os_stat(dir)
-		except:
+		if not harddiskmanager.inside_mountpoint(dir):
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
 				self.session.open(MessageBox, _("Unconfigured storage devices found!") + "\n" \
 					+ _("Please make sure to set up your storage devices with the storage management in menu -> setup -> system -> storage devices."), MessageBox.TYPE_ERROR)
@@ -1680,7 +1678,7 @@ class InfoBarInstantRecord:
 					+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
 				return
 			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
-				part = harddiskmanager.getdefaultStorageDevicebyUUID(defaultStorageDevice())
+				part = harddiskmanager.getDefaultStorageDevicebyUUID(defaultStorageDevice())
 				if part is None:
 					self.session.open(MessageBox, _("Default storage device is not available!") + "\n" \
 						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)

@@ -27,6 +27,7 @@ profile("LOAD:HelpableScreen")
 from Screens.HelpMenu import HelpableScreen
 
 config.misc.initialharddisknotification = ConfigBoolean(True)
+config.misc.missingdefaultstoragenotification = ConfigBoolean(True)
 
 class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder,
@@ -75,10 +76,12 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 
 		self.showHarddiskPopup()
 
-	def showHarddiskPopup(self):
+	def showHarddiskPopup(self, dev = None, media_state = None):
+		from Components.Harddisk import harddiskmanager
+		from Tools import Notifications
+		if not self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
+			harddiskmanager.delayed_device_Notifier.append(self.HDDDetectedCB)
 		if config.misc.initialharddisknotification.value:
-			from Components.Harddisk import harddiskmanager
-			from Tools import Notifications
 			from Screens.MessageBox import MessageBox
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
 				Notifications.AddNotificationWithCallback(self.HDDDetectedAnswer, MessageBox, _("Unconfigured storage devices found!")  + "\n" \
@@ -86,19 +89,52 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 					+ _("Set up your storage device now?"), type = MessageBox.TYPE_YESNO, timeout = 15, default = False)
 				config.misc.initialharddisknotification.value = False
 				config.misc.initialharddisknotification.save()
-				if self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
-					harddiskmanager.delayed_device_Notifier.remove(self.HDDDetectedCB)
-			elif not self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
-				harddiskmanager.delayed_device_Notifier.append(self.HDDDetectedCB)
+		elif config.misc.missingdefaultstoragenotification.value and not config.misc.initialharddisknotification.value:
+			from Screens.ChoiceBox import ChoiceBox
+			from Components.UsageConfig import defaultStorageDevice
+			choices = [
+				(_("OK, do nothing"), "ok"),
+				(_("OK, and don't ask again"), "ok_always")
+			]
+			if harddiskmanager.HDDCount():
+				choices.append((_("OK, and set up a new default storage device"), "ok_setup"))
+			titletxt = _("Default storage device is not available!") + "\n"
+			if dev is None and defaultStorageDevice() != "<undefined>" and harddiskmanager.isDefaultStorageDeviceActivebyUUID(defaultStorageDevice()) is False:
+				Notifications.AddNotificationWithCallback(self.missingDefaultHDDAnswer, ChoiceBox, title = titletxt \
+					+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> storage devices.") + "\n", list = choices)			
+			elif dev is not None and defaultStorageDevice() != "<undefined>" and harddiskmanager.isDefaultStorageDeviceActivebyUUID(defaultStorageDevice()) is False:
+				part = harddiskmanager.getPartitionbyDevice(dev)				
+				if part is not None and part.uuid is not None and media_state is not None and media_state == "remove_default":
+					titletxt = _("Default storage device was removed!") + "\n"
+					Notifications.AddNotificationWithCallback(self.missingDefaultHDDAnswer, ChoiceBox, title = titletxt \
+						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> storage devices.") + "\n", list = choices)			
 
-	def HDDDetectedAnswer(self, answer):
+	def missingDefaultHDDAnswer(self, answer):
+		answer = answer and answer[1]
+		if answer is not None:
+			if answer == "ok_always":
+				print answer
+				config.misc.missingdefaultstoragenotification.value = False
+				config.misc.missingdefaultstoragenotification.save()
+			elif answer == "ok_setup":
+				print answer
+				from Screens.HarddiskSetup import HarddiskDriveSelection
+				self.session.open(HarddiskDriveSelection)				
+
+	def HDDDetectedAnswer(self, answer):	
 		if answer is not None:
 			if answer:
 				from Screens.HarddiskSetup import HarddiskDriveSelection
 				self.session.open(HarddiskDriveSelection)
 
 	def HDDDetectedCB(self, dev, media_state):
-		self.showHarddiskPopup()
+		if InfoBar.instance:
+			if InfoBar.instance.execing:
+				self.showHarddiskPopup(dev, media_state)
+			else:
+				print "HDDDetectedCB: main infobar is not execing... so we ignore hotplug event!"
+		else:
+				print "HDDDetectedCB: hotplug event.. but no infobar"
 
 	def __onClose(self):
 		InfoBar.instance = None

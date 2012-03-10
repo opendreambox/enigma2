@@ -6,7 +6,7 @@ from Components.config import config, ConfigSelection, getConfigListEntry, confi
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Tools.Directories import fileExists
-from Components.UsageConfig import preferredPath
+from Components.UsageConfig import preferredPath, defaultStorageDevice
 from Components.Harddisk import harddiskmanager
 
 class RecordPathsSettings(Screen,ConfigListScreen):
@@ -51,15 +51,14 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 		self.styles = [ ("<default>", _("<Default movie location>")), ("<current>", _("<Current movielist location>")), ("<timer>", _("<Last timer location>")) ]
 		styles_keys = [x[0] for x in self.styles]
 
-		harddiskmanager.verifyDefaultStorageDevice()
 		mountpoints = [ (p.mountpoint, p.description) for p in harddiskmanager.getConfiguredStorageDevices()]
 		mountpoints.sort(reverse = True)
 		self.storage_styles = [ ("<undefined>", _("<No default storage device selected.>"))]
 		self.storage_styles += mountpoints
 		storage_styles_keys = [x[0] for x in self.storage_styles]
-		default = config.storage_options.default_device.value
+		default = defaultStorageDevice()
 		if default not in storage_styles_keys:
-			p = harddiskmanager.getdefaultStorageDevicebyUUID(default)
+			p = harddiskmanager.getDefaultStorageDevicebyUUID(default)
 			if p is not None:
 				default = p.mountpoint
 				if p.mountpoint not in storage_styles_keys:
@@ -139,7 +138,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 	def selectionChanged(self):
 		currentry = self["config"].getCurrent()
 		if currentry == self.device_entry:
-			self["introduction"].setText(_("Please select the default storage device you want to use for recordings. This device gets linked to /media/hdd."))
+			self["introduction"].setText(_("Please select the default storage device you want to use for recordings. This device gets mounted to /media/hdd."))
 		elif currentry == self.default_entry:
 			self["introduction"].setText(_("Please select the default movielist location which is used for recordings."))
 		elif currentry == self.timeshift_entry:
@@ -227,6 +226,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 
 	def save(self):
 		currentry = self["config"].getCurrent()
+		defaultChanged = None
 		if self.checkReadWriteDir(currentry[1]):
 			config.usage.default_path.value = self.default_dirname.value
 			config.usage.timer_path.value = self.timer_dirname.value
@@ -236,8 +236,21 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 			config.usage.timer_path.save()
 			config.usage.instantrec_path.save()
 			config.usage.timeshift_path.save()
-			harddiskmanager.defaultStorageDeviceChanged(self.default_device.value)
-			self.close()
+			if self.default_device.value != defaultStorageDevice():
+				if self.default_device.value != "<undefined>": #changing default ?
+					tmp = harddiskmanager.getPartitionbyMountpoint(self.default_device.value)
+					if tmp is not None:
+						defaultChanged = harddiskmanager.changeStorageDevice(tmp.uuid, "mount_default", None)
+				else: #disabling default ?
+					p = harddiskmanager.getDefaultStorageDevicebyUUID(defaultStorageDevice())
+					if p is not None:
+						defaultChanged = harddiskmanager.changeStorageDevice(defaultStorageDevice(), "unmount", None)
+			if defaultChanged is None:
+				self.close()
+			elif defaultChanged is False:
+				self.session.open(MessageBox, _("There was en error while configuring your storage device."), MessageBox.TYPE_ERROR)
+			else:
+				self.close()
 
 	def cancel(self):
 		self.close()

@@ -72,6 +72,7 @@ class eDVBServiceBase: public iFrontendInformation
 {
 protected:
 	eDVBServicePMTHandler m_service_handler;
+	eTsRemoteSource *m_remote_source;
 public:
 		// iFrontendInformation
 	int getFrontendInfo(int w);
@@ -79,6 +80,7 @@ public:
 	PyObject *getFrontendStatus();
 	PyObject *getTransponderData(bool);
 	PyObject *getAll(bool original); // a sum of getFrontendData/Status/TransponderData
+	virtual ePtr<iTsSource> createTsSource(const eServiceReferenceDVB &ref);
 };
 
 class eSubtitleWidget;
@@ -294,9 +296,6 @@ protected:
 	ePtr<eConnection> m_video_event_connection;
 	void video_event(struct iTSMPEGDecoder::videoEvent);
 
-	eTsRemoteSource *m_remote_source;
-
-	virtual ePtr<iTsSource> createTsSource(const eServiceReferenceDVB &ref);
 };
 
 class eStaticServiceDVBBouquetInformation: public iStaticServiceInformation

@@ -98,7 +98,7 @@ class TimerEntry(Screen, ConfigListScreen):
 
 			justplay_default = {0: "record", 1: "zap"}[justplay]
 			tmp_dir = self.timer.dirname or defaultMoviePath()
-			if not path.exists(tmp_dir):
+			if not harddiskmanager.inside_mountpoint(tmp_dir):
 				justplay_default = {0: "record", 1: "zap"}[True]
 			self.timerentry_justplay = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record"))], default = justplay_default)
 
@@ -289,7 +289,7 @@ class TimerEntry(Screen, ConfigListScreen):
 			self.session.openWithCallback(self.selectChannelSelector, MessageBox, _("You didn't select a channel to record from."), MessageBox.TYPE_ERROR)
 			return
 		if self.timerentry_justplay.value == 'record':
-			if not path.exists(self.timerentry_dirname.value):
+			if not harddiskmanager.inside_mountpoint(self.timerentry_dirname.value):
 				if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
 					self.session.open(MessageBox, _("Unconfigured storage devices found!") + "\n" \
 						+ _("Please make sure to set up your storage devices with the improved storage management in menu -> setup -> system -> storage devices."), MessageBox.TYPE_ERROR)
@@ -299,7 +299,7 @@ class TimerEntry(Screen, ConfigListScreen):
 						+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
 					return
 				elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
-					part = harddiskmanager.getdefaultStorageDevicebyUUID(defaultStorageDevice())
+					part = harddiskmanager.getDefaultStorageDevicebyUUID(defaultStorageDevice())
 					if part is None:
 						self.session.open(MessageBox, _("Default storage device is not available!") + "\n" \
 							+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)

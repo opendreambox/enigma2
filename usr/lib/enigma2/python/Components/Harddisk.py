@@ -1,4 +1,4 @@
-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, symlink, rmdir, unlink, rename
+from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, symlink, rmdir, unlink, rename, getcwd, chdir, W_OK
 from Tools.Directories import SCOPE_HDD, resolveFilename
 from Tools.BoundFunction import boundFunction
 from Tools.CList import CList
@@ -21,6 +21,7 @@ def readFile(filename):
 DEVTYPE_UDEV = 0
 DEVTYPE_DEVFS = 1
 
+
 class Harddisk:
 	def __init__(self, device, removable = False):
 		self.device = device
@@ -31,9 +32,11 @@ class Harddisk:
 		elif access("/dev/.devfsd", 0):
 			self.type = DEVTYPE_DEVFS
 		else:
-			print "Unable to determine structure of /dev"
+			print "Unable to determine structure of /dev fallback to udev"
+			self.type = DEVTYPE_UDEV
 
-		self.is_sleeping = False
+
+		self.is_sleeping = False		
 		self.max_idle_time = 0
 		self.idle_running = False
 		self.timer = None
@@ -130,6 +133,7 @@ class Harddisk:
 			devicedb = DEVICEDB
 
 		for physdevprefix, pdescription in devicedb.get(HardwareInfo().device_name,{}).items():
+			#print "bus_description:",phys, physdevprefix, pdescription
 			if phys.startswith(physdevprefix):
 				return pdescription
 		if phys.find('pci') != -1:
@@ -260,12 +264,11 @@ class Harddisk:
 			if numpart >= 1:
 				devicename = self.device + (str(numpart))
 		type, sys, size, sizeg = harddiskmanager.getFdiskInfo(devicename)"""
-
+		
 		cmd = 'printf "8,\n;0,0\n;0,0\n;0,0\ny\n" | sfdisk -f -uS ' + self.disk_path
 
 		#if sys is not None and "GPT" in sys:
 		#	cmd = 'printf "34,,'+type+'\n;0,0\n;0,0\n;0,0\ny\n" | sfdisk -f -uS ' + self.disk_path
-
 		res = system(cmd)
 		return (res >> 8)
 
@@ -299,13 +302,20 @@ class Harddisk:
 					break
 			except OSError:
 				pass
+
 		return (res >> 8)
 
-	def createMovieFolder(self):
-		try:
-			makedirs(resolveFilename(SCOPE_HDD))
-		except OSError:
-			return -1
+	def createMovieFolder(self, isFstabMounted = False):
+		if isFstabMounted:
+			try:
+				makedirs(resolveFilename(SCOPE_HDD))
+			except OSError:
+				return -1
+		else:
+			try:
+				makedirs("/autofs/" + self.device + "1/movie")
+			except OSError:
+				return -1
 		return 0
 
 	def fsck(self, numpart):
@@ -346,6 +356,7 @@ class Harddisk:
 	def initialize(self, isFstabMounted = False, numpart = None):
 		if self.unmount(numpart) != 0:
 			return -8
+
 		# Udev tries to mount the partition immediately if there is an
 		# old filesystem on it when fdisk reloads the partition table.
 		# To prevent that, we overwrite the first sectors of the
@@ -356,7 +367,6 @@ class Harddisk:
 				self.killPartition(p)
 		else:
 			self.killPartition(1)
-
 		if self.createPartition(numpart) != 0:
 			return -1
 		
@@ -366,8 +376,9 @@ class Harddisk:
 		if isFstabMounted:
 			if self.mount() != 0:
 				return -3
-			if self.createMovieFolder() != 0:
-				return -4
+	
+		if self.createMovieFolder(isFstabMounted) != 0:
+			return -4
 
 		return 0
 
@@ -422,7 +433,6 @@ class Harddisk:
 			Console().ePopen(("sdparm", "sdparm", "--set=SCT=0", self.disk_path))
 		else:
 			Console().ePopen(("hdparm", "hdparm", "-S0", self.disk_path))
-
 		self.timer = eTimer()
 		self.timer.callback.append(self.runIdle)
 		self.idle_running = True
@@ -471,6 +481,9 @@ class Harddisk:
 	def isSleeping(self):
 		return self.is_sleeping
 
+	def isIdle(self):
+		return self.idle_running
+
 class Partition:
 	def __init__(self, mountpoint, device = None, description = "", force_mounted = False):
 		self.mountpoint = mountpoint
@@ -480,6 +493,51 @@ class Partition:
 		self.device = device
 		self.disc_path = None
 		self.uuid = None
+		self.isMountable = False
+		self.isReadable = False
+		self.isWriteable = False
+		self.isInitialized = False
+		self.fsType = None
+		if self.device is not None:
+			self.updatePartitionInfo()
+
+	def updatePartitionInfo(self):
+		curdir = getcwd()
+		if self.device is not None:
+			self.uuid = harddiskmanager.getPartitionUUID(self.device)
+			try:
+				chdir("/autofs/" + self.device)
+				self.isMountable = True
+			except OSError:
+				pass
+			if self.isMountable:
+				try:
+					listdir("/autofs/" + self.device)
+					self.isReadable = True
+				except OSError:
+					pass
+			if self.isReadable:
+				mountpoint, self.fsType, mountopt = harddiskmanager.getMountInfo("/dev/" + self.device)
+				if mountopt is not None and mountopt == 'rw':
+					self.isWriteable = True
+					if not access("/autofs/" + self.device, W_OK):
+						self.isWriteable = False
+			if self.uuid is not None:
+				if self.fsType is None:
+					fstype = harddiskmanager.getBlkidPartitionType("/dev/" + self.device)
+					if fstype is not None:
+						self.fsType = fstype
+			if self.isWriteable:
+				if access("/autofs/" + self.device + "/movie", W_OK):
+					self.isInitialized = True
+		else:
+			self.uuid = None
+			self.isMountable = False
+			self.isReadable = False
+			self.isWriteable = False
+			self.isInitialized = False
+			self.fsType = None
+		chdir(curdir)
 
 	def stat(self):
 		return statvfs(self.mountpoint)
@@ -503,7 +561,6 @@ class Partition:
 		# TODO: can os.path.ismount be used?
 		if self.force_mounted:
 			return True
-
 		try:
 			mounts = open("/proc/mounts")
 		except IOError:
@@ -516,8 +573,8 @@ class Partition:
 			if line.split(' ')[1] == self.mountpoint:
 				return True
 		return False
-
-
+			
+		
 DEVICEDB_SR = \
 	{"dm8000":
 		{
@@ -613,10 +670,6 @@ class HarddiskManager:
 				]
 		self.partitions.extend([ Partition(mountpoint = x[0], description = x[1]) for x in p ])
 
-		self.setupConfigEntries(initial_call = True)
-
-		self.enumerateBlockDevices()
-
 	def getBlockDevInfo(self, blockdev):
 		devpath = "/sys/block/" + blockdev
 		error = False
@@ -658,6 +711,7 @@ class HarddiskManager:
 		return error, blacklisted, removable, is_cdrom, partitions, medium_found
 
 	def enumerateBlockDevices(self):
+		self.setupConfigEntries(initial_call = True)
 		print "enumerating block devices..."
 		for blockdev in listdir("/sys/block"):
 			error, blacklisted, removable, is_cdrom, partitions, medium_found = self.addHotplugPartition(blockdev)
@@ -678,6 +732,28 @@ class HarddiskManager:
 				#print "is_hard_mounted:",device
 				return True
 		return False
+
+	def get_mountdevice(self, mountpoint):
+		mounts = file('/proc/mounts').read().split('\n')
+		for x in mounts:
+			if not x.startswith('/'):
+				continue
+			device, mp = x.split()[0:2]
+			if mp == mountpoint:
+				#print "get_mountdevice for '%s' -> %s " % (device, mp)
+				return device
+		return None
+
+	def get_mountpoint(self, mountpath):
+		mounts = file('/proc/mounts').read().split('\n')
+		for x in mounts:
+			if not x.startswith('/'):
+				continue
+			path, mp = x.split()[0:2]
+			if path == mountpath:
+				#print "get_mountpoint for '%s' -> %s " % (path, mp)
+				return mp
+		return None
 
 	def is_uuidpath_mounted(self, uuidpath, mountpoint):
 		mounts = file('/proc/mounts').read().split('\n')
@@ -740,7 +816,7 @@ class HarddiskManager:
 					fp.write(x + "\n")
 			if not alreadyAdded:
 				if mode == "add_deactivated":
-					#print "modifyFstabEntry - add_deactivated:", partitionPath, mountpoint
+					print "modifyFstabEntry - add_deactivated:", partitionPath, mountpoint
 					fp.write(partitionPath + "\t" + mountpoint + "\tnoauto\tdefaults\t0 0\n")
 			else:
 				if mode == "add_deactivated":
@@ -748,7 +824,6 @@ class HarddiskManager:
 						if "noauto" in oldLine:
 							fp.write(oldLine + "\n")
 						else:
-							#print "modifyFstabEntry - add_deactivated - changed:", partitionPath, mountpoint
 							fp.write(oldLine.replace("auto","noauto") + "\n")
 			fp.close()
 		except:
@@ -784,11 +859,10 @@ class HarddiskManager:
 						if removable:
 							self.hdd.append(Harddisk(device, True))
 						else:
-							self.hdd.append(Harddisk(device, False))							
+							self.hdd.append(Harddisk(device, False))
 					self.hdd.sort()
 					SystemInfo["Harddisk"] = len(self.hdd) > 0
-
-				if (not removable or medium_found) and not self.is_hard_mounted(device):
+				if (not removable or medium_found):
 					self.addDevicePartition(device, physdev)
 
 		return error, blacklisted, removable, is_cdrom, partitions, medium_found
@@ -796,12 +870,13 @@ class HarddiskManager:
 	def removeHotplugPartition(self, device):
 		mountpoint = self.getAutofsMountpoint(device)
 		uuid = self.getPartitionUUID(device)
-		print "[removeHotplugPartition] for device:'%s'" % (device)
+		print "[removeHotplugPartition] for device:'%s' uuid:'%s' and mountpoint:'%s'" % (device, uuid, mountpoint)
 		p = self.getPartitionbyDevice(device)
 		if p is None:
 			p = self.getPartitionbyMountpoint(mountpoint)
 		if p is not None:
 			if uuid is None and p.uuid is not None:
+				print "[removeHotplugPartition] WE GOT uuid:'%s' but have:'%s'" % (uuid,p.uuid)
 				uuid = p.uuid
 				harddiskmanager.unmountPartitionbyMountpoint(p.mountpoint)
 			if uuid is not None and config.storage.get(uuid, None) is not None:
@@ -809,15 +884,9 @@ class HarddiskManager:
 				if not config.storage[uuid]['enabled'].value:
 					del config.storage[uuid]
 					print "[removeHotplugPartition] - remove uuid %s from temporary drive add" % (uuid)
-			self.partitions.remove(p)
-			self.on_partition_list_change("remove", p)
-
-		if (uuid is not None and uuid == config.storage_options.default_device.value):
-			self.verifyDefaultStorageDevice(uuid)
-			from Tools import Notifications
-			from Screens.MessageBox import MessageBox
-			Notifications.AddNotification(MessageBox,_("Default storage device was removed!") + "\n" \
-				+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_INFO, timeout=20)
+			if p.mountpoint != "/media/hdd":
+				self.partitions.remove(p)
+				self.on_partition_list_change("remove", p)
 
 		l = len(device)
 		if l and not device[l-1].isdigit():
@@ -843,23 +912,29 @@ class HarddiskManager:
 		uuid = self.getPartitionUUID(device)
 		print "[addDevicePartition] device:'%s' with UUID:'%s'" % (device, uuid)
 		if config.storage.get(uuid, None) is not None:
-			if config.storage[uuid]['mountpoint'].value != "":
+			if config.storage[uuid]['enabled'].value and config.storage[uuid]['mountpoint'].value != "":
 				device_mountpoint = config.storage[uuid]['mountpoint'].value
+
 		if uuid is not None:
 			if config.storage.get(uuid, None) is None:
+				tmp = self.getPartitionbyDevice(device)
+				if tmp is not None:
+					if uuid != tmp.uuid and tmp.uuid == config.storage_options.default_device.value and tmp.mountpoint == "/media/hdd": #default hdd re/initialize
+						tmp.device = None
+						tmp.updatePartitionInfo()
 				self.setupConfigEntries(initial_call = False, dev = device)
 			else:
-				self.storageDeviceChanged(uuid)
+				tmp = self.getPartitionbyMountpoint(device_mountpoint)
+				if tmp is not None and (tmp.uuid != uuid or tmp.mountpoint != device_mountpoint):
+					self.storageDeviceChanged(uuid)
+
 		p = self.getPartitionbyMountpoint(device_mountpoint)
 		if p is not None:
 			if uuid is not None:
 				if p.uuid is not None and p.uuid != uuid:
 					if config.storage.get(p.uuid, None) is not None:
 						del config.storage[p.uuid] #delete old uuid reference entries
-			p.mountpoint = device_mountpoint
-			p.force_mounted = False
-			p.device = device
-			p.uuid = uuid
+			p.updatePartitionInfo()
 		else:
 			forced = True
 			if uuid is not None:
@@ -872,7 +947,6 @@ class HarddiskManager:
 			x = self.getPartitionbyDevice(device)
 			if x is None:
 				p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = forced, device = device)
-				p.uuid = uuid
 				self.partitions.append(p)
 				self.on_partition_list_change("add", p)
 			else:	# found old partition entry
@@ -880,10 +954,7 @@ class HarddiskManager:
 					del config.storage[x.uuid] #delete old uuid reference entries
 				x.mountpoint = device_mountpoint
 				x.force_mounted = True
-				x.uuid = uuid
-		if p is not None:
-			if uuid == config.storage_options.default_device.value:
-				self.verifyDefaultStorageDevice()
+				x.updatePartitionInfo()
 
 		for callback in self.delayed_device_Notifier:
 			try:
@@ -907,7 +978,7 @@ class HarddiskManager:
 	def HDDEnabledCount(self):
 		cnt = 0
 		for uuid, cfg in config.storage.items():
-			print "uuid", uuid, "cfg", cfg
+			#print "uuid", uuid, "cfg", cfg
 			if cfg["enabled"].value:
 				cnt += 1
 		return cnt
@@ -921,10 +992,24 @@ class HarddiskManager:
 	def getCD(self):
 		return self.cd
 
-	def getFdiskInfo(self, devname):
-		size = sizeg = type = sys = None
-		cmd = "fdisk -l /dev/" + devname
+	def getMountInfo(self, device):
+		dev = mountpoint = fstype = mountopt = None
+		try:
+			mounts = file('/proc/mounts').read().split('\n')
+			for x in mounts:
+				if not x.startswith('/'):
+					continue
+				if x.startswith(device):
+					data = x.split(',')
+					dev, mountpoint, fstype, mountopt = data[0].split(None,4)
+		except:
+			print "error getting mount info"
+		#print "getMountInfo:",mountpoint, fstype, mountopt 
+		return mountpoint, fstype, mountopt
 
+	def getFdiskInfo(self, devname):
+		size = sizeg = fstype = sys = None
+		cmd = "fdisk -l /dev/" + devname
 		try:
 			for line in popen(cmd).read().split('\n'):
 				if line.startswith("Disk"):
@@ -937,25 +1022,30 @@ class HarddiskManager:
 				if not line.startswith('/'):
 					continue
 				if line.startswith("/dev/" + devname):
-					a,b,c,d, type, sys = line.split(None,5)
+					a,b,c,d, fstype, sys = line.split(None,5)
 		except:
 			print "error getting fdisk device info"
-		return type, sys, size, sizeg
+		#print "getFdiskInfo:",devname, fstype, sys, size, sizeg
+		return fstype, sys, size, sizeg
 
 	def getBlkidPartitionType(self, device):
-		type = None
+		#print "getBlkidPartitionType",device
+		fstype = None
 		if path.exists("/usr/sbin/blkid"):
 			cmd = "/usr/sbin/blkid " + str(device)
 			try:
 				for line in popen(cmd).read().split('\n'):
 					if not line.startswith(device):
 						continue
+					print "getBlkidPartitionType",line
 					fstobj = re.search(r' TYPE="((?:[^"\\]|\\.)*)"', line)
 					if fstobj:
-						type = fstobj.group(1)
+						fstype = fstobj.group(1)
 			except:
 				print "error getting blkid partition type"
-		return type
+		
+		#print "getBlkidPartitionType:",device, fstype
+		return fstype
 
 	def getLinkPath(self,link):
 		if path.islink(link):
@@ -964,115 +1054,272 @@ class HarddiskManager:
 				return p
 			return path.join(path.dirname(link), p)
 
-	def verifyDefaultStorageDevice(self, old_default = None):
-		uuid = config.storage_options.default_device.value
-		part = self.getdefaultStorageDevicebyUUID(uuid)
-		defaultpath = "/media/hdd"
-		curr_defaultpath = self.getLinkPath(defaultpath)
-		if part is not None:
-			if part in self.getConfiguredStorageDevices():
-				mountpoint = part.mountpoint
-				if path.ismount(mountpoint): #default storage mountpoint available ?
-					if (path.exists(defaultpath) and not path.islink(defaultpath) and not path.ismount(defaultpath) ):
-						try:
-							rmdir(defaultpath)
-							print "removed /media/hdd dir"
-						except OSError:
-							print "could not remove /media/hdd dir"
-							try:
-								rename(defaultpath,"/media/hdd_old")
-								print "renamed /media/hdd dir to /media/hdd_old"
-							except OSError:
-								print "could not rename /media/hdd dir to /media/hdd_old"
-					if (path.islink(defaultpath) and self.getLinkPath(defaultpath) != mountpoint ):
-						try:
-							unlink(defaultpath)
-							print "removed old default storage link"
-						except OSError:
-							pass
-					if not path.exists(defaultpath):
-						try:
-							symlink(mountpoint,defaultpath)
-							print "default storage link created"
-						except OSError:
-							pass
-					if self.getLinkPath(defaultpath) == mountpoint:
-						print "default storage device successfully linked to /media/hdd"
-				if not path.ismount(mountpoint): #default storage mountpoint unavailable !
-					if self.getLinkPath(defaultpath) == mountpoint:
-						try:
-							unlink(defaultpath)
-							print "removed unused /media/hdd"
-						except OSError:
-							print "could not remove unused /media/hdd link"
-					if not path.exists(defaultpath):
-						print "default storage link removed"
-		else:
-			if old_default is None:
-				if uuid == "<undefined>":
-					if (not path.islink(defaultpath) and not path.ismount(defaultpath) ):
-						try:
-							rmdir(defaultpath)
-							print "removed undefined /media/hdd dir"
-						except OSError:
-							print "could not remove undefined /media/hdd dir"
-							try:
-								rename(defaultpath,"/media/hdd_old")
-								print "renamed undefined /media/hdd dir to /media/hdd_old"
-							except OSError:
-								print "could not rename undefined /media/hdd dir to /media/hdd_old"
-					if (path.islink(defaultpath) and not path.ismount(defaultpath)):
-						try:
-							unlink(defaultpath)
-							print "removed undefined default storage link"
-						except OSError:
-							print "could not remove undefined /media/hdd dir"
-				elif uuid != "<undefined>":
-					cfg_uuid = config.storage.get(uuid, None)
-					if cfg_uuid is not None and not cfg_uuid["enabled"].value:
-						config.storage_options.default_device.value = "<undefined>"
-						config.storage_options.default_device.save()
-						config.storage_options.save()
-						mountpoint = self.getLinkPath(defaultpath)
-						uuidpath = "/dev/disk/by-uuid/" + uuid
-						if (self.is_fstab_mountpoint(uuidpath, mountpoint) and self.get_fstab_mountstate(uuidpath, mountpoint) == 'noauto'):
-							try:
-								unlink(defaultpath)
-								print "removed unconfigured storage device link"
-							except OSError:
-								pass
-					elif cfg_uuid is not None and cfg_uuid["enabled"].value:
-						print self.getLinkPath(defaultpath), cfg_uuid["mountpoint"].value
-						if cfg_uuid["mountpoint"].value == self.getLinkPath(defaultpath):
-							try:
-								unlink(defaultpath)
-								print "removed default storage link for offline device"
-							except OSError:
-								pass
-			else:
-				if uuid == old_default:
-					cfg_uuid = config.storage.get(old_default, None)
-					if cfg_uuid is not None and cfg_uuid["enabled"].value:
-						print self.getLinkPath(defaultpath), cfg_uuid["mountpoint"].value
-						if cfg_uuid["mountpoint"].value == self.getLinkPath(defaultpath):
-							try:
-								unlink(defaultpath)
-								print "removed default storage link for offline device"
-							except OSError:
-								pass
+	def getRealPath(self, dstpath):
+		p = self.getLinkPath(dstpath)
+		if p:
+			return p
+		return path.realpath(dstpath)
 
-	def defaultStorageDeviceChanged(self, mountpoint = None):
-		part = self.getPartitionbyMountpoint(mountpoint)
-		if (part is not None and part in self.getConfiguredStorageDevices()):
-			config.storage_options.default_device.value = part.uuid
-		if (part is not None and part not in self.getConfiguredStorageDevices()):
-			config.storage_options.default_device.value = "<undefined>"
-		if (part is None and mountpoint == "<undefined>"):
-			config.storage_options.default_device.value = "<undefined>"
-		print "defaultStorageDeviceChanged:",config.storage_options.default_device.value
+	def isMount(self, mountdir):
+		return path.ismount( self.getRealPath(mountdir) )
+
+	def _inside_mountpoint(self, filename):
+		#print "is mount? '%s'" % filename
+		if filename == "":
+			return False
+		if filename == "/":
+			return False
+		if path.ismount(filename):
+			return True
+		return self._inside_mountpoint("/".join(filename.split("/")[:-1]))
+	
+	def inside_mountpoint(self,filename):
+		return self._inside_mountpoint(path.realpath(filename))
+	
+	def isUUIDpathFsTabMount(self, uuid, mountpath):
+		uuidpartitionPath = "/dev/disk/by-uuid/" + uuid
+		if self.is_hard_mounted(uuidpartitionPath) and self.is_fstab_mountpoint(uuidpartitionPath, mountpath):
+			if self.get_fstab_mountstate(uuidpartitionPath, mountpath) == 'auto':
+				return True
+		return False
+
+	def isPartitionpathFsTabMount(self, uuid, mountpath):
+		dev = self.getDeviceNamebyUUID(uuid)
+		if dev is not None:
+			partitionPath = "/dev/" + str(dev)
+			if self.is_hard_mounted(partitionPath) and self.is_fstab_mountpoint(partitionPath, mountpath):
+				if self.get_fstab_mountstate(partitionPath, mountpath) == 'auto':
+					return True			
+		return False
+
+	def getPartitionVars(self, hd, partitionNum = False):
+		#print "getPartitionVars for hdd:'%s' and partitionNum:'%s'" % (hd.device, partitionNum)
+		hdd = hd
+		numPartitions = hdd.numPartitions()
+		uuid = partitionType = partitionPath = uuidPath = deviceName = None
+		if partitionNum is False:
+			if numPartitions == 0:
+				deviceName = hdd.device
+				uuid = self.getPartitionUUID(deviceName)
+				partitionPath = hdd.dev_path
+			if numPartitions == 1: 
+				deviceName = hdd.device + str(numPartitions)
+				uuid = self.getPartitionUUID(deviceName)
+				partitionPath = hdd.partitionPath(str(numPartitions))
+			else: #just in case, we should never get here
+				deviceName = hdd.device
+				partitionPath = hdd.dev_path
+		else:
+			deviceName = hdd.device + str(partitionNum)
+			uuid = self.getPartitionUUID(deviceName)
+			partitionPath = hdd.partitionPath(str(partitionNum))
+		if uuid is not None:		
+			uuidPath = "/dev/disk/by-uuid/" + uuid
+		return deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath
+
+	def suggestDeviceMountpath(self,uuid):
+		p = self.getPartitionbyUUID(uuid)
+		if p is not None:
+			hdd = self.getHDD(p.device)
+			if hdd is not None:
+				val = str(hdd.model(model_only = True)).strip().replace(' ','').replace('-','').replace('_','')
+				cnt = 0
+				for dev in self.hdd:
+					tmpval = str(dev.model(model_only = True)).strip().replace(' ','').replace('-','').replace('_','')
+					if tmpval == val:
+						cnt +=1
+				if cnt <=1:
+					cnt = 0
+					for uid in config.storage.keys():
+						if uid == uuid:
+							cnt += 1
+							continue
+						data = config.storage[uid]["device_description"].value.split(None,1)
+						tmpval = data[0].strip().replace(' ','').replace('-','').replace('_','')
+						if tmpval == val or tmpval.endswith(val):
+							cnt += 1
+				if cnt >= 2:
+					val += "HDD" + str(cnt)
+				if hdd.numPartitions() >= 2:
+					partNum = p.device[3:]
+					if int(partNum).isdigit():
+						val += "Part" + str(partNum)
+				print "suggestDeviceMountpath for uuid: '%s' -> '%s'" %(uuid,val)
+				return "/media/" + val
+		else:
+			mountpath = ""
+			uuid_cfg = config.storage.get(uuid, None)
+			if uuid_cfg is not None:
+				if uuid_cfg["mountpoint"].value != "" and uuid_cfg["mountpoint"].value != "/media/hdd":
+					mountpath = uuid_cfg["mountpoint"].value
+				else:
+					if uuid_cfg["device_description"].value != "":
+						tmp = uuid_cfg["device_description"].value.split(None,1)
+						mountpath = "/media/" + tmp[0].strip().replace(' ','').replace('-','').replace('_','')
+			if mountpath != "":
+				cnt = 0
+				for uid in config.storage.keys():
+					if config.storage[uid]["mountpoint"].value != "" and config.storage[uid]["mountpoint"].value != "/media/hdd":
+						tmp = config.storage[uid]["mountpoint"].value
+					else:
+						data = config.storage[uid]["device_description"].value.split(None,1)
+						tmp = "/media/" + data[0].strip().replace(' ','').replace('-','').replace('_','')
+					if tmp == mountpath:
+						cnt += 1
+				if cnt >= 2:
+					mountpath += "HDD" + str(cnt)
+				return mountpath
+		return ""
+
+	def changeStorageDevice(self, uuid = None, action = None , mountData = None ):
+		# mountData should be [oldenable,oldmountpath, newenable,newmountpath]
+		print "[changeStorageDevice] uuid:'%s' - action:'%s' - mountData:'%s'" %(uuid, action, mountData)
+		currentDefaultStorageUUID = config.storage_options.default_device.value
+		print "[changeStorageDevice]: currentDefaultStorageUUID:",currentDefaultStorageUUID
+		successfully = False
+		def_mp = "/media/hdd"
+		cur_default_newmp = new_default_newmp = old_cur_default_mp = old_new_default_mp = ""
+		cur_default = new_default = None
+		cur_default_dev = new_default_dev = None
+		cur_default_cfg = new_default_cfg = None
+		old_cur_default_enabled = old_new_default_enabled = False
+
+		if action == "mount_default":
+			if currentDefaultStorageUUID != "<undefined>" and currentDefaultStorageUUID != uuid:
+				cur_default = self.getDefaultStorageDevicebyUUID(currentDefaultStorageUUID)
+			new_default = self.getPartitionbyUUID(uuid)
+			if cur_default is not None:
+				cur_default_cfg = config.storage.get(currentDefaultStorageUUID, None)
+			new_default_cfg = config.storage.get(uuid, None)
+			if new_default is not None:
+				new_default_dev = new_default.device
+				if currentDefaultStorageUUID != "<undefined>" and currentDefaultStorageUUID != uuid:
+					cur_default_newmp = self.suggestDeviceMountpath(currentDefaultStorageUUID)
+				if cur_default is not None:
+					cur_default_dev = cur_default.device
+				if new_default_cfg is not None:
+					old_new_default_enabled = new_default_cfg["enabled"].value
+					old_new_default_mp = new_default_cfg["mountpoint"].value
+					#[oldmountpath, oldenable, newmountpath, newenable]
+					if mountData is not None and isinstance(mountData, (list, tuple)):
+						old_new_default_enabled = mountData[1]
+						old_new_default_mp = mountData[0]
+					if cur_default_cfg is not None and path.exists(def_mp) and self.isMount(def_mp) and cur_default_cfg["enabled"].value and cur_default_cfg["mountpoint"].value == def_mp:					
+						old_cur_default_enabled = cur_default_cfg["enabled"].value
+						old_cur_default_mp = cur_default_cfg["mountpoint"].value
+						self.unmountPartitionbyMountpoint(def_mp)
+					if not path.exists(def_mp) or (path.exists(def_mp) and not self.isMount(def_mp)):
+						if cur_default_cfg is not None:
+							cur_default_cfg["mountpoint"].value = cur_default_newmp
+						if cur_default_dev is not None:
+							self.setupConfigEntries(initial_call = False, dev = cur_default_dev)
+						if cur_default_dev is None or (path.exists(cur_default_newmp) and self.isMount(cur_default_newmp)):
+							if new_default_cfg["enabled"].value and path.exists(new_default_cfg["mountpoint"].value) and self.isMount(new_default_cfg["mountpoint"].value):
+								self.unmountPartitionbyMountpoint(new_default_cfg["mountpoint"].value, new_default_dev )
+							if not new_default_cfg["enabled"].value or (path.exists(new_default_cfg["mountpoint"].value) and not self.isMount(new_default_cfg["mountpoint"].value)):
+								new_default_cfg["mountpoint"].value = def_mp
+								new_default_cfg["enabled"].value = True
+								self.storageDeviceChanged(uuid)
+								new_default = self.getPartitionbyMountpoint(def_mp)
+								if cur_default_cfg is None and cur_default_newmp is not "": #currentdefault was offline
+									cur_default_cfg = config.storage.get(currentDefaultStorageUUID, None)
+								if cur_default_cfg is not None:
+									old_cur_default_enabled = cur_default_cfg["enabled"].value
+									old_cur_default_mp = cur_default_cfg["mountpoint"].value
+									cur_default_cfg["mountpoint"].value = cur_default_newmp
+								if new_default is not None and new_default_cfg["mountpoint"].value == def_mp and path.exists(def_mp) and self.isMount(def_mp) and new_default.mountpoint == def_mp:
+									successfully = True
+									config.storage_options.default_device.value = uuid
+									if new_default_cfg is not None:
+										new_default_cfg.save()
+									if cur_default_cfg is not None:
+										cur_default_cfg.save()
+		if action == "mount_only":
+			new_default = self.getPartitionbyUUID(uuid)
+			new_default_cfg = config.storage.get(uuid, None)
+			if new_default is not None:
+				new_default_dev = new_default.device
+				new_default_newmp = self.suggestDeviceMountpath(uuid)
+				if new_default_cfg is not None:
+					old_new_default_enabled = new_default_cfg["enabled"].value
+					old_new_default_mp = new_default_cfg["mountpoint"].value
+					#[oldmountpath, oldenable, newmountpath, newenable]
+					if mountData is not None and isinstance(mountData, (list, tuple)):
+						old_new_default_enabled = mountData[1]
+						old_new_default_mp = mountData[0]
+						new_default_newmp = mountData[2]
+					if old_new_default_enabled and path.exists(def_mp) and self.isMount(def_mp) and old_new_default_mp == def_mp:					
+						if uuid == currentDefaultStorageUUID:
+							self.unmountPartitionbyMountpoint(def_mp) #current partition is default, unmount!
+					if old_new_default_enabled and old_new_default_mp != "" and old_new_default_mp != def_mp and path.exists(old_new_default_mp) and self.isMount(old_new_default_mp):					
+						self.unmountPartitionbyMountpoint(old_new_default_mp, new_default_dev) #current partition is already mounted atm. unmount!
+					if not new_default_cfg["enabled"].value or old_new_default_mp == "" or (new_default_cfg["enabled"].value and path.exists(old_new_default_mp) and not self.isMount(old_new_default_mp)):
+						new_default_cfg["enabled"].value = True
+						new_default_cfg["mountpoint"].value = new_default_newmp
+						if path.exists(new_default_newmp) and self.isMount(new_default_newmp):
+							tmppath = self.get_mountdevice(new_default_newmp)
+							if tmppath is not None and tmppath == "/dev/disk/by-uuid/" + uuid:
+								self.unmountPartitionbyMountpoint(new_default_newmp)
+						else:
+							x = None
+							if new_default_dev is not None:
+								x = self.getPartitionbyDevice(new_default_dev)
+							if x is None:
+								self.setupConfigEntries(initial_call = False, dev = new_default_dev)
+							else:
+								self.storageDeviceChanged(uuid)
+						new_default = self.getPartitionbyUUID(uuid)
+						if new_default is not None and path.exists(new_default_newmp) and self.isMount(new_default_newmp):
+							successfully = True
+							if uuid == currentDefaultStorageUUID:
+								config.storage_options.default_device.value = "<undefined>"
+							new_default_cfg.save()
+		if action == "unmount":
+			new_default = self.getPartitionbyUUID(uuid)
+			new_default_cfg = config.storage.get(uuid, None)
+			if new_default is not None:
+				new_default_dev = new_default.device
+				if new_default_cfg is not None and new_default_cfg["mountpoint"].value == new_default.mountpoint:
+					old_new_default_mp = new_default_cfg["mountpoint"].value
+					old_new_default_enabled = new_default_cfg["enabled"].value
+					#[oldmountpath, oldenable, newmountpath, newenable]
+					if mountData is not None and isinstance(mountData, (list, tuple)):
+						old_new_default_enabled = mountData[1]
+						old_new_default_mp = mountData[0]
+				if new_default_cfg is not None and path.exists(old_new_default_mp) and self.isMount(old_new_default_mp):
+					if uuid == currentDefaultStorageUUID:
+						self.unmountPartitionbyMountpoint(old_new_default_mp)
+					else:
+						self.unmountPartitionbyMountpoint(old_new_default_mp, new_default_dev)
+				if path.exists(old_new_default_mp) and not self.isMount(old_new_default_mp):
+					new_default_cfg["mountpoint"].value = ""
+					new_default_cfg["enabled"].value = False
+					self.setupConfigEntries(initial_call = False, dev = new_default_dev)
+					if path.exists(old_new_default_mp) and not self.isMount(old_new_default_mp):
+						successfully = True
+						new_default_cfg.save()
+						if uuid == currentDefaultStorageUUID:
+							config.storage_options.default_device.value = "<undefined>"
+		if not successfully:
+			print "<< not successfully >>"
+			if cur_default_cfg is not None:
+				cur_default_cfg["mountpoint"].value = old_cur_default_mp
+				cur_default_cfg["enabled"].value = old_cur_default_enabled
+				cur_default_cfg.save()
+				if currentDefaultStorageUUID != "<undefined>":
+					self.storageDeviceChanged(currentDefaultStorageUUID)
+			if new_default_cfg is not None:
+				new_default_cfg["mountpoint"].value = old_new_default_mp
+				new_default_cfg["enabled"].value = old_new_default_enabled
+				new_default_cfg.save()
+				self.storageDeviceChanged(uuid)
 		config.storage_options.default_device.save()
 		config.storage_options.save()
-		self.verifyDefaultStorageDevice()
+		config.storage.save()
+		config.save()
+		configfile.save()
+		print "changeStorageDevice default is now:",config.storage_options.default_device.value
+		return successfully
 
 	def isConfiguredStorageDevice(self,uuid):
 		cfg_uuid = config.storage.get(uuid, None)
@@ -1081,13 +1328,20 @@ class HarddiskManager:
 			return True
 		return False
 
-	def getdefaultStorageDevicebyUUID(self, uuid):
-		part = None
+	def isDefaultStorageDeviceActivebyUUID(self, uuid):
+		p = self.getDefaultStorageDevicebyUUID(uuid)
+		if p is not None and p.uuid == uuid:
+			#print "isDefaultStorageDeviceActivebyUUID--for UUID:->",uuid,p.description, p.device, p.mountpoint, p.uuid
+			return True
+		return False
+	
+	def getDefaultStorageDevicebyUUID(self, uuid):
 		for p in self.getConfiguredStorageDevices():
 			if p.uuid == uuid:
-				part = p
-		return part
-
+				#print "getDefaultStorageDevicebyUUID--p:",uuid, p.description, p.device, p.mountpoint, p.uuid
+				return p
+		return None
+	
 	def getConfiguredStorageDevices(self):
 		parts = [x for x in self.partitions if (x.uuid is not None and x.mounted() and self.isConfiguredStorageDevice(x.uuid))]
 		return [x for x in parts]
@@ -1101,6 +1355,7 @@ class HarddiskManager:
 			dev, part = self.splitDeviceName(devname)
 			if part and dev in devs: # if this is a partition and we still have the wholedisk, remove wholedisk
 				devs.remove(dev)
+
 		# return all devices which are not removed due to being a wholedisk when a partition exists
 		return [x for x in parts if not x.device or x.device in devs]
 
@@ -1114,6 +1369,7 @@ class HarddiskManager:
 		return dev, part and int(part) or 0
 
 	def getUserfriendlyDeviceName(self, dev, phys):
+		#print "getUserfriendlyDeviceName",dev, phys
 		dev, part = self.splitDeviceName(dev)
 		description = "External Storage %s" % dev
 		have_model_descr = False
@@ -1165,6 +1421,13 @@ class HarddiskManager:
 		res = system(cmd)
 		return (res >> 8)
 
+	def getPartitionbyUUID(self, uuid):
+		for x in self.partitions[:]:
+			if x.uuid == uuid:
+				#print "[getPartitionbyUUID] '%s', '%s', '%s', '%s', '%s'" % (x.mountpoint,x.description,x.device,x.force_mounted,x.uuid)
+				return x
+		return None
+
 	def getPartitionbyDevice(self, dev):
 		for x in self.partitions[:]:
 			if x.device == dev:
@@ -1183,17 +1446,23 @@ class HarddiskManager:
 		if path.exists("/dev/disk/by-uuid/" + uuid):
 			return path.basename(path.realpath("/dev/disk/by-uuid/" + uuid))
 		return None
-
+	
 	def getPartitionUUID(self, part):
 		if not path.exists("/dev/disk/by-uuid"):
 			return None
 		for uuid in listdir("/dev/disk/by-uuid/"):
 			if not path.exists("/dev/disk/by-uuid/" + uuid):
-				return None			
+				return None
 			if path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) == part:
 				#print "[getPartitionUUID] '%s' - '%s'" % (uuid, path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) )
 				return uuid
 		return None
+
+	def getDeviceDescription(self, dev):
+		physdev = path.realpath('/sys/block/' + dev[:3] + '/device')[4:]
+		description = self.getUserfriendlyDeviceName(dev[:3], physdev)
+		#print "[getDeviceDescription] -> device:'%s' - desc: '%s' phy:'%s'" % (dev, description, physdev)
+		return description
 
 	def reloadExports(self):
 		if path.exists("/etc/exports") and path.exists("/usr/sbin/exportfs"):
@@ -1201,44 +1470,34 @@ class HarddiskManager:
 
 	def unmountPartitionbyMountpoint(self, mountpoint, device = None):
 		if path.exists(mountpoint) and path.ismount(mountpoint):
-			part = self.getPartitionbyMountpoint(mountpoint)
-			if part is not None and part.uuid is not None:
-				if part.uuid == config.storage_options.default_device.value:
-					print part.uuid,config.storage_options.default_device.value
-					if (path.exists("/media/hdd") and path.islink("/media/hdd") and self.getLinkPath("/media/hdd") == mountpoint):
-						try:
-							unlink("/media/hdd")
-							print "removed old default storage link"
-						except OSError:
-							pass					
 			cmd = "umount" + " " + mountpoint
-			print "[unmountPartitionbyMountpoint] %s:" % (mountpoint)
+			print "[unmountPartitionbyMountpoint] %s:" % (cmd)
 			system(cmd)
-			if (device is not None and not path.ismount(mountpoint)):
+		if path.exists(mountpoint) and not path.ismount(mountpoint):
+			part = self.getPartitionbyMountpoint(mountpoint)
+			if part is not None:
+				if part.uuid is not None and part.uuid == config.storage_options.default_device.value: #unmounting Default Mountpoint /media/hdd
+					#call the notifier also here if we unmounted the default partition
+					for callback in self.delayed_device_Notifier:
+						try:
+							callback(part.device, "remove_default" )
+						except AttributeError:
+							self.delayed_device_Notifier.remove(callback)
+					part.device = None
+					part.updatePartitionInfo()
+			if device is not None and not path.ismount(mountpoint):
 				self.removeMountedPartitionbyDevice(device)
 			self.reloadExports()
-
+	
 	def unmountPartitionbyUUID(self, uuid):
 		mountpoint = config.storage[uuid]['mountpoint'].value
 		if mountpoint != "":
 			if path.exists(mountpoint) and path.ismount(mountpoint):
-				partitionPath = "/dev/disk/by-uuid/" + uuid
-				mountpoint = config.storage[uuid]['mountpoint'].value
-				if (self.is_hard_mounted(partitionPath) and self.is_fstab_mountpoint(partitionPath, mountpoint) and self.get_fstab_mountstate(partitionPath, mountpoint) == 'auto'):
-					print "[unmountPartitionbyUUID] disabling external mounted config entry for %s:" % (mountpoint)
+				if self.isUUIDpathFsTabMount(uuid, mountpoint) or self.isPartitionpathFsTabMount(uuid, mountpoint):
+					print "[unmountPartitionbyUUID] disabling config entry for external mounted mountpoint %s:" % (mountpoint)
 					config.storage[uuid]["enabled"].value = False
 					config.storage.save()
 				else:
-					part = self.getPartitionbyMountpoint(mountpoint)
-					if part is not None and part.uuid is not None:
-						if part.uuid == config.storage_options.default_device.value:
-							print part.uuid,config.storage_options.default_device.value
-							if (path.exists("/media/hdd") and path.islink("/media/hdd") and self.getLinkPath("/media/hdd") == mountpoint):
-								try:
-									unlink("/media/hdd")
-									print "removed old default storage link"
-								except OSError:
-									pass					
 					cmd = "umount" + " " + mountpoint
 					print "[unmountPartitionbyUUID] %s:" % (mountpoint)
 					system(cmd)
@@ -1246,21 +1505,32 @@ class HarddiskManager:
 
 	def mountPartitionbyUUID(self, uuid):
 		if path.exists("/dev/disk/by-uuid/" + uuid):
-			print "[mountPartitionbyUUID] for UUID:'%s'" % (uuid)
 			cfg_uuid = config.storage.get(uuid, None)
 			partitionPath = "/dev/disk/by-uuid/" + uuid
 			mountpoint = cfg_uuid['mountpoint'].value
 			dev = self.getDeviceNamebyUUID(uuid)
 			devicepath = "/dev/" + str(dev)
+			#print "[mountPartitionbyUUID] for UUID:'%s' - '%s'" % (uuid,mountpoint)
 
-			if (self.is_hard_mounted(partitionPath) or self.is_hard_mounted(devicepath)):
-				#print "[mountPartitionbyUUID] - found possible Fstab mounted device:",partitionPath, devicepath, dev
-				if (self.is_fstab_mountpoint(partitionPath, mountpoint) and self.get_fstab_mountstate(partitionPath, mountpoint) == 'auto'):
-					cfg_uuid["enabled"].value = False
-					config.storage.save()
-				if (self.is_fstab_mountpoint(devicepath, mountpoint) and self.get_fstab_mountstate(devicepath, mountpoint) == 'auto'):
-					cfg_uuid["enabled"].value = False
-					config.storage.save()	
+			#verify if mountpoint is still mounted from elsewhere (e.g fstab)
+			if path.exists(mountpoint) and path.ismount(mountpoint):
+				tmppath = self.get_mountdevice(mountpoint)
+				if tmppath is not None and tmppath.startswith("/dev/disk/by-uuid/") and tmppath != partitionPath: #probably different device mounted on our mountpoint
+					tmpuuid = tmppath.rsplit("/",1)[1]
+					if not self.isUUIDpathFsTabMount(tmpuuid, mountpoint) and not self.isPartitionpathFsTabMount(tmpuuid, mountpoint):
+						self.unmountPartitionbyMountpoint(mountpoint)
+
+			#verify if our device is still mounted to somewhere else
+			tmpmount = self.get_mountpoint(partitionPath)
+			if tmpmount is not None and tmpmount != mountpoint and path.exists(tmpmount) and path.ismount(tmpmount):
+				if not self.isUUIDpathFsTabMount(uuid, tmpmount) and not self.isPartitionpathFsTabMount(uuid, tmpmount):
+						self.unmountPartitionbyMountpoint(tmpmount)
+				
+			
+			if self.isUUIDpathFsTabMount(uuid, mountpoint) or self.isPartitionpathFsTabMount(uuid, mountpoint):
+				print "[unmountPartitionbyUUID] disabling config entry for external mounted mountpoint %s:" % (mountpoint)
+				cfg_uuid["enabled"].value = False
+				config.storage.save()
 
 			if cfg_uuid['enabled'].value:
 				if mountpoint != "":
@@ -1270,21 +1540,10 @@ class HarddiskManager:
 						except OSError:
 							print "[mountPartitionbyUUID] could not create mountdir:",mountpoint
 
-					if path.exists(mountpoint) and not path.ismount(mountpoint):
+					if path.exists(mountpoint) and not path.ismount(mountpoint) and not path.islink(mountpoint):
 						cmd = "mount -t auto /dev/disk/by-uuid/" + uuid + " " + mountpoint
 						system(cmd)
 						print "[mountPartitionbyUUID]:",cmd
-
-					hdd = self.getHDD(dev)
-					if hdd is not None:
-						partitionType = self.getBlkidPartitionType(devicepath)
-						if partitionType is not None and partitionType in ( "ext2", "ext3" ):
-							moviedir = mountpoint + "/movie"
-							if not path.exists(moviedir):
-								try:
-									makedirs(moviedir)
-								except OSError:
-									print "[mountPartitionbyUUID] could not create moviedir:",moviedir
 
 					if path.ismount(mountpoint):
 						dev = self.getDeviceNamebyUUID(uuid)
@@ -1293,11 +1552,12 @@ class HarddiskManager:
 							if p is not None:
 								x = self.getPartitionbyDevice(dev)
 								if x is not None and x.mountpoint.startswith('/autofs'):
-									self.removeMountedPartitionbyDevice(dev)
+									self.removeMountedPartitionbyDevice(dev) #remove now obsolete entry
 								p.mountpoint = mountpoint
 								p.uuid = uuid
 								p.device = dev
 								p.force_mounted = False
+								p.updatePartitionInfo()
 							else:
 								p = self.getPartitionbyDevice(dev)
 								if p is not None:
@@ -1305,15 +1565,18 @@ class HarddiskManager:
 									p.uuid = uuid
 									p.device = dev
 									p.force_mounted = False
+									p.updatePartitionInfo()
 					else:
 						print "[mountPartitionbyUUID] could not mount mountdir:",mountpoint
 		else:
 			print "[mountPartitionbyUUID] failed for UUID:'%s'" % (uuid)
-
+			
 	def storageDeviceChanged(self, uuid):
 		if config.storage[uuid]["enabled"].value:
+			#print "[storageDeviceChanged] for enabled UUID:'%s'" % (uuid)
 			self.mountPartitionbyUUID(uuid)
 		else:
+			#print "[storageDeviceChanged] for disabled UUID:'%s'" % (uuid)
 			self.unmountPartitionbyUUID(uuid)
 
 	def setupConfigEntries(self, initial_call = False, dev = None):
@@ -1326,18 +1589,29 @@ class HarddiskManager:
 				config.storage[uuid]["device_description"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
 				config.storage[uuid]["device_info"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
 				config.storage[uuid]["isRemovable"] = ConfigBoolean(default = False)
-				dev = self.getDeviceNamebyUUID(uuid)
-				if dev is not None:
-					p = self.getPartitionbyDevice(dev) or self.getPartitionbyMountpoint(config.storage[uuid]["mountpoint"].value)
-					if p is None: # manually add partition entry
-						physdev = path.realpath('/sys/block/' + dev[:3] + '/device')[4:]
-						description = self.getUserfriendlyDeviceName(dev[:3], physdev)
-						p = Partition(mountpoint = config.storage[uuid]["mountpoint"].value, description = description, force_mounted = False, device = dev)
-						p.uuid = uuid
-						self.partitions.append(p)
-						self.on_partition_list_change("add", p)	
-				if path.exists("/dev/disk/by-uuid/" + uuid):
-					self.storageDeviceChanged(uuid)
+				if config.storage[uuid]['enabled'].value:
+					dev = self.getDeviceNamebyUUID(uuid)
+					if uuid == config.storage_options.default_device.value and config.storage[uuid]["mountpoint"].value != "/media/hdd":
+						print "[setupConfigEntries] initial_call discovered a default storage device misconfiguration, reapplied default storage config for:",uuid
+						if dev is not None:						
+							self.unmountPartitionbyMountpoint(config.storage[uuid]["mountpoint"].value, dev)
+						config.storage[uuid]["mountpoint"].value = "/media/hdd"
+					if dev is not None:
+						p = self.getPartitionbyDevice(dev) or self.getPartitionbyMountpoint(config.storage[uuid]["mountpoint"].value)
+						if p is None: # manually add partition entry
+							description = self.getDeviceDescription(dev)
+							device_mountpoint = self.getAutofsMountpoint(dev)
+							if config.storage[uuid]['mountpoint'].value != "":
+								device_mountpoint = config.storage[uuid]['mountpoint'].value
+							p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = False, device = dev)
+							p.uuid = uuid
+							p.updatePartitionInfo()
+							self.partitions.append(p)
+							self.on_partition_list_change("add", p)	
+					if path.exists("/dev/disk/by-uuid/" + uuid):
+						self.storageDeviceChanged(uuid)
+				else:
+					del config.storage[uuid]
 		if dev is not None:
 			uuid = self.getPartitionUUID(dev)
 			if uuid is not None:
@@ -1352,32 +1626,77 @@ class HarddiskManager:
 						device_info =  hdd.bus_description()
 					else:
 						device_info = dev
-						hdd_description = "External Storage"
+						hdd_description = self.getDeviceDescription(dev)
 					config.storage[uuid] = ConfigSubDict()
 					config.storage[uuid]["enabled"] = ConfigYesNo(default = False)
 					config.storage[uuid]["mountpoint"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
 					config.storage[uuid]["device_description"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
 					config.storage[uuid]["device_info"] = ConfigText(default = "", visible_width = 50, fixed_size = False)
 					config.storage[uuid]["isRemovable"] = ConfigBoolean(default = False)
-					config.storage[uuid]["device_description"].setValue(hdd_description)
-					config.storage[uuid]["device_info"].setValue(device_info)
 					removable = False
 					if hdd is not None:
 						removable = hdd.isRemovable
-					config.storage[uuid]["isRemovable"].setValue(removable)					
+					config.storage[uuid]["device_description"].setValue(hdd_description)
+					config.storage[uuid]["device_info"].setValue(device_info)
+					config.storage[uuid]["isRemovable"].setValue(removable)
 					p = self.getPartitionbyDevice(dev)
 					if p is None: # manually add partition entry (e.g. on long spinup times)
-						physdev = path.realpath('/sys/block/' + dev[:3] + '/device')[4:]
-						description = self.getUserfriendlyDeviceName(dev[:3], physdev)
-						p = Partition(mountpoint = self.getAutofsMountpoint(dev), description = description, force_mounted = True, device = dev)
+						description = self.getDeviceDescription(dev)
+						device_mountpoint = self.getAutofsMountpoint(dev)
+						p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = True, device = dev)
 						p.uuid = uuid
+						p.updatePartitionInfo()
 						self.partitions.append(p)
 						self.on_partition_list_change("add", p)	
-					self.storageDeviceChanged(uuid)		
-				else:
-					print "[setupConfigEntries] new device add for '%s' with uuid:'%s'" % (dev, uuid)
 					self.storageDeviceChanged(uuid)
+				else:
+					p = self.getPartitionbyDevice(dev)
+					device_mountpoint = self.getAutofsMountpoint(dev)
+					if config.storage[uuid]['enabled'].value and config.storage[uuid]['mountpoint'].value != "":
+						device_mountpoint = config.storage[uuid]['mountpoint'].value
+					if p is None: # manually add partition entry (e.g. on default storage device change) !!!!!!!!!!!
+						description = self.getDeviceDescription(dev)
+						p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = True, device = dev)
+						p.uuid = uuid
+						p.updatePartitionInfo()
+						self.partitions.append(p)
+						self.on_partition_list_change("add", p)	
+						print "[setupConfigEntries] new/changed device add for '%s' with uuid:'%s'" % (dev, uuid)
+						self.storageDeviceChanged(uuid)
+					else:
+						tmp = self.getPartitionbyMountpoint(device_mountpoint)
+						if tmp is not None and (tmp.uuid != uuid or tmp.mountpoint != config.storage[uuid]['mountpoint'].value):
+							print "[setupConfigEntries] new/changed device add for '%s' with uuid:'%s'" % (dev, uuid)
+							self.storageDeviceChanged(uuid)
 			else:
-				"[setupConfigEntries] device add for '%s' without uuid !!!" % (dev)
+				print "[setupConfigEntries] device add for '%s' without uuid !!!" % (dev)
+
+	def verifyInstalledStorageDevices(self):
+		if config.storage_options.default_device.value == "<undefined>" and self.HDDCount() == 1 and not self.HDDEnabledCount(): #only one installed and unconfigured device
+			hdd = self.hdd[0]
+			if hdd and hdd.numPartitions() <= 1:
+				numPart = hdd.numPartitions()
+				device = hdd.device
+				partitionPath = hdd.dev_path
+				if numPart == 1:
+					device = hdd.device + "1"
+					partitionPath = hdd.partitionPath(str(numPart))
+				p = self.getPartitionbyDevice(device)
+				if p is not None and p.isInitialized: #only one by e2 initialized partition
+					if not self.inside_mountpoint("/media/hdd") and not path.islink("/media/hdd") and not self.isUUIDpathFsTabMount(p.uuid, "/media/hdd") and not self.isPartitionpathFsTabMount(p.uuid, "/media/hdd"):
+						print "verifyInstalledStorageDevices: using found %s as default storage device" % device
+						config.storage_options.default_device.value = p.uuid
+						config.storage_options.save()
+						cfg_uuid = config.storage.get(p.uuid, None)
+						if cfg_uuid is not None and not cfg_uuid["enabled"].value:
+							cfg_uuid["enabled"].value = True
+							cfg_uuid["mountpoint"].value = "/media/hdd"
+							cfg_uuid.save()
+							config.storage.save()
+							harddiskmanager.modifyFstabEntry("/dev/disk/by-uuid/" + p.uuid, "/media/hdd", mode = "add_deactivated")
+							self.storageDeviceChanged(p.uuid)
 
 harddiskmanager = HarddiskManager()
+harddiskmanager.enumerateBlockDevices()
+harddiskmanager.verifyInstalledStorageDevices() #take sure enumerateBlockdev is finished so we don't miss any at startup installed storage devices
+
