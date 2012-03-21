@@ -512,14 +512,18 @@ class Pic_Full_View(Screen):
 		self.picload.setPara([self["pic"].instance.size().width(), self["pic"].instance.size().height(), sc[0], sc[1], 0, int(config.pic.resize.value), self.bgcolor])
 
 		self["play_icon"].hide()
-		if config.pic.infoline.value == False:
+		if not config.pic.infoline.value:
 			self["file"].setText("")
 		self.start_decode()
 
 	def ShowPicture(self):
 		if self.shownow and len(self.currPic):
 			self.shownow = False
-			self["file"].setText(self.currPic[0])
+			if not config.pic.infoline.value:
+				self["play_icon"].hide()
+				self["file"].setText("")
+			else:			
+				self["file"].setText(self.currPic[0])
 			self.lastindex = self.currPic[1]
 			self["pic"].instance.setPixmap(self.currPic[2].__deref__())
 			self.currPic = []

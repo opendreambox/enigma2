@@ -61,11 +61,7 @@ private:
 	void handleLine(unsigned char *line, int len);
 	void handlePageEnd(int have_pts, const pts_t &pts);
 	
-	std::string m_subtitle_text;
-	int m_subtitle_color;
-	int m_current_source_line;
-	
-	void addSubtitleString(int color, std::string string, int source_line);
+	void addSubtitleString(int color, const std::string &string, int source_line);
 	
 	void sendSubtitlePage();
 	

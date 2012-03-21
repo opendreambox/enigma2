@@ -51,7 +51,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 		self.styles = [ ("<default>", _("<Default movie location>")), ("<current>", _("<Current movielist location>")), ("<timer>", _("<Last timer location>")) ]
 		styles_keys = [x[0] for x in self.styles]
 
-		mountpoints = [ (p.mountpoint, p.description) for p in harddiskmanager.getConfiguredStorageDevices()]
+		mountpoints = [ (p.mountpoint, p.description) for p in harddiskmanager.getConfiguredStorageDevices() if p.isInitialized]
 		mountpoints.sort(reverse = True)
 		self.storage_styles = [ ("<undefined>", _("<No default storage device selected.>"))]
 		self.storage_styles += mountpoints
@@ -159,35 +159,18 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 			txt = _("Movie location")
 		if currentry == self.default_entry:
 			self.entrydirname = self.default_dirname
-			self.session.openWithCallback(
-				self.dirnameSelected,
-				MovieLocationBox,
-				txt,
-				preferredPath(self.default_dirname.value)
-			)
-		elif currentry == self.timer_entry:
-			self.entrydirname = self.timer_dirname
-			self.session.openWithCallback(
-				self.dirnameSelected,
-				MovieLocationBox,
-				_("Initial location in new timers"),
-				preferredPath(self.timer_dirname.value)
-			)
-		elif currentry == self.instantrec_entry:
-			self.entrydirname = self.instantrec_dirname
-			self.session.openWithCallback(
-				self.dirnameSelected,
-				MovieLocationBox,
-				_("Location for instant recordings"),
-				preferredPath(self.instantrec_dirname.value)
-			)
+			self.session.openWithCallback(self.dirnameSelected, MovieLocationBox, txt, preferredPath(self.default_dirname.value))
 		elif currentry == self.timeshift_entry:
 			self.entrydirname = self.timeshift_dirname
 			config.usage.timeshift_path.value = self.timeshift_dirname.value
-			self.session.openWithCallback(
-				self.dirnameSelected,
-				TimeshiftLocationBox
-			)
+			self.session.openWithCallback(self.dirnameSelected,	TimeshiftLocationBox)
+		if config.usage.setup_level.index >= 2:
+			if currentry == self.timer_entry:
+				self.entrydirname = self.timer_dirname
+				self.session.openWithCallback(self.dirnameSelected,	MovieLocationBox,_("Initial location in new timers"), preferredPath(self.timer_dirname.value))
+			elif currentry == self.instantrec_entry:
+				self.entrydirname = self.instantrec_dirname
+				self.session.openWithCallback(self.dirnameSelected,	MovieLocationBox, _("Location for instant recordings"), preferredPath(self.instantrec_dirname.value))
 
 	def dirnameSelected(self, res):
 		if res is not None:
@@ -230,7 +213,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 		if self.checkReadWriteDir(currentry[1]):
 			config.usage.default_path.value = self.default_dirname.value
 			config.usage.timer_path.value = self.timer_dirname.value
-			config.usage.instantrec_path.value = self.instantrec_dirname.value 
+			config.usage.instantrec_path.value = self.instantrec_dirname.value
 			config.usage.timeshift_path.value = self.timeshift_dirname.value
 			config.usage.default_path.save()
 			config.usage.timer_path.save()
@@ -254,4 +237,3 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 
 	def cancel(self):
 		self.close()
-

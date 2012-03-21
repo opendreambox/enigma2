@@ -501,18 +501,26 @@ class Partition:
 		if self.device is not None:
 			self.updatePartitionInfo()
 
-	def updatePartitionInfo(self):
+	def updatePartitionInfo(self, dstpath = "", dev = None ):
 		curdir = getcwd()
+		testpath = ""
+		if dstpath != "" and dev is not None:
+			self.device = device
+			testpath = dstpath + self.device
+			
 		if self.device is not None:
+			if testpath == "":
+				testpath = "/autofs/" + self.device
+
 			self.uuid = harddiskmanager.getPartitionUUID(self.device)
 			try:
-				chdir("/autofs/" + self.device)
+				chdir(testpath)
 				self.isMountable = True
 			except OSError:
 				pass
-			if self.isMountable:
+			if self.isMountable:		
 				try:
-					listdir("/autofs/" + self.device)
+					listdir(testpath)
 					self.isReadable = True
 				except OSError:
 					pass
@@ -520,7 +528,7 @@ class Partition:
 				mountpoint, self.fsType, mountopt = harddiskmanager.getMountInfo("/dev/" + self.device)
 				if mountopt is not None and mountopt == 'rw':
 					self.isWriteable = True
-					if not access("/autofs/" + self.device, W_OK):
+					if not access(testpath, W_OK):
 						self.isWriteable = False
 			if self.uuid is not None:
 				if self.fsType is None:
@@ -528,8 +536,8 @@ class Partition:
 					if fstype is not None:
 						self.fsType = fstype
 			if self.isWriteable:
-				if access("/autofs/" + self.device + "/movie", W_OK):
-					self.isInitialized = True
+				if access(testpath + "/movie", W_OK):
+					self.isInitialized = True			
 		else:
 			self.uuid = None
 			self.isMountable = False
@@ -1142,7 +1150,7 @@ class HarddiskManager:
 					val += "HDD" + str(cnt)
 				if hdd.numPartitions() >= 2:
 					partNum = p.device[3:]
-					if int(partNum).isdigit():
+					if str(partNum).isdigit():
 						val += "Part" + str(partNum)
 				print "suggestDeviceMountpath for uuid: '%s' -> '%s'" %(uuid,val)
 				return "/media/" + val
@@ -1593,6 +1601,8 @@ class HarddiskManager:
 					dev = self.getDeviceNamebyUUID(uuid)
 					if uuid == config.storage_options.default_device.value and config.storage[uuid]["mountpoint"].value != "/media/hdd":
 						print "[setupConfigEntries] initial_call discovered a default storage device misconfiguration, reapplied default storage config for:",uuid
+						if path.exists("/media/hdd") and path.islink("/media/hdd") and self.getLinkPath("/media/hdd") == config.storage[uuid]["mountpoint"].value:
+							unlink("/media/hdd")
 						if dev is not None:						
 							self.unmountPartitionbyMountpoint(config.storage[uuid]["mountpoint"].value, dev)
 						config.storage[uuid]["mountpoint"].value = "/media/hdd"
