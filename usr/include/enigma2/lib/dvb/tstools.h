@@ -72,10 +72,15 @@ public:
 	(when direction is >0) or backward (when direction is <0). (direction=0 is a special case and also moves
 	forward, but starts with the last frame.)
 	
-	return values are the new offset, the length of the found frame (both unaligned), and the (signed) 
+	return values are the new offset, the length of the found frame (both unaligned), and the (signed)
 	number of frames skipped. */
 	int findFrame(off_t &offset, size_t &len, int &direction, int frame_types = frametypeI);
 	int findNextPicture(off_t &offset, size_t &len, int &distance, int frame_types = frametypeAll);
+
+	/** search backwards from offset to the prev seq header
+	returns the number of frames skipped. */
+	int setSeqHeader(off_t &offset);
+
 private:
 	int m_pid;
 	int m_maxrange;

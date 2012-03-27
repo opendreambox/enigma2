@@ -111,9 +111,11 @@ class ChannelContextMenu(Screen):
 		self.pipAvailable = False
 		current = csel.getCurrentSelection()
 		current_root = csel.getRoot()
+		current_root_path = current_root and current_root.getPath()
 		current_sel_path = current.getPath()
 		current_sel_flags = current.flags
-		inBouquetRootList = current_root and current_root.getPath().find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
+
+		inBouquetRootList = current_root_path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
 		inBouquet = csel.getMutableList() is not None
 		haveBouquets = config.usage.multibouquet.value
 
@@ -141,8 +143,15 @@ class ChannelContextMenu(Screen):
 						if not inBouquet:
 							append_when_current_valid(current, menu, (_("add service to favourites"), self.addServiceToBouquetSelected), level = 0)
 				else:
-					if current_root.getPath().find('FROM SATELLITES') != -1:
-						append_when_current_valid(current, menu, (_("remove selected satellite"), self.removeSatelliteServices), level = 0)
+					if current_root_path.find('FROM SATELLITES') != -1:
+						unsigned_orbpos = current.getUnsignedData(4) >> 16
+						print "unsigned orbpos %08x" %unsigned_orbpos
+						if unsigned_orbpos == 0xFFFF: #Cable
+							append_when_current_valid(current, menu, (_("remove cable services"), self.removeSatelliteServices), level = 0)
+						elif unsigned_orbpos == 0xEEEE: #Terrestrial
+							append_when_current_valid(current, menu, (_("remove terrestrial services"), self.removeSatelliteServices), level = 0)
+						else:
+							append_when_current_valid(current, menu, (_("remove selected satellite"), self.removeSatelliteServices), level = 0)
 					if haveBouquets:
 						if not inBouquet and current_sel_path.find("PROVIDERS") == -1:
 							append_when_current_valid(current, menu, (_("copy to bouquets"), self.copyCurrentToBouquetList), level = 0)
@@ -259,14 +268,21 @@ class ChannelContextMenu(Screen):
 			self.close(False)
 
 	def removeSatelliteServices(self):
-		curpath = self.csel.getCurrentSelection().getPath()
-		idx = curpath.find("satellitePosition == ")
-		if idx != -1:
-			tmp = curpath[idx+21:]
-			idx = tmp.find(')')
+		current = self.csel.getCurrentSelection()
+		unsigned_orbpos = current.getUnsignedData(4) >> 16
+		if unsigned_orbpos == 0xFFFF:
+			eDVBDB.getInstance().removeServices(-65536) # 0xFFFF0000 as integer
+		elif unsigned_orbpos == 0xEEEE:
+			eDVBDB.getInstance().removeServices(-286392320) # 0xEEEE0000 as integer
+		else:
+			curpath = current.getPath()
+			idx = curpath.find("satellitePosition == ")
 			if idx != -1:
-				satpos = int(tmp[:idx])
-				eDVBDB.getInstance().removeServices(-1, -1, -1, satpos)
+				tmp = curpath[idx+21:]
+				idx = tmp.find(')')
+				if idx != -1:
+					satpos = int(tmp[:idx])
+					eDVBDB.getInstance().removeServices(-1, -1, -1, satpos)
 		self.close()
 
 	def copyCurrentToBouquetList(self):

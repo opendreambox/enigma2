@@ -50,7 +50,7 @@ public:
 	
 	bool empty();
 	
-	typedef unsigned long long structure_data;
+	typedef off_t structure_data;
 		/* this is usually:
 			sc | (other_information << 8)
 			but is really specific to the used video encoder.
@@ -60,11 +60,11 @@ public:
 		/* get a structure entry at given offset (or previous one, if no exact match was found).
 		   optionall, return next element. Offset will be returned. this allows you to easily 
 		   get previous and next structure elements. */
-	int getStructureEntry(off_t &offset, unsigned long long &data, int get_next);
+	int getStructureEntry(off_t &offset, off_t &data, int get_next);
 
 	std::string m_filename;
 	int m_structure_cache_valid;
-	unsigned long long m_structure_cache[1024];
+	off_t m_structure_cache[1024];
 	FILE *m_structure_read, *m_structure_write;
 };
 

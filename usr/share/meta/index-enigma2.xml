@@ -54,6 +54,7 @@
 	<package details="plugin_commoninterfaceassignment.xml" name="CommonInterfaceAssignment" packagename="enigma2-plugin-systemplugins-commoninterfaceassignment" shortdescription="Assigning providers/services/caids to a CI module">
 		<prerequisites>
 			<hardware type="dm8000" />
+			<hardware type="dm7020hd" />
 			<tag type="CI" />
 			<tag type="System" />
 		</prerequisites>
