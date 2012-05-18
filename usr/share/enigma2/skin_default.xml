@@ -1353,8 +1353,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, orgpos.y()))
 		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="EventTime">Progress</convert>
+		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Progress</convert>
 		</widget>
 		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
 			<convert type="ClockToText">Format:%H:%M</convert>

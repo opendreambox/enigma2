@@ -2343,6 +2343,7 @@ class eComponentScan(iObject):
     scanDontRemoveUnscanned = _enigma.eComponentScan_scanDontRemoveUnscanned
     clearToScanOnFirstNIT = _enigma.eComponentScan_clearToScanOnFirstNIT
     scanOnlyFree = _enigma.eComponentScan_scanOnlyFree
+    scanDontSkipEmptyTransponders = _enigma.eComponentScan_scanDontSkipEmptyTransponders
 eComponentScan.getProgress = new_instancemethod(_enigma.eComponentScan_getProgress,None,eComponentScan)
 eComponentScan.getNumServices = new_instancemethod(_enigma.eComponentScan_getNumServices,None,eComponentScan)
 eComponentScan.isDone = new_instancemethod(_enigma.eComponentScan_isDone,None,eComponentScan)

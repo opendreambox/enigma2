@@ -1,13 +1,22 @@
 from Tools.BoundFunction import boundFunction
 
-def getFunctionTree(my_api, name):
+def getFunctionTree(my_api, name = None):
 	functions = my_api.getFunctions()
 	subapis = my_api.getSubAPIs()
 	resultlist = []
 	for function in functions:
-		resultlist.append("%s.%s" %(name, function))
+		item = None
+		if name is None:
+			item = function
+		else:
+			item = "%s.%s" %(name, function)
+		resultlist.append(item)
 	for subapi in subapis:
-		subapiuri = "%s.%s" % (name, subapi)
+		subapiuri = ""
+		if name is None:
+			subapiuri = subapi
+		else:
+			subapiuri = "%s.%s" % (name, subapi)
 		resultlist += getFunctionTree(my_api.call(subapi), subapiuri)
 	return resultlist
 

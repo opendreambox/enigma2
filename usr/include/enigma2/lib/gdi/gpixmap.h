@@ -164,6 +164,8 @@ struct gSurface
 	} colorformat_t;
 
 	colorformat_t colorformat;
+	bool premult;	// premultiplied alpha
+
 	int type;
 	int x, y, bpp, bypp, stride;
 	gPalette clut;
@@ -173,7 +175,7 @@ struct gSurface
 	int offset; // only for backbuffers
 
 	gSurface();
-	gSurface(eSize size, int bpp, int accel);
+	gSurface(eSize size, int bpp, int accel, bool premult = false);
 	~gSurface();
 };
 #endif
@@ -196,7 +198,7 @@ public:
 	};
 
 	gPixmap(gSurface *surface);
-	gPixmap(eSize, int bpp, int accel = 0);
+	gPixmap(eSize, int bpp, int accel = 0, bool premult = false);
 
 #if defined(HAVE_QT) && !defined(SWIG)
 	gPixmap(const char *filename, const char *format = 0);

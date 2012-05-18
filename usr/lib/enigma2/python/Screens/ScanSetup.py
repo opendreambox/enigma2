@@ -847,6 +847,8 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		self.list.append(getConfigListEntry(_("Network scan"), self.scan_networkScan))
 		self.list.append(getConfigListEntry(_("Clear before scan"), self.scan_clearallservices))
 		self.list.append(getConfigListEntry(_("Only Free scan"), self.scan_onlyfree))
+		if config.usage.setup_level.index >= 2:
+			self.list.append(getConfigListEntry(_("Skip empty transponders"), self.scan_skipEmpty))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -967,6 +969,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 			self.scan_clearallservices = ConfigSelection(default = "no", choices = [("no", _("no")), ("yes", _("yes")), ("yes_hold_feeds", _("yes (keep feeds)"))])
 			self.scan_onlyfree = ConfigYesNo(default = False)
 			self.scan_networkScan = ConfigYesNo(default = False)
+			self.scan_skipEmpty = ConfigYesNo(default = True)
 
 			nim_list = []
 			# collect all nims which are *not* set to "nothing"
@@ -1271,6 +1274,9 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				getInitialTerrestrialTransponderList(tlist, nimmanager.getTerrestrialDescription(index_to_scan))
 
 		flags = self.scan_networkScan.value and eComponentScan.scanNetworkSearch or 0
+
+		if not self.scan_skipEmpty.value:
+			flags |= eComponentScan.scanDontSkipEmptyTransponders
 
 		tmp = self.scan_clearallservices.value
 		if tmp == "yes":
