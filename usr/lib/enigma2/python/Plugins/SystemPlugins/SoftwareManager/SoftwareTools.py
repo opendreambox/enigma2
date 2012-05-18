@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-from enigma import eConsoleAppContainer,eTPM
+from enigma import eTPM
 from Components.Console import Console
 from Components.About import about
 from Components.DreamInfoHandler import DreamInfoHandler
@@ -7,7 +7,7 @@ from Components.Language import language
 from Components.Sources.List import List
 from Components.Ipkg import IpkgComponent
 from Components.Network import iNetwork
-from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_METADIR
+from Tools.Directories import resolveFilename, SCOPE_METADIR
 from Tools.HardwareInfo import HardwareInfo
 import hashlib
 from time import time
@@ -106,13 +106,13 @@ class SoftwareTools(DreamInfoHandler):
 		if self.lastDownloadDate is None:
 			if  self.hardware_info.device_name != "dm7025":
 				etpm = eTPM()
-				l2cert = etpm.getCert(eTPM.TPMD_DT_LEVEL2_CERT)
+				l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
 				if l2cert is None:
 					return
 				l2key = validate_cert(l2cert, rootkey)
 				if l2key is None:
 					return
-				l3cert = etpm.getCert(eTPM.TPMD_DT_LEVEL3_CERT)
+				l3cert = etpm.getData(eTPM.DT_LEVEL3_CERT)
 				if l3cert is None:
 					return
 				l3key = validate_cert(l3cert, l2key)
@@ -121,7 +121,7 @@ class SoftwareTools(DreamInfoHandler):
 				rnd = read_random()
 				if rnd is None:
 					return
-				val = etpm.challenge(rnd)
+				val = etpm.computeSignature(rnd)
 				result = decrypt_block(val, l3key)
 			if self.hardware_info.device_name == "dm7025" or result[80:88] == rnd:
 				if self.NetworkConnectionAvailable == True:
@@ -164,13 +164,13 @@ class SoftwareTools(DreamInfoHandler):
 				if self.list_updating and callback is not None:
 					if  self.hardware_info.device_name != "dm7025":
 						etpm = eTPM()
-						l2cert = etpm.getCert(eTPM.TPMD_DT_LEVEL2_CERT)
+						l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
 						if l2cert is None:
 							return
 						l2key = validate_cert(l2cert, rootkey)
 						if l2key is None:
 							return
-						l3cert = etpm.getCert(eTPM.TPMD_DT_LEVEL3_CERT)
+						l3cert = etpm.getData(eTPM.DT_LEVEL3_CERT)
 						if l3cert is None:
 							return
 						l3key = validate_cert(l3cert, l2key)
@@ -179,7 +179,7 @@ class SoftwareTools(DreamInfoHandler):
 						rnd = read_random()
 						if rnd is None:
 							return
-						val = etpm.challenge(rnd)
+						val = etpm.computeSignature(rnd)
 						result = decrypt_block(val, l3key)
 					if self.hardware_info.device_name == "dm7025" or result[80:88] == rnd:
 						self.NotifierCallback = callback

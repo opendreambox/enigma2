@@ -3,11 +3,8 @@ from Components.Console import Console
 from Components.Network import iNetwork
 
 from os import system, path as os_path
-from string import maketrans, strip
-import sys
-import types
-from re import compile as re_compile, search as re_search, escape as re_escape
-from pythonwifi.iwlibs import getNICnames, Wireless, Iwfreq, getWNICnames
+from string import maketrans
+from pythonwifi.iwlibs import Wireless, getWNICnames
 from pythonwifi import flags as wififlags
 
 list = []
@@ -94,7 +91,7 @@ class Wlan:
 				extra = []
 				for element in result.custom:
 					element = element.encode()
-					extra.append( strip(self.asciify(element)) )
+					extra.append( self.asciify(element).strip() )
 				for element in extra:
 					if 'SignalStrength' in element:
 						signal = element[element.index('SignalStrength')+15:element.index(',L')]					
@@ -106,7 +103,7 @@ class Wlan:
 					'bssid': result.bssid,
 					'channel': frequencies.index(ifobj._formatFrequency(result.frequency.getFrequency())) + 1,
 					'encrypted': encryption,
-					'essid': strip(self.asciify(result.essid)),
+					'essid': self.asciify(result.essid).strip(),
 					'iface': self.iface,
 					'maxrate' : ifobj._formatBitrate(result.rate[-1][-1]),
 					'noise' : '',#result.quality.nlevel-0x100,

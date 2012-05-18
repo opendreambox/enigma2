@@ -2,8 +2,7 @@ from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen
 from Components.FileList import FileList
 from Components.Sources.StaticText import StaticText
-from Components.MediaPlayer import PlayList
-from Components.config import config, getConfigListEntry, ConfigSubsection, configfile, ConfigText, ConfigYesNo, ConfigDirectory
+from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigYesNo, ConfigDirectory
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 

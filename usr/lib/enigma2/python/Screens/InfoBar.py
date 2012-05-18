@@ -12,16 +12,18 @@ profile("LOAD:InfoBarGenerics")
 from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarRdsDecoder, \
 	InfoBarEPG, InfoBarSeek, InfoBarInstantRecord, \
-	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey, \
+	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarDish, InfoBarUnhandledKey, \
 	InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
 	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, \
-	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, \
+	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, InfoBarNotifications, \
 	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman
 
 profile("LOAD:InitBar_Components")
 from Components.ActionMap import HelpableActionMap
 from Components.config import config, ConfigBoolean
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.PluginComponent import plugins
+from Plugins.Plugin import PluginDescriptor
 
 profile("LOAD:HelpableScreen")
 from Screens.HelpMenu import HelpableScreen
@@ -29,15 +31,18 @@ from Screens.HelpMenu import HelpableScreen
 config.misc.initialharddisknotification = ConfigBoolean(True)
 config.misc.missingdefaultstoragenotification = ConfigBoolean(True)
 
+from Tools import Notifications
+Notifications.notificationQueue.registerDomain("InfoBar", _("InfoBar"), Notifications.ICON_DEFAULT)
+
 class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder,
-	InfoBarInstantRecord, InfoBarAudioSelection, 
-	HelpableScreen, InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarUnhandledKey,
+	InfoBarInstantRecord, InfoBarAudioSelection,
+	HelpableScreen, InfoBarAdditionalInfo, InfoBarDish, InfoBarUnhandledKey,
 	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
-	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions,
+	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, InfoBarNotifications,
 	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman,
 	Screen):
-	
+
 	ALLOW_SUSPEND = True
 	instance = None
 
@@ -49,17 +54,18 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				"showRadio": (self.showRadio, _("Show the radio player...")),
 				"showTv": (self.showTv, _("Show the tv player...")),
 			}, prio=2)
-		
+
 		self.allowPiP = True
-		
+
 		for x in HelpableScreen, \
 				InfoBarBase, InfoBarShowHide, \
 				InfoBarNumberZap, InfoBarChannelSelection, InfoBarMenu, InfoBarEPG, InfoBarRdsDecoder, \
 				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarUnhandledKey, \
-				InfoBarAdditionalInfo, InfoBarNotifications, InfoBarDish, InfoBarSubserviceSelection, \
+				InfoBarAdditionalInfo, InfoBarDish, InfoBarSubserviceSelection, \
 				InfoBarTimeshift, InfoBarSeek, InfoBarSummarySupport, InfoBarTimeshiftState, \
-				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
-				InfoBarPlugins, InfoBarServiceErrorPopupSupport:
+				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarNotifications, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
+				InfoBarPlugins, InfoBarServiceErrorPopupSupport \
+				:
 			x.__init__(self)
 
 		self.helpList.append((self["actions"], "InfobarActions", [("showMovies", _("view recordings..."))]))
@@ -73,12 +79,13 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		self.current_begin_time=0
 		assert InfoBar.instance is None, "class InfoBar is a singleton class and just one instance of this class is allowed!"
 		InfoBar.instance = self
+		for fnc in plugins.getPlugins(PluginDescriptor.WHERE_INFOBAR):
+			fnc(session)
 
 		self.showHarddiskPopup()
 
 	def showHarddiskPopup(self, dev = None, media_state = None):
 		from Components.Harddisk import harddiskmanager
-		from Tools import Notifications
 		if not self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:
 			harddiskmanager.delayed_device_Notifier.append(self.HDDDetectedCB)
 		if config.misc.initialharddisknotification.value:
@@ -86,7 +93,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
 				Notifications.AddNotificationWithCallback(self.HDDDetectedAnswer, MessageBox, _("Unconfigured storage devices found!")  + "\n" \
 					+ _("Please make sure to set up your storage devices with the storage management in menu -> setup -> system -> storage devices.") + "\n\n" \
-					+ _("Set up your storage device now?"), type = MessageBox.TYPE_YESNO, timeout = 15, default = False)
+					+ _("Set up your storage device now?"), type = MessageBox.TYPE_YESNO, timeout = 15, default = False, domain = "InfoBar")
 				config.misc.initialharddisknotification.value = False
 				config.misc.initialharddisknotification.save()
 		elif config.misc.missingdefaultstoragenotification.value and not config.misc.initialharddisknotification.value:
@@ -101,13 +108,13 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			titletxt = _("Default storage device is not available!") + "\n"
 			if dev is None and defaultStorageDevice() != "<undefined>" and harddiskmanager.isDefaultStorageDeviceActivebyUUID(defaultStorageDevice()) is False:
 				Notifications.AddNotificationWithCallback(self.missingDefaultHDDAnswer, ChoiceBox, title = titletxt \
-					+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> storage devices.") + "\n", list = choices)			
+					+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> storage devices.") + "\n", list = choices, domain = "InfoBar")
 			elif dev is not None and defaultStorageDevice() != "<undefined>" and harddiskmanager.isDefaultStorageDeviceActivebyUUID(defaultStorageDevice()) is False:
-				part = harddiskmanager.getPartitionbyDevice(dev)				
+				part = harddiskmanager.getPartitionbyDevice(dev)
 				if part is not None and part.uuid is not None and media_state is not None and media_state == "remove_default":
 					titletxt = _("Default storage device was removed!") + "\n"
 					Notifications.AddNotificationWithCallback(self.missingDefaultHDDAnswer, ChoiceBox, title = titletxt \
-						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> storage devices.") + "\n", list = choices)			
+						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> storage devices.") + "\n", list = choices, domain = "InfoBar")
 
 	def missingDefaultHDDAnswer(self, answer):
 		answer = answer and answer[1]
@@ -119,9 +126,9 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			elif answer == "ok_setup":
 				print answer
 				from Screens.HarddiskSetup import HarddiskDriveSelection
-				self.session.open(HarddiskDriveSelection)				
+				self.session.open(HarddiskDriveSelection)
 
-	def HDDDetectedAnswer(self, answer):	
+	def HDDDetectedAnswer(self, answer):
 		if answer is not None:
 			if answer:
 				from Screens.HarddiskSetup import HarddiskDriveSelection
@@ -190,30 +197,30 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 
 class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		InfoBarMenu, \
-		InfoBarSeek, InfoBarShowMovies, InfoBarAudioSelection, HelpableScreen, InfoBarNotifications,
+		InfoBarSeek, InfoBarShowMovies, InfoBarAudioSelection, HelpableScreen,
 		InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView,
 		InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, Screen, InfoBarTeletextPlugin,
-		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarPiP):
+		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, InfoBarPlugins, InfoBarPiP):
 
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
-		
+
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
-		
+
 		self["actions"] = HelpableActionMap(self, "MoviePlayerActions",
 			{
 				"leavePlayer": (self.leavePlayer, _("leave movie player..."))
 			})
-		
+
 		self.allowPiP = False
-		
+
 		for x in HelpableScreen, InfoBarShowHide, InfoBarMenu, \
 				InfoBarBase, InfoBarSeek, InfoBarShowMovies, \
-				InfoBarAudioSelection, InfoBarNotifications, InfoBarSimpleEventView, \
+				InfoBarAudioSelection, InfoBarSimpleEventView, \
 				InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, \
 				InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, \
-				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, \
+				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, \
 				InfoBarPlugins, InfoBarPiP:
 			x.__init__(self)
 

@@ -9,7 +9,7 @@ public:
 	virtual RESULT setBufferSize(int size)=0;
 	virtual RESULT start(const eDVBSectionFilterMask &mask)=0;
 	virtual RESULT stop()=0;
-	virtual RESULT connectRead(const Slot1<void,const __u8*> &read, ePtr<eConnection> &conn)=0;
+	virtual RESULT connectRead(const sigc::slot2<void,const __u8*, int> &read, ePtr<eConnection> &conn)=0;
 	virtual ~iDVBSectionReader() { };
 };
 
@@ -19,7 +19,7 @@ public:
 	virtual RESULT setBufferSize(int size)=0;
 	virtual RESULT start(int pid)=0;
 	virtual RESULT stop()=0;
-	virtual RESULT connectRead(const Slot2<void,const __u8*, int> &read, ePtr<eConnection> &conn)=0;
+	virtual RESULT connectRead(const sigc::slot2<void,const __u8*, int> &read, ePtr<eConnection> &conn)=0;
 	virtual ~iDVBPESReader() { };
 };
 
@@ -38,7 +38,6 @@ public:
 	virtual RESULT setTargetFD(int fd) = 0;
 		/* for saving additional meta data. */
 	virtual RESULT setTargetFilename(const char *filename) = 0;
-	virtual RESULT setBoundary(off_t max) = 0;
 	
 	virtual RESULT stop() = 0;
 
@@ -53,7 +52,7 @@ public:
 				/* the programmed boundary was reached. you might set a new target fd. you can close the */
 				/* old one. */
 	};
-	virtual RESULT connectEvent(const Slot1<void,int> &event, ePtr<eConnection> &conn)=0;
+	virtual RESULT connectEvent(const sigc::slot1<void,int> &event, ePtr<eConnection> &conn)=0;
 };
 
 #endif

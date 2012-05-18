@@ -3,11 +3,10 @@ from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Components.InputDevice import iInputDevices
 from Components.Sources.StaticText import StaticText
-from Components.Sources.Boolean import Boolean
 from Components.Sources.List import List
-from Components.config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText, getConfigListEntry, ConfigNothing
+from Components.config import config, ConfigYesNo, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
-from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap
+from Components.ActionMap import ActionMap, HelpableActionMap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
 

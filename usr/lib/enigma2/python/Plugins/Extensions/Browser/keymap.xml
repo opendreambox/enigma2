@@ -1,0 +1,62 @@
+<keymap>
+	<map context="BrowserActions">
+		<!-- generic -->
+		<key id="KEY_LEFT" mapto="left" flags="mr"/>
+		<key id="KEY_RIGHT" mapto="right" flags="mr"/>
+		<key id="KEY_UP" mapto="up" flags="mr"/>
+		<key id="KEY_DOWN" mapto="down" flags="mr"/>
+		<key id="KEY_HOME" mapto="home" flags="mr"/>
+		<key id="KEY_END" mapto="end" flags="mr"/>
+		<key id="KEY_MENU" mapto="menu" flags="m" />
+
+		<!-- keyboard -->
+		<key id="KEY_ENTER" mapto="enter" flags="m"/>
+		<key id="KEY_PAGEUP" mapto="pageUp" flags="mr"/>
+		<key id="KEY_PAGEDOWN" mapto="pageDown" flags="mr"/>
+		<key id="KEY_ESC" mapto="exit" flags="m"/>
+		<!--
+		<key id="KEY_F1" mapto="url" flags="m"/>
+		<key id="KEY_F2" mapto="menu" flags="m"/>
+		<key id="KEY_F3" mapto="back" flags="m"/>
+		<key id="KEY_F4" mapto="forward" flags="m"/>
+		-->
+		<key id="KEY_F5" mapto="url" flags="m"/>
+		<key id="KEY_F6" mapto="menu" flags="m"/>
+		<key id="KEY_F7" mapto="back" flags="m"/>
+		<key id="KEY_F8" mapto="forward" flags="m"/>
+		<!-- undecided -->
+		<key id="KEY_ASCII" mapto="ascii" flags="mr"/>
+		<!--<key id="KEY_F5" mapto="reload" flags="m"/>-->
+		<key id="KEY_TAB" mapto="tab" flags="mr"/>
+		<key id="KEY_BACKSPACE" mapto="backspace" flags="mr"/>
+		<key id="KEY_DELETE" mapto="delete" flags="mr"/>
+
+		<!-- remote -->
+		<key id="KEY_OK" mapto="ok" flags="m"/>
+		<key id="KEY_CHANNELUP" mapto="pageUp" flags="mr"/>
+		<key id="KEY_CHANNELDOWN" mapto="pageDown" flags="mr"/>
+		<key id="KEY_EXIT" mapto="exit" flags="m"/>
+		<key id="KEY_PREVIOUS" mapto="backspace" flags="m"/>
+		<key id="KEY_NEXT" mapto="delete" flags="m"/>
+		<key id="KEY_INFO" mapto="url" flags="m"/>
+		<key id="KEY_TEXT" mapto="text" flags="m"/>
+		<key id="KEY_VIDEO" mapto="tab" flags="m"/>
+	</map>
+	<map context="SimpleEditorActions">
+		<key id="KEY_NEXT" mapto="delete" flags="m" />
+		<key id="KEY_PREVIOUS" mapto="backspace" flags="m" />
+		<key id="KEY_ASCII" mapto="ascii" flags="mr" />
+		<key id="KEY_BACKSPACE" mapto="backspace" flags="mr" />
+		<key id="KEY_DELETE" mapto="delete" flags="mr" />
+		<key id="KEY_LEFT" mapto="left" flags="mr" />
+		<key id="KEY_RIGHT" mapto="right" flags="mr" />
+		<key id="KEY_UP" mapto="up" flags="mr" />
+		<key id="KEY_DOWN" mapto="down" flags="mr" />
+		<key id="KEY_OK" mapto="ok" flags="m" />
+		<key id="KEY_EXIT" mapto="exit" flags="m" />
+		<key id="KEY_ESC" mapto="exit" flags="m" />
+		<key id="KEY_ASCII" mapto="ascii" flags="mr" />
+		<key id="KEY_ENTER" mapto="ok" flags="m"/>
+	</map>
+</keymap>
+

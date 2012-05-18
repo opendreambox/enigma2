@@ -232,6 +232,8 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 				}[value])
 		elif attrib == "enableWrapAround":
 			guiObject.setWrapAround(True)
+		elif attrib == "backlogMode":
+			guiObject.setBacklogMode(True)
 		elif attrib == "pointer" or attrib == "seek_pointer":
 			(name, pos) = value.split(':')
 			pos = parsePosition(pos, scale)

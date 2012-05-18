@@ -1,9 +1,9 @@
 # coding: utf-8
-from config import config, configfile, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
+from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
 
-import struct, sys, time, errno
+import struct
 from fcntl import ioctl
-from os import path as os_path, listdir, open as os_open, close as os_close, write as os_write, read as os_read, O_RDWR, O_NONBLOCK
+from os import listdir, open as os_open, close as os_close, write as os_write, O_RDWR, O_NONBLOCK
 
 # asm-generic/ioctl.h
 IOC_NRBITS = 8L

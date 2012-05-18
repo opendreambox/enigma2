@@ -8,7 +8,7 @@
 
 #define MAX_LAYER 16
 
-class eWidgetDesktop;class eWidgetDesktop;
+class eWidgetDesktop;
 
 class eWidget
 {
@@ -121,7 +121,7 @@ public:
 	void setFocus(eWidget *focus);
 
 		/* enable this if you need the absolute position of the widget */
-	void setPositionNotifyChild(int n) { m_notify_child_on_position_change = 1; }
+	void setPositionNotifyChild(int n) { m_notify_child_on_position_change = n; }
 
 	void notifyShowHide();
 };

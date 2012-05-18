@@ -1,13 +1,11 @@
 from Screen import Screen
-from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
-from Components.config import config, ConfigText, ConfigPassword, KEY_LEFT, KEY_RIGHT, KEY_HOME, KEY_END, KEY_0, KEY_DELETE, KEY_BACKSPACE, KEY_OK, KEY_TOGGLEOW, KEY_ASCII, KEY_TIMEOUT, KEY_NUMBERS
+from Components.config import ConfigText, ConfigPassword, KEY_LEFT, KEY_RIGHT, KEY_0, KEY_DELETE, KEY_BACKSPACE, KEY_ASCII
 
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from Components.Slider import Slider
 from Components.ActionMap import NumberActionMap
-from Components.MenuList import MenuList
 from Components.ConfigList import ConfigList
 from Components.Sources.List import List
 from enigma import eTimer, eEnv

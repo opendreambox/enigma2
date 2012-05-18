@@ -6,6 +6,10 @@
 #include <list>
 #include <string>
 class Event;
+
+#define MAX_LANG 37
+extern const std::string ISOtbl[MAX_LANG][2];
+
 #endif
 
 #include <lib/base/object.h>
@@ -38,7 +42,7 @@ SWIG_IGNORE(eServiceEvent);
 class eServiceEvent: public iObject
 {
 	DECLARE_REF(eServiceEvent);
-	bool loadLanguage(Event *event, std::string lang, int tsidonid);
+	bool loadLanguage(Event *event, const std::string &lang, int tsidonid);
 	std::list<eComponentData> m_component_data;
 	std::list<eServiceReference> m_linkage_services;
 	time_t m_begin;
@@ -50,8 +54,8 @@ class eServiceEvent: public iObject
 public:
 #ifndef SWIG
 	RESULT parseFrom(Event *evt, int tsidonid=0);
-	RESULT parseFrom(const std::string filename, int tsidonid=0);
-	static void setEPGLanguage( const std::string language );
+	RESULT parseFrom(const std::string &filename, int tsidonid=0);
+	static void setEPGLanguage( const std::string &language );
 #endif
 	time_t getBeginTime() const { return m_begin; }
 	int getDuration() const { return m_duration; }
@@ -67,9 +71,9 @@ public:
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eServiceEvent>, eServiceEvent);
 SWIG_EXTEND(ePtr<eServiceEvent>,
-	static void setEPGLanguage( const std::string language )
+	static void setEPGLanguage( const std::string &language )
 	{
-		extern void setServiceEventLanguage(const std::string language);
+		extern void setServiceEventLanguage(const std::string &language);
 		setServiceEventLanguage(language);
 	}
 );

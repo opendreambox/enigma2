@@ -1,6 +1,5 @@
 from Plugins.Plugin import PluginDescriptor
 from Components.Scanner import scanDevice
-from Screens.InfoBar import InfoBar
 from os import access, F_OK, R_OK
 
 def execute(option):
@@ -71,6 +70,7 @@ def menuHook(menuid):
 global_session = None
 
 def partitionListChanged(action, device):
+	from Screens.InfoBar import InfoBar
 	if InfoBar.instance:
 		if InfoBar.instance.execing:
 			if action == 'add' and device.is_hotplug:

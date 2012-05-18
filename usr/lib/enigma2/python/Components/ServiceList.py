@@ -2,7 +2,7 @@ from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 from skin import parseColor, parseFont
 
-from enigma import eListboxServiceContent, eListbox, eServiceCenter, eServiceReference, gFont, eRect
+from enigma import eListboxServiceContent, eListbox, eServiceCenter, eServiceReference, eRect
 from Tools.LoadPixmap import LoadPixmap
 
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN

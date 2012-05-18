@@ -18,7 +18,7 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.LocationBox import MovieLocationBox
 from Screens.HelpMenu import HelpableScreen
 
-from Tools.Directories import *
+from Tools.Directories import fileExists, resolveFilename, SCOPE_HDD
 from Tools.BoundFunction import boundFunction
 
 from enigma import eServiceReference, eServiceCenter, eTimer, eSize

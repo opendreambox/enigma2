@@ -8,7 +8,7 @@ from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 profile("ChannelSelection.py 1")
 from EpgSelection import EPGSelection
-from enigma import eServiceReference, eEPGCache, eServiceCenter, eRCInput, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv
+from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv
 from Components.config import config, ConfigSubsection, ConfigText
 from Tools.NumericalTextInput import NumericalTextInput
 profile("ChannelSelection.py 2")
@@ -115,7 +115,7 @@ class ChannelContextMenu(Screen):
 		current_sel_path = current.getPath()
 		current_sel_flags = current.flags
 
-		inBouquetRootList = current_root_path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
+		inBouquetRootList = current_root_path and current_root_path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
 		inBouquet = csel.getMutableList() is not None
 		haveBouquets = config.usage.multibouquet.value
 
@@ -233,7 +233,7 @@ class ChannelContextMenu(Screen):
 			self.close()
 		else:
 			self.session.openWithCallback(self.close, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
-			
+
 	def showServiceInPiP(self):
 		if not self.pipAvailable:
 			return
@@ -717,7 +717,7 @@ class ChannelSelectionEdit:
 
 	def doContext(self):
 		self.session.openWithCallback(self.exitContext, ChannelContextMenu, self)
-		
+
 	def exitContext(self, close = False):
 		if close:
 			self.cancel()
@@ -763,6 +763,7 @@ class ChannelSelectionBase(Screen):
 		self.pathChangeDisabled = False
 
 		self.bouquetNumOffsetCache = { }
+		self.onRootChanged = []
 
 		self["ChannelSelectBaseActions"] = NumberActionMap(["ChannelSelectBaseActions", "NumberActions", "InputAsciiActions"],
 			{
@@ -924,6 +925,8 @@ class ChannelSelectionBase(Screen):
 	def enterPath(self, ref, justSet=False):
 		self.servicePath.append(ref)
 		self.setRoot(ref, justSet)
+		for fnc in self.onRootChanged:
+			fnc(ref)
 
 	def pathUp(self, justSet=False):
 		prev = self.servicePath.pop()
@@ -1202,15 +1205,6 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 		self.revertMode = None
 		config.usage.multibouquet.addNotifier(self.multibouquet_config_changed)
 		self.new_service_played = False
-		self.onExecBegin.append(self.asciiOn)
-
-	def asciiOn(self):
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmAscii)
-
-	def asciiOff(self):
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmNone)
 
 	def multibouquet_config_changed(self, val):
 		self.recallBouquetMode()
@@ -1279,7 +1273,6 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 			root = self.getRoot()
 			if not root or not (root.flags & eServiceReference.isGroup):
 				self.zap()
-				self.asciiOff()
 				self.close(ref)
 
 	#called from infoBar and channelSelected
@@ -1423,7 +1416,6 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 		elif self.revertMode == MODE_RADIO:
 			self.setModeRadio()
 		self.revertMode = None
-		self.asciiOff()
 		self.close(None)
 
 class RadioInfoBar(Screen):

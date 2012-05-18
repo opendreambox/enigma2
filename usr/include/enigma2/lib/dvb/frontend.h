@@ -43,7 +43,7 @@ public:
 #include <lib/dvb/sec.h>
 class eSecCommandList;
 
-class eDVBFrontend: public iDVBFrontend, public Object
+class eDVBFrontend: public iDVBFrontend, public sigc::trackable
 {
 public:
 	enum {
@@ -130,7 +130,7 @@ public:
 	RESULT prepare_sat(const eDVBFrontendParametersSatellite &, unsigned int timeout);
 	RESULT prepare_cable(const eDVBFrontendParametersCable &);
 	RESULT prepare_terrestrial(const eDVBFrontendParametersTerrestrial &);
-	RESULT connectStateChange(const Slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection);
+	RESULT connectStateChange(const sigc::slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection);
 	RESULT getState(int &state);
 	RESULT setTone(int tone);
 	RESULT setVoltage(int voltage);

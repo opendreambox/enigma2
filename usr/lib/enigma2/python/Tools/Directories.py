@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from os import path as os_path, mkdir, rmdir, system, walk, stat as os_stat, listdir, readlink, makedirs, error as os_error, symlink, access, F_OK, R_OK, W_OK
+from os import path as os_path, mkdir, rmdir, system, walk, stat as os_stat, listdir, readlink, makedirs, symlink, access, F_OK, R_OK, W_OK
 from stat import S_IMODE
 from re import compile
 from enigma import eEnv
@@ -50,7 +50,7 @@ defaultPaths = {
 
 		SCOPE_SKIN: (eEnv.resolve("${datadir}/enigma2/"), PATH_DONTCREATE),
 		SCOPE_SKIN_IMAGE: (eEnv.resolve("${datadir}/enigma2/"), PATH_DONTCREATE),
-		SCOPE_HDD: ("/hdd/movie/", PATH_DONTCREATE),
+		SCOPE_HDD: ("/media/hdd/movie/", PATH_DONTCREATE),
 		SCOPE_MEDIA: ("/media/", PATH_DONTCREATE),
 		SCOPE_PLAYLIST: (eEnv.resolve("${sysconfdir}/enigma2/playlist/"), PATH_CREATE),
 		
@@ -69,7 +69,7 @@ PATH_MOVE = 3 # move the fallback dir to the basedir (can be used for changes in
 fallbackPaths = {
 		SCOPE_CONFIG: [("/home/root/", FILE_MOVE),
 					   (eEnv.resolve("${datadir}/enigma2/defaults/"), FILE_COPY)],
-		SCOPE_HDD: [("/hdd/movies", PATH_MOVE)]
+		SCOPE_HDD: [("/media/hdd/movies", PATH_MOVE)]
 	}
 
 def resolveFilename(scope, base = "", path_prefix = None):

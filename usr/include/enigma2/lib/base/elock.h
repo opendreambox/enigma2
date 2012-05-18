@@ -7,12 +7,12 @@ class singleLock
 {
 	pthread_mutex_t &lock;
 public:
-	singleLock(pthread_mutex_t &m )
+	singleLock(pthread_mutex_t &m ) __attribute__ ((always_inline))
 		:lock(m)
 	{
 		pthread_mutex_lock(&lock);
 	}
-	~singleLock()
+	~singleLock() __attribute__ ((always_inline))
 	{
 		pthread_mutex_unlock(&lock);
 	}
@@ -25,23 +25,23 @@ class eRdWrLock
 	pthread_rwlock_t m_lock;
 	eRdWrLock(eRdWrLock &);
 public:
-	eRdWrLock()
+	eRdWrLock() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_init(&m_lock, 0);
 	}
-	~eRdWrLock()
+	~eRdWrLock() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_destroy(&m_lock);
 	}
-	void RdLock()
+	void RdLock() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_rdlock(&m_lock);
 	}
-	void WrLock()
+	void WrLock() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_wrlock(&m_lock);
 	}
-	void Unlock()
+	void Unlock() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_unlock(&m_lock);
 	}
@@ -51,12 +51,12 @@ class eRdLocker
 {
 	eRdWrLock &m_lock;
 public:
-	eRdLocker(eRdWrLock &m)
+	eRdLocker(eRdWrLock &m) __attribute__ ((always_inline))
 		: m_lock(m)
 	{
 		pthread_rwlock_rdlock(&m_lock.m_lock);
 	}
-	~eRdLocker()
+	~eRdLocker() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_unlock(&m_lock.m_lock);
 	}
@@ -66,20 +66,20 @@ class eWrLocker
 {
 	eRdWrLock &m_lock;
 public:
-	eWrLocker(eRdWrLock &m)
+	eWrLocker(eRdWrLock &m) __attribute__ ((always_inline))
 		: m_lock(m)
 	{
 		pthread_rwlock_wrlock(&m_lock.m_lock);
 	}
-	~eWrLocker()
+	~eWrLocker() __attribute__ ((always_inline))
 	{
 		pthread_rwlock_unlock(&m_lock.m_lock);
 	}
 };
 
+/* FIXME: rename to eMutex */
 class eSingleLock
 {
-	friend class eSingleLocker;
 	pthread_mutex_t m_lock;
 	eSingleLock(eSingleLock &);
 public:
@@ -96,9 +96,22 @@ public:
 		else
 			pthread_mutex_init(&m_lock, 0);
 	}
-	~eSingleLock()
+	~eSingleLock() __attribute__ ((always_inline))
 	{
 		pthread_mutex_destroy(&m_lock);
+	}
+
+	void lock() __attribute__ ((always_inline))
+	{
+		pthread_mutex_lock(&m_lock);
+	}
+	bool tryLock() __attribute__ ((always_inline))
+	{
+		return pthread_mutex_trylock(&m_lock) == 0;
+	}
+	void unlock() __attribute__ ((always_inline))
+	{
+		pthread_mutex_unlock(&m_lock);
 	}
 };
 
@@ -106,14 +119,14 @@ class eSingleLocker
 {
 	eSingleLock &m_lock;
 public:
-	eSingleLocker(eSingleLock &m)
+	eSingleLocker(eSingleLock &m) __attribute__ ((always_inline))
 		: m_lock(m)
 	{
-		pthread_mutex_lock(&m_lock.m_lock);
+		m_lock.lock();
 	}
-	~eSingleLocker()
+	~eSingleLocker() __attribute__ ((always_inline))
 	{
-		pthread_mutex_unlock(&m_lock.m_lock);
+		m_lock.unlock();
 	}
 };
 
@@ -122,7 +135,6 @@ class eLock
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 
-	int pid;
 	int counter, max;
 public:
 	void lock(int res=100);

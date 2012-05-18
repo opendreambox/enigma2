@@ -11,19 +11,16 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.List import List
 from Components.Label import Label
 from Components.FileList import FileList
-from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText
 from Components.ScrollLabel import ScrollLabel
 from Components.Harddisk import harddiskmanager
 from Components.Task import Task, Job, job_manager, Condition
-from Tools.Directories import fileExists, isMount, resolveFilename, SCOPE_HDD, SCOPE_MEDIA
+from Tools.Directories import isMount, resolveFilename, SCOPE_HDD, SCOPE_MEDIA
 from Tools.HardwareInfo import HardwareInfo
 from Tools.Downloader import downloadWithProgress
 from enigma import eConsoleAppContainer, gFont, RT_HALIGN_LEFT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_WRAP, eTimer
-from os import system, path, access, stat, remove, W_OK, R_OK
+from os import system, access, R_OK
 from twisted.web import client
-from twisted.internet import reactor, defer
-from twisted.python import failure
 import re
 
 class ImageDownloadJob(Job):

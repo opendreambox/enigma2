@@ -13,7 +13,6 @@ class eInit
 	friend class eAutoInit;
 	static int rl;
 public:
-	eInit();
 	~eInit();
 	static void setRunlevel(int rlev);
 	static void add(int trl, eAutoInit *c);

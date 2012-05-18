@@ -6,8 +6,8 @@
 		menutemplate="Thumbs_menu_clouds.ddvdm.xml"
 		titlesetmode="multi"
 		vmgm="vmgmdream.mpg"
-		output="dvd"
-		isopath="/hdd/movie/"
+		output="medium"
+		isopath="/media/hdd/movie/"
 		dataformat="iso9660_4"
 	/>
 	<titles> </titles>

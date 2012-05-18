@@ -4,7 +4,7 @@ from Screens.ScanSetup import DefaultSatLists
 from Screens.DefaultWizard import DefaultWizard
 from Screens.Rc import Rc
 
-from Components.Pixmap import Pixmap, MovingPixmap, MultiPixmap
+from Components.Pixmap import Pixmap
 from Components.config import config, ConfigBoolean, configfile, ConfigSubsection
 
 from LanguageSelection import LanguageWizard

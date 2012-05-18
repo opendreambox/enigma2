@@ -9,6 +9,7 @@ from Components.config import config, ConfigYesNo, ConfigSelection, ConfigSubsec
 from Screens.MessageBox import MessageBox
 import Screens.Standby
 
+Notifications.notificationQueue.registerDomain("SleepTimer", _("Sleep Timer"), Notifications.ICON_TIMER)
 config.SleepTimer = ConfigSubsection()
 config.SleepTimer.ask = ConfigYesNo(default = True)
 config.SleepTimer.action = ConfigSelection(default = "shutdown", choices = [("shutdown", _("shutdown")), ("standby", _("standby"))])
@@ -26,12 +27,12 @@ class SleepTimerEntry(timer.TimerEntry):
 		if self.state == self.StateRunning:
 			if config.SleepTimer.action.value == "shutdown":
 				if config.SleepTimer.ask.value and not Screens.Standby.inTryQuitMainloop:
-					Notifications.AddNotificationWithCallback(self.shutdown, MessageBox, _("A sleep timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20)
+					Notifications.AddNotificationWithCallback(self.shutdown, MessageBox, _("A sleep timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20, domain="SleepTimer")
 				else:
 					self.shutdown(True)
 			elif config.SleepTimer.action.value == "standby":
 				if config.SleepTimer.ask.value and not Screens.Standby.inStandby:
-					Notifications.AddNotificationWithCallback(self.standby, MessageBox, _("A sleep timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20)
+					Notifications.AddNotificationWithCallback(self.standby, MessageBox, _("A sleep timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20, domain="SleepTimer")
 				else:
 					self.standby(True)
 
@@ -43,12 +44,12 @@ class SleepTimerEntry(timer.TimerEntry):
 	def shutdown(self, answer):
 		if answer is not None:
 			if answer and not Screens.Standby.inTryQuitMainloop:
-				Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1)
+				Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, domain="SleepTimer")
 
 	def standby(self, answer):
 		if answer is not None:
 			if answer and not Screens.Standby.inStandby:
-				Notifications.AddNotification(Screens.Standby.Standby)
+				Notifications.AddNotification(Screens.Standby.Standby, domain="SleepTimer")
 
 class SleepTimer(timer.Timer):
 	def __init__(self):

@@ -15,11 +15,11 @@ from Screens.MovieSelection import getPreferredTagEditor
 from Screens.LocationBox import MovieLocationBox
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
+from Tools.BoundFunction import boundFunction
 from RecordTimer import AFTEREVENT
-from enigma import eEPGCache, eServiceReference
+from enigma import eEPGCache
 from time import localtime, mktime, time, strftime
 from datetime import datetime
-from os import path
 
 class TimerEntry(Screen, ConfigListScreen):
 	def __init__(self, session, timer):
@@ -143,6 +143,38 @@ class TimerEntry(Screen, ConfigListScreen):
 			self.timerentry_service_ref = self.timer.service_ref
 			self.timerentry_service = ConfigSelection([servicename])
 
+			self.timerentry_plugins = {}
+			if config.usage.setup_level.index >= 2:
+				from Plugins.Plugin import PluginDescriptor
+				from Components.PluginComponent import plugins
+				missing = self.timer.plugins.keys()
+				for p in plugins.getPlugins(PluginDescriptor.WHERE_TIMEREDIT):
+					if p.__call__.has_key("setupFnc"):
+						setupFnc = p.__call__["setupFnc"]
+						if setupFnc is not None:
+							if p.__call__.has_key("configListEntry"):
+								entry = p.__call__["configListEntry"]
+								pdata = None
+								if p.name in self.timer.plugins:
+									pval = self.timer.plugins[p.name][0]
+									pdata = self.timer.plugins[p.name][1]
+									try:
+										if isinstance(entry[1].value, bool):
+											entry[1].value = (pval == "True")
+										elif isinstance(entry[1].value, str):
+											entry[1].value = str(pval)
+										elif isinstance(entry[1].value, int):
+											entry[1].value = int(pval)
+									except ValueError:
+										print "could not get config_val", pval, type(pval), "for WHERE_TIMEREDIT plugin:", p.name
+										break
+
+								self.timerentry_plugins[entry] = [p.name, setupFnc, pdata] # [plugin name, function call for plugin setup, plugin private data]
+								if p.name in missing:
+									missing.remove(p.name)
+				if len(missing):
+					print "could not setup WHERE_TIMEREDIT plugin(s):", missing
+
 	def createSetup(self, widget):
 		self.list = []
 		self.list.append(getConfigListEntry(_("Name"), self.timerentry_name))
@@ -201,6 +233,9 @@ class TimerEntry(Screen, ConfigListScreen):
 				self.list.append(self.tagsSet)
 			self.list.append(getConfigListEntry(_("After event"), self.timerentry_afterevent))
 
+		for entry in self.timerentry_plugins.keys():
+			self.list.append(entry)
+
 		self[widget].list = self.list
 		self[widget].l.setList(self.list)
 
@@ -245,8 +280,21 @@ class TimerEntry(Screen, ConfigListScreen):
 				getPreferredTagEditor(),
 				self.timerentry_tags
 			)
+		elif config.usage.setup_level.index >= 2 and cur in self.timerentry_plugins.keys():
+			self.getConfigListValues()
+			setupFnc = self.timerentry_plugins[cur][1]
+			configentry = cur[1]
+			private_data = self.timerentry_plugins[cur][2]
+			print "calling setupFnc of WHERE_TIMEREDIT plugin:", cur[0], setupFnc, configentry, private_data, self.timer.name
+			self.session.openWithCallback(boundFunction(self.pluginFinished, cur), setupFnc , configentry, private_data, self.timer)
 		else:
 			self.keyGo()
+
+	def pluginFinished(self, entry, ret=""):
+		print "[pluginFinished]", entry, ret
+		self.timerentry_plugins[entry][2] = ret
+		self["config"].invalidate(entry)
+		print "plugin private data", self.timerentry_plugins[entry][2]
 
 	def finishedChannelSelection(self, *args):
 		if args:
@@ -284,7 +332,7 @@ class TimerEntry(Screen, ConfigListScreen):
 			self.finishedChannelSelection(*args)
 			self.keyGo()
 
-	def keyGo(self, result = None):
+	def getConfigListValues(self):
 		if not self.timerentry_service_ref.isRecordable():
 			self.session.openWithCallback(self.selectChannelSelector, MessageBox, _("You didn't select a channel to record from."), MessageBox.TYPE_ERROR)
 			return
@@ -314,7 +362,6 @@ class TimerEntry(Screen, ConfigListScreen):
 		if self.timerentry_justplay.value == "zap":
 			if not self.timerentry_showendtime.value:
 				self.timerentry_endtime.value = self.timerentry_starttime.value
-		
 
 		self.timer.resetRepeated()
 		self.timer.afterEvent = {
@@ -362,6 +409,8 @@ class TimerEntry(Screen, ConfigListScreen):
 			if self.timer.end < self.timer.begin:
 				self.timer.end += 86400
 
+	def keyGo(self, result = None):
+		self.getConfigListValues()
 		if self.timer.eit is not None:
 			event = eEPGCache.getInstance().lookupEventId(self.timer.service_ref.ref, self.timer.eit)
 			if event:
@@ -381,6 +430,13 @@ class TimerEntry(Screen, ConfigListScreen):
 				elif n > 0:
 					parent = self.timer.service_ref.ref
 					self.timer.service_ref = ServiceReference(event.getLinkageService(parent, 0))
+		
+		if self.timerentry_plugins:
+			self.timer.plugins = {}
+			for key, val in self.timerentry_plugins.iteritems():
+				self.timer.plugins[val[0]] = (str(key[1].value),str(val[2]))
+				print "timerentry self.timer.plugins", self.timer.plugins
+		
 		self.saveTimer()
 		self.close((True, self.timer))
 

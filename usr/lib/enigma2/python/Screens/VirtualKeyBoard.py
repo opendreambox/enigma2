@@ -5,7 +5,6 @@ from Components.Language import language
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.Label import Label
-from Components.Pixmap import Pixmap
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN

@@ -1,4 +1,4 @@
-from Wizard import Wizard, wizardManager
+from Wizard import Wizard
 
 from Components.config import ConfigBoolean, config
 from Components.Pixmap import MovingPixmap

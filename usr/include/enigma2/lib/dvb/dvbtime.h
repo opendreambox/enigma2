@@ -32,7 +32,7 @@ class TDT: public eGTable
 	eDVBChannel *chan;
 	ePtr<iDVBDemux> demux;
 	ePtr<eTimer> m_interval_timer;
-	int createTable(unsigned int nr, const __u8 *data, unsigned int max);
+	int createTable(unsigned int nr, const __u8 *data, int len, unsigned int max);
 	void ready(int);
 	int update_count;
 public:
@@ -44,7 +44,7 @@ public:
 
 #endif  // SWIG
 
-class eDVBLocalTimeHandler: public Object
+class eDVBLocalTimeHandler: public sigc::trackable
 {
 	DECLARE_REF(eDVBLocalTimeHandler);
 	struct channel_data

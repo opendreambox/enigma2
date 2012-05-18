@@ -1,20 +1,12 @@
 from Screens.Screen import Screen
-from Screens.ChoiceBox import ChoiceBox
-from Screens.InputBox import InputBox
-from Screens.MessageBox import MessageBox
-from Screens.HelpMenu import HelpableScreen
-from Components.ActionMap import HelpableActionMap, ActionMap
-from Components.Sources.List import List
+from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
-from Components.Sources.Progress import Progress
-from Components.FileList import FileList
 from Components.Pixmap import Pixmap
 from enigma import ePicLoad
-from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_FONTS, SCOPE_HDD
-from Components.config import config, getConfigListEntry, ConfigInteger, ConfigSubsection, ConfigSelection
+from Components.config import config, getConfigListEntry, ConfigInteger
 from Components.ConfigList import ConfigListScreen
 from Components.AVSwitch import AVSwitch
-import DVDTitle
+import Title
 
 class TitleProperties(Screen,ConfigListScreen):
 	skin = """
@@ -50,7 +42,7 @@ class TitleProperties(Screen,ConfigListScreen):
 
 		self.properties = project.titles[title_idx].properties
 		ConfigListScreen.__init__(self, [])
-		self.properties.crop = DVDTitle.ConfigFixedText("crop")
+		self.properties.crop = Title.ConfigFixedText("crop")
 		self.properties.autochapter.addNotifier(self.initConfigList)
 		self.properties.aspect.addNotifier(self.initConfigList)
 		for audiotrack in self.properties.audiotracks:
@@ -149,45 +141,3 @@ class TitleProperties(Screen,ConfigListScreen):
 
 	def cancel(self):
 		self.close()
-
-from Tools.ISO639 import LanguageCodes
-class LanguageChoices():
-	def __init__(self):
-		from Components.Language import language as syslanguage
-		syslang = syslanguage.getLanguage()[:2]
-		self.langdict = { }
-		self.choices = []
-		for key, val in LanguageCodes.iteritems():
-			if len(key) == 2:
-				self.langdict[key] = val[0]
-		for key, val in self.langdict.iteritems():
-			if key not in (syslang, 'en'):
-				self.langdict[key] = val
-				self.choices.append((key, val))
-		self.choices.sort()
-		self.choices.insert(0,("nolang", ("unspecified")))
-		self.choices.insert(1,(syslang, self.langdict[syslang]))
-		if syslang != "en":
-			self.choices.insert(2,("en", self.langdict["en"]))
-
-	def getLanguage(self, DVB_lang):
-		DVB_lang = DVB_lang.lower()
-		for word in ("stereo", "audio", "description", "2ch", "dolby digital"):
-			DVB_lang = DVB_lang.replace(word,"").strip()
-		for key, val in LanguageCodes.iteritems():
-			if DVB_lang.find(key.lower()) == 0:
-				if len(key) == 2:
-					return key
-				else:
-					DVB_lang = (LanguageCodes[key])[0]
-			elif DVB_lang.find(val[0].lower()) > -1:
-				if len(key) == 2:
-					return key
-				else:
-					DVB_lang = (LanguageCodes[key])[0]
-		for key, val in self.langdict.iteritems():
-			if val == DVB_lang:
-				return key
-		return "nolang"
-
-languageChoices = LanguageChoices()

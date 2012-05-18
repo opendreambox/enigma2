@@ -5,6 +5,10 @@
 #include <lib/gdi/erect.h>
 #include <vector>
 
+#if defined(HAVE_QT) && !defined(SWIG)
+class QRegion;
+#endif
+
 class gRegion
 {
 private:
@@ -76,6 +80,12 @@ public:
 	gRegion(const eRect &rect);
 	gRegion();
 	virtual ~gRegion();
+
+#if defined(HAVE_QT) && !defined(SWIG)
+	gRegion(const QRect &r);
+	gRegion(const QRegion &r);
+	operator QRegion();
+#endif
 
 	gRegion operator&(const gRegion &r2) const;
 	gRegion operator-(const gRegion &r2) const;

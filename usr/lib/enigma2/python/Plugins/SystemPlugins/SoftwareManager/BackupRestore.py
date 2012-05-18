@@ -2,19 +2,14 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.Console import Console
 from Components.ActionMap import ActionMap, NumberActionMap
-from Components.Pixmap import Pixmap
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from Components.MenuList import MenuList
-from Components.config import getConfigListEntry, configfile, ConfigSelection, ConfigSubsection, ConfigText, ConfigLocations
-from Components.config import config
-from Components.ConfigList import ConfigList,ConfigListScreen
+from Components.config import config, configfile, ConfigSubsection, ConfigText, ConfigLocations
+from Components.ConfigList import ConfigListScreen
 from Components.FileList import MultiFileSelectList
-from Plugins.Plugin import PluginDescriptor
-from enigma import eTimer, eEnv
-from Tools.Directories import *
-from os import popen, path, makedirs, listdir, access, stat, rename, remove, W_OK, R_OK
-from time import gmtime, strftime, localtime
+from enigma import eEnv
+from os import path, makedirs, listdir, stat, rename, remove
 from datetime import date
 
 config.plugins.configurationbackup = ConfigSubsection()

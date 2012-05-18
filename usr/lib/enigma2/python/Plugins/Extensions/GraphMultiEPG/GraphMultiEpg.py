@@ -8,7 +8,6 @@ from Components.GUIComponent import GUIComponent
 from Components.EpgList import Rect
 from Components.Sources.Event import Event
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
-from Components.TimerList import TimerList
 from Screens.Screen import Screen
 from Screens.EventView import EventViewSimple
 from Screens.TimeDateInput import TimeDateInput

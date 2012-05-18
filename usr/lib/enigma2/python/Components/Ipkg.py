@@ -1,5 +1,4 @@
 from enigma import eConsoleAppContainer
-from Tools.Directories import fileExists
 
 class IpkgComponent:
 	EVENT_INSTALL = 0
@@ -41,13 +40,15 @@ class IpkgComponent:
 			self.runCmd("update")
 		elif cmd == self.CMD_UPGRADE:
 			append = ""
+			if args["use_maintainer"]:
+				append += " --force-maintainer"
 			if args["test_only"]:
-				append = " -test"
+				append += " -test"
 			self.runCmd("upgrade" + append)
 		elif cmd == self.CMD_LIST:
 			self.fetchedList = []
 			if args['installed_only']:
-				self.runCmd("list_installed")
+				self.runCmd("list-installed")
 			else:
 				self.runCmd("list")
 		elif cmd == self.CMD_INSTALL:

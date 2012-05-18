@@ -20,6 +20,7 @@ class Listbox(Renderer, object):
 		self.__wrap_around = False
 		self.__selection_enabled = True
 		self.__scrollbarMode = "showOnDemand"
+		self.__backlogMode = False
 
 	GUI_WIDGET = eListbox
 
@@ -44,6 +45,7 @@ class Listbox(Renderer, object):
 				self.__scrollbarMode = value
 				break
 		self.scrollbarMode = self.scrollbarMode # trigger
+		self.backlogMode = self.backlogMode # trigger
 
 	def preWidgetRemove(self, instance):
 		instance.setContent(None)
@@ -55,6 +57,13 @@ class Listbox(Renderer, object):
 			self.instance.setWrapAround(self.__wrap_around)
 
 	wrap_around = property(lambda self: self.__wrap_around, setWrapAround)
+
+	def setBacklogMode(self, mode):
+		self.__backlogMode = mode
+		if self.instance is not None:
+			self.instance.setBacklogMode(self.__backlogMode)
+
+	backlogMode = property(lambda self: self.__backlogMode, setBacklogMode)
 
 	def selectionChanged(self):
 		self.source.selectionChanged(self.index)
@@ -98,6 +107,8 @@ class Listbox(Renderer, object):
 			self.selection_enabled = self.source.selectionEnabled
 		if hasattr(self.source, "scrollbarMode"):
 			self.scrollbarMode = self.source.scrollbarMode
+		if hasattr(self.source, "backlogMode"):
+			self.backlogMode = self.source.backlogMode
 		if len(what) > 1 and isinstance(what[1], str) and what[1] == "style":
 			return
 		self.content = self.source.content

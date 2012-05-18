@@ -2,7 +2,7 @@ from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 from config import KEY_LEFT, KEY_RIGHT, KEY_HOME, KEY_END, KEY_0, KEY_DELETE, KEY_BACKSPACE, KEY_OK, KEY_TOGGLEOW, KEY_ASCII, KEY_TIMEOUT, KEY_NUMBERS, ConfigElement, ConfigText, ConfigPassword
 from Components.ActionMap import NumberActionMap, ActionMap
-from enigma import eListbox, eListboxPythonConfigContent, eRCInput, eTimer
+from enigma import eListbox, eListboxPythonConfigContent, eTimer
 from Screens.MessageBox import MessageBox
 
 class ConfigList(HTMLComponent, GUIComponent, object):
@@ -17,13 +17,9 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		self.session = session
 
 	def execBegin(self):
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmAscii)
 		self.timer.callback.append(self.timeout)
 
 	def execEnd(self):
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmNone)
 		self.timer.callback.remove(self.timeout)
 
 	def toggle(self):

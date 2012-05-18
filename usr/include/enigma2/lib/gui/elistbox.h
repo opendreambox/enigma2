@@ -2,7 +2,7 @@
 #define __lib_listbox_h
 
 #include <lib/gui/ewidget.h>
-#include <connection.h>
+#include <lib/base/connection.h>
 
 class eListbox;
 class eSlider;
@@ -93,6 +93,7 @@ public:
 	};
 	void setScrollbarMode(int mode);
 	void setWrapAround(bool);
+	void setBacklogMode(bool);
 
 	void setContent(iListboxContent *content);
 
@@ -153,6 +154,7 @@ private:
 	int m_scrollbar_mode, m_prev_scrollbar_page;
 	bool m_content_changed;
 	bool m_enabled_wrap_around;
+	bool m_backlog_mode;
 
 	int m_top, m_selected;
 	int m_itemheight;

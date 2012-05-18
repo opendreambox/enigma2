@@ -26,8 +26,8 @@ public:
 	eServiceCenter();
 	virtual ~eServiceCenter();
 
-	int getServiceTypeForExtension(const char *str);
-	int getServiceTypeForExtension(const std::string &str);
+	int getServiceTypeForExtension(const char *str) const;
+	int getServiceTypeForExtension(const std::string &str) const;
 
 		// iServiceHandler
 	RESULT play(const eServiceReference &, ePtr<iPlayableService> &ptr);

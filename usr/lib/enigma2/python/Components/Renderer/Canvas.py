@@ -1,6 +1,6 @@
 from Renderer import Renderer
 
-from enigma import eCanvas, eRect, gRGB, ePoint, eSize
+from enigma import eCanvas, eRect, gRGB, eSize
 from Components.AVSwitch import AVSwitch
 
 class Canvas(Renderer):

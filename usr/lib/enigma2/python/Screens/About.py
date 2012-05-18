@@ -1,10 +1,10 @@
 from Screen import Screen
+from Components.About import about
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.Harddisk import harddiskmanager
 from Components.NimManager import nimmanager
-from Components.About import about
-
+from Components.ResourceManager import resourcemanager
 from Tools.DreamboxHardware import getFPVersion
 
 class About(Screen):
@@ -39,7 +39,20 @@ class About(Screen):
 		else:
 			self["hddA"] = StaticText(_("none"))
 
-		self["actions"] = ActionMap(["SetupActions", "ColorActions"], 
+		self["IPHeader"] = StaticText(_("Current IP Address:"))
+		iNetwork = resourcemanager.getResource("iNetwork")
+		ifaces = iNetwork.getConfiguredAdapters()
+		convertIP = lambda l: "%s.%s.%s.%s" % tuple(l) if l and len(l) == 4 else "0.0.0.0"
+		ipA = _("none")
+		if len(ifaces) > 0:
+			iface = ifaces[0]
+			ip = iNetwork.getAdapterAttribute(iface, "ip")
+			name = iNetwork.getFriendlyAdapterName(iface)
+			if ip != None:
+				ipA = "%s (%s)" %(convertIP(ip), name)
+		self["ipA"] = StaticText(ipA)
+
+		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
 				"cancel": self.close,
 				"ok": self.close,
@@ -78,7 +91,7 @@ class TranslationInfo(Screen):
 
 		self["TranslatorName"] = StaticText(translator_name)
 
-		self["actions"] = ActionMap(["SetupActions"], 
+		self["actions"] = ActionMap(["SetupActions"],
 			{
 				"cancel": self.close,
 				"ok": self.close,

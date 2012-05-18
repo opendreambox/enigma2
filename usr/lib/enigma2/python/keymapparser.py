@@ -14,6 +14,7 @@ class KeymapError(Exception):
         return self.msg
 
 def parseKeys(context, filename, actionmap, device, keys):
+	devices = filter(None, map(lambda x: x.strip(), device.split(";")))
 	for x in keys.findall("key"):
 		get_attr = x.attrib.get
 		mapto = get_attr("mapto")
@@ -42,8 +43,8 @@ def parseKeys(context, filename, actionmap, device, keys):
 				keyid = KEYIDS[id]
 			except:
 				raise KeymapError("key id '" + str(id) + "' is illegal")
-#				print context + "::" + mapto + " -> " + device + "." + hex(keyid)
-		actionmap.bindKey(filename, device, keyid, flags, context, mapto)
+		for device in devices:
+			actionmap.bindKey(filename, device, keyid, flags, context, mapto)
 		addKeyBinding(filename, keyid, context, mapto, flags)
 
 def readKeymap(filename):

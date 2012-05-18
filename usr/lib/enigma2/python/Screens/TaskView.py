@@ -1,6 +1,6 @@
 from Screen import Screen
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, ConfigSubsection, ConfigSelection, getConfigListEntry
+from Components.config import ConfigSubsection, ConfigSelection, getConfigListEntry
 from Components.SystemInfo import SystemInfo
 from Components.Task import job_manager
 from InfoBarGenerics import InfoBarNotifications
@@ -126,21 +126,23 @@ class JobView(InfoBarNotifications, Screen, ConfigListScreen):
 		from Screens.MessageBox import MessageBox
 		if self.settings.afterEvent.getValue() == "deepstandby":
 			if not Screens.Standby.inTryQuitMainloop:
-				Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A sleep timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20)
+				Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A sleep timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20, domain = "JobManager")
 		elif self.settings.afterEvent.getValue() == "standby":
 			if not Screens.Standby.inStandby:
-				Notifications.AddNotificationWithCallback(self.sendStandbyNotification, MessageBox, _("A sleep timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20)
+				Notifications.AddNotificationWithCallback(self.sendStandbyNotification, MessageBox, _("A sleep timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20, domain = "JobManager")
 
 	def checkNotifications(self):
 		InfoBarNotifications.checkNotifications(self)
-		if Notifications.notifications == []:
-			if self.settings.afterEvent.getValue() == "close" and self.job.status == self.job.FAILED:
-				self.close(False)
+		pending = Notifications.notificationQueue.getPending("JobMananger")
+		if pending:
+			print "[JobView] have pending JobMananger Notification(s):", pending
+		elif self.settings.afterEvent.getValue() == "close" and self.job.status == self.job.FAILED:
+			self.close(False)
 		
 	def sendStandbyNotification(self, answer):
 		if answer:
-			Notifications.AddNotification(Screens.Standby.Standby)
+			Notifications.AddNotification(Screens.Standby.Standby, domain = "JobManager")
 
 	def sendTryQuitMainloopNotification(self, answer):
 		if answer:
-			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1)
+			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, domain = "JobManager")

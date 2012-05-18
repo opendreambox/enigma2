@@ -8,7 +8,6 @@ from Components.ConfigList import ConfigListScreen
 from Components.NimManager import nimmanager, getConfigSatlist
 from Components.Label import Label
 from Tools.Directories import resolveFilename, SCOPE_DEFAULTPARTITIONMOUNTDIR, SCOPE_DEFAULTDIR, SCOPE_DEFAULTPARTITION
-from Tools.HardwareInfo import HardwareInfo
 from Tools.Transponder import ConvertToHumanReadable
 from Screens.MessageBox import MessageBox
 from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, \
@@ -136,7 +135,7 @@ class CableTransponderSearchSupport:
 
 	def getCableTransponderData(self, str):
 		data = str.split()
-		if len(data):
+		if len(data) and data[0] in ("OK", "FAILED"):
 			if data[0] == 'OK':
 				print str
 				parm = eDVBFrontendParametersCable()
@@ -162,11 +161,17 @@ class CableTransponderSearchSupport:
 				parm.modulation = qam[data[4]]
 				parm.inversion = inv[data[5]]
 				self.__tlist.append(parm)
+				status = _("OK")
+			else:
+				status = _("No signal")
+
 			tmpstr = _("Try to find used Transponders in cable network.. please wait...")
 			tmpstr += "\n\n"
 			tmpstr += data[1]
-			tmpstr += " kHz "
-			tmpstr += data[0]
+			tmpstr += " "
+			tmpstr += _("kHz")
+			tmpstr += " - "
+			tmpstr += status
 			self.cable_search_session["text"].setText(tmpstr)
 
 	def startCableTransponderSearch(self, nim_idx):
@@ -185,75 +190,147 @@ class CableTransponderSearchSupport:
 		self.cable_search_container.dataAvail.append(self.getCableTransponderData)
 		cableConfig = config.Nims[nim_idx].cable
 		tunername = nimmanager.getNimName(nim_idx)
+
+		cableScanHelpers = {
+			'CXD1981': 'cxd1978',
+			'Philips CU1216Mk3': 'tda1002x',
+		}
+
 		bus = nimmanager.getI2CDevice(nim_idx)
-		if bus is None:
-			print "ERROR: could not get I2C device for nim", nim_idx, "for cable transponder search"
-			bus = 2
-
-		if tunername == "CXD1981":
-			cmd = "cxd1978 --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
-		else:
-			cmd = "tda1002x --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
+		if bus and cableScanHelpers.has_key(tunername):
+			cmd = cableScanHelpers[tunername]
+			cmd += " --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
 		
-		if cableConfig.scan_type.value == "bands":
-			cmd += " --scan-bands "
-			bands = 0
-			if cableConfig.scan_band_EU_VHF_I.value:
-				bands |= cable_bands["DVBC_BAND_EU_VHF_I"]
-			if cableConfig.scan_band_EU_MID.value:
-				bands |= cable_bands["DVBC_BAND_EU_MID"]
-			if cableConfig.scan_band_EU_VHF_III.value:
-				bands |= cable_bands["DVBC_BAND_EU_VHF_III"]
-			if cableConfig.scan_band_EU_UHF_IV.value:
-				bands |= cable_bands["DVBC_BAND_EU_UHF_IV"]
-			if cableConfig.scan_band_EU_UHF_V.value:
-				bands |= cable_bands["DVBC_BAND_EU_UHF_V"]
-			if cableConfig.scan_band_EU_SUPER.value:
-				bands |= cable_bands["DVBC_BAND_EU_SUPER"]
-			if cableConfig.scan_band_EU_HYPER.value:
-				bands |= cable_bands["DVBC_BAND_EU_HYPER"]
-			if cableConfig.scan_band_US_LOW.value:
-				bands |= cable_bands["DVBC_BAND_US_LO"]
-			if cableConfig.scan_band_US_MID.value:
-				bands |= cable_bands["DVBC_BAND_US_MID"]
-			if cableConfig.scan_band_US_HIGH.value:
-				bands |= cable_bands["DVBC_BAND_US_HI"]
-			if cableConfig.scan_band_US_SUPER.value:
-				bands |= cable_bands["DVBC_BAND_US_SUPER"]
-			if cableConfig.scan_band_US_HYPER.value:
-				bands |= cable_bands["DVBC_BAND_US_HYPER"]
-			cmd += str(bands)
-		else:
-			cmd += " --scan-stepsize "
-			cmd += str(cableConfig.scan_frequency_steps.value)
-		if cableConfig.scan_mod_qam16.value:
-			cmd += " --mod 16"
-		if cableConfig.scan_mod_qam32.value:
-			cmd += " --mod 32"
-		if cableConfig.scan_mod_qam64.value:
-			cmd += " --mod 64"
-		if cableConfig.scan_mod_qam128.value:
-			cmd += " --mod 128"
-		if cableConfig.scan_mod_qam256.value:
-			cmd += " --mod 256"
-		if cableConfig.scan_sr_6900.value:
-			cmd += " --sr 6900000"
-		if cableConfig.scan_sr_6875.value:
-			cmd += " --sr 6875000"
-		if cableConfig.scan_sr_ext1.value > 450:
-			cmd += " --sr "
-			cmd += str(cableConfig.scan_sr_ext1.value)
-			cmd += "000"
-		if cableConfig.scan_sr_ext2.value > 450:
-			cmd += " --sr "
-			cmd += str(cableConfig.scan_sr_ext2.value)
-			cmd += "000"
-		print "TDA1002x CMD is", cmd
+			if cableConfig.scan_type.value == "bands":
+				cmd += " --scan-bands "
+				bands = 0
+				if cableConfig.scan_band_EU_VHF_I.value:
+					bands |= cable_bands["DVBC_BAND_EU_VHF_I"]
+				if cableConfig.scan_band_EU_MID.value:
+					bands |= cable_bands["DVBC_BAND_EU_MID"]
+				if cableConfig.scan_band_EU_VHF_III.value:
+					bands |= cable_bands["DVBC_BAND_EU_VHF_III"]
+				if cableConfig.scan_band_EU_UHF_IV.value:
+					bands |= cable_bands["DVBC_BAND_EU_UHF_IV"]
+				if cableConfig.scan_band_EU_UHF_V.value:
+					bands |= cable_bands["DVBC_BAND_EU_UHF_V"]
+				if cableConfig.scan_band_EU_SUPER.value:
+					bands |= cable_bands["DVBC_BAND_EU_SUPER"]
+				if cableConfig.scan_band_EU_HYPER.value:
+					bands |= cable_bands["DVBC_BAND_EU_HYPER"]
+				if cableConfig.scan_band_US_LOW.value:
+					bands |= cable_bands["DVBC_BAND_US_LO"]
+				if cableConfig.scan_band_US_MID.value:
+					bands |= cable_bands["DVBC_BAND_US_MID"]
+				if cableConfig.scan_band_US_HIGH.value:
+					bands |= cable_bands["DVBC_BAND_US_HI"]
+				if cableConfig.scan_band_US_SUPER.value:
+					bands |= cable_bands["DVBC_BAND_US_SUPER"]
+				if cableConfig.scan_band_US_HYPER.value:
+					bands |= cable_bands["DVBC_BAND_US_HYPER"]
+				cmd += str(bands)
+			else:
+				cmd += " --scan-stepsize "
+				cmd += str(cableConfig.scan_frequency_steps.value)
+			if cableConfig.scan_mod_qam16.value:
+				cmd += " --mod 16"
+			if cableConfig.scan_mod_qam32.value:
+				cmd += " --mod 32"
+			if cableConfig.scan_mod_qam64.value:
+				cmd += " --mod 64"
+			if cableConfig.scan_mod_qam128.value:
+				cmd += " --mod 128"
+			if cableConfig.scan_mod_qam256.value:
+				cmd += " --mod 256"
+			if cableConfig.scan_sr_6900.value:
+				cmd += " --sr 6900000"
+			if cableConfig.scan_sr_6875.value:
+				cmd += " --sr 6875000"
+			if cableConfig.scan_sr_ext1.value > 450:
+				cmd += " --sr "
+				cmd += str(cableConfig.scan_sr_ext1.value)
+				cmd += "000"
+			if cableConfig.scan_sr_ext2.value > 450:
+				cmd += " --sr "
+				cmd += str(cableConfig.scan_sr_ext2.value)
+				cmd += "000"
 
-		self.cable_search_container.execute(cmd)
-		tmpstr = _("Try to find used transponders in cable network.. please wait...")
-		tmpstr += "\n\n..."
-		self.cable_search_session = self.session.openWithCallback(self.cableTransponderSearchSessionClosed, MessageBox, tmpstr, MessageBox.TYPE_INFO)
+			print "DVB-C scan command: ", cmd
+
+			self.cable_search_container.execute(cmd)
+			tmpstr = _("Try to find used transponders in cable network.. please wait...")
+			tmpstr += "\n\n..."
+			self.cable_search_session = self.session.openWithCallback(self.cableTransponderSearchSessionClosed, MessageBox, tmpstr, MessageBox.TYPE_INFO)
+		else:
+			modulations = []
+			symbol_rates = []
+			frequencies = []
+
+			if cableConfig.scan_type.value == "bands":
+				if cableConfig.scan_band_US_LOW.value:
+					frequencies.extend(range(48000, 84000 + 1, 6000))
+				if cableConfig.scan_band_US_MID.value:
+					frequencies.extend(range(91250, 115250 + 1, 6000))
+					frequencies.extend(range(120000, 168000 + 1, 6000))
+				if cableConfig.scan_band_US_HIGH.value:
+					frequencies.extend(range(174000, 210000 + 1, 6000))
+				if cableConfig.scan_band_US_SUPER.value:
+					frequencies.extend(range(216000, 294000 + 1, 6000))
+				if cableConfig.scan_band_US_HYPER.value:
+					frequencies.extend(range(300000, 546000 + 1, 6000))
+				if cableConfig.scan_band_EU_VHF_I.value:
+					frequencies.extend(range(50500, 64500 + 1, 7000))
+					frequencies.extend(range(73000, 81000 + 1, 8000))
+				if cableConfig.scan_band_EU_MID.value:
+					frequencies.append(107500)
+					frequencies.extend(range(113000, 121000 + 1, 8000))
+					frequencies.extend(range(128500, 170500 + 1, 7000))
+				if cableConfig.scan_band_EU_VHF_III.value:
+					frequencies.extend(range(177500, 226500 + 1, 7000))
+				if cableConfig.scan_band_EU_SUPER.value:
+					frequencies.extend(range(233500, 296500 + 1, 7000))
+				if cableConfig.scan_band_EU_HYPER.value:
+					frequencies.extend(range(306000, 466000 + 1, 8000))
+				if cableConfig.scan_band_EU_UHF_IV.value:
+					frequencies.extend(range(474000, 602000 + 1, 8000))
+				if cableConfig.scan_band_EU_UHF_V.value:
+					frequencies.extend(range(610000, 858000 + 1, 8000))
+			else:
+				frequencies.extend(range(17000, 887000 + 1, cableConfig.scan_frequency_steps.value))
+
+			if cableConfig.scan_mod_qam16.value:
+				modulations.append(eDVBFrontendParametersCable.Modulation_QAM16)
+			if cableConfig.scan_mod_qam32.value:
+				modulations.append(eDVBFrontendParametersCable.Modulation_QAM32)
+			if cableConfig.scan_mod_qam64.value:
+				modulations.append(eDVBFrontendParametersCable.Modulation_QAM64)
+			if cableConfig.scan_mod_qam128.value:
+				modulations.append(eDVBFrontendParametersCable.Modulation_QAM128)
+			if cableConfig.scan_mod_qam256.value:
+				modulations.append(eDVBFrontendParametersCable.Modulation_QAM256)
+			if cableConfig.scan_sr_6900.value:
+				symbol_rates.append(6900000)
+			if cableConfig.scan_sr_6875.value:
+				symbol_rates.append(6875000)
+			if cableConfig.scan_sr_ext1.value > 450:
+				symbol_rates.append(cableConfig.scan_sr_ext1.value * 1000)
+			if cableConfig.scan_sr_ext2.value > 450:
+				symbol_rates.append(cableConfig.scan_sr_ext2.value * 1000)
+
+			for frequency in frequencies:
+				for modulation in modulations:
+					for symbol_rate in symbol_rates:
+						parm = eDVBFrontendParametersCable()
+						parm.frequency = frequency
+						parm.symbol_rate = symbol_rate
+						parm.fec_inner = eDVBFrontendParametersCable.FEC_Auto
+						parm.modulation = modulation
+						parm.inversion = eDVBFrontendParametersCable.Inversion_Unknown
+						self.__tlist.append(parm)
+
+			# XXX: I'm a hack. Please replace me!
+			self.cable_search_session = self.session.openWithCallback(self.cableTransponderSearchSessionClosed, MessageBox, "", MessageBox.TYPE_INFO)
+			self.cable_search_session.close(True)
 
 from time import time
 
@@ -668,6 +745,8 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 	def createSetup(self):
 		self.list = []
 		self.multiscanlist = []
+		if self.scan_nims.value == "":
+			return
 		index_to_scan = int(self.scan_nims.value)
 		print "ID: ", index_to_scan
 

@@ -1,0 +1,19 @@
+<default>
+	<prerequisites>
+		<tag type="System" />
+		<tag type="Network" />
+		<tag type="Multimedia" />
+	</prerequisites>
+	<info>
+		<author>Dream Multimedia</author>
+		<name>DLNA Mediaserver Setup (miniDLNA)</name>
+		<packagename>enigma2-plugin-systemplugins-minidlnasetup</packagename>
+		<packagetype>public</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->
+		<shortdescription>Setup your DLNA Mediaserver (minidlna)</shortdescription>
+		<description>This plugin is used to setup the DLNA Mediaserver (minidlna) on your genuine dreambox.</description>
+	</info>
+
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-minidlna" />
+	</files>
+</default>

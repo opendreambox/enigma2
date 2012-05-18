@@ -1,14 +1,26 @@
 #ifndef ESIZE_H
 #define ESIZE_H
 
+#ifndef MIN
 #define MIN(a,b) (a < b ? a : b)
+#endif
+
+#ifndef MAX
 #define MAX(a,b) (a > b ? a : b)
+#endif
+
+class QSize;
 
 class eSize
 {
 public:
 	eSize();
 	eSize( int w, int h );
+
+#if defined(HAVE_QT) && !defined(SWIG)
+	eSize(const QSize &);
+	operator QSize() const;
+#endif
 
 	bool isNull()	const;
 	bool isEmpty()	const;

@@ -5,6 +5,6 @@ includedir=/usr/include
 
 Name: enigma2
 Description: Enigma2
-Version: 3.2.1
-Cflags: -I${includedir}/enigma2 -fno-rtti -fno-exceptions
-Requires.private: sigc++-1.2
+Version: 4.0.0
+Cflags: -I${includedir}/enigma2 -std=gnu++0x
+Requires.private: sigc++-2.0

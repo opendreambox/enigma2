@@ -16,7 +16,7 @@
 
 #include <vector>
 #include <list>
-#if 0 && __GNUC_PREREQ(4,3)
+#if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #include <unordered_map>
 #include <unordered_set>
 #else
@@ -26,7 +26,6 @@
 
 #include <errno.h>
 
-#include <lib/dvb/eit.h>
 #include <lib/dvb/lowlevel/eit.h>
 #ifdef ENABLE_MHW_EPG
 #include <lib/dvb/lowlevel/mhw.h>
@@ -105,7 +104,7 @@ struct hash_uniqueEPGKey
 };
 
 #define tidMap std::set<__u32>
-#if 0 && __GNUC_PREREQ(4,3)
+#if defined(__GXX_EXPERIMENTAL_CXX0X__)
 	#define eventCache std::unordered_map<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, uniqueEPGKey::equal>
 	#ifdef ENABLE_PRIVATE_EPG
 		#define contentTimeMap std::unordered_map<time_t, std::pair<time_t, __u16> >
@@ -166,11 +165,11 @@ public:
 };
 #endif
 
-class eEPGCache: public eMainloop, private eThread, public Object
+class eEPGCache: public eMainloop_native, private eThread, public sigc::trackable
 {
 #ifndef SWIG
 	DECLARE_REF(eEPGCache)
-	struct channel_data: public Object
+	struct channel_data: public sigc::trackable
 	{
 		pthread_mutex_t channel_active;
 		channel_data(eEPGCache*);
@@ -191,7 +190,7 @@ class eEPGCache: public eMainloop, private eThread, public Object
 		ePtr<eConnection> m_PrivateConn;
 		ePtr<iDVBSectionReader> m_PrivateReader;
 		std::set<__u8> seenPrivateSections;
-		void readPrivateData(const __u8 *data);
+		void readPrivateData(const __u8 *data, int len);
 		void startPrivateReader();
 #endif
 #ifdef ENABLE_MHW_EPG
@@ -217,10 +216,10 @@ class eEPGCache: public eMainloop, private eThread, public Object
 		void timeMHW2DVB( u_char hours, u_char minutes, u_char *return_time);
 		void timeMHW2DVB( int minutes, u_char *return_time);
 		void timeMHW2DVB( u_char day, u_char hours, u_char minutes, u_char *return_time);
-		void storeTitle(std::map<__u32, mhw_title_t>::iterator itTitle, std::string sumText, const __u8 *data);
+		void storeTitle(std::map<__u32, mhw_title_t>::iterator itTitle, const std::string &sumText, const __u8 *data);
 #endif
-		void readData(const __u8 *data);
-		void readDataViasat(const __u8 *data);
+		void readData(const __u8 *data, int len);
+		void readDataViasat(const __u8 *data, int len);
 		void startChannel();
 		void startEPG();
 		bool finishEPG();

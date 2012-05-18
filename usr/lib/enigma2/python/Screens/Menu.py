@@ -7,7 +7,8 @@ from Components.PluginComponent import plugins
 from Components.config import config
 from Components.SystemInfo import SystemInfo
 
-from Tools.Directories import resolveFilename, SCOPE_SKIN
+from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_CURRENT_SKIN
+from Tools.LoadPixmap import LoadPixmap
 
 import xml.etree.cElementTree
 
@@ -18,6 +19,22 @@ from Screens.Setup import Setup, getSetupTitle
 #		<item text="File-Mode">self.setModeFile()</item>
 #			<item text="Sleep Timer"></item>
 
+lastMenuID = None
+
+def MenuEntryPixmap(entryID, png_cache, lastMenuID):
+	png = png_cache.get(entryID, None)
+	if png is None: # no cached entry
+		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")) #lets look for a dedicated icon
+		if png is None: # no dedicated icon found
+			if lastMenuID is not None:
+				png = png_cache.get(lastMenuID, None)
+		png_cache[entryID] = png
+	if png is None:
+		png = png_cache.get("missing", None)
+		if png is None:
+			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/missing.png"))
+			png_cache["missing"] = png
+	return png
 
 # read the menu
 mdom = xml.etree.cElementTree.parse(resolveFilename(SCOPE_SKIN, 'menu.xml'))
@@ -28,22 +45,22 @@ class boundFunction:
 		self.args = args
 	def __call__(self):
 		self.fnc(*self.args)
-		
+
 class MenuUpdater:
 	def __init__(self):
 		self.updatedMenuItems = {}
-	
-	def addMenuItem(self, id, pos, text, module, screen, weight):
+
+	def addMenuItem(self, id, pos, text, module, screen, weight, description):
 		if not self.updatedMenuAvailable(id):
 			self.updatedMenuItems[id] = []
-		self.updatedMenuItems[id].append([text, pos, module, screen, weight])
-	
-	def delMenuItem(self, id, pos, text, module, screen, weight):
-		self.updatedMenuItems[id].remove([text, pos, module, screen, weight])
-	
+		self.updatedMenuItems[id].append([text, pos, module, screen, weight, description])
+
+	def delMenuItem(self, id, pos, text, module, screen, weight, description):
+		self.updatedMenuItems[id].remove([text, pos, module, screen, weight, description])
+
 	def updatedMenuAvailable(self, id):
 		return self.updatedMenuItems.has_key(id)
-	
+
 	def getUpdatedMenu(self, id):
 		return self.updatedMenuItems[id]
 
@@ -64,11 +81,14 @@ class MenuSummary(Screen):
 class Menu(Screen):
 
 	ALLOW_SUSPEND = True
+	png_cache = {}
 
 	def okbuttonClick(self):
 		print "okbuttonClick"
 		selection = self["menu"].getCurrent()
 		if selection is not None:
+			global lastMenuID
+			lastMenuID = selection[2]
 			selection[1]()
 
 	def execText(self, text):
@@ -76,9 +96,9 @@ class Menu(Screen):
 
 	def runScreen(self, arg):
 		# arg[0] is the module (as string)
-		# arg[1] is Screen inside this module 
-		#        plus possible arguments, as 
-		#        string (as we want to reference 
+		# arg[1] is Screen inside this module
+		#        plus possible arguments, as
+		#        string (as we want to reference
 		#        stuff which is just imported)
 		# FIXME. somehow
 		if arg[0] != "":
@@ -86,10 +106,10 @@ class Menu(Screen):
 
 		self.openDialog(*eval(arg[1]))
 
-	def nothing(self): #dummy
+	def nothing(self):	#dummy
 		pass
 
-	def openDialog(self, *dialog):				# in every layer needed
+	def openDialog(self, *dialog):	# in every layer needed
 		self.session.openWithCallback(self.menuClosed, *dialog)
 
 	def openSetup(self, dialog):
@@ -106,13 +126,16 @@ class Menu(Screen):
 		MenuTitle = _(node.get("text", "??").encode("UTF-8"))
 		entryID = node.get("entryID", "undefined")
 		weight = node.get("weight", 50)
+		description = node.get("description", "").encode("UTF-8") or None
+		description = description and _(description)
+		menupng = MenuEntryPixmap(entryID, self.png_cache, lastMenuID)
 		x = node.get("flushConfigOnClose")
 		if x:
 			a = boundFunction(self.session.openWithCallback, self.menuClosedWithConfigFlush, Menu, node)
 		else:
 			a = boundFunction(self.session.openWithCallback, self.menuClosed, Menu, node)
 		#TODO add check if !empty(node.childNodes)
-		destList.append((MenuTitle, a, entryID, weight))
+		destList.append((MenuTitle, a, entryID, weight, description, menupng))
 
 	def menuClosedWithConfigFlush(self, *res):
 		configfile.save()
@@ -120,6 +143,8 @@ class Menu(Screen):
 
 	def menuClosed(self, *res):
 		if res and res[0]:
+			global lastMenuID
+			lastMenuID = None
 			self.close(True)
 
 	def addItem(self, destList, node):
@@ -133,6 +158,9 @@ class Menu(Screen):
 		item_text = node.get("text", "").encode("UTF-8")
 		entryID = node.get("entryID", "undefined")
 		weight = node.get("weight", 50)
+		description = node.get("description", "").encode("UTF-8") or None
+		description = description and _(description)
+		menupng = MenuEntryPixmap(entryID, self.png_cache, lastMenuID)
 		for x in node:
 			if x.tag == 'screen':
 				module = x.get("module")
@@ -152,10 +180,10 @@ class Menu(Screen):
 				args = x.text or ""
 				screen += ", " + args
 
-				destList.append((_(item_text or "??"), boundFunction(self.runScreen, (module, screen)), entryID, weight))
+				destList.append((_(item_text or "??"), boundFunction(self.runScreen, (module, screen)), entryID, weight, description, menupng))
 				return
 			elif x.tag == 'code':
-				destList.append((_(item_text or "??"), boundFunction(self.execText, x.text), entryID, weight))
+				destList.append((_(item_text or "??"), boundFunction(self.execText, x.text), entryID, weight, description, menupng))
 				return
 			elif x.tag == 'setup':
 				id = x.get("id")
@@ -163,18 +191,17 @@ class Menu(Screen):
 					item_text = _(getSetupTitle(id))
 				else:
 					item_text = _(item_text)
-				destList.append((item_text, boundFunction(self.openSetup, id), entryID, weight))
+				destList.append((item_text, boundFunction(self.openSetup, id), entryID, weight, description, menupng))
 				return
-		destList.append((item_text, self.nothing, entryID, weight))
-
+		destList.append((item_text, self.nothing, entryID, weight, description, menupng))
 
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
-		
 		list = []
-		
+
 		menuID = None
-		for x in parent:						#walk through the actual nodelist
+		count = 0
+		for x in parent:	#walk through the actual nodelist
 			if x.tag == 'item':
 				item_level = int(x.get("level", 0))
 				if item_level <= config.usage.setup_level.index:
@@ -192,7 +219,10 @@ class Menu(Screen):
 				if menuupdater.updatedMenuAvailable(menuID):
 					for x in menuupdater.getUpdatedMenu(menuID):
 						if x[1] == count:
-							list.append((x[0], boundFunction(self.runScreen, (x[2], x[3] + ", ")), x[4]))
+							description = x.get("description", "").encode("UTF-8") or None
+							description = description and _(description)
+							menupng = MenuEntryPixmap(menuID, self.png_cache, lastMenuID)
+							list.append((x[0], boundFunction(self.runScreen, (x[2], x[3] + ", ")), x[4], description, menupng))
 							count += 1
 
 		if menuID is not None:
@@ -204,7 +234,9 @@ class Menu(Screen):
 					if x[2] == plugin_menuid:
 						list.remove(x)
 						break
-				list.append((l[0], boundFunction(l[1], self.session), l[2], l[3] or 50))
+				description = plugins.getDescriptionForMenuEntryID(menuID, plugin_menuid)
+				menupng = MenuEntryPixmap(l[2], self.png_cache, lastMenuID)
+				list.append((l[0], boundFunction(l[1], self.session), l[2], l[3] or 50, description, menupng))
 
 		# for the skin: first try a menu_<menuID>, then Menu
 		self.skinName = [ ]
@@ -260,7 +292,7 @@ class Menu(Screen):
 
 class MainMenu(Menu):
 	#add file load functions for the xml-file
-	
+
 	def __init__(self, *x):
 		self.skinName = "Menu"
 		Menu.__init__(self, *x)

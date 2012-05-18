@@ -7,7 +7,6 @@ from Components.Pixmap import Pixmap
 from Components.config import config, ConfigInteger
 from Components.SystemInfo import SystemInfo
 from enigma import eEPGCache
-from SleepTimer import SleepTimer
 from time import time
 
 config.SleepTimer.defaulttime = ConfigInteger(default = 30)

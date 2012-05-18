@@ -11,7 +11,7 @@ from Components.MenuList import MenuList
 from Plugins.Plugin import PluginDescriptor
 from Components.config import config
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
-from os import path, walk
+from os import path
 from enigma import eEnv
 
 class SkinSelector(Screen):
@@ -19,6 +19,7 @@ class SkinSelector(Screen):
 	# _("Choose your Skin")
 	skinlist = []
 	root = eEnv.resolve("${datadir}/enigma2/")
+	print root
 
 	def __init__(self, session, args = None):
 
@@ -32,19 +33,16 @@ class SkinSelector(Screen):
 		self["introduction"] = StaticText(_("Press OK to activate the selected skin."))
 		self.skinlist.sort()
 		self["SkinList"] = MenuList(self.skinlist)
+		self["SkinList"].onSelectionChanged.append(self.loadPreview)
 		self["Preview"] = Pixmap()
 
-		self["actions"] = NumberActionMap(["WizardActions", "InputActions", "EPGSelectActions"],
+		self["actions"] = NumberActionMap(["EPGSelectActions", "OkCancelActions"],
 		{
 			"ok": self.ok,
-			"back": self.close,
+			"cancel": self.close,
 			"red": self.close,
-			"up": self.up,
-			"down": self.down,
-			"left": self.left,
-			"right": self.right,
 			"info": self.info,
-		}, -1)
+		})
 
 		self.onLayoutFinish.append(self.layoutFinished)
 
@@ -61,22 +59,6 @@ class SkinSelector(Screen):
 				self["SkinList"].moveToIndex(idx)
 		self.loadPreview()
 
-	def up(self):
-		self["SkinList"].up()
-		self.loadPreview()
-
-	def down(self):
-		self["SkinList"].down()
-		self.loadPreview()
-
-	def left(self):
-		self["SkinList"].pageUp()
-		self.loadPreview()
-
-	def right(self):
-		self["SkinList"].pageDown()
-		self.loadPreview()
-
 	def info(self):
 		aboutbox = self.session.open(MessageBox,_("Enigma2 Skinselector\n\nIf you experience any problems please contact\nstephan@reichholf.net\n\n\xA9 2006 - Stephan Reichholf"), MessageBox.TYPE_INFO)
 		aboutbox.setTitle(_("About..."))
@@ -85,7 +67,7 @@ class SkinSelector(Screen):
 		for x in names:
 			if x == "skin.xml":
 				if dirname <> self.root:
-					subdir = dirname[19:]
+					subdir = dirname.split('/')[-1]
 					self.skinlist.append(subdir)
 				else:
 					subdir = "Default Skin"
@@ -118,7 +100,7 @@ class SkinSelector(Screen):
 		self["Preview"].instance.setPixmapFromFile(self.previewPath)
 
 	def restartGUI(self, answer):
-		if answer is True:
+		if answer:
 			self.session.open(TryQuitMainloop, 3)
 
 def SkinSelMain(session, **kwargs):
@@ -131,4 +113,4 @@ def SkinSelSetup(menuid, **kwargs):
 		return []
 
 def Plugins(**kwargs):
-	return PluginDescriptor(name="Skinselector", description="Select Your Skin", where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=SkinSelSetup)
+	return PluginDescriptor(name="Skinselector", description=_("Select Your Skin"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=SkinSelSetup)

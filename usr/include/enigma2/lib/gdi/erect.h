@@ -4,6 +4,10 @@
 #include <lib/gdi/esize.h>
 #include <lib/gdi/epoint.h>
 
+#if defined(HAVE_QT) && !defined(SWIG)
+class QRect;
+class QRegion;
+#endif
 
 // x2 = x1 + width  (AND NOT, NEVER, NEVER EVER +1 or -1 !!!!)
 
@@ -25,6 +29,12 @@ public:
 	}
 
 	eRect( int left, int top, int width, int height );
+
+#if defined(HAVE_QT) && !defined(SWIG)
+	eRect(const QRect &);
+	operator QRect() const;
+	operator QRegion() const;
+#endif
 
 	bool empty()	const;
 	bool valid()	const;

@@ -37,7 +37,7 @@ protected:
  * Automatically creates a eSocketNotifier and gives you a callback.
  */
 template<class T>
-class eFixedMessagePump: private eMessagePump, public Object
+class eFixedMessagePump: private eMessagePump, public sigc::trackable
 {
 	ePtr<eSocketNotifier> sn;
 	void do_recv(int)
@@ -47,7 +47,7 @@ class eFixedMessagePump: private eMessagePump, public Object
 		/*emit*/ recv_msg(msg);
 	}
 public:
-	Signal1<void,const T&> recv_msg;
+	sigc::signal1<void,const T&> recv_msg;
 	void send(const T &msg)
 	{
 		eMessagePump::send(&msg, sizeof(msg));
@@ -56,14 +56,13 @@ public:
 	{
 		sn=eSocketNotifier::create(context, getOutputFD(), eSocketNotifier::Read);
 		CONNECT(sn->activated, eFixedMessagePump<T>::do_recv);
-		sn->start();
 	}
 	void start() { if (sn) sn->start(); }
 	void stop() { if (sn) sn->stop(); }
 };
 #endif
 
-class ePythonMessagePump: public eMessagePump, public Object
+class ePythonMessagePump: public eMessagePump, public sigc::trackable
 {
 	ePtr<eSocketNotifier> sn;
 	void do_recv(int)

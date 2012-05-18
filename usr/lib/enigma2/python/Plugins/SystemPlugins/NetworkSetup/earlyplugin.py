@@ -1,10 +1,8 @@
-from os import system, popen, path as os_path, listdir
+from os import system, path as os_path, listdir
 from re import compile as re_compile, search as re_search
-from socket import *
 from enigma import eConsoleAppContainer
 from Components.Console import Console
 from Components.PluginComponent import plugins
-from Components.About import about
 from Plugins.Plugin import PluginDescriptor
 from Components.ResourceManager import resourcemanager
 
@@ -661,8 +659,8 @@ class Network:
 		moduledir = self.getWlanModuleDir(iface)
 		if moduledir:
 			module = os_path.basename(os_path.realpath(moduledir))
-			if module in ('ath_pci','ath5k'):
-				return 'madwifi'
+#			if module in ('ath_pci','ath5k'):
+#				return 'madwifi'
 			if module in ('rt73','rt73'):
 				return 'ralink'
 			if module == 'zd1211b':

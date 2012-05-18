@@ -1,22 +1,21 @@
 #ifndef __lib_base_filepush_h
 #define __lib_base_filepush_h
 
+#include <lib/base/itssource.h>
 #include <lib/base/thread.h>
 #include <lib/base/ioprio.h>
-#include <libsig_comp.h>
+#include <lib/base/sigc.h>
 #include <lib/base/message.h>
 #include <sys/types.h>
-#include <lib/base/rawfile.h>
-#include <lib/base/tsremotesrc.h>
 
 class iFilePushScatterGather
 {
 public:
-	virtual void getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size)=0;
+	virtual void getNextSourceSpan(uint64_t current_offset, size_t bytes_read, uint64_t &start, size_t &size)=0;
 	virtual ~iFilePushScatterGather() {}
 };
 
-class eFilePushThread: public eThread, public Object
+class eFilePushThread: public eThread, public sigc::trackable
 {
 	int prio_class, prio;
 public:
@@ -41,7 +40,7 @@ public:
 	void setScatterGather(iFilePushScatterGather *);
 	
 	enum { evtEOF, evtReadError, evtWriteError, evtUser };
-	Signal1<void,int> m_event;
+	sigc::signal1<void,int> m_event;
 
 	void installSigUSR1Handler();
 	void before_set_thread_alive();
@@ -59,7 +58,7 @@ private:
 	int m_send_pvr_commit;
 	int m_stream_mode;
 	int m_blocksize;
-	off_t m_current_position;
+	uint64_t m_current_position;
 
 	ePtr<iTsSource> m_source;
 

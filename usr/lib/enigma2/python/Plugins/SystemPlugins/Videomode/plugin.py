@@ -2,7 +2,7 @@ from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.SystemInfo import SystemInfo
 from Components.ConfigList import ConfigListScreen
-from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigNothing, ConfigSlider
+from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigNothing
 from Components.Sources.StaticText import StaticText
 
 from VideoHardware import video_hw
@@ -56,23 +56,19 @@ class VideoSetup(Screen, ConfigListScreen):
 			getConfigListEntry(_("Video Output"), config.av.videoport)
 		]
 
-		# if we have modes for this port:
-		if config.av.videoport.value in config.av.videomode:
-			# add mode- and rate-selection:
-			self.list.append(getConfigListEntry(_("Mode"), config.av.videomode[config.av.videoport.value]))
-			if config.av.videomode[config.av.videoport.value].value == 'PC':
-				self.list.append(getConfigListEntry(_("Resolution"), config.av.videorate[config.av.videomode[config.av.videoport.value].value]))
-			else:
-				self.list.append(getConfigListEntry(_("Refresh Rate"), config.av.videorate[config.av.videomode[config.av.videoport.value].value]))
+		(port, mode, rate) = self._getPortModeRate()
 
-		port = config.av.videoport.value
-		if port not in config.av.videomode:
-			mode = None
-		else:
-			mode = config.av.videomode[port].value
+		# if we have modes for this port:
+		if mode and rate:
+			# add mode- and rate-selection:
+			self.list.append(getConfigListEntry(_("Mode"), mode))
+			if mode.value == 'PC':
+				self.list.append(getConfigListEntry(_("Resolution"), rate))
+			else:
+				self.list.append(getConfigListEntry(_("Refresh Rate"), rate))
 
 		# some modes (720p, 1080i) are always widescreen. Don't let the user select something here, "auto" is not what he wants.
-		force_wide = self.hw.isWidescreenMode(port, mode)
+		force_wide = self.hw.isWidescreenMode(port, mode and mode.value or None)
 
 		if not force_wide:
 			self.list.append(getConfigListEntry(_("Aspect Ratio"), config.av.aspect))
@@ -85,9 +81,9 @@ class VideoSetup(Screen, ConfigListScreen):
 		elif config.av.aspect.value == "4_3":
 			self.list.append(getConfigListEntry(_("Display 16:9 content as"), config.av.policy_169))
 
-#		if config.av.videoport.value == "DVI":
+#		if port == "DVI":
 #			self.list.append(getConfigListEntry(_("Allow Unsupported Modes"), config.av.edid_override))
-		if config.av.videoport.value == "Scart":
+		if port == "Scart":
 			self.list.append(getConfigListEntry(_("Color Format"), config.av.colorformat))
 			if level >= 1:
 				self.list.append(getConfigListEntry(_("WSS on 4:3"), config.av.wss))
@@ -129,16 +125,31 @@ class VideoSetup(Screen, ConfigListScreen):
 		else:
 			self.keySave()
 
-	def grabLastGoodMode(self):
+	def _getPortModeRate(self):
+		mode = None
+		rate = None
+		port = config.av.videoport
+		if config.av.videomode.has_key(port.value):
+			mode = config.av.videomode[port.value]
+			if config.av.videorate.has_key(mode.value):
+				rate = config.av.videorate[mode.value]
+		return (port, mode, rate)
+
+	def _getPortModeRateValues(self):
+		mode = None
+		rate = None
 		port = config.av.videoport.value
-		mode = config.av.videomode[port].value
-		rate = config.av.videorate[mode].value
-		self.last_good = (port, mode, rate)
+		if config.av.videomode.has_key(port):
+			mode = config.av.videomode[port].value
+			if config.av.videorate.has_key(mode):
+				rate = config.av.videorate[mode].value
+		return (port, mode, rate)
+
+	def grabLastGoodMode(self):
+		self.last_good = self._getPortModeRateValues()
 
 	def apply(self):
-		port = config.av.videoport.value
-		mode = config.av.videomode[port].value
-		rate = config.av.videorate[mode].value
+		(port, mode, rate) = self._getPortModeRateValues()
 		if (port, mode, rate) != self.last_good:
 			self.hw.setMode(port, mode, rate)
 			from Screens.MessageBox import MessageBox
@@ -173,9 +184,7 @@ class VideomodeHotplug:
 
 	def hotplug(self, what):
 		print "hotplug detected on port '%s'" % (what)
-		port = config.av.videoport.value
-		mode = config.av.videomode[port].value
-		rate = config.av.videorate[mode].value
+		(port, mode, rate) = self._getPortModeRateValues()
 
 		if not self.hw.isModeAvailable(port, mode, rate):
 			print "mode %s/%s/%s went away!" % (port, mode, rate)

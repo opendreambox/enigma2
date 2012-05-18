@@ -3,10 +3,8 @@ from Screen import Screen
 from Components.SystemInfo import SystemInfo
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.MenuList import MenuList
 from Components.NimManager import nimmanager
-from Components.config import getConfigListEntry, config, ConfigNothing, ConfigSelection, updateConfigElement,\
-	ConfigSatlist
+from Components.config import getConfigListEntry, config, ConfigNothing, ConfigSatlist
 from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
@@ -55,7 +53,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			if nim.powerMeasurement.value:
 				nim.powerMeasurement.value = False
 				nim.powerMeasurement.save()
-		
+		if config.usage.setup_level.index >= 2: # expert
+			list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), nim.positionerExclusively))
+
 	def createConfigMode(self):
 		if self.nim.isCompatible("DVB-S"):
 			getConfigModeTuple = nimmanager.getConfigModeTuple
@@ -154,8 +154,13 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					currSat = self.nimConfig.advanced.sat[cur_orb_pos]
 					self.fillListWithAdvancedSatEntrys(currSat)
 				self.have_advanced = True
-			if self.nim.description == "Alps BSBE2" and config.usage.setup_level.index >= 2: # expert
-				self.list.append(getConfigListEntry(_("Tone Amplitude"), self.nimConfig.toneAmplitude))
+			if config.usage.setup_level.index >= 2: # expert
+				name = self.nim.description
+				if name == "Alps BSBE2":
+					self.list.append(getConfigListEntry(_("Tone Amplitude"), self.nimConfig.toneAmplitude))
+				if name == "Alps BSBE2" or name.find('BCM450') != -1:
+					self.list.append(getConfigListEntry(_("SCPC optimized search range"), self.nimConfig.scpcSearchRange))
+
 		elif self.nim.isCompatible("DVB-C"):
 			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.configMode)
 			self.list.append(self.configMode)
@@ -353,8 +358,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.list.append(self.advancedUsalsEntry)
 					if not Sat.usals.value:
 						self.list.append(getConfigListEntry(_("Stored position"), Sat.rotorposition))
-
-	
+				if config.usage.setup_level.index >= 2: # expert
+					self.list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), self.nimConfig.positionerExclusively))
 
 	def fillAdvancedList(self):
 		self.list = [ ]

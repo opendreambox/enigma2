@@ -4,7 +4,7 @@
 #include <string>
 #include <map>       
 #include <new>
-#include <libsig_comp.h>
+#include <lib/base/sigc.h>
 
 // to use memleak check change the following in configure.ac
 // * add -DMEMLEAK_CHECK and -rdynamic to CPP_FLAGS
@@ -109,10 +109,13 @@ void DumpUnfreed();
 
 #define CHECKFORMAT __attribute__ ((__format__(__printf__, 1, 2)))
 
-extern Signal2<void, int, const std::string&> logOutput;
+/* eDebug adds newlines by itself, so calling eDebug("") may make sense. */
+#pragma GCC diagnostic ignored "-Wformat-zero-length"
+
+extern sigc::signal2<void, int, const std::string&> logOutput;
 extern int logOutputConsole;
 
-void CHECKFORMAT eFatal(const char*, ...);
+void CHECKFORMAT eFatal(const char*, ...) __attribute__((noreturn));
 enum { lvlDebug=1, lvlWarning=2, lvlFatal=4 };
 
 #ifdef DEBUG
@@ -134,8 +137,6 @@ enum { lvlDebug=1, lvlWarning=2, lvlFatal=4 };
     }
     #define ASSERT(x) do { } while (0)
 #endif //DEBUG
-
-void eWriteCrashdump();
 
 #endif // SWIG
 

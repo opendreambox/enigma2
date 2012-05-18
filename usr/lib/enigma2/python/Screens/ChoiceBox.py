@@ -5,7 +5,7 @@ from Components.ChoiceList import ChoiceEntryComponent, ChoiceList
 from Components.Sources.StaticText import StaticText
 
 class ChoiceBox(Screen):
-	def __init__(self, session, title = "", list = [], keys = None, selection = 0, skin_name = []):
+	def __init__(self, session, title = "", list = [], keys = None, selection = 0, skin_name = [], titlebartext = None):
 		Screen.__init__(self, session)
 
 		if isinstance(skin_name, str):
@@ -16,7 +16,7 @@ class ChoiceBox(Screen):
 		self.list = []
 		self.summarylist = []
 		if keys is None:
-			self.__keys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue" ] + (len(list) - 10) * [""]
+			self.__keys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow", "blue", "text" ] + (len(list) - 10) * [""]
 		else:
 			self.__keys = keys + (len(list) - len(keys)) * [""]
 			
@@ -51,10 +51,18 @@ class ChoiceBox(Screen):
 			"green": self.keyGreen,
 			"yellow": self.keyYellow,
 			"blue": self.keyBlue,
+			"text": self.keyText,
 			"up": self.up,
 			"down": self.down
 		}, -1)
-		
+
+		self.titlebartext = titlebartext
+		self.onLayoutFinish.append(self.layoutFinished)
+
+	def layoutFinished(self):
+		if self.titlebartext:
+			self.setTitle(self.titlebartext)
+
 	def keyLeft(self):
 		pass
 	
@@ -116,6 +124,9 @@ class ChoiceBox(Screen):
 
 	def keyBlue(self):
 		self.goKey("blue")
+
+	def keyText(self):
+		self.goKey("text")
 
 	def updateSummary(self, curpos=0):
 		pos = 0

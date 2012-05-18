@@ -1,6 +1,10 @@
 #ifndef EPOINT_H
 #define EPOINT_H
 
+#include <lib/gdi/esize.h>
+
+class QPoint;
+
 #ifndef ABS
 #define ABS(x) ( x>0 ? x : -x )
 #endif
@@ -10,6 +14,11 @@ class ePoint
 public:
 	ePoint();
 	ePoint( int xpos, int ypos );
+
+#if defined(HAVE_QT) && !defined(SWIG)
+	ePoint(const QPoint &p);
+	operator QPoint() const;
+#endif
 
 	bool   isNull()	const;
 

@@ -162,6 +162,10 @@
 		<widget source="session.RecordState" render="Pixmap" pixmap="skin_default/icons/icon_rec.png" position="561,21" zPosition="1" size="34,21">
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
+		<!-- Blinking Notification pixmap (pending messages available?)-->
+		<widget source="PendingNotification" render="Pixmap" pixmap="skin_default/icons/notification_mail.png" position="448,4" size="85,16" zPosition="1" transparent="1" alphatest="on" >
+			<convert type="ConditionalShowHide">Blink</convert>
+		</widget>
 		<!-- Event (now) -->
 		<ePixmap pixmap="skin_default/icons/icon_event.png" position="182,78" size="15,10" alphatest="on" />
 		<widget source="session.Event_Now" render="Label" position="205,73" size="60,24" font="Regular;20" backgroundColor="#34406f" shadowColor="#1d354c" shadowOffset="-1,-1" transparent="1">

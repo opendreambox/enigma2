@@ -1,6 +1,7 @@
 <wizard>
 	<step id="restorequestion">
 		<condition>
+from Components.config import config
 from Plugins.SystemPlugins.SoftwareManager.ImageWizard import checkConfigBackup
 self.backuppath = checkConfigBackup()
 self.condition = (self.backuppath is not None and config.misc.firstrun.value)

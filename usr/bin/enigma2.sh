@@ -17,14 +17,14 @@ if [ -d /home/root ]; then
 	cd /home/root
 fi
 
-LIBS="$LIBS /usr/lib/libopen.so.0.0.0"
+LIBS="$LIBS /usr/lib/libopen.so"
 
 #check for dreambox specific passthrough helper lib
 if [ -e /usr/lib/libpassthrough.so ]; then
 	LIBS="$LIBS /usr/lib/libpassthrough.so"
 fi
 
-LD_PRELOAD=$LIBS /usr/bin/enigma2
+PAGECACHE_FLUSH_INTERVAL=$((512*1024)) LD_PRELOAD=$LIBS /usr/bin/enigma2
 
 # enigma2 exit codes:
 #

@@ -1,20 +1,17 @@
 from Screens.Screen import Screen
-from Screens.ChannelSelection import *
-from Components.ActionMap import HelpableActionMap, ActionMap, NumberActionMap
-from Components.Sources.List import List
+from Screens.ChannelSelection import ChannelSelectionBase
+from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
-from Components.config import ConfigNothing
+from Components.config import config, ConfigNothing
 from Components.ConfigList import ConfigList
 from Components.Label import Label
 from Components.SelectionList import SelectionList
-from Components.MenuList import MenuList
 from ServiceReference import ServiceReference
 from Plugins.Plugin import PluginDescriptor
 from xml.etree.cElementTree import parse as ci_parse
-from Tools.XMLTools import elementsWithTag, mergeText, stringToXML
 from enigma import eDVBCI_UI, eDVBCIInterfaces, eEnv
 
-from os import system, path as os_path
+from os import path as os_path
 
 class CIselectMainMenu(Screen):
 	skin = """
@@ -582,7 +579,7 @@ def activate_all(session):
 
 					for caid in slot.findall("caid"):
 						read_caid = caid.get("id").encode("UTF-8")
-						usingcaid.append(long(read_caid,16))
+						usingcaid.append(int(read_caid,16))
 
 					for service in slot.findall("service"):
 						read_service_ref = service.get("ref").encode("UTF-8")

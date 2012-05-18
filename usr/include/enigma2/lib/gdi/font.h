@@ -35,21 +35,29 @@ class fontRenderClass
 #ifndef SWIG
 	friend class Font;
 	friend class eTextPara;
-	fbClass *fb;
+	friend class gFont;
+
+protected:
 	struct fontListEntry
 	{
 		std::string filename, face;
 		int scale; // 100 is 1:1
+		long id;
 		fontListEntry *next;
 		~fontListEntry();
 	} *font;
+
+	fontListEntry *findFace(const std::string &face);
+	fontListEntry *findId(FTC_FaceID id);
+
+private:
+	fbClass *fb;
 
 	FT_Library library;
 	FTC_Manager			cacheManager;				/* the cache manager							 */
 	FTC_Image_Cache	imageCache;					/* the glyph image cache					 */
 	FTC_SBit_Cache	 sbitsCache;				/* the glyph small bitmaps cache	 */
 
-	FTC_FaceID getFaceID(const std::string &face);
 	FT_Error getGlyphBitmap(FTC_Image_Desc *font, FT_ULong glyph_index, FTC_SBit *sbit);
 	static fontRenderClass *instance;
 #else
@@ -62,6 +70,7 @@ public:
 #ifndef SWIG
 	std::string AddFont(const std::string &filename, const std::string &name, int scale);
 	FT_Error FTC_Face_Requester(FTC_FaceID	face_id, FT_Face* aface);
+	long getFaceID(const std::string &face);
 	int getFont(ePtr<Font> &font, const std::string &face, int size, int tabwidth=-1);
 	fontRenderClass();
 	~fontRenderClass();
@@ -83,8 +92,26 @@ public:
 #define GS_HYPHEN   32
 #define GS_CANBREAK (GS_ISSPACE|GS_SOFTHYPHEN|GS_HYPHEN)
 
-struct pGlyph
+class pGlyph
 {
+public:
+#if defined(__GXX_EXPERIMENTAL_CXX0X__)
+	/* hmm... not sure why the default operator isn't good enough
+	 * to use this class in a std::vector
+	 */
+	pGlyph &operator=(const pGlyph &p)
+	{
+		x = p.x;
+		y = p.y;
+		w = p.w;
+		font = p.font;
+		glyph_index = p.glyph_index;
+		flags = p.flags;
+		bbox = p.bbox;
+		return *this;
+	}
+#endif
+
 	int x, y, w;
 	ePtr<Font> font;
 	FT_ULong glyph_index;
@@ -133,7 +160,7 @@ public:
 	}
 	virtual ~eTextPara();
 	
-	static void setReplacementFont(std::string font) { replacement_facename=font; }
+	static void setReplacementFont(const std::string &font) { replacement_facename=font; }
 	static void forceReplacementGlyph(int unicode) { forced_replaces.insert(unicode); }
 
 	void setFont(const gFont *font);
@@ -158,7 +185,7 @@ public:
 		return boundBox;
 	}
 	
-	const int size() const
+	int size() const
 	{
 		return glyphs.size();
 	}

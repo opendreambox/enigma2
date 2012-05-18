@@ -21,7 +21,7 @@
 class eDVBCAService;
 class eDVBScan;
 
-struct channel_data: public Object
+struct channel_data: public sigc::trackable
 {
 	ePtr<eDVBChannel> m_channel;
 	ePtr<eConnection> m_stateChangedConn;
@@ -34,7 +34,7 @@ struct channel_data: public Object
 typedef std::map<eServiceReferenceDVB, eDVBCAService*> CAServiceMap;
 typedef std::map<iDVBChannel*, channel_data*> ChannelMap;
 
-class eDVBCAService: public Object
+class eDVBCAService: public sigc::trackable
 {
 	eIOBuffer m_buffer;
 	ePtr<eSocketNotifier> m_sn;
@@ -69,7 +69,7 @@ public:
 
 #endif
 
-class eDVBServicePMTHandler: public Object
+class eDVBServicePMTHandler: public sigc::trackable
 {
 #ifndef SWIG
 	friend class eDVBCAService;
@@ -131,7 +131,7 @@ public:
 		eventMisconfiguration, // a channel was not found in any list, or no frontend was found which could provide this channel
 	};
 #ifndef SWIG
-	Signal1<void,int> serviceEvent;
+	sigc::signal1<void,int> serviceEvent;
 
 	struct videoStream
 	{
@@ -180,6 +180,12 @@ public:
 		}
 	};
 
+	struct aitStream
+	{
+		int pid;
+		std::vector<std::pair<int, int> > type_version_pairs;
+	};
+
 	struct program
 	{
 		struct capid_pair
@@ -192,6 +198,7 @@ public:
 		std::vector<audioStream> audioStreams;
 		int defaultAudioStream;
 		std::vector<subtitleStream> subtitleStreams;
+		std::vector<aitStream> aitStreams;
 		std::list<capid_pair> caids;
 		int pcrPid;
 		int pmtPid;
@@ -217,7 +224,7 @@ public:
 	int tune(eServiceReferenceDVB &ref, int use_decode_demux, eCueSheet *sg=0, bool simulate=false, eDVBService *service = 0);
 
 	/* new interface */
-	int tuneExt(eServiceReferenceDVB &ref, int use_decode_demux, Slot1<ePtr<iTsSource>, const eServiceReferenceDVB&> createTsSource, const char *streaminfo_file, eCueSheet *sg=0, bool simulate=false, eDVBService *service = 0);
+	int tuneExt(eServiceReferenceDVB &ref, int use_decode_demux, sigc::slot1<ePtr<iTsSource>, const eServiceReferenceDVB&> createTsSource, const char *streaminfo_file, eCueSheet *sg=0, bool simulate=false, eDVBService *service = 0);
 
 	void free();
 private:

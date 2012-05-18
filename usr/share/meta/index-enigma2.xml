@@ -1,4 +1,14 @@
 <index>
+	<package details="plugin_bludiscplayer.xml" name="BludiscPlayer" packagename="enigma2-plugin-extensions-bludiscplayer" shortdescription="BludiscPlayer allows playback of unencrypted titles from Bludiscs">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
+	<package details="plugin_browser.xml" name="Browser" packagename="enigma2-plugin-extensions-browser" packagetype="public" shortdescription="Browse the web">
+		<prerequisites>
+			<tag type="Network" />
+		</prerequisites>
+	</package>
 	<package details="plugin_cutlisteditor.xml" name="CutListEditor" packagename="enigma2-plugin-extensions-cutlisteditor" shortdescription="CutListEditor allows you to edit your movies">
 		<prerequisites>
 			<tag type="Recording" />
@@ -87,6 +97,13 @@
 			<tag type="System" />
 		</prerequisites>
 	</package>
+	<package details="plugin_minidlnasetup.xml" name="DLNA Mediaserver Setup (miniDLNA)" packagename="enigma2-plugin-systemplugins-minidlnasetup" packagetype="public" shortdescription="Setup your DLNA Mediaserver (minidlna)">
+		<prerequisites>
+			<tag type="System" />
+			<tag type="Network" />
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
 	<package details="plugin_nfiflash.xml" name="NFIFlash" packagename="enigma2-plugin-systemplugins-nfiflash" shortdescription="Restore your Dreambox with a USB stick">
 		<prerequisites>
 			<hardware type="dm8000" />
@@ -128,7 +145,7 @@
 			<tag type="Skin" />
 		</prerequisites>
 	</package>
-	<package details="plugin_softwaremanager.xml" name="SoftwareManager" packagename="enigma2-plugin-systemplugins-softwaremanager" shortdescription="SoftwareManager manages your Dreambox software">
+	<package details="plugin_softwaremanager.xml" name="SoftwareManager" packagename="enigma2-plugin-systemplugins-softwaremanager" packagetype="internal" shortdescription="SoftwareManager manages your Dreambox software">
 		<prerequisites>
 			<tag type="Software" />
 			<tag type="System" />

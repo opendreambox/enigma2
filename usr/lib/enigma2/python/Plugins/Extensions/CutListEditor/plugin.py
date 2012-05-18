@@ -4,16 +4,13 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ServicePosition import ServicePositionGauge
 from Components.ActionMap import HelpableActionMap
-from Components.MultiContent import MultiContentEntryText
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.VideoWindow import VideoWindow
 from Components.Label import Label
 from Screens.InfoBarGenerics import InfoBarSeek, InfoBarCueSheetSupport
-from Components.GUIComponent import GUIComponent
-from enigma import eListboxPythonMultiContent, eListbox, getDesktop, gFont, iPlayableService, RT_HALIGN_RIGHT
+from enigma import getDesktop, iPlayableService
 from Screens.FixedMenu import FixedMenu
 from Screens.HelpMenu import HelpableScreen
-from ServiceReference import ServiceReference
 from Components.Sources.List import List
 
 import bisect
@@ -81,8 +78,9 @@ class CutListContextMenu(FixedMenu):
 			menu.append((_("remove this mark"), self.removeMark))
 
 		menu.append((_("grab this frame as bitmap"), self.grabFrame))
+
 		FixedMenu.__init__(self, session, _("Cut"), menu)
-		self.skinName = "Menu"
+		self.skinName = ["CutListContextMenu", "Menu" ]
 
 	def startCut(self):
 		self.close(self.RET_STARTCUT)
@@ -132,8 +130,8 @@ class CutListEditor(Screen, InfoBarBase, InfoBarSeek, InfoBarCueSheetSupport, He
 						MultiContentEntryText(size=(125, 20), text = 1, backcolor = MultiContentTemplateColor(3)),
 						MultiContentEntryText(pos=(125,0), size=(50, 20), text = 2, flags = RT_HALIGN_RIGHT, backcolor = MultiContentTemplateColor(3))
 					],
-				 "fonts": [gFont("Regular", 18)],
-				 "itemHeight": 20
+					"fonts": [gFont("Regular", 18)],
+					"itemHeight": 20
 				}
 			</convert>
 		</widget>

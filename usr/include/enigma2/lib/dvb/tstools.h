@@ -3,8 +3,9 @@
 
 #include <sys/types.h>
 #include <lib/dvb/pvrparse.h>
-#include <lib/base/rawfile.h>
+#include <lib/base/itssource.h>
 #include <lib/base/elock.h>
+#include <inttypes.h>
 
 /*
  * Note: we're interested in PTS values, not STC values.
@@ -30,7 +31,7 @@ public:
 	
 		/* get first PTS *after* the given offset. */
 		/* pts values are zero-based. */
-	int getPTS(off_t &offset, pts_t &pts, int fixed=0);
+	int getPTS(uint64_t &offset, pts_t &pts, int fixed=0);
 	
 		/* this fixes up PTS to end up in a [0..len) range.
 		   discontinuities etc. are handled here.
@@ -41,10 +42,10 @@ public:
 		  output:
 		    pts - zero-based PTS value
 		*/
-	int fixupPTS(const off_t &offset, pts_t &pts);
+	int fixupPTS(const uint64_t &offset, pts_t &pts);
 	
 		/* get (approximate) offset corresponding to PTS */
-	int getOffset(off_t &offset, pts_t &pts, int marg=0);
+	int getOffset(uint64_t &offset, pts_t &pts, int marg=0);
 	
 	int getNextAccessPoint(pts_t &ts, const pts_t &start, int direction);
 	
@@ -56,7 +57,7 @@ public:
 	int calcBitrate(); /* in bits/sec */
 	
 	void takeSamples();
-	int takeSample(off_t off, pts_t &p);
+	int takeSample(uint64_t off, pts_t &p);
 	
 	int findPMT(int &pmt_pid, int &service_id);
 	
@@ -74,12 +75,12 @@ public:
 	
 	return values are the new offset, the length of the found frame (both unaligned), and the (signed)
 	number of frames skipped. */
-	int findFrame(off_t &offset, size_t &len, int &direction, int frame_types = frametypeI);
-	int findNextPicture(off_t &offset, size_t &len, int &distance, int frame_types = frametypeAll);
+	int findFrame(uint64_t &offset, size_t &len, int &direction, int frame_types = frametypeI);
+	int findNextPicture(uint64_t &offset, size_t &len, int &distance, int frame_types = frametypeAll);
 
 	/** search backwards from offset to the prev seq header
 	returns the number of frames skipped. */
-	int setSeqHeader(off_t &offset);
+	int setSeqHeader(uint64_t &offset);
 
 private:
 	int m_pid;
@@ -89,15 +90,15 @@ private:
 
 	int m_begin_valid, m_end_valid;
 	pts_t m_pts_begin, m_pts_end;
-	off_t m_offset_begin, m_offset_end;
+	uint64_t m_offset_begin, m_offset_end;
 	
 		/* for simple linear interpolation */
-	std::map<pts_t, off_t> m_samples;
+	std::map<pts_t, uint64_t> m_samples;
 	int m_samples_taken;
 	
 	eMPEGStreamInformation m_streaminfo;
 	int m_use_streaminfo;
-	off_t m_last_filelength;
+	uint64_t m_last_filelength;
 	int m_futile;
 };
 

@@ -1,6 +1,8 @@
 from Components.Task import Task, Job, DiskspacePrecondition, Condition, ToolExistsPrecondition
 from Components.Harddisk import harddiskmanager
 from Screens.MessageBox import MessageBox
+from Project import iso639language
+from Tools import Notifications
 
 class png2yuvTask(Task):
 	def __init__(self, job, inputfile, outputfile):
@@ -317,9 +319,11 @@ class BurnTask(Task):
 	def processOutputLine(self, line):
 		line = line[:-1]
 		print "[GROWISOFS] %s" % line
+		progpos = line.find("%) @")
 		if line[8:14] == "done, ":
 			self.progress = float(line[:6])
-			print "progress:", self.progress
+		elif progpos > 0:
+			self.progress = float(line[progpos-4:progpos])
 		elif line.find("flushing cache") != -1:
 			self.progress = 100
 		elif line.find("closing disc") != -1:
@@ -365,7 +369,7 @@ class BurnTask(Task):
 		self.args = [tool]
 		self.global_preconditions.append(ToolExistsPrecondition())
 
-class RemoveDVDFolder(Task):
+class RemoveWorkspaceFolder(Task):
 	def __init__(self, job):
 		Task.__init__(self, job, "Remove temp. files")
 		self.setTool("rm")
@@ -415,8 +419,7 @@ class PreviewTask(Task):
 			if Screens.Standby.inStandby:
 				self.previewCB(False)
 			else:
-				from Tools import Notifications
-				Notifications.AddNotificationWithCallback(self.previewCB, MessageBox, _("Do you want to preview this DVD before burning?"), timeout = 60, default = False)
+				Notifications.AddNotificationWithCallback(self.previewCB, MessageBox, _("Do you want to preview this DVD before burning?"), timeout = 60, default = False, domain = "JobManager")
 
 	def abort(self):
 		self.finish(aborted = True)
@@ -431,8 +434,7 @@ class PreviewTask(Task):
 		if self.job.menupreview:
 			self.closedCB(True)
 		else:
-			from Tools import Notifications
-			Notifications.AddNotificationWithCallback(self.closedCB, MessageBox, _("Do you want to burn this collection to DVD medium?") )
+			Notifications.AddNotificationWithCallback(self.closedCB, MessageBox, _("Do you want to burn this collection to DVD medium?"), domain = "JobManager" )
 
 	def closedCB(self, answer):
 		if answer == True:
@@ -691,7 +693,7 @@ def CreateAuthoringXML_singleset(job):
 	authorxml.append('<?xml version="1.0" encoding="utf-8"?>\n')
 	authorxml.append(' <dvdauthor dest="' + (job.workspace+"/dvd") + '">\n')
 	authorxml.append('  <vmgm>\n')
-	authorxml.append('   <menus lang="' + job.project.menutemplate.settings.menulang.getValue() + '">\n')
+	authorxml.append('   <menus lang="' + iso639language.get_dvd_id(job.project.menutemplate.settings.menulang.getValue()) + '">\n')
 	authorxml.append('    <pgc>\n')
 	authorxml.append('     <vob file="' + job.project.settings.vmgm.getValue() + '" />\n', )
 	if mode.startswith("menu"):
@@ -703,7 +705,7 @@ def CreateAuthoringXML_singleset(job):
 	authorxml.append('  </vmgm>\n')
 	authorxml.append('  <titleset>\n')
 	if mode.startswith("menu"):
-		authorxml.append('   <menus lang="' + job.project.menutemplate.settings.menulang.getValue() + '">\n')
+		authorxml.append('   <menus lang="' + iso639language.get_dvd_id(job.project.menutemplate.settings.menulang.getValue()) + '">\n')
 		authorxml.append('    <video aspect="4:3"/>\n')
 		for menu_count in range(1 , job.nr_menus+1):
 			if menu_count == 1:
@@ -759,7 +761,7 @@ def CreateAuthoringXML_multiset(job):
 	authorxml.append('<?xml version="1.0" encoding="utf-8"?>\n')
 	authorxml.append(' <dvdauthor dest="' + (job.workspace+"/dvd") + '" jumppad="yes">\n')
 	authorxml.append('  <vmgm>\n')
-	authorxml.append('   <menus lang="' + job.project.menutemplate.settings.menulang.getValue() + '">\n')
+	authorxml.append('   <menus lang="' + iso639language.get_dvd_id(job.project.menutemplate.settings.menulang.getValue()) + '">\n')
 	authorxml.append('    <video aspect="4:3"/>\n')
 	if mode.startswith("menu"):
 		for menu_count in range(1 , job.nr_menus+1):
@@ -791,7 +793,7 @@ def CreateAuthoringXML_multiset(job):
 	for i in range( nr_titles ):
 		title = job.project.titles[i]
 		authorxml.append('  <titleset>\n')
-		authorxml.append('   <menus lang="' + job.project.menutemplate.settings.menulang.getValue() + '">\n')
+		authorxml.append('   <menus lang="' + iso639language.get_dvd_id(job.project.menutemplate.settings.menulang.getValue()) + '">\n')
 		authorxml.append('    <pgc entry="root">\n')
 		authorxml.append('     <pre>\n')
 		authorxml.append('      jump vmgm menu entry title;\n')
@@ -803,7 +805,7 @@ def CreateAuthoringXML_multiset(job):
 			active = audiotrack.active.getValue()
 			if active:
 				format = audiotrack.format.getValue()
-				language = audiotrack.language.getValue()
+				language = iso639language.get_dvd_id(audiotrack.language.getValue())
 				audio_tag = '    <audio format="%s"' % format
 				if language != "nolang":
 					audio_tag += ' lang="%s"' % language
@@ -891,7 +893,7 @@ class DVDJob(Job):
 			PreviewTask(self, self.workspace + "/dvd/VIDEO_TS/")
 			output = self.project.settings.output.getValue()
 			volName = self.project.settings.name.getValue()
-			if output == "dvd":
+			if output == "medium":
 				self.name = _("Burn DVD")
 				tool = "growisofs"
 				burnargs = [ "-Z", "/dev/" + harddiskmanager.getCD(), "-dvd-compat" ]
@@ -904,7 +906,7 @@ class DVDJob(Job):
 				burnargs = [ "-o", isopathfile ]
 			burnargs += [ "-dvd-video", "-publisher", "Dreambox", "-V", volName, self.workspace + "/dvd" ]
 			BurnTask(self, burnargs, tool)
-		RemoveDVDFolder(self)
+		RemoveWorkspaceFolder(self)
 
 class DVDdataJob(Job):
 	def __init__(self, project):
@@ -932,7 +934,7 @@ class DVDdataJob(Job):
 		output = self.project.settings.output.getValue()
 		volName = self.project.settings.name.getValue()
 		tool = "growisofs"
-		if output == "dvd":
+		if output == "medium":
 			self.name = _("Burn DVD")
 			burnargs = [ "-Z", "/dev/" + harddiskmanager.getCD(), "-dvd-compat" ]
 			if self.project.size/(1024*1024) > self.project.MAX_SL:
@@ -950,7 +952,7 @@ class DVDdataJob(Job):
 			burnargs += ["-udf", "-allow-limited-size" ]
 		burnargs += [ "-publisher", "Dreambox", "-V", volName, "-follow-links", self.workspace ]
 		BurnTask(self, burnargs, tool)
-		RemoveDVDFolder(self)
+		RemoveWorkspaceFolder(self)
 
 class DVDisoJob(Job):
 	def __init__(self, project, imagepath):
@@ -959,8 +961,8 @@ class DVDisoJob(Job):
 		self.menupreview = False
 		from Tools.Directories import getSize
 		if imagepath.endswith(".iso"):
-			PreviewTask(self, imagepath)
-			burnargs = [ "-Z", "/dev/" + harddiskmanager.getCD() + '='+imagepath, "-dvd-compat" ]
+			#PreviewTask(self, imagepath)
+			burnargs = [ "-Z", "/dev/" + harddiskmanager.getCD() + '='+imagepath, "-dvd-compat", "-use-the-force-luke=tty"]
 			if getSize(imagepath)/(1024*1024) > self.project.MAX_SL:
 				burnargs += [ "-use-the-force-luke=4gms", "-speed=1" ]
 		else:

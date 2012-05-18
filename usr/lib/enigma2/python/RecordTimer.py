@@ -18,6 +18,7 @@ from ServiceReference import ServiceReference
 from time import localtime, strftime, ctime, time
 from bisect import insort
 
+Notifications.notificationQueue.registerDomain("RecordTimer", _("record timer"), Notifications.ICON_TIMER)
 # ok, for descriptions etc we have:
 # service reference  (to get the service name)
 # name               (title)
@@ -87,10 +88,10 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			# other timers start in a few seconds
 			RecordTimerEntry.staticGotRecordEvent(None, iRecordableService.evEnd)
 			# send normal notification for the case the user leave the standby now..
-			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, onSessionOpenCallback=RecordTimerEntry.stopTryQuitMainloop, default_yes = default_yes)
+			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, onSessionOpenCallback=RecordTimerEntry.stopTryQuitMainloop, default_yes = default_yes, domain="RecordTimer")
 #################################################################
 
-	def __init__(self, serviceref, begin, end, name, description, eit, disabled = False, justplay = False, afterEvent = AFTEREVENT.AUTO, checkOldTimers = False, dirname = None, tags = None):
+	def __init__(self, serviceref, begin, end, name, description, eit, disabled = False, justplay = False, afterEvent = AFTEREVENT.AUTO, checkOldTimers = False, dirname = None, tags = None, plugins = {}):
 		timer.TimerEntry.__init__(self, int(begin), int(end))
 
 		if checkOldTimers == True:
@@ -121,6 +122,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.autoincrease = False
 		self.autoincreasetime = 3600 * 24 # 1 day
 		self.tags = tags or []
+		self.plugins = plugins or {}
 
 		self.log_entries = []
 		self.resetState()
@@ -247,10 +249,10 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				if cur_ref and (not cur_ref.getPath() or cur_ref.getPath()[0] != '/'):
 					if not config.recording.asktozap.value:
 						self.log(8, "asking user to zap away")
-						Notifications.AddNotificationWithCallback(self.failureCB, MessageBox, _("A timer failed to record!\nDisable TV and try again?\n"), timeout=20)
+						Notifications.AddNotificationWithCallback(self.failureCB, MessageBox, _("A timer failed to record!\nDisable TV and try again?\n"), timeout=20, domain="RecordTimer")
 					else: # zap without asking
 						self.log(9, "zap without asking")
-						Notifications.AddNotification(MessageBox, _("In order to record a timer, the TV was switched to the recording service!\n"), type=MessageBox.TYPE_INFO, timeout=20)
+						Notifications.AddNotification(MessageBox, _("In order to record a timer, the TV was switched to the recording service!\n"), type=MessageBox.TYPE_INFO, timeout=20, domain="RecordTimer")
 						self.failureCB(True)
 				elif cur_ref:
 					self.log(8, "currently running service is not a live service.. so stop it makes no sense")
@@ -297,13 +299,25 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				self.record_service = None
 			if self.afterEvent == AFTEREVENT.STANDBY:
 				if not Screens.Standby.inStandby: # not already in standby
-					Notifications.AddNotificationWithCallback(self.sendStandbyNotification, MessageBox, _("A finished record timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20)
+					Notifications.AddNotificationWithCallback(self.sendStandbyNotification, MessageBox, _("A finished record timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20, domain="RecordTimer")
 			elif self.afterEvent == AFTEREVENT.DEEPSTANDBY:
 				if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
 					if Screens.Standby.inStandby: # in standby
 						RecordTimerEntry.TryQuitMainloop() # start shutdown handling without screen
 					else:
-						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20)
+						Notifications.AddNotificationWithCallback(self.sendTryQuitMainloopNotification, MessageBox, _("A finished record timer wants to shut down\nyour Dreambox. Shutdown now?"), timeout = 20, domain="RecordTimer")
+			if self.plugins:
+				from Plugins.Plugin import PluginDescriptor
+				from Components.PluginComponent import plugins
+				for pname, (pval, pdata) in self.plugins.iteritems():
+					if pval:
+						for p in plugins.getPlugins(PluginDescriptor.WHERE_TIMEREDIT):
+							if pname == p.name:
+								if p.__call__.has_key("finishedFnc"):
+									fnc = p.__call__["finishedFnc"]
+									print "calling finishedFnc of WHERE_TIMEREDIT plugin:", p.name, fnc, pval, pdata
+									Notifications.AddNotification(fnc, pval, pdata, self, domain="RecordTimer")
+
 			return True
 
 	def setAutoincreaseEnd(self, entry = None):
@@ -314,7 +328,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		else:
 			new_end = entry.begin -30
 
-		dummyentry = RecordTimerEntry(self.service_ref, self.begin, new_end, self.name, self.description, self.eit, disabled=True, justplay = self.justplay, afterEvent = self.afterEvent, dirname = self.dirname, tags = self.tags)
+		dummyentry = RecordTimerEntry(self.service_ref, self.begin, new_end, self.name, self.description, self.eit, disabled=True, justplay = self.justplay, afterEvent = self.afterEvent, dirname = self.dirname, tags = self.tags, plugins=self.plugins)
 		dummyentry.disabled = self.disabled
 		timersanitycheck = TimerSanityCheck(NavigationInstance.instance.RecordTimer.timer_list, dummyentry)
 		if not timersanitycheck.check():
@@ -329,11 +343,11 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 	def sendStandbyNotification(self, answer):
 		if answer:
-			Notifications.AddNotification(Screens.Standby.Standby)
+			Notifications.AddNotification(Screens.Standby.Standby, domain="RecordTimer")
 
 	def sendTryQuitMainloopNotification(self, answer):
 		if answer:
-			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1)
+			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, domain="RecordTimer")
 
 	def getNextActivation(self):
 		if self.state == self.StateEnded:
@@ -371,7 +385,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			# show notification. the 'id' will make sure that it will be
 			# displayed only once, even if more timers are failing at the
 			# same time. (which is very likely in case of disk fullness)
-			Notifications.AddPopup(text = _("Write error while recording. Disk full?\n"), type = MessageBox.TYPE_ERROR, timeout = 0, id = "DiskFullMessage")
+			Notifications.AddPopup(text = _("Write error while recording. Disk full?\n"), type = MessageBox.TYPE_ERROR, timeout = 0, id = "DiskFullMessage", domain="RecordTimer")
 			# ok, the recording has been stopped. we need to properly note 
 			# that in our state, with also keeping the possibility to re-try.
 			# TODO: this has to be done.
@@ -381,7 +395,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				text = '\n'.join((text, _("Please note that the previously selected media could not be accessed and therefore the default directory is being used instead.")))
 
 			if config.usage.show_message_when_recording_starts.value:
-				Notifications.AddPopup(text = text, type = MessageBox.TYPE_INFO, timeout = 3)
+				Notifications.AddPopup(text = text, type = MessageBox.TYPE_INFO, timeout = 3, domain = "RecordTimer")
 
 	# we have record_service as property to automatically subscribe to record service events
 	def setRecordService(self, service):
@@ -430,7 +444,15 @@ def createTimer(xml):
 
 	name = xml.get("name").encode("utf-8")
 	#filename = xml.get("filename").encode("utf-8")
-	entry = RecordTimerEntry(serviceref, begin, end, name, description, eit, disabled, justplay, afterevent, dirname = location, tags = tags)
+
+	plugins = {}
+	for p in xml.findall("plugin"):
+		pname = str(p.get("name"))
+		pval = str(p.get("config_val"))
+		pdata = str(p.text)
+		plugins[pname] = (pval, pdata)
+
+	entry = RecordTimerEntry(serviceref, begin, end, name, description, eit, disabled, justplay, afterevent, dirname = location, tags = tags, plugins = plugins)
 	entry.repeated = int(repeated)
 	
 	for l in xml.findall("log"):
@@ -438,7 +460,7 @@ def createTimer(xml):
 		code = int(l.get("code"))
 		msg = l.text.strip().encode("utf-8")
 		entry.log_entries.append((time, code, msg))
-	
+
 	return entry
 
 class RecordTimer(timer.Timer):
@@ -496,7 +518,7 @@ class RecordTimer(timer.Timer):
 			from Tools.Notifications import AddPopup
 			from Screens.MessageBox import MessageBox
 
-			AddPopup(_("The timer file (timers.xml) is corrupt and could not be loaded."), type = MessageBox.TYPE_ERROR, timeout = 0, id = "TimerLoadFailed")
+			AddPopup(_("The timer file (timers.xml) is corrupt and could not be loaded."), type = MessageBox.TYPE_ERROR, timeout = 0, id = "TimerLoadFailed", domain="RecordTimer")
 
 			print "timers.xml failed to load!"
 			try:
@@ -518,7 +540,7 @@ class RecordTimer(timer.Timer):
 			if (self.record(newTimer, True, dosave=False) is not None) and (checkit == True):
 				from Tools.Notifications import AddPopup
 				from Screens.MessageBox import MessageBox
-				AddPopup(_("Timer overlap in timers.xml detected!\nPlease recheck it!"), type = MessageBox.TYPE_ERROR, timeout = 0, id = "TimerLoadFailed")
+				AddPopup(_("Timer overlap in timers.xml detected!\nPlease recheck it!"), type = MessageBox.TYPE_ERROR, timeout = 0, id = "TimerLoadFailed", domain="RecordTimer")
 				checkit = False # at moment it is enough when the message is displayed one time
 
 	def saveTimer(self):
@@ -601,7 +623,11 @@ class RecordTimer(timer.Timer):
 					list.append('>')
 					list.append(str(stringToXML(msg)))
 					list.append('</log>\n')
-			
+
+			if timer.plugins:
+				for key, (val, data) in timer.plugins.iteritems():
+					if val:
+						list.append('<plugin name="%s" config_val="%s">%s</plugin>\n' % (str(key), str(val), str(stringToXML(data))))
 			list.append('</timer>\n')
 
 		list.append('</timers>\n')

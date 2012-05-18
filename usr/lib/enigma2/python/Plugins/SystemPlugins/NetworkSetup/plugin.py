@@ -1,5 +1,4 @@
 from Plugins.Plugin import PluginDescriptor
-from Components.PluginComponent import plugins
 
 def autostart(reason, **kwargs):
 	if "session" in kwargs:

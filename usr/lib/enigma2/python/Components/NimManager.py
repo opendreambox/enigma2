@@ -16,7 +16,6 @@ from time import localtime, mktime
 from datetime import datetime
 from Tools.BoundFunction import boundFunction
 
-from Tools import Directories
 import xml.etree.cElementTree
 
 def getConfigSatlist(orbpos, satlist):
@@ -1369,6 +1368,13 @@ def InitNimManager(nimmgr, slot_no = None):
 				tmp.lnb = lnb
 				nim.advanced.sat[x] = tmp
 
+	def scpcSearchRangeChanged(configElement):
+		fe_id = configElement.fe_id
+		slot_id = configElement.slot_id
+		name = nimmgr.nim_slots[slot_id].description
+		if name == 'Alps BSBE2' or name.find('BCM450') != -1:
+			open("/proc/stb/frontend/%d/use_scpc_optimized_search_range" %(fe_id), "w").write(configElement.value)
+
 	def toneAmplitudeChanged(configElement):
 		fe_id = configElement.fe_id
 		slot_id = configElement.slot_id
@@ -1461,6 +1467,10 @@ def InitNimManager(nimmgr, slot_no = None):
 			nim.toneAmplitude.fe_id = x - empty_slots
 			nim.toneAmplitude.slot_id = x
 			nim.toneAmplitude.addNotifier(toneAmplitudeChanged)
+			nim.scpcSearchRange = ConfigSelection([("0", _("no")), ("1", _("yes"))], "0")
+			nim.scpcSearchRange.fe_id = x - empty_slots
+			nim.scpcSearchRange.slot_id = x
+			nim.scpcSearchRange.addNotifier(scpcSearchRangeChanged)
 			nim.diseqc13V = ConfigYesNo(False)
 			nim.diseqcMode = ConfigSelection(diseqc_mode_choices, "diseqc_a_b")
 			nim.connectedTo = ConfigSelection([(str(id), nimmgr.getNimDescription(id)) for id in nimmgr.getNimListOfType("DVB-S") if id != x])
@@ -1476,6 +1486,7 @@ def InitNimManager(nimmgr, slot_no = None):
 			nim.longitudeOrientation = ConfigSelection(longitude_orientation_choices, "east")
 			nim.latitude = ConfigFloat(default=[50,767], limits=[(0,359),(0,999)])
 			nim.latitudeOrientation = ConfigSelection(latitude_orientation_choices, "north")
+			nim.positionerExclusively = ConfigYesNo(True)
 			nim.powerMeasurement = ConfigYesNo(True)
 			nim.powerThreshold = ConfigInteger(default=hw.get_device_name() == "dm8000" and 15 or 50, limits=(0, 100))
 			nim.turningSpeed = ConfigSelection(turning_speed_choices, "fast")

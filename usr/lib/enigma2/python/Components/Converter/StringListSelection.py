@@ -5,6 +5,10 @@ class StringListSelection(Converter, object):
 	"extracts the first element of a the current string list  element for displaying it on LCD"
 	def __init__(self, args):
 		Converter.__init__(self, args)
+		if args.isdigit():
+			self.element_index = int(args)
+		else:
+			self.element_index = 0
 
 	def selChanged(self):
 		self.downstream_elements.changed((self.CHANGED_ALL, 0))
@@ -13,7 +17,7 @@ class StringListSelection(Converter, object):
 	def getText(self):
 		cur = self.source.current
 		if cur and len(cur):
-			return cur[0]
+			return cur[self.element_index]
 		return None
 
 	text = property(getText)

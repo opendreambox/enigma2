@@ -3,7 +3,6 @@ from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, Confi
 from Tools.Directories import resolveFilename, SCOPE_HDD
 from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv;
 from SystemInfo import SystemInfo
-import os
 
 def InitUsageConfig():
 	config.usage = ConfigSubsection();

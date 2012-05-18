@@ -1,6 +1,6 @@
 from Wizard import wizardManager
 from Screens.WizardLanguage import WizardLanguage
-from Tools.Directories import pathExists, resolveFilename, SCOPE_DEFAULTDIR, SCOPE_DEFAULTPARTITIONMOUNTDIR, SCOPE_DEFAULTPARTITION
+from Tools.Directories import pathExists, resolveFilename, SCOPE_DEFAULTPARTITIONMOUNTDIR, SCOPE_DEFAULTPARTITION
 
 from Components.Pixmap import Pixmap, MovingPixmap
 from Components.config import config, ConfigBoolean, configfile, ConfigYesNo, getConfigListEntry

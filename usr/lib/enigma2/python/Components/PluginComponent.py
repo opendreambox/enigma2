@@ -15,7 +15,7 @@ def languageChanged():
 class PluginComponent:
 	firstRun = True
 	restartRequired = False
-	
+
 	def __init__(self):
 		self.plugins = {}
 		self.pluginList = [ ]
@@ -35,7 +35,7 @@ class PluginComponent:
 					plugin(reason=0)
 		else:
 			self.restartRequired = True
-				
+
 	def removePlugin(self, plugin):
 		self.pluginList.remove(plugin)
 		for x in plugin.where:
@@ -115,9 +115,9 @@ class PluginComponent:
 		# internally, the "fnc" argument will be compared with __eq__
 		plugins_added = [p for p in new_plugins if p not in self.pluginList]
 		plugins_removed = [p for p in self.pluginList if not p.internal and p not in new_plugins]
-		
+
 		#ignore already installed but reloaded plugins
-		for p in plugins_removed: 
+		for p in plugins_removed:
 			for pa in plugins_added:
 				if pa.path == p.path and pa.where == p.where:
 					pa.needsRestart = False
@@ -134,7 +134,7 @@ class PluginComponent:
 						if installed_plugin.where == p.where:
 							p.needsRestart = False
 				self.addPlugin(p)
-						
+
 		if self.firstRun:
 			self.firstRun = False
 			self.installedPluginList = self.pluginList
@@ -156,6 +156,13 @@ class PluginComponent:
 		for p in self.getPlugins(PluginDescriptor.WHERE_MENU):
 			res += p(menuid)
 		return res
+
+	def getDescriptionForMenuEntryID(self, menuid, entryid ):
+		for p in self.getPlugins(PluginDescriptor.WHERE_MENU):
+			if p(menuid) and isinstance(p(menuid), (list,tuple)):
+				if p(menuid)[0][2] == entryid:
+					return p.description
+		return None
 
 	def clearPluginList(self):
 		self.pluginList = []

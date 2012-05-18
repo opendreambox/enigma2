@@ -1,205 +1,180 @@
-# enigma2 reactor: based on pollreactor, which is
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# based on qt4reactor.py
+# Copyright (c) 2001-2008 Twisted Matrix Laboratories.
 # See LICENSE for details.
-
+# Original Maintainer: U{Itamar Shtull-Trauring<mailto:twisted@itamarst.org>}
+# Original Ported to QT4: U{Gabe Rudy<mailto:rudy@goldenhelix.com>}
 
 """
-Maintainer: U{Felix Domke<mailto:tmbinc@elitedvb.net>}
+This module provides support for Twisted to interact with Enigma2's mainloop.
+
+Maintainer: U{Andreas Monzner<mailto:andreas.monzner@dream-property.net>}
 """
 
-# System imports
-import select, errno, sys
+__all__ = ['install']
 
-# Twisted imports
-from twisted.python import log, failure
-from twisted.internet import main, posixbase, error
-#from twisted.internet.pollreactor import PollReactor, poller
+# System Imports
+from enigma import runMainloop, quitMainloop, eSocketNotifier, eTimer
+from select import POLLIN, POLLOUT
 
-from enigma import getApplication
+from zope.interface import implements
 
-# globals
-reads = {}
-writes = {}
-selectables = {}
+from twisted.internet.interfaces import IReactorFDSet
+from twisted.python import log
+from twisted.internet.posixbase import PosixReactorBase
 
-POLL_DISCONNECTED = (select.POLLHUP | select.POLLERR | select.POLLNVAL)
+class TwistedSocketNotifier:
+    """
+    Connection between an fd event and reader/writer callbacks.
+    """
 
-class E2SharedPoll:
-	def __init__(self):
-		self.dict = { }
-		self.eApp = getApplication()
+    def __init__(self, reactor, watcher, type):
+        self.sn = eSocketNotifier(watcher.fileno(), type)
+        self.reactor = reactor
+        self.watcher = watcher
+        self.fn = None
+        if type == POLLIN:
+            self.fn = self.read
+        elif type == POLLOUT:
+            self.fn = self.write
+        self.sn.callback.append(self.fn)
 
-	def register(self, fd, eventmask = select.POLLIN | select.POLLERR | select.POLLOUT):
-		self.dict[fd] = eventmask
-	
-	def unregister(self, fd):
-		del self.dict[fd]
-	
-	def poll(self, timeout = None):
-		try:
-			r = self.eApp.poll(timeout, self.dict)
-		except KeyboardInterrupt:
-			return None
-		return r
 
-poller = E2SharedPoll()
+    def shutdown(self):
+        self.fn = self.watcher = None
+        del self.sn
 
-class PollReactor(posixbase.PosixReactorBase):
-	"""A reactor that uses poll(2)."""
 
-	def _updateRegistration(self, fd):
-		"""Register/unregister an fd with the poller."""
-		try:
-			poller.unregister(fd)
-		except KeyError:
-			pass
+    def read(self, sock):
+        w = self.watcher
+        def _read():
+            why = None
+            try:
+                why = w.doRead()
+            except:
+                log.err()
+                why = sys.exc_info()[1]
+            if why:
+                self.reactor._disconnectSelectable(w, why, True)
+        log.callWithLogger(w, _read)
+        self.reactor.simulate()
 
-		mask = 0
-		if reads.has_key(fd): mask = mask | select.POLLIN
-		if writes.has_key(fd): mask = mask | select.POLLOUT
-		if mask != 0:
-			poller.register(fd, mask)
-		else:
-			if selectables.has_key(fd): del selectables[fd]
-		
-		
-		poller.eApp.interruptPoll()
 
-	def _dictRemove(self, selectable, mdict):
-		try:
-			# the easy way
-			fd = selectable.fileno()
-			# make sure the fd is actually real.  In some situations we can get
-			# -1 here.
-			mdict[fd]
-		except:
-			# the hard way: necessary because fileno() may disappear at any
-			# moment, thanks to python's underlying sockets impl
-			for fd, fdes in selectables.items():
-				if selectable is fdes:
-					break
-			else:
-				# Hmm, maybe not the right course of action?  This method can't
-				# fail, because it happens inside error detection...
-				return
-		if mdict.has_key(fd):
-			del mdict[fd]
-			self._updateRegistration(fd)
+    def write(self, sock):
+        w = self.watcher
+        def _write():
+            why = None
+            try:
+                why = w.doWrite()
+            except:
+                log.err()
+                why = sys.exc_info()[1]
+            if why:
+                self.reactor._disconnectSelectable(w, why, False)
+        log.callWithLogger(w, _write)
+        self.reactor.simulate()
 
-	def addReader(self, reader):
-		"""Add a FileDescriptor for notification of data available to read.
-		"""
-		fd = reader.fileno()
-		if not reads.has_key(fd):
-			selectables[fd] = reader
-			reads[fd] =  1
-			self._updateRegistration(fd)
 
-	def addWriter(self, writer, writes=writes, selectables=selectables):
-		"""Add a FileDescriptor for notification of data available to write.
-		"""
-		fd = writer.fileno()
-		if not writes.has_key(fd):
-			selectables[fd] = writer
-			writes[fd] =  1
-			self._updateRegistration(fd)
+class e2reactor(PosixReactorBase):
+    """
+    e2 reactor.
+    """
+    implements(IReactorFDSet)
 
-	def removeReader(self, reader, reads=reads):
-		"""Remove a Selectable for notification of data available to read.
-		"""
-		return self._dictRemove(reader, reads)
+    # Reference to a DelayedCall for self.crash() when the reactor is
+    # entered through .iterate()
+    _crashCall = None
 
-	def removeWriter(self, writer, writes=writes):
-		"""Remove a Selectable for notification of data available to write.
-		"""
-		return self._dictRemove(writer, writes)
+    _timer = None
 
-	def removeAll(self, reads=reads, writes=writes, selectables=selectables):
-		"""Remove all selectables, and return a list of them."""
-		if self.waker is not None:
-			self.removeReader(self.waker)
-		result = selectables.values()
-		fds = selectables.keys()
-		reads.clear()
-		writes.clear()
-		selectables.clear()
-		for fd in fds:
-			poller.unregister(fd)
-			
-		if self.waker is not None:
-			self.addReader(self.waker)
-		return result
+    def __init__(self):
+        self._reads = {}
+        self._writes = {}
+        PosixReactorBase.__init__(self)
+        self.addSystemEventTrigger('after', 'shutdown', self.cleanup)
+        self._timer = eTimer()
+        self._timer.callback.append(self.simulate)
 
-	def doPoll(self, timeout,
-			   reads=reads,
-			   writes=writes,
-			   selectables=selectables,
-			   select=select,
-			   log=log,
-			   POLLIN=select.POLLIN,
-			   POLLOUT=select.POLLOUT):
-		"""Poll the poller for new events."""
-		
-		if timeout is not None:
-			timeout = int(timeout * 1000) # convert seconds to milliseconds
 
-		try:
-			l = poller.poll(timeout)
-			if l is None:
-				if self.running:
-					self.stop()
-				l = [ ]
-		except select.error, e:
-			if e[0] == errno.EINTR:
-				return
-			else:
-				raise
-		_drdw = self._doReadOrWrite
-		for fd, event in l:
-			try:
-				selectable = selectables[fd]
-			except KeyError:
-				# Handles the infrequent case where one selectable's
-				# handler disconnects another.
-				continue
-			log.callWithLogger(selectable, _drdw, selectable, fd, event, POLLIN, POLLOUT, log)
+    def addReader(self, reader):
+        if not reader in self._reads:
+            self._reads[reader] = TwistedSocketNotifier(self, reader,
+                                                       POLLIN)
 
-	doIteration = doPoll
 
-	def _doReadOrWrite(self, selectable, fd, event, POLLIN, POLLOUT, log, 
-		faildict={
-			error.ConnectionDone: failure.Failure(error.ConnectionDone()),
-			error.ConnectionLost: failure.Failure(error.ConnectionLost())
-		}):
-		why = None
-		inRead = False
-		if event & POLL_DISCONNECTED and not (event & POLLIN):
-			why = main.CONNECTION_LOST
-		else:
-			try:
-				if event & POLLIN:
-					why = selectable.doRead()
-					inRead = True
-				if not why and event & POLLOUT:
-					why = selectable.doWrite()
-					inRead = False
-				if not selectable.fileno() == fd:
-					why = error.ConnectionFdescWentAway('Filedescriptor went away')
-					inRead = False
-			except:
-				log.deferr()
-				why = sys.exc_info()[1]
-		if why:
-			self._disconnectSelectable(selectable, why, inRead)
+    def addWriter(self, writer):
+        if not writer in self._writes:
+            self._writes[writer] = TwistedSocketNotifier(self, writer,
+                                                        POLLOUT)
 
-	def callLater(self, *args, **kwargs):
-		poller.eApp.interruptPoll()
-		return posixbase.PosixReactorBase.callLater(self, *args, **kwargs)
 
-def install():
-	"""Install the poll() reactor."""
-	
-	p = PollReactor()
-	main.installReactor(p)
+    def removeReader(self, reader):
+        if reader in self._reads:
+            self._reads[reader].shutdown()
+            del self._reads[reader]
 
-__all__ = ["PollReactor", "install"]
+
+    def removeWriter(self, writer):
+        if writer in self._writes:
+            self._writes[writer].shutdown()
+            del self._writes[writer]
+
+
+    def removeAll(self):
+        return self._removeAll(self._reads, self._writes)
+
+
+    def getReaders(self):
+        return self._reads.keys()
+
+
+    def getWriters(self):
+        return self._writes.keys()
+
+
+    def simulate(self):
+        if not self.running:
+            quitMainloop()
+            return
+
+        self.runUntilCurrent()
+
+        if self._crashCall is not None:
+            self._crashCall.reset(0)
+
+        timeout = self.timeout()
+        if timeout is not None and timeout > 0:
+            self._timer.start(int(timeout * 1010))
+
+
+    def cleanup(self):
+        if self._timer is not None:
+            self._timer.stop()
+            self._timer = None
+
+
+    def iterate(self, delay=0.0):
+        self._crashCall = self.callLater(delay, self._crash)
+        self.run()
+
+
+    def mainLoop(self):
+        self.simulate()
+        runMainloop()
+
+
+    def _crash(self):
+        if self._crashCall is not None:
+            if self._crashCall.active():
+                self._crashCall.cancel()
+            self._crashCall = None
+        self.running = False
+
+
+
+def install(app=None):
+    """
+    Configure the twisted mainloop to be run inside the e2 mainloop.
+    """
+    from twisted.internet import main
+    reactor = e2reactor()
+    main.installReactor(reactor)

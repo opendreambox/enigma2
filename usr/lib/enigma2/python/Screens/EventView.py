@@ -5,13 +5,11 @@ from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
-from Components.TimerList import TimerList
 from Components.UsageConfig import preferredTimerPath
 from enigma import eEPGCache, eTimer, eServiceReference
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from TimerEntry import TimerEntry
 from time import localtime
-from Components.config import config
 
 class EventViewBase:
 	ADD_TIMER = 0

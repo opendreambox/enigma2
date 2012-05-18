@@ -1,4 +1,4 @@
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigPIN, ConfigText, ConfigYesNo, ConfigSubList, ConfigInteger
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigPIN, ConfigYesNo, ConfigSubList, ConfigInteger
 #from Screens.ChannelSelection import service_types_tv
 from Screens.InputBox import PinInput
 from Screens.MessageBox import MessageBox
@@ -19,6 +19,8 @@ IMG_WHITESERVICE = LIST_WHITELIST + "-" + TYPE_SERVICE
 IMG_WHITEBOUQUET = LIST_WHITELIST + "-" + TYPE_BOUQUET
 IMG_BLACKSERVICE = LIST_BLACKLIST + "-" + TYPE_SERVICE
 IMG_BLACKBOUQUET = LIST_BLACKLIST + "-" + TYPE_BOUQUET
+
+Notifications.notificationQueue.registerDomain("ParentalControl", _("Parental control"), Notifications.ICON_DEFAULT)
 
 def InitParentalControl():
 	global parentalControl
@@ -108,7 +110,7 @@ class ParentalControl:
 			if self.serviceLevel.has_key(service):
 				levelNeeded = self.serviceLevel[service]
 			pinList = self.getPinList()[:levelNeeded + 1]
-			Notifications.AddNotificationWithCallback(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry = config.ParentalControl.retries.servicepin, pinList = pinList, service = ServiceReference(ref).getServiceName(), title = _("this service is protected by a parental control pin"), windowTitle = _("Parental control"))
+			Notifications.AddNotificationWithCallback(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry = config.ParentalControl.retries.servicepin, pinList = pinList, service = ServiceReference(ref).getServiceName(), title = _("this service is protected by a parental control pin"), windowTitle = _("Parental control"), domain = "ParentalControl")
 			return False
 		else:
 			return True
@@ -235,7 +237,7 @@ class ParentalControl:
 		else:
 			#This is the new function of caching cancelling of service pin
 			if result is not None:
-				Notifications.AddNotification(MessageBox,  _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
+				Notifications.AddNotification(MessageBox,  _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR, domain = "ParentalControl")
 			else:
 				if self.checkSessionPinCancel == True:
 					self.sessionPinCached = True

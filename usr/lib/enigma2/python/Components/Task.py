@@ -2,6 +2,9 @@
 # A task is the run of an external tool, with proper methods for failure handling
 
 from Tools.CList import CList
+from Tools import Notifications
+
+Notifications.notificationQueue.registerDomain("JobManager", _("Job Manager"), Notifications.ICON_DEFAULT)
 
 class Job(object):
 	NOT_STARTED, IN_PROGRESS, FINISHED, FAILED = range(4)
@@ -109,6 +112,12 @@ class Job(object):
 
 	def cancel(self):
 		self.abort()
+		
+	def remove(self, callback):
+		if self.status == self.IN_PROGRESS:
+			self.abort()
+		else:
+			callback(self, None, [])
 
 class Task(object):
 	def __init__(self, job, name):
@@ -270,17 +279,16 @@ class JobManager:
 
 	def jobDone(self, job, task, problems):
 		print "job", job, "completed with", problems, "in", task
-		from Tools import Notifications
 		if self.in_background:
 			from Screens.TaskView import JobView
 			self.in_background = False
-			Notifications.AddNotification(JobView, self.active_job)
+			Notifications.AddNotification(JobView, self.active_job, domain = "JobManager")
 		if problems:
 			from Screens.MessageBox import MessageBox
 			if problems[0].RECOVERABLE:
-				Notifications.AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)))
+				Notifications.AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)), domain = "JobManager")
 			else:
-				Notifications.AddNotification(MessageBox, _("Error") + (': %s') % (problems[0].getErrorMessage(task)), type = MessageBox.TYPE_ERROR )
+				Notifications.AddNotification(MessageBox, _("Error") + (': %s') % (problems[0].getErrorMessage(task)), type = MessageBox.TYPE_ERROR, domain = "JobManager")
 				self.errorCB(False)
 			return
 			#self.failed_jobs.append(self.active_job)

@@ -5,14 +5,14 @@ from Tools.Directories import resolveFilename, pathExists, fileExists, SCOPE_MED
 from Plugins.Plugin import PluginDescriptor
 
 from Components.Pixmap import Pixmap, MovingPixmap
-from Components.ActionMap import ActionMap, NumberActionMap
+from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.FileList import FileList
 from Components.AVSwitch import AVSwitch
 from Components.Sources.List import List
-from Components.ConfigList import ConfigList, ConfigListScreen
+from Components.ConfigList import ConfigListScreen
 
-from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigEnableDisable, KEY_LEFT, KEY_RIGHT, KEY_0, getConfigListEntry
+from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigEnableDisable, getConfigListEntry
 
 def getScale():
 	return AVSwitch().getFramebufferScale()

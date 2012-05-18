@@ -1,14 +1,12 @@
-from Screens.Wizard import wizardManager, WizardSummary
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Components.Console import Console
 from Components.Ipkg import IpkgComponent
-from Components.Pixmap import Pixmap, MovingPixmap, MultiPixmap
-from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigBoolean
-from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
-from os import system, statvfs, stat
+from Components.Pixmap import Pixmap
+from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from os import statvfs
 
 
 def checkFreeSpaceAvailable():

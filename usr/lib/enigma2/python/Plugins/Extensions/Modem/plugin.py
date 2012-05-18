@@ -1,60 +1,76 @@
 def getDefaultGateway():
-	f = open("/proc/net/route", "r")
-	if f:
-		for line in f.readlines():
-			tokens = line.split('\t')
-			if tokens[1] == '00000000': #dest 0.0.0.0
-				return int(tokens[2], 16)
+	try:
+		f = open("/proc/net/route", "r")
+	except IOError:
+		return None
+
+	for line in f.readlines():
+		tokens = line.split('\t')
+		if tokens[1] == '00000000': #dest 0.0.0.0
+			return int(tokens[2], 16)
 	return None
 
 def getTelephone():
-	f = open("/etc/ppp/options", "r")
-	if f:
-		for line in f.readlines():
-			if line.find('connect') == 0:
-				line = line[line.find(' ')+1:]
-				line = line[line.find(' ')+1:]
-				line = line[:line.find('"')]
-				return line
+	try:
+		f = open("/etc/ppp/options", "r")
+	except IOError:
+		return ""
+
+	for line in f.readlines():
+		if line.find('connect') == 0:
+			line = line[line.find(' ')+1:]
+			line = line[line.find(' ')+1:]
+			line = line[:line.find('"')]
+			return line
 	return ""
 
 def setOptions(tel, user):
-	f = open("/etc/ppp/options", "r+")
-	if f:
-		lines = f.readlines()
-		f.seek(0)
-		for line in lines:
-			if line.find('connect') == 0:
-				p = line.find(' ')
-				p = line.find(' ', p+1)
-				line = line[:p+1]
-				f.write(line+tel+'"\n')
-			elif line.find('user') == 0:
-				f.write('user '+user+'\n')
-			else:
-				f.write(line)
+	try:
+		f = open("/etc/ppp/options", "r+")
+	except IOError:
+		return
+
+	lines = f.readlines()
+	f.seek(0)
+	for line in lines:
+		if line.find('connect') == 0:
+			p = line.find(' ')
+			p = line.find(' ', p+1)
+			line = line[:p+1]
+			f.write(line+tel+'"\n')
+		elif line.find('user') == 0:
+			f.write('user '+user+'\n')
+		else:
+			f.write(line)
 
 def getSecretString():
-	f = open("/etc/ppp/pap-secrets", "r")
-	if f:
-		for line in f.readlines():
-			if line[0] == '#' or line.find('*') == -1:
-				continue
-			for ch in (' ', '\t', '\n', '"'):
-				line = line.replace(ch, '')
-			return line
-	return None
+	try:
+		f = open("/etc/ppp/pap-secrets", "r")
+	except IOError:
+		return ""
+
+	for line in f.readlines():
+		if line[0] == '#' or line.find('*') == -1:
+			continue
+		for ch in (' ', '\t', '\n', '"'):
+			line = line.replace(ch, '')
+		return line
+
+	return ""
 
 def setSecretString(secret):
-	f = open("/etc/ppp/pap-secrets", 'r+')
-	if f:
-		lines = f.readlines()
-		f.seek(0)
-		for line in lines:
-			if line[0] == '#' or line.find('*') == -1:
-				f.write(line)
-				continue
-			f.write(secret+'\n')
+	try:
+		f = open("/etc/ppp/pap-secrets", 'r+')
+	except IOError:
+		return
+
+	lines = f.readlines()
+	f.seek(0)
+	for line in lines:
+		if line[0] == '#' or line.find('*') == -1:
+			f.write(line)
+			continue
+		f.write(secret+'\n')
 
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor

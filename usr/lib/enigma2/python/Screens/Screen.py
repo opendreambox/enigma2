@@ -51,21 +51,17 @@ class Screen(dict, GUISkin):
 		self.keyboardMode = None
 
 	def saveKeyboardMode(self):
-		rcinput = eRCInput.getInstance()
-		self.keyboardMode = rcinput.getKeyboardMode()
+		self.keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 	def setKeyboardModeAscii(self):
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmAscii)
+		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
 
 	def setKeyboardModeNone(self):
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmNone)
+		eRCInput.getInstance().setKeyboardMode(eRCInput.kmNone)
 
 	def restoreKeyboardMode(self):
-		rcinput = eRCInput.getInstance()
 		if self.keyboardMode is not None:
-			rcinput.setKeyboardMode(self.keyboardMode)
+			eRCInput.getInstance().setKeyboardMode(self.keyboardMode)
 
 	def execBegin(self):
 		self.active_components = [ ]

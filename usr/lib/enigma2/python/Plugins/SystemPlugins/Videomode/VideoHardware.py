@@ -1,4 +1,3 @@
-from enigma import eTimer
 from Components.config import config, ConfigSelection, ConfigSubDict, ConfigYesNo
 
 from Tools.CList import CList
@@ -166,6 +165,10 @@ class VideoHardware:
 		# we can ignore "port"
 		self.current_mode = mode
 		self.current_port = port
+
+		if not mode or not rate:
+			return
+
 		modes = self.rates[mode][rate]
 
 		mode_50 = modes.get(50)

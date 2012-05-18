@@ -17,8 +17,8 @@
 #include <lib/base/elock.h>
 #include <lib/base/itssource.h>
 #include <lib/service/service.h>
-#include <libsig_comp.h>
-#include <connection.h>
+#include <lib/base/sigc.h>
+#include <lib/base/connection.h>
 
 #if defined(__GNUC__) && ((__GNUC__ == 3 && __GNUC_MINOR__ >= 1) || __GNUC__ == 4 )  // check if gcc version >= 3.1
 #include <ext/slist>
@@ -185,7 +185,7 @@ struct eDVBChannelID
 		}
 		return 0;
 	}
-	eDVBChannelID(eDVBNamespace dvbnamespace, eTransportStreamID tsid, eOriginalNetworkID onid, const std::string pvr_source=""):
+	eDVBChannelID(eDVBNamespace dvbnamespace, eTransportStreamID tsid, eOriginalNetworkID onid, const std::string &pvr_source = std::string()):
 			dvbnamespace(dvbnamespace), transport_stream_id(tsid), original_network_id(onid), pvr_source(pvr_source)
 	{
 	}
@@ -291,10 +291,10 @@ public:
 		cSUBTITLE, cacheMax
 	};
 
-	int getCacheEntry(cacheID);
+	int getCacheEntry(cacheID) const;
 	void setCacheEntry(cacheID, int);
 
-	bool cacheEmpty();
+	bool cacheEmpty() const;
 
 	eDVBService();
 		/* m_service_name_sort is uppercase, with special chars removed, to increase sort performance. */
@@ -375,7 +375,7 @@ public:
 	int m_sort;
 	std::string m_bouquet_name;
 	
-	static RESULT compile(ePtr<eDVBChannelQuery> &res, std::string query);
+	static RESULT compile(ePtr<eDVBChannelQuery> &res, const std::string &query);
 	
 	ePtr<eDVBChannelQuery> m_p1, m_p2;
 };
@@ -473,7 +473,7 @@ public:
 	virtual int closeFrontend(bool force = false, bool no_delayed = false)=0;
 	virtual void reopenFrontend()=0;
 #ifndef SWIG
-	virtual RESULT connectStateChange(const Slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectStateChange(const sigc::slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection)=0;
 #endif
 	virtual RESULT getState(int &SWIG_OUTPUT)=0;
 	virtual RESULT setTone(int tone)=0;
@@ -508,11 +508,6 @@ public:
 	virtual int canTune(const eDVBFrontendParametersSatellite &feparm, iDVBFrontend *fe, int frontend_id, int *highest_score_lnb=0)=0;
 	virtual void setRotorMoving(int slotid, bool)=0;
 };
-
-struct eDVBCIRouting
-{
-	int enabled;
-};
 #endif // SWIG
 
 SWIG_IGNORE(iDVBChannel);
@@ -521,7 +516,7 @@ class iDVBChannel: public iObject
 public:
 		/* direct frontend access for raw channels and/or status inquiries. */
 	virtual SWIG_VOID(RESULT) getFrontend(ePtr<iDVBFrontend> &SWIG_OUTPUT)=0;
-	virtual RESULT requestTsidOnid(SWIG_PYOBJECT(ePyObject) callback) { return -1; }
+	virtual RESULT requestTsidOnid(SWIG_PYOBJECT(ePyObject) callback) { E_UNUSED(callback); return -1; }
 	virtual int reserveDemux() { return -1; }
 #ifndef SWIG
 	enum
@@ -541,8 +536,8 @@ public:
 	{
 		evtPreStart, evtEOF, evtSOF, evtFailed
 	};
-	virtual RESULT connectStateChange(const Slot1<void,iDVBChannel*> &stateChange, ePtr<eConnection> &connection)=0;
-	virtual RESULT connectEvent(const Slot2<void,iDVBChannel*,int> &eventChange, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectStateChange(const sigc::slot1<void,iDVBChannel*> &stateChange, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectEvent(const sigc::slot2<void,iDVBChannel*,int> &eventChange, ePtr<eConnection> &connection)=0;
 
 		/* demux capabilities */
 	enum
@@ -551,7 +546,6 @@ public:
 		/* capCI = 2 */
 		capNoDescrambler = 4
 	};
-	virtual RESULT setCIRouting(const eDVBCIRouting &routing)=0;
 	virtual RESULT getDemux(ePtr<iDVBDemux> &demux, int cap=0)=0;
 	
 		/* use count handling */
@@ -573,7 +567,7 @@ class iTSMPEGDecoder;
 	   everything is specified in pts and not file positions */
 
 	/* implemented in dvb.cpp */
-class eCueSheet: public iObject, public Object
+class eCueSheet: public iObject, public sigc::trackable
 {
 	DECLARE_REF(eCueSheet);
 public:
@@ -594,12 +588,12 @@ public:
 	
 			/* backend */
 	enum { evtSeek, evtSkipmode, evtSpanChanged };
-	RESULT connectEvent(const Slot1<void, int> &event, ePtr<eConnection> &connection);
+	RESULT connectEvent(const sigc::slot1<void, int> &event, ePtr<eConnection> &connection);
 
 	std::list<std::pair<pts_t,pts_t> > m_spans;	/* begin, end */
 	std::list<std::pair<int, pts_t> > m_seek_requests; /* relative, delta */
 	pts_t m_skipmode_ratio;
-	Signal1<void,int> m_event;
+	sigc::signal1<void,int> m_event;
 	ePtr<iDVBDemux> m_decoding_demux;
 	ePtr<iTSMPEGDecoder> m_decoder;
 };
@@ -684,8 +678,6 @@ public:
 		/** Set Sync mode to PCR */
 	virtual RESULT setSyncPCR(int pcrpid)=0;
 	enum { sm_Audio, sm_Video };
-		/** Set Sync mode to either audio or video master */
-	virtual RESULT setSyncMaster(int who)=0;
 
 		/** Apply settings but don't change state */
 	virtual RESULT set()=0;
@@ -725,7 +717,7 @@ public:
 		unsigned short framerate;
 	};
 
-	virtual RESULT connectVideoEvent(const Slot1<void, struct videoEvent> &event, ePtr<eConnection> &connection) = 0;
+	virtual RESULT connectVideoEvent(const sigc::slot1<void, struct videoEvent> &event, ePtr<eConnection> &connection) = 0;
 
 	virtual int getVideoWidth() = 0;
 	virtual int getVideoHeight() = 0;

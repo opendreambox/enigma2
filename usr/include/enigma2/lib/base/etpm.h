@@ -1,44 +1,49 @@
-#ifndef __lib_base_etpm_h
-#define __lib_base_etpm_h
+#ifndef __lib_base_etpm_h__
+#define __lib_base_etpm_h__
 
-#ifndef SWIG
-#define TPMD_SOCKET "/var/run/tpmd_socket"
-#endif
-
+#include <lib/base/object.h>
 #include <string>
+
+#ifdef SWIG
+#define __attribute__(...)
+#endif
 
 class eTPM
 {
-#ifndef SWIG
-	int fd;
-	unsigned char level2_cert[210];
-	unsigned char level3_cert[210];
-	bool level2_cert_read;
-	bool level3_cert_read;
+	E_DISABLE_COPY(eTPM)
+	E_DECLARE_PRIVATE(eTPM)
 
-	enum tpmd_cmd {
-		TPMD_CMD_RESERVED		= 0x0000,
-		TPMD_CMD_GET_DATA		= 0x0001,
-		TPMD_CMD_APDU			= 0x0002,
-		TPMD_CMD_COMPUTE_SIGNATURE	= 0x0003,
-		TPMD_CMD_APP_CERT		= 0x0004,
+public:
+	enum data_type {
+		DT_TPM_VERSION		= 0x02,
+		DT_SERIAL		= 0x03,
+		DT_LEVEL2_CERT		= 0x04,
+		DT_LEVEL3_CERT		= 0x05,
+		DT_FAB_CA_CERT		= 0x06,
+		DT_DATABLOCK_SIGNED	= 0x07,
 	};
 
-	bool send_cmd(enum tpmd_cmd cmd, const void *data, size_t len);
-	void *recv_cmd(unsigned int *tag, size_t *len);
-	void parse_data(const unsigned char *data, size_t datalen);
+	enum apdu_flag {
+		APDU_READ	= (1 << 0),
+		APDU_WRITE	= (1 << 1),
+	};
 
-#endif
-public:
 	eTPM();
 	~eTPM();
 
 	enum cert_type {
-		TPMD_DT_LEVEL2_CERT = 0x04,
-		TPMD_DT_LEVEL3_CERT = 0x05
+		TPMD_DT_LEVEL2_CERT = DT_LEVEL2_CERT,
+		TPMD_DT_LEVEL3_CERT = DT_LEVEL3_CERT,
 	};
-	std::string getCert(cert_type type);
-	std::string challenge(std::string rnd);
+	std::string getCert(cert_type type) __attribute__ ((deprecated));
+	std::string challenge(std::string rnd) __attribute__ ((deprecated));
+
+	std::string getData(data_type type);
+	std::string apdu(apdu_flag flags, unsigned char cla, unsigned char ins,
+			 unsigned char p1, unsigned char p2, unsigned char len,
+			 const std::string &data);
+	std::string computeSignature(const std::string &data);
+	std::string appCert(unsigned char n, const std::string &data);
 };
 
-#endif // __lib_base_etpm_h
+#endif // __lib_base_etpm_h__

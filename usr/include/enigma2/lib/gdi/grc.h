@@ -26,6 +26,7 @@
 
 class eTextPara;
 
+
 class gDC;
 struct gOpcode
 {
@@ -67,6 +68,7 @@ struct gOpcode
 	} opcode;
 
 	gDC *dc;
+
 	union para
 	{
 		struct pfillRect
@@ -91,7 +93,7 @@ struct gOpcode
 			ePoint offset;
 			eTextPara *textpara;
 		} *renderPara;
-		
+
 		struct psetFont
 		{
 			gFont *font;
@@ -101,7 +103,7 @@ struct gOpcode
 		{
 			gPalette *palette;
 		} *setPalette;
-		
+
 		struct pblit
 		{
 			gPixmap *pixmap;
@@ -114,7 +116,7 @@ struct gOpcode
 		{
 			gPixmap *target;
 		} *mergePalette;
-		
+
 		struct pline
 		{
 			ePoint start, end;
@@ -124,31 +126,42 @@ struct gOpcode
 		{
 			gRegion region;
 		} *clip;
-		
+
 		struct psetColor
 		{
 			gColor color;
 		} *setColor;
-		
+
 		struct psetColorRGB
 		{
 			gRGB color;
 		} *setColorRGB;
-		
+
 		struct psetOffset
 		{
 			ePoint value;
 			int rel;
 		} *setOffset;
-		
+
 		gCompositingData *setCompositing;
+
+		para()
+			:fill(NULL)
+		{
+		}
 	} parm;
+
+	gOpcode()
+		:opcode(shutdown), dc(NULL)
+	{
+	}
+
 };
 
 #define MAXSIZE 2048
 
 		/* gRC is the singleton which controls the fifo and dispatches commands */
-class gRC: public iObject, public Object
+class gRC: public iObject, public sigc::trackable
 {
 	DECLARE_REF(gRC);
 	friend class gPainter;
@@ -187,7 +200,7 @@ public:
 
 	void submit(const gOpcode &o);
 
-	Signal0<void> notify;
+	sigc::signal0<void> notify;
 	
 	void setSpinnerDC(gDC *dc) { m_spinner_dc = dc; }
 	
@@ -249,8 +262,8 @@ public:
 	void blit(gPixmap *pixmap, ePoint pos, const eRect &clip=eRect(), int flags=0);
 	void blitScale(gPixmap *pixmap, const eRect &pos, const eRect &clip=eRect(), int flags=0, int aflags = BT_SCALE);
 
-	void setPalette(gRGB *colors, int start=0, int len=256);
-	void setPalette(gPixmap *source);
+	void setPalette(const gRGB *colors, unsigned int len=256);
+	void setPalette(const ePtr<gPixmap> &source);
 	void mergePalette(gPixmap *target);
 	
 	void line(ePoint start, ePoint end);

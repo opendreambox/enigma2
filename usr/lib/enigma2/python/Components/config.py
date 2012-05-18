@@ -1,4 +1,4 @@
-from enigma import getPrevAsciiCode
+from enigma import eRCInput, getPrevAsciiCode
 from Tools.NumericalTextInput import NumericalTextInput
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
 from copy import copy as copy_copy
@@ -979,12 +979,15 @@ class ConfigText(ConfigElement, NumericalTextInput):
 
 	def onSelect(self, session):
 		self.allmarked = (self.value != "")
+		self._keyboardMode = eRCInput.getInstance().getKeyboardMode()
+		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
 		if session is not None:
 			from Screens.NumericalTextInputHelpDialog import NumericalTextInputHelpDialog
 			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self)
 			self.help_window.show()
 
 	def onDeselect(self, session):
+		eRCInput.getInstance().setKeyboardMode(self._keyboardMode)
 		self.marked_pos = 0
 		self.offset = 0
 		if self.help_window:
@@ -1103,6 +1106,7 @@ class ConfigNumber(ConfigText):
 
 	def onSelect(self, session):
 		self.allmarked = (self.value != "")
+		self._keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 class ConfigSearchText(ConfigText):
 	def __init__(self, default = "", fixed_size = False, visible_width = False):
@@ -1135,6 +1139,7 @@ class ConfigDirectory(ConfigText):
 
 	def onSelect(self, session):
 		self.allmarked = (self.value != "")
+		self._keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 # a slider.
 class ConfigSlider(ConfigElement):
@@ -1570,9 +1575,15 @@ class ConfigSubsection(object):
 				del res[key]
 		return res
 
-	def setSavedValue(self, values):
+	def setSavedValue(self, values, append = False):
 		values = dict(values)
-		self.content.stored_values = values
+		if append:
+			try:
+				self.content.stored_values.update(values)
+			except:
+				self.content.stored_values = values
+		else:
+			self.content.stored_values = values
 		for (key, val) in self.content.items.items():
 			value = values.get(key, None)
 			if value is not None:
@@ -1617,7 +1628,7 @@ class Config(ConfigSubsection):
 		self.pickle_this("config", self.saved_value, result)
 		return ''.join(result)
 
-	def unpickle(self, lines, base_file=True):
+	def unpickle(self, lines, base_file=True, append = False):
 		tree = { }
 		for l in lines:
 			if not l or l[0] == '#':
@@ -1650,7 +1661,7 @@ class Config(ConfigSubsection):
 		# we inherit from ConfigSubsection, so ...
 		#object.__setattr__(self, "saved_value", tree["config"])
 		if "config" in tree:
-			self.setSavedValue(tree["config"])
+			self.setSavedValue(tree["config"], append)
 
 	def saveToFile(self, filename):
 		text = self.pickle()
@@ -1661,9 +1672,9 @@ class Config(ConfigSubsection):
 		except IOError:
 			print "Config: Couldn't write %s" % filename
 
-	def loadFromFile(self, filename, base_file=False):
+	def loadFromFile(self, filename, base_file=False, append = False):
 		f = open(filename, "r")
-		self.unpickle(f.readlines(), base_file)
+		self.unpickle(f.readlines(), base_file, append)
 		f.close()
 
 config = Config()
@@ -1698,8 +1709,7 @@ class ConfigFile:
 				ret=self.__resolveValue(names[1:], config.content.items)
 				if ret and len(ret):
 					return ret
-		print "getResolvedKey", key, "failed !! (Typo??)"
-		return ""
+		return None
 
 def NoSave(element):
 	element.disableSave()

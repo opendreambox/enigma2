@@ -1,6 +1,5 @@
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
-from Components.PluginComponent import plugins
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigYesNo, ConfigNumber
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap

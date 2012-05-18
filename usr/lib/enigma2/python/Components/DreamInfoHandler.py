@@ -1,13 +1,12 @@
 # -*- coding: iso-8859-1 -*-
 import xml.sax
-from Tools.Directories import crawlDirectory, resolveFilename, SCOPE_CONFIG, SCOPE_SKIN, SCOPE_METADIR, SCOPE_DEFAULTDIR, copyfile, copytree, fileExists
+from Tools.Directories import crawlDirectory, resolveFilename, SCOPE_CONFIG, SCOPE_SKIN, SCOPE_DEFAULTDIR, copyfile, copytree, fileExists
 from Components.NimManager import nimmanager
 from Components.Ipkg import IpkgComponent
 from Components.config import config, configfile
 from Tools.HardwareInfo import HardwareInfo
 from enigma import eConsoleAppContainer, eDVBDB
 import os
-from re import compile as re_compile, search as re_search, IGNORECASE
 
 class InfoHandlerParseError(Exception):
 	def __init__(self, value):
@@ -372,8 +371,8 @@ class DreamInfoHandler:
 			if self.currentIndex == 0:
 				from Components.config import configfile
 				configfile.save()
-			config = attributes["config"][self.currentIndex]
-			self.mergeConfig(config["directory"], config["name"])
+			configAttributes = attributes["config"][self.currentIndex]
+			self.mergeConfig(configAttributes["directory"], configAttributes["name"])
 		elif currentAttribute == "favourites":
 			favourite = attributes["favourites"][self.currentIndex]
 			self.installFavourites(favourite["directory"], favourite["name"])
@@ -395,7 +394,7 @@ class DreamInfoHandler:
 	def mergeConfig(self, directory, name, merge = True):
 		print "merging config:", directory, " - ", name
 		if os.path.isfile(directory + name):
-			config.loadFromFile(directory + name)
+			config.loadFromFile(directory + name, append = merge)
 			configfile.save()
 		self.installNext()
 		

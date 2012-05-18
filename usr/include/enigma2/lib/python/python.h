@@ -73,7 +73,7 @@ inline ePyObject::ePyObject(const ePyObject &ob)
 inline ePyObject::ePyObject(PyObject *ob)
 	:m_ob(ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(0), m_to(0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 #endif
 {
 }
@@ -81,7 +81,7 @@ inline ePyObject::ePyObject(PyObject *ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
 inline ePyObject::ePyObject(PyObject *ob, const char* file, int line)
 	:m_ob(ob)
-	,m_file(file), m_line(line), m_from(ob->ob_refcnt), m_to(ob->ob_refcnt), m_erased(false)
+	,m_file(file), m_line(line), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 {
 }
 #endif
@@ -89,7 +89,7 @@ inline ePyObject::ePyObject(PyObject *ob, const char* file, int line)
 inline ePyObject::ePyObject(PyVarObject *ob)
 	:m_ob((PyObject*)ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(0), m_to(0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 #endif
 {
 }
@@ -97,7 +97,7 @@ inline ePyObject::ePyObject(PyVarObject *ob)
 inline ePyObject::ePyObject(PyDictObject *ob)
 	:m_ob((PyObject*)ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(0), m_to(0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 #endif
 {
 }
@@ -105,7 +105,7 @@ inline ePyObject::ePyObject(PyDictObject *ob)
 inline ePyObject::ePyObject(PyTupleObject *ob)
 	:m_ob((PyObject*)ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(0), m_to(0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 #endif
 {
 }
@@ -113,7 +113,7 @@ inline ePyObject::ePyObject(PyTupleObject *ob)
 inline ePyObject::ePyObject(PyListObject *ob)
 	:m_ob((PyObject*)ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(0), m_to(0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 #endif
 {
 }
@@ -121,7 +121,7 @@ inline ePyObject::ePyObject(PyListObject *ob)
 inline ePyObject::ePyObject(PyStringObject *ob)
 	:m_ob((PyObject*)ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(0), m_to(0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
 #endif
 {
 }
@@ -153,6 +153,8 @@ inline void ePyObject::decref()
 {
 	Py_DECREF(m_ob);
 }
+
+#endif // ! PYTHON_REFCOUNT_DEBUG
 
 class ePyObjectWrapper
 {
@@ -189,8 +191,6 @@ public:
 	}
 };
 
-#endif // ! PYTHON_REFCOUNT_DEBUG
-
 #endif  // !SWIG && !SKIP_PART1
 
 #ifndef SKIP_PART2
@@ -198,24 +198,24 @@ public:
 #ifdef PYTHON_REFCOUNT_DEBUG
 inline void Impl_Py_DECREF(const char* file, int line, const ePyObject &obj)
 {
-	((ePyObject*)(&obj))->decref(file, line);
+	const_cast<ePyObject &>(obj).decref(file, line);
 }
 
 inline void Impl_Py_INCREF(const char* file, int line, const ePyObject &obj)
 {
-	((ePyObject*)(&obj))->incref(file, line);
+	const_cast<ePyObject &>(obj).incref(file, line);
 }
 
 inline void Impl_Py_XDECREF(const char* file, int line, const ePyObject &obj)
 {
 	if (obj)
-		((ePyObject*)(&obj))->decref(file, line);
+		const_cast<ePyObject &>(obj).decref(file, line);
 }
 
 inline void Impl_Py_XINCREF(const char* file, int line, const ePyObject &obj)
 {
 	if (obj)
-		((ePyObject*)(&obj))->incref(file, line);
+		const_cast<ePyObject &>(obj).incref(file, line);
 }
 
 inline ePyObject Impl_PyTuple_New(const char* file, int line, int elements=0)
@@ -279,24 +279,24 @@ inline ePyObject Impl_PyTuple_GET_ITEM(const char *file, int line, ePyObject lis
 #else
 inline void Impl_Py_DECREF(const ePyObject &obj)
 {
-	((ePyObject*)(&obj))->decref();
+	const_cast<ePyObject &>(obj).decref();
 }
 
 inline void Impl_Py_INCREF(const ePyObject &obj)
 {
-	((ePyObject*)(&obj))->incref();
+	const_cast<ePyObject &>(obj).incref();
 }
 
 inline void Impl_Py_XDECREF(const ePyObject &obj)
 {
 	if (obj)
-		((ePyObject*)(&obj))->decref();
+		const_cast<ePyObject &>(obj).decref();
 }
 
 inline void Impl_Py_XINCREF(const ePyObject &obj)
 {
 	if (obj)
-		((ePyObject*)(&obj))->incref();
+		const_cast<ePyObject &>(obj).incref();
 }
 
 inline ePyObject Impl_PyTuple_New(int elements=0)

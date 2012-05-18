@@ -15,6 +15,7 @@ from enigma import runMainloop, eDVBDB, eTimer, quitMainloop, \
 from tools import *
 
 from Components.ResourceManager import resourcemanager
+from API import api
 
 profile("ImageDefaults")
 from Components.DreamInfoHandler import ImageDefaultInstaller
@@ -63,7 +64,7 @@ config.misc.isNextRecordTimerAfterEventActionAuto = ConfigYesNo(default=False)
 config.misc.useTransponderTime = ConfigYesNo(default=True)
 config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0)) # number of standby
-config.misc.epgcache_filename = ConfigText(default = "/hdd/epg.dat")
+config.misc.epgcache_filename = ConfigText(default = "/media/hdd/epg.dat")
 
 def setEPGCachePath(configElement):
 	eEPGCache.getInstance().setCacheFile(configElement.value)
@@ -101,6 +102,10 @@ except ImportError:
 	print "twisted not available"
 	def runReactor():
 		runMainloop()
+
+profile("LOAD:API")
+from API import registerAPIs
+registerAPIs()
 
 profile("LOAD:Plugin")
 # initialize autorun plugins and plugin menu entries
@@ -485,6 +490,8 @@ def runScreenTest():
 			session.open(screen, *args)
 
 	config.misc.epgcache_filename.addNotifier(setEPGCachePath)
+	
+	api.setSession(session)
 
 	runNextScreen(session, screensToRun)
 

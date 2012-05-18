@@ -1,8 +1,5 @@
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
-from Screens.InputBox import InputBox
-from Screens.Standby import *
-from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.HelpMenu import HelpableScreen
 from Components.Network import iNetwork
 from Components.Sources.StaticText import StaticText
@@ -11,16 +8,15 @@ from Components.Sources.List import List
 from Components.Label import Label,MultiColorLabel
 from Components.Pixmap import Pixmap,MultiPixmap
 from Components.MenuList import MenuList
-from Components.config import config, ConfigYesNo, ConfigIP, NoSave, ConfigText, ConfigPassword, ConfigSelection, getConfigListEntry, ConfigNothing, ConfigBoolean
+from Components.config import config, ConfigYesNo, ConfigIP, NoSave, ConfigText, ConfigPassword, ConfigSelection, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.PluginComponent import plugins
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
 from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
 from Plugins.Plugin import PluginDescriptor
-from enigma import eTimer, ePoint, eSize, RT_HALIGN_LEFT, eListboxPythonMultiContent, gFont
-from os import path as os_path, system as os_system, unlink
+from enigma import eTimer
+from os import path as os_path, unlink
 from re import compile as re_compile, search as re_search
 
 

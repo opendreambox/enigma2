@@ -16,6 +16,8 @@ class HelpMenuList(GUIComponent):
 
 		l = [ ]
 		for (actionmap, context, actions) in helplist:
+			if not actionmap.enabled:
+				continue
 			for (action, help) in actions:
 				buttons = queryKeyBinding(context, action)
 

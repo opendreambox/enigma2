@@ -812,12 +812,21 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, orgpos.y()))
 		<ePixmap pixmap="skin_default/buttons/green-big.png" position="200,0" size="200,40" alphatest="on" />
 		<widget name="red" position="0,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
 		<widget name="green" position="200,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-		<widget name="list" position="0,45" size="400,355" scrollbarMode="showOnDemand" />
-	</screen>
-	<!-- Plugin downloads -->
-	<screen name="PluginDownloadBrowser" position="center,center" size="560,420" title="Downloadable plugins">
-		<widget name="text" position="0,0" zPosition="1" size="560,430" font="Regular;20" halign="center" valign="center" />
-		<widget name="list" position="10,10" zPosition="2" size="540,405" scrollbarMode="showOnDemand" />
+		<widget source="pluginlist" render="Listbox" position="0,45" size="400,355" scrollbarMode="showOnDemand">
+			<convert type="TemplatedMultiContent">
+			{"templates":
+				{"default": (50,[
+						MultiContentEntryText(pos = (120, 5), size = (320, 25), font = 0, text = 1), # index 1 is the plugin.name
+						MultiContentEntryText(pos = (120, 26), size = (320, 17), font = 1, text = 2), # index 2 is the plugin.description
+						MultiContentEntryPixmapAlphaTest(pos = (10, 5), size = (100, 40), png = 3), # index 3 is the icon
+						
+					]),
+				},
+				"fonts": [gFont("Regular", 20), gFont("Regular", 14)],
+				"itemHeight": 50
+			}
+			</convert>
+		</widget>
 	</screen>
 	<!-- PVR state -->
 	<screen name="PVRState" position="70,70" zPosition="2" size="150,30" backgroundColor="transpBlack" flags="wfNoBorder">

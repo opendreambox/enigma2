@@ -14,28 +14,25 @@ from Components.MenuList import MenuList
 from Components.Sources.List import List
 from Components.Slider import Slider
 from Components.Harddisk import harddiskmanager
-from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigYesNo, ConfigSelection
+from Components.config import config,getConfigListEntry, ConfigSubsection, ConfigText, ConfigLocations, ConfigSelection
 from Components.ConfigList import ConfigListScreen
 from Components.Console import Console
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
 from Components.SelectionList import SelectionList
 from Components.PluginComponent import plugins
-from Components.About import about
 from Components.DreamInfoHandler import DreamInfoHandler
 from Components.Language import language
 from Components.AVSwitch import AVSwitch
 from Components.Network import iNetwork
-from Tools.Directories import pathExists, fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_PLUGIN, SCOPE_CURRENT_SKIN, SCOPE_METADIR
+from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_PLUGIN, SCOPE_CURRENT_SKIN, SCOPE_METADIR
 from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
-from enigma import eTimer, quitMainloop, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, eListbox, gFont, getDesktop, ePicLoad, eRCInput, getPrevAsciiCode, eEnv
+from enigma import eTimer, quitMainloop, RT_HALIGN_LEFT, RT_VALIGN_CENTER, gFont, getDesktop, ePicLoad, getPrevAsciiCode, eEnv
 from cPickle import dump, load
-from os import path as os_path, system as os_system, unlink, stat, mkdir, popen, makedirs, listdir, access, rename, remove, W_OK, R_OK, F_OK
-from time import time, gmtime, strftime, localtime
+from os import path as os_path, stat, mkdir, makedirs, listdir, access, remove, W_OK, R_OK, F_OK
+from time import time
 from stat import ST_MTIME
-from datetime import date
 from twisted.web import client
-from twisted.internet import reactor
 
 from ImageWizard import ImageWizard
 from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
@@ -49,8 +46,7 @@ config.plugins.softwaremanager = ConfigSubsection()
 config.plugins.softwaremanager.overwriteConfigFiles = ConfigSelection(
 				[
 				 ("Y", _("Yes, always")),
-				 ("N", _("No, never")),				 
-				 ("ask", _("Always ask"))
+				 ("N", _("No, never"))
 				], "Y")
 
 def write_cache(cache_file, cache_data):
@@ -119,7 +115,7 @@ class UpdatePluginMenu(Screen):
 		self.menu = args
 		self.list = []
 		self.oktext = _("\nPress OK on your remote control to continue.")
-		self.menutext = "" #_("Press MENU on your remote control for additional options.")
+		self.menutext = _("Press MENU on your remote control for additional options.")
 		self.infotext = _("Press INFO on your remote control for additional information.")
 		self.text = ""
 		self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs.value )
@@ -176,7 +172,7 @@ class UpdatePluginMenu(Screen):
 			"ok": self.go,
 			"back": self.close,
 			"red": self.close,
-			#"menu": self.handleMenu,
+			"menu": self.handleMenu,
 			"showEventInfo": self.handleInfo,
 		}, -1)
 		self.onLayoutFinish.append(self.layoutFinished)
@@ -1419,22 +1415,15 @@ class UpdatePlugin(Screen):
 			self.status.setText(_("Configuring"))
 		elif event == IpkgComponent.EVENT_MODIFIED:
 			self.ipkg.write("Y")
-			"""if not param in self.modified_packages:
-				self.modified_packages.append(param)
-				if config.plugins.softwaremanager.overwriteConfigFiles.value in ("N", "Y"):
-					self.ipkg.write(True and config.plugins.softwaremanager.overwriteConfigFiles.value)
-				else:
-					self.session.openWithCallback(
-						self.modificationCallback,
-						MessageBox,
-						_("A configuration file (%s) was modified since Installation.\nDo you want to keep your version?") % (param)
-					)"""
 		elif event == IpkgComponent.EVENT_ERROR:
 			self.error += 1
 		elif event == IpkgComponent.EVENT_DONE:
 			if self.updating:
 				self.updating = False
-				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE, args = {'test_only': False})
+				upgrade_args = {'use_maintainer' : True, 'test_only': False}
+				if config.plugins.softwaremanager.overwriteConfigFiles.value == 'N':
+					upgrade_args = {'use_maintainer' : False, 'test_only': False}
+				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE, args = upgrade_args)
 			elif self.error == 0:
 				self.slider.setValue(4)
 				
@@ -1720,9 +1709,6 @@ class PacketManager(Screen, NumericalTextInput):
 		self.onShown.append(self.setWindowTitle)
 		self.onLayoutFinish.append(self.rebuildList)
 
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmAscii)		
-
 	def keyNumberGlobal(self, val):
 		key = self.getKey(val)
 		if key is not None:
@@ -1756,8 +1742,6 @@ class PacketManager(Screen, NumericalTextInput):
 			if len(self.Console.appContainers):
 				for name in self.Console.appContainers.keys():
 					self.Console.kill(name)
-		rcinput = eRCInput.getInstance()
-		rcinput.setKeyboardMode(rcinput.kmNone)
 		self.close()
 
 	def reload(self):

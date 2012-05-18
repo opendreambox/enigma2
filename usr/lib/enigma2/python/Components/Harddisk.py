@@ -1,10 +1,9 @@
-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, symlink, rmdir, unlink, rename, getcwd, chdir, W_OK
+from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, unlink, getcwd, chdir, W_OK
 from Tools.Directories import SCOPE_HDD, resolveFilename
-from Tools.BoundFunction import boundFunction
 from Tools.CList import CList
 from SystemInfo import SystemInfo
 import time
-import re, shutil
+import re
 from Components.Console import Console
 from config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
 
@@ -647,6 +646,9 @@ DEVICEDB = \
 	}
 
 class HarddiskManager:
+	EVENT_MOUNT = "mount"
+	EVENT_UNMOUNT = "unmount"
+
 	def __init__(self):
 		config.storage_options = ConfigSubsection()
 		config.storage_options.default_device = ConfigText(default = "<undefined>")
@@ -656,6 +658,7 @@ class HarddiskManager:
 		self.partitions = [ ]
 		self.devices_scanned_on_init = [ ]
 		self.delayed_device_Notifier = [ ]
+		self.onUnMount_Notifier = [ ]
 
 		self.on_partition_list_change = CList()
 
@@ -1048,6 +1051,7 @@ class HarddiskManager:
 					fstype = fstobj.group(1)
 		except:
 			print "error getting blkid partition type"
+
 		#print "getBlkidPartitionType:",device, fstype
 		return fstype
 
@@ -1212,7 +1216,7 @@ class HarddiskManager:
 						old_cur_default_enabled = cur_default_cfg["enabled"].value
 						old_cur_default_mp = cur_default_cfg["mountpoint"].value
 						self.unmountPartitionbyMountpoint(def_mp)
-					if not path.exists(def_mp) or (path.exists(def_mp) and not self.isMount(def_mp)):
+					if not path.exists(def_mp) or (path.exists(def_mp) and not self.isMount(def_mp)) or (not self.isUUIDpathFsTabMount(uuid, def_mp) and not self.isPartitionpathFsTabMount(uuid, def_mp)):
 						if cur_default_cfg is not None:
 							cur_default_cfg["mountpoint"].value = cur_default_newmp
 						if cur_default_dev is not None:
@@ -1220,7 +1224,7 @@ class HarddiskManager:
 						if cur_default_dev is None or (path.exists(cur_default_newmp) and self.isMount(cur_default_newmp)):
 							if new_default_cfg["enabled"].value and path.exists(new_default_cfg["mountpoint"].value) and self.isMount(new_default_cfg["mountpoint"].value):
 								self.unmountPartitionbyMountpoint(new_default_cfg["mountpoint"].value, new_default_dev )
-							if not new_default_cfg["enabled"].value or (path.exists(new_default_cfg["mountpoint"].value) and not self.isMount(new_default_cfg["mountpoint"].value)):
+							if not new_default_cfg["enabled"].value or not self.isMount(new_default_cfg["mountpoint"].value):
 								new_default_cfg["mountpoint"].value = def_mp
 								new_default_cfg["enabled"].value = True
 								self.storageDeviceChanged(uuid)
@@ -1421,9 +1425,7 @@ class HarddiskManager:
 
 	def trigger_udev(self):
 		# We have to trigger udev to rescan sysfs
-		cmd = "udevadm trigger"
-		res = system(cmd)
-		return (res >> 8)
+		Console().ePopen(("udevadm", "udevadm", "trigger"))
 
 	def getPartitionbyUUID(self, uuid):
 		for x in self.partitions[:]:
@@ -1474,6 +1476,12 @@ class HarddiskManager:
 
 	def unmountPartitionbyMountpoint(self, mountpoint, device = None):
 		if path.exists(mountpoint) and path.ismount(mountpoint):
+			#call the mount/unmount event notifier to inform about an unmount
+			for callback in self.onUnMount_Notifier:
+				try:
+					callback(self.EVENT_UNMOUNT, mountpoint)
+				except AttributeError:
+					self.onUnMount_Notifier.remove(callback)
 			cmd = "umount" + " " + mountpoint
 			print "[unmountPartitionbyMountpoint] %s:" % (cmd)
 			system(cmd)
@@ -1502,6 +1510,12 @@ class HarddiskManager:
 					config.storage[uuid]["enabled"].value = False
 					config.storage.save()
 				else:
+					#call the mount/unmount event notifier to inform about an unmount
+					for callback in self.onUnMount_Notifier:
+						try:
+							callback(self.EVENT_UNMOUNT, mountpoint)
+						except AttributeError:
+							self.onUnMount_Notifier.remove(callback)
 					cmd = "umount" + " " + mountpoint
 					print "[unmountPartitionbyUUID] %s:" % (mountpoint)
 					system(cmd)
@@ -1548,6 +1562,12 @@ class HarddiskManager:
 						cmd = "mount -t auto /dev/disk/by-uuid/" + uuid + " " + mountpoint
 						system(cmd)
 						print "[mountPartitionbyUUID]:",cmd
+						#call the mount/unmount event notifier to inform about an mount
+						for callback in self.onUnMount_Notifier:
+							try:
+								callback(self.EVENT_MOUNT, mountpoint)
+							except AttributeError:
+								self.onUnMount_Notifier.remove(callback)
 
 					if path.ismount(mountpoint):
 						dev = self.getDeviceNamebyUUID(uuid)
@@ -1683,10 +1703,8 @@ class HarddiskManager:
 			if hdd and hdd.numPartitions() <= 1:
 				numPart = hdd.numPartitions()
 				device = hdd.device
-				partitionPath = hdd.dev_path
 				if numPart == 1:
 					device = hdd.device + "1"
-					partitionPath = hdd.partitionPath(str(numPart))
 				p = self.getPartitionbyDevice(device)
 				if p is not None and p.isInitialized: #only one by e2 initialized partition
 					if not self.inside_mountpoint("/media/hdd") and not path.islink("/media/hdd") and not self.isUUIDpathFsTabMount(p.uuid, "/media/hdd") and not self.isPartitionpathFsTabMount(p.uuid, "/media/hdd"):
@@ -1699,6 +1717,7 @@ class HarddiskManager:
 							cfg_uuid["mountpoint"].value = "/media/hdd"
 							cfg_uuid.save()
 							config.storage.save()
+							config.save()
 							harddiskmanager.modifyFstabEntry("/dev/disk/by-uuid/" + p.uuid, "/media/hdd", mode = "add_deactivated")
 							self.storageDeviceChanged(p.uuid)
 

@@ -1,6 +1,5 @@
 import NavigationInstance
 from time import localtime, mktime, gmtime
-from ServiceReference import ServiceReference
 from enigma import iServiceInformation, eServiceCenter, eServiceReference
 from timer import TimerEntry
 

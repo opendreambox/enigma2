@@ -5,7 +5,7 @@
 #include <lib/python/python.h>
 #include <lib/base/object.h>
 #include <string>
-#include <connection.h>
+#include <lib/base/connection.h>
 #include <list>
 
 class eServiceEvent;
@@ -853,7 +853,7 @@ class iPlayableService: public iPlayableService_ENUMS, public iObject
 	friend class iServiceHandler;
 public:
 #ifndef SWIG
-	virtual RESULT connectEvent(const Slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectEvent(const sigc::slot2<void,iPlayableService*,int> &event, ePtr<eConnection> &connection)=0;
 #endif
 	virtual RESULT start()=0;
 	virtual RESULT stop()=0;
@@ -917,7 +917,7 @@ class iRecordableService: public iRecordableService_ENUMS, public iObject
 #endif
 public:
 #ifndef SWIG
-	virtual RESULT connectEvent(const Slot2<void,iRecordableService*,int> &event, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectEvent(const sigc::slot2<void,iRecordableService*,int> &event, ePtr<eConnection> &connection)=0;
 #endif
 	virtual SWIG_VOID(RESULT) getError(int &SWIG_OUTPUT)=0;
 	virtual RESULT prepare(const char *filename, time_t begTime=-1, time_t endTime=-1, int eit_event_id=-1, const char *name=0, const char *descr=0, const char *tags=0)=0;
@@ -931,11 +931,6 @@ public:
 SWIG_TEMPLATE_TYPEDEF(ePtr<iRecordableService>, iRecordableServicePtr);
 
 extern PyObject *New_iRecordableServicePtr(const ePtr<iRecordableService> &ref); // defined in enigma_python.i
-
-inline PyObject *PyFrom(ePtr<iRecordableService> &c)
-{
-	return New_iRecordableServicePtr(c);
-}
 
 #ifndef SWIG
 #ifdef PYTHON_REFCOUNT_DEBUG

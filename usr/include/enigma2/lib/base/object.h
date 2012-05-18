@@ -11,11 +11,22 @@
 
 typedef int RESULT;
 
+#define E_DECLARE_PRIVATE(Class)		\
+	class Private;				\
+	Private * const d;			\
+
+#define E_DECLARE_PUBLIC(Class)			\
+	Class * const q;
+
+#define E_DISABLE_COPY(Class)			\
+	Class(const Class &);			\
+	Class &operator=(const Class &);
+
 class iObject
 {
-private:
-		/* we don't allow the default operator here, as it would break the refcount. */
-	void operator=(const iObject &);
+	/* we don't allow the default operator here, as it would break the refcount. */
+	E_DISABLE_COPY(iObject)
+
 protected:
 	void operator delete(void *p) { ::operator delete(p); }
 	virtual ~iObject() { }
@@ -24,6 +35,7 @@ protected:
 	virtual void Release()=0;
 #endif
 public:
+	iObject() { }
 #ifndef SWIG
 	virtual void AddRef()=0;
 	virtual void Release()=0;

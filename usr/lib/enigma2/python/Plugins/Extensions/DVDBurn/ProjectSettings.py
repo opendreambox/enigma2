@@ -1,11 +1,8 @@
 from Screens.Screen import Screen
-from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.HelpMenu import HelpableScreen
-from Components.ActionMap import HelpableActionMap, ActionMap
-from Components.Sources.List import List
+from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
-from Components.Sources.Progress import Progress
 from Components.FileList import FileList
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS, SCOPE_FONTS, SCOPE_HDD
 from Components.config import config, getConfigListEntry
@@ -166,12 +163,14 @@ class ProjectSettings(Screen,ConfigListScreen):
 			#self.list.append(getConfigListEntry(_("Menu")+' '+_("spaces (top, between rows, left)"), self.settings.space))
 			#self.list.append(getConfigListEntry(_("Menu")+' '+_("Audio"), self.settings.menuaudio))
 		if config.usage.setup_level.index >= 2: # expert+
-			if authormode != "data_ts":
+			if authormode not in ("data_ts","bdmv"):
 				self.list.append(getConfigListEntry(_("Titleset mode"), self.settings.titlesetmode))
 				if self.settings.titlesetmode.getValue() == "single" or authormode == "just_linked":
 					self.list.append(getConfigListEntry(_("VMGM (intro trailer)"), self.settings.vmgm))
-			else:
+			elif authormode == "data_ts":
 				self.list.append(getConfigListEntry(("DVD data format"), self.settings.dataformat))
+			elif authormode == "bdmv":
+				self.list.append(getConfigListEntry(_("Menu")+' '+_("Language selection"), self.project.menutemplate.settings.menulang))
 		
 		self["config"].setList(self.list)
 		self.keydict = {}
@@ -202,7 +201,7 @@ class ProjectSettings(Screen,ConfigListScreen):
 		
 	def ok(self):
 		key = self.keydict[self["config"].getCurrent()[1]]
-		from DVDProject import ConfigFilename
+		from Project import ConfigFilename
 		if type(self["config"].getCurrent()[1]) == ConfigFilename:
 			self.session.openWithCallback(self.FileBrowserClosed, FileBrowser, key, self["config"].getCurrent()[1])
 

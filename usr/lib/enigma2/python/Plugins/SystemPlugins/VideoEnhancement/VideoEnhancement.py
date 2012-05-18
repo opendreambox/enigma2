@@ -1,5 +1,4 @@
 from Components.config import config, ConfigSubsection, ConfigSlider, ConfigSelection, ConfigNothing, NoSave
-from Tools.CList import CList
 from os import path as os_path
 # The "VideoEnhancement" is the interface to /proc/stb/vmpeg/0.
 

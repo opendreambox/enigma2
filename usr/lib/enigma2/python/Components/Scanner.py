@@ -13,6 +13,7 @@ add_type("video/MP2T", ".ts")
 add_type("video/x-dvd-iso", ".iso")
 add_type("video/x-matroska", ".mkv")
 add_type("audio/x-matroska", ".mka")
+add_type("video/x-bluray", ".bdmv")
 
 def getType(file):
 	(type, _) = guess_type(file)

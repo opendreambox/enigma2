@@ -7,7 +7,7 @@
 #define TABLE_eDebug(x...) do { if (m_debug) eDebug(x); } while(0)
 #define TABLE_eDebugNoNewLine(x...) do { if (m_debug) eDebugNoNewLine(x); } while(0)
 
-class eGTable: public iObject, public Object
+class eGTable: public iObject, public sigc::trackable
 {
 	DECLARE_REF(eGTable);
 	ePtr<iDVBSectionReader> m_reader;
@@ -17,14 +17,14 @@ class eGTable: public iObject, public Object
 	
 	ePtr<eTimer> m_timeout;
 
-	void sectionRead(const __u8 *data);
+	void sectionRead(const __u8 *data, int len);
 	void timeout();
 	ePtr<eConnection> m_sectionRead_conn;
 protected:
 	bool m_debug;
-	virtual int createTable(unsigned int nr, const __u8 *data, unsigned int max)=0;
+	virtual int createTable(unsigned int nr, const __u8 *data, int len, unsigned int max)=0;
 public:
-	Signal1<void, int> tableReady;
+	sigc::signal1<void, int> tableReady;
 	eGTable(bool debug=true);
 	RESULT start(iDVBSectionReader *reader, const eDVBTableSpec &table);
 	RESULT start(iDVBDemux *reader, const eDVBTableSpec &table);
@@ -41,8 +41,10 @@ private:
 	std::vector<Section*> sections;
 	std::set<int> avail;
 protected:
-	int createTable(unsigned int nr, const __u8 *data, unsigned int max)
+	int createTable(unsigned int nr, const __u8 *data, int len, unsigned int max)
 	{
+		E_UNUSED(len);
+
 		unsigned int ssize = sections.size();
 		if (max < ssize || nr >= max)
 		{
@@ -84,12 +86,13 @@ public:
 	}
 };
 
-class eAUGTable: public Object
+class eAUGTable: public iObject, public sigc::trackable
 {
+	DECLARE_REF(eAUGTable);
 protected:
 	void slotTableReady(int);
 public:
-	Signal1<void, int> tableReady;
+	sigc::signal1<void, int> tableReady;
 	virtual void getNext(int err)=0;
 };
 
@@ -205,7 +208,7 @@ public:
 			/* detect broken table version handling (seen on some m2ts files) */
 			if (m_table_cnt)
 			{
-				if (abs(timeout_usec(m_prev_table_update)) > 500000)
+				if (abs(timeout_msec(m_prev_table_update)) > 500)
 					m_table_cnt = -1;
 				else if (m_table_cnt > 1) // two pmt update within one second
 				{

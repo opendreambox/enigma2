@@ -1,0 +1,17 @@
+<default>
+	<prerequisites>
+		<tag type="Network" />
+	</prerequisites>
+	<info>
+		<author>Dream Multimedia</author>
+		<name>Browser</name>
+		<packagename>enigma2-plugin-extensions-browser</packagename>
+		<packagetype>public</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->
+		<shortdescription>Browse the web</shortdescription>
+		<description>This is a basic browser for your dreambox.</description>
+	</info>
+
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-extensions-browser" />
+	</files>
+</default>

@@ -1,8 +1,7 @@
 from Screens.Screen import Screen
 from Screens.LocationBox import MovieLocationBox, TimeshiftLocationBox
 from Screens.MessageBox import MessageBox
-from Components.Label import Label
-from Components.config import config, ConfigSelection, getConfigListEntry, configfile
+from Components.config import config, ConfigSelection, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Tools.Directories import fileExists
@@ -219,7 +218,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 			config.usage.timer_path.save()
 			config.usage.instantrec_path.save()
 			config.usage.timeshift_path.save()
-			if self.default_device.value != defaultStorageDevice():
+			if self.default_device.value != "/media/hdd":
 				if self.default_device.value != "<undefined>": #changing default ?
 					tmp = harddiskmanager.getPartitionbyMountpoint(self.default_device.value)
 					if tmp is not None:
