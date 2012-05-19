@@ -13,14 +13,15 @@ from Tools.HardwareInfo import HardwareInfo
 
 from os import path as os_path
 
+iNetwork = resourcemanager.getResource("iNetwork")
 
 def onUnMountNotifier(action, mountpoint):
 	if action == harddiskmanager.EVENT_UNMOUNT:
 		dlna_config.stopDaemon()
 	else:
-		dlna_config.startDaemon()
+		if config.plugins.minidlna.enabled.value:
+			dlna_config.startDaemon()
 harddiskmanager.onUnMount_Notifier.append(onUnMountNotifier)
-
 
 """
 This is a start-stop-script-like python-class
@@ -100,7 +101,6 @@ class StartStopDaemon(object):
 		else:
 			self.start()
 
-
 class MiniDLNAConfig:
 	DAEMON = "minidlna"
 	DAEMON_TITLE = "Mediaserver"
@@ -118,31 +118,6 @@ class MiniDLNAConfig:
 
 	BOOL_TEXT = { True : "yes", False : "no" }
 	TEXT_BOOL = { "yes" : True, "no" : False }
-
-	iNetwork = resourcemanager.getResource("iNetwork")
-
-	config.plugins.minidlna = ConfigSubsection()
-	config.plugins.minidlna.enabled = ConfigEnableDisable(default=True)
-	config.plugins.minidlna.share_videodirs = ConfigYesNo(default=True)
-	config.plugins.minidlna.port = ConfigInteger(default=8200, limits = (1, 65535))
-	config.plugins.minidlna.network_interface = ConfigText(default=",".join(iNetwork.getAdapterList()) or "eth0", fixed_size = False)
-	config.plugins.minidlna.media_dirs = ConfigSubList()
-	config.plugins.minidlna.friendly_name = ConfigText(default="%s Mediaserver" %(HardwareInfo().get_device_name()), fixed_size = False)
-	config.plugins.minidlna.db_dir = ConfigDirectory(default="/media/hdd")
-	config.plugins.minidlna.log_dir = ConfigText(default="/tmp/log", fixed_size = False)
-	config.plugins.minidlna.album_art_names = ConfigText("Cover.jpg/cover.jpg/AlbumArtSmall.jpg/albumartsmall.jpg/AlbumArt.jpg/albumart.jpg/Album.jpg/album.jpg/Folder.jpg/folder.jpg/Thumb.jpg/thumb.jpg", fixed_size = False)
-	config.plugins.minidlna.inotify = ConfigYesNo(default=True)
-	config.plugins.minidlna.enable_tivo = ConfigYesNo(default=False)
-	config.plugins.minidlna.strict_dlna = ConfigYesNo(default=False)
-	config.plugins.minidlna.serial = ConfigInteger(default=12345678)
-	config.plugins.minidlna.model_number = ConfigInteger(default=1)
-	config.plugins.minidlna.root_container = ConfigSelection([
-					(ROOT_TREE_DEFAULT, _("Default")),
-					(ROOT_TREE_DIRECTORY, _("Directories")),
-					(ROOT_TREE_MUSIC, _("Music")),
-					(ROOT_TREE_VIDEO, _("Video")),
-					(ROOT_TREE_PICTURES, _("Pictures")),
-				], default = ROOT_TREE_DEFAULT)
 
 	def __init__(self, args = None):
 		iNetwork = resourcemanager.getResource("iNetwork")
@@ -246,6 +221,29 @@ class MiniDLNAConfig:
 			print e
 			return False
 
+config.plugins.minidlna = ConfigSubsection()
+config.plugins.minidlna.enabled = ConfigEnableDisable(default=False)
+config.plugins.minidlna.share_videodirs = ConfigYesNo(default=True)
+config.plugins.minidlna.port = ConfigInteger(default=8200, limits = (1, 65535))
+config.plugins.minidlna.network_interface = ConfigText(default=",".join(iNetwork.getAdapterList()) or "eth0", fixed_size = False)
+config.plugins.minidlna.media_dirs = ConfigSubList()
+config.plugins.minidlna.friendly_name = ConfigText(default="%s Mediaserver" %(HardwareInfo().get_device_name()), fixed_size = False)
+config.plugins.minidlna.db_dir = ConfigDirectory(default="/media/hdd")
+config.plugins.minidlna.log_dir = ConfigText(default="/tmp/log", fixed_size = False)
+config.plugins.minidlna.album_art_names = ConfigText("Cover.jpg/cover.jpg/AlbumArtSmall.jpg/albumartsmall.jpg/AlbumArt.jpg/albumart.jpg/Album.jpg/album.jpg/Folder.jpg/folder.jpg/Thumb.jpg/thumb.jpg", fixed_size = False)
+config.plugins.minidlna.inotify = ConfigYesNo(default=True)
+config.plugins.minidlna.enable_tivo = ConfigYesNo(default=False)
+config.plugins.minidlna.strict_dlna = ConfigYesNo(default=False)
+config.plugins.minidlna.serial = ConfigInteger(default=12345678)
+config.plugins.minidlna.model_number = ConfigInteger(default=1)
+config.plugins.minidlna.root_container = ConfigSelection([
+				(MiniDLNAConfig.ROOT_TREE_DEFAULT, _("Default")),
+				(MiniDLNAConfig.ROOT_TREE_DIRECTORY, _("Directories")),
+				(MiniDLNAConfig.ROOT_TREE_MUSIC, _("Music")),
+				(MiniDLNAConfig.ROOT_TREE_VIDEO, _("Video")),
+				(MiniDLNAConfig.ROOT_TREE_PICTURES, _("Pictures")),
+			], default = MiniDLNAConfig.ROOT_TREE_DEFAULT)
+
 dlna_config = MiniDLNAConfig()
 
 class MiniDLNASetup(ConfigListScreen, Screen):
@@ -286,6 +284,8 @@ class MiniDLNASetup(ConfigListScreen, Screen):
 	def _onClose(self):
 		dlna_config.onActionFinished.remove( self._actionFinished )
 		config.plugins.minidlna.enabled.removeNotifier(self._enabledChanged)
+		for x in self["config"].list:
+			x[1].save()
 
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)

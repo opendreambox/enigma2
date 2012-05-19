@@ -73,7 +73,7 @@ class Network:
 
 	def IPaddrFinished(self, result, retval, extra_args):
 		(iface, callback ) = extra_args
-		data = { 'up': False, 'dhcp': False, 'preup' : False, 'predown' : False, 'dns-nameservers' : False }
+		data = { 'up': False, 'dhcp': False, 'preup' : False, 'predown' : False, 'dns-nameservers' : False, 'broadcast' : False }
 		globalIPpattern = re_compile("scope global")
 		ipRegexp = '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
 		netRegexp = '[0-9]{1,2}'
@@ -155,12 +155,18 @@ class Network:
 					fp.write("	netmask %d.%d.%d.%d\n" % tuple(iface['netmask']))
 					if iface.has_key('gateway'):
 						fp.write("	gateway %d.%d.%d.%d\n" % tuple(iface['gateway']))
+					if interface is not None and interface == ifacename:
+						if iface.has_key('ip') and iface.has_key('netmask'):
+							if iface['ip'] != [0, 0, 0, 0] and iface['netmask'] != [0, 0, 0, 0]:
+								fp.write("	broadcast %s\n" % self.calc_broadcast("%s.%s.%s.%s" % tuple(iface['ip']),"%s.%s.%s.%s" % tuple(iface['netmask'])))
 			if interface is not None and interface == ifacename:
 				if self.nameservers:
 					entry = ' '.join([("%d.%d.%d.%d" % tuple(x)) for x in self.nameservers if x != [0, 0, 0, 0] ])
 					if entry:
 						fp.write("	dns-nameservers " + str(entry))
 			if interface is not None and interface != ifacename:
+				if iface["broadcast"] is not False:
+					fp.write(iface['broadcast'])
 				if iface["dns-nameservers"] is not False:
 					fp.write(iface['dns-nameservers'])
 			if iface.has_key("configStrings"):
@@ -222,6 +228,9 @@ class Network:
 				if (split[0] == "dns-nameservers"):
 					if self.ifaces[currif].has_key("dns-nameservers"):
 						self.ifaces[currif]["dns-nameservers"] = i
+				if (split[0] == "broadcast"):
+					if self.ifaces[currif].has_key("broadcast"):
+						self.ifaces[currif]["broadcast"] = i
 
 		for ifacename, iface in ifaces.items():
 			if self.ifaces.has_key(ifacename):
@@ -335,21 +344,16 @@ class Network:
 				del self.ifaces[iface][attribute]
 
 	def getInterfaceNameserverList(self, iface):
-		ipRegexp = "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
-		ipPattern = re_compile(ipRegexp)
-		dns_servers = []
-		if self.getAdapterAttribute(iface, "dns-nameservers") is not False:
-			dns_servers = self.getAdapterAttribute(iface, "dns-nameservers").strip().split(' ')[1:]
-			if dns_servers:
-				self.nameservers = []
-				for server in dns_servers:
-					ip = self.regExpMatch(ipPattern, server)
-					if ip:
-						self.nameservers.append(self.convertIP(ip))
-		if len(self.nameservers) == 0:
-			return [[0, 0, 0, 0], [0, 0, 0, 0]]
-		else:
-			return self.nameservers
+		result = []
+		dns_nameservers = self.getAdapterAttribute(iface, "dns-nameservers")
+		if dns_nameservers:
+			ipRegexp = "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+			ipPattern = re_compile(ipRegexp)
+			for server in dns_nameservers.split()[1:]:
+				ip = self.regExpMatch(ipPattern, server)
+				if ip:
+					result.append(self.convertIP(ip))
+		return result
 
 	def getNameserverList(self):
 		if len(self.nameservers) == 0:
@@ -690,12 +694,16 @@ class Network:
 			if module == 'zd1211b':
 				return 'zydas'
 		return 'wext'
+
+	def addHotplugNetDevice(self, device, interface):
+		self.getInterfaces()
+
+	def removeHotplugNetDevice(self, device, interface):
+		self.getInterfaces()
 	
-	def calc_netmask(self,nmask):
-		from struct import pack, unpack
-		from socket import inet_ntoa, inet_aton
-		mask = 1L<<31
-		xnet = (1L<<32)-1
+	def calc_netmask(self, nmask):
+		from struct import pack
+		from socket import inet_ntoa
 		cidr_range = range(0, 32)
 		cidr = long(nmask)
 		if cidr not in cidr_range:
@@ -705,6 +713,27 @@ class Network:
 			nm = ((1L<<cidr)-1)<<(32-cidr)
 			netmask = str(inet_ntoa(pack('>L', nm)))
 			return netmask
+	
+	def calc_cidr(self, netmask):
+		mask = netmask.split('.')
+		bits = ' '.join([("%s" % bin(int(c))) for c in mask ])
+		cidr = 0
+		for c in bits:
+			cidr += (c == "1") 
+		return str(cidr)
+
+	def calc_broadcast(self, ip, netmask):
+		cidr = self.calc_cidr(netmask)
+		l = ip.split('.')
+		for i in range(len(l)):
+			l[i] = int(l[i])
+		int_ipaddress = (l[0]<<24) + (l[1]<<16) + (l[2]<<8) + l[3]
+		int_netmask_cidr = (~0 << (32 - int(cidr)))
+		int_netmask = (int_ipaddress & int_netmask_cidr)
+		int_broadcast = (int_netmask | ~(int_netmask_cidr))
+		str_broadcast = "%d.%d.%d.%d" % ((int_broadcast>>24) & 255, (int_broadcast>>16) & 255, (int_broadcast>>8) & 255, int_broadcast & 255)
+		print "calc_broadcast: ip:'%s' netmask:'%s' cidr:'%s' broadcast:'%s'" % (ip, netmask, cidr, str_broadcast)
+		return str(str_broadcast)
 	
 	def msgPlugins(self):
 		if self.config_ready is not None:

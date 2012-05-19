@@ -12,6 +12,8 @@ class WebNavigation(Source):
 	COMMAND_ENABLE_PERSISTENT_STORAGE = 0x008
 	COMMAND_GET_COOKIES = 0x009
 	COMMAND_SET_COOKIES = 0x010
+	COMMAND_SET_TRANSPARENT = 0x011
+	COMMAND_SET_ACCEPT_LANGUAGE = 0x012
 	
 	EVENT_URL_CHANGED = 0x100
 	EVENT_TITLE_CHANGED = 0x101
@@ -119,7 +121,12 @@ class WebNavigation(Source):
 	def enablePersistentStorage(self, path):
 		assert path
 		self.changed(self.COMMAND_ENABLE_PERSISTENT_STORAGE, path)
-		
+
+	def setBackgroundTransparent(self, enabled):
+		self.changed(self.COMMAND_SET_TRANSPARENT, enabled)
+
+	def setAcceptLanguage(self, language):
+		self.changed(self.COMMAND_SET_ACCEPT_LANGUAGE, language)
 
 	def __onUrlChanged(self, url):
 		self.__url = url

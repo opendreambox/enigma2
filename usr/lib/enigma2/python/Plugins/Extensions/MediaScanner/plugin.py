@@ -23,11 +23,12 @@ def mountpoint_choosen(option):
 	list = [ (r.description, r, res[r], session) for r in res ]
 
 	if not list:
-		from Components.Harddisk import harddiskmanager
-		p = harddiskmanager.getPartitionbyMountpoint(mountpoint)
-		if p is not None and p.uuid is None: #ignore partitions with unknown or no filesystem uuid
-			print "ignore", mountpoint, "because we have no uuid"
-			return
+		if mountpoint != "/":
+			from Components.Harddisk import harddiskmanager
+			p = harddiskmanager.getPartitionbyMountpoint(mountpoint)
+			if p is not None and p.uuid is None: #ignore partitions with unknown or no filesystem uuid
+				print "ignore", mountpoint, "because we have no uuid"
+				return
 
 		from Screens.MessageBox import MessageBox
 		if access(mountpoint, F_OK|R_OK):

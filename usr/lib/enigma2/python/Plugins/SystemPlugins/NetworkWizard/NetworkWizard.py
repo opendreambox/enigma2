@@ -67,7 +67,6 @@ class NetworkWizard(WizardLanguage, Rc):
 		self.originalSelectedInterface = interface
 		self.NextStep = None
 		self.resetRef = None
-		self.checkRef = None
 		self.AdapterRef = None
 		self.APList = None
 		self.newAPlist = None
@@ -79,6 +78,9 @@ class NetworkWizard(WizardLanguage, Rc):
 		self.Text = None
 		self.rescanTimer = eTimer()
 		self.rescanTimer.callback.append(self.rescanTimerFired)
+		self.dhcpWaitTimerRunCount = 0
+		self.dhcpWaitTimer = eTimer()
+		self.dhcpWaitTimer.callback.append(self.dhcpWaitTimerFired)
 
 		self.getInstalledInterfaceCount()
 		self.isWlanPluginInstalled()
@@ -91,6 +93,8 @@ class NetworkWizard(WizardLanguage, Rc):
 	def markDone(self):
 		self.stopScan()
 		del self.rescanTimer
+		del self.dhcpWaitTimer
+		self.dhcpWaitTimerRunCount = 0
 		self.checkOldInterfaceState()
 		global firstRun
 		if firstRun == True:
@@ -121,8 +125,7 @@ class NetworkWizard(WizardLanguage, Rc):
 		for interface in iNetwork.getAdapterList():
 			self.originalInterfaceState[interface] = {}
 			self.originalInterfaceState[interface]["up"] = iNetwork.getAdapterAttribute(interface, 'up')
-		
-		
+
 	def verifyFirstRun(self):
 		#check if we have already a working network connection after flashing/factory reset
 		if firstRun and checkNetwork:
@@ -198,8 +201,6 @@ class NetworkWizard(WizardLanguage, Rc):
 				else:
 					self.NextStep = 'asknetworktype'
 				self.checkInterface(self.selectedInterface)
-
-
 
 	def checkOldInterfaceState(self):
 		# disable up interface if it was originally down and config is unchanged.
@@ -280,12 +281,8 @@ class NetworkWizard(WizardLanguage, Rc):
 
 	def AdapterSetupEnd(self, iface):
 		self.originalInterfaceStateChanged = True
-		if iNetwork.getAdapterAttribute(iface, "dhcp") is True:
-			iNetwork.checkNetworkState(self.AdapterSetupEndFinished)
-			self.AdapterRef = self.session.openWithCallback(self.AdapterSetupEndCB, MessageBox, _("Please wait while we test your network..."), type = MessageBox.TYPE_INFO, enable_input = False)
-		else:
-			self.currStep = self.getStepWithID("confdns")
-			self.afterAsyncCode()
+		iNetwork.checkNetworkState(self.AdapterSetupEndFinished)
+		self.AdapterRef = self.session.openWithCallback(self.AdapterSetupEndCB, MessageBox, _("Please wait while we test your network..."), type = MessageBox.TYPE_INFO, enable_input = False)
 
 	def AdapterSetupEndCB(self,data):
 		if data is True:
@@ -304,21 +301,41 @@ class NetworkWizard(WizardLanguage, Rc):
 	def AdapterSetupEndFinished(self,data):
 		if data <= 2:
 			self.InterfaceState = True
+			self.AdapterRef.close(True)
 		else:
-			self.InterfaceState = False
-		self.AdapterRef.close(True)
-			
+			if iNetwork.getAdapterAttribute(self.selectedInterface, 'up') is True and self.dhcpWaitTimerRunCount <=2:
+				#some wlan drivers need a long time to get an ip, lets wait max three times and retest network, if first pass didn't got a usable result.
+				self.dhcpWaitTimer.startLongTimer(4)
+			else:
+				self.InterfaceState = False
+				self.AdapterRef.close(True)
+
+	def dhcpWaitTimerFired(self):
+		if self.dhcpWaitTimerRunCount <=2:
+			self.dhcpWaitTimerRunCount+=1
+		else:
+			self.dhcpWaitTimer.stop()
+		iNetwork.getInterfaces(self.getInterfacesReReadFinished)
+
+	def getInterfacesReReadFinished(self, data):
+		if data is True:
+			if iNetwork.getAdapterAttribute(self.selectedInterface, 'up') is True:
+				self.isInterfaceUp = True
+			else:
+				self.isInterfaceUp = False
+		iNetwork.checkNetworkState(self.AdapterSetupEndFinished)
+
 	def checkWlanStateCB(self,data,status):
 		if data is not None:
 			if data is True:
 				if status is not None:
 					text1 = _("Your Dreambox is now ready to use.\n\nYour internet connection is working now.\n\n")
-					text2 = _("IP Address") + ":\t" + str('.'.join(["%d" % d for d in iNetwork.getAdapterAttribute(self.selectedInterface, 'ip')])) + "\n"
-					text3 = _("Accesspoint") + ":\t" + str(status[self.selectedInterface]["accesspoint"]) + "\n"
-					text4 = _("SSID") + ":\t" + str(status[self.selectedInterface]["essid"]) + "\n"
+					text2 = _("IP Address") + ":\t\t" + str('.'.join(["%d" % d for d in iNetwork.getAdapterAttribute(self.selectedInterface, 'ip')])) + "\n"
+					text3 = _("Accesspoint") + ":\t\t" + str(status[self.selectedInterface]["accesspoint"]) + "\n"
+					text4 = _("SSID") + ":\t\t" + str(status[self.selectedInterface]["essid"]) + "\n"
 					text5 = _("Link Quality") + ":\t" + str(status[self.selectedInterface]["quality"])+ "\n"
 					text6 = _("Signal Strength") + ":\t" + str(status[self.selectedInterface]["signal"]) + "\n"
-					text7 = _("Bitrate") + ":\t" + str(status[self.selectedInterface]["bitrate"]) + "\n"
+					text7 = _("Bitrate") + ":\t\t" + str(status[self.selectedInterface]["bitrate"]) + "\n"
 
 					encryption = _("Enabled")
 					if str(status[self.selectedInterface]["encryption"]) == "off":
@@ -335,31 +352,6 @@ class NetworkWizard(WizardLanguage, Rc):
 						self.InterfaceState = False
 					self.afterAsyncCode()
 
-	def checkNetwork(self):
-		iNetwork.checkNetworkState(self.checkNetworkStateCB)
-		self.checkRef = self.session.openWithCallback(self.checkNetworkCB, MessageBox, _("Please wait while we test your network..."), type = MessageBox.TYPE_INFO, enable_input = False)
-
-	def checkNetworkCB(self,data):
-		if data is True:
-			if iNetwork.isWirelessInterface(self.selectedInterface):
-				if self.WlanPluginInstalled == True:
-					from Plugins.SystemPlugins.WirelessLan.Wlan import iStatus
-					iStatus.getDataForInterface(self.selectedInterface,self.checkWlanStateCB)
-				else:
-					self.currStep = self.getStepWithID("checklanstatusend")
-					self.afterAsyncCode()					
-			else:
-				self.currStep = self.getStepWithID("checklanstatusend")
-				self.Text = self.getLanStatusMsg()
-				self.afterAsyncCode()
-
-	def checkNetworkStateCB(self,data):
-		if data <= 2:
-			self.InterfaceState = True
-		else:
-			self.InterfaceState = False
-		self.checkRef.close(True)
-	
 	def rescanTimerFired(self):
 		self.rescanTimer.stop()
 		self.updateAPList()

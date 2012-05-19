@@ -1,9 +1,11 @@
 from Plugins.Plugin import PluginDescriptor
 from Components.Harddisk import harddiskmanager
+from Components.Network import iNetwork
 from Tools.Directories import fileExists
 from Tools.BoundFunction import boundFunction
 
 hotplugNotifier = [ ]
+hotplugNetDevNotifier = [ ]
 bdpoll = None
 delayed_HotplugData = { }
 
@@ -41,6 +43,24 @@ def processHotplugData(self, v):
 	
 	if delayed_HotplugData.get(device, None) is not None:
 		del delayed_HotplugData[device]
+
+
+def processHotplugNetDevData(self, v):
+	#print "hotplug NetDev:", v
+	action = v.get("ACTION")
+	device = v.get("DEVPATH")
+	interface = v.get("INTERFACE")
+
+	if action is not None and action == "add":
+		iNetwork.addHotplugNetDevice(device, interface)
+	elif action is not None and action == "remove":
+		iNetwork.removeHotplugNetDevice(device, interface)
+
+	for callback in hotplugNetDevNotifier:
+		try:
+			callback(action, device, interface)
+		except AttributeError:
+			hotplugNetDevNotifier.remove(callback)
 
 
 CDROM_DRIVE_STATUS = 0x5326
@@ -97,6 +117,8 @@ def autostart(reason, **kwargs):
 							tmr.callback.append(boundFunction(processHotplugData, self, v))
 							delayed_HotplugData[str(v.get("DEVPATH"))] = tmr
 							tmr.start(2000, True)
+						if v['SUBSYSTEM'] == 'net' and v['ACTION'] in ('add', 'remove'):
+							processHotplugNetDevData(self, v)
 
 			from threading import Thread, Semaphore, Lock
 			class ThreadQueue:

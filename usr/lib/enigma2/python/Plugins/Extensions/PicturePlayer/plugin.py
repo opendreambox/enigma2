@@ -1,4 +1,4 @@
-from enigma import ePicLoad, eTimer, getDesktop
+from enigma import ePicLoad, eTimer, getDesktop, eRect
 
 from Screens.Screen import Screen
 from Tools.Directories import resolveFilename, pathExists, fileExists, SCOPE_MEDIA
@@ -20,13 +20,47 @@ def getScale():
 config.pic = ConfigSubsection()
 config.pic.framesize = ConfigInteger(default=30, limits=(5, 99))
 config.pic.slidetime = ConfigInteger(default=10, limits=(10, 60))
-config.pic.resize = ConfigSelection(default="1", choices = [("0", _("simple")), ("1", _("better"))])
+config.pic.resize = ConfigSelection(default="2", choices = [("0", _("simple")), ("1", _("better")), ("2", _("fast JPEG"))])
+config.pic.resize.value = 2 # 2 = fast JPEG (non JPEG fallback to 1)
 config.pic.cache = ConfigEnableDisable(default=True)
 config.pic.lastDir = ConfigText(default=resolveFilename(SCOPE_MEDIA))
 config.pic.infoline = ConfigEnableDisable(default=True)
 config.pic.loop = ConfigEnableDisable(default=True)
 config.pic.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
 config.pic.textcolor = ConfigSelection(default="#0038FF48", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+
+def setPixmap(dest, ptr):
+	pic_scale_size = ptr.scaleSize()
+
+	if pic_scale_size.isValid():
+		pic_size = ptr.size()
+		pic_width = pic_size.width()
+		pic_height = pic_size.height()
+
+		dest_size = dest.getSize()
+		dest_width = dest_size.width()
+		dest_height = dest_size.height()
+
+		pic_scale_width = pic_scale_size.width()
+		pic_scale_height = pic_scale_size.height()
+
+#		print "pic size %dx%d" %(pic_width, pic_height)
+#		print "pic scale size %dx%d" %(pic_scale_width, pic_scale_height)
+#		print "dest area size %dx%d" %(dest_width, dest_height)
+
+		if pic_scale_width == dest_width: # v center
+			dest_rect = eRect(0, (dest_height - pic_scale_height) / 2, pic_scale_width, pic_scale_height)
+		else: # h center
+			dest_rect = eRect((dest_width - pic_scale_width) / 2, 0, pic_scale_width, pic_scale_height)
+
+#		print "dest rect", (dest_rect.left(), dest_rect.top(), dest_rect.width(), dest_rect.height())
+
+		dest.instance.setScale(1)
+		dest.instance.setScaleDest(dest_rect)
+	else:
+#		print "no scale!"
+		dest.instance.setScale(0)
+	dest.instance.setPixmap(ptr.__deref__())
 
 class picshow(Screen):
 	skin = """
@@ -40,7 +74,7 @@ class picshow(Screen):
 			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />
 			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
 			<widget source="label" render="Label" position="5,55" size="350,140" font="Regular;19" backgroundColor="#25062748" transparent="1"  />
-			<widget name="thn" position="360,40" size="180,160" alphatest="on" />
+			<widget name="thn" position="360,40" size="180,160" />
 			<widget name="filelist" position="5,205" zPosition="2" size="550,230" scrollbarMode="showOnDemand" />
 		</screen>"""
 
@@ -83,7 +117,7 @@ class picshow(Screen):
 	def showPic(self, picInfo=""):
 		ptr = self.picload.getData()
 		if ptr != None:
-			self["thn"].instance.setPixmap(ptr.__deref__())
+			setPixmap(self["thn"], ptr)
 			self["thn"].show()
 
 		text = picInfo.split('\n',1)
@@ -125,7 +159,9 @@ class picshow(Screen):
 		self.setTitle(_("PicturePlayer"))
 		sc = getScale()
 		#0=Width 1=Height 2=Aspect 3=use_cache 4=resize_type 5=Background(#AARRGGBB)
-		self.picload.setPara((self["thn"].instance.size().width(), self["thn"].instance.size().height(), sc[0], sc[1], config.pic.cache.value, int(config.pic.resize.value), "#00000000"))
+
+		params = (self["thn"].instance.size().width(), self["thn"].instance.size().height(), sc[0], sc[1], config.pic.cache.value, int(config.pic.resize.value), "#00000000")
+		self.picload.setPara(params)
 
 	def callbackView(self, val=0):
 		if val > 0:
@@ -175,7 +211,7 @@ class Pic_Setup(Screen, ConfigListScreen):
 	def createSetup(self):
 		self.list = []
 		self.list.append(getConfigListEntry(_("Slideshow Interval (sec.)"), config.pic.slidetime))
-		self.list.append(getConfigListEntry(_("Scaling Mode"), config.pic.resize))
+#		self.list.append(getConfigListEntry(_("Scaling Mode"), config.pic.resize))
 		self.list.append(getConfigListEntry(_("Cache Thumbnails"), config.pic.cache))
 		self.list.append(getConfigListEntry(_("show Infoline"), config.pic.infoline))
 		self.list.append(getConfigListEntry(_("Frame size in full view"), config.pic.framesize))
@@ -288,11 +324,12 @@ class Pic_Thumb(Screen):
 			absY = self.spaceY + (posY*(self.spaceY + self.picY))
 			self.positionlist.append((absX, absY))
 			skincontent += "<widget source=\"label" + str(x) + "\" render=\"Label\" position=\"" + str(absX+5) + "," + str(absY+self.picY-textsize) + "\" size=\"" + str(self.picX - 10) + ","  + str(textsize) + "\" font=\"Regular;14\" zPosition=\"2\" transparent=\"1\" noWrap=\"1\" foregroundColor=\"" + self.textcolor + "\" />"
-			skincontent += "<widget name=\"thumb" + str(x) + "\" position=\"" + str(absX+5)+ "," + str(absY+5) + "\" size=\"" + str(self.picX -10) + "," + str(self.picY - (textsize*2)) + "\" zPosition=\"2\" transparent=\"1\" alphatest=\"on\" />"
+			skincontent += "<widget name=\"thumb" + str(x) + "\" position=\"" + str(absX+5)+ "," + str(absY+5) + "\" size=\"" + str(self.picX -10) + "," + str(self.picY - (textsize*2)) + "\" zPosition=\"2\" transparent=\"1\" />"
 
 		# Screen, backgroundlabel and MovingPixmap
 		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\"" + self.color + "\" /><widget name=\"frame\" position=\"35,30\" size=\"190,200\" pixmap=\"pic_frame.png\" zPosition=\"1\" alphatest=\"on\" />"  + skincontent + "</screen>"
+			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\"" + self.color + "\" /> \
+			<widget name=\"frame\" position=\"35,30\" size=\"190,200\" pixmap=\"pic_frame.png\" zPosition=\"1\" alphatest=\"on\" />"  + skincontent + "</screen>"
 
 		Screen.__init__(self, session)
 
@@ -390,7 +427,7 @@ class Pic_Thumb(Screen):
 				self.Thumbnaillist[x][0] = 2
 				ptr = self.picload.getData()
 				if ptr != None:
-					self["thumb" + str(self.Thumbnaillist[x][1])].instance.setPixmap(ptr.__deref__())
+					setPixmap(self["thumb" + str(self.Thumbnaillist[x][1])], ptr)
 					self["thumb" + str(self.Thumbnaillist[x][1])].show()
 
 	def key_left(self):
@@ -448,7 +485,8 @@ class Pic_Full_View(Screen):
 		size_h = getDesktop(0).size().height()
 
 		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\""+ self.bgcolor +"\" /><widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w-(space*2)) + "," + str(size_h-(space*2)) + "\" zPosition=\"1\" alphatest=\"on\" /> \
+			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\""+ self.bgcolor +"\" /> \
+			<widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w-(space*2)) + "," + str(size_h-(space*2)) + "\" zPosition=\"1\" /> \
 			<widget name=\"point\" position=\""+ str(space+5) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\" alphatest=\"on\" /> \
 			<widget name=\"play_icon\" position=\""+ str(space+25) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/ico_mp_play.png\"  alphatest=\"on\" /> \
 			<widget source=\"file\" render=\"Label\" position=\""+ str(space+45) + "," + str(space) + "\" size=\""+ str(size_w-(space*2)-50) + ",25\" font=\"Regular;20\" halign=\"left\" foregroundColor=\"" + self.textcolor + "\" zPosition=\"2\" noWrap=\"1\" transparent=\"1\" /></screen>"
@@ -509,7 +547,7 @@ class Pic_Full_View(Screen):
 
 	def setPicloadConf(self):
 		sc = getScale()
-		self.picload.setPara([self["pic"].instance.size().width(), self["pic"].instance.size().height(), sc[0], sc[1], 0, int(config.pic.resize.value), self.bgcolor])
+		self.picload.setPara((self["pic"].instance.size().width(), self["pic"].instance.size().height(), sc[0], sc[1], 0, int(config.pic.resize.value), self.bgcolor))
 
 		self["play_icon"].hide()
 		if not config.pic.infoline.value:
@@ -525,7 +563,7 @@ class Pic_Full_View(Screen):
 			else:			
 				self["file"].setText(self.currPic[0])
 			self.lastindex = self.currPic[1]
-			self["pic"].instance.setPixmap(self.currPic[2].__deref__())
+			setPixmap(self["pic"], self.currPic[2])
 			self.currPic = []
 
 			self.next()

@@ -4,18 +4,19 @@ from enigma import eEnv, getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStr
 import enigma
 enigma.eWebView = eWebView
 
-from Components.ActionMap import NumberActionMap, ActionMap
+from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
+from Components.config import config, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo, ConfigDirectory
 from Components.Input import Input
 from Components.Label import Label
+from Components.Language import language
 from Components.MenuList import MenuList
 from Components.Sources.Boolean import Boolean
 from Components.Sources.CanvasSource import CanvasSource
 from Components.Sources.StaticText import StaticText
 from Components.Sources.WebNavigation import WebNavigation
 
-from Components.config import config, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo, ConfigDirectory
-
 from Screens.ChoiceBox import ChoiceBox
+from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
@@ -32,6 +33,8 @@ from base64 import b64decode, b64encode
 from urllib import unquote as url_unquote, quote_plus as url_quote_plus
 from urlparse import urlparse
 
+from Hbbtv import Hbbtv
+
 config.plugins.WebBrowser = ConfigSubsection()
 config.plugins.WebBrowser.home = ConfigText(default = "http://box.dream-multimedia-tv.de")
 config.plugins.WebBrowser.startPage = ConfigSelection([ ("home", _("Home Page")), ("lastvisted", _("Last visted")) ])
@@ -44,8 +47,8 @@ config.plugins.WebBrowser.storage.enabled = ConfigYesNo( default = False )
 config.plugins.WebBrowser.storage.path = ConfigDirectory(default = "/media/hdd/webkit-data")
 config.plugins.WebBrowser.downloadpath = ConfigDirectory(default = "/media/hdd")
 
-class Browser(Screen):
-	def __init__(self, session, fullscreen = False, url = None, isHbbtv = False):
+class Browser(Screen, HelpableScreen):
+	def __init__(self, session, fullscreen = False, url = None, isHbbtv = False, isTransparent = False):
 		size = getDesktop(0).size()
 		width = int(size.width() * 0.9)
 		fwidth = int(size.width())
@@ -153,12 +156,15 @@ class Browser(Screen):
 
 		self.__isHbbtv = isHbbtv
 		if self.__isHbbtv:
-			fullscreen = True
+			isTransparent = fullscreen = True
+
+		self.__isTransparent = isTransparent
 		self.__fullscreen = fullscreen
 		if self.__fullscreen:
 			Browser.skin = Browser.skinFullscreen
 
 		Screen.__init__(self, session)
+		HelpableScreen.__init__(self)
 
 		if self.__fullscreen:
 			self.skinName = "BrowserFullscreen"
@@ -227,35 +233,36 @@ class Browser(Screen):
 		self.__keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
+		self.onClose.append(self.__onClose)
 
-		self["actions"] = ActionMap(["BrowserActions"],
+		self["helpableactions"] = HelpableActionMap(self, "BrowserActions",
 		{
-			"exit": self.__actionExit,
-			"url": self.__actionEnterUrl,
+			"exit": (self.__actionExit, _("Close the browser")),
+			"url": (self.__actionEnterUrl, _("Enter web address or search term")),
 			"back": boundFunction(self.__actionNavigate, eWebView.navBack),
 			"forward": boundFunction(self.__actionNavigate, eWebView.navForward),
-			"openLink": boundFunction(self.__actionNavigate, eWebView.navOpenLink),
-			"stop": boundFunction(self.__actionNavigate, eWebView.navStop),
-			"reload": boundFunction(self.__actionNavigate, eWebView.navReload),
 			"left": self.__actionLeft,
 			"right": self.__actionRight,
 			"up": self.__actionUp,
 			"down": self.__actionDown,
-			"pageUp": self.__actionPageUp,
-			"pageDown": self.__actionPageDown,
-#			"home": boundFunction(self.__actionNavigate, eWebView.navHome),
+			"pageUp": (self.__actionPageUp, _("Page Up / Zoom in")),
+			"pageDown": (self.__actionPageDown, _("Page Down / Zoom out")),
 			"home" : self.__actionHome,
 			"end": boundFunction(self.__actionNavigate, eWebView.navEnd),
-			"tab": boundFunction(self.__actionNavigate, eWebView.navTab),
-			"backspace": self.__actionBackspace,
+			"tab": (boundFunction(self.__actionNavigate, eWebView.navTab), _("Tab")),
+			"backspace": (self.__actionBackspace, _("Backspace / Navigate back")),
 			"backtab": boundFunction(self.__actionNavigate, eWebView.navBacktab),
-			"delete": self.__actionDelete,
+			"delete": (self.__actionDelete, _("Delete / Navigate forward")),
 			"ascii": self.__actionAscii,
-			"text" : self.__actionVirtualAscii,
+			"text" : (self.__actionVirtualAscii, _("Open Virtual Keyboard")),
 			"ok" : self.__actionOk,
 			"enter" : self.__actionEnter,
-			"menu" : self.__actionMenu,
-			"fullscreen" : self.__actionFullscreen
+			"menu" : (self.__actionMenu, _("Menu")),
+			"fullscreen" : self.__actionFullscreen,
+			"play" : self.__actionPlay,
+			"pause" : self.actionPause,
+			"playpause" : self.__actionPlayPause,
+			"stop" : self.actionStop,
 		}, -2)
 
 		self["coloractions"] = ActionMap(["ColorActions"],
@@ -279,6 +286,16 @@ class Browser(Screen):
 			"9": self.keyNumberGlobal,
 			"0": self.keyNumberGlobal
 		})
+
+		if Hbbtv.instance:
+			Hbbtv.instance.setBrowser(self)
+
+	def setBackgroundTransparent(self, enabled):
+		self.webnavigation.setBackgroundTransparent(enabled)
+
+	def __onClose(self):
+		if Hbbtv.instance:
+			Hbbtv.instance.unsetBrowser()
 
 	def __setKeyBoardModeAscii(self):
 		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
@@ -309,6 +326,11 @@ class Browser(Screen):
 			self.close()
 
 	def __onFirstExecBegin(self):
+		#enable/disable transparent background
+		self.setBackgroundTransparent(self.__isTransparent)
+		#set Accept-Language header to current language
+		lang = '-'.join(language.getLanguage().split('_'))
+		self.webnavigation.setAcceptLanguage(lang)
 		self.__registerCallbacks()
 		self.__urlList.hide()
 		self.__restoreCookies()
@@ -535,6 +557,18 @@ class Browser(Screen):
 		else:
 			self.__actionNavigate(eWebView.navOpenLink)
 
+	def __actionPlay(self):
+		self.__actionNavigate(eWebView.navMediaPlay)
+
+	def actionPause(self):
+		self.__actionNavigate(eWebView.navMediaPause)
+
+	def __actionPlayPause(self):
+		self.__actionNavigate(eWebView.navMediaPlay) #playpause doesn't work anywhere, but play does (HBBTV)
+
+	def actionStop(self):
+		self.__actionNavigate(eWebView.navMediaStop)
+
 	def __actionBackspace(self):
 		if self.textInput.visible:
 			self.restartTimer()
@@ -684,7 +718,6 @@ class Browser(Screen):
 		else:
 			if not self.__hasSslErrors and not self.__handledUnsupportedContent:
 				self.__handledUnsupportedContent = False
-				self.session.open(MessageBox, _("Error loading the requested page!"), type = MessageBox.TYPE_ERROR, timeout = 3)
 
 	def __searchUsingCurrentUrlValue(self):
 		needle = self.urlInput.getText()
@@ -710,14 +743,14 @@ class Browser(Screen):
 		perrors = {}
 		pems.sort()
 		for pem in pems:
-			messages = perrors.get(pem, [])
-			messages.append(errors[cnt])
-			perrors[pem] = messages
-			cnt += 1
+			if pem.strip() != "":
+				messages = perrors.get(pem, [])
+				messages.append(errors[cnt])
+				perrors[pem] = messages
+				cnt += 1
 
 		for pem, messages in perrors.iteritems():
 			cert = Certificate(-1, self.__getCurrentNetloc(), pem)
-			print cert
 			checkVal = self.__db.checkCert( cert ) == BrowserDB.CERT_UNKOWN
 			if checkVal == BrowserDB.CERT_OK:
 				print "[Browser].__onSslErrors :: netloc/pem combination known and trusted!"

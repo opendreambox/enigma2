@@ -9,7 +9,7 @@ from Components.SelectionList import SelectionList
 from ServiceReference import ServiceReference
 from Plugins.Plugin import PluginDescriptor
 from xml.etree.cElementTree import parse as ci_parse
-from enigma import eDVBCI_UI, eDVBCIInterfaces, eEnv
+from enigma import eDVBCI_UI, eDVBCIInterfaces, eEnv, eServiceReference, eServiceCenter
 
 from os import path as os_path
 

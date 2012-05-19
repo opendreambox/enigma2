@@ -79,7 +79,7 @@ class VideoHardware:
 			elif is_auto:
 				try:
 					aspect_str = open("/proc/stb/vmpeg/0/aspect", "r").read()
-					if aspect_str == "1": # 4:3
+					if aspect_str[0] == "2": # 4:3
 						ret = (4,3)
 				except IOError:
 					pass

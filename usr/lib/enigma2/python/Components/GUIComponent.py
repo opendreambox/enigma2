@@ -92,12 +92,9 @@ class GUIComponent(object):
 	def getPosition(self):
 		p = self.instance.position()
 		return (p.x(), p.y())
-	
-	def getWidth(self):
-		return self.width
-	
-	def getHeight(self):
-		return self.height
+
+	def getSize(self):
+		return self.instance.size()
 
 	position = property(getPosition, setPosition)
 

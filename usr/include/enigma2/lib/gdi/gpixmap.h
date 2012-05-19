@@ -188,6 +188,7 @@ class gPixmap: public iObject
 	DECLARE_REF(gPixmap);
 	E_DISABLE_COPY(gPixmap)
 
+	eSize m_scale_size;
 public:
 #ifndef SWIG
 	enum
@@ -213,6 +214,7 @@ public:
 #endif
 	virtual ~gPixmap();
 	eSize size() const { return eSize(surface->x, surface->y); }
+	const eSize &scaleSize() const { return m_scale_size; }
 
 	gRGB color(int index) const;
 	int colorCount() const;
@@ -221,6 +223,7 @@ public:
 	void setColorCount(int colorCount);
 	void setColorTable(const std::vector<gRGB> &colors);
 	void setColorFormat(gSurface::colorformat_t colorformat);
+	void setScaleSize(const eSize &size) { m_scale_size = size; }
 
 private:
 	E_DECLARE_PRIVATE(gPixmap)

@@ -1,6 +1,7 @@
 from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
+from Screens.InfoBar import InfoBar
 from Components.VideoWindow import VideoWindow
 
 from MoviePlayer import MoviePlayer
@@ -36,23 +37,59 @@ class Hbbtv(object):
 	def __init__(self, session):
 		assert Hbbtv.instance is None, "Hbbtv is a singleton class and may only be initialized once!"
 		Hbbtv.instance = self
-		from Screens.InfoBar import InfoBar
 
 		self.session = session
 		self.eHbbtv = eHbbtv.getInstance()
 		self.eHbbtv.playServiceRequest.get().append(self.zap)
-		self.eHbbtv.playStreamRequest.get().append(self.stream)
+		self.eHbbtv.playStreamRequest.get().append(self.playStream)
+		self.eHbbtv.pauseStreamRequest.get().append(self.pauseStream)
+		self.eHbbtv.stopStreamRequest.get().append(self.stopStream)
 		self.eHbbtv.nextServiceRequest.get().append(self.nextService)
 		self.eHbbtv.prevServiceRequest.get().append(self.prevService)
 		InfoBar.instance.onServiceListRootChanged.append(self.setCurrentBouquet)
 
 		self.__overlay = None
+		self.__currentStreamRef = None
+		self.__browser = None
+
+	def setBrowser(self, browser):
+		self.__browser = browser
+
+	def unsetBrowser(self):
+		self.__browser = None
 
 	def zap(self, sref):
 		self.session.nav.playService(eServiceReference(sref))
 
-	def stream(self, sref):
-		self.session.open(MoviePlayer, eServiceReference(sref))
+	def isStreaming(self):
+		if self.__currentStreamRef:
+			return True
+		return False
+
+	def playStream(self, sref):
+		self.__currentStreamRef = eServiceReference(sref)
+		self.session.open(MoviePlayer, self.__currentStreamRef, stopCallback=self.actionStop, pauseCallback=self.actionPause)
+		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PLAYING)
+
+	def actionPause(self):
+		if self.__browser:
+			self.__browser.actionPause()
+
+	def pauseStream(self):
+		if self.isStreaming():
+			pauseable = self.session.nav.getCurrentService().pause()
+			if pauseable is None:
+				self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PLAYING)
+			else:
+				self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PAUSED)
+
+	def actionStop(self):
+		if self.__browser:
+			self.__browser.actionStop()
+
+	def stopStream(self):
+		if self.isStreaming():
+			self.__currentStreamRef = None
 
 	def nextService(self):
 		ib = InfoBar.instance

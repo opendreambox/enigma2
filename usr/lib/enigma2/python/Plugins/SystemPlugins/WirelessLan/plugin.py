@@ -104,11 +104,15 @@ class WlanStatus(Screen):
 
 	def cleanup(self):
 		iStatus.stopWlanConsole()
+		iNetwork.stopGetInterfacesConsole()
 
 	def layoutFinished(self):
 		self.setTitle(_("Wireless network state"))
 
 	def resetList(self):
+		iNetwork.getInterfaces(self.getInterfacesReReadFinished)
+
+	def getInterfacesReReadFinished(self, data):
 		iStatus.getDataForInterface(self.iface,self.getInfoCB)
 
 	def getInfoCB(self,data,status):

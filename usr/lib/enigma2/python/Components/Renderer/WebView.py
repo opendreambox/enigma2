@@ -41,6 +41,10 @@ class WebView(Renderer):
 				param(self.instance.getRawCookies())
 			elif cmd == WebNavigation.COMMAND_SET_COOKIES:
 				self.instance.setRawCookies(param)
+			elif cmd == WebNavigation.COMMAND_SET_TRANSPARENT:
+				self.instance.setBackgroundTransparent(param)
+			elif cmd == WebNavigation.COMMAND_SET_ACCEPT_LANGUAGE:
+				self.instance.setAcceptLanguage(param)
 			elif cmd == WebNavigation.EVENT_URL_CHANGED:
 				self.instance.urlChanged.get().append(param)
 			elif cmd == WebNavigation.EVENT_TITLE_CHANGED:

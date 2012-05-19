@@ -12,7 +12,7 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
-	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None):
+	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None, pauseCallback = None):
 		Screen.__init__(self, session)
 		InfoBarNotifications.__init__(self)
 		InfoBarSeek.__init__(self)
@@ -31,6 +31,7 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		self.getNextServiceCB = getNextService
 		self.getPrevServiceCB = getPrevService
 		self.stopCB = stopCallback
+		self.pauseCB = pauseCallback
 		self.callback = None
 		self.screen_timeout = 5000
 		self.nextservice = None
@@ -42,7 +43,7 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		{
 				"cancel": self.leavePlayer,
 				"stop": self.leavePlayer,
-				"playpauseService": self.playpauseService,
+				"playpauseService": self.playpause,
 				"previous":  self.playPrev,
 				"next": self.playNext,
 				"showEventInfo": self.showVideoInfo,
@@ -59,7 +60,6 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		self.session.nav.stopService()
 		if self.restoreService:
 			self.session.nav.playService(self.oldService)
-
 
 	def createSummary(self):
 		return SimpleLCDScreen
@@ -104,9 +104,16 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		if self.shown:
 			self.checkSkipShowHideLock()
 
+	def playpause(self):
+		self.playpauseService()
+		if self.pauseCB != None:
+			self.pauseCB()
+
 	def stopCurrent(self):
 		print "stopCurrent"
 		self.session.nav.stopService()
+		if self.stopCB != None:
+			self.stopCB()
 
 	def showVideoInfo(self):
 		if self.infoCallback != None:

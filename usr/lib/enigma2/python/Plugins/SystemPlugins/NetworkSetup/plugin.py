@@ -3,9 +3,8 @@ from Plugins.Plugin import PluginDescriptor
 def autostart(reason, **kwargs):
 	if "session" in kwargs:
 		from Components.ResourceManager import resourcemanager
-		from NetworkSetup import NetworkAdapterSelection, NameserverSetup, AdapterSetup
+		from NetworkSetup import NetworkAdapterSelection, AdapterSetup
 		resourcemanager.addResource("NetworkAdapterSelection", NetworkAdapterSelection)
-		resourcemanager.addResource("NameserverSetup", NameserverSetup)
 		resourcemanager.addResource("AdapterSetup", AdapterSetup)
 
 def Plugins(**kwargs):

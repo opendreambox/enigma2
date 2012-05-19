@@ -1026,6 +1026,7 @@ gPixmapPtr.__ref__ = new_instancemethod(_enigma.gPixmapPtr___ref__,None,gPixmapP
 gPixmapPtr.getPtrString = new_instancemethod(_enigma.gPixmapPtr_getPtrString,None,gPixmapPtr)
 gPixmapPtr.__deref__ = new_instancemethod(_enigma.gPixmapPtr___deref__,None,gPixmapPtr)
 gPixmapPtr.size = new_instancemethod(_enigma.gPixmapPtr_size,None,gPixmapPtr)
+gPixmapPtr.scaleSize = new_instancemethod(_enigma.gPixmapPtr_scaleSize,None,gPixmapPtr)
 gPixmapPtr.color = new_instancemethod(_enigma.gPixmapPtr_color,None,gPixmapPtr)
 gPixmapPtr.colorCount = new_instancemethod(_enigma.gPixmapPtr_colorCount,None,gPixmapPtr)
 gPixmapPtr.colorTable = new_instancemethod(_enigma.gPixmapPtr_colorTable,None,gPixmapPtr)
@@ -1033,6 +1034,7 @@ gPixmapPtr.setColor = new_instancemethod(_enigma.gPixmapPtr_setColor,None,gPixma
 gPixmapPtr.setColorCount = new_instancemethod(_enigma.gPixmapPtr_setColorCount,None,gPixmapPtr)
 gPixmapPtr.setColorTable = new_instancemethod(_enigma.gPixmapPtr_setColorTable,None,gPixmapPtr)
 gPixmapPtr.setColorFormat = new_instancemethod(_enigma.gPixmapPtr_setColorFormat,None,gPixmapPtr)
+gPixmapPtr.setScaleSize = new_instancemethod(_enigma.gPixmapPtr_setScaleSize,None,gPixmapPtr)
 gPixmapPtr_swigregister = _enigma.gPixmapPtr_swigregister
 gPixmapPtr_swigregister(gPixmapPtr)
 
@@ -1264,6 +1266,7 @@ ePixmap.setPixmap = new_instancemethod(_enigma.ePixmap_setPixmap,None,ePixmap)
 ePixmap.setPixmapFromFile = new_instancemethod(_enigma.ePixmap_setPixmapFromFile,None,ePixmap)
 ePixmap.setAlphatest = new_instancemethod(_enigma.ePixmap_setAlphatest,None,ePixmap)
 ePixmap.setScale = new_instancemethod(_enigma.ePixmap_setScale,None,ePixmap)
+ePixmap.setScaleDest = new_instancemethod(_enigma.ePixmap_setScaleDest,None,ePixmap)
 ePixmap.setBorderWidth = new_instancemethod(_enigma.ePixmap_setBorderWidth,None,ePixmap)
 ePixmap.setBorderColor = new_instancemethod(_enigma.ePixmap_setBorderColor,None,ePixmap)
 ePixmap_swigregister = _enigma.ePixmap_swigregister
@@ -2735,17 +2738,20 @@ class eHbbtv(object):
     STREAM_STATE_BUFFERING = _enigma.eHbbtv_STREAM_STATE_BUFFERING
     STREAM_STATE_FINISHED = _enigma.eHbbtv_STREAM_STATE_FINISHED
     STREAM_STATE_ERROR = _enigma.eHbbtv_STREAM_STATE_ERROR
+    STREAM_ERROR_NONE = _enigma.eHbbtv_STREAM_ERROR_NONE
     STREAM_ERROR_UNSUPPORTED = _enigma.eHbbtv_STREAM_ERROR_UNSUPPORTED
     STREAM_ERROR_CONNECTING = _enigma.eHbbtv_STREAM_ERROR_CONNECTING
     STREAM_ERROR_UNKNOWN = _enigma.eHbbtv_STREAM_ERROR_UNKNOWN
     getInstance = staticmethod(_enigma.eHbbtv_getInstance)
     playServiceRequest = _swig_property(_enigma.eHbbtv_playServiceRequest_get, _enigma.eHbbtv_playServiceRequest_set)
     playStreamRequest = _swig_property(_enigma.eHbbtv_playStreamRequest_get, _enigma.eHbbtv_playStreamRequest_set)
-    stopPlaybackRequest = _swig_property(_enigma.eHbbtv_stopPlaybackRequest_get, _enigma.eHbbtv_stopPlaybackRequest_set)
+    pauseStreamRequest = _swig_property(_enigma.eHbbtv_pauseStreamRequest_get, _enigma.eHbbtv_pauseStreamRequest_set)
+    stopStreamRequest = _swig_property(_enigma.eHbbtv_stopStreamRequest_get, _enigma.eHbbtv_stopStreamRequest_set)
     nextServiceRequest = _swig_property(_enigma.eHbbtv_nextServiceRequest_get, _enigma.eHbbtv_nextServiceRequest_set)
     prevServiceRequest = _swig_property(_enigma.eHbbtv_prevServiceRequest_get, _enigma.eHbbtv_prevServiceRequest_set)
     setVideoWindowRequest = _swig_property(_enigma.eHbbtv_setVideoWindowRequest_get, _enigma.eHbbtv_setVideoWindowRequest_set)
 eHbbtv.setServiceList = new_instancemethod(_enigma.eHbbtv_setServiceList,None,eHbbtv)
+eHbbtv.setStreamState = new_instancemethod(_enigma.eHbbtv_setStreamState,None,eHbbtv)
 eHbbtv_swigregister = _enigma.eHbbtv_swigregister
 eHbbtv_swigregister(eHbbtv)
 
