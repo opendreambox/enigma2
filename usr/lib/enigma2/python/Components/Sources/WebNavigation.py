@@ -14,6 +14,9 @@ class WebNavigation(Source):
 	COMMAND_SET_COOKIES = 0x010
 	COMMAND_SET_TRANSPARENT = 0x011
 	COMMAND_SET_ACCEPT_LANGUAGE = 0x012
+	COMMAND_LEFT_CLICK = 0x013
+	COMMAND_GET_POS = 0x015
+	COMMAND_GET_SIZE = 0x014
 	
 	EVENT_URL_CHANGED = 0x100
 	EVENT_TITLE_CHANGED = 0x101
@@ -45,11 +48,13 @@ class WebNavigation(Source):
 		self.__isFirstExec = True
 		self.__zoomFactor = None
 		self.__cookies = None
+		self.__pos = None
+		self.__size = None
 
 	def execBegin(self):
 		if self.__isFirstExec:
 			self.__onFirstExecBegin()
-			
+
 	def __onFirstExecBegin(self):
 		self.__isFirstExec = False
 		self.changed(self.EVENT_URL_CHANGED, self.__onUrlChanged)
@@ -63,6 +68,24 @@ class WebNavigation(Source):
 		self.changed(self.EVENT_SSL_ERRORS, self.__onSslErrors)
 		self.changed(self.EVENT_AUTH_REQUIRED, self.__onAuthRequired)
 		self.changed(self.EVENT_PROXY_AUTH_REQUIRED, self.__onProxyAuthRequired)
+
+	def __setPos(self, pos):
+		self.__pos = pos
+
+	def __getPos(self):
+		self.changed(self.COMMAND_GET_POS, self.__setPos)
+		return self.__pos
+
+	position = property(__getPos)
+
+	def __setSize(self, size):
+		self.__size = size
+
+	def __getSize(self):
+		self.changed(self.COMMAND_GET_SIZE, self.__setSize)
+		return self.__size
+
+	size = property(__getSize)
 
 	def __getHtml(self):
 		return self.__html
@@ -127,6 +150,9 @@ class WebNavigation(Source):
 
 	def setAcceptLanguage(self, language):
 		self.changed(self.COMMAND_SET_ACCEPT_LANGUAGE, language)
+
+	def leftClick(self, point):
+		self.changed(self.COMMAND_LEFT_CLICK, point)
 
 	def __onUrlChanged(self, url):
 		self.__url = url

@@ -156,20 +156,30 @@ struct gLookup
 	void build(int size, const gPalette &pal, const gRGB &start, const gRGB &end);
 };
 
+typedef enum
+{
+    ARGB, ABGR, RGBA, BGRA, INDEXED
+} colorformat_t;
+
+typedef enum
+{
+    DISABLED, BILINEAR, ANISOTROPIC,
+    SHARP, SHARPER, BLURRY, ANTI_FLUTTER,
+    ANTI_FLUTTER_BLURRY, ANTI_FLUTTER_SHARP
+} scalefilter_t;
+#endif
+
+#ifndef SWIG
 struct gSurface
 {
-	typedef enum
-	{
-	    ARGB, ABGR, RGBA, BGRA, INDEXED
-	} colorformat_t;
-
 	colorformat_t colorformat;
 	bool premult;	// premultiplied alpha
+	scalefilter_t scalefilter;
 
 	int type;
 	int x, y, bpp, bypp, stride;
 	gPalette clut;
-	
+
 	void *data;
 	int data_phys;
 	int offset; // only for backbuffers
@@ -222,7 +232,8 @@ public:
 	void setColor(int index, const gRGB &colorValue);
 	void setColorCount(int colorCount);
 	void setColorTable(const std::vector<gRGB> &colors);
-	void setColorFormat(gSurface::colorformat_t colorformat);
+	void setColorFormat(colorformat_t colorformat);
+	void setScaleFilter(scalefilter_t scalefilter);
 	void setScaleSize(const eSize &size) { m_scale_size = size; }
 
 private:

@@ -1034,6 +1034,7 @@ gPixmapPtr.setColor = new_instancemethod(_enigma.gPixmapPtr_setColor,None,gPixma
 gPixmapPtr.setColorCount = new_instancemethod(_enigma.gPixmapPtr_setColorCount,None,gPixmapPtr)
 gPixmapPtr.setColorTable = new_instancemethod(_enigma.gPixmapPtr_setColorTable,None,gPixmapPtr)
 gPixmapPtr.setColorFormat = new_instancemethod(_enigma.gPixmapPtr_setColorFormat,None,gPixmapPtr)
+gPixmapPtr.setScaleFilter = new_instancemethod(_enigma.gPixmapPtr_setScaleFilter,None,gPixmapPtr)
 gPixmapPtr.setScaleSize = new_instancemethod(_enigma.gPixmapPtr_setScaleSize,None,gPixmapPtr)
 gPixmapPtr_swigregister = _enigma.gPixmapPtr_swigregister
 gPixmapPtr_swigregister(gPixmapPtr)
@@ -1687,6 +1688,9 @@ eSubtitleWidget_setFontStyle = _enigma.eSubtitleWidget_setFontStyle
 class Teletext(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+    MODE_FULL = _enigma.Teletext_MODE_FULL
+    MODE_UPPER_HALF = _enigma.Teletext_MODE_UPPER_HALF
+    MODE_LOWER_HALF = _enigma.Teletext_MODE_LOWER_HALF
     def __init__(self): 
         _enigma.Teletext_swiginit(self,_enigma.new_Teletext())
     __swig_destroy__ = _enigma.delete_Teletext
@@ -1695,6 +1699,7 @@ Teletext.hide = new_instancemethod(_enigma.Teletext_hide,None,Teletext)
 Teletext.update = new_instancemethod(_enigma.Teletext_update,None,Teletext)
 Teletext.getRenderBufferOffset = new_instancemethod(_enigma.Teletext_getRenderBufferOffset,None,Teletext)
 Teletext.getRenderBufferStride = new_instancemethod(_enigma.Teletext_getRenderBufferStride,None,Teletext)
+Teletext.getTextPidsAndName = new_instancemethod(_enigma.Teletext_getTextPidsAndName,None,Teletext)
 Teletext_swigregister = _enigma.Teletext_swigregister
 Teletext_swigregister(Teletext)
 

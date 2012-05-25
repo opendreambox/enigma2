@@ -229,6 +229,37 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		self.returning = False
 		self.onClose.append(self.__onClose)
 
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
+			{
+				iPlayableService.evUser+10: self.__evAudioDecodeError,
+				iPlayableService.evUser+11: self.__evVideoDecodeError,
+				iPlayableService.evUser+12: self.__evPluginError,
+			})
+
+	def __evAudioDecodeError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
+		print "[__evAudioDecodeError] audio-codec %s can't be decoded by hardware" % (sTagAudioCodec)
+		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagAudioCodec, type = MessageBox.TYPE_INFO,timeout = 20 )
+
+	def __evVideoDecodeError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
+		print "[__evVideoDecodeError] video-codec %s can't be decoded by hardware" % (sTagVideoCodec)
+		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagVideoCodec, type = MessageBox.TYPE_INFO,timeout = 20 )
+
+	def __evPluginError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		print "[__evPluginError]" , message
+		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )
+
 	def __onClose(self):
 		self.session.nav.playService(self.lastservice)
 

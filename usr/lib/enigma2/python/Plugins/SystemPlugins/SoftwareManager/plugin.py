@@ -37,6 +37,7 @@ from twisted.web import client
 from ImageWizard import ImageWizard
 from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
 from SoftwareTools import iSoftwareTools
+from Components.ResourceManager import resourcemanager
 
 config.plugins.configurationbackup = ConfigSubsection()
 config.plugins.configurationbackup.backuplocation = ConfigText(default = '/media/hdd/', visible_width = 50, fixed_size = False)
@@ -2024,6 +2025,10 @@ def startSetup(menuid):
 def Plugins(path, **kwargs):
 	global plugin_path
 	plugin_path = path
+	
+	resourcemanager.addResource("software_manager", UpdatePluginMenu)
+	resourcemanager.addResource("software_manager_upgrade", UpdatePlugin)
+	
 	list = [
 		PluginDescriptor(name=_("Software management"), description=_("Manage your receiver's software"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=startSetup),
 		PluginDescriptor(name=_("Ipkg"), where = PluginDescriptor.WHERE_FILESCAN, needsRestart = False, fnc = filescan)

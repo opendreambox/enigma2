@@ -1,6 +1,6 @@
 import _webview
 from webview import eWebView
-from enigma import eEnv, getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput
+from enigma import eEnv, getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint
 import enigma
 enigma.eWebView = eWebView
 
@@ -10,6 +10,7 @@ from Components.Input import Input
 from Components.Label import Label
 from Components.Language import language
 from Components.MenuList import MenuList
+from Components.Pixmap import Pixmap
 from Components.Sources.Boolean import Boolean
 from Components.Sources.CanvasSource import CanvasSource
 from Components.Sources.StaticText import StaticText
@@ -22,6 +23,7 @@ from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 
 from Tools.BoundFunction import boundFunction
+from Tools.Directories import SCOPE_PLUGINS, resolveFilename
 
 from BrowserDB import BrowserDB, HistoryItem, Certificate, Cookie
 from BrowserMenu import BrowserMenu
@@ -48,20 +50,23 @@ config.plugins.WebBrowser.storage.path = ConfigDirectory(default = "/media/hdd/w
 config.plugins.WebBrowser.downloadpath = ConfigDirectory(default = "/media/hdd")
 
 class Browser(Screen, HelpableScreen):
+
 	def __init__(self, session, fullscreen = False, url = None, isHbbtv = False, isTransparent = False):
 		size = getDesktop(0).size()
 		width = int(size.width() * 0.9)
 		fwidth = int(size.width())
 		height = int(size.height() * 0.85)
 		fheight = int(size.height())
+
 		Browser.skin = """
 			<screen name="Browser" position="center,center" size="%(w)d,%(h)d" title="Web Browser" >
-				<widget name="url" position="0,0" zPosition="1" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="1" />
-				<widget name="loading" position="%(loadingX)d,0" zPosition="2" size="150,25" font="Regular;20" halign="right" valign="bottom" backgroundColor="#000000" transparent="1"/>
+				<widget name="cursor" position="0,0" size="19,30" zPosition="1" alphatest="on"/>
+				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="1" />
+				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="right" valign="bottom" backgroundColor="#000000" transparent="1"/>
 				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="#000000" transparent="0" />
 				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="#000000" transparent="0" />
-				<widget source="webnavigation" render="WebView" position="0,25" zPosition="1" size="%(w)d,%(mainH)d" />
-				<widget source="canvas" render="Canvas" position="0,25" zPosition="2" size="%(w)d,%(mainH)d" backgroundColor="#000000" transparent="1" alphatest="on"/>
+				<widget source="webnavigation" render="WebView" position="0,25" zPosition="0" size="%(w)d,%(mainH)d" />
+				<widget source="canvas" render="Canvas" position="0,25" zPosition="1" size="%(w)d,%(mainH)d" backgroundColor="#000000" transparent="1" alphatest="on"/>
 
 				<ePixmap pixmap="skin_default/buttons/button_red_off.png" position="5,%(btnY)d" size="15,16" alphatest="on" />
 				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="5,%(btnY)d" size="15,16" alphatest="on">
@@ -101,9 +106,10 @@ class Browser(Screen, HelpableScreen):
 
 		Browser.skinFullscreen = """
 			<screen name="BrowserFullscreen" flags="wfNoBorder" position="center,center" size="%(w)d,%(h)d" title="Web Browser" >
-				<widget name="url" position="0,0" zPosition="1" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="0" />
-				<widget name="loading" position="%(loadingX)d,0" zPosition="2" size="150,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="0"/>
-				<widget name="urlList" position="0,30" zPosition="1" size="%(w)d,150" backgroundColor="#000000" transparent="0" />
+				<widget name="cursor" position="0,0" size="19,30" zPosition="1" alphatest="on"/>
+				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="0" />
+				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="0"/>
+				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="#000000" transparent="0" />
 				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="#000000" transparent="0" />
 				<widget source="webnavigation" render="WebView" position="0,0" zPosition="0" size="%(w)d,%(h)d" backgroundColor="#00000000"/>
 				<widget source="canvas" render="Canvas" position="0,0" zPosition="1" size="%(w)d,%(h)d" backgroundColor="#000000" transparent="1" alphatest="on"/>
@@ -202,14 +208,18 @@ class Browser(Screen, HelpableScreen):
 		self["button_green_off"] = Boolean(True)
 		self["button_yellow_off"] = Boolean(True)
 		self["button_blue_off"] = Boolean(True)
-		self["button_red"] = Boolean(False)
+		self["button_red"] = Boolean(True)
 		self["button_green"] = Boolean(False)
 		self["button_yellow"] = Boolean(True)
 		self["button_blue"] = Boolean(True)
-		self["red"] = Label("")
+		self["red"] = Label(_("Mouse Off"))
 		self["green"] = Label("")
 		self["yellow"] = Label(_("Navigation"))
 		self["blue"] = Label(_("Pagescroll"))
+
+		self["cursor"] = Pixmap()
+		self.__cursorPos = ePoint(50,50)
+		self.__mouseMode = False
 
 		self.__db = BrowserDB.getInstance()
 		self.pageTitle = ""
@@ -313,6 +323,16 @@ class Browser(Screen, HelpableScreen):
 		self["statuslabel"].hide()
 		self.__statusTimer.stop()
 
+	def __setMouseMode(self, enabled):
+		self.__mouseMode = enabled
+		if enabled:
+			self["cursor"].show()
+			self["red"].setText("Mouse On")
+			self.__clearCanvas()
+		else:
+			self["cursor"].hide()
+			self["red"].setText("Mouse Off")
+
 	def __actionExit(self):
 		self.session.openWithCallback(self.__actionExitCB, MessageBox, _("Do you really want to exit the browser?"), type = MessageBox.TYPE_YESNO)
 
@@ -326,6 +346,10 @@ class Browser(Screen, HelpableScreen):
 			self.close()
 
 	def __onFirstExecBegin(self):
+		self["cursor"].instance.setPixmapFromFile(resolveFilename(SCOPE_PLUGINS, "Extensions/Browser/cursor.png"))
+		self.__setCursor()
+		self.__setMouseMode(self.__mouseMode)
+
 		#enable/disable transparent background
 		self.setBackgroundTransparent(self.__isTransparent)
 		#set Accept-Language header to current language
@@ -364,11 +388,11 @@ class Browser(Screen, HelpableScreen):
 				self.setKeyboardModeAscii()
 
 			self.__clearCanvas()
-			lw = 2  #line width
+			lw = 4 #line width
 			y = y
 			x = x - lw
 			w = w + lw
-			blo = ( y + h ) #bottom line offset
+			blo = y + h #bottom line offset
 			color =0xFF9900 #line color
 
 			self.canvas.fill(x, y, lw, h, color)#left line
@@ -490,8 +514,8 @@ class Browser(Screen, HelpableScreen):
 		self["button_green_off"].setBoolean(visible)
 		self["button_yellow_off"].setBoolean(visible)
 		self["button_blue_off"].setBoolean(visible)
-		self["button_red"] = Boolean(False)
-		self["button_green"] = Boolean(False)
+		self["button_red"].setBoolean(visible)
+		self["button_green"].setBoolean(False)
 		self["button_yellow"].setBoolean(visible)
 		self["button_blue"].setBoolean(visible)
 		if visible:
@@ -549,13 +573,19 @@ class Browser(Screen, HelpableScreen):
 				self.__disableUrlInput(False)
 
 		else:
-			self.__actionNavigate(eWebView.navOpenLink)
+			if self.__mouseMode:
+				self.webnavigation.leftClick(self.__cursorPos)
+			else:
+				self.__actionNavigate(eWebView.navOpenLink)
 
 	def __actionEnter(self):
 		if self.textInput.visible or self.urlInputEnabled:
 			self.__actionOk()
 		else:
-			self.__actionNavigate(eWebView.navOpenLink)
+			if self.__mouseMode:
+				self.webnavigation.leftClick(self.__cursorPos)
+			else:
+				self.__actionNavigate(eWebView.navOpenLink)
 
 	def __actionPlay(self):
 		self.__actionNavigate(eWebView.navMediaPlay)
@@ -595,6 +625,42 @@ class Browser(Screen, HelpableScreen):
 			else:
 				self.__actionNavigate(eWebView.navForward)
 
+	def __moveCursor(self, x=0, y=0):
+		if x != 0 or y != 0:
+			wSize = self.webnavigation.size
+			#horizontal
+			if x != 0:
+				x = self.__cursorPos.x() + x
+				w = wSize.width()
+				if x <= 2:
+					x = 2
+					self.__scroll(0-int(config.plugins.WebBrowser.scrollOffset.value), 0)
+				elif x >= w-2:
+					x = w-2
+					self.__scroll(int(config.plugins.WebBrowser.scrollOffset.value), 0)
+				self.__cursorPos.setX(x)
+			#vertical
+			if y != 0:
+				y = self.__cursorPos.y() + y
+				h = wSize.height()
+				if y < 2:
+					y = 2
+					self.__scroll(0, 0-int(config.plugins.WebBrowser.scrollOffset.value))
+				elif y > h-2:
+					y = h-2
+					self.__scroll(0, int(config.plugins.WebBrowser.scrollOffset.value))
+				self.__cursorPos.setY(y)
+		self.__setCursor()
+
+	def __setCursor(self):
+		wPos = self.webnavigation.position
+		relPos = None
+		if wPos.x() > 0 or wPos.y() > 0:
+			relPos = ePoint(self.__cursorPos.x() + wPos.x(), self.__cursorPos.y() + wPos.y())
+		else:
+			relPos = self.__cursorPos
+		self["cursor"].move(relPos)
+
 	def __actionLeft(self):
 		if self.urlInputEnabled:
 			self.urlInput.left()
@@ -604,7 +670,10 @@ class Browser(Screen, HelpableScreen):
 			self.restartTimer()
 			self.textInput.left()
 		else:
-			self.__actionNavigate(eWebView.navLeft)
+			if self.__mouseMode:
+				self.__moveCursor(x=-10)
+			else:
+				self.__actionNavigate(eWebView.navLeft)
 
 	def __actionRight(self):
 		if self.urlInputEnabled:
@@ -615,21 +684,25 @@ class Browser(Screen, HelpableScreen):
 			self.restartTimer()
 			self.textInput.right()
 		else:
-			self.__actionNavigate(eWebView.navRight)
+			if self.__mouseMode:
+				self.__moveCursor(x=10)
+			else:
+				self.__actionNavigate(eWebView.navRight)
 
 	def __actionUp(self):
 		if self.urlInputEnabled:
 			if self.__urlList.visible:
 				self.__urlList.up()
-			#else:
-			#	self.urlInput.up()
 		elif self.__scrollMode:
 			self.__scroll(0, 0-int(config.plugins.WebBrowser.scrollOffset.value))
 		elif self.textInput.visible:
 			self.restartTimer()
 			self.textInput.up()
 		else:
-			self.__actionNavigate(eWebView.navUp)
+			if self.__mouseMode:
+				self.__moveCursor(y=-10)
+			else:
+				self.__actionNavigate(eWebView.navUp)
 
 	def __actionDown(self):
 		if self.urlInputEnabled:
@@ -643,13 +716,19 @@ class Browser(Screen, HelpableScreen):
 			self.restartTimer()
 			self.textInput.down()
 		else:
-			self.__actionNavigate(eWebView.navDown)
+			if self.__mouseMode:
+				self.__moveCursor(y=10)
+			else:
+				self.__actionNavigate(eWebView.navDown)
 
 	def __scroll(self, dx, dy):
 		self.webnavigation.scroll(dx, dy)
 
 	def __actionRed(self):
-		self.__actionNavigate(eWebView.navRed)
+		if self.__isHbbtv:
+			self.__actionNavigate(eWebView.navRed)
+		else:
+			self.__setMouseMode(not self.__mouseMode)
 
 	def __actionGreen(self):
 		self.__actionNavigate(eWebView.navGreen)

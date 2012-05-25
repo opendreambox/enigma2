@@ -159,23 +159,31 @@ class Network:
 						if iface.has_key('ip') and iface.has_key('netmask'):
 							if iface['ip'] != [0, 0, 0, 0] and iface['netmask'] != [0, 0, 0, 0]:
 								fp.write("	broadcast %s\n" % self.calc_broadcast("%s.%s.%s.%s" % tuple(iface['ip']),"%s.%s.%s.%s" % tuple(iface['netmask'])))
-			if interface is not None and interface == ifacename:
-				if self.nameservers:
-					entry = ' '.join([("%d.%d.%d.%d" % tuple(x)) for x in self.nameservers if x != [0, 0, 0, 0] ])
-					if entry:
-						fp.write("	dns-nameservers " + str(entry))
-			if interface is not None and interface != ifacename:
-				if iface["broadcast"] is not False:
-					fp.write(iface['broadcast'])
-				if iface["dns-nameservers"] is not False:
-					fp.write(iface['dns-nameservers'])
+
+			def newLineHelper(s):
+				if s[-1] != '\n':
+					s += '\n'
+				return s
+
+			if interface is not None:
+				if interface == ifacename:
+					if self.nameservers:
+						entry = ' '.join([("%d.%d.%d.%d" % tuple(x)) for x in self.nameservers if x != [0, 0, 0, 0] ])
+						if entry:
+							fp.write("	dns-nameservers %s\n" %entry)
+				else:
+					if iface["broadcast"] is not False:
+						fp.write(newLineHelper(iface['broadcast']))
+					if iface["dns-nameservers"] is not False:
+						fp.write(newLineHelper(iface['dns-nameservers']))
 			if iface.has_key("configStrings"):
-				fp.write(iface["configStrings"])
-			if iface["preup"] is not False and not iface.has_key("configStrings"):
-				fp.write(iface["preup"])
-			if iface["predown"] is not False and not iface.has_key("configStrings"):
-				fp.write(iface["predown"])
-			fp.write("\n")				
+				fp.write(newLineHelper(iface["configStrings"]))
+			else:
+				if iface["preup"] is not False:
+					fp.write(newLineHelper(iface["preup"]))
+				if iface["predown"] is not False:
+					fp.write(newLineHelper(iface["predown"]))
+			fp.write('\n')
 		fp.close()
 		self.configuredNetworkAdapters = self.configuredInterfaces
 

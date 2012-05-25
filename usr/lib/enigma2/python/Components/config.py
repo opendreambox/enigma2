@@ -822,6 +822,7 @@ class ConfigText(ConfigElement, NumericalTextInput):
 		self.overwrite = fixed_size
 		self.help_window = None
 		self.value = self.default = default
+		self._keyboardMode = 0
 
 	def validateMarker(self):
 		textlen = len(self.text)

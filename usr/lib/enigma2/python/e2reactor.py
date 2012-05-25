@@ -89,6 +89,7 @@ class e2reactor(PosixReactorBase):
     def __init__(self):
         self._reads = {}
         self._writes = {}
+        self.savedTimeout = None
         PosixReactorBase.__init__(self)
         self.addSystemEventTrigger('after', 'shutdown', self.cleanup)
         self._timer = eTimer()
@@ -141,10 +142,14 @@ class e2reactor(PosixReactorBase):
         if self._crashCall is not None:
             self._crashCall.reset(0)
 
-        timeout = self.timeout()
-        if timeout is not None and timeout > 0:
-            self._timer.start(int(timeout * 1010))
-
+        pendingTimedCalls = self._pendingTimedCalls
+        if pendingTimedCalls:
+            nextTimeout = pendingTimedCalls[0].time
+            if nextTimeout != self.savedTimeout:
+                self.savedTimeout = nextTimeout
+                timeout = max(0, nextTimeout - self.seconds())
+                if timeout > 0:
+                    self._timer.start(int(timeout * 1010))
 
     def cleanup(self):
         if self._timer is not None:

@@ -1,7 +1,6 @@
 from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
-from Screens.InfoBar import InfoBar
 from Components.VideoWindow import VideoWindow
 
 from MoviePlayer import MoviePlayer
@@ -37,6 +36,7 @@ class Hbbtv(object):
 	def __init__(self, session):
 		assert Hbbtv.instance is None, "Hbbtv is a singleton class and may only be initialized once!"
 		Hbbtv.instance = self
+		from Screens.InfoBar import InfoBar
 
 		self.session = session
 		self.eHbbtv = eHbbtv.getInstance()

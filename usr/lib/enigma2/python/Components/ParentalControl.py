@@ -191,7 +191,7 @@ class ParentalControl:
 			self.checkPinInterval = True
 			iMinutes = float(self.storeServicePin)
 			iSeconds = iMinutes*60
-			self.pinIntervalSeconds = iSeconds
+			self.pinIntervalSeconds = int(iSeconds)
 	
 		if self.storeServicePinCancel == "never":
 			pass
@@ -201,7 +201,7 @@ class ParentalControl:
 			self.checkPinIntervalCancel = True
 			iMinutes = float(self.storeServicePinCancel)
 			iSeconds = iMinutes*60
-			self.pinIntervalSecondsCancel = iSeconds
+			self.pinIntervalSecondsCancel = int(iSeconds)
 	
 		self.configInitialized = True
 		# Reset PIN cache on standby: Use StandbyCounter- Config- Callback

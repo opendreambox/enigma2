@@ -14,6 +14,7 @@ EXTENSIONS = {
 		"mp2": "music",
 		"mp3": "music",
 		"wav": "music",
+		"wma": "music",
 		"ogg": "music",
 		"flac": "music",
 		"jpg": "picture",
@@ -30,6 +31,8 @@ EXTENSIONS = {
 		"mp4": "movie",
 		"mov": "movie",
 		"m2ts": "movie",
+		"flv": "movie",
+		"wmv": "movie",
 	}
 
 def FileEntryComponent(name, absolute = None, isDir = False):

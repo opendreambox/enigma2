@@ -45,6 +45,12 @@ class WebView(Renderer):
 				self.instance.setBackgroundTransparent(param)
 			elif cmd == WebNavigation.COMMAND_SET_ACCEPT_LANGUAGE:
 				self.instance.setAcceptLanguage(param)
+			elif cmd == WebNavigation.COMMAND_LEFT_CLICK:
+				self.instance.leftClick(param)
+			elif cmd == WebNavigation.COMMAND_GET_POS:
+				param(self.instance.position())
+			elif cmd == WebNavigation.COMMAND_GET_SIZE:
+				param(self.instance.size())
 			elif cmd == WebNavigation.EVENT_URL_CHANGED:
 				self.instance.urlChanged.get().append(param)
 			elif cmd == WebNavigation.EVENT_TITLE_CHANGED:
