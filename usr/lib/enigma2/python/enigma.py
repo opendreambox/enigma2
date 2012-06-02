@@ -1016,6 +1016,20 @@ gRGB.__eq__ = new_instancemethod(_enigma.gRGB___eq__,None,gRGB)
 gRGB_swigregister = _enigma.gRGB_swigregister
 gRGB_swigregister(gRGB)
 
+ARGB = _enigma.ARGB
+ABGR = _enigma.ABGR
+RGBA = _enigma.RGBA
+BGRA = _enigma.BGRA
+INDEXED = _enigma.INDEXED
+DISABLED = _enigma.DISABLED
+BILINEAR = _enigma.BILINEAR
+ANISOTROPIC = _enigma.ANISOTROPIC
+SHARP = _enigma.SHARP
+SHARPER = _enigma.SHARPER
+BLURRY = _enigma.BLURRY
+ANTI_FLUTTER = _enigma.ANTI_FLUTTER
+ANTI_FLUTTER_BLURRY = _enigma.ANTI_FLUTTER_BLURRY
+ANTI_FLUTTER_SHARP = _enigma.ANTI_FLUTTER_SHARP
 class gPixmapPtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -2564,16 +2578,7 @@ def eDVBDB_getInstance():
   return _enigma.eDVBDB_getInstance()
 eDVBDB_getInstance = _enigma.eDVBDB_getInstance
 
-class PyCaller(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PyCaller_swiginit(self,_enigma.new_PyCaller())
-    __swig_destroy__ = _enigma.delete_PyCaller
-PyCaller_swigregister = _enigma.PyCaller_swigregister
-PyCaller_swigregister(PyCaller)
-
-class PSignal(PyCaller):
+class PSignal(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self): 
@@ -2605,7 +2610,7 @@ def PyConv_PyFrom(*args):
   return _enigma.PyConv_PyFrom(*args)
 PyConv_PyFrom = _enigma.PyConv_PyFrom
 
-class PySignalArg(PyCaller):
+class PySignalArg(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
@@ -2681,7 +2686,6 @@ class ePicLoad(iObject):
     def __init__(self): 
         _enigma.ePicLoad_swiginit(self,_enigma.new_ePicLoad())
     __swig_destroy__ = _enigma.delete_ePicLoad
-ePicLoad.waitFinished = new_instancemethod(_enigma.ePicLoad_waitFinished,None,ePicLoad)
 ePicLoad.startDecode = new_instancemethod(_enigma.ePicLoad_startDecode,None,ePicLoad)
 ePicLoad.getThumbnail = new_instancemethod(_enigma.ePicLoad_getThumbnail,None,ePicLoad)
 ePicLoad.setPara = new_instancemethod(_enigma.ePicLoad_setPara,None,ePicLoad)

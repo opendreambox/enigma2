@@ -1,4 +1,4 @@
-from enigma import ePicLoad, eTimer, getDesktop, eRect
+from enigma import ePicLoad, eTimer, getDesktop, eRect, gPixmapPtr
 
 from Screens.Screen import Screen
 from Tools.Directories import resolveFilename, pathExists, fileExists, SCOPE_MEDIA
@@ -19,7 +19,7 @@ def getScale():
 
 config.pic = ConfigSubsection()
 config.pic.framesize = ConfigInteger(default=30, limits=(5, 99))
-config.pic.slidetime = ConfigInteger(default=10, limits=(10, 60))
+config.pic.slidetime = ConfigInteger(default=10, limits=(5, 60))
 config.pic.resize = ConfigSelection(default="2", choices = [("0", _("simple")), ("1", _("better")), ("2", _("fast JPEG"))])
 config.pic.resize.value = 2 # 2 = fast JPEG (non JPEG fallback to 1)
 config.pic.cache = ConfigEnableDisable(default=True)
@@ -510,12 +510,14 @@ class Pic_Full_View(Screen):
 		self["play_icon"] = Pixmap()
 		self["file"] = StaticText(_("please wait, loading picture..."))
 
+		self.picVisible = False
+		self.picReady = False
 		self.old_index = 0
 		self.filelist = []
 		self.lastindex = index
-		self.currPic = []
 		self.shownow = True
 		self.dirlistcount = 0
+		self.direction = 1 #cache next picture
 
 		for x in filelist:
 			if len(filelist[0]) == 3: #orig. filelist
@@ -555,46 +557,59 @@ class Pic_Full_View(Screen):
 		self.start_decode()
 
 	def ShowPicture(self):
-		if self.shownow and len(self.currPic):
-			self.shownow = False
-			if not config.pic.infoline.value:
-				self["play_icon"].hide()
-				self["file"].setText("")
-			else:			
-				self["file"].setText(self.currPic[0])
-			self.lastindex = self.currPic[1]
-			setPixmap(self["pic"], self.currPic[2])
-			self.currPic = []
+		if self.shownow and self.pic_ready:
+			if self.picVisible:
+				self.picVisible = False
+				empty = gPixmapPtr()
+				self["pic"].instance.setPixmap(empty)
 
-			self.next()
+			ptr = self.picload.getData()
+			if ptr != None:
+				text = ""
+				try:
+					text = picInfo.split('\n',1)
+					text = "(" + str(self.index+1) + "/" + str(self.maxentry+1) + ") " + text[0].split('/')[-1]
+				except:
+					pass
+
+				self.shownow = False
+				if not config.pic.infoline.value:
+					self["play_icon"].hide()
+					self["file"].setText("")
+				else:			
+					self["file"].setText(text)
+				self.lastindex = self.index
+
+				setPixmap(self["pic"], ptr)
+				self.picVisible = True
+			else:
+				print "picture ready but no picture avail!!!!!!!"
+
+			print "direction", self.direction
+			if self.direction > 0:
+				self.next()
+			else:
+				self.prev()
 			self.start_decode()
 
 	def finish_decode(self, picInfo=""):
 		self["point"].hide()
-		ptr = self.picload.getData()
-		if ptr != None:
-			text = ""
-			try:
-				text = picInfo.split('\n',1)
-				text = "(" + str(self.index+1) + "/" + str(self.maxentry+1) + ") " + text[0].split('/')[-1]
-			except:
-				pass
-			self.currPic = []
-			self.currPic.append(text)
-			self.currPic.append(self.index)
-			self.currPic.append(ptr)
-			self.ShowPicture()
+		self.pic_ready = True
+		self.ShowPicture()
 
 	def start_decode(self):
+		self.pic_ready = False
 		self.picload.startDecode(self.filelist[self.index])
 		self["point"].show()
 
 	def next(self):
+		self.direction = 1
 		self.index += 1
 		if self.index > self.maxentry:
 			self.index = 0
 
 	def prev(self):
+		self.direction = -1
 		self.index -= 1
 		if self.index < 0:
 			self.index = self.maxentry
@@ -616,15 +631,22 @@ class Pic_Full_View(Screen):
 			self.nextPic()
 
 	def prevPic(self):
-		self.currPic = []
-		self.index = self.lastindex
-		self.prev()
-		self.start_decode()
 		self.shownow = True
+		if self.direction < 0:
+			self.ShowPicture()
+		else:
+			self.index = self.lastindex
+			self.prev()
+			self.start_decode()
 
 	def nextPic(self):
 		self.shownow = True
-		self.ShowPicture()
+		if self.direction > 0:
+			self.ShowPicture()
+		else:
+			self.index = self.lastindex
+			self.next()
+			self.start_decode()
 
 	def StartExif(self):
 		if self.maxentry < 0:

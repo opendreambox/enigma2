@@ -164,16 +164,7 @@ def stdStringArray_frompointer(*args):
   return _webview.stdStringArray_frompointer(*args)
 stdStringArray_frompointer = _webview.stdStringArray_frompointer
 
-class PyCaller(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _webview.PyCaller_swiginit(self,_webview.new_PyCaller())
-    __swig_destroy__ = _webview.delete_PyCaller
-PyCaller_swigregister = _webview.PyCaller_swigregister
-PyCaller_swigregister(PyCaller)
-
-class PSignal(PyCaller):
+class PSignal(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self): 
@@ -205,7 +196,7 @@ def PyConv_PyFrom(*args):
   return _webview.PyConv_PyFrom(*args)
 PyConv_PyFrom = _webview.PyConv_PyFrom
 
-class PySignalArg(PyCaller):
+class PySignalArg(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 

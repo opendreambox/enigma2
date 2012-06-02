@@ -29,7 +29,9 @@ class Navigation:
 		self.currentlyPlayingServiceReference = None
 		self.currentlyPlayingService = None
 		self.RecordTimer = RecordTimer.RecordTimer()
+		self.__wasTimerWakeup = False
 		if getFPWasTimerWakeup():
+			self.__wasTimerWakeup = True
 			clearFPWasTimerWakeup()
 			if getFPWasTimerWakeup(): # sanity check to detect if the FP driver is working correct!
 				print "buggy fp driver detected!!! please update drivers.... ignore timer wakeup!"
@@ -37,6 +39,9 @@ class Navigation:
 				if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
 					RecordTimer.RecordTimerEntry.TryQuitMainloop(False) # start shutdown handling
 		self.SleepTimer = SleepTimer.SleepTimer()
+
+	def wasTimerWakeup(self):
+		return self.__wasTimerWakeup
 
 	def dispatchEvent(self, i):
 		for x in self.event:

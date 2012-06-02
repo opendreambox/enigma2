@@ -153,7 +153,6 @@ class eMainloop
 	friend class eTimer;
 	friend class eSocketNotifier;
 	friend class ePythonConfigQuery;
-	friend class PyCaller;
 
 	virtual eSocketNotifier *createSocketNotifier(int fd, int req, bool startnow) = 0;
 	virtual eTimer *createTimer() = 0;
@@ -263,6 +262,7 @@ public:
 	bool isActive() { return bActive; }
 
 	timespec &getNextActivation() { return nextActivation; }
+	int getInterval() const { return interval; }
 
 	void activate();
 	void start(int msec, bool b=false);
@@ -276,15 +276,18 @@ public:
 			// werden in einer mainloop verarbeitet
 class eMainloop_native: public eMainloop
 {
+protected:
 	std::multimap<int, eSocketNotifier*> m_notifiers;
 	std::multimap<int, eSocketNotifier*> m_notifiers_new;
 
 	ePtrList<eTimer> m_timer_list;
 
+	volatile bool m_abort_loop;
+	int m_loop_count;
 	bool m_app_quit_now;
 	int m_retval;
- 
-	void processOneEvent();
+
+	void processOneEvent(int do_wait=1);
 
 	eSocketNotifier *createSocketNotifier(int fd, int req, bool startnow) { return new eSocketNotifier(this, fd, req, startnow); }
 	eTimer *createTimer() { return new eTimer(this); }

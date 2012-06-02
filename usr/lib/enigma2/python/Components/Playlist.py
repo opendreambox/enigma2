@@ -16,7 +16,7 @@ class PlaylistIO:
 	ERROR = 3
 	UNSUPPORTED_FILES_IN_PLAYLIST = 4
 	
-	REMOTE_PROTOS = ["http", "https", "udp", "rtsp", "rtp", "mmp"]
+	REMOTE_PROTOS = ["http", "https", "udp", "rtsp", "rtp", "mmp", "mms"]
 	
 	def save(self, filename = None):
 		return self.ERROR

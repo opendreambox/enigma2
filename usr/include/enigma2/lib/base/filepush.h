@@ -17,10 +17,12 @@ public:
 
 class eFilePushThread: public eThread, public sigc::trackable
 {
-	int prio_class, prio;
 public:
 	eFilePushThread(int prio_class=IOPRIO_CLASS_BE, int prio_level=0, int blocksize=188);
-	void thread();
+	virtual ~eFilePushThread();
+
+	virtual void thread();
+
 	void stop();
 	void start(int sourcefd, int destfd);
 	int start(const char *filename, int destfd);
@@ -29,16 +31,16 @@ public:
 
 	void pause();
 	void resume();
-	
-		/* flushes the internal readbuffer */ 
+
+		/* flushes the internal readbuffer */
 	void flush();
 	void enablePVRCommit(int);
-	
+
 		/* stream mode will wait on EOF until more data is available. */
 	void setStreamMode(int);
-	
+
 	void setScatterGather(iFilePushScatterGather *);
-	
+
 	enum { evtEOF, evtReadError, evtWriteError, evtUser };
 	sigc::signal1<void,int> m_event;
 
@@ -47,17 +49,18 @@ public:
 
 		/* you can send private events if you want */
 	void sendEvent(int evt);
+
 protected:
-	virtual int filterRecordData(const unsigned char *data, int len, size_t &current_span_remaining);
-private:
+	int prio_class, prio;
+
 	iFilePushScatterGather *m_sg;
 	int m_stop;
-	unsigned char m_buffer[65536];
 	int m_buf_start, m_buf_end, m_filter_end;
 	int m_fd_dest;
 	int m_send_pvr_commit;
 	int m_stream_mode;
 	int m_blocksize;
+
 	uint64_t m_current_position;
 
 	ePtr<iTsSource> m_source;

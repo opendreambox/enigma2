@@ -92,6 +92,11 @@
 			<tag type="System" />
 		</prerequisites>
 	</package>
+	<package details="plugin_hdmicec.xml" name="HDMI CEC" packagename="enigma2-plugin-systemplugins-hdmicec" shortdescription="HDMI CEC Configuration">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
 	<package details="plugin_hotplug.xml" name="Hotplug" packagename="enigma2-plugin-systemplugins-hotplug" shortdescription="Hotplugging for removeable devices">
 		<prerequisites>
 			<tag type="System" />

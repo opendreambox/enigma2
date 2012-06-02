@@ -3,7 +3,6 @@ from Components.ActionMap import ActionMap
 from Components.config import config
 from Components.AVSwitch import AVSwitch
 from Components.SystemInfo import SystemInfo
-from Components.HdmiCec import hdmi_cec
 from GlobalActions import globalActionMap
 from enigma import eDVBVolumecontrol
 
@@ -12,7 +11,6 @@ inStandby = None
 class Standby(Screen):
 	def Power(self):
 		print "leave standby"
-		hdmi_cec.otp_source_enable()
 		#set input to encoder
 		self.avswitch.setInput("ENCODER")
 		#restart last played service
@@ -48,9 +46,6 @@ class Standby(Screen):
 
 		#mute adc
 		self.setMute()
-
-		#hdmi-cec standby
-		hdmi_cec.ss_standby()
 
 		self.paused_service = None
 		self.prev_running_service = None

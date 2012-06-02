@@ -54,7 +54,10 @@ class IpkgComponent:
 		elif cmd == self.CMD_INSTALL:
 			self.runCmd("install " + args['package'])
 		elif cmd == self.CMD_REMOVE:
-			self.runCmd("remove " + args['package'])
+			append = ""
+			if args["autoremove"]:
+				append = "--autoremove "
+			self.runCmd("remove " + append + args['package'])
 		self.setCurrentCommand(cmd)
 	
 	def cmdFinished(self, retval):

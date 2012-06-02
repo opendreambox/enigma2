@@ -896,9 +896,9 @@ class PluginManager(Screen, DreamInfoHandler):
 					if plugin[1] == 'installed':
 						if self.packagefiles:
 							for package in self.packagefiles[:]:
-								self.cmdList.append((IpkgComponent.CMD_REMOVE, { "package": package["name"] }))
+								self.cmdList.append((IpkgComponent.CMD_REMOVE, { "autoremove": True, "package": package["name"] }))
 						else:
-							self.cmdList.append((IpkgComponent.CMD_REMOVE, { "package": plugin[2] }))
+							self.cmdList.append((IpkgComponent.CMD_REMOVE, { "autoremove": True, "package": plugin[2] }))
 					else:
 						if self.packagefiles:
 							for package in self.packagefiles[:]:
@@ -907,7 +907,7 @@ class PluginManager(Screen, DreamInfoHandler):
 							self.cmdList.append((IpkgComponent.CMD_INSTALL, { "package": plugin[2] }))
 				else:
 					if plugin[1] == 'installed':
-						self.cmdList.append((IpkgComponent.CMD_REMOVE, { "package": plugin[2] }))
+						self.cmdList.append((IpkgComponent.CMD_REMOVE, { "autoremove": True, "package": plugin[2] }))
 					else:
 						self.cmdList.append((IpkgComponent.CMD_INSTALL, { "package": plugin[2] }))
 
@@ -1278,7 +1278,7 @@ class PluginDetails(Screen, DreamInfoHandler):
 		if self.pluginstate in ('installed', 'remove'):
 			if self.packagefiles:
 				for package in self.packagefiles[:]:
-					self.cmdList.append((IpkgComponent.CMD_REMOVE, { "package": package["name"] }))
+					self.cmdList.append((IpkgComponent.CMD_REMOVE, { "autoremove": True, "package": package["name"] }))
 					if len(self.cmdList):
 						self.session.openWithCallback(self.runRemove, MessageBox, _("Do you want to remove the package:\n") + self.pluginname + "\n" + self.oktext)
 		else:
@@ -1787,7 +1787,7 @@ class PacketManager(Screen, NumericalTextInput):
 			package = cur[0]
 			self.cmdList = []
 			if status == 'installed':
-				self.cmdList.append((IpkgComponent.CMD_REMOVE, { "package": package }))
+				self.cmdList.append((IpkgComponent.CMD_REMOVE, { "autoremove": True, "package": package }))
 				if len(self.cmdList):
 					self.session.openWithCallback(self.runRemove, MessageBox, _("Do you want to remove the package:\n") + package + "\n" + self.oktext)
 			elif status == 'upgradeable':

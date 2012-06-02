@@ -326,6 +326,7 @@ class Browser(Screen, HelpableScreen):
 	def __setMouseMode(self, enabled):
 		self.__mouseMode = enabled
 		if enabled:
+			self.__setCursor()
 			self["cursor"].show()
 			self["red"].setText("Mouse On")
 			self.__clearCanvas()
@@ -379,7 +380,10 @@ class Browser(Screen, HelpableScreen):
 			self.webnavigation.enablePersistentStorage(config.plugins.WebBrowser.storage.path.value)
 
 	def __onMicroFocusChanged(self, x, y, w, h, isInput):
-		if not self.__isHbbtv:
+		if not self.__isHbbtv and not self.__mouseMode:
+			self.__cursorPos.setX(x)
+			self.__cursorPos.setY(y)
+
 			if self.__isInput and not isInput:
 				self.__unsetKeyBoardModeAscii()
 

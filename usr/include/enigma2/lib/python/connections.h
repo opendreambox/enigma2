@@ -20,17 +20,7 @@
 #include <QVector>
 #endif
 
-class PyCaller
-{
-	bool m_app_was_idle;
-protected:
-	void prePythonCall();
-	void postPythonCall();
-public:
-	PyCaller();
-};
-
-class PSignal : public PyCaller
+class PSignal
 {
 #ifndef SWIG
 protected:
@@ -240,11 +230,9 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(0);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal0<R>::operator()();
 	}
@@ -258,12 +246,10 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(1);
 			PyTuple_SET_ITEM(pArgs, 0, PyConv::PyFrom(a0));
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal1<R,V0>::operator()(a0);
 	}
@@ -277,13 +263,11 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(2);
 			PyTuple_SET_ITEM(pArgs, 0, PyConv::PyFrom(a0));
 			PyTuple_SET_ITEM(pArgs, 1, PyConv::PyFrom(a1));
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal2<R,V0,V1>::operator()(a0, a1);
 	}
@@ -297,14 +281,12 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(3);
 			PyTuple_SET_ITEM(pArgs, 0, PyConv::PyFrom(a0));
 			PyTuple_SET_ITEM(pArgs, 1, PyConv::PyFrom(a1));
 			PyTuple_SET_ITEM(pArgs, 2, PyConv::PyFrom(a2));
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal3<R,V0,V1,V2>::operator()(a0, a1, a2);
 	}
@@ -313,12 +295,10 @@ public:
 #define PSA_CONSTRUCTOR(...)						\
 	PySignalArg(const __VA_ARGS__ &src)				\
 	{								\
-		prePythonCall();					\
 		m_obj = PyConv::PyFrom(src);				\
-		postPythonCall();					\
 	}
 
-class PySignalArg : public PyCaller
+class PySignalArg
 {
 private:
 	PyObject *m_obj;
@@ -372,11 +352,9 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(0);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal0<PySignalArg>::operator()();
 	}
@@ -389,12 +367,10 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(1);
 			PyTuple_SET_ITEM(pArgs, 0, a0);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal1<PySignalArg, PySignalArg>::operator()(a0);
 	}
@@ -407,13 +383,11 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(2);
 			PyTuple_SET_ITEM(pArgs, 0, a0);
 			PyTuple_SET_ITEM(pArgs, 1, a1);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal2<PySignalArg, PySignalArg, PySignalArg>::operator()(a0, a1);
 	}
@@ -426,14 +400,12 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(3);
 			PyTuple_SET_ITEM(pArgs, 0, a0);
 			PyTuple_SET_ITEM(pArgs, 1, a1);
 			PyTuple_SET_ITEM(pArgs, 2, a2);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal3<PySignalArg, PySignalArg, PySignalArg, PySignalArg>::operator()(a0, a1, a2);
 	}
@@ -446,7 +418,6 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(4);
 			PyTuple_SET_ITEM(pArgs, 0, a0);
 			PyTuple_SET_ITEM(pArgs, 1, a1);
@@ -454,7 +425,6 @@ public:
 			PyTuple_SET_ITEM(pArgs, 3, a3);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal4<PySignalArg, PySignalArg, PySignalArg, PySignalArg, PySignalArg>::operator()(a0, a1, a2, a3);
 	}
@@ -467,7 +437,6 @@ public:
 	{
 		if (m_list)
 		{
-			prePythonCall();
 			PyObject *pArgs = PyTuple_New(5);
 			PyTuple_SET_ITEM(pArgs, 0, a0);
 			PyTuple_SET_ITEM(pArgs, 1, a1);
@@ -476,7 +445,6 @@ public:
 			PyTuple_SET_ITEM(pArgs, 4, a4);
 			callPython(pArgs);
 			Org_Py_DECREF(pArgs);
-			postPythonCall();
 		}
 		return sigc::signal5<PySignalArg, PySignalArg, PySignalArg, PySignalArg, PySignalArg, PySignalArg>::operator()(a0, a1, a2, a3, a4);
 	}

@@ -155,6 +155,7 @@ struct gLookup
 	~gLookup() { delete [] lookup; }
 	void build(int size, const gPalette &pal, const gRGB &start, const gRGB &end);
 };
+#endif
 
 typedef enum
 {
@@ -167,7 +168,6 @@ typedef enum
     SHARP, SHARPER, BLURRY, ANTI_FLUTTER,
     ANTI_FLUTTER_BLURRY, ANTI_FLUTTER_SHARP
 } scalefilter_t;
-#endif
 
 #ifndef SWIG
 struct gSurface
