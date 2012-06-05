@@ -10,17 +10,19 @@ class eBackgroundFileEraser: public eMainloop_native, private eThread, public si
 	struct Message
 	{
 		int type;
-		const char *filename;
+		char *filename;
 		enum
 		{
+			done,
 			erase,
 			quit
 		};
-		Message(int type=0, const char *filename=0)
+		Message(int type=0, char *filename=0)
 			:type(type), filename(filename)
 		{}
 	};
 	eFixedMessagePump<Message> messages;
+	eFixedMessagePump<Message> messages_thread;
 	static eBackgroundFileEraser *instance;
 	void gotMessage(const Message &message);
 	void thread();
@@ -34,8 +36,10 @@ public:
 #ifdef SWIG
 public:
 #endif
-	void erase(const char * filename);
+	int erase(const char * filename);
 	static eBackgroundFileEraser *getInstance() { return instance; }
+	PSignal1<void, const char*> fileErased;
+
 };
 
 #endif

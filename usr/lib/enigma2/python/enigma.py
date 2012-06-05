@@ -2384,6 +2384,7 @@ class eBackgroundFileEraser(object):
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     getInstance = staticmethod(_enigma.eBackgroundFileEraser_getInstance)
+    fileErased = _swig_property(_enigma.eBackgroundFileEraser_fileErased_get, _enigma.eBackgroundFileEraser_fileErased_set)
 eBackgroundFileEraser.erase = new_instancemethod(_enigma.eBackgroundFileEraser_erase,None,eBackgroundFileEraser)
 eBackgroundFileEraser_swigregister = _enigma.eBackgroundFileEraser_swigregister
 eBackgroundFileEraser_swigregister(eBackgroundFileEraser)
@@ -2702,6 +2703,7 @@ class hdmi_cec(object):
     __swig_destroy__ = _enigma.delete_hdmi_cec
     getInstance = staticmethod(_enigma.hdmi_cec_getInstance)
     receivedStandby = _swig_property(_enigma.hdmi_cec_receivedStandby_get, _enigma.hdmi_cec_receivedStandby_set)
+    isNowActive = _swig_property(_enigma.hdmi_cec_isNowActive_get, _enigma.hdmi_cec_isNowActive_set)
     receivedRaw = _swig_property(_enigma.hdmi_cec_receivedRaw_get, _enigma.hdmi_cec_receivedRaw_set)
 hdmi_cec.cec_otp_source_enable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_enable,None,hdmi_cec)
 hdmi_cec.cec_ss_standby = new_instancemethod(_enigma.hdmi_cec_cec_ss_standby,None,hdmi_cec)

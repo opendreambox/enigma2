@@ -22,6 +22,28 @@ from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log
 from twisted.internet.posixbase import PosixReactorBase
 
+from ctypes import CDLL, Structure, c_long, c_int, POINTER, pointer, get_errno
+from os import strerror
+
+CLOCK_MONOTONIC = 1 # see <linux/time.h>
+
+class timespec(Structure):
+    _fields_ = [
+        ('tv_sec', c_long),
+        ('tv_nsec', c_long)
+    ]
+
+librt = CDLL('librt.so.1', use_errno=True)
+clock_gettime = librt.clock_gettime
+clock_gettime.argtypes = [c_int, POINTER(timespec)]
+
+def monotonic_time():
+    t = timespec()
+    if clock_gettime(CLOCK_MONOTONIC, pointer(t)) != 0:
+        errno_ = get_errno()
+        raise OSError(errno_, strerror(errno_))
+    return t.tv_sec + t.tv_nsec * 1e-9
+
 class TwistedSocketNotifier:
     """
     Connection between an fd event and reader/writer callbacks.
@@ -86,6 +108,8 @@ class e2reactor(PosixReactorBase):
 
     _timer = None
 
+    _now = None
+
     def __init__(self):
         self._reads = {}
         self._writes = {}
@@ -94,6 +118,12 @@ class e2reactor(PosixReactorBase):
         self.addSystemEventTrigger('after', 'shutdown', self.cleanup)
         self._timer = eTimer()
         self._timer.callback.append(self.simulate)
+
+        # to limit the systemcalls per loop
+        # twistes gets a cached monotonic time for internal timers
+        # only updated once per loop (monotonic_time call in def simulate)
+        PosixReactorBase.seconds = lambda x: e2reactor._now
+        e2reactor._now = monotonic_time()
 
 
     def addReader(self, reader):
@@ -137,10 +167,15 @@ class e2reactor(PosixReactorBase):
             quitMainloop()
             return
 
+        #update time returned by self.seconds
+        e2reactor._now = monotonic_time()
+
         self.runUntilCurrent()
 
         if self._crashCall is not None:
             self._crashCall.reset(0)
+
+        self._insertNewDelayedCalls()
 
         pendingTimedCalls = self._pendingTimedCalls
         if pendingTimedCalls:
@@ -150,6 +185,7 @@ class e2reactor(PosixReactorBase):
                 timeout = max(0, nextTimeout - self.seconds())
                 if timeout > 0:
                     self._timer.start(int(timeout * 1010))
+
 
     def cleanup(self):
         if self._timer is not None:

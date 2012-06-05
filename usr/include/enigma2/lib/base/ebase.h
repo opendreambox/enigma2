@@ -280,7 +280,8 @@ protected:
 	std::multimap<int, eSocketNotifier*> m_notifiers;
 	std::multimap<int, eSocketNotifier*> m_notifiers_new;
 
-	ePtrList<eTimer> m_timer_list;
+	ePtrList<eTimer> m_timers;
+	ePtrList<eTimer> m_timers_new;
 
 	volatile bool m_abort_loop;
 	int m_loop_count;
@@ -294,8 +295,8 @@ protected:
 
 	void addSocketNotifier(eSocketNotifier *sn);
 	void removeSocketNotifier(eSocketNotifier *sn);
-	void addTimer(eTimer* e) { m_timer_list.insert_in_order(e); }
-	void removeTimer(eTimer* e) { m_timer_list.remove(e); }
+	void addTimer(eTimer* e);
+	void removeTimer(eTimer* e);
 public:
 	eMainloop_native();
 	~eMainloop_native();

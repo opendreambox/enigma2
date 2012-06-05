@@ -24,10 +24,10 @@ public:
 	virtual void thread();
 
 	void stop();
-	void start(int sourcefd, int destfd);
-	int start(const char *filename, int destfd);
 
-	void start(ePtr<iTsSource> &source, int destfd);
+	virtual void start(int sourcefd, int destfd);
+	virtual int start(const char *filename, int destfd);
+	virtual void start(ePtr<iTsSource> &source, int destfd);
 
 	void pause();
 	void resume();
