@@ -92,10 +92,12 @@ class Hbbtv(object):
 			self.__currentStreamRef = None
 
 	def nextService(self):
+		from Screens.InfoBar import InfoBar
 		ib = InfoBar.instance
 		ib.zapDown()
 
 	def prevService(self):
+		from Screens.InfoBar import InfoBar
 		ib = InfoBar.instance
 		ib.zapUp()
 

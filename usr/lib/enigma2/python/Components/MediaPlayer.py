@@ -25,6 +25,8 @@ def PlaylistEntryComponent(serviceref, state):
 	text = serviceref.getName()
 	if text is "":
 		text = path.split(serviceref.getPath().split('/')[-1])[1]
+		if len(text) == 0:
+			text = serviceref.getPath()
 	res.append((eListboxPythonMultiContent.TYPE_TEXT,25, 1, 470, 22, 0, RT_VALIGN_CENTER, text))
 	png = None
 	if state == STATE_PLAY:

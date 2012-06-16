@@ -139,6 +139,7 @@ class eLock
 public:
 	void lock(int res=100);
 	void unlock(int res=100);
+	int lock_count();
 
 	eLock(int max=100);
 	~eLock();

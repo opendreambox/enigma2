@@ -1951,6 +1951,7 @@ class InfoBarCueSheetSupport:
 
 		self.cut_list = [ ]
 		self.is_closing = False
+		self.length = [0,0]
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evStart: self.__serviceStarted,
@@ -1972,6 +1973,8 @@ class InfoBarCueSheetSupport:
 			if last is not None:
 				self.resume_point = last
 
+				if (self.length[1] > 0) and abs(self.length[1] - last) < 4*90000: # if last playpos is within 4 seconds span to the length of this recording, assume it has been watched all the way to the end and don't resume
+					return
 				l = last / 90000
 				if config.usage.on_movie_start.value == "ask":
 					Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l/3600, l%3600/60, l%60))), timeout=10, domain = "InfoBar")
@@ -2111,6 +2114,8 @@ class InfoBarCueSheetSupport:
 		service = self.session.nav.getCurrentService()
 		if service is None:
 			return None
+		if self.__getSeekable():
+			self.length = self.__getSeekable().getLength()
 		return service.cueSheet()
 
 	def uploadCuesheet(self):

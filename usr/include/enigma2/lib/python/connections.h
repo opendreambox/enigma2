@@ -56,14 +56,24 @@ public:
 		return src;
 	}
 
-	static inline PyObject *PyFrom(void *src)
+	static inline PyObject *PyFrom(const void *src)
 	{
-		return PyInt_FromLong((long)src);
+		return PyLong_FromLong((long)src);
+	}
+
+	static inline PyObject *PyFrom(int src)
+	{
+		return PyLong_FromLong(src);
 	}
 
 	static inline PyObject *PyFrom(long src)
 	{
-		return PyInt_FromLong(src);
+		return PyLong_FromLong(src);
+	}
+
+	static inline PyObject *PyFrom(long long src)
+	{
+		return PyLong_FromLongLong(src);
 	}
 
 	static inline PyObject *PyFrom(const char *src)
@@ -298,6 +308,12 @@ public:
 		m_obj = PyConv::PyFrom(src);				\
 	}
 
+#define PSA_CONSTRUCTOR_PTR(...)					\
+	PySignalArg(const __VA_ARGS__ *src)				\
+	{								\
+		m_obj = PyConv::PyFrom(src);				\
+	}
+
 class PySignalArg
 {
 private:
@@ -312,8 +328,11 @@ public:
 	{
 	}
 
+	PSA_CONSTRUCTOR(int)
 	PSA_CONSTRUCTOR(long)
-	PSA_CONSTRUCTOR(char *)
+	PSA_CONSTRUCTOR(long long)
+	PSA_CONSTRUCTOR_PTR(void)
+	PSA_CONSTRUCTOR_PTR(char)
 	PSA_CONSTRUCTOR(std::string)
 
 	template <class T>

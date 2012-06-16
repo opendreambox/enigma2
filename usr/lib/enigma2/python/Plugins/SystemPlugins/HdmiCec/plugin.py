@@ -5,20 +5,20 @@ from Plugins.Plugin import PluginDescriptor
 from CecConfig import CecConfig
 
 config.plugins.cec = ConfigSubsection()
-config.plugins.cec.power = ConfigEnableDisable(default=True)
+config.plugins.cec.sendpower = ConfigEnableDisable(default=True)
+config.plugins.cec.receivepower = ConfigEnableDisable(default=False)
 
 class Cec(object):
 	session = None
 
 	def __receivedStandby(self):
-		if config.plugins.cec.power.value:
+		if config.plugins.cec.receivepower.value:
 			from Screens.Standby import Standby, inStandby
 			if not inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
 				self.session.open(Standby)
 
 	def __receivedNowActive(self):
-		print "[Cec] receivedNowActive!"
-		if config.plugins.cec.power.value:
+		if config.plugins.cec.receivepower.value:
 			from Screens.Standby import inStandby
 			if inStandby != None:
 				inStandby.Power()
@@ -29,12 +29,12 @@ class Cec(object):
 		hdmi_cec.instance.isNowActive.get().append(self.__receivedNowActive)
 
 	def powerOn(self):
-		if config.plugins.cec.power.value:
+		if config.plugins.cec.sendpower.value:
 			print "[Cec] power on"
 			hdmi_cec.otp_source_enable()
 
 	def powerOff(self):
-		if config.plugins.cec.power.value:
+		if config.plugins.cec.sendpower.value:
 			print "[Cec] power off"
 			hdmi_cec.ss_standby()
 

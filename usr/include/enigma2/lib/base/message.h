@@ -17,6 +17,7 @@
 #ifndef SWIG
 class eMessagePump
 {
+protected:
 	int fd[2];
 	eLock content;
 	int ismt;
@@ -42,9 +43,16 @@ class eFixedMessagePump: private eMessagePump, public sigc::trackable
 	ePtr<eSocketNotifier> sn;
 	void do_recv(int)
 	{
-		T msg;
-		recv(&msg, sizeof(msg));
-		/*emit*/ recv_msg(msg);
+		/*
+		 * before calling (blocking) recv we have to check
+		 * if anything is avail to read
+		 *
+		 */
+		if (content.lock_count()) {
+			T msg;
+			recv(&msg, sizeof(msg));
+			/*emit*/ recv_msg(msg);
+		}
 	}
 public:
 	sigc::signal1<void,const T&> recv_msg;
@@ -59,6 +67,8 @@ public:
 	}
 	void start() { if (sn) sn->start(); }
 	void stop() { if (sn) sn->stop(); }
+	/* its NOT safe to call flush from other than 'receiver' context !!! */
+	void flush() { T msg; if (ismt) while(content.lock_count()) recv(&msg, sizeof(msg)); }
 };
 #endif
 

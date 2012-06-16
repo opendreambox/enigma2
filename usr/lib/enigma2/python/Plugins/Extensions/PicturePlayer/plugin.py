@@ -168,6 +168,7 @@ class picshow(Screen):
 			self.filelist.moveToIndex(val)
 
 	def KeyExit(self):
+		self.ThumbTimer.stop()
 		del self.picload
 
 		if self.filelist.getCurrentDirectory() is None:
@@ -654,6 +655,7 @@ class Pic_Full_View(Screen):
 		self.session.open(Pic_Exif, self.picload.getInfo(self.filelist[self.lastindex]))
 
 	def Exit(self):
+		self.slideTimer.stop()
 		del self.picload
 		self.close(self.lastindex + self.dirlistcount)
 

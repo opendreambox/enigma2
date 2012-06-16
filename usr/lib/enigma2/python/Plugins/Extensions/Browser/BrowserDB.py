@@ -160,6 +160,8 @@ class BrowserDB:
 	CERT_CHANGED = 2
 
 	__instance = None
+
+	@staticmethod
 	def getInstance():
 		instance = None
 		try:
@@ -168,7 +170,6 @@ class BrowserDB:
 			instance = d
 
 		return instance
-	getInstance = Callable(getInstance)
 
 	def __init__(self):
 		if BrowserDB.__instance != None:
@@ -541,5 +542,3 @@ class BrowserDB:
 		cursor.execute(sql, (cookie.key, cookie.domain, cookie.path))
 		self.__conn.commit()
 		cursor.close()
-
-

@@ -113,7 +113,21 @@ class TransponderSearchSupport:
 			return False
 		return (False, False)
 
+def CableScanHelperDMM(nim_idx):
+	bus = nimmanager.getI2CDevice(nim_idx)
+	tunername = nimmanager.getNimName(nim_idx)
+	cableScanHelpers = {
+		'CXD1981': 'cxd1978',
+		'Philips CU1216Mk3': 'tda1002x',
+	}
+	cmd = cableScanHelpers.get(tunername, None)
+	if cmd is not None:
+		cmd += " --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
+	return cmd
+
 class CableTransponderSearchSupport:
+	CableScanHelpers = [ CableScanHelperDMM ]
+
 	def cableTransponderSearchSessionClosed(self, *val):
 		print "cableTransponderSearchSessionClosed, val", val
 		self.cable_search_container.appClosed.remove(self.cableTransponderSearchClosed)
@@ -174,6 +188,18 @@ class CableTransponderSearchSupport:
 			tmpstr += status
 			self.cable_search_session["text"].setText(tmpstr)
 
+	def getCableScanHelper(self, nim_idx):
+		bus = nimmanager.getI2CDevice(nim_idx)
+		tunername = nimmanager.getNimName(nim_idx)
+		cableScanHelpers = {
+			'CXD1981': 'cxd1978',
+			'Philips CU1216Mk3': 'tda1002x',
+		}
+		cmd = cableScanHelpers.get(tunername, None)
+		if cmd is not None:
+			cmd += " --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
+		return cmd
+
 	def startCableTransponderSearch(self, nim_idx):
 		if not self.tryGetRawFrontend(nim_idx):
 			self.session.nav.stopService()
@@ -189,18 +215,14 @@ class CableTransponderSearchSupport:
 		self.cable_search_container.appClosed.append(self.cableTransponderSearchClosed)
 		self.cable_search_container.dataAvail.append(self.getCableTransponderData)
 		cableConfig = config.Nims[nim_idx].cable
-		tunername = nimmanager.getNimName(nim_idx)
 
-		cableScanHelpers = {
-			'CXD1981': 'cxd1978',
-			'Philips CU1216Mk3': 'tda1002x',
-		}
+		cmd = None
+		for fnc in self.CableScanHelpers:
+			cmd = fnc(nim_idx)
+			if cmd is not None:
+				break
 
-		bus = nimmanager.getI2CDevice(nim_idx)
-		if bus and cableScanHelpers.has_key(tunername):
-			cmd = cableScanHelpers[tunername]
-			cmd += " --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
-		
+		if cmd is not None:
 			if cableConfig.scan_type.value == "bands":
 				cmd += " --scan-bands "
 				bands = 0

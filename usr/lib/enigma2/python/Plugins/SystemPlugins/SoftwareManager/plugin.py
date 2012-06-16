@@ -880,7 +880,10 @@ class PluginManager(Screen, DreamInfoHandler):
 	def prepareInstall(self):
 		self.cmdList = []
 		if iSoftwareTools.available_updates > 0:
-			self.cmdList.append((IpkgComponent.CMD_UPGRADE, { "test_only": False }))
+			upgrade_args = {'use_maintainer' : True, 'test_only': False}
+			if config.plugins.softwaremanager.overwriteConfigFiles.value == 'N':
+				upgrade_args = {'use_maintainer' : False, 'test_only': False}
+			self.cmdList.append((IpkgComponent.CMD_UPGRADE, upgrade_args))
 		if self.selectedFiles and len(self.selectedFiles):
 			for plugin in self.selectedFiles:
 				detailsfile = iSoftwareTools.directory[0] + "/" + plugin[0]

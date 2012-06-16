@@ -910,7 +910,37 @@ class Browser(Screen, HelpableScreen):
 
 		action = nav.get(str(char), None)
 		if action != None:
-			self.__actionNavigate(action)
+			if self.__mouseMode:
+				self.__actionMouseJump(char)
+			else:
+				self.__actionNavigate(action)
+
+	def __actionMouseJump(self, char):
+		size = self.webnavigation.size
+		off = 100 #offset
+
+		hcenter = size.width() / 2
+		vcenter = size.height() / 2
+
+		roff = size.width() - off #right offset
+		boff = size.height() - off # bottom offset
+
+		offsets = {
+			'1' : [off,off],
+			'2' : [hcenter, off],
+			'3' : [roff, off],
+			'4' : [off, vcenter],
+			'5' : [hcenter, vcenter],
+			'6' : [roff, vcenter],
+			'7' : [off, boff],
+			'8' : [hcenter, boff],
+			'9' : [roff, boff],
+			}
+		offset = offsets.get(str(char), None)
+		if offset:
+			self.__cursorPos.setX(offset[0])
+			self.__cursorPos.setY(offset[1])
+			self.__setCursor()
 
 	def __actionVirtualAscii(self):
 		self.session.openWithCallback(self.sendTextAsAscii, VirtualKeyBoard, title="Browser Input")

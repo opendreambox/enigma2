@@ -109,6 +109,7 @@ class PlaylistIOPLS(PlaylistIO):
 			return None
 		entry = file.readline().strip()
 		if entry == "[playlist]": # extended pls
+			lastref = None
 			while True:
 				entry = file.readline().strip()
 				if entry == "":
@@ -118,6 +119,13 @@ class PlaylistIOPLS(PlaylistIO):
 					newentry = entry[pos:]
 					sref = PlaylistIO.getRef(self, filename, newentry)
 					self.addService(sref)
+					lastref = sref.ref
+				if lastref:
+					if entry[0:5] == "Title":
+						pos = entry.find('=') + 1
+						title = entry[pos:]
+						lastref.setName(title)
+						lastref = None
 		else:
 			playlist = PlaylistIOM3U()
 			return playlist.open(filename)

@@ -46,7 +46,8 @@ class CecConfig(ConfigListScreen, Screen):
 
 	def _createSetup(self):
 		list = [
-			getConfigListEntry(_("HDMI CEC Power Events"), config.plugins.cec.power),
+			getConfigListEntry(_("Send HDMI CEC Power Events"), config.plugins.cec.sendpower),
+			getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.plugins.cec.receivepower),
 		]
 		self["config"].list = list
 		self["config"].l.setList(list)
@@ -63,3 +64,4 @@ class CecConfig(ConfigListScreen, Screen):
 		for x in self["config"].list:
 			x[1].cancel()
 		self.close(False, self.session)
+
