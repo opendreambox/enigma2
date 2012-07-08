@@ -115,7 +115,7 @@ class ChannelContextMenu(Screen):
 		current_sel_path = current.getPath()
 		current_sel_flags = current.flags
 
-		inBouquetRootList = current_root_path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
+		inBouquetRootList = current_root_path and current_root_path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
 		inBouquet = csel.getMutableList() is not None
 		haveBouquets = config.usage.multibouquet.value
 

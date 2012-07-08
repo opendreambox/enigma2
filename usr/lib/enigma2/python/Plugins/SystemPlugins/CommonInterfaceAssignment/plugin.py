@@ -582,7 +582,7 @@ def activate_all(session):
 
 					for caid in slot.findall("caid"):
 						read_caid = caid.get("id").encode("UTF-8")
-						usingcaid.append(long(read_caid,16))
+						usingcaid.append(int(read_caid,16))
 
 					for service in slot.findall("service"):
 						read_service_ref = service.get("ref").encode("UTF-8")

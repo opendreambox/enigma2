@@ -55,7 +55,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			if nim.powerMeasurement.value:
 				nim.powerMeasurement.value = False
 				nim.powerMeasurement.save()
-		
+		if config.usage.setup_level.index >= 2: # expert
+			list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), nim.positionerExclusively))
+
 	def createConfigMode(self):
 		if self.nim.isCompatible("DVB-S"):
 			getConfigModeTuple = nimmanager.getConfigModeTuple
@@ -353,8 +355,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.list.append(self.advancedUsalsEntry)
 					if not Sat.usals.value:
 						self.list.append(getConfigListEntry(_("Stored position"), Sat.rotorposition))
-
-	
+				if config.usage.setup_level.index >= 2: # expert
+					self.list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), self.nimConfig.positionerExclusively))
 
 	def fillAdvancedList(self):
 		self.list = [ ]

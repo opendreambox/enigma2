@@ -83,7 +83,7 @@ def autostart(reason, **kwargs):
 					except socket.error, err:
 						print "hotplug: receive from netlink socket failed.", os.strerror(err.errno)
 					else:
-						print "HOTPLUG(%d):" %(what), received
+#						print "HOTPLUG(%d):" %(what), received
 						data = received[0].split('\0')[:-1]
 						v = {}
 	

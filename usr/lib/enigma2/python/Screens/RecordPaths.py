@@ -219,7 +219,7 @@ class RecordPathsSettings(Screen,ConfigListScreen):
 			config.usage.timer_path.save()
 			config.usage.instantrec_path.save()
 			config.usage.timeshift_path.save()
-			if self.default_device.value != defaultStorageDevice():
+			if self.default_device.value != "/media/hdd":
 				if self.default_device.value != "<undefined>": #changing default ?
 					tmp = harddiskmanager.getPartitionbyMountpoint(self.default_device.value)
 					if tmp is not None:

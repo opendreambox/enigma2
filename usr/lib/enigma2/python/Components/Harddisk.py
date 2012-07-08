@@ -1220,7 +1220,7 @@ class HarddiskManager:
 						if cur_default_dev is None or (path.exists(cur_default_newmp) and self.isMount(cur_default_newmp)):
 							if new_default_cfg["enabled"].value and path.exists(new_default_cfg["mountpoint"].value) and self.isMount(new_default_cfg["mountpoint"].value):
 								self.unmountPartitionbyMountpoint(new_default_cfg["mountpoint"].value, new_default_dev )
-							if not new_default_cfg["enabled"].value or (path.exists(new_default_cfg["mountpoint"].value) and not self.isMount(new_default_cfg["mountpoint"].value)):
+							if not new_default_cfg["enabled"].value or not self.isMount(new_default_cfg["mountpoint"].value):
 								new_default_cfg["mountpoint"].value = def_mp
 								new_default_cfg["enabled"].value = True
 								self.storageDeviceChanged(uuid)

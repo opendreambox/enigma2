@@ -149,7 +149,7 @@ class AudioSelection(Screen, ConfigListScreen):
 					language = _("<unknown>")
 					selected = ""
 
-					if sel and x == sel:
+					if sel and x[:4] == sel[:4]:
 						selected = _("Running")
 						selectedidx = idx
 					

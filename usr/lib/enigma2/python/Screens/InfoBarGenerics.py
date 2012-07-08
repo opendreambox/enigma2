@@ -1532,8 +1532,28 @@ class InfoBarInstantRecord:
 				
 	def stopCurrentRecording(self, entry = -1):
 		if entry is not None and entry != -1:
-			self.session.nav.RecordTimer.removeEntry(self.recording[entry])
-			self.recording.remove(self.recording[entry])
+			t = self.recording[entry]
+			if t.repeated:	# do not delete repeated timer, ask user what to do
+				choicelist = (
+					(_("Stop current event but not coming events"), "stoponlycurrent"),
+					(_("Stop current event and disable coming events"), "stopall")
+				)
+				self.session.openWithCallback(boundFunction(self.runningRepeatedTimerCallback, t), ChoiceBox, title=_("Repeating event currently recording... What do you want to do?"), list = choicelist)
+			else:
+				self.session.nav.RecordTimer.removeEntry(t)
+				self.recording.remove(t)
+
+	def runningRepeatedTimerCallback(self, t, result):
+		if result is not None:
+			if result[1] == "stoponlycurrent":
+				t.enable()
+				t.processRepeated(findRunningEvent = False)
+				self.session.nav.RecordTimer.doActivate(t)
+			elif result[1] == "stopall":
+				t.disable()
+			self.session.nav.RecordTimer.timeChanged(t)
+			self.recording.remove(t)
+
 
 	def startInstantRecording(self, limitEvent = False):
 		serviceref = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -1614,7 +1634,7 @@ class InfoBarInstantRecord:
 		list = []
 		recording = self.recording[:]
 		for x in recording:
-			if not x in self.session.nav.RecordTimer.timer_list:
+			if not x in self.session.nav.RecordTimer.timer_list or not x.isRunning(): # check for isRunning because of repeated timer (there are still in the timerlist!)
 				self.recording.remove(x)
 			elif x.isRunning():
 				list.append((x, False))

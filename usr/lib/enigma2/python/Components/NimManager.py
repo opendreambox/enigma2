@@ -1476,6 +1476,7 @@ def InitNimManager(nimmgr, slot_no = None):
 			nim.longitudeOrientation = ConfigSelection(longitude_orientation_choices, "east")
 			nim.latitude = ConfigFloat(default=[50,767], limits=[(0,359),(0,999)])
 			nim.latitudeOrientation = ConfigSelection(latitude_orientation_choices, "north")
+			nim.positionerExclusively = ConfigYesNo(True)
 			nim.powerMeasurement = ConfigYesNo(True)
 			nim.powerThreshold = ConfigInteger(default=hw.get_device_name() == "dm8000" and 15 or 50, limits=(0, 100))
 			nim.turningSpeed = ConfigSelection(turning_speed_choices, "fast")

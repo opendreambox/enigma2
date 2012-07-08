@@ -234,6 +234,8 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 					if uuid_cfg["enabled"].value:
 						if uuid_cfg["mountpoint"].value == "" or ( self.oldEnabledState is False and uuid_cfg["mountpoint"].value == "/media/hdd"):
 							val = harddiskmanager.suggestDeviceMountpath(self.UUID)
+							if self.UUID == defaultStorageDevice():
+								val = "/media/hdd"
 							uuid_cfg["mountpoint"].value = val
 						self.list.append(getConfigListEntry(_("Mountpoint:"), uuid_cfg["mountpoint"]))
 
@@ -316,7 +318,7 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 		#% (self.deviceName, tmpid, self.numPartitions, self.partitionNum, self.partitionPath, self.uuidPath, self.hdd.device,self.hdd.dev_path)
 
 		if tmpid is not None and tmpid != self.UUID:
-			if self.UUID == defaultStorageDevice() or (self.UUID is None and not harddiskmanager.HDDEnabledCount()): #we initialized the default storage device
+			if self.UUID == defaultStorageDevice() or not harddiskmanager.HDDEnabledCount(): #we initialized the default storage device or no configured drives
 				print "[HarddiskDriveSetup] - verifyInitialize - set up device %s as default." % tmpid
 				config.storage_options.default_device.value = tmpid
 				config.storage_options.default_device.save()
@@ -1116,6 +1118,10 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		if config.storage.get(uuid, None) is not None:
 			updateVideoDirs(uuid)
 			del config.storage[uuid]
+			if uuid == defaultStorageDevice():
+				config.storage_options.default_device.value = "<undefined>"
+				config.storage_options.default_device.save()
+				config.storage_options.save()
 			config.storage.save()
 			config.save()
 			configfile.save()

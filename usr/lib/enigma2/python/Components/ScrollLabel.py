@@ -57,6 +57,8 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 				total=total+self.pageHeight
 				pages=pages+1
 			if pages > 1:
+				s = self.long_text.size()
+				self.long_text.resize(eSize(s.width(), self.pageHeight*pages))
 				self.scrollbar.show()
 				self.total = total
 				self.pages = pages
@@ -81,6 +83,8 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 				total=total+self.pageHeight
 				pages=pages+1
 			if pages > 1:
+				s = self.long_text.size()
+				self.long_text.resize(eSize(s.width(), self.pageHeight*pages))
 				self.scrollbar.show()
 				self.total = total
 				self.pages = pages
