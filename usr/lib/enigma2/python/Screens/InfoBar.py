@@ -15,7 +15,7 @@ from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarAudioSelection, InfoBarAdditionalInfo, InfoBarDish, InfoBarUnhandledKey, \
 	InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
 	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, \
-	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, InfoBarNotifications, \
+	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications, \
 	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman
 
 profile("LOAD:InitBar_Components")
@@ -39,7 +39,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarInstantRecord, InfoBarAudioSelection,
 	HelpableScreen, InfoBarAdditionalInfo, InfoBarDish, InfoBarUnhandledKey,
 	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
-	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfoBarExtensions, InfoBarNotifications,
+	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications,
 	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman,
 	Screen):
 
@@ -63,7 +63,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				InfoBarInstantRecord, InfoBarAudioSelection, InfoBarUnhandledKey, \
 				InfoBarAdditionalInfo, InfoBarDish, InfoBarSubserviceSelection, \
 				InfoBarTimeshift, InfoBarSeek, InfoBarSummarySupport, InfoBarTimeshiftState, \
-				InfoBarTeletextPlugin, InfoBarExtensions, InfoBarNotifications, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
+				InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
 				InfoBarPlugins, InfoBarServiceErrorPopupSupport \
 				:
 			x.__init__(self)
@@ -206,6 +206,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 	ALLOW_SUSPEND = True
 
 	def __init__(self, session, service):
+		from enigma import eServiceMP3
 		Screen.__init__(self, session)
 
 		self["actions"] = HelpableActionMap(self, "MoviePlayerActions",
@@ -231,9 +232,10 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
-				iPlayableService.evUser+10: self.__evAudioDecodeError,
-				iPlayableService.evUser+11: self.__evVideoDecodeError,
-				iPlayableService.evUser+12: self.__evPluginError,
+				eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
+				eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
+				eServiceMP3.evPluginError: self.__evPluginError,
+				eServiceMP3.evStreamingSrcError: self.__evStreamingSrcError
 			})
 
 	def __evAudioDecodeError(self):
@@ -259,6 +261,14 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
 		print "[__evPluginError]" , message
 		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )
+
+	def __evStreamingSrcError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		print "[__evStreamingSrcError]", message
+		self.session.open(MessageBox, _("Streaming error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 20 )
 
 	def __onClose(self):
 		self.session.nav.playService(self.lastservice)

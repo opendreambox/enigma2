@@ -203,6 +203,13 @@
 		<widget source="RecordingPossible" render="FixedLabel" text="Record" position="232,130" zPosition="1" size="80,22" font="Regular;16" backgroundColor="#182946" shadowColor="#1d354c" shadowOffset="-1,-1" transparent="1">
 			<convert type="ConditionalShowHide" />
 		</widget>
+		<!-- Red button, Hbbtv (only if record is not on red, for now) -->
+		<widget source="HbbtvApplication" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="212,130" zPosition="1" size="15,16" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="HbbtvApplication" render="Label" position="232,130" zPosition="1" size="80,22" font="Regular;16" backgroundColor="#182946" shadowColor="#1d354c" shadowOffset="-1,-1" transparent="1">
+			<convert type="HbbtvApplicationInfo">Name</convert>
+		</widget>
 		<!-- Green button (is subservices available?) -->
 		<ePixmap pixmap="skin_default/buttons/button_green_off.png" position="315,130" size="15,16" alphatest="on" />
 		<widget source="session.CurrentService" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="315,130" zPosition="1" size="15,16" alphatest="on">

@@ -35,8 +35,6 @@ from base64 import b64decode, b64encode
 from urllib import unquote as url_unquote, quote_plus as url_quote_plus
 from urlparse import urlparse
 
-from Hbbtv import Hbbtv
-
 config.plugins.WebBrowser = ConfigSubsection()
 config.plugins.WebBrowser.home = ConfigText(default = "http://box.dream-multimedia-tv.de")
 config.plugins.WebBrowser.startPage = ConfigSelection([ ("home", _("Home Page")), ("lastvisted", _("Last visted")) ])
@@ -59,40 +57,41 @@ class Browser(Screen, HelpableScreen):
 		fheight = int(size.height())
 
 		Browser.skin = """
-			<screen name="Browser" position="center,center" size="%(w)d,%(h)d" title="Web Browser" >
+			<screen name="Browser" position="center,center" size="%(w)d,%(h)d" title="Web Browser" backgroundColor="#FF000000">
 				<widget name="cursor" position="0,0" size="19,30" zPosition="1" alphatest="on"/>
-				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="1" />
-				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="right" valign="bottom" backgroundColor="#000000" transparent="1"/>
-				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="#000000" transparent="0" />
-				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="#000000" transparent="0" />
-				<widget source="webnavigation" render="WebView" position="0,25" zPosition="0" size="%(w)d,%(mainH)d" />
-				<widget source="canvas" render="Canvas" position="0,25" zPosition="1" size="%(w)d,%(mainH)d" backgroundColor="#000000" transparent="1" alphatest="on"/>
+				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="background"/>
+				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="right" valign="bottom" backgroundColor="background"/>
+				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="background"/>
+				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="background"/>
+				<widget source="webnavigation" render="WebView" position="0,25" zPosition="0" size="%(w)d,%(mainH)d" transparent="1"/>
+				<widget source="canvas" render="Canvas" position="0,25" zPosition="1" size="%(w)d,%(mainH)d" backgroundColor="#FF000000" transparent="1" alphatest="on"/>
 
+				<widget name="buttonBar" position="0,%(btnBarY)d" size="%(w)d,30" zPosition="0" backgroundColor="background" transparent="0" />
 				<ePixmap pixmap="skin_default/buttons/button_red_off.png" position="5,%(btnY)d" size="15,16" alphatest="on" />
 				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="5,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1" />
+				<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1" />
 
 				<ePixmap pixmap="skin_default/buttons/button_green_off.png" position="195,%(btnY)d" size="15,16" alphatest="on" />
 				<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="195,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
 				<ePixmap pixmap="skin_default/buttons/button_yellow_off.png" position="385,%(btnY)d" size="15,16" alphatest="on" />
 				<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="385,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
 				<ePixmap pixmap="skin_default/buttons/button_blue_off.png" position="585,%(btnY)d" size="15,16" alphatest="on" />
 				<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="585,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget name="statuslabel" position="%(notifX)d,%(btnTxtY)d" size="350,20" font="Regular;18"  zPosition="3" halign="right" valign="center" backgroundColor="#000000" transparent="1" />
+				<widget name="statuslabel" position="%(notifX)d,%(btnTxtY)d" size="350,20" font="Regular;18"  zPosition="3" halign="right" valign="center" backgroundColor="background" />
 			</screen>
 			""" %{	"w" : width,
 					"h" : height,
@@ -101,27 +100,28 @@ class Browser(Screen, HelpableScreen):
 					"mainH" : height-55,
 					"btnY" : height-22,
 					"btnTxtY" : height-24,
+					"btnBarY" : height - 30,
 					"notifX" : width-350
 				}
 
 		Browser.skinFullscreen = """
-			<screen name="BrowserFullscreen" flags="wfNoBorder" position="center,center" size="%(w)d,%(h)d" title="Web Browser" >
+			<screen name="BrowserFullscreen" flags="wfNoBorder" position="center,center" size="%(w)d,%(h)d" title="Web Browser" backgroundColor="#FF000000">
 				<widget name="cursor" position="0,0" size="19,30" zPosition="1" alphatest="on"/>
-				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="0" />
-				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="0"/>
-				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="#000000" transparent="0" />
-				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="#000000" transparent="0" />
-				<widget source="webnavigation" render="WebView" position="0,0" zPosition="0" size="%(w)d,%(h)d" backgroundColor="#00000000"/>
-				<widget source="canvas" render="Canvas" position="0,0" zPosition="1" size="%(w)d,%(h)d" backgroundColor="#000000" transparent="1" alphatest="on"/>
+				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="background"/>
+				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="background"/>
+				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="background" transparent="0" />
+				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="background" transparent="0" />
+				<widget source="webnavigation" render="WebView" position="0,0" zPosition="0" size="%(w)d,%(h)d" transparent="1"/>
+				<widget source="canvas" render="Canvas" position="0,0" zPosition="1" size="%(w)d,%(h)d" backgroundColor="#FF000000" transparent="1" alphatest="on"/>
 
-				<widget name="buttonBar" position="0,%(btnBarY)d" size="%(w)d,35" zPosition="0" backgroundColor="#000000" transparent="0" />
+				<widget name="buttonBar" position="0,%(btnBarY)d" size="%(w)d,35" zPosition="0" backgroundColor="background" transparent="0" />
 				<widget source="button_red_off" render="Pixmap" pixmap="skin_default/buttons/button_red_off.png" position="5,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
 				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="5,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
 				<widget source="button_green_off" render="Pixmap" pixmap="skin_default/buttons/button_green_off.png" position="195,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
@@ -129,7 +129,7 @@ class Browser(Screen, HelpableScreen):
 				<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="195,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
 				<widget source="button_yellow_off" render="Pixmap" pixmap="skin_default/buttons/button_yellow_off.png" position="385,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
@@ -137,7 +137,7 @@ class Browser(Screen, HelpableScreen):
 				<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="385,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
 				<widget source="button_blue_off" render="Pixmap" pixmap="skin_default/buttons/button_blue_off.png" position="585,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
@@ -145,9 +145,9 @@ class Browser(Screen, HelpableScreen):
 				<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="585,%(btnY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="#000000" transparent="1"/>
+				<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget name="statuslabel" position="%(notifX)d,%(btnTxtY)d" size="350,20" zPosition="1" font="Regular;18" halign="right" valign="center" backgroundColor="#000000" transparent="0" />
+				<widget name="statuslabel" position="%(notifX)d,%(btnTxtY)d" size="350,20" zPosition="1" font="Regular;18" halign="right" valign="center" backgroundColor="background" transparent="0" />
 			</screen>
 			""" %{	"w" : fwidth,
 					"h" : fheight,
@@ -243,7 +243,6 @@ class Browser(Screen, HelpableScreen):
 		self.__keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
-		self.onClose.append(self.__onClose)
 
 		self["helpableactions"] = HelpableActionMap(self, "BrowserActions",
 		{
@@ -297,15 +296,8 @@ class Browser(Screen, HelpableScreen):
 			"0": self.keyNumberGlobal
 		})
 
-		if Hbbtv.instance:
-			Hbbtv.instance.setBrowser(self)
-
 	def setBackgroundTransparent(self, enabled):
 		self.webnavigation.setBackgroundTransparent(enabled)
-
-	def __onClose(self):
-		if Hbbtv.instance:
-			Hbbtv.instance.unsetBrowser()
 
 	def __setKeyBoardModeAscii(self):
 		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
@@ -335,14 +327,18 @@ class Browser(Screen, HelpableScreen):
 			self["red"].setText("Mouse Off")
 
 	def __actionExit(self):
+		if self.__isHbbtv:
+			self.__actionExitCB(True)
+			return
 		self.session.openWithCallback(self.__actionExitCB, MessageBox, _("Do you really want to exit the browser?"), type = MessageBox.TYPE_YESNO)
 
 	def __actionExitCB(self, confirmed):
 		if confirmed:
 			self.__urlSuggestionTimer.stop()
 			self.__inputTimer.stop()
-			config.plugins.WebBrowser.lastvisited.value = self.webnavigation.url
-			config.plugins.WebBrowser.lastvisited.save()
+			if not self.__isHbbtv:
+				config.plugins.WebBrowser.lastvisited.value = self.webnavigation.url
+				config.plugins.WebBrowser.lastvisited.save()
 			self.__persistCookies()
 			self.close()
 
@@ -1019,13 +1015,13 @@ class Browser(Screen, HelpableScreen):
 class HttpAuthenticationDialog(Screen):
 	skin = """
 		<screen position="center,center" size="600,120"  title="Authentication required">
-			<widget source="realm" render="Label" position="5,0" zPosition="1" size="590,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="#000000" transparent="1" />
-			<widget source="userTitle" render="Label" position="5,30" zPosition="1" size="120,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="#000000" transparent="1" />
-			<widget source="passwordTitle" render="Label" position="5,70" zPosition="1" size="120,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="#000000" transparent="1" />
-			<widget name="user" position="130,30" size="420,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="#000000" transparent="1"/>
-			<widget name="password" position="130,70" size="420,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="#000000" transparent="1"/>
-			<widget name="userActive" position="560,30" zPosition="1" size="40,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="#000000" transparent="1" />
-			<widget name="passwordActive" position="560,70" zPosition="1" size="40,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="#000000" transparent="1" />
+			<widget source="realm" render="Label" position="5,0" zPosition="1" size="590,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="background" transparent="1" />
+			<widget source="userTitle" render="Label" position="5,30" zPosition="1" size="120,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="background" transparent="1" />
+			<widget source="passwordTitle" render="Label" position="5,70" zPosition="1" size="120,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="background" transparent="1" />
+			<widget name="user" position="130,30" size="420,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="background" transparent="1"/>
+			<widget name="password" position="130,70" size="420,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="background" transparent="1"/>
+			<widget name="userActive" position="560,30" zPosition="1" size="40,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="background" transparent="1" />
+			<widget name="passwordActive" position="560,70" zPosition="1" size="40,25" font="Regular;22" halign="right" valign="bottom" backgroundColor="background" transparent="1" />
 		</screen>"""
 
 	def __init__(self, session, user = "", password = "", realm = ""):

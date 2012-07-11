@@ -767,6 +767,18 @@ iServiceKeysPtr.keyPressed = new_instancemethod(_enigma.iServiceKeysPtr_keyPress
 iServiceKeysPtr_swigregister = _enigma.iServiceKeysPtr_swigregister
 iServiceKeysPtr_swigregister(iServiceKeysPtr)
 
+class iHbbtvPtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.iHbbtvPtr_swiginit(self,_enigma.new_iHbbtvPtr(*args))
+    __swig_destroy__ = _enigma.delete_iHbbtvPtr
+iHbbtvPtr.__ref__ = new_instancemethod(_enigma.iHbbtvPtr___ref__,None,iHbbtvPtr)
+iHbbtvPtr.getPtrString = new_instancemethod(_enigma.iHbbtvPtr_getPtrString,None,iHbbtvPtr)
+iHbbtvPtr.__deref__ = new_instancemethod(_enigma.iHbbtvPtr___deref__,None,iHbbtvPtr)
+iHbbtvPtr_swigregister = _enigma.iHbbtvPtr_swigregister
+iHbbtvPtr_swigregister(iHbbtvPtr)
+
 class iPlayableService(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
@@ -821,6 +833,7 @@ iPlayableServicePtr.rdsDecoder = new_instancemethod(_enigma.iPlayableServicePtr_
 iPlayableServicePtr.stream = new_instancemethod(_enigma.iPlayableServicePtr_stream,None,iPlayableServicePtr)
 iPlayableServicePtr.streamed = new_instancemethod(_enigma.iPlayableServicePtr_streamed,None,iPlayableServicePtr)
 iPlayableServicePtr.keys = new_instancemethod(_enigma.iPlayableServicePtr_keys,None,iPlayableServicePtr)
+iPlayableServicePtr.hbbtv = new_instancemethod(_enigma.iPlayableServicePtr_hbbtv,None,iPlayableServicePtr)
 iPlayableServicePtr_swigregister = _enigma.iPlayableServicePtr_swigregister
 iPlayableServicePtr_swigregister(iPlayableServicePtr)
 
@@ -901,6 +914,46 @@ eServiceCenter_swigregister(eServiceCenter)
 def eServiceCenter_getInstance():
   return _enigma.eServiceCenter_getInstance()
 eServiceCenter_getInstance = _enigma.eServiceCenter_getInstance
+
+atUnknown = _enigma.atUnknown
+atMPEG = _enigma.atMPEG
+atMP3 = _enigma.atMP3
+atAC3 = _enigma.atAC3
+atDTS = _enigma.atDTS
+atAAC = _enigma.atAAC
+atPCM = _enigma.atPCM
+atOGG = _enigma.atOGG
+atFLAC = _enigma.atFLAC
+atWMA = _enigma.atWMA
+stUnknown = _enigma.stUnknown
+stPlainText = _enigma.stPlainText
+stSSA = _enigma.stSSA
+stASS = _enigma.stASS
+stSRT = _enigma.stSRT
+stVOB = _enigma.stVOB
+stPGS = _enigma.stPGS
+ctNone = _enigma.ctNone
+ctMPEGTS = _enigma.ctMPEGTS
+ctMPEGPS = _enigma.ctMPEGPS
+ctMKV = _enigma.ctMKV
+ctAVI = _enigma.ctAVI
+ctMP4 = _enigma.ctMP4
+ctVCD = _enigma.ctVCD
+ctCDA = _enigma.ctCDA
+ctFLV = _enigma.ctFLV
+ctWM = _enigma.ctWM
+class eServiceMP3(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    evAudioDecodeError = _enigma.eServiceMP3_ENUMS_evAudioDecodeError
+    evVideoDecodeError = _enigma.eServiceMP3_ENUMS_evVideoDecodeError
+    evPluginError = _enigma.eServiceMP3_ENUMS_evPluginError
+    evEmbeddedCoverArt = _enigma.eServiceMP3_ENUMS_evEmbeddedCoverArt
+    evUpdatedBitrate = _enigma.eServiceMP3_ENUMS_evUpdatedBitrate
+    evStreamingSrcError = _enigma.eServiceMP3_ENUMS_evStreamingSrcError
+eServiceMP3_swigregister = _enigma.eServiceMP3_ENUMS_swigregister
+eServiceMP3_swigregister(eServiceMP3)
 
 class ePythonMessagePump(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -1503,6 +1556,8 @@ eListboxPythonMultiContent.setFont = new_instancemethod(_enigma.eListboxPythonMu
 eListboxPythonMultiContent.setBuildFunc = new_instancemethod(_enigma.eListboxPythonMultiContent_setBuildFunc,None,eListboxPythonMultiContent)
 eListboxPythonMultiContent.setSelectableFunc = new_instancemethod(_enigma.eListboxPythonMultiContent_setSelectableFunc,None,eListboxPythonMultiContent)
 eListboxPythonMultiContent.setItemHeight = new_instancemethod(_enigma.eListboxPythonMultiContent_setItemHeight,None,eListboxPythonMultiContent)
+eListboxPythonMultiContent.setSelectionEnable = new_instancemethod(_enigma.eListboxPythonMultiContent_setSelectionEnable,None,eListboxPythonMultiContent)
+eListboxPythonMultiContent.moveSelection = new_instancemethod(_enigma.eListboxPythonMultiContent_moveSelection,None,eListboxPythonMultiContent)
 eListboxPythonMultiContent.setSelectionClip = new_instancemethod(_enigma.eListboxPythonMultiContent_setSelectionClip,None,eListboxPythonMultiContent)
 eListboxPythonMultiContent.updateClip = new_instancemethod(_enigma.eListboxPythonMultiContent_updateClip,None,eListboxPythonMultiContent)
 eListboxPythonMultiContent.entryRemoved = new_instancemethod(_enigma.eListboxPythonMultiContent_entryRemoved,None,eListboxPythonMultiContent)
@@ -1834,6 +1889,10 @@ class gFont(iObject):
 gFont_swigregister = _enigma.gFont_swigregister
 gFont_swigregister(gFont)
 
+
+def loadImage(*args):
+  return _enigma.loadImage(*args)
+loadImage = _enigma.loadImage
 
 def loadPNG(*args):
   return _enigma.loadPNG(*args)
@@ -2726,6 +2785,9 @@ class eHbbtv(object):
     def __init__(self): 
         _enigma.eHbbtv_swiginit(self,_enigma.new_eHbbtv())
     __swig_destroy__ = _enigma.delete_eHbbtv
+    VERSION_MAJOR = _enigma.eHbbtv_VERSION_MAJOR
+    VERSION_MINOR = _enigma.eHbbtv_VERSION_MINOR
+    VERSION_MICRO = _enigma.eHbbtv_VERSION_MICRO
     EVENT_NOW = _enigma.eHbbtv_EVENT_NOW
     EVENT_NEXT = _enigma.eHbbtv_EVENT_NEXT
     BROADCAST_STATE_UNREALIZED = _enigma.eHbbtv_BROADCAST_STATE_UNREALIZED
@@ -2761,14 +2823,62 @@ class eHbbtv(object):
     nextServiceRequest = _swig_property(_enigma.eHbbtv_nextServiceRequest_get, _enigma.eHbbtv_nextServiceRequest_set)
     prevServiceRequest = _swig_property(_enigma.eHbbtv_prevServiceRequest_get, _enigma.eHbbtv_prevServiceRequest_set)
     setVideoWindowRequest = _swig_property(_enigma.eHbbtv_setVideoWindowRequest_get, _enigma.eHbbtv_setVideoWindowRequest_set)
+    aitInvalidated = _swig_property(_enigma.eHbbtv_aitInvalidated_get, _enigma.eHbbtv_aitInvalidated_set)
+    redButtonAppplicationReady = _swig_property(_enigma.eHbbtv_redButtonAppplicationReady_get, _enigma.eHbbtv_redButtonAppplicationReady_set)
+    textApplicationReady = _swig_property(_enigma.eHbbtv_textApplicationReady_get, _enigma.eHbbtv_textApplicationReady_set)
+    createApplicationRequest = _swig_property(_enigma.eHbbtv_createApplicationRequest_get, _enigma.eHbbtv_createApplicationRequest_set)
+    show = _swig_property(_enigma.eHbbtv_show_get, _enigma.eHbbtv_show_set)
+    hide = _swig_property(_enigma.eHbbtv_hide_get, _enigma.eHbbtv_hide_set)
+eHbbtv.setAitSignalsEnabled = new_instancemethod(_enigma.eHbbtv_setAitSignalsEnabled,None,eHbbtv)
 eHbbtv.setServiceList = new_instancemethod(_enigma.eHbbtv_setServiceList,None,eHbbtv)
 eHbbtv.setStreamState = new_instancemethod(_enigma.eHbbtv_setStreamState,None,eHbbtv)
+eHbbtv.getApplication = new_instancemethod(_enigma.eHbbtv_getApplication,None,eHbbtv)
+eHbbtv.resolveApplicationLocator = new_instancemethod(_enigma.eHbbtv_resolveApplicationLocator,None,eHbbtv)
+eHbbtv.getApplicationIdsAndName = new_instancemethod(_enigma.eHbbtv_getApplicationIdsAndName,None,eHbbtv)
 eHbbtv_swigregister = _enigma.eHbbtv_swigregister
 eHbbtv_swigregister(eHbbtv)
 
 def eHbbtv_getInstance():
   return _enigma.eHbbtv_getInstance()
 eHbbtv_getInstance = _enigma.eHbbtv_getInstance
+
+class eOipfApplication(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    CONTROL_CODE_AUTOSTART = _enigma.eOipfApplication_CONTROL_CODE_AUTOSTART
+    CONTROL_CODE_PRESENT = _enigma.eOipfApplication_CONTROL_CODE_PRESENT
+    CONTROL_CODE_DESTROY = _enigma.eOipfApplication_CONTROL_CODE_DESTROY
+    CONTROL_CODE_KILL = _enigma.eOipfApplication_CONTROL_CODE_KILL
+    CONTROL_CODE_PREFETCH = _enigma.eOipfApplication_CONTROL_CODE_PREFETCH
+    CONTROL_CODE_REMOTE = _enigma.eOipfApplication_CONTROL_CODE_REMOTE
+    CONTROL_CODE_DISABLED = _enigma.eOipfApplication_CONTROL_CODE_DISABLED
+    CONTROL_CODE_PLAYBACK_AUTOSTART = _enigma.eOipfApplication_CONTROL_CODE_PLAYBACK_AUTOSTART
+    USAGE_TYPE_TEXT = _enigma.eOipfApplication_USAGE_TYPE_TEXT
+    VISIBILITY_NOT_VISIBLE_ALL = _enigma.eOipfApplication_VISIBILITY_NOT_VISIBLE_ALL
+    VISIBILITY_NOT_VISIBLE_USERS = _enigma.eOipfApplication_VISIBILITY_NOT_VISIBLE_USERS
+    VISIBILITY_VISIBLE_ALL = _enigma.eOipfApplication_VISIBILITY_VISIBLE_ALL
+    __swig_destroy__ = _enigma.delete_eOipfApplication
+    getById = staticmethod(_enigma.eOipfApplication_getById)
+eOipfApplication.isValid = new_instancemethod(_enigma.eOipfApplication_isValid,None,eOipfApplication)
+eOipfApplication.getOrganisationId = new_instancemethod(_enigma.eOipfApplication_getOrganisationId,None,eOipfApplication)
+eOipfApplication.getApplicationId = new_instancemethod(_enigma.eOipfApplication_getApplicationId,None,eOipfApplication)
+eOipfApplication.getApplicationProfile = new_instancemethod(_enigma.eOipfApplication_getApplicationProfile,None,eOipfApplication)
+eOipfApplication.getPriority = new_instancemethod(_enigma.eOipfApplication_getPriority,None,eOipfApplication)
+eOipfApplication.getUsageType = new_instancemethod(_enigma.eOipfApplication_getUsageType,None,eOipfApplication)
+eOipfApplication.getControlCode = new_instancemethod(_enigma.eOipfApplication_getControlCode,None,eOipfApplication)
+eOipfApplication.getServiceBoundFlag = new_instancemethod(_enigma.eOipfApplication_getServiceBoundFlag,None,eOipfApplication)
+eOipfApplication.getVisibility = new_instancemethod(_enigma.eOipfApplication_getVisibility,None,eOipfApplication)
+eOipfApplication.getId = new_instancemethod(_enigma.eOipfApplication_getId,None,eOipfApplication)
+eOipfApplication.getName = new_instancemethod(_enigma.eOipfApplication_getName,None,eOipfApplication)
+eOipfApplication.getInitialPath = new_instancemethod(_enigma.eOipfApplication_getInitialPath,None,eOipfApplication)
+eOipfApplication.getUrlBase = new_instancemethod(_enigma.eOipfApplication_getUrlBase,None,eOipfApplication)
+eOipfApplication_swigregister = _enigma.eOipfApplication_swigregister
+eOipfApplication_swigregister(eOipfApplication)
+
+def eOipfApplication_getById(*args):
+  return _enigma.eOipfApplication_getById(*args)
+eOipfApplication_getById = _enigma.eOipfApplication_getById
 
 class PSignal0V(PSignal):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

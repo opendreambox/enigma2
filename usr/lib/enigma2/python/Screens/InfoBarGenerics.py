@@ -8,6 +8,7 @@ from Components.Label import Label
 from Components.PluginComponent import plugins
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
+from Components.Sources.HbbtvApplication import HbbtvApplication
 from Components.config import config, ConfigBoolean, ConfigClock
 from Components.SystemInfo import SystemInfo
 from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath, defaultStorageDevice
@@ -891,28 +892,29 @@ class InfoBarSeek:
 			print "not pauseable."
 			state = self.SEEK_STATE_PLAY
 
-		self.seekstate = state
-
+		ret = 0
 		if pauseable is not None:
-			if self.seekstate[0]:
-				print "resolved to PAUSE"
-				pauseable.pause()
-			elif self.seekstate[1]:
-				print "resolved to FAST FORWARD"
-				pauseable.setFastForward(self.seekstate[1])
-			elif self.seekstate[2]:
-				print "resolved to SLOW MOTION"
-				pauseable.setSlowMotion(self.seekstate[2])
+			if state[0]:
+				ret = pauseable.pause()
+				print "resolved to PAUSE", ret
+			elif state[1]:
+				ret = pauseable.setFastForward(state[1])
+				print "resolved to FAST FORWARD", ret
+			elif state[2]:
+				ret = pauseable.setSlowMotion(state[2])
+				print "resolved to SLOW MOTION", ret
 			else:
-				print "resolved to PLAY"
-				pauseable.unpause()
+				ret = pauseable.unpause()
+				print "resolved to PLAY", ret
 
-		for c in self.onPlayStateChanged:
-			c(self.seekstate)
+		if ret == 0:
+			self.seekstate = state
+			for c in self.onPlayStateChanged:
+				c(self.seekstate)
 
 		self.checkSkipShowHideLock()
 
-		return True
+		return (ret == 0)
 
 	def playpauseService(self):
 		if self.seekstate != self.SEEK_STATE_PLAY:
@@ -2192,21 +2194,46 @@ class InfoBarMoviePlayerSummarySupport:
 
 class InfoBarTeletextPlugin:
 	def __init__(self):
-		self.teletext_plugin = None
-
-		for p in plugins.getPlugins(PluginDescriptor.WHERE_TELETEXT):
-			self.teletext_plugin = p
-
-		if self.teletext_plugin is not None:
-			self["TeletextActions"] = HelpableActionMap(self, "InfobarTeletextActions",
-				{
-					"startTeletext": (self.startTeletext, _("View teletext..."))
-				})
-		else:
-			print "no teletext plugin found!"
+		self["TeletextActions"] = HelpableActionMap(self, "InfobarTeletextActions",
+			{
+				"startTeletext": (self.startTeletext, _("View teletext..."))
+			})
 
 	def startTeletext(self):
-		self.teletext_plugin(session=self.session, service=self.session.nav.getCurrentService())
+		teletext_plugins = plugins.getPlugins(PluginDescriptor.WHERE_TELETEXT)
+		l = len(teletext_plugins)
+		if l == 1:
+			teletext_plugins[0](session=self.session, service=self.session.nav.getCurrentService())
+		elif l > 1:
+			list = []
+			for p in teletext_plugins:
+				list.append( (p.name, p) )
+			self.session.openWithCallback(self.onTextSelected, ChoiceBox, title=_("Please select a Text application"), list = list)
+
+	def onTextSelected(self, p):
+		p = p and p[1]
+		if p is not None:
+			p(session=self.session, service=self.session.nav.getCurrentService())
+
+class InfobarHbbtvPlugin:
+	def __init__(self):
+		if not self["ShowRecordOnRed"].boolean:
+			self["HbbtvActions"] = HelpableActionMap(self, "InfobarHbbtvActions",
+				{
+					"hbbtvAutostart" : (self.startHbbtv, _("Start HbbTV..."))
+				}
+			)
+			self["HbbtvApplication"] = HbbtvApplication()
+		else:
+			self["HbbtvApplication"] = Boolean(fixed=0)
+			self["HbbtvApplication"].name = "" #is this a hack?
+
+	def startHbbtv(self):
+		hbbtv_plugin = None
+		for p in plugins.getPlugins(PluginDescriptor.WHERE_HBBTV):
+			hbbtv_plugin = p
+		if hbbtv_plugin is not None:
+			hbbtv_plugin(session=self.session)
 
 class InfoBarSubtitleSupport(object):
 	def __init__(self):

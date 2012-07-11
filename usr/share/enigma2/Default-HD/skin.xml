@@ -271,6 +271,13 @@
 		<widget source="RecordingPossible" render="FixedLabel" text="Record" position="450,135" size="160,22" zPosition="1" font="Regular;18" backgroundColor="#182946" transparent="1">
 			<convert type="ConditionalShowHide" />
 		</widget>
+		<!-- Red button, Hbbtv (only if record is not on red, for now) -->
+		<widget source="HbbtvApplication" render="Pixmap" pixmap="Default-HD/buttons/button_red.png" position="420,135" size="20,20" zPosition="1" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="HbbtvApplication" render="Label" position="450,135" size="160,22" zPosition="1" font="Regular;18" backgroundColor="#182946" transparent="1">
+			<convert type="HbbtvApplicationInfo">Name</convert>
+		</widget>
 		<!-- Green button (is subservices available?) -->
 		<ePixmap pixmap="Default-HD/buttons/button_green_off.png" position="620,135" size="20,20" alphatest="on" />
 		<widget source="session.CurrentService" render="Pixmap" pixmap="Default-HD/buttons/button_green.png" position="620,135" size="20,20" zPosition="1" alphatest="on">
@@ -413,23 +420,59 @@
 				}
 			</convert>
 		</widget>
-		<widget source="menu" render="Listbox" position="30,65" size="200,200" scrollbarMode="showNever" selectionDisabled="1" transparent="1">
+		<widget source="menu" render="Listbox" position="40,75" size="180,180" scrollbarMode="showNever" selectionDisabled="1" transparent="1">
 			<convert type="TemplatedMultiContent">
-				{"template": [ MultiContentEntryPixmapAlphaBlend(pos = (10,10), size = (180,180), png = 5) ],
+				{"template": [ MultiContentEntryPixmapAlphaBlend(pos = (0,0), size = (180,180), png = 5) ],
 				"fonts": [gFont("Regular", 22)],
-				"itemHeight": 200
+				"itemHeight": 180
 				}
 			</convert>
 		</widget>
-		<widget source="menu" render="Listbox" position="0,280" size="250,200" zPosition="1" scrollbarMode="showNever" selectionDisabled="1" transparent="1">
+		<widget source="menu" render="Listbox" position="15,300" size="230,180" zPosition="1" scrollbarMode="showNever" selectionDisabled="1" transparent="1">
 			<convert type="TemplatedMultiContent">
 				{"template": [
-						MultiContentEntryText(pos = (2, 2), size = (250, 200), flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER|RT_WRAP, text = 4) ],
+						MultiContentEntryText(pos = (0, 0), size = (230, 180), flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER|RT_WRAP, text = 4) ],
 				"fonts": [gFont("Regular", 22)],
-				"itemHeight": 200
+				"itemHeight": 180
 				}
 			</convert>
 		</widget>
+	</screen>
+	<!-- Notification Queue Viewer -->
+	<screen name="NotificationQueueViewer" position="center,120" size="920,520" title="Notification Queue Viewer">
+		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
+		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on"/>
+		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="label_results" render="Label" position="420,5" size="490,40" font="Regular;20" halign="center" valign="center" transparent="1"/>
+		<widget source="labels" render="Listbox" position="10,50" size="900,22" scrollbarMode="showOnDemand" transparent="1">
+			<convert type="TemplatedMultiContent">
+				{"template": [
+						MultiContentEntryText(pos = (10, 1), size = (110, 20), font = 0, flags = RT_HALIGN_LEFT, text = 1), # index 1 Time,
+						MultiContentEntryText(pos = (130, 1), size = (140, 20), font = 0, flags = RT_HALIGN_CENTER, text = 3), # index 3 Domain,
+						MultiContentEntryText(pos = (280, 1), size = (520, 20), font = 0, flags = RT_HALIGN_LEFT, text = 4), # index 4 Text,
+						MultiContentEntryText(pos = (810, 1), size = (60, 20), font = 0, flags = RT_HALIGN_CENTER, text = 5), # index 5 is the pending pixmap
+					],
+				"fonts": [gFont("Regular", 18)],
+				"itemHeight": 22
+				}
+			</convert>
+		</widget>
+		<widget source="notifications" render="Listbox" position="10,85" size="900,405" scrollbarMode="showOnDemand" transparent="1">
+			<convert type="TemplatedMultiContent">
+				{"template": [
+						MultiContentEntryText(pos = (10, 1), size = (110, 43), font = 0, flags = RT_HALIGN_LEFT, text = 1), # index 1 Time,
+						MultiContentEntryPixmapAlphaTest(pos = (130, 4), size = (22, 22), png = 2), # domain icon
+						MultiContentEntryText(pos = (160, 1), size = (110, 43), font = 0, flags = RT_HALIGN_LEFT|RT_WRAP, text = 3), # index 3 Domain,
+						MultiContentEntryText(pos = (280, 1), size = (520, 43), font = 0, flags = RT_HALIGN_LEFT|RT_WRAP, text = 4), # index 4 Text,
+						MultiContentEntryPixmapAlphaTest(pos = (833, 15), size = (15, 16), png = 5), # index 5 is the pending pixmap
+					],
+				"fonts": [gFont("Regular", 18)],
+				"itemHeight": 45
+				}
+			</convert>
+		</widget>
+		<widget source="statusbar" render="Label" position="0,498" size="920,22" halign="center" valign="center" font="Regular;18" backgroundColor="#254f7497" foregroundColor="white"/>
 	</screen>
 	<!-- About screen -->
 	<screen name="About" position="center,145" size="600,470" title="About">
@@ -2501,6 +2544,25 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 		</widget>
 	</screen>
 	<!-- Default wizards -->
+	<screen name="DefaultWizard" position="center,70" size="1200,620" title="Welcome...">
+		<ePixmap pixmap="Default-HD/buttons/red.png" position="270,15" size="200,40" alphatest="on" />
+		<widget name="languagetext" position="270,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+		<widget name="wizard" position="0,0" size="240,620" pixmap="Default-HD/wizard.png" />
+		<widget name="rc" position="0,0" size="0,0"/>
+		<widget name="arrowdown" position="-100,-100" size="37,70" pixmap="skin_default/arrowdown.png" zPosition="2" alphatest="on" />
+		<widget name="arrowup" position="-100,-100" size="37,70" pixmap="skin_default/arrowup.png" zPosition="2" alphatest="on" />
+		<widget name="arrowup2" position="-100,-100" size="37,70" pixmap="skin_default/arrowup.png" zPosition="2" alphatest="on" />
+		<widget name="text" position="280,70" size="880,240" font="Regular;23" backgroundColor="background" transparent="1" />
+		<widget source="list" render="Listbox" position="280,330" size="880,270" zPosition="1" scrollbarMode="showOnDemand" transparent="1">
+			<convert type="TemplatedMultiContent">
+				{"template": [ MultiContentEntryText(pos = (10, 4), size = (580, 22), flags = RT_HALIGN_LEFT, text = 0) ],
+				"fonts": [gFont("Regular", 20)],
+				"itemHeight": 30
+				}
+			</convert>
+		</widget>
+		<widget name="config" position="280,330" size="880,270" zPosition="2" itemHeight="30" scrollbarMode="showOnDemand" transparent="1"/>
+	</screen>
 	<screen name="DefaultSatLists" position="center,120" size="620,520" title="Default services lists">
 		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
 		<widget name="languagetext"	position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>

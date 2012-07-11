@@ -61,6 +61,10 @@ public:
 		return PyLong_FromLong((long)src);
 	}
 
+	static inline PyObject *PyFrom(unsigned int src){
+		return PyLong_FromUnsignedLong(src);
+	}
+
 	static inline PyObject *PyFrom(int src)
 	{
 		return PyLong_FromLong(src);
@@ -328,6 +332,7 @@ public:
 	{
 	}
 
+	PSA_CONSTRUCTOR(unsigned int)
 	PSA_CONSTRUCTOR(int)
 	PSA_CONSTRUCTOR(long)
 	PSA_CONSTRUCTOR(long long)

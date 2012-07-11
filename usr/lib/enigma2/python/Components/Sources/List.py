@@ -19,6 +19,7 @@ to generate HTML."""
 		self.enableWrapAround = enableWrapAround
 		self.__style = "default" # style might be an optional string which can be used to define different visualisations in the skin
 		self.__buildfunc = buildfunc
+		self.__selection_enabled = True
 
 	def setList(self, list):
 		self.__list = list
@@ -87,6 +88,24 @@ to generate HTML."""
 			self.index -= 1
 		self.setIndex(self.index)
 
+	def moveSelection(self, direction):
+		if self.master is not None:
+			if hasattr(self.master, "content"):
+				self.master.content.moveSelection(int(
+					{ "moveUp": 0,
+					  "moveDown": 1,
+					  "moveTop": 2,
+					  "moveEnd": 3,
+					  "pageUp": 4,
+					  "pageDown": 5,
+					  "justCheck": 6,
+					}[direction]))
+	def pageUp(self):
+		self.moveSelection("pageUp")
+
+	def pageDown(self):
+		self.moveSelection("pageDown")
+
 	@cached
 	def getStyle(self):
 		return self.__style
@@ -108,6 +127,13 @@ to generate HTML."""
 			self.changed((self.CHANGED_SPECIFIC, "buildfunc"))
 
 	buildfunc = property(getBuildFunc, setBuildFunc)
+
+	def setSelectionEnabled(self, enabled):
+		if self.__selection_enabled != enabled:
+			self.__selection_enabled = enabled
+			self.changed((self.CHANGED_SPECIFIC, "selection_enabled"))
+
+	selection_enabled = property(lambda self: self.__selection_enabled, setSelectionEnabled)
 
 	def updateList(self, list):
 		"""Changes the list without changing the selection or emitting changed Events"""

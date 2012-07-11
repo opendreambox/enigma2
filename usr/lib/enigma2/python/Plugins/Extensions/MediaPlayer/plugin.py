@@ -1,6 +1,6 @@
 from os import path as os_path, remove as os_remove, listdir as os_listdir
 from time import strftime
-from enigma import iPlayableService, eTimer, eServiceCenter, iServiceInformation, ePicLoad
+from enigma import iPlayableService, eTimer, eServiceCenter, iServiceInformation, ePicLoad, eServiceMP3
 from ServiceReference import ServiceReference
 from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen
@@ -224,11 +224,12 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
-				iPlayableService.evUser+10: self.__evAudioDecodeError,
-				iPlayableService.evUser+11: self.__evVideoDecodeError,
-				iPlayableService.evUser+12: self.__evPluginError,
-				iPlayableService.evUser+13: self["coverArt"].embeddedCoverArt,
-				iPlayableService.evUser+15: self.__evStreamingSrcError
+				eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
+				eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
+				eServiceMP3.evPluginError: self.__evPluginError,
+				eServiceMP3.evEmbeddedCoverArt: self["coverArt"].embeddedCoverArt,
+				eServiceMP3.evUpdatedBitrate: self.__evUpdatedBitrate,
+				eServiceMP3.evStreamingSrcError: self.__evStreamingSrcError
 			})
 
 	def doNothing(self):
@@ -265,6 +266,11 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 
 	def __onClose(self):
 		self.session.nav.playService(self.oldService)
+
+	def __evUpdatedBitrate(self):
+		currPlay = self.session.nav.getCurrentService()
+		if currPlay is not None:
+			self.bitrate =  currPlay.info().getInfo(iServiceInformation.sTagBitrate)
 
 	def __evUpdatedInfo(self):
 		currPlay = self.session.nav.getCurrentService()

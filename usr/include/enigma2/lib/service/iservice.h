@@ -794,6 +794,22 @@ public:
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iServiceKeys>, iServiceKeysPtr);
 
+class eDVBServiceAITHandler;
+
+SWIG_IGNORE(iHbbtv);
+class iHbbtv: public iObject
+{
+#ifdef SWIG
+	iHbbtv();
+	~iHbbtv();
+#endif
+public:
+#ifndef SWIG
+	virtual eDVBServiceAITHandler *getAitHandler(void)=0;
+#endif
+};
+SWIG_TEMPLATE_TYPEDEF(ePtr<iHbbtv>, iHbbtvPtr);
+
 class iPlayableService_ENUMS
 {
 #ifdef SWIG
@@ -859,21 +875,22 @@ public:
 	virtual RESULT stop()=0;
 			/* might have to be changed... */
 	virtual RESULT setTarget(int target)=0;
-	virtual SWIG_VOID(RESULT) seek(ePtr<iSeekableService> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) pause(ePtr<iPauseableService> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) info(ePtr<iServiceInformation> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) audioTracks(ePtr<iAudioTrackSelection> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) audioChannel(ePtr<iAudioChannelSelection> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) subServices(ePtr<iSubserviceList> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) frontendInfo(ePtr<iFrontendInformation> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) timeshift(ePtr<iTimeshiftService> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) cueSheet(ePtr<iCueSheet> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) subtitle(ePtr<iSubtitleOutput> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) audioDelay(ePtr<iAudioDelay> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) rdsDecoder(ePtr<iRdsDecoder> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) stream(ePtr<iStreamableService> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) streamed(ePtr<iStreamedService> &SWIG_OUTPUT)=0;
-	virtual SWIG_VOID(RESULT) keys(ePtr<iServiceKeys> &SWIG_OUTPUT)=0;
+	virtual SWIG_VOID(RESULT) seek(ePtr<iSeekableService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) pause(ePtr<iPauseableService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) info(ePtr<iServiceInformation> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) audioTracks(ePtr<iAudioTrackSelection> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) audioChannel(ePtr<iAudioChannelSelection> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) subServices(ePtr<iSubserviceList> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) frontendInfo(ePtr<iFrontendInformation> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) timeshift(ePtr<iTimeshiftService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) cueSheet(ePtr<iCueSheet> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) subtitle(ePtr<iSubtitleOutput> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) audioDelay(ePtr<iAudioDelay> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) rdsDecoder(ePtr<iRdsDecoder> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) stream(ePtr<iStreamableService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) streamed(ePtr<iStreamedService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) keys(ePtr<iServiceKeys> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) hbbtv(ePtr<iHbbtv> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iPlayableService>, iPlayableServicePtr);
 

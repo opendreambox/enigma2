@@ -5,13 +5,14 @@ class TemplatedMultiContent(StringList):
 	def __init__(self, args):
 		StringList.__init__(self, args)
 		from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_HALIGN_CENTER, RT_HALIGN_RIGHT, RT_VALIGN_TOP, RT_VALIGN_CENTER, RT_VALIGN_BOTTOM, RT_WRAP
-		from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmap, MultiContentEntryPixmapAlphaTest, MultiContentEntryPixmapAlphaBlend, MultiContentTemplateColor, MultiContentEntryProgress
+		from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmap, MultiContentEntryPixmapAlphaTest, MultiContentEntryPixmapAlphaBlend, MultiContentTemplateColor, MultiContentEntryProgress, MultiContentEntryProgressPixmap
 		l = locals()
 		del l["self"] # cleanup locals a bit
 		del l["args"]
 
 		self.active_style = None
 		self.active_buildfunc = None
+		self.selectionEnabled = True
 		self.template = eval(args, {}, l)
 		assert "fonts" in self.template
 		assert "itemHeight" in self.template
@@ -34,7 +35,7 @@ class TemplatedMultiContent(StringList):
 				index += 1
 
 		# if only template changed, don't reload list
-		if what[0] == self.CHANGED_SPECIFIC and what[1] in ("style", "buildfunc"):
+		if what[0] == self.CHANGED_SPECIFIC and what[1] in ("style", "buildfunc", "selection_enabled"):
 			pass
 		elif self.source:
 			self.content.setList(self.source.list)
@@ -48,6 +49,11 @@ class TemplatedMultiContent(StringList):
 			if buildfunc != self.active_buildfunc:
 				self.active_buildfunc = buildfunc
 				self.content.setBuildFunc(buildfunc)
+
+			selection_enabled = self.source.selection_enabled
+			if selection_enabled != self.selectionEnabled:
+				self.selectionEnabled = selection_enabled
+				self.content.setSelectionEnable(selection_enabled)
 
 			style = self.source.style
 
@@ -72,6 +78,7 @@ class TemplatedMultiContent(StringList):
 			self.content.setTemplate(template)
 			self.content.setItemHeight(itemheight)
 			self.selectionEnabled = selectionEnabled
+			self.content.setSelectionEnable(selectionEnabled)
 			if scrollbarMode is not None:
 				self.scrollbarMode = scrollbarMode
 			self.active_style = style

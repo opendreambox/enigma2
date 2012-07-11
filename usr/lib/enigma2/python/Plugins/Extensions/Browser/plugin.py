@@ -2,12 +2,15 @@ from Components.config import config
 
 from Plugins.Plugin import PluginDescriptor
 from Browser import Browser
+from Hbbtv import Hbbtv
 
 def main_widget(session, **kwargs):
 	url = kwargs.get("url", None)
 	hbbtv = kwargs.get("hbbtv", False)
 	if hbbtv:
 		url = "http://www.hbbig.com"
+		Hbbtv.instance.startApplicationByUri(url)
+		return
 	session.openWithCallback(main_widget_callback, Browser, config.plugins.WebBrowser.fullscreen.value, url, hbbtv)
 
 def main_widget_hbbtv(session, **kwargs):
@@ -35,10 +38,13 @@ def menu_hbbtv(menuid, **kwargs):
 
 	return menu(menuid, **kwargs)
 
-from Hbbtv import start as start_hbbtv
+from Hbbtv import start as start_hbbtv, autostart as autostart_hbbtv, Hbbtv
+
 def Plugins(**kwargs):
 	return [
 			PluginDescriptor(name = "Browser", description = _("Browse the web"), where = PluginDescriptor.WHERE_MENU, fnc = menu),
 			PluginDescriptor(name = "HbbTV (Testsuite)", description = _("Test HbbTV Functionality"), where = PluginDescriptor.WHERE_MENU, fnc = menu_hbbtv),
 			PluginDescriptor(where=[PluginDescriptor.WHERE_INFOBAR,], fnc=start_hbbtv),
+			PluginDescriptor(where=[PluginDescriptor.WHERE_AUTOSTART,], fnc=autostart_hbbtv),
+			#PluginDescriptor(name = "HbbTV Applications", description = _("Show available HbbTV Appliations"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc = Hbbtv.showApplicationList),
 		]

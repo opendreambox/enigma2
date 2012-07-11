@@ -48,7 +48,7 @@ class eFixedMessagePump: private eMessagePump, public sigc::trackable
 		 * if anything is avail to read
 		 *
 		 */
-		if (content.lock_count()) {
+		if (!ismt || content.lock_count()) {
 			T msg;
 			recv(&msg, sizeof(msg));
 			/*emit*/ recv_msg(msg);
