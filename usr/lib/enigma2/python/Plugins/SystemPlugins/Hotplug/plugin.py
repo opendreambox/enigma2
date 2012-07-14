@@ -90,8 +90,8 @@ def autostart(reason, **kwargs):
 			class Netlink:
 				def __init__(self):
 					self.netlink = socket.socket(socket.AF_NETLINK, socket.SOCK_DGRAM, 15)
-					self.netlink.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 65536)
-					self.netlink.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 65536)
+					self.netlink.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 8*1024)
+					self.netlink.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 128*1024)
 					self.netlink.bind((0, 1))
 					self.sn = eSocketNotifier(self.netlink.fileno(), POLLIN|POLLPRI)
 					self.sn.callback.append(self.dataAvail)

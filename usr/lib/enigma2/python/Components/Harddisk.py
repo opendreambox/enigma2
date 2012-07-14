@@ -20,6 +20,30 @@ def readFile(filename):
 DEVTYPE_UDEV = 0
 DEVTYPE_DEVFS = 1
 
+def forceAutofsUmount(dev):
+	try:
+		mounts = open("/proc/mounts")
+	except IOError:
+		return -1
+
+	lines = mounts.readlines()
+	mounts.close()
+
+	res = -1
+	for line in lines:
+		parts = line.strip().split(" ")
+		real_path = path.realpath(parts[0])
+		if not real_path[-1].isdigit():
+			continue
+		try:
+			if parts[1] == '/autofs/' + dev:
+				print "forced", parts[1], "umount!!"
+				cmd = "umount /autofs/" + dev + " || /bin/true"
+				res = system(cmd)
+				break
+		except OSError:
+			pass
+	return (res >> 8)
 
 class Harddisk:
 	def __init__(self, device, removable = False):
@@ -295,6 +319,12 @@ class Harddisk:
 				continue
 			try:
 				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
+
+					forceAutofsUmount(self.device+real_path[-1])
+					# we must umount autofs first because autofs mounts with "sync" option
+					# and the real mount than also mounts with this option
+					# this is realy bad for the performance!
+
 					cmd = "mount -t auto " + parts[0]
 					res = system(cmd)
 					break
@@ -644,6 +674,7 @@ DEVICEDB = \
 		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
 	}
 	}
+
 
 class HarddiskManager:
 	EVENT_MOUNT = "mount"
@@ -1530,6 +1561,11 @@ class HarddiskManager:
 			devicepath = "/dev/" + str(dev)
 			#print "[mountPartitionbyUUID] for UUID:'%s' - '%s'" % (uuid,mountpoint)
 
+			# we must umount autofs first because autofs mounts with "sync" option
+			# and the real mount than also mounts with this option
+			# this is realy bad for the performance!
+			forceAutofsUmount(dev)
+
 			#verify if mountpoint is still mounted from elsewhere (e.g fstab)
 			if path.exists(mountpoint) and path.ismount(mountpoint):
 				tmppath = self.get_mountdevice(mountpoint)
@@ -1543,7 +1579,6 @@ class HarddiskManager:
 			if tmpmount is not None and tmpmount != mountpoint and path.exists(tmpmount) and path.ismount(tmpmount):
 				if not self.isUUIDpathFsTabMount(uuid, tmpmount) and not self.isPartitionpathFsTabMount(uuid, tmpmount):
 						self.unmountPartitionbyMountpoint(tmpmount)
-
 
 			if self.isUUIDpathFsTabMount(uuid, mountpoint) or self.isPartitionpathFsTabMount(uuid, mountpoint):
 				print "[unmountPartitionbyUUID] disabling config entry for external mounted mountpoint %s:" % (mountpoint)
