@@ -694,7 +694,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 
 #override some InfoBarSeek functions
 	def doEof(self):
-		self.setSeekState(self.SEEK_STATE_PLAY)
+		self.setSeekState(self.SEEK_STATE_STOP)
 
 	def calcRemainingTime(self):
 		return 0

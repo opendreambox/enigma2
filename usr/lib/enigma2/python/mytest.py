@@ -65,6 +65,8 @@ config.misc.useTransponderTime = ConfigYesNo(default=True)
 config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0)) # number of standby
 config.misc.epgcache_filename = ConfigText(default = "/media/hdd/epg.dat")
+config.misc.record_io_buffer = ConfigInteger(default=192512*5)
+config.misc.record_dmx_buffer = ConfigInteger(default=1024*1024)
 
 def setEPGCachePath(configElement):
 	eEPGCache.getInstance().setCacheFile(configElement.value)

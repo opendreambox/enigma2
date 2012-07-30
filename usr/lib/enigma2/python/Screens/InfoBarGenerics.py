@@ -745,6 +745,7 @@ class InfoBarSeek:
 	SEEK_STATE_PLAY = (0, 0, 0, ">")
 	SEEK_STATE_PAUSE = (1, 0, 0, "||")
 	SEEK_STATE_EOF = (1, 0, 0, "END")
+	SEEK_STATE_STOP = (0, 0, 0, "STOP")
 
 	def __init__(self, actionmap = "InfobarSeekActions"):
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
@@ -793,8 +794,8 @@ class InfoBarSeek:
 
 		self["SeekActions"].setEnabled(False)
 
-		self.seekstate = self.SEEK_STATE_PLAY
-		self.lastseekstate = self.SEEK_STATE_PLAY
+		self.seekstate = self.SEEK_STATE_STOP
+		self.lastseekstate = self.SEEK_STATE_STOP
 
 		self.onPlayStateChanged = [ ]
 
@@ -873,39 +874,40 @@ class InfoBarSeek:
 
 	def __serviceStarted(self):
 		self.fast_winding_hint_message_showed = False
-		self.seekstate = self.SEEK_STATE_PLAY
+		self.setSeekState(self.SEEK_STATE_PLAY)
 		self.__seekableStatusChanged()
 
 	def setSeekState(self, state):
 		service = self.session.nav.getCurrentService()
+		ret = 0
 
 		if service is None:
 			return False
 
-		if not self.isSeekable():
-			if state not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
+		if state != self.SEEK_STATE_STOP:
+			if not self.isSeekable():
+				if state not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
+					state = self.SEEK_STATE_PLAY
+
+			pauseable = service.pause()
+
+			if pauseable is None:
+				print "not pauseable."
 				state = self.SEEK_STATE_PLAY
 
-		pauseable = service.pause()
-
-		if pauseable is None:
-			print "not pauseable."
-			state = self.SEEK_STATE_PLAY
-
-		ret = 0
-		if pauseable is not None:
-			if state[0]:
-				ret = pauseable.pause()
-				print "resolved to PAUSE", ret
-			elif state[1]:
-				ret = pauseable.setFastForward(state[1])
-				print "resolved to FAST FORWARD", ret
-			elif state[2]:
-				ret = pauseable.setSlowMotion(state[2])
-				print "resolved to SLOW MOTION", ret
-			else:
-				ret = pauseable.unpause()
-				print "resolved to PLAY", ret
+			if pauseable is not None:
+				if state[0]:
+					ret = pauseable.pause()
+					print "resolved to PAUSE", ret
+				elif state[1]:
+					ret = pauseable.setFastForward(state[1])
+					print "resolved to FAST FORWARD", ret
+				elif state[2]:
+					ret = pauseable.setSlowMotion(state[2])
+					print "resolved to SLOW MOTION", ret
+				else:
+					ret = pauseable.unpause()
+					print "resolved to PLAY", ret
 
 		if ret == 0:
 			self.seekstate = state
@@ -1127,7 +1129,8 @@ class InfoBarPVRState:
 		self.pvrStateDialog["state"].setText(playstateString)
 
 		# if we return into "PLAY" state, ensure that the dialog gets hidden if there will be no infobar displayed
-		if not config.usage.show_infobar_on_skip.value and self.seekstate == self.SEEK_STATE_PLAY and not self.force_show:
+		# also hide if service stopped and returning into MovieList
+		if not config.usage.show_infobar_on_skip.value and self.seekstate in (self.SEEK_STATE_PLAY, self.SEEK_STATE_STOP) and not self.force_show:
 			self.pvrStateDialog.hide()
 		else:
 			self._mayShow()
@@ -1931,7 +1934,7 @@ class InfoBarServiceNotifications:
 		print "service end!"
 
 		try:
-			self.setSeekState(self.SEEK_STATE_PLAY)
+			self.setSeekState(self.SEEK_STATE_STOP)
 		except:
 			pass
 

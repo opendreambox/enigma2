@@ -1064,6 +1064,18 @@ def InitSecParams():
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_DISEQC_PERIPHERIAL_POWERON_CMD, configElement.value))
 	config.sec.delay_after_diseqc_peripherial_poweron_cmd = x
 
+	x = ConfigInteger(default=10, limits = (0, 9999))
+	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD, configElement.value))
+	config.sec.delay_after_voltage_change_before_unicable_cmd = x
+
+	x = ConfigInteger(default=3, limits = (0, 9999))
+	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_UNICABLE_CMD, configElement.value))
+	config.sec.delay_after_unicable_cmd = x
+
+	x = ConfigInteger(default=10, limits = (0, 9999))
+	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_UNICABLE_FINAL_VOLTAGE_CHANGE, configElement.value))
+	config.sec.delay_after_unicable_final_voltage_change = x
+
 # TODO add support for satpos depending nims to advanced nim configuration
 # so a second/third/fourth cable from a motorized lnb can used behind a
 # diseqc 1.0 / diseqc 1.1 / toneburst switch

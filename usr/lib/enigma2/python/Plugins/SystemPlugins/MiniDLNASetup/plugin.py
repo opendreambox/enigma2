@@ -194,17 +194,15 @@ class MiniDLNAConfig:
 				locations = []
 				if config.plugins.minidlna.share_videodirs.value:
 					locations = config.movielist.videodirs.value or []
-
 				for cfgtxt in item:
-					val = cfgtxt.value
-					if val in locations:
-						locations.remove(val)
-					lines.append("%s=%s\n" %(key, cfgtxt.value))
+					locations.append(cfgtxt.value)
 
-				#add all remaining configured locations (if the user enabled share_videodirs)
+				locations = self._unifyLocations( locations )
+				config.plugins.minidlna.media_dirs = ConfigSubList()
 				for loc in locations:
-					config.plugins.minidlna.media_dirs.append(ConfigText(default=loc, fixed_size = False))
 					lines.append("%s=%s\n" %(key, loc))
+					config.plugins.minidlna.media_dirs.append(ConfigText(default=loc, fixed_size = False))
+				self._config[key] = config.plugins.minidlna.media_dirs
 			else:
 				value = item.value
 				if key in self.bool_options:
@@ -220,6 +218,21 @@ class MiniDLNAConfig:
 		except IOError, e:
 			print e
 			return False
+
+	def _unifyLocations(self, locations):
+		lst = []
+		for loc in locations:
+			lst.append( harddiskmanager.getRealPath(loc) )
+		lst.sort()
+		lst.reverse()
+		last = lst[-1]
+		for i in range(len(lst)-2, -1, -1):
+			item = lst[i]
+			if last == item or item.startswith(last):
+				del lst[i]
+			else:
+				last = item
+		return lst
 
 config.plugins.minidlna = ConfigSubsection()
 config.plugins.minidlna.enabled = ConfigEnableDisable(default=False)

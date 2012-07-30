@@ -2016,6 +2016,9 @@ class eDVBSatelliteEquipmentControl(object):
     DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS
     DELAY_AFTER_DISEQC_RESET_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_DISEQC_RESET_CMD
     DELAY_AFTER_DISEQC_PERIPHERIAL_POWERON_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_DISEQC_PERIPHERIAL_POWERON_CMD
+    DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD
+    DELAY_AFTER_UNICABLE_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_UNICABLE_CMD
+    DELAY_AFTER_UNICABLE_FINAL_VOLTAGE_CHANGE = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_UNICABLE_FINAL_VOLTAGE_CHANGE
     MAX_PARAMS = _enigma.eDVBSatelliteEquipmentControl_MAX_PARAMS
     getInstance = staticmethod(_enigma.eDVBSatelliteEquipmentControl_getInstance)
     setParam = staticmethod(_enigma.eDVBSatelliteEquipmentControl_setParam)
