@@ -1,5 +1,5 @@
 from Tools.Directories import fileExists
-from Components.config import ConfigSubsection, ConfigInteger, ConfigText, ConfigSelection, ConfigSequence, ConfigSubList
+from Components.config import config, ConfigSubsection, ConfigInteger, ConfigText, ConfigSelection, ConfigSequence, ConfigSubList
 import Title
 import xml.dom.minidom
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_FONTS
@@ -235,6 +235,10 @@ class MenuTemplate(Project):
 		self.filekeys = ["menubg", "menuaudio", "fontface_headline", "fontface_title", "fontface_subtitle"]
 		choicelist = iso639language.getChoices()
 		self.settings.menulang = ConfigSelection(choicelist, default=choicelist[1][0])
+		tvsys = config.av.tvsystem
+		if tvsys not in ("pal", "ntsc"):
+			tvsys = "pal"
+		self.settings.video_format = ConfigSelection(choices = {"pal": _("PAL"), "ntsc": _("NTSC")}, default=tvsys)
 		self.error = ""
 
 	def loadTemplate(self, filename):

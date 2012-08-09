@@ -1,0 +1,18 @@
+<default>
+	<prerequisites>
+		<tag type="Network" />
+		<tag type="Multimedia" />
+	</prerequisites>
+	<info>
+		<author>Dream Multimedia</author>
+		<name>HbbTV</name>
+		<packagename>enigma2-plugin-extensions-hbbtv</packagename>
+		<packagetype>public</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->
+		<shortdescription>HbbTV for your Dreambox</shortdescription>
+		<description>HbbTV for your Dreambox. This plugin is still a work in progress!</description>
+	</info>
+
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-extensions-hbbtv" />
+	</files>
+</default>

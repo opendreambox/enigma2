@@ -754,7 +754,7 @@ class InfoBarSeek:
 				iPlayableService.evStart: self.__serviceStarted,
 
 				iPlayableService.evEOF: self.__evEOF,
-				iPlayableService.evSOF: self.__evSOF,
+				iPlayableService.evSOF: self.__evSOF
 			})
 		self.fast_winding_hint_message_showed = False
 
@@ -874,17 +874,17 @@ class InfoBarSeek:
 
 	def __serviceStarted(self):
 		self.fast_winding_hint_message_showed = False
-		self.setSeekState(self.SEEK_STATE_PLAY)
+		self.setSeekState(self.SEEK_STATE_PLAY, True)
 		self.__seekableStatusChanged()
 
-	def setSeekState(self, state):
+	def setSeekState(self, state, onlyGUI = False):
 		service = self.session.nav.getCurrentService()
 		ret = 0
 
 		if service is None:
 			return False
 
-		if state != self.SEEK_STATE_STOP:
+		if not onlyGUI and state != self.SEEK_STATE_STOP:
 			if not self.isSeekable():
 				if state not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):
 					state = self.SEEK_STATE_PLAY
@@ -1932,9 +1932,8 @@ class InfoBarServiceNotifications:
 
 	def serviceHasEnded(self):
 		print "service end!"
-
 		try:
-			self.setSeekState(self.SEEK_STATE_STOP)
+			self.setSeekState(self.SEEK_STATE_STOP, True)
 		except:
 			pass
 

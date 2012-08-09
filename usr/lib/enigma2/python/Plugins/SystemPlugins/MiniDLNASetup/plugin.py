@@ -220,19 +220,22 @@ class MiniDLNAConfig:
 			return False
 
 	def _unifyLocations(self, locations):
-		lst = []
-		for loc in locations:
-			lst.append( harddiskmanager.getRealPath(loc) )
-		lst.sort()
-		lst.reverse()
-		last = lst[-1]
-		for i in range(len(lst)-2, -1, -1):
-			item = lst[i]
-			if last == item or item.startswith(last):
-				del lst[i]
-			else:
-				last = item
-		return lst
+		if len(locations) > 1:
+			lst = []
+			for loc in locations:
+				lst.append( harddiskmanager.getRealPath(loc) )
+			lst.sort()
+			lst.reverse()
+			last = lst[-1]
+			for i in range(len(lst)-2, -1, -1):
+				item = lst[i]
+				if last == item or item.startswith(last):
+					del lst[i]
+				else:
+					last = item
+			return lst
+		else:
+			return locations
 
 config.plugins.minidlna = ConfigSubsection()
 config.plugins.minidlna.enabled = ConfigEnableDisable(default=False)

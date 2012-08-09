@@ -691,7 +691,7 @@ def CreateAuthoringXML_singleset(job):
 	mode = job.project.settings.authormode.getValue()
 	authorxml = []
 	authorxml.append('<?xml version="1.0" encoding="utf-8"?>\n')
-	authorxml.append(' <dvdauthor dest="' + (job.workspace+"/dvd") + '">\n')
+	authorxml.append(' <dvdauthor dest="' + (job.workspace+"/dvd") + '" format="' + job.project.menutemplate.settings.video_format.getValue() + '">\n')
 	authorxml.append('  <vmgm>\n')
 	authorxml.append('   <menus lang="' + iso639language.get_dvd_id(job.project.menutemplate.settings.menulang.getValue()) + '">\n')
 	authorxml.append('    <pgc>\n')
@@ -759,7 +759,7 @@ def CreateAuthoringXML_multiset(job):
 	mode = job.project.settings.authormode.getValue()
 	authorxml = []
 	authorxml.append('<?xml version="1.0" encoding="utf-8"?>\n')
-	authorxml.append(' <dvdauthor dest="' + (job.workspace+"/dvd") + '" jumppad="yes">\n')
+	authorxml.append(' <dvdauthor dest="' + (job.workspace+"/dvd") + '" jumppad="yes" format="' + job.project.menutemplate.settings.video_format.getValue() + '">\n')
 	authorxml.append('  <vmgm>\n')
 	authorxml.append('   <menus lang="' + iso639language.get_dvd_id(job.project.menutemplate.settings.menulang.getValue()) + '">\n')
 	authorxml.append('    <video aspect="4:3"/>\n')

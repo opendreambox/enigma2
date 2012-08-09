@@ -31,6 +31,12 @@
 			<tag type="Recording" />
 		</prerequisites>
 	</package>
+	<package details="plugin_hbbtv.xml" name="HbbTV" packagename="enigma2-plugin-extensions-hbbtv" packagetype="public" shortdescription="HbbTV for your Dreambox">
+		<prerequisites>
+			<tag type="Network" />
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
 	<package details="plugin_mediaplayer.xml" name="MediaPlayer" packagename="enigma2-plugin-extensions-mediaplayer" shortdescription="Plays your favorite music and videos">
 		<prerequisites>
 			<tag type="Multimedia" />

@@ -477,7 +477,7 @@ class BrowserMenu(Screen):
 	#Bookmark List Methods
 	def __bmOk(self):
 		print "[BrowserMenu].__bmOk"
-		if self.detailList.getSelectedIndex() > 0:
+		if self.detailList.getSelectedIndex() > 0 and  self.detailList.getCurrent() != None:
 			current = self.detailList.getCurrent()[0]
 			print "[BrowserMenu].__bmOk, current = '%s'" %current
 			self.__actions.append( (self.ACTION_BOOKMARK, current.url) )
@@ -489,7 +489,7 @@ class BrowserMenu(Screen):
 		self.session.openWithCallback(self.__bmEditCB, BookmarkEditor, bookmark)
 
 	def __bmEdit(self):
-		if self.detailList.getSelectedIndex() > 0:
+		if self.detailList.getSelectedIndex() > 0 and  self.detailList.getCurrent() != None:
 			cur = self.detailList.getCurrent()[0]
 			self.session.openWithCallback(self.__bmEditCB, BookmarkEditor, cur)
 
@@ -500,10 +500,11 @@ class BrowserMenu(Screen):
 			self.__setStatus(_("Bookmark '%s' saved succesfully!" %bookmark.name))
 
 	def __bmDelete(self):
-		name = self.detailList.getCurrent()[0].name
-		print "[BrowserMenu].__bmDelete, name='%s'" %name
-		dlg = self.session.openWithCallback( self.__bmDeleteCB, MessageBox, _("Do you really want to delete the bookmark '%s'?") %name, type = MessageBox.TYPE_YESNO )
-		dlg.setTitle(_("Delete Bookmark?"))
+		if self.detailList.getCurrent() != None:
+			name = self.detailList.getCurrent()[0].name
+			print "[BrowserMenu].__bmDelete, name='%s'" %name
+			dlg = self.session.openWithCallback( self.__bmDeleteCB, MessageBox, _("Do you really want to delete the bookmark '%s'?") %name, type = MessageBox.TYPE_YESNO )
+			dlg.setTitle(_("Delete Bookmark?"))
 
 	def __bmDeleteCB(self, confirmed):
 		if confirmed:
@@ -569,8 +570,9 @@ class BrowserMenu(Screen):
 
 	#History list methods
 	def __hisSetCurrentAsHome(self):
-		cur = self.detailList.getCurrent()[0]
-		self.__setUrlAsHome(cur.url)
+		if self.detailList.getCurrent() != None:
+			cur = self.detailList.getCurrent()[0]
+			self.__setUrlAsHome(cur.url)
 
 	def __setUrlAsHome(self, url):
 		config.plugins.WebBrowser.home.value = url
@@ -615,9 +617,10 @@ class BrowserMenu(Screen):
 		self.detailList.setList(history)
 
 	def __hisOk(self):
-		current = self.detailList.getCurrent()[0]
-		self.__actions.append( (self.ACTION_BOOKMARK, current.url) )
-		self.close( self.__actions )
+		if self.detailList.getCurrent() != None:
+			current = self.detailList.getCurrent()[0]
+			self.__actions.append( (self.ACTION_BOOKMARK, current.url) )
+			self.close( self.__actions )
 
 	def __hisFilterCB(self):
 		needle = self.detailInput.getText()
@@ -712,7 +715,7 @@ class BrowserMenu(Screen):
 		self.detailList.setList(certs)
 
 	def __crtDelete(self):
-		if self.detailList.getSelectedIndex() >= 0:
+		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
 			cert = self.detailList.getCurrent()[0]
 			print "[BrowserMenu].__crtDelete, host=%s,SHA1 fingerprint=%s" %(cert.host,cert.cert.digest("sha1"))
 			text = _("Do you really want to remove the following certificate from the list of trusted certificates?\n\nHostname: %s\nSHA1-Fingerprint: %s") %(cert.host, cert.cert.digest("sha1"))
@@ -728,7 +731,7 @@ class BrowserMenu(Screen):
 
 	def __crtDetails(self):
 		print "[BrowserMenu].__crtDetails"
-		if self.detailList.getSelectedIndex() >= 0:
+		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
 			cert = self.detailList.getCurrent()[0]
 
 			text = _("Issued for:")
@@ -775,7 +778,7 @@ class BrowserMenu(Screen):
 		return res
 
 	def __ckDelete(self):
-		if self.detailList.getSelectedIndex() >= 0:
+		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
 			cookie = self.detailList.getCurrent()[0]
 			text = _("Do you really want to delete the following cookie?\nDomain: %s\nPath: %s\nKey: %s\nRaw-Content:\n%s") %(cookie.domain, cookie.path, cookie.key, cookie.raw)
 			dlg = self.session.openWithCallback( self.__ckDeleteCB, MessageBox, text, type = MessageBox.TYPE_YESNO )
@@ -791,7 +794,7 @@ class BrowserMenu(Screen):
 				self.__actions.append(action)
 
 	def __ckDeleteAll(self):
-		if self.detailList.getSelectedIndex() >= 0:
+		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
 			cookie = self.detailList.getCurrent()[0]
 			text = _("Do you really want to delete ALL cookies?")
 			dlg = self.session.openWithCallback( self.__ckDeleteAllCB, MessageBox, text, type = MessageBox.TYPE_YESNO )

@@ -83,7 +83,7 @@ class VideoSetup(Screen, ConfigListScreen):
 
 #		if port == "DVI":
 #			self.list.append(getConfigListEntry(_("Allow Unsupported Modes"), config.av.edid_override))
-		if port == "Scart":
+		if port and port.value and port.value == "Scart":
 			self.list.append(getConfigListEntry(_("Color Format"), config.av.colorformat))
 			if level >= 1:
 				self.list.append(getConfigListEntry(_("WSS on 4:3"), config.av.wss))

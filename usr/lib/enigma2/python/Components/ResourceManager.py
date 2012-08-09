@@ -3,9 +3,9 @@ class ResourceManager:
 		self.resourceList = {}
 		
 	def addResource(self, name, resource):
-		print "adding Resource", name
+		print "[ResourceManager] adding:", name
 		self.resourceList[name] = resource
-		print "resources:", self.resourceList
+		#print "resources:", self.resourceList
 		
 		
 	def getResource(self, name):

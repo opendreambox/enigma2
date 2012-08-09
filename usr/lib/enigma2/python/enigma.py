@@ -2838,6 +2838,7 @@ eHbbtv.setStreamState = new_instancemethod(_enigma.eHbbtv_setStreamState,None,eH
 eHbbtv.getApplication = new_instancemethod(_enigma.eHbbtv_getApplication,None,eHbbtv)
 eHbbtv.resolveApplicationLocator = new_instancemethod(_enigma.eHbbtv_resolveApplicationLocator,None,eHbbtv)
 eHbbtv.getApplicationIdsAndName = new_instancemethod(_enigma.eHbbtv_getApplicationIdsAndName,None,eHbbtv)
+eHbbtv.pageLoadFinished = new_instancemethod(_enigma.eHbbtv_pageLoadFinished,None,eHbbtv)
 eHbbtv_swigregister = _enigma.eHbbtv_swigregister
 eHbbtv_swigregister(eHbbtv)
 

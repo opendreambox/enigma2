@@ -243,6 +243,9 @@ class Browser(Screen, HelpableScreen):
 		self.__keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
+		self.onPageLoadFinished = []
+		self.onActionTv = []
+		self.onUrlChanged = []
 
 		self["helpableactions"] = HelpableActionMap(self, "BrowserActions",
 		{
@@ -272,6 +275,7 @@ class Browser(Screen, HelpableScreen):
 			"pause" : self.actionPause,
 			"playpause" : self.__actionPlayPause,
 			"stop" : self.actionStop,
+			"tv" : self.__actionTv,
 		}, -2)
 
 		self["coloractions"] = ActionMap(["ColorActions"],
@@ -721,6 +725,11 @@ class Browser(Screen, HelpableScreen):
 			else:
 				self.__actionNavigate(eWebView.navDown)
 
+	def __actionTv(self):
+		for fnc in self.onActionTv:
+			if fnc(): #True if the function handled the event, abort
+				return
+
 	def __scroll(self, dx, dy):
 		self.webnavigation.scroll(dx, dy)
 
@@ -773,6 +782,9 @@ class Browser(Screen, HelpableScreen):
 			if self.__fullscreen and not self.__isHbbtv:
 				self.__showHideBars()
 
+			for fnc in self.onUrlChanged:
+				fnc(url)
+
 	def __onTitleChanged(self, title):
 		if title != None:
 			self.pageTitle = title
@@ -797,6 +809,8 @@ class Browser(Screen, HelpableScreen):
 		else:
 			if not self.__hasSslErrors and not self.__handledUnsupportedContent:
 				self.__handledUnsupportedContent = False
+		for fnc in self.onPageLoadFinished:
+			fnc()
 
 	def __searchUsingCurrentUrlValue(self):
 		needle = self.urlInput.getText()

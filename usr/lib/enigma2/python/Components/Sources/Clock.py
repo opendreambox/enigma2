@@ -9,7 +9,6 @@ class Clock(Source):
 		Source.__init__(self)
 		self.clock_timer = eTimer()
 		self.clock_timer.callback.append(self.poll)
-		self.clock_timer.start(1000)
 
 	@cached
 	def getClock(self):

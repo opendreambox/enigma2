@@ -1385,9 +1385,9 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 		for nim in nimmanager.nim_slots:
 			# collect networks provided by this tuner
 
+			networks_to_scan = [ ]
 			need_scan = False
 			networks = self.getNetworksForNim(nim)
-			
 			print "nim %d provides" % nim.slot, networks
 			print "known:", known_networks
 
@@ -1397,13 +1397,14 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 				if x not in known_networks:
 					need_scan = True
 					print x, "not in ", known_networks
-					known_networks.append(x)
-					
+					networks_to_scan.append(x)
+
 			# don't offer to scan nims if nothing is connected
 			if not nimmanager.somethingConnected(nim.slot):
-				need_scan = False				
+				need_scan = False
 
 			if need_scan:
+				known_networks += networks_to_scan
 				nims_to_scan.append(nim)
 
 		# we save the config elements to use them on keyGo
