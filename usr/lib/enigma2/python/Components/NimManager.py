@@ -1020,7 +1020,7 @@ def InitSecParams():
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS, configElement.value))
 	config.sec.delay_after_change_voltage_before_switch_command = x
 
-	x = ConfigInteger(default=200, limits = (0, 9999))
+	x = ConfigInteger(default=400, limits = (0, 9999))
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_SWITCH_CMDS, configElement.value))
 	config.sec.delay_after_enable_voltage_before_switch_command = x
 
@@ -1068,7 +1068,7 @@ def InitSecParams():
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD, configElement.value))
 	config.sec.delay_after_voltage_change_before_unicable_cmd = x
 
-	x = ConfigInteger(default=3, limits = (0, 9999))
+	x = ConfigInteger(default=5, limits = (0, 9999))
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_UNICABLE_CMD, configElement.value))
 	config.sec.delay_after_unicable_cmd = x
 

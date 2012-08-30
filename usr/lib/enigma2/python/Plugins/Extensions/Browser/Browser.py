@@ -107,57 +107,64 @@ class Browser(Screen, HelpableScreen):
 		Browser.skinFullscreen = """
 			<screen name="BrowserFullscreen" flags="wfNoBorder" position="center,center" size="%(w)d,%(h)d" title="Web Browser" backgroundColor="#FF000000">
 				<widget name="cursor" position="0,0" size="19,30" zPosition="1" alphatest="on"/>
-				<widget name="url" position="0,0" zPosition="2" size="%(w)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="background"/>
-				<widget name="loading" position="%(loadingX)d,0" zPosition="3" size="150,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="background"/>
-				<widget name="urlList" position="0,30" zPosition="2" size="%(w)d,150" backgroundColor="background" transparent="0" />
+				<widget name="url" position="75,75" zPosition="2" size="%(urlW)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="background"/>
+				<widget name="loading" position="%(loadingX)d,%(loadingY)d" zPosition="2" size="200,50" font="Regular;20" halign="center" valign="center" backgroundColor="background"/>
+				<widget name="urlList" position="75,100" zPosition="2" size="%(urlW)d,150" backgroundColor="background" transparent="0" />
 				<widget name="text" position="%(textX)d,100" size="350,40" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="background" transparent="0" />
 				<widget source="webnavigation" render="WebView" position="0,0" zPosition="0" size="%(w)d,%(h)d" transparent="1"/>
 				<widget source="canvas" render="Canvas" position="0,0" zPosition="1" size="%(w)d,%(h)d" backgroundColor="#FF000000" transparent="1" alphatest="on"/>
 
-				<widget name="buttonBar" position="0,%(btnBarY)d" size="%(w)d,35" zPosition="0" backgroundColor="background" transparent="0" />
-				<widget source="button_red_off" render="Pixmap" pixmap="skin_default/buttons/button_red_off.png" position="5,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
+				<widget name="buttonBar" position="%(btnBarX)d,%(btnBarY)d" size="200,110" zPosition="0" backgroundColor="background" transparent="0" />
+				<widget source="button_red_off" render="Pixmap" pixmap="skin_default/buttons/button_red_off.png" position="%(btnX)d,%(btnRedY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="5,%(btnY)d" size="15,16" alphatest="on">
+				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="%(btnX)d,%(btnRedY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				<widget name="red" position="%(btnTxtX)d,%(btnRedY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget source="button_green_off" render="Pixmap" pixmap="skin_default/buttons/button_green_off.png" position="195,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
+				<widget source="button_green_off" render="Pixmap" pixmap="skin_default/buttons/button_green_off.png" position="%(btnX)d,%(btnGreenY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="195,%(btnY)d" size="15,16" alphatest="on">
+				<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="%(btnX)d,%(btnGreenY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				<widget name="green" position="%(btnTxtX)d,%(btnGreenY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget source="button_yellow_off" render="Pixmap" pixmap="skin_default/buttons/button_yellow_off.png" position="385,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
+				<widget source="button_yellow_off" render="Pixmap" pixmap="skin_default/buttons/button_yellow_off.png" position="%(btnX)d,%(btnYellowY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="385,%(btnY)d" size="15,16" alphatest="on">
+				<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="%(btnX)d,%(btnYellowY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				<widget name="yellow" position="%(btnTxtX)d,%(btnYellowY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget source="button_blue_off" render="Pixmap" pixmap="skin_default/buttons/button_blue_off.png" position="585,%(btnY)d" size="15,16" zPosition="1" alphatest="on">
+				<widget source="button_blue_off" render="Pixmap" pixmap="skin_default/buttons/button_blue_off.png" position="%(btnX)d,%(btnBlueY)d" size="15,16" zPosition="1" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="585,%(btnY)d" size="15,16" alphatest="on">
+				<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="%(btnX)d,%(btnBlueY)d" size="15,16" alphatest="on">
 					<convert type="ConditionalShowHide" />
 				</widget>
-				<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				<widget name="blue" position="%(btnTxtX)d,%(btnBlueY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget name="statuslabel" position="%(notifX)d,%(btnTxtY)d" size="350,20" zPosition="1" font="Regular;18" halign="right" valign="center" backgroundColor="background" transparent="0" />
+				<widget name="statuslabel" position="%(notifX)d,%(loadingY)d" size="350,50" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="background" transparent="0" />
 			</screen>
 			""" %{	"w" : fwidth,
 					"h" : fheight,
-					"loadingX" : fwidth-150,
+					"urlW": fwidth - 150,
+					"loadingY" : fheight - 125,
+					"loadingX" : ( fwidth / 2 ) - 75,
 					"textX" : (fwidth - 375) / 2,
 					"mainH" : fheight-55,
-					"btnY" : fheight-27,
-					"btnTxtY" : fheight-29,
-					"btnBarY" : fheight - 35,
-					"notifX" : fwidth-350
+					"btnBarX": fwidth - 75 - 200,
+					"btnBarY": fheight - 75 - 108,
+					"btnX" : fwidth - 75 - 190,
+					"btnTxtX" : fwidth - 75 - 165,
+					"btnRedY" : fheight - 75 - 100,
+					"btnGreenY" : fheight - 75 - 75,
+					"btnYellowY" : fheight - 75 - 50,
+					"btnBlueY" : fheight - 75 - 25,
+					"notifX" : ( fwidth / 2 ) - 175,
 				}
 
 		self.__isHbbtv = isHbbtv
@@ -243,6 +250,7 @@ class Browser(Screen, HelpableScreen):
 		self.__keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
+		self.onExecEnd = []
 		self.onPageLoadFinished = []
 		self.onActionTv = []
 		self.onUrlChanged = []
@@ -299,6 +307,11 @@ class Browser(Screen, HelpableScreen):
 			"9": self.keyNumberGlobal,
 			"0": self.keyNumberGlobal
 		})
+
+	def execEnd(self):
+		Screen.execEnd(self)
+		for fnc in self.onExecEnd:
+			fnc()
 
 	def setBackgroundTransparent(self, enabled):
 		self.webnavigation.setBackgroundTransparent(enabled)

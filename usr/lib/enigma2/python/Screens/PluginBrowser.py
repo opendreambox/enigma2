@@ -45,8 +45,8 @@ class PluginBrowser(Screen):
 			"red": self.openExtensionmanager
 		})
 		self["SoftwareActions"].setEnabled(True)
+		self.updateList()
 		self.onFirstExecBegin.append(self.checkWarnings)
-		self.onShown.append(self.updateList)
 	
 	def checkWarnings(self):
 		if len(plugins.warnings):

@@ -65,7 +65,6 @@ class SoftwareTools(DreamInfoHandler):
 	available_packetlist  = []
 	installed_packetlist = {}
 
-	
 	def __init__(self):
 		aboutInfo = about.getImageVersionString()
 		if aboutInfo.startswith("dev-"):
@@ -86,13 +85,13 @@ class SoftwareTools(DreamInfoHandler):
 		self.ipkg.addCallback(self.ipkgCallback)		
 
 	def statusCallback(self, status, progress):
-		pass		
+		pass
 
 	def startSoftwareTools(self, callback = None):
 		if callback is not None:
 			self.NotifierCallback = callback
 		iNetwork.checkNetworkState(self.checkNetworkCB)
-		
+
 	def checkNetworkCB(self,data):
 		if data is not None:
 			if data <= 2:
@@ -330,21 +329,6 @@ class SoftwareTools(DreamInfoHandler):
 					self.NotifierCallback(True)
 					self.NotifierCallback = None
 
-	def startIpkgUpdate(self, callback = None):
-		if not self.Console:
-			self.Console = Console()
-		cmd = "opkg update"
-		self.Console.ePopen(cmd, self.IpkgUpdateCB, callback)
-
-	def IpkgUpdateCB(self, result, retval, extra_args = None):
-		(callback) = extra_args
-		if result:
-			if self.Console:
-				if len(self.Console.appContainers) == 0:
-					if callback is not None:
-						callback(True)
-						callback = None
-
 	def cleanupSoftwareTools(self):
 		self.list_updating = False
 		if self.NotifierCallback is not None:
@@ -358,6 +342,7 @@ class SoftwareTools(DreamInfoHandler):
 			if len(self.UpdateConsole.appContainers):
 				for name in self.UpdateConsole.appContainers.keys():
 					self.UpdateConsole.kill(name)
+		self.ipkg.cleanupPackageData()
 
 	def verifyPrerequisites(self, prerequisites):
 		if prerequisites.has_key("hardware"):
@@ -370,3 +355,4 @@ class SoftwareTools(DreamInfoHandler):
 		return True
 
 iSoftwareTools = SoftwareTools()
+iSoftwareTools.cleanupSoftwareTools()

@@ -59,7 +59,6 @@ to generate HTML."""
 	def setIndex(self, index):
 		if self.master is not None:
 			self.master.index = index
-			self.selectionChanged(index)
 
 	@cached
 	def getIndex(self):
@@ -78,7 +77,6 @@ to generate HTML."""
 				self.index = 0
 		else:
 			self.index += 1
-		self.setIndex(self.index)
 
 	def selectPrevious(self):
 		if self.getIndex() - 1 < 0:
@@ -86,7 +84,6 @@ to generate HTML."""
 				self.index = self.count() - 1
 		else:
 			self.index -= 1
-		self.setIndex(self.index)
 
 	def moveSelection(self, direction):
 		if self.master is not None:

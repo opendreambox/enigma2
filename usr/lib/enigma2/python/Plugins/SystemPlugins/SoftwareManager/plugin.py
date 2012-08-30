@@ -33,6 +33,7 @@ from os import path as os_path, stat, mkdir, makedirs, listdir, access, remove, 
 from time import time
 from stat import ST_MTIME
 from twisted.web import client
+from re import compile as re_compile
 
 from ImageWizard import ImageWizard
 from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
@@ -189,6 +190,7 @@ class UpdatePluginMenu(Screen):
 	def setWindowTitle(self):
 		self.setTitle(_("Software management"))
 
+	# never called yet!?!
 	def cleanup(self):
 		iNetwork.stopPingConsole()
 		iSoftwareTools.cleanupSoftwareTools()
@@ -488,7 +490,18 @@ class SoftwareManagerInfo(Screen):
 			for entry in backupfiles:
 				self.list.append((entry,))
 			self['list'].setList(self.list)
-			
+
+sqsh_re = None
+
+def pendingSqshImgInstall():
+	global sqsh_re
+	if sqsh_re is None:
+		sqsh_re = re_compile('^\.u*mount_.+_needed$')
+	for f in listdir('/var/tmp'):
+		print "check ", f
+		if sqsh_re.match(f):
+			return True
+	return False
 
 class PluginManager(Screen, DreamInfoHandler):
 
@@ -566,9 +579,10 @@ class PluginManager(Screen, DreamInfoHandler):
 		self.currentSelectedPackage = None
 		self.saved_currentSelectedPackage = None
 		self.restartRequired = False
-		
+
 		self.onShown.append(self.setWindowTitle)
 		self.onLayoutFinish.append(self.getUpdateInfos)
+		self.onClose.append(iSoftwareTools.cleanupSoftwareTools)
 
 	def setWindowTitle(self):
 		self.setTitle(_("Extensions management"))
@@ -583,7 +597,6 @@ class PluginManager(Screen, DreamInfoHandler):
 			self["list"].updateList(self.categoryList)
 			self.selectionChanged()
 		else:
-			iSoftwareTools.cleanupSoftwareTools()
 			self.prepareInstall()
 			if len(self.cmdList):
 				self.session.openWithCallback(self.runExecute, PluginManagerInfo, self.skin_path, self.cmdList)
@@ -926,7 +939,8 @@ class PluginManager(Screen, DreamInfoHandler):
 
 	def runExecuteFinished(self):
 		self.reloadPluginlist()
-		if plugins.restartRequired or self.restartRequired:
+
+		if plugins.restartRequired or self.restartRequired or pendingSqshImgInstall():
 			self.session.openWithCallback(self.ExecuteReboot, MessageBox, _("Install or remove finished.") +" "+_("Do you want to reboot your Dreambox?"), MessageBox.TYPE_YESNO)
 		else:
 			self.selectedFiles = []
@@ -1298,10 +1312,11 @@ class PluginDetails(Screen, DreamInfoHandler):
 
 	def runUpgradeFinished(self):
 		self.reloadPluginlist()
-		if plugins.restartRequired or self.restartRequired:
+		if plugins.restartRequired or self.restartRequired or pendingSqshImgInstall():
 			self.session.openWithCallback(self.UpgradeReboot, MessageBox, _("Installation finished.") +" "+_("Do you want to reboot your Dreambox?"), MessageBox.TYPE_YESNO)
 		else:
 			self.close(True)
+
 	def UpgradeReboot(self, result):
 		if result:
 			quitMainloop(3)
@@ -1311,6 +1326,12 @@ class PluginDetails(Screen, DreamInfoHandler):
 	def runRemove(self, result):
 		if result:
 			self.session.openWithCallback(self.runRemoveFinished, Ipkg, cmdList = self.cmdList)
+
+	def runRemoveFinished(self):
+		if pendingSqshImgInstall():
+			self.session.openWithCallback(self.UpgradeReboot, MessageBox, _("Remove finished.") +" "+_("Do you want to reboot your Dreambox?"), MessageBox.TYPE_YESNO)
+		else:
+			self.close(True)
 
 	def runRemoveFinished(self):
 		self.close(True)
@@ -1369,7 +1390,7 @@ class UpdatePlugin(Screen):
 		
 		iNetwork.checkNetworkState(self.checkNetworkCB)
 		self.onClose.append(self.cleanup)
-		
+
 	def cleanup(self):
 		iNetwork.stopPingConsole()
 
@@ -1454,19 +1475,24 @@ class UpdatePlugin(Screen):
 	def exit(self):
 		if not self.ipkg.isRunning():
 			if self.packages != 0 and self.error == 0:
-				self.session.openWithCallback(self.exitAnswer, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your Dreambox?"))
+				self.session.openWithCallback(self.exitReboot, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your Dreambox?"))
+			elif pendingSqshImgInstall():
+				self.session.openWithCallback(self.exitRestart, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your Dreambox?"))
 			else:
 				self.close()
 		else:
 			if not self.updating:
 				self.close()
 
-	def exitAnswer(self, result):
-		if result is not None and result:
+	def exitReboot(self, result):
+		if result:
 			quitMainloop(2)
 		self.close()
 
-
+	def exitRestart(self, result):
+		if result:
+			quitMainloop(3)
+		self.close()
 
 class IPKGMenu(Screen):
 	skin = """
@@ -1830,7 +1856,7 @@ class PacketManager(Screen, NumericalTextInput):
 
 	def runUpgradeFinished(self):
 		self.session.openWithCallback(self.UpgradeReboot, MessageBox, _("Upgrade finished.") +" "+_("Do you want to reboot your Dreambox?"), MessageBox.TYPE_YESNO)
-		
+
 	def UpgradeReboot(self, result):
 		if result is None:
 			return

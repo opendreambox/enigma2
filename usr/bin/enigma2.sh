@@ -9,9 +9,9 @@ if [ -x /usr/bin/showiframe -a -f /usr/share/backdrop.mvi ]; then
 fi
 
 # hook to execute scripts always before enigma2 start
-if [ -x /usr/bin/enigma2_pre_start.sh ]; then
-	/usr/bin/enigma2_pre_start.sh
-fi
+for i in `ls /usr/bin/enigma2_pre_start*.sh 2> /dev/null`; do
+	[ -x $i ] && $i || /bin/true
+done
 
 if [ -d /home/root ]; then
 	cd /home/root

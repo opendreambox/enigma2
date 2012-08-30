@@ -11,13 +11,13 @@ from Plugins.Extensions.Browser.MoviePlayer import MoviePlayer
 
 config.plugins.hbbtv = ConfigSubsection()
 config.plugins.hbbtv.enabled = ConfigEnableDisable(default=True)
-config.plugins.hbbtv.testsuite = ConfigSelection([("mainmenu", _("Menu")), ("extensions", _("Extensions")), ("plugins", _("Plugins Browser")), ("disabled", _("Disabled"))], default="disabled")
+config.plugins.hbbtv.testsuite = ConfigSelection([("mainmenu", _("Menu")), ("extensions", _("Extensions")), ("plugins", _("Plugin Browser")), ("disabled", _("Disabled"))], default="disabled")
 config.plugins.hbbtv.text = ConfigEnableDisable(default=True)
 
 class HbbTVVideoOverlay(Screen):
 	skin = """
-		<screen name="HbbTVVideoOverlay" flags="wfNoBorder" zPosition="9999" position="0,0" size="1280,720" title="HbbTVVideoOverlay" backgroundColor="transparent">
-			<widget name="video" position="0,0" zPosition="9999" size="0,0" backgroundColor="transparent"/>
+		<screen name="HbbTVVideoOverlay" flags="wfNoBorder" zPosition="1" position="0,0" size="1280,720" title="HbbTVVideoOverlay" backgroundColor="transparent">
+			<widget name="video" position="0,0" zPosition="0" size="0,0" backgroundColor="transparent"/>
 		</screen>
 	"""
 
@@ -109,6 +109,14 @@ class HbbTV(object):
 		self.eHbbtv.show.get().remove(self.showBrowser)
 		self.eHbbtv.hide.get().remove(self.hideBrowser)
 
+	def _showOverlayIfAvail(self):
+		if self.__overlay != None:
+			self.__overlay.show()
+
+	def _hideOverlayIfAvail(self):
+		if self.__overlay != None:
+			self.__overlay.hide()
+
 	def setVideoWindow(self, x, y, w, h):
 		print "[Hbbtv].setVideoWindow x=%s, y=%s, w=%s, h=%s" %(x, y, w, h)
 		if w < 1280 or h < 720:
@@ -138,13 +146,13 @@ class HbbTV(object):
 		self._unsetVideoWindow()
 
 	def showBrowser(self):
-		if self.__browser:
-			pass
+		self._showOverlayIfAvail()
+#		if self.__browser:
 			#self.__browser.show()
 
 	def hideBrowser(self):
-		if self.__browser:
-			pass
+		self._hideOverlayIfAvail()
+#		if self.__browser:
 			#self.__browser.hide()
 
 	def _unsetBrowser(self):
@@ -261,6 +269,8 @@ class HbbTV(object):
 			self.__browser.onPageLoadFinished.append(self.eHbbtv.pageLoadFinished)
 			self.__browser.onActionTv.append(self._toggleVideoFullscreen)
 			self.__browser.onUrlChanged.append(self._onUrlChanged)
+			self.__browser.onExecBegin.append(self._showOverlayIfAvail)
+			self.__browser.onExecEnd.append(self._hideOverlayIfAvail)
 
 	def startApplicationById(self, appid):
 		uri = self.eHbbtv.resolveApplicationLocator("dvb://current.ait/%s" %appid)

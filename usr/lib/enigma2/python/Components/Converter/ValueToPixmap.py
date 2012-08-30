@@ -19,7 +19,7 @@ class ValueToPixmap(Converter, object):
 
 	@cached
 	def getPixmap(self):
-		if self.source:
+		if self.source is not None:
 			val = self.source.text
 			if val in (None, ""):
 				return None

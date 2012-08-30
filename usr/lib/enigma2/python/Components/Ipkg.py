@@ -1,4 +1,6 @@
 from enigma import eConsoleAppContainer
+from glob import glob
+from os import unlink
 
 class IpkgComponent:
 	EVENT_INSTALL = 0
@@ -11,23 +13,37 @@ class IpkgComponent:
 	EVENT_DONE = 10
 	EVENT_ERROR = 11
 	EVENT_MODIFIED = 12
-	
+
 	CMD_INSTALL = 0
 	CMD_LIST = 1
 	CMD_REMOVE = 2
 	CMD_UPDATE = 3
 	CMD_UPGRADE = 4
-	
+
 	def __init__(self, ipkg = 'opkg'):
 		self.ipkg = ipkg
 		self.cmd = eConsoleAppContainer()
 		self.cache = None
 		self.callbackList = []
 		self.setCurrentCommand()
-		
+		self.update_done = False
+
+	def __del__(self):
+		if self.update_done:
+			self.cleanupPackageData()
+
+	def cleanupPackageData(self):
+		for f in glob("/var/tmp/remote-*"):
+			print "IpkgComponent unlink", f
+			unlink(f)
+		for f in glob("/var/lib/opkg/remote-*"):
+			print "IpkgComponent unlink", f
+			unlink(f)
+		self.update_done = False
+
 	def setCurrentCommand(self, command = None):
 		self.currentCommand = command
-		
+
 	def runCmd(self, cmd):
 		print "executing", self.ipkg, cmd
 		self.cmd.appClosed.append(self.cmdFinished)
@@ -38,6 +54,7 @@ class IpkgComponent:
 	def startCmd(self, cmd, args = None):
 		if cmd == self.CMD_UPDATE:
 			self.runCmd("update")
+			self.update_done = True
 		elif cmd == self.CMD_UPGRADE:
 			append = ""
 			if args["use_maintainer"]:
@@ -59,7 +76,7 @@ class IpkgComponent:
 				append = "--autoremove "
 			self.runCmd("remove " + append + args['package'])
 		self.setCurrentCommand(cmd)
-	
+
 	def cmdFinished(self, retval):
 		self.callCallbacks(self.EVENT_DONE)
 		self.cmd.appClosed.remove(self.cmdFinished)
@@ -118,13 +135,13 @@ class IpkgComponent:
 
 	def addCallback(self, callback):
 		self.callbackList.append(callback)
-		
+
 	def getFetchedList(self):
 		return self.fetchedList
-	
+
 	def stop(self):
 		self.cmd.kill()
-		
+
 	def isRunning(self):
 		return self.cmd.running()
 

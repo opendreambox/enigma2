@@ -66,7 +66,7 @@ class Element(object):
 		for s in self.sources:
 			s.disconnectDownstream(self)
 
-		if self.source:
+		if self.source is not None:
 			# sources are owned by the Screen, so don't destroy them here.
 			self.destroy()
 		self.source = None

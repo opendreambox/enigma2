@@ -37,14 +37,14 @@ class TemplatedMultiContent(StringList):
 		# if only template changed, don't reload list
 		if what[0] == self.CHANGED_SPECIFIC and what[1] in ("style", "buildfunc", "selection_enabled"):
 			pass
-		elif self.source:
+		elif self.source is not None:
 			self.content.setList(self.source.list)
 
 		self.setTemplate()
 		self.downstream_elements.changed(what)
 
 	def setTemplate(self):
-		if self.source:
+		if self.source is not None:
 			buildfunc = self.source.buildfunc
 			if buildfunc != self.active_buildfunc:
 				self.active_buildfunc = buildfunc

@@ -618,3 +618,18 @@ def readSkin(screen, skin, names, desktop):
 		# applyAttributes(guiObject, widget, desktop)
 		# guiObject.thisown = 0
 		screen.additionalWidgets.append(w)
+
+class TemplatedColors():
+	def __init__(self, style_id = 0):
+		from enigma import eWindowStyleManager, eWindowStyleSkinned, gRGB
+		x = eWindowStyleManager.getInstance()
+		style = x.getStyle(style_id)
+		self.colors = {}
+		for color_name in ("Background", "LabelForeground", "ListboxForeground", "ListboxSelectedForeground", "ListboxBackground", "ListboxSelectedBackground", "ListboxMarkedForeground", "ListboxMarkedAndSelectedForeground", "ListboxMarkedBackground", "ListboxMarkedAndSelectedBackground", "WindowTitleForeground", "WindowTitleBackground"):
+			color = gRGB(0)
+			style.getColor(eWindowStyleSkinned.__dict__["col"+color_name], color)
+			self.colors[color_name] = color.argb()
+	
+	def __getitem__(self, color_name):
+		return color_name in self.colors and self.colors[color_name] or 0x000000
+

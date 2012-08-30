@@ -1599,6 +1599,7 @@ class eWindowStylePtr(object):
 eWindowStylePtr.__ref__ = new_instancemethod(_enigma.eWindowStylePtr___ref__,None,eWindowStylePtr)
 eWindowStylePtr.getPtrString = new_instancemethod(_enigma.eWindowStylePtr_getPtrString,None,eWindowStylePtr)
 eWindowStylePtr.__deref__ = new_instancemethod(_enigma.eWindowStylePtr___deref__,None,eWindowStylePtr)
+eWindowStylePtr.getColor = new_instancemethod(_enigma.eWindowStylePtr_getColor,None,eWindowStylePtr)
 eWindowStylePtr_swigregister = _enigma.eWindowStylePtr_swigregister
 eWindowStylePtr_swigregister(eWindowStylePtr)
 
@@ -1666,6 +1667,7 @@ class eWindowStyleSkinned(object):
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setPixmap = new_instancemethod(_enigma.eWindowStyleSkinned_setPixmap,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setColor = new_instancemethod(_enigma.eWindowStyleSkinned_setColor,None,eWindowStyleSkinned)
+eWindowStyleSkinned.getColor = new_instancemethod(_enigma.eWindowStyleSkinned_getColor,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setTitleOffset = new_instancemethod(_enigma.eWindowStyleSkinned_setTitleOffset,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setTitleFont = new_instancemethod(_enigma.eWindowStyleSkinned_setTitleFont,None,eWindowStyleSkinned)
 eWindowStyleSkinned_swigregister = _enigma.eWindowStyleSkinned_swigregister

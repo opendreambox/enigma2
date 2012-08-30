@@ -44,6 +44,5 @@ def Plugins(**kwargs):
 			list.append(
 				PluginDescriptor(name = "HbbTV Testsuite", description = _("Test HbbTV Functionality"), where = PluginDescriptor.WHERE_PLUGINMENU, fnc = hbbtv_testsuite) 
 			)
-		return list
 
-	return []
+	return list

@@ -411,6 +411,9 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 	record_service = property(lambda self: self.__record_service, setRecordService)
 
+	def __str__(self):
+		return '<%s instance at %x name=%s %s>' % (self.__class__.__name__, id(self), self.name, hasattr(self,"Filename") and self.Filename or "")
+
 def createTimer(xml):
 	begin = int(xml.get("begin"))
 	end = int(xml.get("end"))
