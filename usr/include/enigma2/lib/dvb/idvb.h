@@ -145,8 +145,8 @@ public:
 	eDVBNamespace(): v(-1) { }
 	bool operator == (const eDVBNamespace &c) const { return v == c.v; }
 	bool operator != (const eDVBNamespace &c) const { return v != c.v; }
-	bool operator < (const eDVBNamespace &c) const { return v < c.v; }
-	bool operator > (const eDVBNamespace &c) const { return v > c.v; }
+	bool operator < (const eDVBNamespace &c) const { return (unsigned int)v < (unsigned int)c.v; }
+	bool operator > (const eDVBNamespace &c) const { return (unsigned int)v > (unsigned int)c.v; }
 };
 
 struct eDVBChannelID

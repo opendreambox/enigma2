@@ -498,7 +498,6 @@ def pendingSqshImgInstall():
 	if sqsh_re is None:
 		sqsh_re = re_compile('^\.u*mount_.+_needed$')
 	for f in listdir('/var/tmp'):
-		print "check ", f
 		if sqsh_re.match(f):
 			return True
 	return False
