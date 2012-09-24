@@ -1112,6 +1112,9 @@ self.instance.move(ePoint((1280-wsizex)/2, (720-wsizey)/2))
 		</widget>
 		<eLabel position="10,455" size="800,1" backgroundColor="grey"/>
 		<widget source="introduction" render="Label" position="10,465" size="800,50" font="Regular;21" halign="center" valign="center" transparent="1"/>
+		<widget source="info" render="Pixmap" pixmap="skin_default/buttons/key_info.png" position="0,500" zPosition="9" size="35,25" transparent="1" alphatest="on" >
+			<convert type="ConditionalShowHide" />
+		</widget>
 	</screen>
 	<!-- Harddisk setup -->
 	<screen name="HarddiskDriveSetup" position="center,120" size="820,520" title="Harddisk">
@@ -1152,6 +1155,31 @@ self.instance.move(ePoint((1280-wsizex)/2, (720-wsizey)/2))
 	<!-- Harddisk wait -->
 	<screen name="HarddiskWait" position="center,120" size="820,520" >
 		<widget name="wait" position="10,10" size="800,500" halign="center" valign="center" font="Regular;23" />
+	</screen>
+	<!-- Storage Information -->
+	<screen name="StorageInformation" position="center,120" size="820,520" title="Storage device information">
+		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
+		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on"/>
+		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on"/>
+		<ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on"/>
+		<widget source="key_red" render="Label" position="10,5"  size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
+		<widget source="icon" render="Pixmap" position="30,70" size="88,126" alphatest="on">
+			<convert type="ValueToPixmap">Path</convert>
+		</widget>
+		<widget source="model" render="Label" position="160,70" size="650,25" font="Regular;23"/>
+		<widget source="device_capacity" render="Label" position="160,100" size="650,25" font="Regular;23"/>
+		<widget source="device_free" render="Label" position="160,130" size="650,25" font="Regular;23"/>
+		<widget source="bus" render="Label" position="160,160" size="650,25" font="Regular;23"/>
+		<widget source="num_partitions" render="Label" position="160,190" size="650,25" font="Regular;23"/>
+		<widget source="partition" render="Label" position="160,220" size="650,25" font="Regular;23"/>
+		<widget source="partition_capacity" render="Label" position="160,250" size="650,25" font="Regular;23"/>
+		<widget source="filesystem" render="Label" position="160,280" size="650,25" font="Regular;23"/>
+		<eLabel position="10,455" size="800,1" backgroundColor="grey"/>
+		<widget source="introduction" render="Label" position="10,465" size="800,50" font="Regular;21" halign="center" valign="center" transparent="1"/>
 	</screen>
 	<!-- Help menu -->
 	<screen name="HelpMenu" position="center,70" size="1200,620" title="help...">
@@ -1674,7 +1702,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 	<screen name="AdapterSetup" position="center,120" size="820,520" title="Network Setup">
 		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
 		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<!-- <ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" /> 
+		<!-- <ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
 		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" /> -->
 		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
 		<widget name="config" position="10,60" size="800,210" itemHeight="30" scrollbarMode="showOnDemand" />

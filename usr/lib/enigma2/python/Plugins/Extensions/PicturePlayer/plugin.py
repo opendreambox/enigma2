@@ -568,7 +568,7 @@ class Pic_Full_View(Screen):
 			if ptr != None:
 				text = ""
 				try:
-					text = picInfo.split('\n',1)
+					text = self.picInfo.split('\n',1)
 					text = "(" + str(self.index+1) + "/" + str(self.maxentry+1) + ") " + text[0].split('/')[-1]
 				except:
 					pass
@@ -577,7 +577,7 @@ class Pic_Full_View(Screen):
 				if not config.pic.infoline.value:
 					self["play_icon"].hide()
 					self["file"].setText("")
-				else:			
+				else:
 					self["file"].setText(text)
 				self.lastindex = self.index
 
@@ -595,6 +595,7 @@ class Pic_Full_View(Screen):
 
 	def finish_decode(self, picInfo=""):
 		self["point"].hide()
+		self.picInfo = picInfo
 		self.pic_ready = True
 		self.ShowPicture()
 

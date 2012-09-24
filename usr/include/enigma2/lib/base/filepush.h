@@ -18,7 +18,7 @@ public:
 class eFilePushThread: public eThread, public sigc::trackable
 {
 public:
-	eFilePushThread(int prio_class=IOPRIO_CLASS_BE, int prio_level=0, int blocksize=188);
+	eFilePushThread(int prio_class=IOPRIO_CLASS_BE, int prio_level=5, int blocksize=188);
 	virtual ~eFilePushThread();
 
 	virtual void thread();
