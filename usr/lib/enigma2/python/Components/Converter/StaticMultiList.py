@@ -7,7 +7,7 @@ class StaticMultiList(StringList):
 		if not self.content:
 			self.content = eListboxPythonMultiContent()
 
-			if self.source:
+			if self.source is not None:
 				# setup the required item height, as given by the source.
 				self.content.setItemHeight(self.source.item_height)
 			
@@ -17,7 +17,7 @@ class StaticMultiList(StringList):
 					self.content.setFont(index, f)
 					index += 1
 
-		if self.source:
+		if self.source is not None:
 			self.content.setList(self.source.list)
 
 		print "downstream_elements:", self.downstream_elements

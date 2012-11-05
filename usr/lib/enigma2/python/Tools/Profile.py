@@ -33,7 +33,7 @@ def profile(id):
 	if profile_file:
 		profile_file.write("%.2f\t%s\n" % (now, id))
 
-		if id in profile_data:
+		if id in profile_data and total_time:
 			t = profile_data[id]
 			perc = t * (PERCENTAGE_END - PERCENTAGE_START) / total_time + PERCENTAGE_START
 			try:

@@ -29,7 +29,7 @@ class FileBrowser(Screen):
 		self.skinName = ["FileBrowser_DVDPlayer", "FileBrowser" ]
 
 		self.dvd_filelist = dvd_filelist
-		if len(dvd_filelist):	
+		if len(dvd_filelist):
 			self["filelist"] = MenuList(self.dvd_filelist)
 		else:
 			global lastpath
@@ -151,7 +151,7 @@ class ChapterZap(Screen):
 		<widget name="chapter" position="35,15" size="110,25" font="Regular;23" />
 		<widget name="number" position="145,15" size="80,25" halign="right" font="Regular;23" />
 	</screen>"""
-	
+
 	def quit(self):
 		self.Timer.stop()
 		self.close(0)
@@ -198,7 +198,7 @@ class ChapterZap(Screen):
 class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport):
 	ALLOW_SUSPEND = Screen.SUSPEND_PAUSES
 	ENABLE_RESUME_SUPPORT = True
-	
+
 	skin = """
 	<screen name="DVDPlayer" flags="wfNoBorder" position="0,380" size="720,160" title="InfoBar" backgroundColor="transparent" >
 		<!-- Background -->
@@ -356,7 +356,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 				"nextAngle": (self.nextAngle, _("switch to the next angle")),
 				"seekBeginning": self.seekBeginning,
 			}, -2)
-			
+
 		self["NumberActions"] = NumberActionMap( [ "NumberActions"],
 			{
 				"1": self.keyNumberGlobal,
@@ -375,7 +375,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 
 		from Plugins.SystemPlugins.Hotplug.plugin import hotplugNotifier
 		hotplugNotifier.append(self.hotplugCB)
-		
+
 		self.autoplay = dvd_device or dvd_filelist
 
 		if dvd_device:
@@ -492,7 +492,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			if subtitleTuple != self.last_subtitleTuple and not self.in_menu:
 				self.doShow()
 		self.last_subtitleTuple = subtitleTuple
-	
+
 	def __osdAngleInfoAvail(self):
 		info = self.getServiceInterface("info")
 		angleTuple = info and info.getInfoObject(iServiceInformation.sUser+8)
@@ -526,7 +526,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			print "__titleUpdated: %d/%d" % (self.currentTitle, self.totalTitles)
 			if not self.in_menu:
 				self.doShow()
-		
+
 	def askLeavePlayer(self):
 		choices = [(_("Exit"), "exit"), (_("Continue playing"), "play")]
 		if True or not self.physicalDVD:
@@ -569,7 +569,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 
 	def enterDVDMenu(self):
 		self.sendKey(iServiceKeys.keyUser+7)
-	
+
 	def nextAngle(self):
 		self.sendKey(iServiceKeys.keyUser+8)
 
@@ -750,7 +750,7 @@ def filescan_open(list, session, **kwargs):
 			if x.mimetype == "video/x-dvd-iso":
 				dvd_filelist.append(x.path)
 			if x.mimetype == "video/x-dvd":
-				dvd_filelist.append(x.path.rsplit('/',1)[0])			
+				dvd_filelist.append(x.path.rsplit('/',1)[0])
 		session.open(DVDPlayer, dvd_filelist=dvd_filelist)
 
 def filescan(**kwargs):
@@ -772,8 +772,8 @@ def filescan(**kwargs):
 			name = "DVD",
 			description = _("Play DVD"),
 			openfnc = filescan_open,
-		)]		
+		)]
 
 def Plugins(**kwargs):
-	return [PluginDescriptor(name = "DVDPlayer", description = "Play DVDs", where = PluginDescriptor.WHERE_MENU, needsRestart = True, fnc = menu),
+	return [PluginDescriptor(name = "DVDPlayer", description = _("Play DVDs"), where = PluginDescriptor.WHERE_MENU, needsRestart = True, fnc = menu),
 		 	PluginDescriptor(where = PluginDescriptor.WHERE_FILESCAN, needsRestart = True, fnc = filescan)]

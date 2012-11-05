@@ -1907,6 +1907,9 @@ class eDVBSatelliteEquipmentControl(object):
     DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS
     DELAY_AFTER_DISEQC_RESET_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_DISEQC_RESET_CMD
     DELAY_AFTER_DISEQC_PERIPHERIAL_POWERON_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_DISEQC_PERIPHERIAL_POWERON_CMD
+    DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD
+    DELAY_AFTER_UNICABLE_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_UNICABLE_CMD
+    DELAY_AFTER_UNICABLE_FINAL_VOLTAGE_CHANGE = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_UNICABLE_FINAL_VOLTAGE_CHANGE
     MAX_PARAMS = _enigma.eDVBSatelliteEquipmentControl_MAX_PARAMS
     getInstance = staticmethod(_enigma.eDVBSatelliteEquipmentControl_getInstance)
     setParam = staticmethod(_enigma.eDVBSatelliteEquipmentControl_setParam)
@@ -2188,6 +2191,7 @@ class iDVBFrontend(object):
     stateFailed = _enigma.iDVBFrontend_ENUMS_stateFailed
     stateLock = _enigma.iDVBFrontend_ENUMS_stateLock
     stateLostLock = _enigma.iDVBFrontend_ENUMS_stateLostLock
+    statePreClose = _enigma.iDVBFrontend_ENUMS_statePreClose
     stateClosed = _enigma.iDVBFrontend_ENUMS_stateClosed
     toneOff = _enigma.iDVBFrontend_ENUMS_toneOff
     toneOn = _enigma.iDVBFrontend_ENUMS_toneOn
@@ -2315,6 +2319,7 @@ class eComponentScan(iObject):
     scanDontRemoveUnscanned = _enigma.eComponentScan_scanDontRemoveUnscanned
     clearToScanOnFirstNIT = _enigma.eComponentScan_clearToScanOnFirstNIT
     scanOnlyFree = _enigma.eComponentScan_scanOnlyFree
+    scanDontSkipEmptyTransponders = _enigma.eComponentScan_scanDontSkipEmptyTransponders
 eComponentScan.getProgress = new_instancemethod(_enigma.eComponentScan_getProgress,None,eComponentScan)
 eComponentScan.getNumServices = new_instancemethod(_enigma.eComponentScan_getNumServices,None,eComponentScan)
 eComponentScan.isDone = new_instancemethod(_enigma.eComponentScan_isDone,None,eComponentScan)

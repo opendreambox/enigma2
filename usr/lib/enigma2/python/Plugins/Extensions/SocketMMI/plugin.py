@@ -19,7 +19,10 @@ def autostart(reason, **kwargs):
 	if reason == 1:
 		socketHandler = None
 	else:
-		socketHandler = SocketMMIMessageHandler()
+		if socketHandler is None:
+			socketHandler = SocketMMIMessageHandler()
+		else:
+			print "[SocketMMI] - socketHandler already connected."
 
 def Plugins(**kwargs):
 	return [ PluginDescriptor(name = "SocketMMI", description = _("Python frontend for /tmp/mmi.socket"), where = PluginDescriptor.WHERE_MENU, needsRestart = True, fnc = menu),

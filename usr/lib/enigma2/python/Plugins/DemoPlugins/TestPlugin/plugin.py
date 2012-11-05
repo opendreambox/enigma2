@@ -22,9 +22,9 @@ class Test(Screen):
 
 		self["list"] = FileList("/", matchingPattern = "^.*\.(png|avi|mp3|mpeg|ts)")
 		self["pixmap"] = Pixmap()
-		
+
 		#self["text"] = Input("1234", maxSize=True, type=Input.NUMBER)
-				
+
 		self["actions"] = NumberActionMap(["WizardActions", "InputActions"],
 		{
 			"ok": self.openTest,
@@ -49,26 +49,26 @@ class Test(Screen):
 		self.session.openWithCallback(self.mycallback, MessageBox, _("Test-Messagebox?"))
 
 #		self.session.open(InputBox)
-	
+
 	def mycallback(self, answer):
 		print "answer:", answer
 		if answer:
 			raise Exception("test-crash")
 		self.close()
-	
+
 	def keyLeft(self):
 		self["text"].left()
-	
+
 	def keyRight(self):
 		self["text"].right()
-	
+
 	def ok(self):
 		selection = self["list"].getSelection()
 		if selection[1] == True: # isDir
 			self["list"].changeDir(selection[0])
 		else:
 			self["pixmap"].instance.setPixmapFromFile(selection[0])
-	
+
 	def keyNumberGlobal(self, number):
 		print "pressed", number
 		self["text"].number(number)
@@ -77,9 +77,9 @@ def main(session, **kwargs):
 	session.open(Test)
 	#session.openWithCallback(test, MessageBox, _("Test-Messagebox?"), timeout = 10)
 	#session.openWithCallback(test, ChoiceBox, title="Delete everything on this Dreambox?", list=[(_("yes"), "yes"), (_("no"), "no"), (_("perhaps"), "perhaps"), (_("ask me tomorrow"), "ask me tomorrow"), (_("leave me alone with this!"), "yes")])
-	
+
 def test(returnValue):
 	print "You entered", returnValue
 
 def Plugins(**kwargs):
-	return PluginDescriptor(name="Test", description="plugin to test some capabilities", where = PluginDescriptor.WHERE_PLUGINMENU, needsRestart = False, fnc=main)
+	return PluginDescriptor(name="Test", description=_("plugin to test some capabilities"), where = PluginDescriptor.WHERE_PLUGINMENU, needsRestart = False, fnc=main)

@@ -25,7 +25,7 @@ class AVSwitch:
 		elif valstr == "16_9": # auto ... 4:3 or 16:9
 			try:
 				aspect_str = open("/proc/stb/vmpeg/0/aspect", "r").read()
-				if aspect_str == "1": # 4:3
+				if aspect_str[0] == "2": # 4:3
 					return (4,3)
 			except IOError:
 				pass

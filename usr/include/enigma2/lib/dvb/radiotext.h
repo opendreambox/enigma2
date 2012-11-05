@@ -6,6 +6,8 @@
 #include <lib/dvb/pesparse.h>
 #include <lib/gdi/gpixmap.h>
 
+//#define DEBUG_TO_FILE
+
 class eDVBRdsDecoder: public iObject, public ePESParser, public Object
 {
 	DECLARE_REF(eDVBRdsDecoder);
@@ -20,6 +22,9 @@ class eDVBRdsDecoder: public iObject, public ePESParser, public Object
 	void removeFromPictureMask(int id);
 	int m_type;
 	int m_pid;
+#ifdef DEBUG_TO_FILE
+	FILE *f;
+#endif
 public:
 	enum { RadioTextChanged, RtpTextChanged, RassInteractivePicMaskChanged, RecvRassSlidePic };
 	eDVBRdsDecoder(iDVBDemux *demux, int type);

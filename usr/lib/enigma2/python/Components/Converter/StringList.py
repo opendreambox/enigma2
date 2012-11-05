@@ -12,7 +12,7 @@ class StringList(Converter):
 		if not self.content:
 			self.content = eListboxPythonStringContent()
 
-		if self.source:
+		if self.source is not None:
 			self.content.setList(self.source.list)
 		self.downstream_elements.changed(what)
 

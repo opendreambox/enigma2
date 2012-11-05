@@ -186,7 +186,7 @@ class SecConfigure:
 				if nim.configMode.value in ( "loopthrough", "satposdepends", "nothing" ):
 					pass
 				else:
-					sec.setSlotNotLinked(x)
+					slotLinked = False
 					if nim.configMode.value == "equal":
 						pass
 					elif nim.configMode.value == "simple":		#simple config
@@ -243,19 +243,23 @@ class SecConfigure:
 								inputPowerDelta = inputPowerDelta,
 								diseqc13V = nim.diseqc13V.value)
 					elif nim.configMode.value == "advanced": #advanced config
-						self.updateAdvanced(sec, x)
+						slotLinked = self.updateAdvanced(sec, x)
+					if not slotLinked:
+						sec.setSlotNotLinked(x)
 		print "sec config completed"
 
 	def updateAdvanced(self, sec, slotid):
+		slotLinked = False
 		try:
 			if config.Nims[slotid].advanced.unicableconnected is not None:
-				if config.Nims[slotid].advanced.unicableconnected.value == True:
+				if config.Nims[slotid].advanced.unicableconnected.value:
 					config.Nims[slotid].advanced.unicableconnectedTo.save_forced = True
 					self.linkNIMs(sec, slotid, int(config.Nims[slotid].advanced.unicableconnectedTo.value))
 					connto = self.getRoot(slotid, int(config.Nims[slotid].advanced.unicableconnectedTo.value))
 					if not self.linked.has_key(connto):
 						self.linked[connto] = []
 					self.linked[connto].append(slotid)
+					slotLinked = True
 				else:
 					config.Nims[slotid].advanced.unicableconnectedTo.save_forced = False
 		except:
@@ -475,6 +479,7 @@ class SecConfigure:
 						sec.setRotorPosNum(currSat.rotorposition.value)
 					else:
 						sec.setRotorPosNum(0) #USALS
+		return slotLinked
 
 	def __init__(self, nimmgr):
 		self.NimManager = nimmgr
@@ -1064,6 +1069,18 @@ def InitSecParams():
 	x = ConfigInteger(default=150, limits = (0, 9999))
 	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_DISEQC_PERIPHERIAL_POWERON_CMD, configElement.value))
 	config.sec.delay_after_diseqc_peripherial_poweron_cmd = x
+
+	x = ConfigInteger(default=10, limits = (0, 9999))
+	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_UNICABLE_CMD, configElement.value))
+	config.sec.delay_after_voltage_change_before_unicable_cmd = x
+
+	x = ConfigInteger(default=3, limits = (0, 9999))
+	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_UNICABLE_CMD, configElement.value))
+	config.sec.delay_after_unicable_cmd = x
+
+	x = ConfigInteger(default=10, limits = (0, 9999))
+	x.addNotifier(lambda configElement: secClass.setParam(secClass.DELAY_AFTER_UNICABLE_FINAL_VOLTAGE_CHANGE, configElement.value))
+	config.sec.delay_after_unicable_final_voltage_change = x
 
 # TODO add support for satpos depending nims to advanced nim configuration
 # so a second/third/fourth cable from a motorized lnb can used behind a

@@ -102,7 +102,9 @@ public:
 		scanNetworkSearch = 1, scanSearchBAT = 2,
 		scanRemoveServices = 4, scanDontRemoveFeeds = 8,
 		scanDontRemoveUnscanned = 16,
-		clearToScanOnFirstNIT = 32, scanOnlyFree = 64 };
+		clearToScanOnFirstNIT = 32, scanOnlyFree = 64,
+		scanDontSkipEmptyTransponders = 128
+	};
 
 	void start(const eSmartPtrList<iDVBFrontendParameters> &known_transponders, int flags);
 
