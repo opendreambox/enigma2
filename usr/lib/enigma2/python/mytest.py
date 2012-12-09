@@ -54,7 +54,7 @@ from skin import readSkin
 
 profile("LOAD:Tools")
 from Tools.Directories import InitFallbackFiles, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
-from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, NoSave
+from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, NoSave
 InitFallbackFiles()
 
 profile("config.misc")
@@ -65,12 +65,15 @@ config.misc.useTransponderTime = ConfigYesNo(default=True)
 config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0)) # number of standby
 config.misc.epgcache_filename = ConfigText(default = "/media/hdd/epg.dat")
+config.misc.epgcache_timespan = ConfigSelection(default = "28", choices = [("7", _("7 days")), ("14", _("14 days")), ("21", _("21 days")), ("28", _("28 days"))])
 config.misc.record_io_buffer = ConfigInteger(default=192512*5)
 config.misc.record_dmx_buffer = ConfigInteger(default=1024*1024)
 
 def setEPGCachePath(configElement):
 	eEPGCache.getInstance().setCacheFile(configElement.value)
 
+def setEPGCacheTimespan(configElement):
+	eEPGCache.getInstance().setCacheTimespan(int(configElement.value))
 
 #demo code for use of standby enter leave callbacks
 #def leaveStandby():
@@ -492,7 +495,8 @@ def runScreenTest():
 			session.open(screen, *args)
 
 	config.misc.epgcache_filename.addNotifier(setEPGCachePath)
-	
+	config.misc.epgcache_timespan.addNotifier(setEPGCacheTimespan)
+
 	api.setSession(session)
 
 	runNextScreen(session, screensToRun)

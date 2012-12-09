@@ -125,6 +125,42 @@ public:
 				if (!ref) \
 					delete this; \
 			}
+	#elif defined(__arm__)
+		#define DECLARE_REF(x) 			\
+			public: void AddRef(); 		\
+				void Release();		\
+			private: oRefCount ref;
+		#define DEFINE_REF(c) \
+			void c::AddRef() \
+			{ \
+				unsigned long tmp; \
+				int result; \
+				__asm__ __volatile__( \
+				"1:	ldrex	%0, [%3]	\n" \
+				"	add	%0, %0, %4	\n" \
+				"	strex	%1, %0, [%3]	\n" \
+				"	teq	%1, #0		\n" \
+				"	bne	1b" \
+				: "=&r" (result), "=&r" (tmp), "+Qo" (ref.count) \
+				: "r" (&ref.count), "Ir" (1) \
+				: "cc"); \
+			} \
+			void c::Release() \
+			{ \
+				unsigned long tmp; \
+				int result; \
+				__asm__ __volatile__( \
+				"1:	ldrex	%0, [%3]	\n" \
+				"	sub	%0, %0, %4	\n" \
+				"	strex	%1, %0, [%3]	\n" \
+				"	teq	%1, #0		\n" \
+				"	bne	1b" \
+				: "=&r" (result), "=&r" (tmp), "+Qo" (ref.count) \
+				: "r" (&ref.count), "Ir" (1) \
+				: "cc"); \
+				if (!ref) \
+					delete this; \
+			}
 	#elif defined(__ppc__) || defined(__powerpc__)
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\

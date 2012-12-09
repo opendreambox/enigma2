@@ -104,6 +104,7 @@ public:
 		x = p.x;
 		y = p.y;
 		w = p.w;
+		argb = p.argb;
 		font = p.font;
 		glyph_index = p.glyph_index;
 		flags = p.flags;
@@ -113,6 +114,7 @@ public:
 #endif
 
 	int x, y, w;
+	unsigned long argb;
 	ePtr<Font> font;
 	FT_ULong glyph_index;
 	int flags;
@@ -144,7 +146,7 @@ class eTextPara: public iObject
 	int charCount;
 	bool doTopBottomReordering;
 
-	int appendGlyph(Font *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags);
+	int appendGlyph(Font *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags, unsigned long &argb);
 	void newLine(int flags);
 	void setFont(Font *font, Font *replacement_font);
 	eRect boundBox;

@@ -174,7 +174,9 @@ public:
 	{
 		// added a new item to the list... in order
 		// returns a iterator to the new item
-		return insert( std::lower_bound( std::list<T*>::begin(), std::list<T*>::end(), e, less()), e );
+		// this-> is required as of gcc 4.7, which would raise the following without it
+		// "declarations in dependent base ‘std::list<eTimer*, std::allocator<eTimer*> >’ are not found by unqualified lookup"
+		return this->insert( std::lower_bound( std::list<T*>::begin(), std::list<T*>::end(), e, less()), e );
 	}
 
 };

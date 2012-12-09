@@ -2087,6 +2087,9 @@ class eEPGCache(object):
     CASE_CHECK = _enigma.eEPGCache_CASE_CHECK
     NO_CASE_CHECK = _enigma.eEPGCache_NO_CASE_CHECK
 eEPGCache.setCacheFile = new_instancemethod(_enigma.eEPGCache_setCacheFile,None,eEPGCache)
+eEPGCache.setCacheTimespan = new_instancemethod(_enigma.eEPGCache_setCacheTimespan,None,eEPGCache)
+eEPGCache.load = new_instancemethod(_enigma.eEPGCache_load,None,eEPGCache)
+eEPGCache.save = new_instancemethod(_enigma.eEPGCache_save,None,eEPGCache)
 eEPGCache.Lock = new_instancemethod(_enigma.eEPGCache_Lock,None,eEPGCache)
 eEPGCache.Unlock = new_instancemethod(_enigma.eEPGCache_Unlock,None,eEPGCache)
 eEPGCache.startTimeQuery = new_instancemethod(_enigma.eEPGCache_startTimeQuery,None,eEPGCache)
@@ -2301,6 +2304,7 @@ class iDVBFrontend(object):
     stateFailed = _enigma.iDVBFrontend_ENUMS_stateFailed
     stateLock = _enigma.iDVBFrontend_ENUMS_stateLock
     stateLostLock = _enigma.iDVBFrontend_ENUMS_stateLostLock
+    statePreClose = _enigma.iDVBFrontend_ENUMS_statePreClose
     stateClosed = _enigma.iDVBFrontend_ENUMS_stateClosed
     toneOff = _enigma.iDVBFrontend_ENUMS_toneOff
     toneOn = _enigma.iDVBFrontend_ENUMS_toneOn
@@ -2823,10 +2827,13 @@ class eHbbtv(object):
     playServiceRequest = _swig_property(_enigma.eHbbtv_playServiceRequest_get, _enigma.eHbbtv_playServiceRequest_set)
     playStreamRequest = _swig_property(_enigma.eHbbtv_playStreamRequest_get, _enigma.eHbbtv_playStreamRequest_set)
     pauseStreamRequest = _swig_property(_enigma.eHbbtv_pauseStreamRequest_get, _enigma.eHbbtv_pauseStreamRequest_set)
+    seekStreamRequest = _swig_property(_enigma.eHbbtv_seekStreamRequest_get, _enigma.eHbbtv_seekStreamRequest_set)
     stopStreamRequest = _swig_property(_enigma.eHbbtv_stopStreamRequest_get, _enigma.eHbbtv_stopStreamRequest_set)
     nextServiceRequest = _swig_property(_enigma.eHbbtv_nextServiceRequest_get, _enigma.eHbbtv_nextServiceRequest_set)
     prevServiceRequest = _swig_property(_enigma.eHbbtv_prevServiceRequest_get, _enigma.eHbbtv_prevServiceRequest_set)
+    setVolumeRequest = _swig_property(_enigma.eHbbtv_setVolumeRequest_get, _enigma.eHbbtv_setVolumeRequest_set)
     setVideoWindowRequest = _swig_property(_enigma.eHbbtv_setVideoWindowRequest_get, _enigma.eHbbtv_setVideoWindowRequest_set)
+    unsetVideoWindowRequest = _swig_property(_enigma.eHbbtv_unsetVideoWindowRequest_get, _enigma.eHbbtv_unsetVideoWindowRequest_set)
     aitInvalidated = _swig_property(_enigma.eHbbtv_aitInvalidated_get, _enigma.eHbbtv_aitInvalidated_set)
     redButtonAppplicationReady = _swig_property(_enigma.eHbbtv_redButtonAppplicationReady_get, _enigma.eHbbtv_redButtonAppplicationReady_set)
     textApplicationReady = _swig_property(_enigma.eHbbtv_textApplicationReady_get, _enigma.eHbbtv_textApplicationReady_set)

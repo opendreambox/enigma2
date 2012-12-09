@@ -79,21 +79,24 @@ class BrowserMenu(Screen):
 				"btnTxtY" : bof
 			}
 
-	def __init__(self, session, currentTitle, currentUrl):
+	def __init__(self, session, currentTitle, currentUrl, menulist = None):
 		Screen.__init__(self, session)
 
 		self.currentUrl = currentUrl
 		self.currentTitle = currentTitle
 
 		#Menu
-		self.menu = MenuList([
+		if menulist is None:
+			self.menu = MenuList([
 						(_("Bookmarks"), self.MENU_BOOKMARKS),
 						(_("History"), self.MENU_HISTORY),
 						(_("Downloads"), self.MENU_DOWNLOADS),
 						(_("Certificates"), self.MENU_CERTS),
 						(_("Cookies"), self.MENU_COOKIES),
 						(_("Settings"), self.MENU_SETTINGS),
-					], enableWrapAround = True)
+				], enableWrapAround = True)
+		else:
+			self.menu = MenuList(menulist, enableWrapAround=True)
 		self["menu"] = self.menu
 
 		self["statuslabel"] = Label("")
@@ -112,8 +115,6 @@ class BrowserMenu(Screen):
 		self["green"] = self.green
 		self["yellow"] = self.yellow
 		self["blue"] = self.blue
-
-
 
 		#Lists
 		self.detailList = MenuList([], enableWrapAround = True, content = eListboxPythonMultiContent)

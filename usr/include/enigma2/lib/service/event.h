@@ -7,7 +7,7 @@
 #include <string>
 class Event;
 
-#define MAX_LANG 37
+#define MAX_LANG 40
 extern const std::string ISOtbl[MAX_LANG][2];
 
 #endif

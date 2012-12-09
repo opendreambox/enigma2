@@ -241,7 +241,8 @@ public:
 		RT_VALIGN_CENTER = 8,
 		RT_VALIGN_BOTTOM = 16,
 		
-		RT_WRAP = 32
+		RT_WRAP = 32,
+		RT_FILLED_BOX = 64
 	};
 	void renderText(const eRect &position, const std::string &string, int flags=0);
 	

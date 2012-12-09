@@ -4,6 +4,7 @@ from coherence.base import Coherence
 
 from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.devices.media_renderer import MediaRenderer
+from coherence.upnp.devices.media_server import MediaServer
 from coherence.upnp.devices.media_server_client import MediaServerClient
 
 class Statics:
@@ -91,6 +92,9 @@ class ManagedControlPoint(object):
 
 	def registerRenderer(self, classDef, **kwargs):
 		return MediaRenderer(self.coherence, classDef, no_thread_needed=True, **kwargs)
+
+	def registerServer(self, classDef, **kwargs):
+		return MediaServer(self.coherence, classDef, no_thread_needed=True, **kwargs)
 
 	def getServerList(self):
 		return self.__mediaServerClients.values()

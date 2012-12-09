@@ -1,53 +1,70 @@
-from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop
+from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop, iPlayableService, eServiceMP3, eTimer, eDVBVolumecontrol
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
+from Screens.MessageBox import MessageBox
+from Screens.LocationBox import MovieLocationBox
 from Components.config import config, ConfigSubsection, ConfigEnableDisable, ConfigSelection
 from Components.PluginComponent import plugins
+from Components.ServiceEventTracker import ServiceEventTracker
+from Components.UsageConfig import preferredPath
 from Components.VideoWindow import VideoWindow
 
 from Plugins.Extensions.Browser.Browser import Browser
-from Plugins.Extensions.Browser.MoviePlayer import MoviePlayer
+from Plugins.Extensions.Browser.Downloads import downloadManager, DownloadJob
 
 config.plugins.hbbtv = ConfigSubsection()
 config.plugins.hbbtv.enabled = ConfigEnableDisable(default=True)
 config.plugins.hbbtv.testsuite = ConfigSelection([("mainmenu", _("Menu")), ("extensions", _("Extensions")), ("plugins", _("Plugin Browser")), ("disabled", _("Disabled"))], default="disabled")
 config.plugins.hbbtv.text = ConfigEnableDisable(default=True)
 
-class HbbTVVideoOverlay(Screen):
+from datetime import datetime
+from urlparse import urlparse
+
+import time
+
+class HbbTVVideoWindow(Screen):
 	skin = """
-		<screen name="HbbTVVideoOverlay" flags="wfNoBorder" zPosition="1" position="0,0" size="1280,720" title="HbbTVVideoOverlay" backgroundColor="transparent">
+		<screen name="HbbTVVideoWindow" flags="wfNoBorder" zPosition="-1" position="0,0" size="1280,720" title="HbbTVVideoWindow" backgroundColor="transparent">
 			<widget name="video" position="0,0" zPosition="0" size="0,0" backgroundColor="transparent"/>
 		</screen>
 	"""
 
-	def __init__(self, session, point = ePoint(0,0), size = eSize(0,0) ):
+	def __init__(self, session, point=ePoint(0, 0), size=eSize(0, 0)):
 		Screen.__init__(self, session)
 		desktopSize = getDesktop(0).size()
-		self["video"] = VideoWindow(decoder = 0, fb_width=desktopSize.width(), fb_height=desktopSize.height())
+		self["video"] = VideoWindow(decoder=0, fb_width=desktopSize.width(), fb_height=desktopSize.height())
+
 		self.__point = point
 		self.__size = size
+		self.__retainedPoint = point
+		self.__retainedSize = size
+
 		self.__isFullscreen = False
 
-	def setRect(self, point, size):
-		self.instance.move(point)
-		self.instance.resize(size)
-		self["video"].instance.resize(size)
-		self.__point = point
-		self.__size = size
+	def setRect(self, point, size, retain=True):
+		if point.x() != self.__point.x() or point.y() != self.__point.y():
+			self.instance.move(point)
+			self.__point = point
+		if size.width() != self.__size.width() or size.height() != self.__size.height():
+			self.instance.resize(size)
+			self.__size = size
+			self["video"].instance.resize(size)
+
+		if retain:
+			self.__retainedPoint = point
+			self.__retainedSize = size
 
 	def toggleFullscreen(self):
 		if self.__isFullscreen:
-			self.setRect(self.__point, self.__size)
+			self.setRect(self.__retainedPoint, self.__retainedSize)
 			self.__isFullscreen = False
 		else:
-			point = ePoint(0,0)
+			point = ePoint(0, 0)
 			size = getDesktop(0).size()
-
-			self.instance.move(point)
-			self.instance.resize(size)
-			self["video"].instance.resize(size)
+			self.setRect(point, size, retain=False)
 			self.__isFullscreen = True
+		return self.__isFullscreen
 
 class HbbTV(object):
 	instance = None
@@ -57,7 +74,6 @@ class HbbTV(object):
 	def __init__(self, session):
 		assert HbbTV.instance is None, "HbbTV is a singleton class and may only be initialized once!"
 		HbbTV.instance = self
-		from Screens.InfoBar import InfoBar
 
 		self.session = session
 		self._redButtonApp = None
@@ -65,23 +81,31 @@ class HbbTV(object):
 		self.eHbbtv = eHbbtv.getInstance()
 		self.connectCallbacks()
 
-		InfoBar.instance.onServiceListRootChanged.append(self.setCurrentBouquet)
-		InfoBar.instance.addExtension((self._getExtensionMenuText, self._showApplicationList, lambda: True), key = "red")
+		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_STOPPED)
 
-		self.__overlay = None
+		from Screens.InfoBar import InfoBar
+		InfoBar.instance.onServiceListRootChanged.append(self.setCurrentBouquet)
+		InfoBar.instance.addExtension((self._getExtensionMenuText, self._showApplicationList, lambda: True), key="red")
+
+		self.onClose = []
+
+		self.__videoWindow = None
 		self.__currentStreamRef = None
 		self.__browser = None
-		self.__fullscreen = True
 		self.__lastService = None
+		self.__restoreTimer = eTimer()
+		self.__restoreTimer.callback.append(self._restoreLastService)
 
 	def connectCallbacks(self):
 		print "[HbbTV] connecting callbacks"
 		self.eHbbtv.playServiceRequest.get().append(self.zap)
 		self.eHbbtv.playStreamRequest.get().append(self.playStream)
 		self.eHbbtv.pauseStreamRequest.get().append(self.pauseStream)
+		self.eHbbtv.seekStreamRequest.get().append(self.seekStream)
 		self.eHbbtv.stopStreamRequest.get().append(self.stopStream)
 		self.eHbbtv.nextServiceRequest.get().append(self.nextService)
 		self.eHbbtv.prevServiceRequest.get().append(self.prevService)
+		self.eHbbtv.setVolumeRequest.get().append(self.setVolume)
 		self.eHbbtv.setVideoWindowRequest.get().append(self.setVideoWindow)
 		#AIT
 		self.eHbbtv.setAitSignalsEnabled(True);
@@ -97,9 +121,11 @@ class HbbTV(object):
 		self.eHbbtv.playServiceRequest.get().remove(self.zap)
 		self.eHbbtv.playStreamRequest.get().remove(self.playStream)
 		self.eHbbtv.pauseStreamRequest.get().remove(self.pauseStream)
+		self.eHbbtv.seekStreamRequest.get().remove(self.seekStream)
 		self.eHbbtv.stopStreamRequest.get().remove(self.stopStream)
 		self.eHbbtv.nextServiceRequest.get().remove(self.nextService)
 		self.eHbbtv.prevServiceRequest.get().remove(self.prevService)
+		self.eHbbtv.setVolumeRequest.get().remove(self.setVolume)
 		self.eHbbtv.setVideoWindowRequest.get().remove(self.setVideoWindow)
 		#AIT
 		self.eHbbtv.redButtonAppplicationReady.get().remove(self.redButtonAppplicationReady)
@@ -108,57 +134,92 @@ class HbbTV(object):
 		self.eHbbtv.createApplicationRequest.get().remove(self.startApplicationByUri)
 		self.eHbbtv.show.get().remove(self.showBrowser)
 		self.eHbbtv.hide.get().remove(self.hideBrowser)
+		for fnc in self.onClose:
+			fnc()
 
-	def _showOverlayIfAvail(self):
-		if self.__overlay != None:
-			self.__overlay.show()
+	def _showVideoIfAvail(self):
+		if self.__videoWindow != None:
+			self.__videoWindow.show()
 
-	def _hideOverlayIfAvail(self):
-		if self.__overlay != None:
-			self.__overlay.hide()
+	def _hideVideoIfAvail(self):
+		if self.__videoWindow != None:
+			self.__videoWindow.hide()
+
+	def _adjustLimits(self, var, lower, upper):
+		var = int(var)
+		var = lower if var < lower else var
+		var = upper if var > upper else var
+		return var
 
 	def setVideoWindow(self, x, y, w, h):
-		print "[Hbbtv].setVideoWindow x=%s, y=%s, w=%s, h=%s" %(x, y, w, h)
-		if w < 1280 or h < 720:
-			p = ePoint(x+2, y+2)
-			s = eSize(w-4, h-4)
-			if self.__overlay == None:
-				self.__overlay = self.session.instantiateDialog(HbbTVVideoOverlay, point = p, size = s)
-			self.__overlay.setRect(p, s)
-			self.__overlay.show()
-			self.__fullscreen = False
-		else:
-			self.__fullscreen = True
-			self._unsetVideoWindow()
+		w = self._adjustLimits(w, 0, 1280)
+		h = self._adjustLimits(h, 0, 720)
+		x = self._adjustLimits(x, 0, 1280)
+		y = self._adjustLimits(y, 0, 720)
+
+		print "[Hbbtv].setVideoWindow x=%s, y=%s, w=%s, h=%s" % (x, y, w, h)
+
+		p = ePoint(x, y)
+		s = eSize(w, h)
+		if self.__videoWindow == None:
+			self.__videoWindow = self.session.instantiateDialog(HbbTVVideoWindow, point=p, size=s)
+		self.__videoWindow.setRect(p, s)
+		self.__videoWindow.show()
 
 	def _unsetVideoWindow(self):
-		if self.__overlay != None:
-			self.session.deleteDialog(self.__overlay)
-			self.__overlay = None
+		if self.__videoWindow != None:
+			self.session.deleteDialog(self.__videoWindow)
+			self.__videoWindow = None
 
 	def _toggleVideoFullscreen(self):
-		if self.__overlay:
-			self.__overlay.toggleFullscreen()
+		if self.__videoWindow:
+			if self.__videoWindow.toggleFullscreen():
+				if self.__browser:
+					self.__browser.hide()
+			else:
+				if self.__browser:
+					self.__browser.show()
+
+			return True
+
+	def _saveStreamToDisk(self):
+		if self.isStreaming():
+			title = _("Please selection the location you want to download the current stream to.")
+			self.session.openWithCallback(self._onSaveStreamToDisk, MovieLocationBox, title, preferredPath("<timer>"))
 			return True
 		return False
 
+	def _onSaveStreamToDisk(self, path):
+		if path is not None:
+			parsed = urlparse(self.__currentStreamRef.getPath())
+			file = parsed.path.split("/")[-1].split(".")
+			host = parsed.netloc.split(":")[0]
+			datestring = datetime.now().strftime("%Y%m%d_%H%M")
+			extension = file[1]
+			filename = "%s_%s_%s.%s " % (datestring, host, file[0], extension)
+
+			path = "%s/%s" % (path, filename)
+
+			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename))
+			self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
+
 	def _onUrlChanged(self, url):
+		self.stopStream()
 		self._unsetVideoWindow()
 
 	def showBrowser(self):
-		self._showOverlayIfAvail()
+		self._showVideoIfAvail()
 #		if self.__browser:
 			#self.__browser.show()
 
 	def hideBrowser(self):
-		self._hideOverlayIfAvail()
+		self._hideVideoIfAvail()
 #		if self.__browser:
 			#self.__browser.hide()
 
 	def _unsetBrowser(self):
 		self._unsetVideoWindow()
-		if self.__lastService:
-			self.session.nav.playService(self.__lastService)
+		self.stopStream()
 		self.__browser = None
 
 	def zap(self, sref):
@@ -170,26 +231,55 @@ class HbbTV(object):
 		return False
 
 	def playStream(self, sref):
+		self.__restoreTimer.stop()
 		self.__currentStreamRef = eServiceReference(sref)
-		if self.__fullscreen:
-			self.session.open(MoviePlayer, self.__currentStreamRef, stopCallback=self.actionStop, pauseCallback=self.actionPause)
+		currentService = self.session.nav.getCurrentlyPlayingServiceReference()
+		if currentService:
+			if currentService.toCompareString() != self.__currentStreamRef.toCompareString() and currentService.type == eServiceReference.idDVB:
+				self.__lastService = currentService
+				self._playStream(sref)
+			else:
+				self._unpauseStream()
 		else:
-			self.__lastService = self.session.nav.getCurrentlyPlayingServiceReference()
-			self.session.nav.playService(eServiceReference(sref))
-			self.__overlay.show()
-		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PLAYING)
+			self._playStream(sref)
+
+		self._showVideoIfAvail()
+
+	def _playStream(self, sref):
+		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_CONNECTING)
+		self.session.nav.stopService()
+		self.session.nav.playService(eServiceReference(sref))
 
 	def actionPause(self):
 		if self.__browser:
 			self.__browser.actionPause()
 
+	def _unpauseStream(self):
+		pausable = self.session.nav.getCurrentService().pause()
+		pausable.unpause()
+		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PLAYING)
+
 	def pauseStream(self):
 		if self.isStreaming():
-			pauseable = self.session.nav.getCurrentService().pause()
-			if pauseable is None:
+			pausable = self.session.nav.getCurrentService().pause()
+			if pausable is None:
 				self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PLAYING)
 			else:
+				pausable.pause()
 				self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PAUSED)
+
+	def seekStream(self, to):
+		if not self.isStreaming():
+			return
+
+		s = self.session.nav.getCurrentService()
+		if not s:
+			return
+
+		seekable = s.seek()
+		if seekable is None or not seekable.isCurrentlySeekable():
+			return
+		seekable.seekTo(to)
 
 	def actionStop(self):
 		if self.__browser:
@@ -197,12 +287,19 @@ class HbbTV(object):
 
 	def stopStream(self):
 		if self.isStreaming():
+			self.session.nav.stopService()
+			self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_STOPPED)
 			self.__currentStreamRef = None
-			if not self.__fullscreen:
-				if self.__lastService:
-					self.session.nav.playService(self.__lastService)
-				else:
-					self.session.nav.stopService()
+			self.__restoreTimer.startLongTimer(1)
+
+	def setVolume(self, volume):
+		vol = eDVBVolumecontrol.getInstance()
+		vol.setVolume(volume)
+
+	def _restoreLastService(self):
+		if self.__lastService:
+			self.session.nav.playService(self.__lastService)
+			self.__lastService = None
 
 	def nextService(self):
 		from Screens.InfoBar import InfoBar
@@ -215,14 +312,14 @@ class HbbTV(object):
 		ib.zapUp()
 
 	def redButtonAppplicationReady(self, appid):
-		print "[HbbTV].readButtonApplicationReady, appid=%s" %(appid)
+		print "[HbbTV].readButtonApplicationReady, appid=%s" % (appid)
 		self._redButtonApp = appid
 		app = self.eHbbtv.getApplication(self._redButtonApp)
 		HbbTV.redButtonDescriptor.name = app.getName()
 		plugins.addPlugin(HbbTV.redButtonDescriptor)
-	
+
 	def textApplicationReady(self, appid):
-		print "[HbbTV].textApplicationReady, appid=%s" %(appid)
+		print "[HbbTV].textApplicationReady, appid=%s" % (appid)
 		if config.plugins.hbbtv.text.value:
 			self._textApp = appid
 			app = self.eHbbtv.getApplication(self._textApp)
@@ -264,16 +361,17 @@ class HbbTV(object):
 					self.__browser.show()
 					return
 
-			self.__browser = self.session.open(Browser, True, uri, True)
+			self.__browser = self.session.open(Browser, True, uri, True, hbbtvMenu=self._showApplicationList)
 			self.__browser.onClose.append(self._unsetBrowser)
 			self.__browser.onPageLoadFinished.append(self.eHbbtv.pageLoadFinished)
 			self.__browser.onActionTv.append(self._toggleVideoFullscreen)
+			self.__browser.onActionRecord.append(self._saveStreamToDisk)
 			self.__browser.onUrlChanged.append(self._onUrlChanged)
-			self.__browser.onExecBegin.append(self._showOverlayIfAvail)
-			self.__browser.onExecEnd.append(self._hideOverlayIfAvail)
+			self.__browser.onExecBegin.append(self._showVideoIfAvail)
+			self.__browser.onExecEnd.append(self._hideVideoIfAvail)
 
 	def startApplicationById(self, appid):
-		uri = self.eHbbtv.resolveApplicationLocator("dvb://current.ait/%s" %appid)
+		uri = self.eHbbtv.resolveApplicationLocator("dvb://current.ait/%s" % appid)
 		if uri != "":
 			self.startApplicationByUri(uri)
 
@@ -285,15 +383,18 @@ class HbbTV(object):
 
 	def _showApplicationList(self):
 		apps = eHbbtv.getInstance().getApplicationIdsAndName()
+		apps.append(("putpat.tv", "http://www.putpat.tv/device/phupaw9t"))
 		if len(apps) == 0:
-			apps.append( (_("No HbbTV Application available"), None) )
-		self.session.openWithCallback(self._applicationSelected, ChoiceBox, title=_("Please select an HbbTV application"), list = apps)
+			apps.append((_("No HbbTV Application available"), None))
+		self.session.openWithCallback(self._applicationSelected, ChoiceBox, title=_("Please select an HbbTV application"), list=apps)
 
 	def _applicationSelected(self, appid):
 		appid = appid and appid[1]
-		hbbtv = HbbTV.instance
-		if appid is not None and hbbtv is not None:
-			hbbtv.startApplicationById(appid)
+		if appid is not None:
+			if str(appid).startswith("http"):
+				self.startApplicationByUri(appid)
+			else:
+				self.startApplicationById(appid)
 
 	@staticmethod
 	def redButton(**kwargs):
@@ -309,8 +410,8 @@ class HbbTV(object):
 			if hbbtv.isTextAvailable():
 				hbbtv.showTextApplication()
 
-HbbTV.redButtonDescriptor = PluginDescriptor(name="HbbTV", description=_("Show the current HbbTV Startapplication"), where=[PluginDescriptor.WHERE_HBBTV,], fnc=HbbTV.redButton, needsRestart=False)
-HbbTV.textDescriptor = PluginDescriptor(name="HbbTV", description=_("Show the current HbbTV Teletext Application"), where=[PluginDescriptor.WHERE_TELETEXT,], fnc=HbbTV.textButton, needsRestart=False)
+HbbTV.redButtonDescriptor = PluginDescriptor(name="HbbTV", description=_("Show the current HbbTV Startapplication"), where=[PluginDescriptor.WHERE_HBBTV, ], fnc=HbbTV.redButton, needsRestart=False)
+HbbTV.textDescriptor = PluginDescriptor(name="HbbTV", description=_("Show the current HbbTV Teletext Application"), where=[PluginDescriptor.WHERE_TELETEXT, ], fnc=HbbTV.textButton, needsRestart=False)
 
 def start(session, **kwargs):
 	if HbbTV.instance is None:

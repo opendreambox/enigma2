@@ -2,6 +2,7 @@ from Components.config import config
 from Plugins.Plugin import PluginDescriptor
 
 from Browser import Browser
+from BrowserMenu import BrowserMenu
 
 def main_widget(session, **kwargs):
 	url = kwargs.get("url", None)
@@ -16,7 +17,11 @@ def menu(menuid, **kwargs):
 		return [(_("Web Browser"), main_widget, "web_browser", 45)]
 	return []
 
+def downloads(session, **kwargs):
+	session.open(BrowserMenu, None, None, menulist = [(_("Downloads"), BrowserMenu.MENU_DOWNLOADS),])
+
 def Plugins(**kwargs):
 	return [
 			PluginDescriptor(name = "Browser", description = _("Browse the web"), where = PluginDescriptor.WHERE_MENU, fnc = menu),
+			PluginDescriptor(name = "Downloads", description = _("Downloads"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc = downloads),
 		]

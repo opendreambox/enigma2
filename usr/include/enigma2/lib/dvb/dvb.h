@@ -150,7 +150,7 @@ class eDVBResourceManager: public iObject, public sigc::trackable
 	DECLARE_REF(eDVBResourceManager);
 	int avail, busy;
 
-	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD };
+	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, DM500HDV2, DM800SEV2 };
 
 	int m_boxtype;
 

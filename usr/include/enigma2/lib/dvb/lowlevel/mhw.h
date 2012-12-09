@@ -42,6 +42,22 @@ struct day_hours {
 };
 
 typedef struct {
+   u_char                                        :8;
+   u_char                                        :8;
+   u_char duration_hi                            :8;
+   u_char duration_lo                            :8;
+   u_char title                                [23];
+   u_char ppv_id_hi                              :8;
+   u_char ppv_id_mh                              :8;
+   u_char ppv_id_ml                              :8;
+   u_char ppv_id_lo                              :8;
+   u_char program_id_hi                          :8;
+   u_char program_id_mh                          :8;
+   u_char program_id_ml                          :8;
+   u_char program_id_lo                          :8;
+} mhw_data_t;
+
+typedef struct {
    u_char table_id                               :8;
 #if BYTE_ORDER == BIG_ENDIAN
    u_char section_syntax_indicator               :1;
@@ -68,19 +84,10 @@ typedef struct {
      struct summary_min ms;
      u_char mhw2_seconds                         :8;
    };
-   u_char                                        :8; // mhw2_title begin
-   u_char                                        :8;
-   u_char duration_hi                            :8;
-   u_char duration_lo                            :8;
-   u_char title                                [23];
-   u_char ppv_id_hi                              :8;
-   u_char ppv_id_mh                              :8;
-   u_char ppv_id_ml                              :8;
-   u_char ppv_id_lo                              :8;
-   u_char program_id_hi                          :8;
-   u_char program_id_mh                          :8;
-   u_char program_id_ml                          :8;
-   u_char program_id_lo                          :8; // mhw2_title end (35chars max)
+   union {
+     u_char title_mhw2[35];
+     mhw_data_t mhw;
+   };
    u_char mhw2_mjd_hi                            :8;
    u_char mhw2_mjd_lo                            :8;
    u_char mhw2_duration_hi                       :8;

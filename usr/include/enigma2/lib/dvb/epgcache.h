@@ -205,8 +205,8 @@ class eEPGCache: public eMainloop_native, private eThread, public sigc::trackabl
 		__u16 m_mhw2_channel_pid, m_mhw2_title_pid, m_mhw2_summary_pid;
 		bool m_MHWTimeoutet;
 		void MHWTimeout() { m_MHWTimeoutet=true; }
-		void readMHWData(const __u8 *data);
-		void readMHWData2(const __u8 *data);
+		void readMHWData(const __u8 *data, int len);
+		void readMHWData2(const __u8 *data, int len);
 		void startMHWReader(__u16 pid, __u8 tid);
 		void startMHWReader2(__u16 pid, __u8 tid, int ext=-1);
 		void startTimeout(int msek);
@@ -271,6 +271,7 @@ public:
 			:type(type), time(time) {}
 	};
 	eFixedMessagePump<Message> messages;
+
 private:
 	friend class channel_data;
 	static eEPGCache *instance;
@@ -292,8 +293,7 @@ private:
 // called from epgcache thread
 	int m_running;
 	char m_filename[1024];
-	void save();
-	void load();
+
 #ifdef ENABLE_PRIVATE_EPG
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif
@@ -329,6 +329,10 @@ public:
 #endif
 	// must be called once!
 	void setCacheFile(const char *filename);
+	void setCacheTimespan(int days);
+
+	void load();
+	void save();
 
 	// called from main thread
 	inline void Lock();

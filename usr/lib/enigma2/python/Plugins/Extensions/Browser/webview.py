@@ -300,7 +300,9 @@ class eWebView(eWidget):
     nav8 = _webview.eWebView_nav8
     nav9 = _webview.eWebView_nav9
     navBack = _webview.eWebView_navBack
+    navBackExplicit = _webview.eWebView_navBackExplicit
     navForward = _webview.eWebView_navForward
+    navForwardExplicit = _webview.eWebView_navForwardExplicit
     navStop = _webview.eWebView_navStop
     navReload = _webview.eWebView_navReload
     def __init__(self, *args): 

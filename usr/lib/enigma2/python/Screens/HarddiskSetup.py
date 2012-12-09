@@ -580,6 +580,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		unsupportetpart_msg = _("Unsupported partition type!")
 		multiplepartmsg = _("Multiple partitions found!")
 		needsattention_msg = _("Needs attention!")
+		systemountpoint_msg = _("Mounted by system!")
 
 		if isOfflineStorageDevice:
 			uuid = hd
@@ -682,7 +683,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 								if selectedPart is not None and selectedPart.isMountable:
 									if selectedPart.isReadable:
 										isReadable = True
-										device_info += " - " + nomountpoint_msg
+										device_info += " - " + systemountpoint_msg
 									else:
 										device_info += " - " + unsupportetpart_msg
 								elif selectedPart is not None and not selectedPart.isMountable:
@@ -698,7 +699,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 										except OSError:
 											isReadable = False
 										if isReadable:
-											device_info += " - " + nomountpoint_msg
+											device_info += " - " + systemountpoint_msg
 										else:
 											device_info += " - " + unsupportetpart_msg
 									else:
@@ -712,7 +713,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 							if selectedPart is not None and selectedPart.isMountable:
 								if selectedPart.isReadable:
 									isReadable = True
-									device_info += " - " +nomountpoint_msg
+									device_info += " - " + systemountpoint_msg
 								else:
 									device_info += " - " + unsupportetpart_msg
 							elif selectedPart is not None and not selectedPart.isMountable:
@@ -737,7 +738,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 									except OSError:
 										isReadable = False
 									if isReadable:
-										device_info += " - " + nomountpoint_msg
+										device_info += " - " + systemountpoint_msg
 									else:
 										device_info += " - " + unsupportetpart_msg
 								else:

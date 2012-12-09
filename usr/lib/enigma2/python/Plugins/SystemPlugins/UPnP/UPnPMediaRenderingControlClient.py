@@ -10,12 +10,12 @@ class UPnPMediaRenderingControlClient(object):
 	UPNP_NOT_IMPLEMENTED = "NOT_IMPLEMENTED"
 
 	def __init__(self, client):
-		self.__client = client
-		self.__transport = self.__client.av_transport
-		self.__renderer = self.__client.rendering_control
+		self.__client = client #MediaRendererClient
+		self.__transport = self.__client.av_transport #AVTransportClient
+		self.__renderclient = self.__client.rendering_control #RenderingControlClient
 		#useless without avtransport- and/or renderering client
 		assert self.__transport is not None
-		assert self.__renderer is not None
+		assert self.__renderclient is not None
 
 		self.onTransportStatusChanged = []
 		self.onPlaybackStatusChanged = []
@@ -26,21 +26,18 @@ class UPnPMediaRenderingControlClient(object):
 
 	def __subscribe(self):
 		for var in ["TransportStatus", "TransportState", "CurrentTrackDuration", "AbsoluteTimePosition"]:
-			print "__subscribing to %s" %(var)
-			self.__transport.subscribe_for_variable(var, self.__onStateVariableChanged)
+			self.__transport.subscribe_for_variable(var, self.__onStateVariableChanged, signal=True)
 
 	def __onStateVariableChanged(self, variable):
-		name = variable.name
-		val = variable.value
-		print "__onStateVariableChanged: %s=%s" %(name, val)
-		if name == "TransportStatus":
-			self.__onTransportStatusChanged(val)
-		elif name == "TransportState":
-			self.__onTransportStateChanged(val)
-		elif name == "CurrentTrackDuration":
-			self.__onDurationChanged(val)
-		elif name == "AbsoluteTimePosition":
-			self.__onPositionChanged(val)
+		print "__onStateVariableChanged: %s=%s" %(variable.name, variable.value)
+		if variable.name == "TransportStatus":
+			self.__onTransportStatusChanged(variable.value)
+		elif variable.name == "TransportState":
+			self.__onTransportStateChanged(variable.value)
+		elif variable.name == "CurrentTrackDuration":
+			self.__onDurationChanged(variable.value)
+		elif variable.name == "AbsoluteTimePosition":
+			self.__onPositionChanged(variable.value)
 
 	def __onTransportStatusChanged(self, status):
 		print "__onTransportStatusChanged status=%s" %(status)
@@ -94,7 +91,7 @@ class UPnPMediaRenderingControlClient(object):
 		self.__transport.pause()
 
 	def seek(self, target):
-		self.__transport.seek(target)
+		self.__transport.seek(target=target)
 
 	def next(self):
 		self.__transport.next()
@@ -106,15 +103,15 @@ class UPnPMediaRenderingControlClient(object):
 		self.__transport.stop()
 
 	def getMute(self):
-		return self.__renderer.get_mute() == 1
+		return self.__renderclient.get_mute() == 1
 
 	def setMute(self, mute):
 		val = int(mute)
-		self.__renderer.set_mute(desired_mute=val)
+		self.__renderclient.set_mute(desired_mute=val)
 
 	def getVolume(self):
-		return self.__renderer.get_volume()
+		return self.__renderclient.get_volume()
 
 	def setVolume(self, target):
-		self.__renderer.set_volume(desired_volume=target)
+		self.__renderclient.set_volume(desired_volume=target)
 

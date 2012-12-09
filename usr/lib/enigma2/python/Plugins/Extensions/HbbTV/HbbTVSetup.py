@@ -27,7 +27,7 @@ class HbbTVSetup(ConfigListScreen, Screen):
 			"cancel": self.cancel,
 			"ok" : self.close,
 		}, -2)
-		
+
 		self.createSetup()
 		self.onLayoutFinish.append(self.layoutFinished)
 		config.plugins.hbbtv.enabled.addNotifier(self._enabledChanged, initial_call = False)
@@ -39,11 +39,11 @@ class HbbTVSetup(ConfigListScreen, Screen):
 		if self._save:
 			for x in self["config"].list:
 				x[1].save()
-	
+
 	def cancel(self):
 		self._save = False
 		self.close()
-	
+
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)
 
@@ -55,7 +55,7 @@ class HbbTVSetup(ConfigListScreen, Screen):
 		if config.plugins.hbbtv.enabled.value:
 			list.extend( [
 				getConfigListEntry(_("HbbTV Text"), config.plugins.hbbtv.text),
-				getConfigListEntry(_("Show HbbTV Testsuite"), config.plugins.hbbtv.testsuite),
+				getConfigListEntry(_("Show HbbTV Browser"), config.plugins.hbbtv.testsuite),
 			])
 
 		self["config"].list = list

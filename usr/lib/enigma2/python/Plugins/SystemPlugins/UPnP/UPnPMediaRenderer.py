@@ -18,16 +18,11 @@ from coherence import log
 import coherence.extern.louie as louie
 from coherence.extern.simple_plugin import Plugin
 
+from UPnPCore import Statics, Item
+
 import os
 
 class UPnPPlayer(object):
-	STATE_STOPPED = 0
-	STATE_PLAYING = 1
-	STATE_PAUSED = 2
-
-	MESSAGE_EOF = "eof"
-	MESSAGE_BUFFERING = "buffering"
-
 	def __init__(self, session, handlePlayback=False):
 		global globalActionMap #fixme #hack
 		self.actionmap = globalActionMap
@@ -38,7 +33,7 @@ class UPnPPlayer(object):
 		self.uri = None
 		self.metadata = {}
 		self.mimetype = None
-		self._state = UPnPPlayer.STATE_STOPPED
+		self._state = UPnPMediaRenderer.STATE_IDLE
 
 		self.onStateChange = []
 		self.onClose = [] #hack
@@ -48,9 +43,10 @@ class UPnPPlayer(object):
 
 		self.volctrl = eDVBVolumecontrol.getInstance() # this is not nice
 
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
-			iPlayableService.evEOF: self.__onEOF,
-		})
+		if self._handlePlayback:
+			self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
+				iPlayableService.evEOF: self.__onEOF,
+			})
 
 	def _stateChanged(self, state, message=None):
 		self._state = state
@@ -58,19 +54,19 @@ class UPnPPlayer(object):
 			fnc(message)
 
 	def __onEOF(self):
-		self.__poll_pos_timer.stop()
-		self._stateChanged(UPnPPlayer.STATE_STOPPED, self.MESSAGE_EOF)
+		self.stopPolling()
+		self._stateChanged(UPnPMediaRenderer.STATE_IDLE, UPnPMediaRenderer.MESSAGE_EOF)
 
 	def __onPlay(self):
 		self.startPolling()
-		self._stateChanged(UPnPPlayer.STATE_PLAYING)
+		self._stateChanged(UPnPMediaRenderer.STATE_PLAYING)
 
 	def __onPause(self):
-		self._stateChanged(UPnPPlayer.STATE_PAUSED)
+		self._stateChanged(UPnPMediaRenderer.STATE_PAUSED)
 
 	def __onStop(self):
 		self.stopPolling()
-		self._stateChanged(UPnPPlayer.STATE_STOPPED)
+		self._stateChanged(UPnPMediaRenderer.STATE_IDLE)
 
 	def getSeekable(self):
 		s = self.session.nav.getCurrentService()
@@ -90,7 +86,7 @@ class UPnPPlayer(object):
 		return None
 
 	def load(self, uri, metadata, mimetype=None):
-		print "[UPnPPlayer.load]\nuri=%s\nmimetype=%s\n" %(uri, mimetype)
+		print "[UPnPPlayer.load]\nuri=%s\nmimetype=%s\nmetadata=%s\n" %(uri, mimetype, metadata)
 		self.uri = uri
 		self.metadata = metadata
 		self.mimetype = mimetype
@@ -98,12 +94,16 @@ class UPnPPlayer(object):
 	def play(self):
 		print "[UPnPPlayer.play] Will now play %s" %self.uri
 		if self._handlePlayback:
-			if self._state == UPnPPlayer.STATE_PAUSED:
+			if self._state == UPnPMediaRenderer.STATE_PAUSED:
 				if self.unpause():
 					return
 			service = eServiceReference(4097, 0, self.uri)
 			self.session.nav.playService(service)
 		self.__onPlay()
+
+	def transition(self):
+		self._state = UPnPMediaRenderer.STATE_TRANSITIONING
+		self.stopPolling()
 
 	def pause(self):
 		print "[UPnPPlayer.pause]"
@@ -126,11 +126,15 @@ class UPnPPlayer(object):
 
 		self.startPolling() #start sending position again
 
-	def stop(self):
-		print "[UPnPPlayer.stop]"
-		if self._handlePlayback:
-			self.session.nav.stopService()
-		self.__onStop()
+	def stop(self, isEOF):
+		if isEOF:
+			print "[UPnPPlayer.stop :: EOF]"
+			self.__onEOF()
+		else:
+			print "[UPnPPlayer.stop]"
+			if self._handlePlayback:
+				self.session.nav.stopService()
+				self.__onStop()
 
 	def unpause(self):
 		print "[UPnPPlayer.unpause]"
@@ -208,6 +212,11 @@ class UPnPPlayer(object):
 class UPnPMediaRenderer(log.Loggable, Plugin):
 	STATE_TRANSITIONING = "transitioning"
 	STATE_IDLE = "idle"
+	STATE_PLAYING = "playing"
+	STATE_PAUSED = "paused"
+
+	MESSAGE_EOF = "eof"
+	MESSAGE_BUFFERING = "buffering"
 
 	logCategory = 'enigma2_player'
 	implements = ['MediaRenderer']
@@ -217,18 +226,13 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 
 	def __init__(self, device, session, **kwargs):
 		self.name = kwargs.get('name', '%s' %(HardwareInfo().get_device_name()) )
-
 		self.metadata = None
 		self.player = kwargs.get('player', UPnPPlayer(session, handlePlayback=True))
 		self.player.onStateChange.append(self.update)
 		self.tags = {}
 		self.server = device
-		self._state = UPnPPlayer.STATE_STOPPED
-
 		self.playcontainer = None
-
 		self.dlna_caps = ['playcontainer-0-1']
-
 		louie.send('Coherence.UPnP.Backend.init_completed', None, backend=self)
 
 	def __repr__(self):
@@ -240,15 +244,16 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		connection_manager = self.server.connection_manager_server
 		av_transport = self.server.av_transport_server
 		conn_id = connection_manager.lookup_avt_id(self.current_connection_id)
-		if current == UPnPPlayer.STATE_PLAYING:
-			state = UPnPPlayer.STATE_PLAYING
+		if current == self.STATE_PLAYING:
+			state = self.STATE_PLAYING
 			av_transport.set_variable(conn_id, 'TransportState', 'PLAYING')
-		elif current == UPnPPlayer.STATE_PAUSED:
-			state = UPnPPlayer.STATE_PAUSED
+		elif current == self.STATE_PAUSED:
+			state = self.STATE_PAUSED
 			av_transport.set_variable(conn_id, 'TransportState', 'PAUSED_PLAYBACK')
 		elif self.playcontainer != None and message == self.MESSAGE_EOF and \
 			self.playcontainer[0] + 1 < len(self.playcontainer[2]):
-			state = UPnPPlayer.STATE_PAUSED
+			state = self.STATE_TRANSITIONING
+			self.player.transition()
 			av_transport.set_variable(conn_id, 'TransportState', 'TRANSITIONING')
 
 			next_track = ()
@@ -265,6 +270,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 				next_track = (res.data, didl.toString(), remote_content_format)
 				self.playcontainer[0] = self.playcontainer[0] + 1
 
+			self.info("update: next=%s" %next_track)
 			if len(next_track) == 3:
 				av_transport.set_variable(conn_id, 'CurrentTrack',
 											self.playcontainer[0] + 1)
@@ -273,9 +279,10 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 			else:
 				state = self.STATE_IDLE
 				av_transport.set_variable(conn_id, 'TransportState', 'STOPPED')
-		elif message == UPnPPlayer.MESSAGE_EOF and \
+		elif message == self.MESSAGE_EOF and \
 			len(av_transport.get_variable('NextAVTransportURI').value) > 0:
 			state = self.STATE_TRANSITIONING
+			self.player.transition()
 			av_transport.set_variable(conn_id, 'TransportState', 'TRANSITIONING')
 			CurrentURI = av_transport.get_variable('NextAVTransportURI').value
 			metadata = av_transport.get_variable('NextAVTransportURIMetaData')
@@ -285,6 +292,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 			r = self.upnp_SetAVTransportURI(self, InstanceID=0,
 											CurrentURI=CurrentURI,
 											CurrentURIMetaData=CurrentURIMetaData)
+			self.info("update: r=%s" %r)
 			if r == {}:
 				self.play()
 			else:
@@ -326,7 +334,13 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 
 	def load(self, uri, metadata, mimetype=None):
 		self.info("loading: %r %r %r" % (uri, metadata, mimetype))
-		self.player.load(uri, metadata, mimetype)
+
+		elt = DIDLLite.DIDLElement.fromString(metadata)
+		meta = None
+		if(len(elt.getItems()) > 0):
+			meta = Item.getItemMetadata(elt.getItems()[0])
+		self.player.load(uri, meta, mimetype)
+
 		state = self.player.getState()
 		connection_id = self.server.connection_manager_server.lookup_avt_id(self.current_connection_id)
 		self.stop(silent=True) # the check whether a stop is really needed is done inside stop
@@ -371,9 +385,12 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 
 		self.server.av_transport_server.set_variable(connection_id, 'CurrentTransportActions', transport_actions)
 
-		if state == UPnPPlayer.STATE_PLAYING:
-			self.info("was playing...")
-			self.play()
+# I think it is wrong to call play from within load
+# UPnP RenderingClients actually call "play" themselves after calling SetAVTransportURI (which causes load to be called)
+# The code stays until we're sure!
+#		if state == self.STATE_PLAYING:
+#			self.info("was playing...")
+#			self.play()
 		self.update()
 
 	def start(self, uri):

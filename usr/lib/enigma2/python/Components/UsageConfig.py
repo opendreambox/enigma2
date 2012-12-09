@@ -129,6 +129,8 @@ def InitUsageConfig():
 
 	config.seek.speeds_backward.addNotifier(updateEnterBackward, immediate_feedback = False)
 
+	config.usage.text_subtitle_presentation = ConfigSelection(default = "black box", choices = [("black box", _("black box")), ("drop-shadow", _("drop-shadow"))])
+
 
 def updateChoices(sel, choices):
 	if choices:

@@ -49,7 +49,7 @@ config.plugins.WebBrowser.downloadpath = ConfigDirectory(default = "/media/hdd")
 
 class Browser(Screen, HelpableScreen):
 
-	def __init__(self, session, fullscreen = False, url = None, isHbbtv = False, isTransparent = False):
+	def __init__(self, session, fullscreen = False, url = None, isHbbtv = False, isTransparent = False, hbbtvMenu = None):
 		size = getDesktop(0).size()
 		width = int(size.width() * 0.9)
 		fwidth = int(size.width())
@@ -171,6 +171,8 @@ class Browser(Screen, HelpableScreen):
 		if self.__isHbbtv:
 			isTransparent = fullscreen = True
 
+		self.__hbbtvMenu = hbbtvMenu
+
 		self.__isTransparent = isTransparent
 		self.__fullscreen = fullscreen
 		if self.__fullscreen:
@@ -253,14 +255,15 @@ class Browser(Screen, HelpableScreen):
 		self.onExecEnd = []
 		self.onPageLoadFinished = []
 		self.onActionTv = []
+		self.onActionRecord = []
 		self.onUrlChanged = []
 
 		self["helpableactions"] = HelpableActionMap(self, "BrowserActions",
 		{
 			"exit": (self.__actionExit, _("Close the browser")),
 			"url": (self.__actionEnterUrl, _("Enter web address or search term")),
-			"back": boundFunction(self.__actionNavigate, eWebView.navBack),
-			"forward": boundFunction(self.__actionNavigate, eWebView.navForward),
+			"back": self.__actionBack,
+			"forward": self.__actionForward,
 			"left": self.__actionLeft,
 			"right": self.__actionRight,
 			"up": self.__actionUp,
@@ -284,6 +287,7 @@ class Browser(Screen, HelpableScreen):
 			"playpause" : self.__actionPlayPause,
 			"stop" : self.actionStop,
 			"tv" : self.__actionTv,
+			"record" : self.__actionRecord,
 		}, -2)
 
 		self["coloractions"] = ActionMap(["ColorActions"],
@@ -478,12 +482,16 @@ class Browser(Screen, HelpableScreen):
 				self.session.open(MoviePlayer, service)
 
 	def __actionMenu(self):
-		if not self.__isHbbtv:
-			self.__urlSuggestionTimer.stop()
-			self.__inputTimer.stop()
-			self.__urlList.hide()
-			self.__persistCookies()
-			self.session.openWithCallback(self.__menuCB, BrowserMenu, self.pageTitle, self.webnavigation.url)
+		if self.__isHbbtv:
+			if self.__hbbtvMenu is not None:
+				self.__hbbtvMenu()
+			return
+
+		self.__urlSuggestionTimer.stop()
+		self.__inputTimer.stop()
+		self.__urlList.hide()
+		self.__persistCookies()
+		self.session.openWithCallback(self.__menuCB, BrowserMenu, self.pageTitle, self.webnavigation.url)
 
 	def __menuCB(self, actions = None):
 		if actions != None:
@@ -616,6 +624,18 @@ class Browser(Screen, HelpableScreen):
 	def actionStop(self):
 		self.__actionNavigate(eWebView.navMediaStop)
 
+	def __actionBack(self):
+		if self.__isHbbtv:
+			self.__actionNavigate(eWebView.navBack)
+		else:
+			self.__actionNavigate(eWebView.navBackExplicit)
+
+	def __actionForward(self):
+		if self.__isHbbtv:
+			self.__actionNavigate(eWebView.navForward)
+		else:
+			self.__actionNavigate(eWebView.navForwardExplicit)
+
 	def __actionBackspace(self):
 		if self.textInput.visible:
 			self.restartTimer()
@@ -627,7 +647,7 @@ class Browser(Screen, HelpableScreen):
 			if self.__isInput:
 				self.__actionNavigate(eWebView.navBackspace)
 			else:
-				self.__actionNavigate(eWebView.navBack)
+				self.__actionBack()
 
 	def __actionDelete(self):
 		if self.textInput.visible:
@@ -640,7 +660,7 @@ class Browser(Screen, HelpableScreen):
 			if self.__isInput:
 				self.__actionNavigate(eWebView.navDelete)
 			else:
-				self.__actionNavigate(eWebView.navForward)
+				self.__actionForward()
 
 	def __moveCursor(self, x=0, y=0):
 		if x != 0 or y != 0:
@@ -740,7 +760,12 @@ class Browser(Screen, HelpableScreen):
 
 	def __actionTv(self):
 		for fnc in self.onActionTv:
-			if fnc(): #True if the function handled the event, abort
+			if fnc() is True: #Function told us to stop handling
+				return
+
+	def __actionRecord(self):
+		for fnc in self.onActionRecord:
+			if fnc() is True: #Function told us to stop handling
 				return
 
 	def __scroll(self, dx, dy):
@@ -804,7 +829,7 @@ class Browser(Screen, HelpableScreen):
 			self.setTitle("Web Browser - %s" %self.pageTitle)
 
 	def __onLoadProgress(self, progress):
-		print "[Browser].loadProgress %s" %progress
+		print "[Browser].__onLoadProgress %s" %progress
 		if(progress < 100):
 			self["loading"].show()
 			self["loading"].setText(_("Loading... %s%%" %progress))
@@ -813,7 +838,7 @@ class Browser(Screen, HelpableScreen):
 			self["loading"].setText("")
 
 	def __onLoadFinished(self, val):
-		print "[Browser].loadFinished %s" %val
+		print "[Browser].__onLoadFinished %s" %val
 		if val == 1:
 			if not self.__isHbbtv:
 				self.__db.addToHistory(HistoryItem(title = self.pageTitle, url = self.webnavigation.url));
