@@ -13,7 +13,7 @@ class NotificationQueueEntry():
 		self.args = args
 		self.kwargs = kwargs
 		self.domain = "default"
-		
+
 		if kwargs.has_key("domain"):
 			if kwargs["domain"]:
 				if kwargs["domain"] in notificationQueue.domains:
@@ -70,14 +70,14 @@ ICON_DEFAULT = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 
 ICON_MAIL = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/notification_mail.png'))
 ICON_TIMER = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/clock.png'))
 
-class NotificationQueue():	
+class NotificationQueue():
 	def __init__(self):
 		self.queue = []
 		self.__screen = None
 
 		# notifications which are currently on screen (and might be closed by similiar notifications)
 		self.current = [ ]
-		
+
 		# functions which will be called when new notification is added
 		self.addedCB = [ ]
 
@@ -89,11 +89,11 @@ class NotificationQueue():
 
 	def addEntry(self, entry):
 		assert isinstance(entry, NotificationQueueEntry)
-	
+
 		self.queue.append(entry)
 		for x in self.addedCB:
 			x()
-	
+
 	def removeSameID(self, id):
 		for entry in self.queue:
 			if entry.pending and entry.id == id:
@@ -103,8 +103,8 @@ class NotificationQueue():
 		for entry, dlg in self.current:
 			if entry.id == id:
 				print "(found in current notifications)"
-				dlg.close()		    
-	
+				dlg.close()
+
 	def getPending(self, domain = None):
 		res = []
 		for entry in self.queue:
@@ -112,7 +112,7 @@ class NotificationQueue():
 				res.append(entry)
 		return res
 
-	def popNotification(self, parent, entry = None):	
+	def popNotification(self, parent, entry = None):
 		if entry:
 			performCB = entry.deferred_callable
 		else:
@@ -122,13 +122,14 @@ class NotificationQueue():
 			else:
 				return
 			performCB = True
-		
+
 		print "[NotificationQueue::popNotification] domain", entry.domain, "deferred_callable:", entry.deferred_callable
-		
+
 		if performCB and entry.kwargs.has_key("onSessionOpenCallback"):
 			entry.kwargs["onSessionOpenCallback"]()
 			del entry.kwargs["onSessionOpenCallback"]
 
+		entry.pending = False
 		if performCB and entry.fnc is not None:
 			dlg = parent.session.openWithCallback(entry.fnc, entry.screen, *entry.args, **entry.kwargs)
 		else:
@@ -141,7 +142,6 @@ class NotificationQueue():
 
 	def __notificationClosed(self, d):
 		#print "[NotificationQueue::__notificationClosed]", d, self.current
-		d[0].pending = False
 		self.current.remove(d)
 
 notificationQueue = NotificationQueue()

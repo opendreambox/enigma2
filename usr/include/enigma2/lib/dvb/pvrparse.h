@@ -87,6 +87,9 @@ private:
 	int m_skip;
 	int m_last_pts_valid;
 	pts_t m_last_pts;
+	unsigned char m_pkt2[188*2];
+	uint64_t m_last_sc_offset;
+	int m_last_sc_offset_valid;
 };
 
 #endif

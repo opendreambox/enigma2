@@ -196,12 +196,12 @@ class HbbTV(object):
 			host = parsed.netloc.split(":")[0]
 			datestring = datetime.now().strftime("%Y%m%d_%H%M")
 			extension = file[1]
-			filename = "%s_%s_%s.%s " % (datestring, host, file[0], extension)
+			filename = "%s_%s_%s.%s" % (datestring, host, file[0], extension)
 
-			path = "%s/%s" % (path, filename)
+			path = "%s%s" % (path, filename)
 
 			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename))
-			self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
+			#self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
 
 	def _onUrlChanged(self, url):
 		self.stopStream()
@@ -234,7 +234,7 @@ class HbbTV(object):
 		self.__restoreTimer.stop()
 		self.__currentStreamRef = eServiceReference(sref)
 		currentService = self.session.nav.getCurrentlyPlayingServiceReference()
-		if currentService:
+		if currentService and currentService.valid():
 			if currentService.toCompareString() != self.__currentStreamRef.toCompareString() and currentService.type == eServiceReference.idDVB:
 				self.__lastService = currentService
 				self._playStream(sref)

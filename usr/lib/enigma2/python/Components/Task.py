@@ -112,7 +112,7 @@ class Job(object):
 
 	def cancel(self):
 		self.abort()
-		
+
 	def remove(self, callback):
 		if self.status == self.IN_PROGRESS:
 			self.abort()
@@ -196,10 +196,10 @@ class Task(object):
 
 	def cleanup(self, failed):
 		pass
-	
+
 	def processStdout(self, data):
 		self.processOutput(data)
-		
+
 	def processStderr(self, data):
 		self.processOutput(data)
 
@@ -260,12 +260,13 @@ class Task(object):
 # later, it will also support suspending jobs (and continuing them after reboot etc)
 # It also supports a notification when some error occured, and possibly a retry.
 class JobManager:
-	def __init__(self):
+	def __init__(self, domain="JobManager"):
 		self.active_jobs = [ ]
 		self.failed_jobs = [ ]
 		self.job_classes = [ ]
 		self.in_background = False
 		self.active_job = None
+		self.domain = domain
 
 	def AddJob(self, job):
 		self.active_jobs.append(job)
@@ -282,13 +283,13 @@ class JobManager:
 		if self.in_background:
 			from Screens.TaskView import JobView
 			self.in_background = False
-			Notifications.AddNotification(JobView, self.active_job, domain = "JobManager")
+			Notifications.AddNotification(JobView, self.active_job, domain=self.domain)
 		if problems:
 			from Screens.MessageBox import MessageBox
 			if problems[0].RECOVERABLE:
-				Notifications.AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)), domain = "JobManager")
+				Notifications.AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)), domain=self.domain)
 			else:
-				Notifications.AddNotification(MessageBox, _("Error") + (': %s') % (problems[0].getErrorMessage(task)), type = MessageBox.TYPE_ERROR, domain = "JobManager")
+				Notifications.AddNotification(MessageBox, _("Error") + (': %s') % (problems[0].getErrorMessage(task)), type = MessageBox.TYPE_ERROR, domain=self.domain)
 				self.errorCB(False)
 			return
 			#self.failed_jobs.append(self.active_job)
@@ -378,10 +379,10 @@ class DiskspacePrecondition(Condition):
 class ToolExistsPrecondition(Condition):
 	def check(self, task):
 		import os
-		
+
 		if task.cmd[0]=='/':
 			self.realpath = task.cmd
-			print "[Task.py][ToolExistsPrecondition] WARNING: usage of absolute paths for tasks should be avoided!" 
+			print "[Task.py][ToolExistsPrecondition] WARNING: usage of absolute paths for tasks should be avoided!"
 			return os.access(self.realpath, os.X_OK)
 		else:
 			self.realpath = task.cmd
@@ -391,7 +392,7 @@ class ToolExistsPrecondition(Condition):
 			if len(absolutes) > 0:
 				self.realpath = task.cmd[0]
 				return True
-		return False 
+		return False
 
 	def getErrorMessage(self, task):
 		return _("A required tool (%s) was not found.") % (self.realpath)

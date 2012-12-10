@@ -1,5 +1,9 @@
 from Components.Task import Task, Job, JobManager
 from Tools.Downloader import downloadWithProgress
+from Tools import Notifications
+
+Notifications.notificationQueue.registerDomain("DownloadManager", _("Download Manager"), Notifications.ICON_DEFAULT)
+
 
 class DownloadJob(Job):
 	def __init__(self, url, file, title):
@@ -37,5 +41,5 @@ class DownloadTask(Task):
 			print "[DownloadTask].http_failed " + error_message
 			Task.processFinished(self, 1)
 
-downloadManager = JobManager()
+downloadManager = JobManager(domain="DownloadManager")
 downloadManager.in_background = True
