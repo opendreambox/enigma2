@@ -15,6 +15,7 @@ class ServiceEventTracker:
 	InfoBarStack = [ ]
 	InfoBarStackSize = 0
 	oldServiceStr = None
+	oldRef = None
 	EventMap = { }
 	navcore = None
 

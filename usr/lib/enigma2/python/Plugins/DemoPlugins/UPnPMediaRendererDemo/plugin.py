@@ -1,19 +1,19 @@
 # -*- coding: UTF-8 -*-
+from enigma import eServiceReference
 from Components.ResourceManager import resourcemanager
-from Screens.MessageBox import MessageBox
 from Plugins.SystemPlugins.UPnP.UPnPMediaRenderer import UPnPMediaRenderer, UPnPPlayer
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 from Plugins.Plugin import PluginDescriptor
-from MoviePlayer import MoviePlayer
+from Screens.Standby import Standby
 
-from enigma import eServiceReference
+from MoviePlayer import MoviePlayer
 
 class ExtendedPlayer(UPnPPlayer):
 	IMAGE_CACHE_PATH = "/tmp/"
 
 	def __init__(self, session):
 		UPnPPlayer.__init__(self, session, handlePlayback=False)
-		self._reset() # initialize some stuff
+		self._reset()# initialize some stuff
 
 	def _reset(self):
 		self._moviePlayer = None
@@ -29,9 +29,9 @@ class ExtendedPlayer(UPnPPlayer):
 				self._picView.close()
 			service = eServiceReference(4097, 0, self.uri)
 			if self.metadata != None:
-				title = self.metadata[Statics.META_TITLE]
-				artist = self.metadata[Statics.META_ARTIST]
-				album = self.metadata[Statics.META_ALBUM]
+				title = self.metadata.get(Statics.META_TITLE, None)
+				artist = self.metadata.get(Statics.META_ARTIST, None)
+				album = self.metadata.get(Statics.META_ALBUM, None)
 				if title != None:
 					if artist != None:
 						if album != None:

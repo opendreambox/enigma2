@@ -858,7 +858,9 @@ class InfoBarSeek:
 		return seek
 
 	def isSeekable(self):
-		if self.getSeek() is None:
+		import Screens.InfoBar
+
+		if self.getSeek() is None or (isinstance(self, Screens.InfoBar.InfoBar) and not self.timeshift_enabled):
 			return False
 		return True
 

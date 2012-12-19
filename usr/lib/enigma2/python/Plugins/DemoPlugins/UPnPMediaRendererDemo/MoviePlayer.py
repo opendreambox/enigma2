@@ -115,9 +115,9 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		if self.getMetadata:
 			metadata = self.getMetadata()
 			if metadata is not None:
-				title = metadata[Statics.META_TITLE]
-				artist = metadata[Statics.META_ARTIST]
-				album = metadata[Statics.META_ALBUM]
+				title = metadata.get(Statics.META_TITLE, None)
+				artist = metadata.get(Statics.META_ARTIST, None)
+				album = metadata.get(Statics.META_ALBUM, None)
 				if title:
 					self.summaries.setText(title, 1)
 					if artist:

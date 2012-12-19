@@ -225,8 +225,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				break
 
 	def run(self):
-		if self.have_advanced and self.nim.config_mode == "advanced":
-			self.fillAdvancedList()
 		for x in self.list:
 			if x in (self.turnFastEpochBegin, self.turnFastEpochEnd):
 				# workaround for storing only hour*3600+min*60 value in configfile
@@ -360,17 +358,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 						self.list.append(getConfigListEntry(_("Stored position"), Sat.rotorposition))
 				if config.usage.setup_level.index >= 2: # expert
 					self.list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), self.nimConfig.positionerExclusively))
-
-	def fillAdvancedList(self):
-		self.list = [ ]
-		self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.configMode)
-		self.list.append(self.configMode)
-		self.advancedSatsEntry = getConfigListEntry(_("Satellite"), self.nimConfig.advanced.sats)
-		self.list.append(self.advancedSatsEntry)
-		for x in self.nimConfig.advanced.sat.keys():
-			Sat = self.nimConfig.advanced.sat[x]
-			self.fillListWithAdvancedSatEntrys(Sat)
-		self["config"].list = self.list
 
 	def keySave(self):
 		old_configured_sats = nimmanager.getConfiguredSats()

@@ -41,12 +41,16 @@ class HbbTVVideoWindow(Screen):
 		self.__retainedSize = size
 
 		self.__isFullscreen = False
+		self.onLayoutFinish.append(self._onLayoutFinished)
 
-	def setRect(self, point, size, retain=True):
-		if point.x() != self.__point.x() or point.y() != self.__point.y():
+	def _onLayoutFinished(self):
+		self.setRect(self.__point, self.__size, force=True)
+
+	def setRect(self, point, size, retain=True, force=False):
+		if point.x() != self.__point.x() or point.y() != self.__point.y() or force:
 			self.instance.move(point)
 			self.__point = point
-		if size.width() != self.__size.width() or size.height() != self.__size.height():
+		if size.width() != self.__size.width() or size.height() != self.__size.height() or force:
 			self.instance.resize(size)
 			self.__size = size
 			self["video"].instance.resize(size)
@@ -197,9 +201,7 @@ class HbbTV(object):
 			datestring = datetime.now().strftime("%Y%m%d_%H%M")
 			extension = file[1]
 			filename = "%s_%s_%s.%s" % (datestring, host, file[0], extension)
-
 			path = "%s%s" % (path, filename)
-
 			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename))
 			#self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
 

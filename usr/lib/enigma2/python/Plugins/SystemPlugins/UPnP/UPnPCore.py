@@ -63,7 +63,7 @@ class ManagedControlPoint(object):
 		self.onMediaDeviceDectected = []
 
 	def _onMediaServerDetected(self, client, udn):
-		print "[DLNA] _onMediaServerDetected: %s (%s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type())
+		print "[DLNA] MediaServer Detected: %s (%s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type())
 		self.__mediaServerClients[udn] = client
 		for fnc in self.onMediaServerDetected:
 			fnc(udn, client)
@@ -75,13 +75,15 @@ class ManagedControlPoint(object):
 				fnc(udn)
 
 	def _onMediaRendererDetected(self, client, udn):
-		print "[DLNA] _onMediaRendererDetected: %s (%s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type())
+		print "[DLNA] MediaRenderer detected: %s (%s, %s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type(), udn)
 		self.__mediaRendererClients[udn] = client
 		for fnc in self.onMediaRendererDetected:
 			fnc(udn, client)
 
 	def _onMediaRendererRemoved(self, udn):
+		print "[DLNA] MediaRenderer removed: %s" % (udn)
 		if self.__mediaRendererClients.get(udn, None) != None:
+			client = self.__mediaRendererClients[udn]
 			del self.__mediaRendererClients[udn]
 			for fnc in self.onMediaRendererRemoved:
 				fnc(udn)
