@@ -71,7 +71,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				choices.append(getConfigModeTuple("loopthrough"))
 			self.nimConfig.configMode.setChoices(dict(choices), default = "nothing")
 
-	def createSetup(self):
+	def createSetup(self, fill_advanced_sat=True):
 		print "Creating setup"
 		self.list = [ ]
 
@@ -147,8 +147,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				self.advancedSatsEntry = getConfigListEntry(_("Satellite"), self.nimConfig.advanced.sats)
 				self.list.append(self.advancedSatsEntry)
 				cur_orb_pos = self.nimConfig.advanced.sats.orbital_position
-				satlist = self.nimConfig.advanced.sat.keys()
-				if cur_orb_pos is not None:
+				if cur_orb_pos is not None and fill_advanced_sat:
+					satlist = self.nimConfig.advanced.sat.keys()
 					if cur_orb_pos not in satlist:
 						cur_orb_pos = satlist[0]
 					currSat = self.nimConfig.advanced.sat[cur_orb_pos]
@@ -224,7 +224,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				self.createSetup()
 				break
 
-	def run(self):
+	def fixTurnFastEpochTime(self):
 		for x in self.list:
 			if x in (self.turnFastEpochBegin, self.turnFastEpochEnd):
 				# workaround for storing only hour*3600+min*60 value in configfile
@@ -232,14 +232,28 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				tm = localtime(x[1].value)
 				dt = datetime(1970, 1, 1, tm.tm_hour, tm.tm_min)
 				x[1].value = int(mktime(dt.timetuple()))
-			x[1].save()
+
+	def refillAdvancedSats(self):
+		if self.have_advanced and self.nim.config_mode == "advanced":
+			self.createSetup(False)
+			satlist = self.nimConfig.advanced.sat.keys()
+			for orb_pos in satlist:
+				curSat = self.nimConfig.advanced.sat[orb_pos]
+				self.fillListWithAdvancedSatEntrys(curSat)
+				self.fixTurnFastEpochTime()
+			self["config"].list = self.list
+		else:
+			self.fixTurnFastEpochTime()
+
+	def run(self):
+		self.refillAdvancedSats()
 		nimmanager.sec.update()
 		self.saveAll()
 
 	def fillListWithAdvancedSatEntrys(self, Sat):
 		lnbnum = int(Sat.lnb.value)
 		currLnb = self.nimConfig.advanced.lnb[lnbnum]
-		
+
 		if isinstance(currLnb, ConfigNothing):
 			currLnb = None
 
@@ -426,13 +440,13 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 	def keyRight(self):
 		ConfigListScreen.keyRight(self)
 		self.newConfig()
-		
+
 	def keyCancel(self):
 		if self["config"].isChanged():
 			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
 		else:
 			self.restoreService(_("Zap back to service before tuner setup?"))
-		
+
 	def saveAll(self):
 		if self.nim.isCompatible("DVB-S"):
 			# reset connectedTo to all choices to properly store the default value
@@ -443,22 +457,25 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.nimConfig.connectedTo.setChoices(choices)
 		for x in self["config"].list:
 			x[1].save()
-			
+
 	def cancelConfirm(self, result):
 		if not result:
 			return
 
+		self.refillAdvancedSats()
+
 		for x in self["config"].list:
 			x[1].cancel()
+
 		# we need to call saveAll to reset the connectedTo choices
 		self.saveAll()
 		self.restoreService(_("Zap back to service before tuner setup?"))
-		
+
 	def nothingConnectedShortcut(self):
 		if type(self["config"].getCurrent()[1]) is ConfigSatlist:
 			self["config"].getCurrent()[1].setValue("3601")
 			self["config"].invalidateCurrent()
-			
+
 class NimSelection(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
@@ -468,13 +485,13 @@ class NimSelection(Screen):
 		self.updateList()
 		
 		self.setResultClass()
-
+		
 		self["actions"] = ActionMap(["OkCancelActions"],
 		{
 			"ok": self.okbuttonClick ,
 			"cancel": self.close
 		}, -2)
-		
+
 	def setResultClass(self):
 		self.resultclass = NimSetup
 
@@ -483,7 +500,7 @@ class NimSelection(Screen):
 		nim = nim and nim[3]
 		if nim is not None and not nim.empty and nim.isSupported():
 			self.session.openWithCallback(self.updateList, self.resultclass, nim.slot)
-			
+
 	def showNim(self, nim):
 		return True
 

@@ -1136,6 +1136,10 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 						else:
 							choices.extend([adoptmsg, defaultmsg, mountmsg, manualmsg])
 				else:
+					if selectedPart is not None and selectedPart.isWriteable and selectedPart.isMountable: #writeable device, but not initialized by Enigma2
+						choices.extend([defaultmsg, mountmsg, manualmsg])
+					else:
+						choices.extend([mountmsg, manualmsg])
 					choices.extend([mountmsg, manualmsg])
 			elif uuid_cfg is not None and uuid_cfg['enabled'].value: # configured drive
 				if selectedPart is not None and selectedPart.isInitialized:

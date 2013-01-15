@@ -1360,7 +1360,9 @@ class HarddiskManager:
 							if not new_default_cfg["enabled"].value or not self.isMount(new_default_cfg["mountpoint"].value):
 								new_default_cfg["mountpoint"].value = def_mp
 								new_default_cfg["enabled"].value = True
+								config.storage_options.default_device.value = uuid  #temporary assign the default storage uuid
 								self.storageDeviceChanged(uuid)
+								config.storage_options.default_device.value = currentDefaultStorageUUID  #reassign the original default storage uuid
 								new_default = self.getPartitionbyMountpoint(def_mp)
 								if cur_default_cfg is None and cur_default_newmp is not "": #currentdefault was offline
 									cur_default_cfg = config.storage.get(currentDefaultStorageUUID, None)
@@ -1369,12 +1371,20 @@ class HarddiskManager:
 									old_cur_default_mp = cur_default_cfg["mountpoint"].value
 									cur_default_cfg["mountpoint"].value = cur_default_newmp
 								if new_default is not None and new_default_cfg["mountpoint"].value == def_mp and path.exists(def_mp) and self.isMount(def_mp) and new_default.mountpoint == def_mp:
-									successfully = True
-									config.storage_options.default_device.value = uuid
-									if new_default_cfg is not None:
-										new_default_cfg.save()
-									if cur_default_cfg is not None:
-										cur_default_cfg.save()
+									# reverify if the movie folder was created correctly
+									if not path.exists(resolveFilename(SCOPE_HDD)):
+										print "default movie folder still missing...try again to create it."
+										try:
+											makedirs(resolveFilename(SCOPE_HDD))
+										except OSError:
+											pass
+									if path.exists(resolveFilename(SCOPE_HDD)):
+										successfully = True
+										config.storage_options.default_device.value = uuid
+										if new_default_cfg is not None:
+											new_default_cfg.save()
+										if cur_default_cfg is not None:
+											cur_default_cfg.save()
 		if action == "mount_only":
 			new_default = self.getPartitionbyUUID(uuid)
 			new_default_cfg = config.storage.get(uuid, None)
@@ -1700,6 +1710,13 @@ class HarddiskManager:
 					if path.ismount(mountpoint):
 						dev = self.getDeviceNamebyUUID(uuid)
 						if dev is not None:
+							# verify if the current storage device is our default storage and create the movie folder if it is missing
+							if uuid == config.storage_options.default_device.value and not path.exists(resolveFilename(SCOPE_HDD)):
+								print "default movie folder is missing...trying to create it."
+								try:
+									makedirs(resolveFilename(SCOPE_HDD))
+								except OSError:
+									pass
 							p = self.getPartitionbyMountpoint(mountpoint)
 							if p is not None:
 								x = self.getPartitionbyDevice(dev)

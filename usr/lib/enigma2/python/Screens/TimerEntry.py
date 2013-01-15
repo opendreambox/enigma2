@@ -134,12 +134,11 @@ class TimerEntry(Screen, ConfigListScreen):
 			for x in (0, 1, 2, 3, 4, 5, 6):
 				self.timerentry_day.append(ConfigYesNo(default = day[x]))
 
-			# FIXME some service-chooser needed here
-			servicename = "N/A"
 			try: # no current service available?
 				servicename = str(self.timer.service_ref.getServiceName())
 			except:
 				pass
+			servicename = servicename or "N/A"
 			self.timerentry_service_ref = self.timer.service_ref
 			self.timerentry_service = ConfigSelection([servicename])
 

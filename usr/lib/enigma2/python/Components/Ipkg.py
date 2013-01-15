@@ -74,7 +74,7 @@ class IpkgComponent:
 		print "executing", self.ipkg, cmd
 		self.cmd.appClosed.append(self.cmdFinished)
 		self.cmd.dataAvail.append(self.cmdData)
-		if self.cmd.execute(self.ipkg + " " + cmd):
+		if self.cmd.execute("cd /tmp && " + self.ipkg + " " + cmd):
 			self.cmdFinished(-1)
 
 	def startCmd(self, cmd, args = None):

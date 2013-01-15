@@ -64,6 +64,8 @@ class SoftwareTools(DreamInfoHandler):
 	available_updatelist  = []
 	available_packetlist  = []
 	installed_packetlist = {}
+	upgradable_packages = {}
+	upgradeAvailable = False
 
 	def __init__(self):
 		aboutInfo = about.getImageVersionString()
@@ -79,8 +81,10 @@ class SoftwareTools(DreamInfoHandler):
 		self.NotifierCallback = None
 		self.Console = Console()
 		self.UpdateConsole = Console()
+		self.UpgradeConsole = Console()
 		self.cmdList = []
 		self.unwanted_extensions = ('-dbg', '-dev', '-doc')
+		self.reboot_required_packages = ('dreambox-dvb-modules', 'kernel-')
 		self.ipkg = IpkgComponent()
 		self.ipkg.addCallback(self.ipkgCallback)		
 
@@ -207,7 +211,7 @@ class SoftwareTools(DreamInfoHandler):
 		if self.list_updating:
 			if not self.UpdateConsole:
 				self.UpdateConsole = Console()
-			cmd = "opkg list"
+			cmd = "cd /tmp && opkg list"
 			self.UpdateConsole.ePopen(cmd, self.IpkgListAvailableCB, callback)
 
 	def IpkgListAvailableCB(self, result, retval, extra_args = None):
@@ -243,7 +247,7 @@ class SoftwareTools(DreamInfoHandler):
 			if self.NetworkConnectionAvailable == True:
 				if not self.UpdateConsole:
 					self.UpdateConsole = Console()
-				cmd = "opkg install enigma2-meta enigma2-plugins-meta enigma2-skins-meta"
+				cmd = "cd /tmp && opkg install enigma2-meta enigma2-plugins-meta enigma2-skins-meta"
 				self.UpdateConsole.ePopen(cmd, self.InstallMetaPackageCB, callback)
 			else:
 				self.InstallMetaPackageCB(True)
@@ -271,7 +275,7 @@ class SoftwareTools(DreamInfoHandler):
 		if self.list_updating:
 			if not self.UpdateConsole:
 				self.UpdateConsole = Console()
-			cmd = "opkg list-installed"
+			cmd = "cd /tmp && opkg list-installed"
 			self.UpdateConsole.ePopen(cmd, self.IpkgListInstalledCB, callback)
 
 	def IpkgListInstalledCB(self, result, retval, extra_args = None):
@@ -294,7 +298,7 @@ class SoftwareTools(DreamInfoHandler):
 					if attributes["packagetype"] == "internal":
 						self.packagesIndexlist.remove(package)
 			if callback is None:
-				self.countUpdates()
+				self.listUpgradable()
 			else:
 				if self.UpdateConsole:
 					if len(self.UpdateConsole.appContainers) == 0:
@@ -306,9 +310,26 @@ class SoftwareTools(DreamInfoHandler):
 					if callback is not None:
 						callback(False)
 
-	def countUpdates(self, callback = None):
+	def listUpgradable(self, callback = None):
+		self.list_updating = True
+		if not self.UpgradeConsole:
+			self.UpgradeConsole = Console()
+		cmd = "cd /tmp && opkg list-upgradable"
+		self.UpgradeConsole.ePopen(cmd, self.listUpgradableCB, callback)
+
+	def listUpgradableCB(self, result, retval, extra_args = None):
+		(callback) = extra_args
+		self.upgradable_packages = {}
 		self.available_updates = 0
 		self.available_updatelist  = []
+		if result:
+			for x in result.splitlines():
+				tokens = x.split(' - ')
+				name = tokens[0].strip()
+				if not any(name.endswith(x) for x in self.unwanted_extensions):
+					l = len(tokens)
+					version = l > 2 and tokens[2].strip() or ""
+					self.upgradable_packages[name] = version
 		for package in self.packagesIndexlist[:]:
 			attributes = package[0]["attributes"]
 			packagename = attributes["packagename"]
@@ -318,10 +339,11 @@ class SoftwareTools(DreamInfoHandler):
 						if self.installed_packetlist[packagename] != x[1]:
 							self.available_updates +=1
 							self.available_updatelist.append([packagename])
-
 		self.list_updating = False
-		if self.UpdateConsole:
-			if len(self.UpdateConsole.appContainers) == 0:
+		if self.upgradable_packages:
+			self.upgradeAvailable = True
+		if self.UpgradeConsole:
+			if len(self.UpgradeConsole.appContainers) == 0:
 				if callback is not None:
 					callback(True)
 					callback = None
@@ -342,6 +364,10 @@ class SoftwareTools(DreamInfoHandler):
 			if len(self.UpdateConsole.appContainers):
 				for name in self.UpdateConsole.appContainers.keys():
 					self.UpdateConsole.kill(name)
+		if self.UpgradeConsole is not None:
+			if len(self.UpgradeConsole.appContainers):
+				for name in self.UpgradeConsole.appContainers.keys():
+					self.UpgradeConsole.kill(name)
 		self.ipkg.cleanupPackageData()
 
 	def verifyPrerequisites(self, prerequisites):
@@ -353,6 +379,7 @@ class SoftwareTools(DreamInfoHandler):
 			if not hardware_found:
 				return False
 		return True
+
 
 iSoftwareTools = SoftwareTools()
 iSoftwareTools.cleanupSoftwareTools()

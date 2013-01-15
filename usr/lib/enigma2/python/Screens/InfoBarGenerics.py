@@ -1228,21 +1228,18 @@ class InfoBarTimeshift:
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
 				self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
 					+ _("Please make sure to set up your storage devices with the storage management in menu -> setup -> system -> storage devices."), MessageBox.TYPE_ERROR)
-				return 0
 			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() == "<undefined>":
 				self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
 					+ _("Please make sure to set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
-				return 0
 			elif harddiskmanager.HDDEnabledCount() and defaultStorageDevice() != "<undefined>":
 				part = harddiskmanager.getDefaultStorageDevicebyUUID(defaultStorageDevice())
 				if part is None:
 					self.session.open(MessageBox, _("Timeshift not possible!") + "\n" \
 						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
-					return 0
 			else:
 				self.session.open(MessageBox, _("Timeshift not possible!"), MessageBox.TYPE_ERROR)
 				print "no ts interface"
-				return 0
+			return 0
 
 		if self.timeshift_enabled:
 			print "hu, timeshift already enabled?"

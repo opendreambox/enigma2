@@ -21,6 +21,7 @@ LIBS="$LIBS /usr/lib/libopen.so"
 
 #check for dreambox specific pagecache helper lib
 if [ -e /usr/lib/libpagecache.so ]; then
+	(sleep 40; echo "libpagecache exists... drop caches now!"; echo 3 > /proc/sys/vm/drop_caches;) &
 	LIBS="$LIBS /usr/lib/libpagecache.so"
 fi
 
@@ -36,6 +37,8 @@ PAGECACHE_FLUSH_INTERVAL=$((512*1024)) LD_PRELOAD=$LIBS /usr/bin/enigma2
 # 0 - restart enigma
 # 1 - halt
 # 2 - reboot
+# 6 - start softwareupgrade and restart enigma2
+# 7 - start softwareupgrade and reboot
 #
 # >128 signal
 
@@ -54,6 +57,13 @@ case $ret in
 		/sbin/rmmod fp
 		/sbin/modprobe fp
 		/sbin/reboot
+		;;
+	6)
+		/usr/bin/opkgfb
+		;;
+	7)
+		/usr/bin/opkgfb
+		/sbin/reboot		
 		;;
 	*)
 		;;
