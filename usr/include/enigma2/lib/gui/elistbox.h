@@ -132,6 +132,11 @@ public:
 	void setBackgroundPicture(ePtr<gPixmap> &pixmap);
 	void setSelectionPicture(ePtr<gPixmap> &pixmap);
 
+	void setScrollbarSliderPicture(ePtr<gPixmap> &pm);
+	void setScrollbarSliderBackgroundPicture(ePtr<gPixmap> &pm);
+	void setScrollbarSliderBorderWidth(int size);
+	void setScrollbarWidth(int size);
+
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
 
@@ -146,6 +151,7 @@ public:
 
 	int getEntryTop();
 	void invalidate(const gRegion &region = gRegion::invalidRegion());
+
 protected:
 	int event(int event, void *data=0, void *data2=0);
 	void recalcSize();
@@ -163,6 +169,10 @@ private:
 	ePtr<iListboxContent> m_content;
 	eSlider *m_scrollbar;
 	eListboxStyle m_style;
+
+	int m_scrollbar_width;
+	int m_scrollbar_slider_border_width;
+	ePtr<gPixmap> m_scrollbarsliderpixmap, m_scrollbarsliderbackgroundpixmap;
 #endif
 };
 

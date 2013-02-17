@@ -437,7 +437,7 @@
 		<key id="KEY_DOWN" mapto="down" flags="m" />
 		<key id="KEY_VIDEO" mapto="movieList" flags="m" />
 		<device name="Console; DirectFB; dreambox ir keyboard; Qt; SDL">
-			<key id="KEY_F8" mapto="showMovies" flags="m" />
+			<key id="KEY_F8" mapto="movieList" flags="m" />
 		</device>
 	</map>
 

@@ -220,9 +220,11 @@ class RemuxTask(Task):
 	def processOutputLine(self, line):
 		if line.startswith("entrypoint:"):
 			values = line[:-1].split(' ')
-			self.title.entrypoints.append((int(values[1]), int(values[2])))
-			print "[bdremux] added new entrypoint", self.title.entrypoints[-1]
-			self.progress = int(values[1])
+			(spn, pts) = (int(values[1]), int(values[2]))
+			if spn > 0 and pts > 0:
+				self.title.entrypoints.append((spn, pts))
+				print "[bdremux] added new entrypoint", self.title.entrypoints[-1]
+			self.progress = spn
 		elif line.startswith("linked:"):	
 			words = line[:-1].split(' ')
 			pid = int(words[5].split('_')[1])

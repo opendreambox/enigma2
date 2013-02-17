@@ -30,6 +30,9 @@ if [ -e /usr/lib/libpassthrough.so ]; then
 	LIBS="$LIBS /usr/lib/libpassthrough.so"
 fi
 
+(sleep 2; echo "enigma2 is the main pvr application... adjust oom score!"; PID=$(pidof enigma2); \
+	[ -e /proc/$PID/oom_score_adj ] && echo "-999" > /proc/$PID/oom_score_adj || echo "-17" > /proc/$PID/oom_adj;) &
+
 PAGECACHE_FLUSH_INTERVAL=$((512*1024)) LD_PRELOAD=$LIBS /usr/bin/enigma2
 
 # enigma2 exit codes:
@@ -63,7 +66,7 @@ case $ret in
 		;;
 	7)
 		/usr/bin/opkgfb
-		/sbin/reboot		
+		/sbin/reboot
 		;;
 	*)
 		;;

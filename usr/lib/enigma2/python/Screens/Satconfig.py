@@ -314,11 +314,11 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					if self.nimConfig.advanced.unicableconnected.value == True:
 						self.nimConfig.advanced.unicableconnectedTo.setChoices(choices)
 						self.list.append(getConfigListEntry(_("Connected to"),self.nimConfig.advanced.unicableconnectedTo))
-
 			else:	#kein Unicable
 				self.list.append(getConfigListEntry(_("Voltage mode"), Sat.voltage))
-				self.list.append(getConfigListEntry(_("Increased voltage"), currLnb.increased_voltage))
 				self.list.append(getConfigListEntry(_("Tone mode"), Sat.tonemode))
+
+			self.list.append(getConfigListEntry(_("Increased voltage"), currLnb.increased_voltage))
 
 			if lnbnum < 33:
 				self.advancedDiseqcMode = getConfigListEntry(_("DiSEqC mode"), currLnb.diseqcMode)

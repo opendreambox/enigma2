@@ -14,14 +14,16 @@ class TemplatedMultiContent(StringList):
 		self.active_buildfunc = None
 		self.selectionEnabled = True
 		self.template = eval(args, {}, l)
-		assert "fonts" in self.template
-		assert "itemHeight" in self.template
+
 		assert "template" in self.template or "templates" in self.template
 		assert "template" in self.template or "default" in self.template["templates"] # we need to have a default template
+		assert "fonts" in self.template
 
 		if not "template" in self.template: # default template can be ["template"] or ["templates"]["default"]
 			self.template["template"] = self.template["templates"]["default"][1]
 			self.template["itemHeight"] = self.template["template"][0]
+
+		assert "itemHeight" in self.template
 
 	def changed(self, what):
 		if not self.content:

@@ -150,7 +150,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setZPosition(int(value))
 		elif attrib == 'itemHeight':
 			guiObject.setItemHeight(int(value))
-		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap"):
+		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture"):
 			ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
 			if attrib == "pixmap":
 				guiObject.setPixmap(ptr)
@@ -158,6 +158,10 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 				guiObject.setBackgroundPicture(ptr)
 			elif attrib == "selectionPixmap":
 				guiObject.setSelectionPicture(ptr)
+			elif attrib == "scrollbarSliderPicture":
+				guiObject.setScrollbarSliderPicture(ptr)
+			elif attrib == "scrollbarSliderBackgroundPicture":
+				guiObject.setScrollbarSliderBackgroundPicture(ptr)
 			# guiObject.setPixmapFromFile(value)
 		elif attrib == "alphatest": # used by ePixmap
 			guiObject.setAlphatest(
@@ -224,6 +228,10 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setBorderColor(parseColor(value))
 		elif attrib == "borderWidth":
 			guiObject.setBorderWidth(int(value))
+		elif attrib == "scrollbarSliderBorderWidth":
+			guiObject.setScrollbarSliderBorderWidth(int(value))
+		elif attrib == "scrollbarWidth":
+			guiObject.setScrollbarWidth(int(value))
 		elif attrib == "scrollbarMode":
 			guiObject.setScrollbarMode(
 				{ "showOnDemand": guiObject.showOnDemand,

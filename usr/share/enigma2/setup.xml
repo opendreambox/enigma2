@@ -20,6 +20,7 @@
 		</setup>
 		<setup key="usage" title="Customize">
 			<item level="0" text="Setup Mode">config.usage.setup_level</item>
+			<item level="0" text="Shutdown when no key has been pressed for">config.usage.inactivity_shutdown</item>
 			<item level="1" text="Recordings always have priority">config.recording.asktozap</item>
 			<item level="0" text="Margin before record (minutes)">config.recording.margin_before</item>
 			<item level="0" text="Margin after record">config.recording.margin_after</item>
@@ -27,6 +28,7 @@
 			<item level="2" text="Show Message when Recording starts">config.usage.show_message_when_recording_starts</item>
 			<item level="2" text="Load Length of Movies in Movielist">config.usage.load_length_of_movies_in_moviellist</item>
 			<item level="1" text="Text subtitle presentation">config.usage.text_subtitle_presentation</item>
+			<item level="2" text="Disable multimedia subtitle support">config.usage.disable_gst_subtitles</item>
 			<item level="1" text="Show positioner movement">config.usage.showdish</item>
 			<item level="1" text="Enable multiple bouquets">config.usage.multibouquet</item>
 			<item level="1" text="Multi-EPG bouquet selection">config.usage.multiepg_ask_bouquet</item>
@@ -92,7 +94,7 @@
 		<setup key="lcd" title="Display Setup" requires="FrontpanelDisplay">
 			<item level="0" text="Brightness">config.lcd.bright</item>
 			<item level="0" text="Contrast">config.lcd.contrast</item>
-			<item level="0" text="Standby">config.lcd.standby</item>
+			<item level="0" text="Idle Mode">config.lcd.standby</item>
 		</setup>
 		<setup key="satconfig" title="Sat / Dish Setup">
 			<item text="Tuner Slot">config.sat.tunerslot</item>

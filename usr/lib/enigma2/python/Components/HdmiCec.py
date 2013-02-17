@@ -11,6 +11,9 @@ class Hdmi_Cec:
 	def otp_source_enable(self):
 		self.instance.cec_otp_source_enable()
 
+	def otp_source_disable(self):
+		self.instance.cec_otp_source_disable()
+
 	def ss_standby(self):
 		self.instance.cec_ss_standby(0)
 

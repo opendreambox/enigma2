@@ -5,6 +5,7 @@ from Components.config import config, getConfigListEntry, KEY_LEFT, KEY_RIGHT, K
 from Components.ConfigList import ConfigList
 from Components.Label import Label
 from Components.MenuList import MenuList
+from Components.Sources.List import List
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryProgress
 from Components.Sources.Boolean import Boolean
 from Components.Sources.CanvasSource import CanvasSource
@@ -37,14 +38,52 @@ class BrowserMenu(Screen):
 	width = int(size.width() * 0.9)
 	height = int(size.height() * 0.85)
 	bof = height - 35 #Button-Offset
+
 	skin = """
 		<screen name="BrowserMenu" position="center,center" size="%(w)d,%(h)d" title="Web Browser - Menu" >
 			<widget name="menu" position="0,0" zPosition="1" size="200,%(h)d" backgroundColor="#000000" transparent="1" />
 			<widget source="line" render="Canvas" position="203,0" zPosition="2" size="4,%(h)d" backgroundColor="#000000" transparent="1" alphatest="on"/>
-			<widget name="list" position="210,0" zPosition="1" size="%(listW)d,%(listH)d" backgroundColor="#000000" transparent="1" />
+			<widget source="list" render="Listbox" position="210,0" zPosition="1" size="%(listW)d,%(listH)d" backgroundColor="#000000" transparent="1">
+				<convert type="TemplatedMultiContent">
+					{"templates":
+						{"default": (55, [
+							MultiContentEntryText(pos = (10, 1), size = (920, 25), font = 0, flags = RT_VALIGN_CENTER, text = 1),
+							MultiContentEntryText(pos = (10, 30), size = (920, 25), font = 1, flags = RT_VALIGN_CENTER, text = 2),
+						]),
+						"history": (55, [
+							MultiContentEntryText(pos = (10, 1), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = 1),
+							MultiContentEntryText(pos = (10, 28), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = 2),
+							MultiContentEntryText(pos = (190, 1), size = (690, 25), font = 0, flags = RT_VALIGN_CENTER, text = 3),
+							MultiContentEntryText(pos = (190, 28), size = (690, 25), font = 1, flags = RT_VALIGN_CENTER, text = 4),
+						]),
+						"downloads": (25, [
+							MultiContentEntryText(pos = (0, 1), size = (600, 24), font=1, flags = RT_HALIGN_LEFT, text = 1),
+							MultiContentEntryText(pos = (610, 1), size = (150, 24), font=1, flags = RT_HALIGN_RIGHT, text = 2),
+							MultiContentEntryProgress(pos = (760, 1), size = (100, 24), percent = 3),
+							MultiContentEntryText(pos = (870, 1), size = (70, 24), font=1, flags = RT_HALIGN_RIGHT, text = 4),
+						]),
+						"certificates": (85, [
+							MultiContentEntryText(pos = (10, 1), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = 1),
+							MultiContentEntryText(pos = (10, 28), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = 2),
+							MultiContentEntryText(pos = (190, 1), size = (690, 25), font = 0, flags = RT_VALIGN_CENTER, text = 3),
+							MultiContentEntryText(pos = (190, 28), size = (690, 25), font = 1, flags = RT_VALIGN_CENTER, text = 4),
+							MultiContentEntryText(pos = (10, 60), size = (900, 25), font = 0, flags = RT_VALIGN_CENTER, text = 5),
+						]),
+						"cookies": (75, [
+							MultiContentEntryText(pos = (10, 1), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = 1),
+							MultiContentEntryText(pos = (10, 28), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = 2),
+							MultiContentEntryText(pos = (180, 1), size = (720, 25), font = 0, flags = RT_VALIGN_CENTER, text = 3),
+							MultiContentEntryText(pos = (180, 28), size = (625, 25), font = 1, flags = RT_VALIGN_CENTER, text = 4),
+							MultiContentEntryText(pos = (10, 60), size = (900, 15), font = 2, flags = RT_VALIGN_CENTER, text = 5),
+						])
+						},
+					"fonts": [gFont("Regular", 22), gFont("Regular", 16), gFont("Regular", 13)]
+					}
+				</convert>
+			</widget>
 			<widget name="statuslabel" position="210,%(inputY)d" size="%(listW)d,25" font="Regular;20"  zPosition="2" halign="center" valign="center" backgroundColor="#000000" transparent="0" />
 			<widget name="input" position="210,%(inputY)d" zPosition="1" size="%(listW)d,25" font="Regular;20" halign="left" valign="bottom" backgroundColor="#000000" transparent="1"/>
-			<widget name="config" position="210,0" zPosition="1" size="%(listW)d,%(configH)d" backgroundColor="#000000" transparent="1" />
+			<widget name="config" position="210,0" zPosition="2" size="%(listW)d,%(configH)d" backgroundColor="background" transparent="0" />
 
 			<ePixmap pixmap="skin_default/buttons/button_red_off.png" position="210,%(btnY)d" size="15,16" alphatest="on" />
 			<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="210,%(btnY)d" size="15,16" alphatest="on">
@@ -74,7 +113,7 @@ class BrowserMenu(Screen):
 				"h" : height,
 				"listW" : width - 210, "listH" : height - 90,
 				"inputY" : height - 80,
-				"configH" : height - 25,
+				"configH" : height - 90,
 				"btnY" : bof + 2,
 				"btnTxtY" : bof
 			}
@@ -117,7 +156,7 @@ class BrowserMenu(Screen):
 		self["blue"] = self.blue
 
 		#Lists
-		self.detailList = MenuList([], enableWrapAround = True, content = eListboxPythonMultiContent)
+		self.detailList = List([], enableWrapAround = True, item_height = 55)
 		self.detailConfigList = ConfigList([])
 		self.detailConfigList.l.setSeperation( (BrowserMenu.width - 210) / 2 )
 		config.plugins.WebBrowser.storage.enabled.addNotifier(self.__cfgExpandableElementChanged, initial_call = False)
@@ -193,9 +232,9 @@ class BrowserMenu(Screen):
 
 		self.__actionFuncs = {
 			self.MENU_BOOKMARKS : {
-				"up" : self.detailList.up,
-				"down" : self.detailList.down,
-				"left" : self.detailList.pageUp,
+				"up" : self.detailList.selectPrevious,
+				"down" : self.detailList.selectNext,
+				"left" : self.detailList.selectPrevious,
 				"right" : self.detailList.pageDown,
 				"ok" : self.__bmOk,
 				"enter" : self.__bmOk,
@@ -208,8 +247,8 @@ class BrowserMenu(Screen):
 				"ascii": self.__bmKeyAscii,
 				},
 			self.MENU_HISTORY : {
-				"up" : self.detailList.up,
-				"down" : self.detailList.down,
+				"up" : self.detailList.selectPrevious,
+				"down" : self.detailList.selectNext,
 				"left" : self.detailList.pageUp,
 				"right" : self.detailList.pageDown,
 				"ok" : self.__hisOk,
@@ -234,23 +273,23 @@ class BrowserMenu(Screen):
 				"ascii": self.__cfgKeyAscii,
 				},
 			self.MENU_DOWNLOADS : {
-				"up" : self.detailList.up,
-				"down" : self.detailList.down,
+				"up" : self.detailList.selectPrevious,
+				"down" : self.detailList.selectNext,
 				"left" : self.detailList.pageUp,
 				"right" : self.detailList.pageDown,
 				"red" : self.__dlAbort,
 				},
 			self.MENU_CERTS : {
-				"up" : self.detailList.up,
-				"down" : self.detailList.down,
+				"up" : self.detailList.selectPrevious,
+				"down" : self.detailList.selectNext,
 				"left" : self.detailList.pageUp,
 				"right" : self.detailList.pageDown,
 				"red" : self.__crtDelete,
 				"green" : self.__crtDetails,
 				},
 			self.MENU_COOKIES : {
-				"up" : self.detailList.up,
-				"down" : self.detailList.down,
+				"up" : self.detailList.selectPrevious,
+				"down" : self.detailList.selectNext,
 				"left" : self.detailList.pageUp,
 				"right" : self.detailList.pageDown,
 				"red" : self.__ckDelete,
@@ -321,11 +360,13 @@ class BrowserMenu(Screen):
 		if self.__curMenu == self.MENU_BOOKMARKS:
 			self.__showMenuList(True)
 			self.__setButtons(_("Delete"), _("Add"), _("Edit"), _("Set as Startpage"))
+			self.detailList.style = "default"
 			self.__bmBuildList()
 			self.detailInput.setText(self.__bmNeedle)
 		elif self.__curMenu == self.MENU_HISTORY:
 			self.__showMenuList(True)
 			self.__setButtons(_("Clear"), "", "", _("Set as Startpage"))
+			self.detailList.style = "history"
 			self.__hisBuildList()
 			self.detailInput.setText(self.__hisNeedle)
 		elif self.__curMenu == self.MENU_SETTINGS:
@@ -334,14 +375,17 @@ class BrowserMenu(Screen):
 		elif self.__curMenu == self.MENU_DOWNLOADS:
 			self.__showMenuList()
 			self.__setButtons(_("Abort"), "", "", "")
+			self.detailList.style = "downloads"
 			self.__dlBuildList()
 		elif self.__curMenu == self.MENU_CERTS:
 			self.__showMenuList()
 			self.__setButtons(_("Delete"), _("Details"), "", "")
+			self.detailList.style = "certificates"
 			self.__crtBuildList()
 		elif self.__curMenu == self.MENU_COOKIES:
 			self.__showMenuList()
 			self.__setButtons(_("Delete"), "", "", _("Delete All"))
+			self.detailList.style = "cookies"
 			self.__ckBuildList()
 
 	def __setButtons(self, red, green, yellow, blue):
@@ -364,17 +408,17 @@ class BrowserMenu(Screen):
 		if self.detailConfigList.visible:
 			self.detailConfigList.hide()
 
-		if not self.detailList.visible:
-			self.detailList.show()
+# 		if not self.detailList.instance.visible:
+# 			self.detailList.instance.show()
 		if hasFilter:
 			self.detailInput.show()
 		else:
 			self.detailInput.hide()
 
 	def __showConfigList(self):
-		if self.detailList.visible == 1:
-			self.detailList.hide()
-			self.detailInput.hide()
+# 		if self.detailList.instance.visible == 1:
+# 			self.detailList.instance.hide()
+		self.detailInput.hide()
 		if self.detailConfigList.visible == 0:
 			self.detailConfigList.show()
 
@@ -478,7 +522,7 @@ class BrowserMenu(Screen):
 	#Bookmark List Methods
 	def __bmOk(self):
 		print "[BrowserMenu].__bmOk"
-		if self.detailList.getSelectedIndex() > 0 and  self.detailList.getCurrent() != None:
+		if self.detailList.index > 0 and  self.detailList.getCurrent() != None:
 			current = self.detailList.getCurrent()[0]
 			print "[BrowserMenu].__bmOk, current = '%s'" %current
 			self.__actions.append( (self.ACTION_BOOKMARK, current.url) )
@@ -490,7 +534,7 @@ class BrowserMenu(Screen):
 		self.session.openWithCallback(self.__bmEditCB, BookmarkEditor, bookmark)
 
 	def __bmEdit(self):
-		if self.detailList.getSelectedIndex() > 0 and  self.detailList.getCurrent() != None:
+		if self.detailList.index > 0 and  self.detailList.getCurrent() != None:
 			cur = self.detailList.getCurrent()[0]
 			self.session.openWithCallback(self.__bmEditCB, BookmarkEditor, cur)
 
@@ -519,17 +563,10 @@ class BrowserMenu(Screen):
 		self.__setUrlAsHome(cur.url)
 
 	def __bmGetEntryComponent(self, bookmark):
-		w = self.width - 225
-		res = [ bookmark ]
-		res.append(MultiContentEntryText(pos = (10, 1), size = (w, 25), font = 0, flags = RT_VALIGN_CENTER, text = bookmark.name))
-		res.append(MultiContentEntryText(pos = (10, 30), size = (w, 25), font = 1, flags = RT_VALIGN_CENTER, text = bookmark.url))
-		return res
+		return ( bookmark, bookmark.name, bookmark.url )
 
 	def __bmBuildList(self):
 		print "[BrowserMenu].__bmBuildList"
-		self.detailList.l.setFont(0, gFont("Regular", 22))
-		self.detailList.l.setFont(1, gFont("Regular", 16))
-		self.detailList.l.setItemHeight(55)
 		list = []
 		#Suggest current page for adding
 
@@ -591,15 +628,9 @@ class BrowserMenu(Screen):
 			self.__setStatus(_("History cleared!"))
 
 	def __hisGetEntryComponent(self, historyItem):
-		w = self.width - 225
-		res = [ historyItem ]
 		date = strftime("%Y-%m-%d", localtime(historyItem.timestamp))
 		time = strftime("%H:%M:%S", localtime(historyItem.timestamp))
-		res.append(MultiContentEntryText(pos = (10, 1), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = date))
-		res.append(MultiContentEntryText(pos = (10, 28), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = time))
-		res.append(MultiContentEntryText(pos = (190, 1), size = (w-210, 25), font = 0, flags = RT_VALIGN_CENTER, text = historyItem.title))
-		res.append(MultiContentEntryText(pos = (190, 28), size = (w-210, 25), font = 1, flags = RT_VALIGN_CENTER, text = historyItem.url))
-		return res
+		return ( historyItem, date, time, historyItem.title, historyItem.url )
 
 	def __hisReload(self, needle = ""):
 		print "[BrowserMenu].__hisReload"
@@ -609,9 +640,6 @@ class BrowserMenu(Screen):
 
 	def __hisBuildList(self):
 		print "[BrowserMenu].__hisBuildList"
-		self.detailList.l.setFont(0, gFont("Regular", 22))
-		self.detailList.l.setFont(1, gFont("Regular", 16))
-		self.detailList.l.setItemHeight(55)
 		history = []
 		for h in self.__hisList:
 			history.append(self.__hisGetEntryComponent(h))
@@ -648,25 +676,10 @@ class BrowserMenu(Screen):
 
 	#Download list methods
 	def __dlGetEntryComponent(self, job):
-		w = self.width - 225
-		nw = w - 320 #nameWidth
-		stp = nw + 10 #statusTextPos
-		spp = stp + 160 #statusProgressPos
-		sptp = spp + 110 #statusProgressTextPos
-
-		res = [ job ]
-		print "%s :: %s :: %s/%s" %(job.name, job.getStatustext(), job.progress, job.end)
-		res.append(MultiContentEntryText(pos = (0, 1), size = (nw, 24), font=1, flags = RT_HALIGN_LEFT, text = job.name))
-		res.append(MultiContentEntryText(pos = (stp, 1), size = (150, 24), font=1, flags = RT_HALIGN_RIGHT, text = job.getStatustext()))
-		res.append(MultiContentEntryProgress(pos = (spp, 1), size = (100, 24), percent = int(100*job.progress/float(job.end))))
-		res.append(MultiContentEntryText(pos = (sptp, 1), size = (70, 24), font=1, flags = RT_HALIGN_RIGHT, text = str(100*job.progress/float(job.end)) + "%"))
-		return res
+		return ( job, job.name, job.getStatustext(), int(100*job.progress/float(job.end)), str(100*job.progress/float(job.end)) + "%")
 
 	def __dlBuildList(self):
 		print "[BrowserMenu].__dlBuildList"
-		self.detailList.l.setFont(0, gFont("Regular", 22))
-		self.detailList.l.setFont(1, gFont("Regular", 16))
-		self.detailList.l.setItemHeight(25)
 		downloads = []
 		for job in downloadManager.getPendingJobs():
 			downloads.append(self.__dlGetEntryComponent(job))
@@ -689,15 +702,8 @@ class BrowserMenu(Screen):
 			self.__dlBuildList()
 
 	def __crtGetEntryComponent(self, cert):
-		w = self.width - 225
-		res = [ cert ]
 		cn = "CN: %s" %(str(cert.cert.get_subject().commonName))
-		res.append(MultiContentEntryText(pos = (10, 1), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = str(cert.notBefore())))
-		res.append(MultiContentEntryText(pos = (10, 28), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = str(cert.notAfter())))
-		res.append(MultiContentEntryText(pos = (190, 1), size = (w-210, 25), font = 0, flags = RT_VALIGN_CENTER, text = str(cert.host)))
-		res.append(MultiContentEntryText(pos = (190, 28), size = (w-210, 25), font = 1, flags = RT_VALIGN_CENTER, text = cn))
-		res.append(MultiContentEntryText(pos = (10, 60), size = (w-20, 25), font = 0, flags = RT_VALIGN_CENTER, text = str(cert.cert.digest("sha1")) ))
-		return res
+		return ( cert, str(cert.notBefore()), str(cert.notAfter()), str(cert.host), cn, str(cert.cert.digest("sha1")) )
 
 	def __crtReload(self):
 		print "[BrowserMenu].__crtReload"
@@ -707,16 +713,13 @@ class BrowserMenu(Screen):
 
 	def __crtBuildList(self):
 		print "[BrowserMenu].__crtBuildList"
-		self.detailList.l.setFont(0, gFont("Regular", 22))
-		self.detailList.l.setFont(1, gFont("Regular", 16))
-		self.detailList.l.setItemHeight(85)
 		certs = []
 		for c in self.__crtList:
 			certs.append(self.__crtGetEntryComponent(c))
 		self.detailList.setList(certs)
 
 	def __crtDelete(self):
-		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
+		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
 			cert = self.detailList.getCurrent()[0]
 			print "[BrowserMenu].__crtDelete, host=%s,SHA1 fingerprint=%s" %(cert.host,cert.cert.digest("sha1"))
 			text = _("Do you really want to remove the following certificate from the list of trusted certificates?\n\nHostname: %s\nSHA1-Fingerprint: %s") %(cert.host, cert.cert.digest("sha1"))
@@ -732,7 +735,7 @@ class BrowserMenu(Screen):
 
 	def __crtDetails(self):
 		print "[BrowserMenu].__crtDetails"
-		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
+		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
 			cert = self.detailList.getCurrent()[0]
 
 			text = _("Issued for:")
@@ -757,29 +760,18 @@ class BrowserMenu(Screen):
 
 	def __ckBuildList(self):
 		print "[BrowserMenu].__ckBuildList"
-		self.detailList.l.setFont(0, gFont("Regular", 22))
-		self.detailList.l.setFont(1, gFont("Regular", 16))
-		self.detailList.l.setFont(2, gFont("Regular", 13))
-		self.detailList.l.setItemHeight(75)
 		cookies = []
 		for c in self.__ckList:
 			cookies.append(self.__ckGetEntryComponent(c))
 		self.detailList.setList(cookies)
 
 	def __ckGetEntryComponent(self, cookie):
-		w = self.width - 225
-		res = [ cookie ]
 		date = strftime("%Y-%m-%d", localtime(cookie.expires))
 		time = strftime("%H:%M:%S", localtime(cookie.expires))
-		res.append(MultiContentEntryText(pos = (10, 1), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = date))
-		res.append(MultiContentEntryText(pos = (10, 28), size = (150, 25), font = 1, flags = RT_VALIGN_CENTER, text = time))
-		res.append(MultiContentEntryText(pos = (180, 1), size = (w-200, 25), font = 0, flags = RT_VALIGN_CENTER, text = cookie.domain))
-		res.append(MultiContentEntryText(pos = (180, 28), size = (w-200, 25), font = 1, flags = RT_VALIGN_CENTER, text = cookie.path))
-		res.append(MultiContentEntryText(pos = (10, 60), size = (w-20, 15), font = 2, flags = RT_VALIGN_CENTER, text = cookie.raw))
-		return res
+		return ( cookie, date, time, cookie.domain, cookie.path, cookie.raw )
 
 	def __ckDelete(self):
-		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
+		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
 			cookie = self.detailList.getCurrent()[0]
 			text = _("Do you really want to delete the following cookie?\nDomain: %s\nPath: %s\nKey: %s\nRaw-Content:\n%s") %(cookie.domain, cookie.path, cookie.key, cookie.raw)
 			dlg = self.session.openWithCallback( self.__ckDeleteCB, MessageBox, text, type = MessageBox.TYPE_YESNO )
@@ -795,7 +787,7 @@ class BrowserMenu(Screen):
 				self.__actions.append(action)
 
 	def __ckDeleteAll(self):
-		if self.detailList.getSelectedIndex() >= 0 and self.detailList.getCurrent() != None:
+		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
 			cookie = self.detailList.getCurrent()[0]
 			text = _("Do you really want to delete ALL cookies?")
 			dlg = self.session.openWithCallback( self.__ckDeleteAllCB, MessageBox, text, type = MessageBox.TYPE_YESNO )

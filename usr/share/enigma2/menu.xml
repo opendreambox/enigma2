@@ -96,7 +96,7 @@ self.session.openWithCallback(msgClosed, FactoryReset)
 			<id val="shutdown" />
 			<!--<item text="Standby"><code>quitMainloop(0)</code></item>-->
 			<item text="Sleep Timer" entryID="sleep" description="Set up a timer after which your Dreambox will turn off."><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
-			<item text="Standby" entryID="standby" description="Put your Dreambox into standby."><screen module="Standby" screen="Standby"/></item>
+			<item text="Idle Mode" entryID="standby" description="Put your Dreambox into idle mode."><screen module="Standby" screen="Standby"/></item>
 			<item text="Restart" entryID="restart" description="Reboot your Dreambox."><screen module="Standby" screen="TryQuitMainloop">2</screen></item>
 			<item level="2" text="Restart GUI" entryID="restart_enigma" description="Restart Enigma2 only."><screen module="Standby" screen="TryQuitMainloop">3</screen></item>
 			<item text="Deep Standby" requires="DeepstandbySupport" entryID="deep_standby" description="Put your Dreambox into deep standby."><screen module="Standby" screen="TryQuitMainloop">1</screen></item>

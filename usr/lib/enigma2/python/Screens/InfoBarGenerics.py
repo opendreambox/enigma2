@@ -41,6 +41,7 @@ from time import time, localtime, strftime
 from bisect import insort
 
 from RecordTimer import RecordTimerEntry
+import Screens.Standby
 
 # hack alert!
 from Menu import MainMenu, mdom
@@ -81,6 +82,63 @@ class InfoBarUnhandledKey:
 		if self.flags == self.uflags:
 			self.unhandledKeyDialog.show()
 			self.hideUnhandledKeySymbolTimer.start(2000, True)
+
+class InfoBarAutoSleepTimer:
+	def __init__(self):
+		self.inactivityTimer = eTimer()
+		self.inactivityTimer.callback.append(self.inactive)
+		self.keypress(None, 1)
+		eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keypress) #highest prio
+		if not config.usage.inactivity_shutdown_initialized.value:
+			from Components.UsageConfig import inactivity_shutdown_choices
+			list = []
+			for item in inactivity_shutdown_choices:
+				list.append((item[1], item[0]))
+			Notifications.AddNotificationWithCallback(
+				self._initialAutoSleepValueSet,
+				ChoiceBox,
+				list = list,
+				selection=3,
+				title=_("Please specify the amount of time the device has to be inactive (no key pressed) before shutting down automatically"),
+				titlebartext=_("Inactivity shutdown"))
+
+	def _initialAutoSleepValueSet(self, answer):
+		config.usage.inactivity_shutdown_initialized.value = True
+		config.usage.inactivity_shutdown_initialized.save()
+		if answer != None:
+			config.usage.inactivity_shutdown.value = answer[1]
+
+	#this function is called on every keypress!
+	def keypress(self, key, flag):
+		if flag == 1: # break code
+			hours = config.usage.inactivity_shutdown.value
+			if hours != "never":
+				self.inactivityTimer.startLongTimer(int(hours)*60*60)
+			else:
+				self.inactivityTimer.stop()
+		return 0
+
+	def inactive(self):
+		print "[InfoBarAutoSleepTimer].inactive"
+		if Screens.Standby.inStandby == None:
+			self.session.openWithCallback(self.shutdown, MessageBox, _("The device will shutdown due to inactivity.\nDo you want to abort the shutdown?"), MessageBox.TYPE_YESNO, timeout=120, default=False, title=_("Inactivity shutdown"))
+		else:
+			self.shutdown(False)
+			return
+
+	def shutdown(self, aborted):
+		print "[InfoBarAutoSleepTimer].shutdown"
+		if aborted or Screens.Standby.inTryQuitMainloop:
+			print "aborted"
+			self.keypress(None, 1) #restart the timer
+			return
+
+		if Screens.Standby.inStandby != None:
+			print "RecordTimer.TryQuitMainloop"
+			RecordTimerEntry.TryQuitMainloop(True)
+		else:
+			print "Screens.Standby.TryQuitMainloop"
+			self.session.open(Screens.Standby.TryQuitMainloop, 1)
 
 class InfoBarShowHide:
 	""" InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -1523,7 +1581,7 @@ class InfoBarPiP:
 		elif "stop" == use:
 			self.showPiP()
 
-from RecordTimer import parseEvent, RecordTimerEntry
+from RecordTimer import parseEvent
 
 class InfoBarInstantRecord:
 	"""Instant Record - handles the instantRecord action in order to

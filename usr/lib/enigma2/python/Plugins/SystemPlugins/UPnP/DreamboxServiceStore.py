@@ -17,178 +17,133 @@ Lolcats media backend.
 from enigma import eServiceReference
 from Components.Sources.ServiceList import ServiceList
 
-from coherence.backend import BackendStore
-from coherence.backend import BackendItem
+from coherence.backend import ROOT_CONTAINER_ID, AbstractBackendStore, Container, LazyContainer, BackendItem
 from coherence.upnp.core import DIDLLite
 
-from twisted.internet import reactor
+from twisted.internet import defer
 from coherence.extern.et import parse_xml
 
 class DreamboxService(BackendItem):
-	def __init__(self, parent_id, id, name, url):
-		self.parentid = parent_id
+	def __init__(self, title, url, service_number, storage):
 		self.update_id = 0
-		self.id = id
+		self.name = title
 		self.location = url
-		self.name = name
-		self.item = DIDLLite.VideoItem(id, parent_id, self.name)
-		res = DIDLLite.Resource(self.location, 'http-get:*:video/mpeg:DLNA_PN=MPEG_PS_PAL')
-		res.size = None
-		self.item.res.append(res)
+		self.storage = storage
+		self.item = None
+		self.service_number = service_number
 
-class DreamboxServiceContainer(BackendItem):
-	def __init__(self, parent_id, id, name="Dreambox", ref=None, children=None):
-		self.parent_id = parent_id
-		self.id = id
-		self.name = name
-		self.mimetype = 'directory'
-		self.update_id = 0
-		self.children = children or []
-		self.item = DIDLLite.Container(id, parent_id, self.name)
-		self.item.childCount = None
-		self.ref = ref
+	def get_service_number(self):
+		return self.service_number
 
 	def get_children(self, start=0, end=0):
-		if end != 0:
-			return self.children[start:end]
-		return self.children[start:]
+		[]
 
 	def get_child_count(self):
-		return len(self.children)
-
-	def get_item(self):
-		return self.item
-
-	def get_name(self):
-		return self.name
+		return 0
 
 	def get_id(self):
-		return self.id
+		return self.storage_id
 
-class DreamboxServiceStore(BackendStore):
+	def get_path(self):
+		return self.location
+
+	def get_item(self):
+		if self.item == None:
+			self.item = DIDLLite.VideoItem(self.get_id(), self.storage.get_id(), self.name)
+			res = DIDLLite.Resource(self.location, 'http-get:*:video/mpeg:DLNA_PN=MPEG_PS_PAL')
+			res.size = None
+			self.item.res.append(res)
+
+		return self.item
+
+class DreamboxServiceStore(AbstractBackendStore):
 	implements = ['MediaServer']
 	logCategory = 'dreambox_service_store'
 
-	ROOT_ID = 0
 	def __init__(self, server, *args, **kwargs):
+		AbstractBackendStore.__init__(self, server, **kwargs)
 
-		self.server = server
-
+		self.name = kwargs.get('name','Dreambox (TV)')
 		# streaminghost is the ip address of the dreambox machine, defaults to localhost
 		self.streaminghost = kwargs.get('streaminghost', self.server.coherence.hostname)
-		self.name = kwargs.get('name', 'Dreambox')
-		# timeout between updates in minutes
+
 		self.refresh = float(kwargs.get('refresh', 1)) * 60
-		self.next_id = 1000
-		self.update_id = 0
-		self.last_updated = None
-		self.container = None
-		self.set_default_container()
+		self.init_root()
 		self.init_completed()
 
-	def set_default_container(self):
-		l = [
-			DreamboxServiceContainer(
-				self.ROOT_ID,
-				self.get_next_id(self.ROOT_ID),
-				name=_("Bouquets (TV)"),
-				ref="1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25) FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet"),
-			DreamboxServiceContainer(
-				self.ROOT_ID,
-				self.get_next_id(self.ROOT_ID),
-				name=_("Provider (TV)"),
-				ref="1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25) FROM PROVIDERS ORDER BY name"),
-			# RADIO
-			DreamboxServiceContainer(
-				self.ROOT_ID,
-				self.get_next_id(self.ROOT_ID),
-				name=_("Bouquets (Radio)"),
-				ref="1:7:2:0:0:0:0:0:0:0:(type == 2)FROM BOUQUET \"bouquets.radio\" ORDER BY bouquet"),
-			DreamboxServiceContainer(
-				self.ROOT_ID,
-				self.get_next_id(self.ROOT_ID),
-				name=_("Provider (Radio)"),
-				ref="1:7:2:0:0:0:0:0:0:0:(type == 2) FROM PROVIDERS ORDER BY name"),
-		]
-		self.container = DreamboxServiceContainer(None, self.ROOT_ID, children=l)
+	def init_root(self):
+		root = Container(None, ROOT_CONTAINER_ID)
+		self.set_root_item( root )
+		root.add_child(
+			LazyContainer(
+				root,
+				_("Bouquets (TV)"),
+				external_id="1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25) FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet",
+				childrenRetriever=self.populate_container))
+		root.add_child(
+			LazyContainer(
+				root,
+				("Provider (TV)"),
+				external_id="1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25) FROM PROVIDERS ORDER BY name",
+				childrenRetriever=self.populate_container))
+		root.add_child(
+			LazyContainer(
+				root,
+				_("Bouquets (Radio)"),
+				external_id="1:7:2:0:0:0:0:0:0:0:(type == 2)FROM BOUQUET \"bouquets.radio\" ORDER BY bouquet",
+				childrenRetriever=self.populate_container))
+		root.add_child(
+			LazyContainer(
+				root,
+				_("Provider (Radio)"),
+				external_id="1:7:2:0:0:0:0:0:0:0:(type == 2) FROM PROVIDERS ORDER BY name",
+				childrenRetriever=self.populate_container))
+		root.sorted = True
 
-	def get_next_id(self, parent):
-		id = "%s:%s" % (parent, self.next_id)
-		self.next_id += 1
-		return id
+	def populate_container(self, parent=None):
+		self.warning("ref %s" %parent.external_id)
+		retriever = self.populate_container
 
-	def get_by_id(self, id):
-		self.info("get_by_id: %s" %id)
-		if str(id) == "0":
-			return self.container
-		else:
-			container = self.container
-			id = str(id).split(":")
-			upper = len(id) - 1
+		def do_populate(parent=None):
+			if parent.external_id == None:
+				self.warning("Invalid ref %s" %parent.external_id)
+				return
 
-			i = 1
-			while i <= upper:
-				current_id = id if i == upper else id[:i+1]
-				child_id = ":".join(current_id)
-				found = False
+			servicelist = None
+			def get_servicelist(ref):
+				servicelist.root = ref
+			ref = eServiceReference(parent.external_id)
+			if not ref.valid():
+				self.warning("Invalid ref %s" %parent.external_id)
+				return
 
-				for child in container.get_children():
-					if child.get_id() == child_id:
-						container = child
-						found = True
-						break
-				if not found:
-					self.warning("Couldn't find container with id %s, returning closest existing parent", id)
-					break
-				i += 1
+			servicelist = ServiceList(ref, command_func=get_servicelist, validate_commands=False)
+			services = servicelist.getServicesAsList()
 
-		if container.get_id() != self.ROOT_ID:
-			if container.get_child_count() <= 0:
- 				self.populate_container(container)
+			snum = 1
+			isChannelList = False
+			for sref, name in services:
+				name = unicode(name.replace('\xc2\x86', '').replace('\xc2\x87', ''), errors='ignore')
+				item = None
+				if sref.startswith("1:7:"): #Bouquet
+					item = LazyContainer(parent, name, childrenRetriever=retriever)
+				else:
+					isChannelList = True
+					if not sref.startswith("1:64:"): # skip markers
+						url = 'http://' + self.streaminghost + ':8001/' + sref
+						item = DreamboxService(name, url, snum, parent)
+						snum += 1
 
-		return container
+				if item is not None:
+					parent.add_child(item, external_id=sref)
 
-	def populate_container(self, container):
-		if container.ref == None:
-			self.warning("Invalid ref %s" %container.ref)
-			return
+			if isChannelList:
+				def sort(x, y):
+					return cmp(x.get_service_number(), y.get_service_number())
+				parent.sorting_method = sort
 
-		servicelist = None
-		def get_servicelist(ref):
-			servicelist.root = ref
-		ref = eServiceReference(container.ref)
-		if not ref.valid():
-			self.warning("Invalid ref %s" %container.ref)
-			return
-
-		servicelist = ServiceList(ref, command_func=get_servicelist, validate_commands=False)
-		services = servicelist.getServicesAsList()
-		isContainerList = len(container.get_id().split(":")) < 3 #HACK ALERT
-
-		cid = container.get_id()
-		append = container.children.append
-
-		for ref, name in services:
-			name = unicode(name.replace('\xc2\x86', '').replace('\xc2\x87', ''), errors='ignore')
-			if isContainerList:
-				append(DreamboxServiceContainer(
-						cid,
-						self.get_next_id(cid),
-						name=name,
-						ref=ref))
-			else:
-				url = 'http://' + self.streaminghost + ':8001/' + ref
-				append(DreamboxService(
-						cid,
-						self.get_next_id(cid),
-						name,
-						url))
-
-		container.update_id += 1
-		self.update_id += 1
-		if self.server:
-			self.server.content_directory_server.set_variable(0, 'SystemUpdateID', self.update_id)
-			self.server.content_directory_server.set_variable(0, 'ContainerUpdateIDs', (cid, container.update_id))
+		d = defer.maybeDeferred(do_populate, parent=parent)
+		return d
 
 	def upnp_init(self):
 		if self.server:

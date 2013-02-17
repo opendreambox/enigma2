@@ -310,7 +310,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				from Plugins.Plugin import PluginDescriptor
 				from Components.PluginComponent import plugins
 				for pname, (pval, pdata) in self.plugins.iteritems():
-					if pval:
+					if pval == 'True':
 						for p in plugins.getPlugins(PluginDescriptor.WHERE_TIMEREDIT):
 							if pname == p.name:
 								if p.__call__.has_key("finishedFnc"):

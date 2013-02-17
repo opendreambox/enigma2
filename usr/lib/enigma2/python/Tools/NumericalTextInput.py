@@ -18,7 +18,10 @@ class NumericalTextInput:
 		self.pos = -1
 
 		if search:
-			self.mapping.append (u"%_0") # 0
+			if isinstance(search, basestring):
+				self.mapping.append (unicode(search)+u"0") # 0
+			else:
+				self.mapping.append (u"%_0") # 1
 			self.mapping.append (u" 1") # 1
 			self.mapping.append (u"abc2") # 2
 			self.mapping.append (u"def3") # 3

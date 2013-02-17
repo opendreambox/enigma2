@@ -1110,9 +1110,9 @@ class ConfigNumber(ConfigText):
 		self._keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
 class ConfigSearchText(ConfigText):
-	def __init__(self, default = "", fixed_size = False, visible_width = False):
+	def __init__(self, default = "", fixed_size = False, visible_width = False, special_chars = ""):
 		ConfigText.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
-		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False, search = True)
+		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False, search = special_chars)
 
 class ConfigDirectory(ConfigText):
 	def __init__(self, default="", visible_width=60):

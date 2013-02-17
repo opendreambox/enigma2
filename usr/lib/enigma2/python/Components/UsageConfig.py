@@ -4,8 +4,12 @@ from Tools.Directories import resolveFilename, SCOPE_HDD
 from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv;
 from SystemInfo import SystemInfo
 
+inactivity_shutdown_choices = [("never", _("disabled")), ("1", "1 " + _("hour")), ("2", "2 " + _("hours")), ("3", "3 " + _("hours")), ("4", "4 " + _("hours")), ("5", "5 " + _("hours"))]
+
 def InitUsageConfig():
 	config.usage = ConfigSubsection();
+	config.usage.inactivity_shutdown = ConfigSelection(default = "3", choices = inactivity_shutdown_choices)
+	config.usage.inactivity_shutdown_initialized = ConfigYesNo(default = False)
 	config.usage.showdish = ConfigYesNo(default = True)
 	config.usage.multibouquet = ConfigYesNo(default = False)
 	config.usage.multiepg_ask_bouquet = ConfigYesNo(default = False)
@@ -53,12 +57,12 @@ def InitUsageConfig():
 	config.usage.on_long_powerpress = ConfigSelection(default = "show_menu", choices = [
 		("show_menu", _("show shutdown menu")),
 		("shutdown", _("immediate shutdown")),
-		("standby", _("Standby")) ] )
+		("standby", _("Idle Mode")) ] )
 	
 	config.usage.on_short_powerpress = ConfigSelection(default = "standby", choices = [
 		("show_menu", _("show shutdown menu")),
 		("shutdown", _("immediate shutdown")),
-		("standby", _("Standby")) ] )
+		("standby", _("Idle Mode")) ] )
 
 	config.usage.alternatives_priority = ConfigSelection(default = "0", choices = [
 		("0", "DVB-S/-C/-T"),
@@ -130,6 +134,9 @@ def InitUsageConfig():
 	config.seek.speeds_backward.addNotifier(updateEnterBackward, immediate_feedback = False)
 
 	config.usage.text_subtitle_presentation = ConfigSelection(default = "black box", choices = [("black box", _("black box")), ("drop-shadow", _("drop-shadow"))])
+
+	#disables gstreamer subtitle support to workaround a big gstreamer memory leak (http://comments.gmane.org/gmane.comp.video.gstreamer.bugs/102357)
+	config.usage.disable_gst_subtitles = ConfigYesNo(default = False)
 
 
 def updateChoices(sel, choices):

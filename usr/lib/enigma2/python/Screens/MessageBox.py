@@ -12,7 +12,7 @@ class MessageBox(Screen):
 	TYPE_WARNING = 2
 	TYPE_ERROR = 3
 
-	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None):
+	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, title = None):
 		self.type = type
 		Screen.__init__(self, session)
 		
@@ -24,6 +24,7 @@ class MessageBox(Screen):
 
 		self.text = text
 		self.close_on_any_key = close_on_any_key
+		self.title = title
 
 		self["ErrorPixmap"] = Pixmap()
 		self["QuestionPixmap"] = Pixmap()
@@ -49,6 +50,8 @@ class MessageBox(Screen):
 			self["selectedChoice"].setText(self.list[0][0])
 		self["list"] = MenuList(self.list)
 
+		self.onFirstExecBegin.append(self._onFirstExecBegin)
+
 		if enable_input:
 			self["actions"] = ActionMap(["MsgBoxActions", "DirectionActions"], 
 				{
@@ -64,6 +67,10 @@ class MessageBox(Screen):
 					"leftRepeated": self.left,
 					"rightRepeated": self.right
 				}, -1)
+
+	def _onFirstExecBegin(self):
+		if self.title != None:
+			self.setTitle(self.title)
 
 	def initTimeout(self, timeout):
 		self.timeout = timeout

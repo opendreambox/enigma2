@@ -1393,6 +1393,7 @@ eSlider.setOrientation = new_instancemethod(_enigma.eSlider_setOrientation,None,
 eSlider.setBorderWidth = new_instancemethod(_enigma.eSlider_setBorderWidth,None,eSlider)
 eSlider.setBorderColor = new_instancemethod(_enigma.eSlider_setBorderColor,None,eSlider)
 eSlider.setPixmap = new_instancemethod(_enigma.eSlider_setPixmap,None,eSlider)
+eSlider.setBackgroundPixmap = new_instancemethod(_enigma.eSlider_setBackgroundPixmap,None,eSlider)
 eSlider_swigregister = _enigma.eSlider_swigregister
 eSlider_swigregister(eSlider)
 
@@ -1502,6 +1503,10 @@ eListbox.setForegroundColor = new_instancemethod(_enigma.eListbox_setForegroundC
 eListbox.setForegroundColorSelected = new_instancemethod(_enigma.eListbox_setForegroundColorSelected,None,eListbox)
 eListbox.setBackgroundPicture = new_instancemethod(_enigma.eListbox_setBackgroundPicture,None,eListbox)
 eListbox.setSelectionPicture = new_instancemethod(_enigma.eListbox_setSelectionPicture,None,eListbox)
+eListbox.setScrollbarSliderPicture = new_instancemethod(_enigma.eListbox_setScrollbarSliderPicture,None,eListbox)
+eListbox.setScrollbarSliderBackgroundPicture = new_instancemethod(_enigma.eListbox_setScrollbarSliderBackgroundPicture,None,eListbox)
+eListbox.setScrollbarSliderBorderWidth = new_instancemethod(_enigma.eListbox_setScrollbarSliderBorderWidth,None,eListbox)
+eListbox.setScrollbarWidth = new_instancemethod(_enigma.eListbox_setScrollbarWidth,None,eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 
@@ -2773,6 +2778,7 @@ class hdmi_cec(object):
     isNowActive = _swig_property(_enigma.hdmi_cec_isNowActive_get, _enigma.hdmi_cec_isNowActive_set)
     receivedRaw = _swig_property(_enigma.hdmi_cec_receivedRaw_get, _enigma.hdmi_cec_receivedRaw_set)
 hdmi_cec.cec_otp_source_enable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_enable,None,hdmi_cec)
+hdmi_cec.cec_otp_source_disable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_disable,None,hdmi_cec)
 hdmi_cec.cec_ss_standby = new_instancemethod(_enigma.hdmi_cec_cec_ss_standby,None,hdmi_cec)
 hdmi_cec.cec_register_raw_command = new_instancemethod(_enigma.hdmi_cec_cec_register_raw_command,None,hdmi_cec)
 hdmi_cec.cec_unregister_raw_command = new_instancemethod(_enigma.hdmi_cec_cec_unregister_raw_command,None,hdmi_cec)

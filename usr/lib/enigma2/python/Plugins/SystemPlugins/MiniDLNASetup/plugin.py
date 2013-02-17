@@ -30,12 +30,12 @@ class StartStopDaemon(object):
 	TYPE_START = "start"
 	TYPE_STOP = "stop"
 
-	def __init__(self, daemon, title, bindir=eEnv.resolve('${bindir}'), pidfile=None):
+	def __init__(self, daemon, title, bindir=eEnv.resolve('${sbindir}'), pidfile=None):
 		self._daemon = daemon
 		self._title = title
 
 		self._path_daemon = '%s/%s' %(bindir, daemon)
-		self._path_killall = '%s/killall' %(eEnv.resolve('${bindir}'))
+		self._path_killall = '%s/killall' %(eEnv.resolve('${sbindir}'))
 		self._path_pidfile = pidfile or '/var/run/%s.pid' %(self._daemon)
 
 		self._console = eConsoleAppContainer()
@@ -102,7 +102,7 @@ class StartStopDaemon(object):
 			self.start()
 
 class MiniDLNAConfig:
-	DAEMON = "minidlna"
+	DAEMON = "minidlnad"
 	DAEMON_TITLE = "Mediaserver"
 	CONFIG_FILE_PATH = "%s/minidlna.conf" %(eEnv.resolve('${sysconfdir}'))
 

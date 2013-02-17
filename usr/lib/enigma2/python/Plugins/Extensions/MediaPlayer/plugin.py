@@ -507,6 +507,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 			else:
 				menu.append((_("add files to playlist"), "copyfiles"))
 			menu.append((_("switch to playlist"), "playlist"))
+			menu.append((_("clear playlist"), "clear"))
 			if config.usage.setup_level.index >= 1: # intermediate+
 				menu.append((_("delete file"), "deletefile"))
 		else:

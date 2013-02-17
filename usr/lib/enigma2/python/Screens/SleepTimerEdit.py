@@ -83,7 +83,7 @@ class SleepTimerEdit(Screen):
 				shutdownString = _("Shutdown")
 			self["green_text"].setText(_("Sleep timer action:") + " " + shutdownString)
 		elif config.SleepTimer.action.value == "standby":
-			self["green_text"].setText(_("Sleep timer action:") + " " + _("Standby"))
+			self["green_text"].setText(_("Sleep timer action:") + " " + _("Idle Mode"))
 		
 		if config.SleepTimer.ask.value:
 			self["yellow_text"].setText(_("Ask before shutdown:") + " " + _("yes"))

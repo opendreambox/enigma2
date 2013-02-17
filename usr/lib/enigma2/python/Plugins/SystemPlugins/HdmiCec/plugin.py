@@ -36,7 +36,7 @@ class Cec(object):
 	def powerOff(self):
 		if config.plugins.cec.sendpower.value:
 			print "[Cec] power off"
-			hdmi_cec.ss_standby()
+			hdmi_cec.otp_source_disable()
 
 	def _onStandby(self, element):
 		from Screens.Standby import inStandby

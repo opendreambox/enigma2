@@ -55,6 +55,7 @@ class ManagedControlPoint(object):
 		self.__mediaDevices = {}
 
 		self.__browser = []
+		self.__devices = []
 
 		self.onMediaServerDetected = []
 		self.onMediaServerRemoved  = []
@@ -93,10 +94,14 @@ class ManagedControlPoint(object):
 		self.__mediaDevices[device.udn] = device
 
 	def registerRenderer(self, classDef, **kwargs):
-		return MediaRenderer(self.coherence, classDef, no_thread_needed=True, **kwargs)
+		renderer = MediaRenderer(self.coherence, classDef, no_thread_needed=True, **kwargs)
+		self.__devices.append(renderer)
+		return renderer
 
 	def registerServer(self, classDef, **kwargs):
-		return MediaServer(self.coherence, classDef, no_thread_needed=True, **kwargs)
+		server = MediaServer(self.coherence, classDef, no_thread_needed=True, **kwargs)
+		self.__devices.append(server)
+		return server
 
 	def getServerList(self):
 		return self.__mediaServerClients.values()
@@ -106,6 +111,11 @@ class ManagedControlPoint(object):
 
 	def getDeviceName(self, client):
 		return client.device.get_friendly_name().encode( "utf-8" )
+
+	def shutdown(self):
+		for device in self.__devices:
+			device.unregister()
+		self._controlPoint.shutdown()
 
 class Item(object):
 	@staticmethod
