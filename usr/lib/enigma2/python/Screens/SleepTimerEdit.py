@@ -78,7 +78,7 @@ class SleepTimerEdit(Screen):
 		
 		if config.SleepTimer.action.value == "shutdown":
 			if SystemInfo["DeepstandbySupport"]:
-				shutdownString = _("Deep Standby")
+				shutdownString = _("Standby")
 			else:
 				shutdownString = _("Shutdown")
 			self["green_text"].setText(_("Sleep timer action:") + " " + shutdownString)

@@ -4,11 +4,18 @@ from Tools.Directories import resolveFilename, SCOPE_HDD
 from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv;
 from SystemInfo import SystemInfo
 
-inactivity_shutdown_choices = [("never", _("disabled")), ("1", "1 " + _("hour")), ("2", "2 " + _("hours")), ("3", "3 " + _("hours")), ("4", "4 " + _("hours")), ("5", "5 " + _("hours"))]
-
-def InitUsageConfig():
+def BaseInitUsageConfig():
 	config.usage = ConfigSubsection();
-	config.usage.inactivity_shutdown = ConfigSelection(default = "3", choices = inactivity_shutdown_choices)
+
+	config.usage.keymap = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"))
+
+	config.usage.setup_level = ConfigSelection(default = "intermediate", choices = [
+		("simple", _("Simple")),
+		("intermediate", _("Intermediate")),
+		("expert", _("Expert")) ])
+
+def FinalInitUsageConfig():
+	config.usage.inactivity_shutdown = ConfigSelection(default = "3", choices = [("never", _("disabled")), ("1", _("1 hour")), ("2", _("%d hours") %2), ("3", _("%d hours") %3), ("4", _("%d hours") %4), ("5", _("%d hours") %5)])
 	config.usage.inactivity_shutdown_initialized = ConfigYesNo(default = False)
 	config.usage.showdish = ConfigYesNo(default = True)
 	config.usage.multibouquet = ConfigYesNo(default = False)
@@ -48,11 +55,6 @@ def InitUsageConfig():
 		("ask", _("Ask user")), ("movielist", _("Return to movie list")), ("quit", _("Return to previous service")) ])
 	config.usage.on_movie_eof = ConfigSelection(default = "ask", choices = [
 		("ask", _("Ask user")), ("movielist", _("Return to movie list")), ("quit", _("Return to previous service")), ("pause", _("Pause movie at end")) ])
-
-	config.usage.setup_level = ConfigSelection(default = "intermediate", choices = [
-		("simple", _("Simple")),
-		("intermediate", _("Intermediate")),
-		("expert", _("Expert")) ])
 
 	config.usage.on_long_powerpress = ConfigSelection(default = "show_menu", choices = [
 		("show_menu", _("show shutdown menu")),
@@ -97,8 +99,6 @@ def InitUsageConfig():
 	config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
 
 	SystemInfo["12V_Output"] = Misc_Options.getInstance().detected_12V_output()
-
-	config.usage.keymap = ConfigText(default = eEnv.resolve("${datadir}/enigma2/keymap.xml"))
 
 	config.seek = ConfigSubsection()
 	config.seek.selfdefined_13 = ConfigNumber(default=15)

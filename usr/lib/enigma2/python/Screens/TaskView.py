@@ -46,10 +46,10 @@ class JobView(InfoBarNotifications, Screen, ConfigListScreen):
 
 		self.settings = ConfigSubsection()
 		if SystemInfo["DeepstandbySupport"]:
-			shutdownString = _("go to deep standby")
+			shutdownString = _("go to standby")
 		else:
 			shutdownString = _("shut down")
-		self.settings.afterEvent = ConfigSelection(choices = [("nothing", _("do nothing")), ("close", _("Close")), ("standby", _("go to standby")), ("deepstandby", shutdownString)], default = self.job.afterEvent or "nothing")
+		self.settings.afterEvent = ConfigSelection(choices = [("nothing", _("do nothing")), ("close", _("Close")), ("standby", _("go to idle mode")), ("deepstandby", shutdownString)], default = self.job.afterEvent or "nothing")
 		self.job.afterEvent = self.settings.afterEvent.getValue()
 		self.afterEventChangeable = afterEventChangeable
 		self.setupList()

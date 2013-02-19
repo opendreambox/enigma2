@@ -115,7 +115,7 @@ def collectAttributes(skinAttributes, node, skin_path_prefix=None, ignore=[]):
 		attrib = a[0]
 		value = a[1]
 
-		if attrib in ("pixmap", "pointer", "seek_pointer", "backgroundPixmap", "selectionPixmap"):
+		if attrib in ("pixmap", "pointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture"):
 			value = resolveFilename(SCOPE_SKIN_IMAGE, value, path_prefix=skin_path_prefix)
 
 		if attrib not in ignore:

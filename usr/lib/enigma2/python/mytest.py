@@ -572,7 +572,8 @@ Components.RecordingConfig.InitRecordingConfig()
 
 profile("UsageConfig")
 import Components.UsageConfig
-Components.UsageConfig.InitUsageConfig()
+Components.UsageConfig.BaseInitUsageConfig()
+language.addCallback(Components.UsageConfig.FinalInitUsageConfig)
 
 profile("keymapparser")
 import keymapparser

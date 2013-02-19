@@ -82,6 +82,8 @@ public:
 	returns the number of frames skipped. */
 	int setSeqHeader(uint64_t &offset);
 
+	uint64_t byteLen() const { return m_last_filelength; }
+
 private:
 	int m_pid;
 	int m_maxrange;

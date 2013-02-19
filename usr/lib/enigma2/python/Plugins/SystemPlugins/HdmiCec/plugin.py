@@ -36,7 +36,7 @@ class Cec(object):
 	def powerOff(self):
 		if config.plugins.cec.sendpower.value:
 			print "[Cec] power off"
-			hdmi_cec.otp_source_disable()
+			hdmi_cec.ss_standby()
 
 	def _onStandby(self, element):
 		from Screens.Standby import inStandby
@@ -51,7 +51,7 @@ def autostart(reason, **kwargs):
 		cec.session = session
 	if reason == 0:
 		if session is not None:
-			#only send cec power on if it hasn been a record-timer issued poweron
+			#only send cec power on if it hasn been a record-timer that issued poweron
 			if not session.nav.wasTimerWakeup() or session.nav.RecordTimer.getNextRecordingTime() > session.nav.RecordTimer.getNextZapTime():
 				cec.powerOn()
 	else:

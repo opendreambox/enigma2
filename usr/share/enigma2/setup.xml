@@ -20,7 +20,7 @@
 		</setup>
 		<setup key="usage" title="Customize">
 			<item level="0" text="Setup Mode">config.usage.setup_level</item>
-			<item level="0" text="Shutdown when no key has been pressed for">config.usage.inactivity_shutdown</item>
+			<item level="0" text="Shutdown when no button has been pressed for">config.usage.inactivity_shutdown</item>
 			<item level="1" text="Recordings always have priority">config.recording.asktozap</item>
 			<item level="0" text="Margin before record (minutes)">config.recording.margin_before</item>
 			<item level="0" text="Margin after record">config.recording.margin_after</item>
