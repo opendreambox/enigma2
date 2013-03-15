@@ -71,6 +71,9 @@ class PluginDescriptor:
 	#argument: session, current selected storage device entry
 	WHERE_STORAGEMANAGER = 18
 
+	# start as channellist context menu plugin. arguments: session, serviceref
+	WHERE_CHANNEL_CONTEXT_MENU = 19
+
 	def __init__(self, name = "Plugin", where = [ ], description = "", icon = None, fnc = None, wakeupfnc = None, needsRestart = None, internal = False, weight = 0):
 		self.name = name
 		self.internal = internal

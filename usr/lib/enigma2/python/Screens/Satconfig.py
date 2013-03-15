@@ -404,7 +404,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				sat_name = ("%d.%d" + h) % (orbpos / 10, orbpos % 10)
 				
 			if confirmed[1] == "yes" or confirmed[1] == "no":
-				self.session.openWithCallback(self.deleteConfirmed, ChoiceBox, _("Delete no more configured satellite\n%s?") %(sat_name), [(_("Yes"), "yes"), (_("No"), "no"), (_("Yes to all"), "yestoall"), (_("No to all"), "notoall")])
+				self.session.openWithCallback(self.deleteConfirmed, ChoiceBox, _("Delete no more configured satellite\n%s?") %(sat_name), [(_("Yes"), "yes"), (_("No"), "no"), (_("Yes to all"), "yestoall"), (_("No to all"), "notoall")], allow_cancel = False)
 			if confirmed[1] == "yestoall" or confirmed[1] == "notoall":
 				self.deleteConfirmed(confirmed)
 			break

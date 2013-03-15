@@ -1,19 +1,8 @@
-# -*- coding: utf-8 -*-
-
-# Licensed under the MIT license
-# http://opensource.org/licenses/mit-license.php
-
-# Copyright 2009, Jose Luis Garduno Garcia <deepsight[atsign]gmail.com>
-# Based on the Lolcats Media backend from Benjamin Kampmann
-# Copyright 2008, Benjamin Kampmann <ben.kampmann@googlemail.com>
-
-#relicensed under the enigma2 license!
 """
 This is a Media Backend that allows you to access video streams from
-a Dreambox which uses the Enigma2 web interface. Based on the
-Lolcats media backend.
-
+a Dreambox which uses the Enigma2 web interface.
 """
+
 from enigma import eServiceReference
 from Components.Sources.ServiceList import ServiceList
 

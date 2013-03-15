@@ -29,6 +29,7 @@
 		<color name="WindowTitleForeground" color="#ffffff" />
 		<color name="WindowTitleBackground" color="#000000" />
 	</windowstyle>
+	<windowstylescrollbar id="4"/>
 	<fonts>
 		<font filename="nmsbd.ttf" name="Display" scale="90"/>
 	</fonts>

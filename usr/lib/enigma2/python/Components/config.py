@@ -304,6 +304,9 @@ class ConfigSelection(ConfigElement):
 		if self.value not in self.choices:
 			self.value = default
 
+	def getChoices(self):
+		return self.choices.choices
+
 	def setValue(self, value):
 		if value in self.choices:
 			self._value = value

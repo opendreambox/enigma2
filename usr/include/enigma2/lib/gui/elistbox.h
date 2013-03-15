@@ -134,8 +134,16 @@ public:
 
 	void setScrollbarSliderPicture(ePtr<gPixmap> &pm);
 	void setScrollbarSliderBackgroundPicture(ePtr<gPixmap> &pm);
+	void setScrollbarValuePicture(ePtr<gPixmap> &pm);
 	void setScrollbarSliderBorderWidth(int size);
 	void setScrollbarWidth(int size);
+
+	void setScrollbarBackgroundPixmapTopHeight(int value);
+	void setScrollbarBackgroundPixmapBottomHeight(int value);
+	void setScrollbarValuePixmapTopHeight(int value);
+	void setScrollbarValuePixmapBottomHeight(int value);
+
+	void resetScrollbarProperties();
 
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
@@ -172,7 +180,9 @@ private:
 
 	int m_scrollbar_width;
 	int m_scrollbar_slider_border_width;
-	ePtr<gPixmap> m_scrollbarsliderpixmap, m_scrollbarsliderbackgroundpixmap;
+	int m_scrollbar_top_backgroundpixmap_height, m_scrollbar_bottom_backgroundpixmap_height, m_scrollbar_top_valuepixmap_height, m_scrollbar_bottom_valuepixmap_height;
+	ePtr<gPixmap> m_scrollbarsliderpixmap, m_scrollbarvaluepixmap, m_scrollbarsliderbackgroundpixmap;
+	int scrollbarPropertiesResetted;
 #endif
 };
 

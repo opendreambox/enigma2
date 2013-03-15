@@ -28,7 +28,10 @@ class iObject
 	E_DISABLE_COPY(iObject)
 
 protected:
+#ifndef __EXCEPTIONS
+	/* with exceptions enabled, the delete operator must not be protected */
 	void operator delete(void *p) { ::operator delete(p); }
+#endif
 	virtual ~iObject() { }
 #ifdef SWIG
 	virtual void AddRef()=0;

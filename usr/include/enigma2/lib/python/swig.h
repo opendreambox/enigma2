@@ -8,6 +8,7 @@
 #define SWIG_ALLOW_OUTPUT_SIMPLE(x) %typemap_output_simple(x)
 #define SWIG_INPUT INPUT
 #define SWIG_OUTPUT OUTPUT
+#define SWIG_INOUT(x) INOUT
 #define SWIG_NAMED_OUTPUT(x) OUTPUT
 #define SWIG_VOID(x) void
 #define SWIG_PYOBJECT(...) PyObject*
@@ -18,6 +19,7 @@
 #define SWIG_ALLOW_OUTPUT_SIMPLE(x)
 #define SWIG_INPUT
 #define SWIG_OUTPUT
+#define SWIG_INOUT(x) x
 #define SWIG_NAMED_OUTPUT(x) x
 #define SWIG_VOID(x) x
 #define SWIG_PYOBJECT(...) __VA_ARGS__

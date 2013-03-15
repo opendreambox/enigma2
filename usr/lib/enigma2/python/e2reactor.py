@@ -59,11 +59,9 @@ class TwistedSocketNotifier:
 		elif type == POLLOUT:
 			self.fn = self.write
 		self.sn.callback.append(self.fn)
-		self.reactor.wakeUp()
 
 	def shutdown(self):
 		self.fn = self.watcher = None
-		self.reactor.wakeUp()
 		del self.sn
 
 	def read(self, sock):
@@ -112,24 +110,26 @@ class e2reactor(PosixReactorBase):
 		self._reads = {}
 		self._writes = {}
 		self.savedTimeout = None
-		PosixReactorBase.__init__(self)
-		self.addSystemEventTrigger('after', 'shutdown', self.cleanup)
 		self._timer = eTimer()
 		self._timer.callback.append(self.simulate)
 		self._insimulate = False
+		self._wakeupPending = False
 		# to limit the systemcalls per loop
 		# twistes gets a cached monotonic time for internal timers
 		# only updated once per loop (monotonic_time call in def simulate)
 		PosixReactorBase.seconds = self.now
-		e2reactor._now = monotonic_time()
+		PosixReactorBase.__init__(self)
+		self.addSystemEventTrigger('after', 'shutdown', self.cleanup)
 
 	def now(self):
 		return self._insimulate and self._now or monotonic_time()
 
 	def callLater(self, _seconds, _f, *args, **kw):
-		PosixReactorBase.callLater(self, _seconds, _f, *args, **kw)
-		if not self._insimulate:
+		ret = PosixReactorBase.callLater(self, _seconds, _f, *args, **kw)
+		if not self._wakeupPending:
 			self.wakeUp()
+			self._wakeupPending = True
+		return ret
 
 	def addReader(self, reader):
 		if not reader in self._reads:
@@ -141,13 +141,11 @@ class e2reactor(PosixReactorBase):
 
 	def removeReader(self, reader):
 		if reader in self._reads:
-			self._reads[reader].shutdown()
-			del self._reads[reader]
+			self._reads.pop(reader).shutdown()
 
 	def removeWriter(self, writer):
 		if writer in self._writes:
-			self._writes[writer].shutdown()
-			del self._writes[writer]
+			self._writes.pop(writer).shutdown()
 
 	def removeAll(self):
 		return self._removeAll(self._reads, self._writes)
@@ -166,8 +164,8 @@ class e2reactor(PosixReactorBase):
 		#update time returned by self.seconds
 		e2reactor._now = monotonic_time()
 
+		self._wakeupPending = False
 		self._insimulate = True
-		self._insertNewDelayedCalls()
 
 		self.runUntilCurrent()
 
@@ -182,11 +180,11 @@ class e2reactor(PosixReactorBase):
 			if nextTimeout != self.savedTimeout:
 				self.savedTimeout = nextTimeout
 				timeout = max(0, nextTimeout - self.seconds())
-				if timeout > 0:
-					self._timer.start(int(timeout * 1010), True)
+				self._timer.start(int(timeout * 1010), True)
+		else:
+			self._timer.stop()
 
 		self._insimulate = False
-
 
 	def cleanup(self):
 		if self._timer is not None:

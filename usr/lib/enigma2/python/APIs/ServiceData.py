@@ -1,13 +1,17 @@
 from Screens.ChannelSelection import service_types_tv, service_types_radio
 from enigma import eServiceCenter, eServiceReference, iServiceInformation
+from Components.NimManager import nimmanager
 from ServiceReference import ServiceReference
 from Tools.Transponder import ConvertToHumanReadable
+
 
 def getServiceList(ref):
 	print "getServiceList:", type(ref)
 	root = eServiceReference(str(ref))
 	serviceHandler = eServiceCenter.getInstance()
-	return serviceHandler.list(root).getContent("SN", True)
+	hnd = serviceHandler and serviceHandler.list(root)
+	servicelist = hnd and hnd.getContent("SN", False)
+	return servicelist
 
 def getAllServices():
 	return getServiceList("1:7:1:0:0:0:0:0:0:0:")
@@ -86,6 +90,23 @@ def getTransponderInfo(ref):
 def convertTransponderInfoHumanReadable(transponder_info):
 	return ConvertToHumanReadable(transponder_info)
 
+def getSatList(feid):
+	return nimmanager.getSatListForNim(feid)
+
+def getTransponderList(feid):
+	transponderlist = {}
+	for sat in nimmanager.getSatListForNim(feid):
+		transponderlist[sat[0]] = nimmanager.getTransponders(sat[0])
+	return transponderlist
+
+def getAllTransponderList():
+	transponderlist = {}
+	for feid in range(nimmanager.getSlotCount()):
+		transponderdict = getTransponderList(feid)
+		for sat in transponderdict.keys():
+			transponderlist[sat] = transponderdict[sat]
+	return transponderlist
+
 def getCurrentService(session):
 	return session.nav.getCurrentlyPlayingServiceReference().toString()
 
@@ -106,6 +127,9 @@ def registerAPIs(api):
 	api.add_call("enigma2.servicedata.getServicePIDs", getServicePIDs, "(s)", "{s:i}")
 	api.add_call("enigma2.servicedata.getTransponderInfo", getTransponderInfo, "(s)", "{s:t}")
 	api.add_call("enigma2.servicedata.convertTransponderInfoHumanReadable", convertTransponderInfoHumanReadable, "{s:t}", "{s:t}")
+	api.add_call("enigma2.servicedata.getSatList", getSatList, "(s)", "[i,s,i]")
+	api.add_call("enigma2.servicedata.getTransponderList", getTransponderList, "(s)", "[{s:t}]")
+	api.add_call("enigma2.servicedata.getAllTransponderList", getAllTransponderList, "", "[{s:t}]")
 	
 	api.add_call("enigma2.servicedata.getCurrentService", getCurrentService, "()", "s", needsSession = True)
 	api.add_call("enigma2.servicedata.playService", playService, "(s)", "", needsSession = True)

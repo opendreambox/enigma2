@@ -31,6 +31,8 @@ from Screens.RdsDisplay import RassInteractive
 from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
 from os import remove
+from Plugins.Plugin import PluginDescriptor
+from Components.PluginComponent import plugins
 profile("ChannelSelection.py after imports")
 
 FLAG_SERVICE_NEW_FOUND = 64 #define in lib/dvb/idvb.h as dxNewFound = 64
@@ -118,9 +120,13 @@ class ChannelContextMenu(Screen):
 		inBouquetRootList = current_root_path and current_root_path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
 		inBouquet = csel.getMutableList() is not None
 		haveBouquets = config.usage.multibouquet.value
+		channel_context_menu_plugins = plugins.getPlugins(PluginDescriptor.WHERE_CHANNEL_CONTEXT_MENU)
 
 		if not (current_sel_path or current_sel_flags & (eServiceReference.isDirectory|eServiceReference.isMarker)):
 			append_when_current_valid(current, menu, (_("show transponder info"), self.showServiceInformations), level = 2)
+			if len(channel_context_menu_plugins):
+				for p in channel_context_menu_plugins:
+					append_when_current_valid(current, menu, (p.description, boundFunction(self.execPlugin, p, csel.getCurrentSelection())))
 		if csel.bouquet_mark_edit == OFF and not csel.movemode:
 			if not inBouquetRootList:
 				isPlayable = not (current_sel_flags & (eServiceReference.isMarker|eServiceReference.isDirectory))
@@ -359,6 +365,10 @@ class ChannelContextMenu(Screen):
 		self.csel.addAlternativeServices()
 		self.csel.startMarkedEdit(EDIT_ALTERNATIVES)
 		self.close()
+	
+	def execPlugin(self, plugin, service):
+		plugin(self.session, service)
+
 
 class SelectionEventInfo:
 	def __init__(self):

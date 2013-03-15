@@ -15,7 +15,10 @@ def BaseInitUsageConfig():
 		("expert", _("Expert")) ])
 
 def FinalInitUsageConfig():
-	config.usage.inactivity_shutdown = ConfigSelection(default = "3", choices = [("never", _("disabled")), ("1", _("1 hour")), ("2", _("%d hours") %2), ("3", _("%d hours") %3), ("4", _("%d hours") %4), ("5", _("%d hours") %5)])
+	inactivity_shutdown_choices = [ ("never", _("disabled")) ]
+	for i in range(1,6):
+		inactivity_shutdown_choices.extend([("%d" % i, ngettext("%(num)d hour", "%(num)d hours",i) % {"num" : i})])
+	config.usage.inactivity_shutdown = ConfigSelection(default = "3", choices = inactivity_shutdown_choices)
 	config.usage.inactivity_shutdown_initialized = ConfigYesNo(default = False)
 	config.usage.showdish = ConfigYesNo(default = True)
 	config.usage.multibouquet = ConfigYesNo(default = False)

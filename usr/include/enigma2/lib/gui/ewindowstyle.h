@@ -48,6 +48,7 @@ public:
 	virtual void setStyle(gPainter &painter, int what) = 0;
 	virtual void drawFrame(gPainter &painter, const eRect &frame, int type) = 0;
 	virtual RESULT getFont(int what, ePtr<gFont> &font) = 0;
+	virtual	void getScrollbarValues(ePtr<gPixmap> &backgroundpixmap, ePtr<gPixmap> &valuepixmap, int &top_backgroundpixmap_height, int &bottom_backgroundpixmap_height, int &top_valuepixmap_height, int &bottom_valuepixmap_height, int &scrollbar_width, int &scrollbar_border_width)=0;
 #endif
 	virtual RESULT getColor(int what, gRGB &color) = 0;
 	virtual ~eWindowStyle() = 0;
@@ -100,6 +101,7 @@ public:
 	void drawFrame(gPainter &painter, const eRect &frame, int what);
 	RESULT getFont(int what, ePtr<gFont> &font);
 	RESULT getColor(int what, gRGB &color);
+	void getScrollbarValues(ePtr<gPixmap> &backgroundpixmap, ePtr<gPixmap> &valuepixmap, int &top_backgroundpixmap_height, int &bottom_backgroundpixmap_height, int &top_valuepixmap_height, int &bottom_valuepixmap_height, int &scrollbar_width, int &scrollbar_border_width) {return;}
 };
 #endif
 

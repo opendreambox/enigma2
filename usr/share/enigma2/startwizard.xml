@@ -137,10 +137,18 @@ self.condition = config.misc.startwizard.doservicescan.value and nimmanager.some
 			</list>
 		</step>
 		<step id="finisheddefaultsatlists">
+			<text value="Automatic standby mode\n\nIf you don't press any button on the remote control, your Dreambox can enter the standby mode automatically. You can choose the period after which the standby mode will be activated or disable this functionality now." />
+			<list type="config" configelement="config.usage.inactivity_shutdown" />
+			<code pos="after">
+config.usage.inactivity_shutdown_initialized.value = True
+config.usage.inactivity_shutdown_initialized.save()
+			</code>
+		</step>
+		<step id="enableparentalcontrol">
 			<text value="Do you want to enable the parental control feature on your dreambox?" />
 			<list>
 				<listentry caption="Yes" step="parentalsetup" />
-				<listentry caption="No" step="end" />
+				<listentry caption="No" step="expert" />
 			</list>
 			<code pos="after">
 from Components.config import config
@@ -182,6 +190,18 @@ config.ParentalControl.setuppin.save()
 			</code>
 
 			<text value="After the start wizard is completed, you need to protect single services. Refer to your dreambox's manual on how to do that." />
+		</step>
+		<step id="expert">
+			<text value="Your Dreambox offers three levels of configuration options:\n\nSimple - We suggest this level if this is your first contact with a Dreambox.\nIntermediate - This level enables you to change some more options, mainly the graphical user interface and the behaviour of your Dreambox.\nExpert - This gives you full control over all available settings of your Dreambox.\n\nWarning: Higher levels may lead to increased usage complexity." />
+			<list type="config" configelement="config.usage.setup_level" />
+		</step>
+		<step id="multibouquets">
+			<condition>
+from Components.config import config
+self.condition = config.usage.setup_level.value != "simple" 
+			</condition>
+			<text value="Multiple Bouquets Feature\n\nYour Dreambox offers a multiple bouquets feature. If this feature is active, you can manage multiple favorite lists of TV and radio services. If deactivated, only one favorite list is available which makes navigation a bit easier.\n\nWould you like to activate the multiple bouquets feature now?" />
+			<list type="config" configelement="config.usage.multibouquet" />
 		</step>
 		<step id="end" laststep="true">
 			<condition>

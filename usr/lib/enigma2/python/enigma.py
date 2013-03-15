@@ -1393,7 +1393,14 @@ eSlider.setOrientation = new_instancemethod(_enigma.eSlider_setOrientation,None,
 eSlider.setBorderWidth = new_instancemethod(_enigma.eSlider_setBorderWidth,None,eSlider)
 eSlider.setBorderColor = new_instancemethod(_enigma.eSlider_setBorderColor,None,eSlider)
 eSlider.setPixmap = new_instancemethod(_enigma.eSlider_setPixmap,None,eSlider)
+eSlider.setValuePixmap = new_instancemethod(_enigma.eSlider_setValuePixmap,None,eSlider)
 eSlider.setBackgroundPixmap = new_instancemethod(_enigma.eSlider_setBackgroundPixmap,None,eSlider)
+eSlider.setBackgroundPixmapTopHeight = new_instancemethod(_enigma.eSlider_setBackgroundPixmapTopHeight,None,eSlider)
+eSlider.setBackgroundPixmapBottomHeight = new_instancemethod(_enigma.eSlider_setBackgroundPixmapBottomHeight,None,eSlider)
+eSlider.setValuePixmapTopHeight = new_instancemethod(_enigma.eSlider_setValuePixmapTopHeight,None,eSlider)
+eSlider.setValuePixmapBottomHeight = new_instancemethod(_enigma.eSlider_setValuePixmapBottomHeight,None,eSlider)
+eSlider.clearProperties = new_instancemethod(_enigma.eSlider_clearProperties,None,eSlider)
+eSlider.updateScrollLabelProperties = new_instancemethod(_enigma.eSlider_updateScrollLabelProperties,None,eSlider)
 eSlider_swigregister = _enigma.eSlider_swigregister
 eSlider_swigregister(eSlider)
 
@@ -1505,8 +1512,14 @@ eListbox.setBackgroundPicture = new_instancemethod(_enigma.eListbox_setBackgroun
 eListbox.setSelectionPicture = new_instancemethod(_enigma.eListbox_setSelectionPicture,None,eListbox)
 eListbox.setScrollbarSliderPicture = new_instancemethod(_enigma.eListbox_setScrollbarSliderPicture,None,eListbox)
 eListbox.setScrollbarSliderBackgroundPicture = new_instancemethod(_enigma.eListbox_setScrollbarSliderBackgroundPicture,None,eListbox)
+eListbox.setScrollbarValuePicture = new_instancemethod(_enigma.eListbox_setScrollbarValuePicture,None,eListbox)
 eListbox.setScrollbarSliderBorderWidth = new_instancemethod(_enigma.eListbox_setScrollbarSliderBorderWidth,None,eListbox)
 eListbox.setScrollbarWidth = new_instancemethod(_enigma.eListbox_setScrollbarWidth,None,eListbox)
+eListbox.setScrollbarBackgroundPixmapTopHeight = new_instancemethod(_enigma.eListbox_setScrollbarBackgroundPixmapTopHeight,None,eListbox)
+eListbox.setScrollbarBackgroundPixmapBottomHeight = new_instancemethod(_enigma.eListbox_setScrollbarBackgroundPixmapBottomHeight,None,eListbox)
+eListbox.setScrollbarValuePixmapTopHeight = new_instancemethod(_enigma.eListbox_setScrollbarValuePixmapTopHeight,None,eListbox)
+eListbox.setScrollbarValuePixmapBottomHeight = new_instancemethod(_enigma.eListbox_setScrollbarValuePixmapBottomHeight,None,eListbox)
+eListbox.resetScrollbarProperties = new_instancemethod(_enigma.eListbox_resetScrollbarProperties,None,eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 
@@ -1676,6 +1689,24 @@ eWindowStyleSkinned.setTitleOffset = new_instancemethod(_enigma.eWindowStyleSkin
 eWindowStyleSkinned.setTitleFont = new_instancemethod(_enigma.eWindowStyleSkinned_setTitleFont,None,eWindowStyleSkinned)
 eWindowStyleSkinned_swigregister = _enigma.eWindowStyleSkinned_swigregister
 eWindowStyleSkinned_swigregister(eWindowStyleSkinned)
+
+class eWindowStyleScrollbar(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        _enigma.eWindowStyleScrollbar_swiginit(self,_enigma.new_eWindowStyleScrollbar())
+    __swig_destroy__ = _enigma.delete_eWindowStyleScrollbar
+eWindowStyleScrollbar.getColor = new_instancemethod(_enigma.eWindowStyleScrollbar_getColor,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setBackgroundPixmap = new_instancemethod(_enigma.eWindowStyleScrollbar_setBackgroundPixmap,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setValuePixmap = new_instancemethod(_enigma.eWindowStyleScrollbar_setValuePixmap,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setBackgroundPixmapTopHeight = new_instancemethod(_enigma.eWindowStyleScrollbar_setBackgroundPixmapTopHeight,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setBackgroundPixmapBottomHeight = new_instancemethod(_enigma.eWindowStyleScrollbar_setBackgroundPixmapBottomHeight,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setValuePixmapTopHeight = new_instancemethod(_enigma.eWindowStyleScrollbar_setValuePixmapTopHeight,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setValuePixmapBottomHeight = new_instancemethod(_enigma.eWindowStyleScrollbar_setValuePixmapBottomHeight,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setScrollbarWidth = new_instancemethod(_enigma.eWindowStyleScrollbar_setScrollbarWidth,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.setScrollbarBorderWidth = new_instancemethod(_enigma.eWindowStyleScrollbar_setScrollbarBorderWidth,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar_swigregister = _enigma.eWindowStyleScrollbar_swigregister
+eWindowStyleScrollbar_swigregister(eWindowStyleScrollbar)
 
 class eWidgetAnimation(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

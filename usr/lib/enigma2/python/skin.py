@@ -5,7 +5,7 @@ from os import path
 
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
-	addFont, gRGB, eWindowStyleSkinned
+	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar
 from Components.config import ConfigSubsection, ConfigText, config
 from Components.Converter.Converter import Converter
 from Components.Sources.Source import Source, ObsoleteSource
@@ -115,7 +115,7 @@ def collectAttributes(skinAttributes, node, skin_path_prefix=None, ignore=[]):
 		attrib = a[0]
 		value = a[1]
 
-		if attrib in ("pixmap", "pointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture"):
+		if attrib in ("pixmap", "pointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
 			value = resolveFilename(SCOPE_SKIN_IMAGE, value, path_prefix=skin_path_prefix)
 
 		if attrib not in ignore:
@@ -150,7 +150,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setZPosition(int(value))
 		elif attrib == 'itemHeight':
 			guiObject.setItemHeight(int(value))
-		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture"):
+		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
 			ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
 			if attrib == "pixmap":
 				guiObject.setPixmap(ptr)
@@ -162,6 +162,8 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 				guiObject.setScrollbarSliderPicture(ptr)
 			elif attrib == "scrollbarSliderBackgroundPicture":
 				guiObject.setScrollbarSliderBackgroundPicture(ptr)
+			elif attrib == "scrollbarValuePicture":
+				guiObject.setScrollbarValuePicture(ptr)
 			# guiObject.setPixmapFromFile(value)
 		elif attrib == "alphatest": # used by ePixmap
 			guiObject.setAlphatest(
@@ -232,6 +234,14 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setScrollbarSliderBorderWidth(int(value))
 		elif attrib == "scrollbarWidth":
 			guiObject.setScrollbarWidth(int(value))
+		elif attrib == "scrollbarBackgroundPixmapTopHeight":
+			guiObject.setScrollbarBackgroundPixmapTopHeight(int(value))
+		elif attrib == "scrollbarBackgroundPixmapBottomHeight":
+			guiObject.setScrollbarBackgroundPixmapBottomHeight(int(value))
+		elif attrib == "scrollbarValuePixmapTopHeight":
+			guiObject.setScrollbarValuePixmapTopHeight(int(value))
+		elif attrib == "scrollbarValuePixmapBottomHeight":
+			guiObject.setScrollbarValuePixmapBottomHeight(int(value))
 		elif attrib == "scrollbarMode":
 			guiObject.setScrollbarMode(
 				{ "showOnDemand": guiObject.showOnDemand,
@@ -398,6 +408,43 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 
 			#print "  color:", type, color
 
+		x = eWindowStyleManager.getInstance()
+		x.setStyle(id, style)
+
+	for windowstylescrollbar in skin.findall("windowstylescrollbar"):
+		style = eWindowStyleScrollbar()
+		id = windowstylescrollbar.attrib.get("id")
+		if id:
+			id = int(id)
+		else:
+			id = 4
+		for value in windowstylescrollbar.findall("value"):
+			get_attr = value.attrib.get
+			vType = get_attr("name")
+			v = get_attr("value")
+			if vType == "BackgroundPixmapTopHeight":
+				style.setBackgroundPixmapTopHeight(int(v))
+			elif vType == "BackgroundPixmapBottomHeight":
+				style.setBackgroundPixmapBottomHeight(int(v))
+			elif vType == "ValuePixmapTopHeight":
+				style.setValuePixmapTopHeight(int(v))
+			elif vType == "ValuePixmapBottomHeight":
+				style.setValuePixmapBottomHeight(int(v))
+			elif vType == "ScrollbarWidth":
+				style.setScrollbarWidth(int(v))
+			elif vType == "ScrollbarBorderWidth":
+				style.setScrollbarBorderWidth(int(v))
+		for pixmap in windowstylescrollbar.findall("pixmap"):
+			get_attr = pixmap.attrib.get
+			vType = get_attr("name")
+			filename = get_attr("filename")
+			if filename:
+				if vType == "BackgroundPixmap":
+					png = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix), desktop)
+					style.setBackgroundPixmap(png)
+				elif vType == "ValuePixmap":
+					png = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix), desktop)
+					style.setValuePixmap(png)
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(id, style)
 

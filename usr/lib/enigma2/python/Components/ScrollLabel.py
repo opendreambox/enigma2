@@ -35,13 +35,16 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		lines = (int)(s.height() / lineheight)
 		self.pageHeight = (int)(lines * lineheight)
 		self.instance.resize(eSize(s.width(), self.pageHeight+(int)(lineheight/6)))
-		self.scrollbar.move(ePoint(s.width()-20,0))
-		self.scrollbar.resize(eSize(20,self.pageHeight+(int)(lineheight/6)))
+
+		scrollbarwidth, scrollbarborderwidth = self.scrollbar.updateScrollLabelProperties(20, 1)
+
+		self.scrollbar.move(ePoint(s.width()-scrollbarwidth,0))
+		self.scrollbar.resize(eSize(scrollbarwidth,self.pageHeight+(int)(lineheight/6)))
 		self.scrollbar.setOrientation(eSlider.orVertical);
 		self.scrollbar.setRange(0,100)
-		self.scrollbar.setBorderWidth(1)
+		self.scrollbar.setBorderWidth(scrollbarborderwidth)
 		self.long_text.move(ePoint(0,0))
-		self.long_text.resize(eSize(s.width()-30, self.pageHeight*16))
+		self.long_text.resize(eSize(s.width()-scrollbarwidth-10, self.pageHeight*16))
 		self.setText(self.message)
 		return ret
 

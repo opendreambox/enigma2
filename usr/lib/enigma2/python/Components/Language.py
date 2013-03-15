@@ -7,7 +7,7 @@ import language_cache
 
 class Language:
 	def __init__(self):
-		self.currLangObj = gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), unicode=0, codeset="utf-8")
+		self.currLangObj = gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), unicode=0, codeset="utf-8", names="ngettext")
 		self.activeLanguage = 0
 		self.lang = {}
 		self.langlist = []
@@ -62,7 +62,7 @@ class Language:
 			print "Activating language " + lang[0]
 			gettext._translations = {}
 			self.currLangObj = gettext.translation('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), languages=[lang[1]], fallback=True)
-			self.currLangObj.install()
+			self.currLangObj.install(names="ngettext")
 			os.environ["LANGUAGE"] = lang[1]
 			self.activeLanguage = index
 			self.activateLanguageFallback(index, 'enigma2-plugins' )

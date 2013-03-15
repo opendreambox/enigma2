@@ -90,11 +90,11 @@ class InfoBarAutoSleepTimer:
 		self.keypress(None, 1)
 		eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keypress) #highest prio
 		if not config.usage.inactivity_shutdown_initialized.value:
-			list = [(_("disabled"), "never"), (_("1 hour"),"1"), (_("%d hours") %2, "2"), (_("%d hours") %3, "3"), (_("%d hours") %4, "4"), (_("%d hours") %5, "5")] #this is currently a copy of the selection you will find in Components.UsageConfig
+			choicelist = [ (x[1],x[0]) for x in config.usage.inactivity_shutdown.getChoices() ] #we actually need to switch key/value for the choicebox
 			Notifications.AddNotificationWithCallback(
 				self._initialAutoSleepValueSet,
 				ChoiceBox,
-				list = list,
+				list = choicelist,
 				selection=3,
 				title=_("Please specify the amount of time the device has to be inactive (e.g. no button pressed) before shutting down automatically"),
 				titlebartext=_("Inactivity shutdown"))
