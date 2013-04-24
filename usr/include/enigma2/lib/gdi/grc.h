@@ -7,9 +7,9 @@
 	gPixmap aufsetzt (und damit unbeschleunigt ist).
 */
 
-// for debugging use:
-//#define SYNC_PAINT
-#undef SYNC_PAINT
+#if defined(DISPLAY_COGL)
+#define SYNC_PAINT
+#endif
 
 #include <pthread.h>
 #include <stack>
@@ -28,8 +28,9 @@ class eTextPara;
 
 
 class gDC;
-struct gOpcode
+class gOpcode
 {
+public:
 	enum Opcode
 	{
 		renderText,
@@ -62,7 +63,7 @@ struct gOpcode
 		
 		enableSpinner, disableSpinner, incrementSpinner,
 		
-		shutdown,
+		setVideoMode, shutdown,
 		
 		setCompositing,
 	} opcode;
@@ -143,6 +144,12 @@ struct gOpcode
 			int rel;
 		} *setOffset;
 
+		struct pvideoMode
+		{
+			eSize resolution;
+			unsigned int bpp;
+		} *videoMode;
+
 		gCompositingData *setCompositing;
 
 		para()
@@ -151,11 +158,10 @@ struct gOpcode
 		}
 	} parm;
 
-	gOpcode()
-		:opcode(shutdown), dc(NULL)
-	{
-	}
-
+	gOpcode();
+	std::string toString() const;
+private:
+	std::string parmString() const;
 };
 
 #define MAXSIZE 2048
@@ -192,8 +198,10 @@ class gRC: public iObject, public sigc::trackable
 
 	int m_prev_idle_count;
 
+#ifndef SYNC_PAINT
 	void lock();
 	void unlock();
+#endif
 public:
 	gRC();
 	virtual ~gRC();

@@ -294,6 +294,8 @@ private:
 	int m_running;
 	char m_filename[1024];
 
+	int m_outdated_epg_timespan;
+
 #ifdef ENABLE_PRIVATE_EPG
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif
@@ -327,9 +329,10 @@ public:
 #endif
 
 #endif
-	// must be called once!
+	// must be called once after setting cachetimespan and outdated timespan
 	void setCacheFile(const char *filename);
 	void setCacheTimespan(int days);
+	void setOutdatedEPGTimespan(int hours);
 
 	void load();
 	void save();

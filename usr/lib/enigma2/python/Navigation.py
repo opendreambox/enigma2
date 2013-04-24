@@ -31,13 +31,14 @@ class Navigation:
 		self.RecordTimer = RecordTimer.RecordTimer()
 		self.__wasTimerWakeup = False
 		if getFPWasTimerWakeup():
-			self.__wasTimerWakeup = True
 			clearFPWasTimerWakeup()
 			if getFPWasTimerWakeup(): # sanity check to detect if the FP driver is working correct!
 				print "buggy fp driver detected!!! please update drivers.... ignore timer wakeup!"
-			elif nextRecordTimerAfterEventActionAuto and (len(self.getRecordings()) or abs(self.RecordTimer.getNextRecordingTime() - time()) <= 360):
-				if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
-					RecordTimer.RecordTimerEntry.TryQuitMainloop(False) # start shutdown handling
+			else:
+				self.__wasTimerWakeup = True
+				if nextRecordTimerAfterEventActionAuto and (len(self.getRecordings()) or abs(self.RecordTimer.getNextRecordingTime() - time()) <= 360):
+					if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
+						RecordTimer.RecordTimerEntry.TryQuitMainloop(False) # start shutdown handling
 		self.SleepTimer = SleepTimer.SleepTimer()
 
 	def wasTimerWakeup(self):

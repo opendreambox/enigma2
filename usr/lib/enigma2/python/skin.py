@@ -5,7 +5,7 @@ from os import path
 
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
-	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar
+	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent
 from Components.config import ConfigSubsection, ConfigText, config
 from Components.Converter.Converter import Converter
 from Components.Sources.Source import Source, ObsoleteSource
@@ -107,6 +107,12 @@ def parseColor(str):
 		except:
 			raise SkinError("color '%s' must be #aarrggbb or valid named color" % (str))
 	return gRGB(int(str[1:], 0x10))
+
+def parseValue(str):
+	try:
+		return int(str)
+	except:
+		raise SkinError("value '%s' is not integer" % (str))
 
 def collectAttributes(skinAttributes, node, skin_path_prefix=None, ignore=[]):
 	# walk all attributes
@@ -321,6 +327,19 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				#print "Color:", name, color
 			else:
 				raise SkinError("need color and name, got %s %s" % (name, color))
+
+	for c in skin.findall("listboxcontent"):
+		for offset in c.findall("offset"):
+			get_attr = offset.attrib.get
+			name = get_attr("name")
+			value = get_attr("value")
+			if name and value:
+				if name == "left":
+					eListboxPythonStringContent.setLeftOffset(parseValue(value))
+				elif name == "right":
+					eListboxPythonStringContent.setRightOffset(parseValue(value))
+				else:
+					raise SkinError("got configlist offset '%s'' but 'left' or 'right' is allowed only" % name)
 
 	for c in skin.findall("fonts"):
 		for font in c.findall("font"):

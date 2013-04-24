@@ -1,49 +1,164 @@
-from os import system, listdir, statvfs, popen, makedirs, stat, major, minor, path, access, readlink, unlink, getcwd, chdir, W_OK
+from os import system, listdir, statvfs, makedirs, stat, major, minor, path, access, readlink, unlink, getcwd, chdir, W_OK
+from re import search
+from time import time
+
+try:
+	from subprocess import Popen, PIPE
+	haveSubprocess = True
+except ImportError:
+	from os import popen
+	haveSubprocess = False
+
 from Tools.Directories import SCOPE_HDD, resolveFilename
 from Tools.CList import CList
+from Tools.IO import saveFile
 from SystemInfo import SystemInfo
-import time
-import re
 from Components.Console import Console
 from config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
-
-def MajorMinor(path):
-	rdev = stat(path).st_rdev
-	return (major(rdev),minor(rdev))
-
-def readFile(filename):
-	file = open(filename)
-	data = file.read().strip()
-	file.close()
-	return data
 
 DEVTYPE_UDEV = 0
 DEVTYPE_DEVFS = 1
 
-def forceAutofsUmount(dev):
-	try:
-		mounts = open("/proc/mounts")
-	except IOError:
-		return -1
-
-	lines = mounts.readlines()
-	mounts.close()
-
-	res = -1
-	for line in lines:
-		parts = line.strip().split(" ")
-		real_path = path.realpath(parts[0])
-		if not real_path[-1].isdigit():
-			continue
+class Util:
+	@staticmethod
+	def compareDeviceId(pathnameA, pathnameB):
 		try:
-			if parts[1] == '/autofs/' + dev:
-				print "forced", parts[1], "umount!!"
-				cmd = "umount /autofs/" + dev + " || /bin/true"
-				res = system(cmd)
-				break
-		except OSError:
-			pass
-	return (res >> 8)
+			rdevA = stat(pathnameA).st_rdev
+		except:
+			print "Harddisk.py: stat failed on %s" % pathnameA
+			raise
+		try:
+			rdevB = stat(pathnameB).st_rdev
+		except:
+			print "Harddisk.py: stat failed on %s" % pathnameB
+			raise
+		return rdevA == rdevB
+
+	@staticmethod
+	def readFile(filename):
+		try:
+			return file(filename).read().strip()
+		except:
+			print "Harddisk.py: failed to read %s" % filename
+			raise
+
+	@staticmethod
+	def __readLines(filename):
+		try:
+			return file(filename).read().splitlines()
+		except:
+			print "Harddisk.py: failed to read %s" % filename
+			return []
+
+	@staticmethod
+	def fstab():
+		if not hasattr(Util.fstab, 'cache'):
+			Util.fstab.cache = []
+			Util.fstab.mtime = -1
+		try:
+			mtime = stat('/etc/fstab').st_mtime
+		except:
+			print "Harddisk.py: stat failed on %s" % '/etc/fstab'
+			return Util.fstab.cache
+
+		if mtime != Util.fstab.mtime:
+			Util.fstab.cache = Util.__readLines('/etc/fstab')
+			Util.fstab.mtime = mtime
+
+		return Util.fstab.cache
+
+	@staticmethod
+	def mtab(phys=True, virt=True):
+		mounts = Util.__readLines('/proc/mounts')
+		if phys and virt:
+			return mounts
+		elif phys:
+			return [m for m in mounts if m.startswith('/')]
+		elif virt:
+			return [m for m in mounts if not m.startswith('/')]
+		else:
+			return []
+
+	@staticmethod
+	def parseFstabLine(line):
+		if line.startswith('#'):
+			return None
+		fields = line.split()
+		nfields = len(fields)
+		if not 4 <= nfields <= 6:
+			return None
+		# freq defaults to 0
+		if nfields < 5:
+			fields.append('0')
+		# passno defaults to 0
+		if nfields < 6:
+			fields.append('0')
+		return fields
+
+	@staticmethod
+	def __findInTab(tab, src, dst):
+		if src or dst:
+			for line in tab:
+				fields = Util.parseFstabLine(line)
+				if not fields:
+					continue
+				if src is not None and src != fields[0]:
+					continue
+				if dst is not None and dst != fields[1]:
+					continue
+				return dict(src = fields[0],
+					dst = fields[1],
+					vfstype = fields[2],
+					options = set(fields[3].split(',')),
+					freq = int(fields[4]),
+					passno = int(fields[5]))
+		return None
+
+	@staticmethod
+	def findInFstab(src=None, dst=None):
+		return Util.__findInTab(Util.fstab(), src, dst)
+
+	@staticmethod
+	def findInMtab(src=None, dst=None):
+		return Util.__findInTab(Util.mtab(), src, dst)
+
+	@staticmethod
+	def run(cmd):
+		if haveSubprocess:
+			p = Popen(cmd, stdout=PIPE, close_fds=True)
+			output = p.stdout.read()
+			p.stdout.close()
+			return p.wait(), output.splitlines()
+		else:
+			p = popen(' '.join(cmd))
+			output = p.read()
+			rc = p.close()
+			return (rc >> 8 if rc is not None else 0), output.splitlines()
+
+	@staticmethod
+	def __mountUmount(cmd, dir_or_device):
+		if dir_or_device:
+			rc, _ = Util.run([cmd, dir_or_device])
+			return rc
+		else:
+			return -1
+
+	@staticmethod
+	def mount(dir_or_device):
+		return Util.__mountUmount('mount', dir_or_device)
+
+	@staticmethod
+	def umount(dir_or_device):
+		return Util.__mountUmount('umount', dir_or_device)
+
+	# We must unmount autofs before mounting manually, because autofs uses the
+	# "sync" option, which the manual mount would inherit. This would be bad
+	# for performance.
+	@staticmethod
+	def forceAutofsUmount(dev):
+		autofsPath = '/autofs/%s' % dev
+		if Util.findInMtab(dst=autofsPath):
+			Util.umount(autofsPath)
 
 class Harddisk:
 	def __init__(self, device, removable = False):
@@ -75,7 +190,7 @@ class Harddisk:
 			self.disk_path = self.dev_path
 
 		elif self.type == DEVTYPE_DEVFS:
-			tmp = readFile(self.sysfsPath('dev')).split(':')
+			tmp = Util.readFile(self.sysfsPath('dev')).split(':')
 			s_major = int(tmp[0])
 			s_minor = int(tmp[1])
 			for disc in listdir("/dev/discs"):
@@ -169,7 +284,7 @@ class Harddisk:
 
 	def diskSize(self, sectors = False):
 		try:
-			line = readFile(self.sysfsPath('size'))
+			line = Util.readFile(self.sysfsPath('size'))
 			cap = int(line)
 		except:
 			return 0;
@@ -185,11 +300,11 @@ class Harddisk:
 
 	def model(self, model_only = False, vendor_only = False):
 		if self.device[:2] == "hd":
-			return readFile('/proc/ide/' + self.device + '/model')
+			return Util.readFile('/proc/ide/' + self.device + '/model')
 		elif self.device[:2] == "sd":
 			try:
-				vendor = readFile(self.sysfsPath('device/vendor'))
-				model = readFile(self.sysfsPath('device/model'))
+				vendor = Util.readFile(self.sysfsPath('device/vendor'))
+				model = Util.readFile(self.sysfsPath('device/model'))
 			except:
 				vendor = ""
 				model = ""
@@ -203,24 +318,16 @@ class Harddisk:
 			assert False, "no hdX or sdX"
 
 	def free(self):
-		try:
-			mounts = open("/proc/mounts")
-		except IOError:
-			return -1
-
-		lines = mounts.readlines()
-		mounts.close()
-
-		for line in lines:
-			parts = line.strip().split(" ")
-			real_path = path.realpath(parts[0])
-			if not real_path[-1].isdigit():
-				continue
+		for line in Util.mtab(virt=False):
 			try:
-				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
-					stat = statvfs(parts[1])
+				src, dst, _, _, _, _ = Util.parseFstabLine(line)
+				real_path = path.realpath(src)
+				if not real_path[-1].isdigit():
+					continue
+				if Util.compareDeviceId(real_path, self.partitionPath(real_path[-1])):
+					stat = statvfs(dst)
 					return stat.f_bfree/1000 * stat.f_bsize/1000
-			except OSError:
+			except:
 				pass
 		return -1
 
@@ -248,39 +355,28 @@ class Harddisk:
 		return numPart
 
 	def unmount(self, numpart = None):
-		try:
-			mounts = open("/proc/mounts")
-		except IOError:
-			return -1
-
-		lines = mounts.readlines()
-		mounts.close()
-
-		cmd = "umount"
-		for line in lines:
-			parts = line.strip().split(" ")
-			real_path = path.realpath(parts[0])
+		for line in Util.mtab(virt=False):
+			try:
+				src, _, _, _, _, _ = Util.parseFstabLine(line)
+			except:
+				continue
+			real_path = path.realpath(src)
 			if not real_path[-1].isdigit():
-				if numpart is not None and numpart == 0:
+				if numpart == 0:
 					if real_path.startswith("/dev/sd"):
 						uuid = harddiskmanager.getPartitionUUID(self.device)
 						if uuid is not None:
 							try:
-								if MajorMinor(real_path) == MajorMinor(self.dev_path):
-									cmd = ' ' . join([cmd, parts[1]])
-									break
+								if Util.compareDeviceId(real_path, self.dev_path):
+									return Util.umount(src)
 							except OSError:
 								pass
 			try:
-				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
-					cmd = ' ' . join([cmd, parts[1]])
-					break
+				if Util.compareDeviceId(real_path, self.partitionPath(real_path[-1])):
+					return Util.umount(src)
 			except OSError:
 				pass
-		res = system(cmd)
-		if cmd == "umount": # nothing found to unmount
-			res = 0
-		return (res >> 8)
+		return 0
 
 	def createPartition(self):
 		cmd = 'printf "8,\n;0,0\n;0,0\n;0,0\ny\n" | sfdisk -f -uS -q ' + self.disk_path
@@ -320,47 +416,34 @@ class Harddisk:
 
 	def activateswap(self, partitionNum = "2"):
 		partitionType = harddiskmanager.getBlkidPartitionType(self.partitionPath(partitionNum))
-		if partitionType is not None and partitionType == "swap":
+		if partitionType == "swap":
 			cmd = "swapon " + self.partitionPath(partitionNum)
 			system(cmd)
 
 	def deactivateswap(self, partitionNum = "2"):
 		partitionType = harddiskmanager.getBlkidPartitionType(self.partitionPath(partitionNum))
-		if partitionType is not None and partitionType == "swap":
+		if partitionType == "swap":
 			cmd = "swapoff " + self.partitionPath(partitionNum)
 			print "[deactivate swap]:",cmd
 			system(cmd)
 
 	def mount(self):
-		try:
-			fstab = open("/etc/fstab")
-		except IOError:
-			return -1
-
-		lines = fstab.readlines()
-		fstab.close()
-
-		res = -1
-		for line in lines:
-			parts = line.strip().split(" ")
-			real_path = path.realpath(parts[0])
+		for line in Util.fstab():
+			try:
+				src, dst, _, _, _, _ = Util.parseFstabLine(line)
+			except:
+				continue
+			real_path = path.realpath(src)
 			if not real_path[-1].isdigit():
 				continue
 			try:
-				if MajorMinor(real_path) == MajorMinor(self.partitionPath(real_path[-1])):
-
-					forceAutofsUmount(self.device+real_path[-1])
-					# we must umount autofs first because autofs mounts with "sync" option
-					# and the real mount than also mounts with this option
-					# this is realy bad for the performance!
-
-					cmd = "mount -t auto " + parts[0]
-					res = system(cmd)
-					break
+				if Util.compareDeviceId(real_path, self.partitionPath(real_path[-1])):
+					Util.forceAutofsUmount(self.device+real_path[-1])
+					return Util.mount(src)
 			except OSError:
 				pass
 
-		return (res >> 8)
+		return -1
 
 	def createMovieFolder(self, isFstabMounted = False):
 		if isFstabMounted:
@@ -382,17 +465,16 @@ class Harddisk:
 		# Lets activate the swap partition if exists
 		self.activateswap()
 
-		if numpart is not None:
-			if numpart == 0:
-				partitionPath = self.dev_path
-			if numpart >= 1:
-				partitionPath = self.partitionPath(str(numpart))
+		if numpart == 0:
+			partitionPath = self.dev_path
+		elif numpart >= 1:
+			partitionPath = self.partitionPath(str(numpart))
 
 		partitionType = harddiskmanager.getBlkidPartitionType(partitionPath)
 
 		res = -1
 		if access(partitionPath, 0):
-			if partitionType is not None and partitionType in ("ext2", "ext3"):
+			if partitionType in ("ext2", "ext3"):
 				cmd = "fsck." + partitionType + " -f -p -C 0 " + partitionPath
 				res = system(cmd)
 
@@ -490,7 +572,7 @@ class Harddisk:
 		return int(nr_read), int(nr_write)
 
 	def startIdle(self):
-		self.last_access = time.time()
+		self.last_access = time()
 		self.last_stat = 0
 		from enigma import eTimer
 
@@ -507,7 +589,7 @@ class Harddisk:
 	def runIdle(self):
 		if not self.max_idle_time:
 			return
-		t = time.time()
+		t = time()
 
 		idle_time = t - self.last_access
 
@@ -593,13 +675,11 @@ class Partition:
 				if self.fsType is None:
 					self.fsType = harddiskmanager.getBlkidPartitionType("/dev/" + self.device)
 			if self.isReadable:
-				mountpoint, fsType, mountopt = harddiskmanager.getMountInfo("/dev/" + self.device)
-				if self.fsType is None and fsType is not None:
-					self.fsType = fsType
-				if mountopt is not None and mountopt == 'rw':
-					self.isWriteable = True
-					if not access(testpath, W_OK):
-						self.isWriteable = False
+				entry = Util.findInMtab(src='/dev/%s' % self.device)
+				if entry:
+					if self.fsType is None:
+						self.fsType = entry['vfstype']
+					self.isWriteable = 'rw' in entry['options'] and access(testpath, W_OK)
 			if self.isWriteable:
 				if access(testpath + "/movie", W_OK):
 					self.isInitialized = True
@@ -632,20 +712,7 @@ class Partition:
 	def mounted(self):
 		# THANK YOU PYTHON FOR STRIPPING AWAY f_fsid.
 		# TODO: can os.path.ismount be used?
-		if self.force_mounted:
-			return True
-		try:
-			mounts = open("/proc/mounts")
-		except IOError:
-			return False
-
-		lines = mounts.readlines()
-		mounts.close()
-
-		for line in lines:
-			if line.split(' ')[1] == self.mountpoint:
-				return True
-		return False
+		return self.force_mounted or Util.findInMtab(dst=self.mountpoint) is not None
 
 
 DEVICEDB_SR = \
@@ -765,13 +832,13 @@ class HarddiskManager:
 	def getKernelVersion(self):
 		version = "3.2"
 		try:
-			cmd = "uname -sr"
-			for line in popen(cmd).read().split('\n'):
-				if line.find("Linux 3.2") == 0:
+			_, output = Util.run(['uname', '-r'])
+			for line in output:
+				if line.startswith("3.2"):
 					version = "3.2"
-				if line.find("Linux 2.6.18") == 0:
+				if line.startswith("2.6.18"):
 					version = "2.6.18"
-				if line.find("Linux 2.6.12") == 0:
+				if line.startswith("2.6.12"):
 					version = "2.6.12"
 		except:
 			print "error getting kernel version"
@@ -785,15 +852,15 @@ class HarddiskManager:
 		is_cdrom = False
 		partitions = []
 		try:
-			removable = bool(int(readFile(devpath + "/removable")))
-			dev = int(readFile(devpath + "/dev").split(':')[0])
+			removable = bool(int(Util.readFile(devpath + "/removable")))
+			dev = int(Util.readFile(devpath + "/dev").split(':')[0])
 			if dev in (1, 7, 31): # ram, loop, mtdblock
 				blacklisted = True
 			if blockdev[0:2] == 'sr':
 				is_cdrom = True
 			if blockdev[0:2] == 'hd':
 				try:
-					media = readFile("/proc/ide/%s/media" % blockdev)
+					media = Util.readFile("/proc/ide/%s/media" % blockdev)
 					if "cdrom" in media:
 						is_cdrom = True
 				except IOError:
@@ -833,120 +900,77 @@ class HarddiskManager:
 		return "/autofs/%s/" % (device)
 
 	def is_hard_mounted(self, device):
-		mounts = file('/proc/mounts').read().split('\n')
-		for x in mounts:
-			if x.find('/autofs') == -1 and x.find(device) != -1:
-				#print "is_hard_mounted:",device
-				return True
+		entry = Util.findInMtab(src=device)
+		if entry:
+			return not entry['dst'].startswith('/autofs/')
 		return False
 
 	def get_mountdevice(self, mountpoint):
-		mounts = file('/proc/mounts').read().split('\n')
-		for x in mounts:
-			if not x.startswith('/'):
-				continue
-			device, mp = x.split()[0:2]
-			if mp == mountpoint:
-				#print "get_mountdevice for '%s' -> %s " % (device, mp)
-				return device
+		entry = Util.findInMtab(dst=mountpoint)
+		if entry:
+			return entry['src']
 		return None
 
-	def get_mountpoint(self, mountpath):
-		mounts = file('/proc/mounts').read().split('\n')
-		for x in mounts:
-			if not x.startswith('/'):
-				continue
-			path, mp = x.split()[0:2]
-			if path == mountpath:
-				#print "get_mountpoint for '%s' -> %s " % (path, mp)
-				return mp
+	def get_mountpoint(self, device):
+		entry = Util.findInMtab(src=device)
+		if entry:
+			return entry['dst']
 		return None
 
 	def is_uuidpath_mounted(self, uuidpath, mountpoint):
-		mounts = file('/proc/mounts').read().split('\n')
-		for x in mounts:
-			if not x.startswith('/'):
-				continue
-			path, mp = x.split()[0:2]
-			if (path == uuidpath and mp == mountpoint):
-				#print "is_uuid_mounted:'%s' for: %s " % (path, mp)
-				return True
-		return False
+		return Util.findInMtab(src=uuidpath, dst=mountpoint) is not None
 
 	def is_fstab_mountpoint(self, device, mountpoint):
-		mounts = file('/etc/fstab').read().split('\n')
-		for x in mounts:
-			if not x.startswith('/'):
-				continue
-			dev, mp = x.split()[0:2]
-			if (dev == device and mp == mountpoint):
-				#print "is_fstab_mountpoint:'%s' for: %s " % (mp, dev)
-				return True
-		return False
+		return Util.findInFstab(src=device, dst=mountpoint) is not None
 
 	def get_fstab_mountstate(self, device, mountpoint):
-		mounts = file('/etc/fstab').read().split('\n')
-		for x in mounts:
-			if not x.startswith('/'):
-				continue
-			dev, mp, ms = x.split()[0:3]
-			if (dev == device and mp == mountpoint):
-				#print "got_fstab_mountstate:'%s' for: %s - %s" % (ms, dev, mp)
-				return ms
-		return False
+		entry = Util.findInFstab(src=device, dst=mountpoint)
+		if entry:
+			return ('noauto' if 'noauto' in entry['options'] else 'auto')
+		return None
 
 	def get_fstab_mountpoint(self, device):
-		mounts = file('/etc/fstab').read().split('\n')
-		for x in mounts:
-			if not x.startswith('/'):
-				continue
-			dev, mp = x.split()[0:2]
-			if device == dev:
-				#print "got_fstab_mountpoint:'%s' for: %s" % (mp, dev)
-				return mp
+		entry = Util.findInFstab(src=device)
+		if entry:
+			return entry['dst']
 		return None
 
 	def modifyFstabEntry(self, partitionPath, mountpoint, mode = "add_deactivated"):
-		try:
-			alreadyAdded = self.is_fstab_mountpoint(partitionPath, mountpoint)
-			oldLine = None
-			mounts = file('/etc/fstab').read().split('\n')
-			fp = file("/etc/fstab", 'w')
-			fp.write("#automatically edited by enigma2, " + str(time.strftime( "%a" + ", " + "%d " + "%b" + " %Y %H:%M:%S", time.localtime(time.time() ))) + "\n")
-			for x in mounts:
-				if (x.startswith(partitionPath) and mountpoint in x):
-					oldLine = x
-					continue
-				if len(x):
-					if x.startswith('#automatically'):
-						continue
-					fp.write(x + "\n")
-			if not alreadyAdded:
-				if mode == "add_deactivated":
-					print "modifyFstabEntry - add_deactivated:", partitionPath, mountpoint
-					fp.write(partitionPath + "\t" + mountpoint + "\tnoauto\tdefaults\t0 0\n")
-				elif mode == "add_activated":
-					print "modifyFstabEntry - add_activated:", partitionPath, mountpoint
-					fp.write(partitionPath + "\t" + mountpoint + "\tauto\tdefaults\t0 0\n")
+		fstab = Util.fstab()
+		if not fstab:
+			print '[Harddisk.py] Refusing to modify empty fstab'
+			return False
+
+		newopt = ('noauto' if mode == 'add_deactivated' else 'auto')
+		output = []
+		for x in fstab:
+			try:
+				src, dst, vfstype, mntops, freq, passno = Util.parseFstabLine(x)
+			except:
+				output.append(x)
 			else:
-				if mode == "add_deactivated":
-					if oldLine is not None:
-						if "noauto" in oldLine:
-							fp.write(oldLine + "\n")
-						else:
-							fp.write(oldLine.replace("auto","noauto") + "\n")
-				elif mode == "add_activated":
-					if oldLine is not None:
-						if "noauto" in oldLine:
-							fp.write(oldLine.replace("noauto","auto") + "\n")
-						else:
-							fp.write(oldLine + "\n")
-				elif mode == "remove":
-					if oldLine is not None:
-						pass
-			fp.close()
-		except:
-			print "error adding fstab entry for: %s" % (partitionPath)
+				# remove or replace existing entry
+				if src == partitionPath and dst == mountpoint:
+					if mode == 'remove':
+						continue
+					opts = set(mntops.split(',')) ^ { 'auto', 'noauto' }
+					opts.append(newopt)
+					mntops = ','.join(opts)
+					output.append('\t'.join([src, dst, vfstype, mntops, freq, passno]))
+					# remove possible duplicate entries
+					mode = 'remove'
+				else:
+					output.append(x)
+
+		# append new entry
+		if mode != 'remove':
+			output.append('\t'.join([partitionPath, mountpoint, 'auto', newopt, '0', '0']))
+
+		if not output:
+			print '[Harddisk.py] Refusing to write empty fstab'
+			return False
+
+		return saveFile('/etc/fstab', '\n'.join(output) + '\n')
 
 	def addHotplugPartition(self, device, physdev = None):
 		if not physdev:
@@ -991,10 +1015,7 @@ class HarddiskManager:
 		uuid = self.getPartitionUUID(device)
 		print "[removeHotplugPartition] for device:'%s' uuid:'%s' and mountpoint:'%s'" % (device, uuid, mountpoint)
 
-		# we must umount autofs first because autofs mounts with "sync" option
-		# and the real mount than also mounts with this option
-		# this is realy bad for the performance!
-		forceAutofsUmount(device)
+		Util.forceAutofsUmount(device)
 
 		p = self.getPartitionbyDevice(device)
 		if p is None:
@@ -1123,36 +1144,21 @@ class HarddiskManager:
 	def getCD(self):
 		return self.cd
 
-	def getMountInfo(self, device):
-		dev = mountpoint = fstype = mountopt = None
-		try:
-			mounts = file('/proc/mounts').read().split('\n')
-			for x in mounts:
-				if not x.startswith('/'):
-					continue
-				if x.startswith(device):
-					data = x.split(',')
-					dev, mountpoint, fstype, mountopt = data[0].split(None,4)
-		except:
-			print "error getting mount info"
-		#print "getMountInfo:",mountpoint, fstype, mountopt
-		return mountpoint, fstype, mountopt
-
 	def getFdiskInfo(self, devname):
 		size = sizeg = fstype = sys = sectors = None
-		cmd = "fdisk -l /dev/" + devname
 		try:
-			for line in popen(cmd).read().split('\n'):
+			_, output = Util.run(['fdisk', '-l', '/dev/%s' % devname])
+			for line in output:
 				if line.startswith("Found valid GPT"):
 					sys = "GPT"
 				if line.startswith("Disk"):
-					sizeobj = re.search(r', ((?:[a-zA-Z0-9])*) bytes', line)
+					sizeobj = search(r', ((?:[a-zA-Z0-9])*) bytes', line)
 					if sizeobj:
 						size = sizeobj.group(1)
-					sizegobj = re.search(r': ((?:[0-9.0-9])*) GB', line)
+					sizegobj = search(r': ((?:[0-9.0-9])*) GB', line)
 					if sizegobj:
 						sizeg = sizegobj.group(1)
-					sectorsobj = re.search(r': ((?:[0-9.0-9])*) sectors', line)
+					sectorsobj = search(r': ((?:[0-9.0-9])*) sectors', line)
 					if sectorsobj:
 						sectors = sectorsobj.group(1)
 				if not line.startswith('/'):
@@ -1164,38 +1170,35 @@ class HarddiskManager:
 		#print "getFdiskInfo:",devname, fstype, sys, size, sizeg, sectors
 		return fstype, sys, size, sizeg, sectors
 
-	def getBlkidPartitionType(self, device):
-		#print "getBlkidPartitionType",device
-		fstype = None
-		cmd = "blkid " + str(device)
+	def __getBlkidAttributes(self, options):
+		res = dict()
 		try:
-			for line in popen(cmd).read().split('\n'):
-				if not line.startswith(device):
-					continue
-				fstobj = re.search(r' TYPE="((?:[^"\\]|\\.)*)"', line)
-				if fstobj:
-					fstype = fstobj.group(1)
+			rc, output = Util.run(['blkid', '-o', 'export' ] + options)
+			if rc == 0:
+				for line in output:
+					key, value = line.split('=', 1)
+					res[key] = value
 		except:
-			print "error getting blkid partition type"
+			pass
+		return res
 
-		#print "getBlkidPartitionType:",device, fstype
-		return fstype
+	def __getBlkidAttribute(self, options, name):
+		attrs = self.__getBlkidAttributes(options)
+		if name in attrs:
+			return attrs[name]
+		return None
 
-	def getLinkPath(self,link):
-		if path.islink(link):
-			p = path.normpath(readlink(link))
-			if path.isabs(p):
-				return p
-			return path.join(path.dirname(link), p)
+	def __getBlkidAttributeByDevice(self, device, name):
+		return self.__getBlkidAttribute([device], name)
 
-	def getRealPath(self, dstpath):
-		p = self.getLinkPath(dstpath)
-		if p:
-			return p
-		return path.realpath(dstpath)
+	def __getBlkidAttributeByUuid(self, uuid, name):
+		return self.__getBlkidAttribute(['-t', 'UUID=%s' % uuid, '-l'], name)
+
+	def getBlkidPartitionType(self, device):
+		return self.__getBlkidAttributeByDevice(device, 'TYPE')
 
 	def isMount(self, mountdir):
-		return path.ismount( self.getRealPath(mountdir) )
+		return path.ismount(path.realpath(mountdir))
 
 	def _inside_mountpoint(self, filename):
 		#print "is mount? '%s'" % filename
@@ -1524,7 +1527,7 @@ class HarddiskManager:
 		description = "External Storage %s" % dev
 		have_model_descr = False
 		try:
-			description = readFile("/sys" + phys + "/model")
+			description = Util.readFile("/sys" + phys + "/model")
 			have_model_descr = True
 		except IOError, s:
 			print "couldn't read model: ", s
@@ -1591,19 +1594,27 @@ class HarddiskManager:
 		return None
 
 	def getDeviceNamebyUUID(self, uuid):
+		# try blkid first
+		devname = self.__getBlkidAttributeByUuid(uuid, 'DEVNAME')
+		if devname:
+			return path.basename(devname)
+		# fallback to udev symlinks
 		if path.exists("/dev/disk/by-uuid/" + uuid):
 			return path.basename(path.realpath("/dev/disk/by-uuid/" + uuid))
 		return None
 
 	def getPartitionUUID(self, part):
-		if not path.exists("/dev/disk/by-uuid"):
-			return None
-		for uuid in listdir("/dev/disk/by-uuid/"):
-			if not path.exists("/dev/disk/by-uuid/" + uuid):
-				return None
-			if path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) == part:
-				#print "[getPartitionUUID] '%s' - '%s'" % (uuid, path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) )
-				return uuid
+		absPart = '/dev/%s' % part
+		# try blkid first
+		uuid = self.__getBlkidAttributeByDevice(absPart, 'UUID')
+		if uuid:
+			return uuid
+		# fallback to udev symlinks
+		if path.exists("/dev/disk/by-uuid"):
+			for uuid in listdir("/dev/disk/by-uuid/"):
+				if path.realpath("/dev/disk/by-uuid/%s" % uuid) == absPart:
+					#print "[getPartitionUUID] '%s' - '%s'" % (uuid, path.basename(path.realpath("/dev/disk/by-uuid/" + uuid)) )
+					return uuid
 		return None
 
 	def getDeviceDescription(self, dev):
@@ -1669,10 +1680,7 @@ class HarddiskManager:
 			dev = self.getDeviceNamebyUUID(uuid)
 			#print "[mountPartitionbyUUID] for UUID:'%s' - '%s'" % (uuid,mountpoint)
 
-			# we must umount autofs first because autofs mounts with "sync" option
-			# and the real mount than also mounts with this option
-			# this is realy bad for the performance!
-			forceAutofsUmount(dev)
+			Util.forceAutofsUmount(dev)
 
 			#verify if mountpoint is still mounted from elsewhere (e.g fstab)
 			if path.exists(mountpoint) and path.ismount(mountpoint):
@@ -1697,7 +1705,7 @@ class HarddiskManager:
 							print "[mountPartitionbyUUID] could not create mountdir:",mountpoint
 
 					if path.exists(mountpoint) and not path.ismount(mountpoint) and not path.islink(mountpoint):
-						cmd = "mount -t auto /dev/disk/by-uuid/" + uuid + " " + mountpoint
+						cmd = "mount /dev/disk/by-uuid/" + uuid + " " + mountpoint
 						system(cmd)
 						print "[mountPartitionbyUUID]:",cmd
 						#call the mount/unmount event notifier to inform about an mount
@@ -1762,7 +1770,7 @@ class HarddiskManager:
 					dev = self.getDeviceNamebyUUID(uuid)
 					if uuid == config.storage_options.default_device.value and config.storage[uuid]["mountpoint"].value != "/media/hdd":
 						print "[setupConfigEntries] initial_call discovered a default storage device misconfiguration, reapplied default storage config for:",uuid
-						if path.exists("/media/hdd") and path.islink("/media/hdd") and self.getLinkPath("/media/hdd") == config.storage[uuid]["mountpoint"].value:
+						if path.exists("/media/hdd") and path.islink("/media/hdd") and path.realpath("/media/hdd") == config.storage[uuid]["mountpoint"].value:
 							unlink("/media/hdd")
 						if dev is not None:
 							self.unmountPartitionbyMountpoint(config.storage[uuid]["mountpoint"].value, dev)

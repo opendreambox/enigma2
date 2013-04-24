@@ -31,7 +31,7 @@
 	</map>
 
 	<map context="SetupActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="cancel" flags="m" />
 			<key id="KEY_F2" mapto="save" flags="m" />
 			<key id="KEY_DELETE" mapto="deleteForward" flags="mr" />
@@ -98,20 +98,20 @@
 		<device name="dreambox remote control (native)">
 			<key id="KEY_RED" mapto="instantRecord" flags="b" />
 		</device>
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="instantRecord" flags="b" />
 		</device>
 	</map>
 
 	<map context="InfobarExtensions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F4" mapto="extensions" flags="b" />
 		</device>
 		<key id="KEY_BLUE" mapto="extensions" flags="b" />
 	</map>
 	
 	<map context="SatlistShortcutAction">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F4" mapto="nothingconnected" flags="b" />
 		</device>
 		<key id="KEY_BLUE" mapto="nothingconnected" flags="b" />
@@ -142,7 +142,7 @@
 	</map>
 
 	<map context="InputAsciiActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_ASCII" mapto="gotAsciiCode" flags="mr" />
 		</device>
 	</map>
@@ -154,7 +154,7 @@
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
 		<key id="KEY_EXIT" mapto="back" flags="m" />
 		<key id="KEY_ESC" mapto="back" flags="m" />
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_DELETE" mapto="deleteForward" flags="mr" />
 			<key id="KEY_BACKSPACE" mapto="deleteBackward" flags="mr" />
 		</device>
@@ -194,14 +194,14 @@
 	
 	<map context="InfobarMenuActions">
 		<key id="KEY_MENU" mapto="mainMenu" flags="mr" />
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_SPACE" mapto="mainMenu" flags="mr" />
 		</device>
 	</map>
 	
 	<map context="MenuActions">
 		<key id="KEY_MENU" mapto="menu" flags="mr" />
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_SPACE" mapto="menu" flags="mr" />
 		</device>
 	</map>
@@ -214,7 +214,7 @@
 	</map>
 
 	<map context="InfobarActions">
-		<device name="Console; DirectFB; dreambox ir keyboard; Qt; SDL">
+		<device name="compatible: pcKeyboard; dreambox ir keyboard">
 			<key id="KEY_F8" mapto="showMovies" flags="m" />
 		</device>
 		<key id="KEY_VIDEO" mapto="showMovies" flags="m" />
@@ -223,7 +223,7 @@
 	</map>
 
 	<map context="InfobarAudioSelectionActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F3" mapto="audioSelection" flags="b" />
 		</device>
 		<device name="dreambox remote control (native)">
@@ -288,7 +288,7 @@
 	</map>
 
 	<map context="TextEntryActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_DELETE" mapto="deleteForward" flags="mr" />
 			<key id="KEY_BACKSPACE" mapto="deleteBackward" flags="mr" />
 		</device>
@@ -305,7 +305,7 @@
 	</map>
 
 	<map context="InfobarSeekActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F3" mapto="pauseService" flags="b" />
 			<key id="KEY_F2" mapto="unPauseService" flags="b" />
 			<key id="KEY_F1" mapto="seekBack" flags="b" />
@@ -351,7 +351,7 @@
 	</map>
 
 	<map context="MediaPlayerSeekActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="seekBack" flags="b" />
 			<key id="KEY_F4" mapto="seekFwd" flags="b" />
 			<key id="KEY_F1" mapto="seekBackManual" flags="l" />
@@ -385,7 +385,7 @@
 	</map>
 
 	<map context="InfobarTimeshiftActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F3" mapto="timeshiftStart" flags="b" />
 		</device>
 		<device name="dreambox advanced remote control (native)">
@@ -406,7 +406,7 @@
 	</map>
 
 	<map context="InfobarTimeshiftActivateActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="timeshiftActivateEnd" flags="b" />
 			<key id="KEY_F3" mapto="timeshiftActivateEndAndPause" flags="b" />
 		</device>
@@ -425,7 +425,7 @@
 	</map>
 
 	<map context="MovieSelectionActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_SPACE" mapto="contextMenu" flags="m" />
 		</device>
 		<key id="KEY_MENU" mapto="contextMenu" flags="m" />
@@ -436,7 +436,7 @@
 		<key id="KEY_UP" mapto="up" flags="m" />
 		<key id="KEY_DOWN" mapto="down" flags="m" />
 		<key id="KEY_VIDEO" mapto="movieList" flags="m" />
-		<device name="Console; DirectFB; dreambox ir keyboard; Qt; SDL">
+		<device name="compatible: pcKeyboard; dreambox ir keyboard">
 			<key id="KEY_F8" mapto="movieList" flags="m" />
 		</device>
 	</map>
@@ -456,7 +456,7 @@
 	</map>
 	
 	<map context="InfobarCueSheetActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_TAB" mapto="toggleMark" flags="m" />
 		</device>
 		<device name="dreambox remote control (native)">
@@ -477,7 +477,7 @@
 	</map>
 	
 	<map context="MediaPlayerCueSheetActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_TAB" mapto="toggleMark" flags="m" />
 			<key id="KEY_F3" mapto="toggleMark" flags="b" />
 		</device>
@@ -519,7 +519,7 @@
 	</map>
 
 	<map context="ChannelSelectBaseActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="showAllServices" flags="m" />
 			<key id="KEY_F2" mapto="showSatellites" flags="m" />
 			<key id="KEY_F3" mapto="showProviders" flags="m" />
@@ -535,6 +535,10 @@
 		<key id="KEY_NEXT" mapto="nextMarker" flags="m" />
 		<key id="KEY_BACK" mapto="prevMarker" flags="m" />
 		<key id="KEY_FORWARD" mapto="nextMarker" flags="m" />
+		<key id="KEY_DOWN" mapto="selectServiceDown" flags="mr" />
+		<key id="KEY_UP" mapto="selectServiceUp" flags="mr" />
+		<key id="KEY_RIGHT" mapto="selectServicePageDown" flags="mr" />
+		<key id="KEY_LEFT" mapto="selectServicePageUp" flags="mr" />
 	</map>
 
 	<map context="ChannelSelectEPGActions">
@@ -543,7 +547,7 @@
 
 	<map context="ChannelSelectEditActions">
 		<key id="KEY_MENU" mapto="contextMenu" flags="m" />
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_SPACE" mapto="contextMenu" flags="m" />
 		</device>
 	</map>
@@ -558,7 +562,7 @@
 	</map>
 	
 	<map context="EPGSelectActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="red" flags="m" />
 			<key id="KEY_F2" mapto="timerAdd" flags="m" />
 			<key id="KEY_F3" mapto="yellow" flags="mr" />
@@ -577,7 +581,7 @@
 	</map>
 
 	<map context="EventViewActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="openSimilarList" flags="m" />
 			<key id="KEY_F2" mapto="timerAdd" flags="m" />
 		</device>
@@ -591,7 +595,7 @@
 	</map>
 	
 	<map context="EventViewEPGActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F3" mapto="openSingleServiceEPG" flags="m" />
 			<key id="KEY_F4" mapto="openMultiServiceEPG" flags="m" />
 		</device>
@@ -629,7 +633,7 @@
 	</map>
 	
 	<map context="ColorActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="red" flags="m" />
 			<key id="KEY_F2" mapto="green" flags="m" />
 			<key id="KEY_F3" mapto="yellow" flags="m" />
@@ -642,7 +646,7 @@
 	</map>
 
 	<map context="MsgBoxActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="cancel" flags="m" />
 			<key id="KEY_F2" mapto="alwaysOK" flags="m" />
 		</device>
@@ -663,7 +667,7 @@
 	</map>
 
 	<map context="ShortcutActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="red" flags="mr" />
 			<key id="KEY_F2" mapto="green" flags="mr" />
 			<key id="KEY_F3" mapto="yellow" flags="mr" />
@@ -679,7 +683,7 @@
 	</map>
 	
 	<map context="SleepTimerEditorActions">
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_F1" mapto="disableTimer" flags="mr" />
 			<key id="KEY_F2" mapto="toggleAction" flags="mr" />
 			<key id="KEY_F3" mapto="toggleAsk" flags="mr" />
@@ -754,7 +758,7 @@
 			<key id="KEY_PREVIOUSSONG" mapto="previous" flags="m" />
 			<key id="KEY_NEXTSONG" mapto="next" flags="m" />
 		</device>
-		<device name="Console; DirectFB; Qt; SDL">
+		<device name="compatible: pcKeyboard">
 			<key id="KEY_SPACE" mapto="menu" flags="m" />
 			<key id="KEY_F1" mapto="previous" flags="m" />
 			<key id="KEY_F2" mapto="play" flags="m" />

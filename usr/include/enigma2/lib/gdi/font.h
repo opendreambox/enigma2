@@ -24,16 +24,18 @@ typedef FTC_SBitCache FTC_SBit_Cache;
 #include <set>
 
 class FontRenderClass;
-class Font;
+class eFont;
 class gDC;
 class gFont;
+class gRegion;
 class gRGB;
+class gSurface;
 
 #endif
 class fontRenderClass
 { 
 #ifndef SWIG
-	friend class Font;
+	friend class eFont;
 	friend class eTextPara;
 	friend class gFont;
 
@@ -71,7 +73,7 @@ public:
 	std::string AddFont(const std::string &filename, const std::string &name, int scale);
 	FT_Error FTC_Face_Requester(FTC_FaceID	face_id, FT_Face* aface);
 	long getFaceID(const std::string &face);
-	int getFont(ePtr<Font> &font, const std::string &face, int size, int tabwidth=-1);
+	int getFont(ePtr<eFont> &font, const std::string &face, int size, int tabwidth=-1);
 	fontRenderClass();
 	~fontRenderClass();
 #endif
@@ -115,7 +117,7 @@ public:
 
 	int x, y, w;
 	unsigned long argb;
-	ePtr<Font> font;
+	ePtr<eFont> font;
 	FT_ULong glyph_index;
 	int flags;
 	eRect bbox;
@@ -123,13 +125,13 @@ public:
 
 typedef std::vector<pGlyph> glyphString;
 
-class Font;
+class eFont;
 class eLCD;
 
 class eTextPara: public iObject
 {
 	DECLARE_REF(eTextPara);
-	ePtr<Font> current_font, replacement_font;
+	ePtr<eFont> current_font, replacement_font;
 	FT_Face current_face, replacement_face;
 	int use_kerning;
 	int previous;
@@ -146,9 +148,9 @@ class eTextPara: public iObject
 	int charCount;
 	bool doTopBottomReordering;
 
-	int appendGlyph(Font *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags, unsigned long &argb);
+	int appendGlyph(eFont *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags, unsigned long &argb);
 	void newLine(int flags);
-	void setFont(Font *font, Font *replacement_font);
+	void setFont(eFont *font, eFont *replacement_font);
 	eRect boundBox;
 	void calc_bbox();
 	int bboxValid;
@@ -171,6 +173,7 @@ public:
 
 
 	void blit(gDC &dc, const ePoint &offset, const gRGB &background, const gRGB &foreground);
+	void blit(gSurface *surface, const gRegion &clip, const ePoint &offset, const gRGB &background, const gRGB &foreground);
 
 	enum
 	{
@@ -214,9 +217,9 @@ public:
 	}
 };
 
-class Font: public iObject
+class eFont: public iObject
 {
-	DECLARE_REF(Font);
+	DECLARE_REF(eFont);
 public:
 	FTC_ScalerRec scaler;
 	FTC_Image_Desc font;
@@ -227,8 +230,8 @@ public:
 	
 	int tabwidth;
 	int height;
-	Font(fontRenderClass *render, FTC_FaceID faceid, int isize, int tabwidth);
-	virtual ~Font();
+	eFont(fontRenderClass *render, FTC_FaceID faceid, int isize, int tabwidth);
+	virtual ~eFont();
 };
 
 extern fontRenderClass *font;

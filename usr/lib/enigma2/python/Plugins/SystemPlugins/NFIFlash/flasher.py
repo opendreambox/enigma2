@@ -85,7 +85,7 @@ class NFIFlash(Screen):
 		Screen.__init__(self, session)
 		
 		self.box = HardwareInfo().get_device_name()
-		self.usbmountpoint = "/mnt/usb/"
+		self.usbmountpoint = "/media/usb/"
 
 		self["key_red"] = StaticText()
 		self["key_green"] = StaticText()

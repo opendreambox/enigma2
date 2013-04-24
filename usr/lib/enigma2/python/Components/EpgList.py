@@ -4,6 +4,7 @@ from GUIComponent import GUIComponent
 from enigma import eEPGCache, eListbox, eListboxPythonMultiContent, gFont, \
 	RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER
 
+from Components.config import config
 from Tools.LoadPixmap import LoadPixmap
 
 from time import localtime, time
@@ -283,6 +284,14 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.list = self.queryEPG(test)
 		self.l.setList(self.list)
 		#print time() - t
+		self.selectionChanged()
+
+	def fillOutdatedSingleEPG(self, service):
+		t = time()
+		keep_time = config.misc.epgcache_outdated_timespan.value * 60 
+		test = [ 'RIBDT', (service.ref.toString(), 0, t-keep_time*60, keep_time) ]
+		self.list = self.queryEPG(test)
+		self.l.setList(self.list)
 		self.selectionChanged()
 
 	def sortSingleEPG(self, type):

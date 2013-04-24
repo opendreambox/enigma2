@@ -1281,16 +1281,16 @@ class PluginDetails(Screen, DreamInfoHandler):
 		self.picload.startDecode(filename)
 
 		if self.statuspicinstance != None:
-			self["statuspic"].instance.setPixmap(self.statuspicinstance.__deref__())
+			self["statuspic"].instance.setPixmap(self.statuspicinstance)
 			self["statuspic"].show()
 		if self.divpicinstance != None:
-			self["divpic"].instance.setPixmap(self.divpicinstance.__deref__())
+			self["divpic"].instance.setPixmap(self.divpicinstance)
 			self["divpic"].show()
 
 	def paintScreenshotPixmapCB(self, picInfo=None):
 		ptr = self.picload.getData()
 		if ptr != None:
-			self["screenshot"].instance.setPixmap(ptr.__deref__())
+			self["screenshot"].instance.setPixmap(ptr)
 			self["screenshot"].show()
 		else:
 			self.setThumbnail(noScreenshot = True)

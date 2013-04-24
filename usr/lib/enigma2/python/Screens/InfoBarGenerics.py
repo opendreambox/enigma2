@@ -13,7 +13,7 @@ from Components.config import config, ConfigBoolean, ConfigClock
 from Components.SystemInfo import SystemInfo
 from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath, defaultStorageDevice
 from Components.ResourceManager import resourcemanager
-from EpgSelection import EPGSelection
+from EpgSelection import EPGSelection, OutdatedEPGSelection
 from Plugins.Plugin import PluginDescriptor
 
 from Screen import Screen
@@ -680,11 +680,27 @@ class InfoBarEPG:
 			else:
 				self.session.open(EPGSelection, ref)
 
+	def openOutdatedSingleServiceEPG(self):
+		ref=self.session.nav.getCurrentlyPlayingServiceReference()
+		if ref:
+			if self.servicelist.getMutableList() is not None: # bouquet in channellist
+				current_path = self.servicelist.getRoot()
+				services = self.getBouquetServices(current_path)
+				self.serviceSel = SimpleServicelist(services)
+				if self.serviceSel.selectService(ref):
+					self.session.openWithCallback(self.SingleServiceEPGClosed, OutdatedEPGSelection, ref, serviceChangeCB = self.changeServiceCB)
+				else:
+					self.session.openWithCallback(self.SingleServiceEPGClosed, OutdatedEPGSelection, ref)
+			else:
+				self.session.open(OutdatedEPGSelection, ref)
+
 	def showEventInfoPlugins(self):
 		list = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EVENTINFO)]
 
 		if list:
 			list.append((_("show single service EPG..."), self.openSingleServiceEPG))
+			if config.misc.epgcache_outdated_timespan.value:
+				list.append((_("show outdated service EPG..."), self.openOutdatedSingleServiceEPG))
 			list.append((_("Multi EPG"), self.openMultiServiceEPG))
 			self.session.openWithCallback(self.EventInfoPluginChosen, ChoiceBox, title=_("Please choose an extension..."), list = list, skin_name = "EPGExtensionsList")
 		else:

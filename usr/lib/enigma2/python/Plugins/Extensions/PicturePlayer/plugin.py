@@ -60,7 +60,7 @@ def setPixmap(dest, ptr):
 	else:
 #		print "no scale!"
 		dest.instance.setScale(0)
-	dest.instance.setPixmap(ptr.__deref__())
+	dest.instance.setPixmap(ptr)
 
 class picshow(Screen):
 	skin = """

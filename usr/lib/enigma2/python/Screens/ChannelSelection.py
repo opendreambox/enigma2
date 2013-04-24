@@ -33,6 +33,7 @@ from Tools.BoundFunction import boundFunction
 from os import remove
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
+from ChannelSelectionDisplaySettings import ChannelSelectionDisplaySettings
 profile("ChannelSelection.py after imports")
 
 FLAG_SERVICE_NEW_FOUND = 64 #define in lib/dvb/idvb.h as dxNewFound = 64
@@ -204,6 +205,8 @@ class ChannelContextMenu(Screen):
 						append_when_current_valid(current, menu, (_("end alternatives edit"), self.bouquetMarkEnd), level = 0)
 						append_when_current_valid(current, menu, (_("abort alternatives edit"), self.bouquetMarkAbort), level = 0)
 
+		append_when_current_valid(current, menu, (_("ChannelSelection Display Settings"), self.displaySettings), level = 2)
+
 		menu.append(ChoiceEntryComponent(text = (_("back"), self.cancelClick)))
 		self["menu"] = ChoiceList(menu)
 
@@ -212,6 +215,9 @@ class ChannelContextMenu(Screen):
 
 	def cancelClick(self):
 		self.close(False)
+
+	def displaySettings(self):
+		self.session.openWithCallback(self.close, ChannelSelectionDisplaySettings)
 
 	def showServiceInformations(self):
 		self.session.open( ServiceInfo, self.csel.getCurrentSelection() )
@@ -365,7 +371,7 @@ class ChannelContextMenu(Screen):
 		self.csel.addAlternativeServices()
 		self.csel.startMarkedEdit(EDIT_ALTERNATIVES)
 		self.close()
-	
+
 	def execPlugin(self, plugin, service):
 		plugin(self.session, service)
 
@@ -505,9 +511,8 @@ class ChannelSelectionEdit:
 					if mutableAlternatives.addService(cur_service.ref):
 						print "add", cur_service.ref.toString(), "to new alternatives failed"
 					mutableAlternatives.flushChanges()
-					self.servicelist.addService(new_ref.ref, True)
 					self.servicelist.removeCurrent()
-					self.servicelist.moveUp()
+					self.servicelist.addService(new_ref.ref, True)
 				else:
 					print "get mutable list for new created alternatives failed"
 			else:
@@ -569,6 +574,7 @@ class ChannelSelectionEdit:
 			if edit_root:
 				if not edit_root.addService(first_in_alternative, cur_service.ref):
 					self.servicelist.addService(first_in_alternative, True)
+					self.servicelist.setCurrent(cur_service.ref)
 				else:
 					print "couldn't add first alternative service to current root"
 			else:
@@ -576,7 +582,8 @@ class ChannelSelectionEdit:
 		else:
 			print "remove empty alternative list !!"
 		self.removeBouquet()
-		self.servicelist.moveUp()
+		if first_in_alternative:
+			self.servicelist.setCurrent(first_in_alternative) 
 
 	def removeBouquet(self):
 		refstr = self.getCurrentSelection().toString()
@@ -757,7 +764,7 @@ class ChannelSelectionBase(Screen):
 		self["key_yellow"] = Button(_("Provider"))
 		self["key_blue"] = Button(_("Favourites"))
 
-		self["list"] = ServiceList()
+		self["list"] = ServiceList(session)
 		self.servicelist = self["list"]
 
 		self.numericalTextInput = NumericalTextInput()
@@ -786,6 +793,10 @@ class ChannelSelectionBase(Screen):
 				"nextMarker": self.nextMarker,
 				"prevMarker": self.prevMarker,
 				"gotAsciiCode": self.keyAsciiCode,
+				"selectServiceDown": self.moveDown,
+				"selectServiceUp": self.moveUp,
+				"selectServicePageDown": self.pageDown,
+				"selectServicePageUp": self.pageUp,
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
 				"3": self.keyNumberGlobal,
@@ -796,7 +807,7 @@ class ChannelSelectionBase(Screen):
 				"8": self.keyNumberGlobal,
 				"9": self.keyNumberGlobal,
 				"0": self.keyNumber0
-			})
+			}, -1)
 		self.recallBouquetMode()
 
 	def getBouquetNumOffset(self, bouquet):
@@ -866,13 +877,14 @@ class ChannelSelectionBase(Screen):
 	def setRoot(self, root, justSet=False):
 		path = root.getPath()
 		inBouquetRootList = path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
-		pos = path.find('FROM BOUQUET')
-		isBouquet = (pos != -1) and (root.flags & eServiceReference.isDirectory)
-		if not inBouquetRootList and isBouquet:
+		isBouquetList = self.servicelist.isBouquetList(root)
+
+		if not isBouquetList:
 			self.servicelist.setMode(ServiceList.MODE_FAVOURITES)
 			self.servicelist.setNumberOffset(self.getBouquetNumOffset(root))
 		else:
 			self.servicelist.setMode(ServiceList.MODE_NORMAL)
+
 		self.servicelist.setRoot(root, justSet)
 		self.rootChanged = True
 		self.buildTitleString()
@@ -928,6 +940,12 @@ class ChannelSelectionBase(Screen):
 
 	def moveDown(self):
 		self.servicelist.moveDown()
+
+	def pageUp(self):
+		self.servicelist.pageUp()
+		
+	def pageDown(self):
+		self.servicelist.pageDown()
 
 	def clearPath(self):
 		del self.servicePath[:]
@@ -993,6 +1011,7 @@ class ChannelSelectionBase(Screen):
 					serviceHandler = eServiceCenter.getInstance()
 					servicelist = serviceHandler.list(ref)
 					if not servicelist is None:
+						self.servicelist.setMode(self.servicelist.MODE_NORMAL)
 						while True:
 							service = servicelist.getNext()
 							if not service.valid(): #check if end of list

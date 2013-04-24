@@ -270,8 +270,8 @@ class Browser(Screen, HelpableScreen):
 			"down": self.__actionDown,
 			"pageUp": (self.__actionPageUp, _("Page Up / Zoom in")),
 			"pageDown": (self.__actionPageDown, _("Page Down / Zoom out")),
-			"home" : self.__actionHome,
-			"end": boundFunction(self.__actionNavigate, eWebView.navEnd),
+			"seekBack": boundFunction(self.__actionNavigate, eWebView.navMediaRewind),
+			"seekFwd": boundFunction(self.__actionNavigate, eWebView.navMediaFastForward),
 			"tab": (boundFunction(self.__actionNavigate, eWebView.navTab), _("Tab")),
 			"backspace": (self.__actionBackspace, _("Backspace / Navigate back")),
 			"backtab": boundFunction(self.__actionNavigate, eWebView.navBacktab),
@@ -283,7 +283,7 @@ class Browser(Screen, HelpableScreen):
 			"menu" : (self.__actionMenu, _("Menu")),
 			"fullscreen" : self.__actionFullscreen,
 			"play" : self.__actionPlay,
-			"pause" : self.actionPause,
+			"pause" : self.__actionPause,
 			"playpause" : self.__actionPlayPause,
 			"stop" : self.actionStop,
 			"tv" : self.__actionTv,
@@ -615,7 +615,7 @@ class Browser(Screen, HelpableScreen):
 	def __actionPlay(self):
 		self.__actionNavigate(eWebView.navMediaPlay)
 
-	def actionPause(self):
+	def __actionPause(self):
 		self.__actionNavigate(eWebView.navMediaPause)
 
 	def __actionPlayPause(self):

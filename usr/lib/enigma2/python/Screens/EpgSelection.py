@@ -117,6 +117,9 @@ class EPGSelection(Screen):
 				config.misc.prev_mepg_time=ConfigClock(default = time())
 				mepg_config_initialized = True
 			self.session.openWithCallback(self.onDateTimeInputClosed, TimeDateInput, config.misc.prev_mepg_time )
+		elif self.type == EPG_TYPE_SINGLE:
+			if not isinstance(self, OutdatedEPGSelection) and config.misc.epgcache_outdated_timespan.value:
+				self.session.open(OutdatedEPGSelection, self.currentService.ref)
 
 	def onDateTimeInputClosed(self, ret):
 		if len(ret) > 1:
@@ -371,3 +374,29 @@ class EPGSelection(Screen):
 		elif not isRecordEvent and self.key_green_choice != self.ADD_TIMER:
 			self["key_green"].setText(_("Add timer"))
 			self.key_green_choice = self.ADD_TIMER
+
+class OutdatedEPGSelection(EPGSelection):
+	def __init__(self, session, service, zapFunc=None, eventid=None, bouquetChangeCB=None, serviceChangeCB=None):
+		Screen.__init__(self, session)
+		EPGSelection.__init__(self, session, service, zapFunc, eventid, bouquetChangeCB, serviceChangeCB)
+		self.skinName = "EPGSelection"
+		
+	def onCreate(self):
+		l = self["list"]
+		l.recalcEntrySize()
+		service = self.currentService
+		self["Service"].newService(service.ref)
+		if self.saved_title is None:
+			self.saved_title = self.instance.getTitle()
+		title = self.saved_title + ' - ' + service.getServiceName()
+		self.instance.setTitle(title)
+		l.fillOutdatedSingleEPG(service)
+	
+	# makes no sense to add timer
+	def timerAdd(self):
+		pass 
+		
+	def onSelectionChanged(self):
+		EPGSelection.onSelectionChanged(self)
+		self["key_green"].setText("")
+		self.key_green_choice = self.EMPTY

@@ -1,6 +1,7 @@
 from enigma import eRCInput, getPrevAsciiCode
 from Tools.NumericalTextInput import NumericalTextInput
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
+from Tools.IO import saveFile
 from copy import copy as copy_copy
 from os import path as os_path
 from time import localtime, strftime
@@ -1668,13 +1669,7 @@ class Config(ConfigSubsection):
 			self.setSavedValue(tree["config"], append)
 
 	def saveToFile(self, filename):
-		text = self.pickle()
-		try:
-			f = open(filename, "w")
-			f.write(text)
-			f.close()
-		except IOError:
-			print "Config: Couldn't write %s" % filename
+		saveFile(filename, self.pickle())
 
 	def loadFromFile(self, filename, base_file=False, append = False):
 		f = open(filename, "r")

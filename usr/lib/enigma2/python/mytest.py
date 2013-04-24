@@ -5,6 +5,66 @@ enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 
+def gPixmapPtr_deref(self):
+	print "gPixmapPtr.__deref__() is deprecated please completely remove the \".__deref__()\" call!"
+	import traceback
+	traceback.print_stack(limit = 2)
+	return self
+
+enigma.gPixmapPtr.__deref__ = gPixmapPtr_deref
+
+# allow None as pixmap parameter for setPixmap
+ePixmap_setPixmap_org = enigma.ePixmap.setPixmap
+def ePixmap_setPixmap(self, pixmap):
+	if pixmap is None:
+		print "ePixmap.setPixmap(None) is deprecated please use ePixmap.setPixmap(enigma.gPixmapPtr())!"
+		import traceback
+		traceback.print_stack(limit = 2)
+		pm = enigma.gPixmapPtr()
+		ePixmap_setPixmap_org(self, pm)
+	else:
+		ePixmap_setPixmap_org(self, pixmap)
+enigma.ePixmap.setPixmap = ePixmap_setPixmap
+
+# allow None as pixmap parameter for setPixmap
+eSlider_setPixmap_org = enigma.eSlider.setPixmap
+def eSlider_setPixmap(self, pixmap):
+	if pixmap is None:
+		print "eSlider.setPixmap(None) is deprecated please use eSlider.setPixmap(enigma.gPixmapPtr())!"
+		import traceback
+		traceback.print_stack(limit = 2)
+		pm = enigma.gPixmapPtr()
+		eSlider_setPixmap_org(self, pm)
+	else:
+		eSlider_setPixmap_org(self, pixmap)
+enigma.eSlider.setPixmap = eSlider_setPixmap
+
+# allow None as pixmap parameter for setBackgroundPixmap
+eSlider_setBackgroundPixmap_org = enigma.eSlider.setBackgroundPixmap
+def eSlider_setBackgroundPixmap(self, pixmap):
+	if pixmap is None:
+		print "eSlider.setBackgroundPixmap(None) is deprecated please use eSlider.setBackgroundPixmap(enigma.gPixmapPtr())!"
+		import traceback
+		traceback.print_stack(limit = 2)
+		pm = enigma.gPixmapPtr()
+		eSlider_setBackgroundPixmap_org(self, pm)
+	else:
+		eSlider_setBackgroundPixmap_org(self, pixmap)
+enigma.eSlider.setBackgroundPixmap = eSlider_setBackgroundPixmap
+
+# allow None as pixmap parameter for setPointer
+ePositionGauge_setPointer_org = enigma.ePositionGauge.setPointer
+def ePositionGauge_setPointer(self, which, pixmap, center):
+	if pixmap is None:
+		print "ePositionGauge.setPointer(which, None, center) is deprecated please use ePositionGauge.setPointer(which, enigma.gPixmapPtr(), center)!"
+		import traceback
+		traceback.print_stack(limit = 2)
+		pm = enigma.gPixmapPtr()
+		ePositionGauge_setPointer_org(self, which, pm, center)
+	else:
+		ePositionGauge_setPointer_org(self, which, pixmap, center)
+enigma.ePositionGauge.setPointer = ePositionGauge_setPointer
+
 from Tools.Profile import profile, profile_final
 
 profile("PYTHON_START")
@@ -66,6 +126,7 @@ config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0)) # number of standby
 config.misc.epgcache_filename = ConfigText(default = "/media/hdd/epg.dat")
 config.misc.epgcache_timespan = ConfigSelection(default = "28", choices = [("7", _("7 days")), ("14", _("14 days")), ("21", _("21 days")), ("28", _("28 days"))])
+config.misc.epgcache_outdated_timespan = ConfigInteger(default = 0, limits=(0,96))
 config.misc.record_io_buffer = ConfigInteger(default=192512*5)
 config.misc.record_dmx_buffer = ConfigInteger(default=1024*1024)
 
@@ -74,6 +135,9 @@ def setEPGCachePath(configElement):
 
 def setEPGCacheTimespan(configElement):
 	eEPGCache.getInstance().setCacheTimespan(int(configElement.value))
+
+def setOutdatedEPGTimespan(configElement):
+	eEPGCache.getInstance().setOutdatedEPGTimespan(configElement.value)
 
 #demo code for use of standby enter leave callbacks
 #def leaveStandby():
@@ -494,8 +558,9 @@ def runScreenTest():
 		else:
 			session.open(screen, *args)
 
-	config.misc.epgcache_filename.addNotifier(setEPGCachePath)
+	config.misc.epgcache_outdated_timespan.addNotifier(setOutdatedEPGTimespan)
 	config.misc.epgcache_timespan.addNotifier(setEPGCacheTimespan)
+	config.misc.epgcache_filename.addNotifier(setEPGCachePath)
 
 	api.setSession(session)
 
@@ -520,11 +585,12 @@ def runScreenTest():
 	from Tools.DreamboxHardware import setFPWakeuptime, getFPWakeuptime, setRTCtime
 	#get currentTime
 	nowTime = time()
+	wakeup_on_zaptimers = config.usage.standby_zaptimer_wakeup.value
 	wakeupList = [
 		x for x in ((session.nav.RecordTimer.getNextRecordingTime(), 0, session.nav.RecordTimer.isNextRecordAfterEventActionAuto()),
 					(session.nav.RecordTimer.getNextZapTime(), 1),
 					(plugins.getNextWakeupTime(), 2))
-		if x[0] != -1
+		if x[0] != -1 and (x[1] != 1 or wakeup_on_zaptimers)
 	]
 	wakeupList.sort()
 	recordTimerWakeupAuto = False

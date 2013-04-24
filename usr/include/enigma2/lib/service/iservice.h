@@ -176,12 +176,20 @@ public:
 			return r < 0;
 		return path < c.path;
 	}
-	
+
 	int valid() const
 	{
 		return type != idInvalid;
 	}
+
+	int compare(const eServiceReference &ref) const { return ref == *this ? 0 : ref < *this ? -1 : 1; };
+
+	long hash() const; // provides an hash... but take care a hash must NOT be unique!
 };
+
+#ifdef SWIG
+%pythoncode %{eServiceReference.__hash__ = eServiceReference.hash%}
+#endif
 
 SWIG_ALLOW_OUTPUT_SIMPLE(eServiceReference);
 

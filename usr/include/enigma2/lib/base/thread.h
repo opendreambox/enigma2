@@ -45,6 +45,8 @@ public:
 		   died again. */
 	int run(int prio=0, int policy=0);
 
+	bool in_thread();
+
 	virtual void thread()=0;
 	
 		/* waits until thread is in "run" state */

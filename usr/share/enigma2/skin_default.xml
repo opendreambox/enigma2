@@ -1,4 +1,9 @@
 <skin>
+	<listboxcontent>
+		<!-- the following two offsets are used for eListboxPythonStringContent and eListboxPythonConfigContent (NOT eListboxPythonMultiContent) -->
+		<offset name="left" value="0" />
+		<offset name="right" value="0" />
+	</listboxcontent>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">
 		<color name="Background" color="#000000" />

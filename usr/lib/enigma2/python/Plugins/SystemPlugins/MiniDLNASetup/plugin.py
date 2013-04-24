@@ -35,7 +35,7 @@ class StartStopDaemon(object):
 		self._title = title
 
 		self._path_daemon = '%s/%s' %(bindir, daemon)
-		self._path_killall = '%s/killall' %(eEnv.resolve('${sbindir}'))
+		self._path_killall = '%s/killall' %(eEnv.resolve('${bindir}'))
 		self._path_pidfile = pidfile or '/var/run/%s.pid' %(self._daemon)
 
 		self._console = eConsoleAppContainer()
@@ -43,6 +43,7 @@ class StartStopDaemon(object):
 
 		self._cmd_kill = [self._path_killall, self._path_killall, "-HUP", self._daemon]
 		self._cmd_start = [self._path_daemon, self._path_daemon]
+		self._current_cmd_start = self._cmd_start
 		self._restart = False
 		self.__checkTimer = eTimer()
 		self.__checkTimer.callback.append(self._checkIfRunning)
@@ -51,7 +52,7 @@ class StartStopDaemon(object):
 	def _consoleCmdFinished(self, data):
 		if self._restart and config.plugins.minidlna.enabled.value:
 			self._restart = False
-			self._console.execute(*self._cmd_start)
+			self._console.execute(*self._current_cmd_start)
 		elif self._restart:
 			self._restart = False
 			self._commandFinished(self.TYPE_STOP, True, _("Configuration saved. %s is disabled") %self._title)
@@ -88,22 +89,29 @@ class StartStopDaemon(object):
 		self._restart = restart
 		self._console.execute(*self._cmd_kill)
 
-	def start(self):
+	def _setCurrentCmd(self, params=[]):
+		self._current_cmd_start = list(self._cmd_start)
+		self._current_cmd_start.extend(params)
+
+	def start(self, params=[]):
 		self._restart = False
 		if not self.isRunning():
-			self._console.execute(*self._cmd_start)
+			self._setCurrentCmd(params)
+			self._console.execute(*self._current_cmd_start)
 		else:
 			self._commandFinished(self.TYPE_START, True, _("%s was already running") %self._title)
 
-	def restart(self):
+	def restart(self, params=[]):
 		if self.isRunning():
+			self._setCurrentCmd(params)
 			self.stop(True)
 		else:
-			self.start()
+			self.start(params)
 
 class MiniDLNAConfig:
 	DAEMON = "minidlnad"
 	DAEMON_TITLE = "Mediaserver"
+	PID_FILE = "/var/run/minidlna/minidlna.pid"
 	CONFIG_FILE_PATH = "%s/minidlna.conf" %(eEnv.resolve('${sysconfdir}'))
 
 	MEDIA_TYPE_AUDIO = "A"
@@ -145,7 +153,7 @@ class MiniDLNAConfig:
 			"root_container" : config.plugins.minidlna.root_container,
 		}
 
-		self._init = StartStopDaemon(self.DAEMON, self.DAEMON_TITLE)
+		self._init = StartStopDaemon(self.DAEMON, self.DAEMON_TITLE, pidfile=self.PID_FILE)
 		self._init.onCommandFinished.append(self._onStartStopCommandFinished)
 		self.onActionFinished = []
 
@@ -164,9 +172,9 @@ class MiniDLNAConfig:
 	def _onDeviceNotifier(self, device, action):
 		self._writeConfig()
 
-	def startDaemon(self):
+	def startDaemon(self, params=[]):
 		if harddiskmanager.isMount(config.plugins.minidlna.db_dir.value):
-			self.apply()
+			self.apply(params)
 		else:
 			print "[MiniDLNAConfig].startDaemon :: Refusing to start with database in a non-mounted path"
 			self._actionFinished(False, _("Error! The configured directory is not a mountpoint! Refusing to start!"))
@@ -174,16 +182,16 @@ class MiniDLNAConfig:
 	def stopDaemon(self):
 		self._init.stop()
 
-	def restartDaemon(self):
-		self._init.restart()
+	def restartDaemon(self, params=[]):
+		self._init.restart(params)
 
-	def apply(self):
+	def apply(self, params=[]):
 		print "[MiniDLNAConfig].apply"
 		for x in self._config.values():
 			x.save()
 
 		if self._writeConfig():
-			self.restartDaemon()
+			self.restartDaemon(params)
 		else:
 			self._actionFinished(False, _("Error! Couldn't write the configuration file!\nSettings will NOT be lost on exit!"))
 
@@ -223,7 +231,7 @@ class MiniDLNAConfig:
 		if len(locations) > 1:
 			lst = []
 			for loc in locations:
-				lst.append( harddiskmanager.getRealPath(loc) )
+				lst.append( os_path.realpath(loc) )
 			lst.sort()
 			lst.reverse()
 			last = lst[-1]
@@ -268,9 +276,11 @@ class MiniDLNASetup(ConfigListScreen, Screen):
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
 			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
 			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
 		</screen>"""
 
@@ -281,11 +291,13 @@ class MiniDLNASetup(ConfigListScreen, Screen):
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
 		self["key_yellow"] = StaticText(_("Shares"))
+		self["key_blue"] = StaticText(_("Rescan"))
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
 		{
 			"red": self.close,
 			"green": self.save,
 			"yellow": self._editShares,
+			"blue": self._rescan,
 			"save": self.save,
 			"cancel": self.close,
 		}, -2)
@@ -351,6 +363,9 @@ class MiniDLNASetup(ConfigListScreen, Screen):
 
 	def _editShares(self):
 		self.session.open(MiniDLNAShareSetup)
+
+	def _rescan(self):
+		dlna_config.restartDaemon(['-R'])
 
 class MiniDLNAShareSetup(ConfigListScreen, Screen):
 	skin = """

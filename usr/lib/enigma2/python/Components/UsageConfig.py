@@ -1,7 +1,7 @@
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations
+from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, ConfigInteger
 from Tools.Directories import resolveFilename, SCOPE_HDD
-from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv;
+from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv
 from SystemInfo import SystemInfo
 
 def BaseInitUsageConfig():
@@ -63,7 +63,7 @@ def FinalInitUsageConfig():
 		("show_menu", _("show shutdown menu")),
 		("shutdown", _("immediate shutdown")),
 		("standby", _("Idle Mode")) ] )
-	
+
 	config.usage.on_short_powerpress = ConfigSelection(default = "standby", choices = [
 		("show_menu", _("show shutdown menu")),
 		("shutdown", _("immediate shutdown")),
@@ -84,7 +84,7 @@ def FinalInitUsageConfig():
 	config.usage.show_message_when_recording_starts = ConfigYesNo(default = True)
 
 	config.usage.load_length_of_movies_in_moviellist = ConfigYesNo(default = True)
-	
+
 	def TunerTypePriorityOrderChanged(configElement):
 		setTunerTypePriorityOrder(int(configElement.value))
 	config.usage.alternatives_priority.addNotifier(TunerTypePriorityOrderChanged, immediate_feedback=False)
@@ -138,9 +138,30 @@ def FinalInitUsageConfig():
 
 	config.usage.text_subtitle_presentation = ConfigSelection(default = "black box", choices = [("black box", _("black box")), ("drop-shadow", _("drop-shadow"))])
 
-	#disables gstreamer subtitle support to workaround a big gstreamer memory leak (http://comments.gmane.org/gmane.comp.video.gstreamer.bugs/102357)
-	config.usage.disable_gst_subtitles = ConfigYesNo(default = False)
+	# Channelselection settings
+	config.usage.configselection_showsettingsincontextmenu = ConfigYesNo(default=True)
+	config.usage.configselection_showlistnumbers = ConfigYesNo(default=True)
+	config.usage.configselection_showservicename = ConfigYesNo(default=True)
+	config.usage.configselection_progressbarposition = ConfigSelection(default = "0", choices = [("0",_("After servicenumber")),("1",_("After servicename")), ("2",_("After servicedescription"))])
+	config.usage.configselection_servicenamecolwidth = ConfigInteger(200, limits =(100,400))
+	config.usage.configselection_columnstyle = ConfigYesNo(default=False)
+	config.usage.configselection_additionaltimedisplayposition = ConfigSelection(default = "1", choices = [("0",_("ahead")),("1",_("behind"))])
+	config.usage.configselection_showadditionaltimedisplay = ConfigSelection(default = "0",choices = [("0", _("Off")), ("1", _("Percent")), ("2", _("Remain")),("3", _("Remain / duration")), ("4", _("Elapsed")), ("5", _("Elapsed / duration")), ("6", _("Elapsed / remain / duration")),("7", _("Time"))])
+	config.usage.configselection_showpicons = ConfigYesNo(default=False)
+	config.usage.configselection_bigpicons = ConfigYesNo(default=False)
+	config.usage.configselection_secondlineinfo =  ConfigSelection(default = "0", choices = [("0",_("nothing")),("1",_("short description")), ("2",_("upcoming event"))])
 
+	config.usage.configselection_piconspath = ConfigSelection(default = eEnv.resolve('${datadir}/enigma2/picon_50x30/'), choices = [
+				(eEnv.resolve('${datadir}/enigma2/picon_50x30/'), eEnv.resolve('${datadir}/enigma2/picon_50x30')),
+				('/media/cf/picon_50x30/', '/media/cf/picon_50x30'),
+				('/media/usb/picon_50x30/', '/media/usb/picon_50x30'),
+				(eEnv.resolve('${datadir}/enigma2/picon/'), eEnv.resolve('${datadir}/enigma2/picon')),
+				('/media/cf/picon/', '/media/cf/picon'),
+				('/media/usb/picon/', '/media/usb/picon'),
+				])
+
+	config.usage.configselection_showrecordings = ConfigYesNo(default=False)
+	config.usage.standby_zaptimer_wakeup = ConfigYesNo(default=True)
 
 def updateChoices(sel, choices):
 	if choices:

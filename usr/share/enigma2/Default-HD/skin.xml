@@ -2,6 +2,10 @@
 	<output id="0">
 		<resolution xres="1280" yres="720" bpp="32" />
 	</output>
+	<listboxcontent>
+		<offset name="left" value="10" />
+		<offset name="right" value="10" />
+	</listboxcontent>
 	<!-- Colors (#AARRGGBB) -->
 	<colors>
 		<color name="black" value="#000000"/>
@@ -1356,9 +1360,11 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
+		<ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
 		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
 		<widget name="config" position="10,60" size="800,450" itemHeight="30" scrollbarMode="showOnDemand" />
 	</screen>

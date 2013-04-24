@@ -5,8 +5,6 @@
 		<key id="KEY_RIGHT" mapto="right" flags="mr"/>
 		<key id="KEY_UP" mapto="up" flags="mr"/>
 		<key id="KEY_DOWN" mapto="down" flags="mr"/>
-		<key id="KEY_HOME" mapto="home" flags="mr"/>
-		<key id="KEY_END" mapto="end" flags="mr"/>
 		<key id="KEY_MENU" mapto="menu" flags="m" />
 		<!-- keyboard -->
 		<key id="KEY_ENTER" mapto="enter" flags="m"/>
@@ -39,10 +37,21 @@
 		<key id="KEY_TV" mapto="tv" flags="m"/>
 		<key id="KEY_RECORD" mapto="record" flags="m"/>
 		<!-- remote pvr -->
-		<key id="KEY_PLAY" mapto="play" flags="m"/>
-		<key id="KEY_PAUSE" mapto="pause" flags="m"/>
-		<key id="KEY_PLAYPAUSE" mapto="playpause" flags="m"/>
-		<key id="KEY_STOP" mapto="stop" flags="m"/>
+		<key id="KEY_HOME" mapto="seekBack" flags="mr"/>
+		<key id="KEY_END" mapto="seekFwd" flags="mr"/>
+		<device name="dreambox advanced remote control (native)">
+			<key id="KEY_PLAY" mapto="play" flags="m" />
+			<key id="KEY_PAUSE" mapto="pause" flags="m" />
+			<key id="KEY_PREVIOUSSONG" mapto="seekBack" flags="m" />
+			<key id="KEY_NEXTSONG" mapto="seekFwd" flags="m" />
+		</device>
+		<device name="dreambox ir keyboard">
+			<key id="KEY_PAUSE" mapto="pause" flags="m" />
+			<key id="KEY_PLAY" mapto="play" flags="m" />
+			<key id="KEY_REWIND" mapto="seekBack" flags="m" />
+			<key id="KEY_FASTFORWARD" mapto="seekFwd" flags="m" />
+		</device>
+
 	</map>
 	<map context="SimpleEditorActions">
 		<key id="KEY_NEXT" mapto="delete" flags="m" />

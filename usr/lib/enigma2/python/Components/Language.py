@@ -66,11 +66,12 @@ class Language:
 			os.environ["LANGUAGE"] = lang[1]
 			self.activeLanguage = index
 			self.activateLanguageFallback(index, 'enigma2-plugins' )
-			for x in self.callbacks:
-				x()
 		except:
 			print "Selected language does not exist!"
-			
+
+		for x in self.callbacks:
+			x()
+
 	def activateLanguageFallback(self, index, domain):
 		if index == self.getLanguage() and self.currLangObj:
 			lang = self.lang[index]
@@ -106,7 +107,7 @@ class Language:
 		self.callbacks.append(callback)
 
 	def precalcLanguageList(self):
-		# excuse me for those T1, T2 hacks please. The goal was to keep the language_cache.py as small as possible, *and* 
+		# excuse me for those T1, T2 hacks please. The goal was to keep the language_cache.py as small as possible, *and*
 		# don't duplicate these strings.
 		T1 = _("Please use the UP and DOWN keys to select your language. Afterwards press the OK button.")
 		T2 = _("Language selection")

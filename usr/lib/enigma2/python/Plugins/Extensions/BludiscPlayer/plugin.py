@@ -83,7 +83,7 @@ class BludiscMenu(Screen):
 	def picdecodedCB(self, picInfo = None):
 		ptr = self.picload.getData()
 		if ptr is not None:
-			self["pixmap"].instance.setPixmap(ptr.__deref__())
+			self["pixmap"].instance.setPixmap(ptr)
 
 	def ok(self):
 		if type(self["menu"].getCurrent()) is type(None):

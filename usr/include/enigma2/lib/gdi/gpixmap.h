@@ -159,7 +159,7 @@ struct gLookup
 
 typedef enum
 {
-    ARGB, ABGR, RGBA, BGRA, INDEXED
+    ARGB, ABGR, RGBA, BGRA, INDEXED, RGB, BGR
 } colorformat_t;
 
 typedef enum
@@ -183,6 +183,7 @@ struct gSurface
 	void *data;
 	int data_phys;
 	int offset; // only for backbuffers
+	void *priv; // for accelerators
 
 	gSurface();
 	gSurface(eSize size, int bpp, int accel, bool premult = false);
@@ -208,11 +209,14 @@ public:
 		blitScale=4
 	};
 
-	gPixmap(gSurface *surface);
+	gPixmap(gSurface *surface, bool takeOwnership = false);
 	gPixmap(eSize, int bpp, int accel = 0, bool premult = false);
 
-#if defined(HAVE_QT) && !defined(SWIG)
-	gPixmap(const char *filename, const char *format = 0);
+	static ePtr<gPixmap> fromFile(const char *filename);
+#if defined(DISPLAY_QT)
+	gPixmap(const char *filename);
+#endif
+#if defined(HAVE_QT)
 	QImage &toQImage();
 #endif
 
