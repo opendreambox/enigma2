@@ -954,7 +954,7 @@ class HarddiskManager:
 					if mode == 'remove':
 						continue
 					opts = set(mntops.split(',')) ^ { 'auto', 'noauto' }
-					opts.append(newopt)
+					opts.add(newopt)
 					mntops = ','.join(opts)
 					output.append('\t'.join([src, dst, vfstype, mntops, freq, passno]))
 					# remove possible duplicate entries

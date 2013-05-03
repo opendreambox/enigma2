@@ -1,8 +1,15 @@
 <skin>
 	<listboxcontent>
 		<!-- the following two offsets are used for eListboxPythonStringContent and eListboxPythonConfigContent (NOT eListboxPythonMultiContent) -->
-		<offset name="left" value="0" />
-		<offset name="right" value="0" />
+		<offset name="left" value="2" />
+		<offset name="right" value="2" />
+
+		<!--font name="string" font="Regular;20" /-->
+		<!--value name="string_item_height" value="25" /-->
+
+		<!--font name="config_description" font="Regular;20" /-->
+		<!--font name="config_value" font="Regular;16" /-->
+		<!--value name="config_item_height" font="Regular;25" /-->
 	</listboxcontent>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">

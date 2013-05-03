@@ -1535,9 +1535,11 @@ eListbox_setWrapAroundDefault = _enigma.eListbox_setWrapAroundDefault
 class eListboxPythonStringContent(iListboxContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.eListboxPythonStringContent_swiginit(self,_enigma.new_eListboxPythonStringContent())
+    def __init__(self, default_item_height=0): 
+        _enigma.eListboxPythonStringContent_swiginit(self,_enigma.new_eListboxPythonStringContent(default_item_height))
     __swig_destroy__ = _enigma.delete_eListboxPythonStringContent
+    setItemHeight = staticmethod(_enigma.eListboxPythonStringContent_setItemHeight)
+    setFont = staticmethod(_enigma.eListboxPythonStringContent_setFont)
     setLeftOffset = staticmethod(_enigma.eListboxPythonStringContent_setLeftOffset)
     setRightOffset = staticmethod(_enigma.eListboxPythonStringContent_setRightOffset)
 eListboxPythonStringContent.setList = new_instancemethod(_enigma.eListboxPythonStringContent_setList,None,eListboxPythonStringContent)
@@ -1548,6 +1550,14 @@ eListboxPythonStringContent.invalidate = new_instancemethod(_enigma.eListboxPyth
 eListboxPythonStringContent.getItemSize = new_instancemethod(_enigma.eListboxPythonStringContent_getItemSize,None,eListboxPythonStringContent)
 eListboxPythonStringContent_swigregister = _enigma.eListboxPythonStringContent_swigregister
 eListboxPythonStringContent_swigregister(eListboxPythonStringContent)
+
+def eListboxPythonStringContent_setItemHeight(*args):
+  return _enigma.eListboxPythonStringContent_setItemHeight(*args)
+eListboxPythonStringContent_setItemHeight = _enigma.eListboxPythonStringContent_setItemHeight
+
+def eListboxPythonStringContent_setFont(*args):
+  return _enigma.eListboxPythonStringContent_setFont(*args)
+eListboxPythonStringContent_setFont = _enigma.eListboxPythonStringContent_setFont
 
 def eListboxPythonStringContent_setLeftOffset(*args):
   return _enigma.eListboxPythonStringContent_setLeftOffset(*args)
@@ -1560,6 +1570,9 @@ eListboxPythonStringContent_setRightOffset = _enigma.eListboxPythonStringContent
 class eListboxPythonConfigContent(eListboxPythonStringContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+    setItemHeight = staticmethod(_enigma.eListboxPythonConfigContent_setItemHeight)
+    setValueFont = staticmethod(_enigma.eListboxPythonConfigContent_setValueFont)
+    setDescriptionFont = staticmethod(_enigma.eListboxPythonConfigContent_setDescriptionFont)
     def __init__(self): 
         _enigma.eListboxPythonConfigContent_swiginit(self,_enigma.new_eListboxPythonConfigContent())
     __swig_destroy__ = _enigma.delete_eListboxPythonConfigContent
@@ -1568,6 +1581,18 @@ eListboxPythonConfigContent.setSeperation = new_instancemethod(_enigma.eListboxP
 eListboxPythonConfigContent.currentCursorSelectable = new_instancemethod(_enigma.eListboxPythonConfigContent_currentCursorSelectable,None,eListboxPythonConfigContent)
 eListboxPythonConfigContent_swigregister = _enigma.eListboxPythonConfigContent_swigregister
 eListboxPythonConfigContent_swigregister(eListboxPythonConfigContent)
+
+def eListboxPythonConfigContent_setItemHeight(*args):
+  return _enigma.eListboxPythonConfigContent_setItemHeight(*args)
+eListboxPythonConfigContent_setItemHeight = _enigma.eListboxPythonConfigContent_setItemHeight
+
+def eListboxPythonConfigContent_setValueFont(*args):
+  return _enigma.eListboxPythonConfigContent_setValueFont(*args)
+eListboxPythonConfigContent_setValueFont = _enigma.eListboxPythonConfigContent_setValueFont
+
+def eListboxPythonConfigContent_setDescriptionFont(*args):
+  return _enigma.eListboxPythonConfigContent_setDescriptionFont(*args)
+eListboxPythonConfigContent_setDescriptionFont = _enigma.eListboxPythonConfigContent_setDescriptionFont
 
 class eListboxPythonMultiContent(eListboxPythonStringContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

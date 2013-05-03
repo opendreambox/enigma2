@@ -283,6 +283,7 @@ protected:
 	ePtrList<eTimer> m_timers;
 	ePtrList<eTimer> m_timers_new;
 
+	pid_t m_tid;
 	volatile bool m_abort_loop;
 	int m_loop_count;
 	bool m_app_quit_now;

@@ -339,7 +339,31 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				elif name == "right":
 					eListboxPythonStringContent.setRightOffset(parseValue(value))
 				else:
-					raise SkinError("got configlist offset '%s'' but 'left' or 'right' is allowed only" % name)
+					raise SkinError("got listboxcontent offset '%s'' but 'left' or 'right' is allowed only" % name)
+		for font in c.findall("font"):
+			get_attr = font.attrib.get
+			name = get_attr("name")
+			font = get_attr("font")
+			if name and font:
+				if name == "string":
+					eListboxPythonStringContent.setFont(parseFont(font, ((1,1),(1,1))))
+				elif name == "config_description":
+					eListboxPythonConfigContent.setDescriptionFont(parseFont(font, ((1,1),(1,1))))
+				elif name == "config_value":
+					eListboxPythonConfigContent.setValueFont(parseFont(font, ((1,1),(1,1))))
+				else:
+					raise SkinError("got listboxcontent font '%s' but 'string', 'config_description' or 'config_value' is allowed only" % name)
+		for value in c.findall("value"):
+			get_attr = value.attrib.get
+			name = get_attr("name")
+			value = get_attr("value")
+			if name and value:
+				if name == "string_item_height":
+					eListboxPythonStringContent.setItemHeight(parseValue(value))
+				elif name == "config_item_height":
+					eListboxPythonConfigContent.setItemHeight(parseValue(value))
+				else:
+					raise SkinError("got listboxcontent value '%s' but 'string_item_height' or 'config_item_height' is allowed only" % name)
 
 	for c in skin.findall("fonts"):
 		for font in c.findall("font"):

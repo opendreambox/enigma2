@@ -1054,6 +1054,7 @@ class ChannelSelectionBase(Screen):
 								cur_ref.getUnsignedData(3), # ONID
 								self.service_types[pos+1:])
 							ref = eServiceReference(refstr)
+							ref.flags |= eServiceReference.sort1 # needed for sort
 							ref.setName(_("Current Transponder"))
 							self.servicelist.addService(ref)
 						self.servicelist.finishFill()

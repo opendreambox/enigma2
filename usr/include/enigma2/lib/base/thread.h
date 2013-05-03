@@ -57,6 +57,8 @@ public:
 
 		/* join the thread, i.e. busywait until thread has finnished. */
 	void kill(bool sendcancel=false);
+
+	static pid_t gettid();
 private:
 	pthread_t the_thread;
 

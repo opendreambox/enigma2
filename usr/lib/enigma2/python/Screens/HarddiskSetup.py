@@ -683,7 +683,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 								if selectedPart is not None and selectedPart.isMountable:
 									if selectedPart.isReadable:
 										isReadable = True
-										device_info += " - " + systemountpoint_msg
+										device_info += " - " + nomountpoint_msg
 									else:
 										device_info += " - " + unsupportetpart_msg
 								elif selectedPart is not None and not selectedPart.isMountable:
@@ -699,7 +699,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 										except OSError:
 											isReadable = False
 										if isReadable:
-											device_info += " - " + systemountpoint_msg
+											device_info += " - " + nomountpoint_msg
 										else:
 											device_info += " - " + unsupportetpart_msg
 									else:
@@ -713,7 +713,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 							if selectedPart is not None and selectedPart.isMountable:
 								if selectedPart.isReadable:
 									isReadable = True
-									device_info += " - " + systemountpoint_msg
+									device_info += " - " + nomountpoint_msg
 								else:
 									device_info += " - " + unsupportetpart_msg
 							elif selectedPart is not None and not selectedPart.isMountable:
@@ -738,7 +738,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 									except OSError:
 										isReadable = False
 									if isReadable:
-										device_info += " - " + systemountpoint_msg
+										device_info += " - " + nomountpoint_msg
 									else:
 										device_info += " - " + unsupportetpart_msg
 								else:
@@ -1039,11 +1039,13 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 			deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hd,partNum)
 
 			successfully = False
+			old_mountpoint = ""
 			uuid_cfg = config.storage.get(uuid, None)
 			if uuid_cfg is not None:
 				mountpoint = ""
 				if answer == "unmount":
 					uuid_cfg['enabled'].value = False
+					old_mountpoint = uuid_cfg['mountpoint'].value
 					updateVideoDirs(uuid)
 					uuid_cfg['enabled'].value = True
 				if answer == "adopt_mount":
@@ -1064,10 +1066,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 						harddiskmanager.modifyFstabEntry(uuidPath, uuid_cfg['mountpoint'].value, mode = "add_activated")
 					updateVideoDirs(uuid)
 					if answer == "unmount":
-						harddiskmanager.modifyFstabEntry(uuidPath, uuid_cfg['mountpoint'].value, mode = "remove")
-						del config.storage[uuid]
-						config.storage.save()
-						config.save()
+						harddiskmanager.modifyFstabEntry(uuidPath, old_mountpoint, mode = "remove")
 			else:
 				self.session.open(MessageBox, _("There was en error while configuring your %(desc)s.") % self.devicedescription, MessageBox.TYPE_ERROR)
 			self.mainMenuClosed()

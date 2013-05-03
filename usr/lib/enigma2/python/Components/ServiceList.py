@@ -9,7 +9,7 @@ from enigma import RT_WRAP, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, g
 from ServiceReference import ServiceReference
 from Components.MultiContent import MultiContentEntryText
 from time import time
-from enigma import eLabel, eSize, eEnv
+from enigma import eLabel, eSize, eEnv, eServiceReference
 from skin import TemplatedColors
 import NavigationInstance
 from time import localtime
@@ -20,7 +20,7 @@ class PiconLoader():
 	def __init__(self):
 		self.nameCache = { }
 		config.usage.configselection_piconspath.addNotifier(self.piconPathChanged, initial_call = False)
-		
+
 	def getPiconFilename(self, sRef):
 		pngname = ""
 		# strip all after last :
@@ -39,20 +39,20 @@ class PiconLoader():
 					if pngname != "":
 						self.nameCache["default"] = pngname
 		return pngname
-		
+
 	def getPicon(self, pngname):
 		filename = self.getPiconFilename(pngname)
 		if fileExists(filename):
 			return LoadPixmap(cached = True, path = filename)
 		else:
 			return None
-		
+
 	def findPicon(self, sRef):
 		pngname = "%s%s.png" % (config.usage.configselection_piconspath.value, sRef)
 		if not fileExists(pngname):
 			pngname = ""
 		return pngname
-		
+
 	def piconPathChanged(self, configElement = None):
 		self.nameCache.clear()
 
@@ -125,7 +125,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.onSelectionChanged = [ ]
 		self.recordingList = {}
 		self.piconLoader = PiconLoader()
-		if self.session:		
+		if self.session:
 			self.session.nav.RecordTimer.on_state_change.append(self.onTimerEntryStateChange)
 		config.usage.configselection_showrecordings.addNotifier(self.getRecordingList, initial_call = True)
 		config.usage.configselection_bigpicons.addNotifier(self.setItemHeight, initial_call = True)
@@ -180,7 +180,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		showServiceName = config.usage.configselection_showservicename.value
 		showProgressbar = config.usage.show_event_progress_in_servicelist.value
 		progressbarPosition = config.usage.configselection_progressbarposition.value
-		servicenameWidth = config.usage.configselection_servicenamecolwidth.value 
+		servicenameWidth = config.usage.configselection_servicenamecolwidth.value
 		columnStyle = config.usage.configselection_columnstyle.value
 		additionalposition = config.usage.configselection_additionaltimedisplayposition.value
 		bigPicons = config.usage.configselection_bigpicons.value
@@ -239,8 +239,8 @@ class ServiceList(HTMLComponent, GUIComponent):
 		if marked > 0:
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, 0, 0, width , height, 1, RT_HALIGN_RIGHT, "", forgroundColor, forgroundColorSel, backgroundColor, backgroundColorSel))
 
-		info = self.service_center.info(service)		
-		serviceName = info.getName(service) or ServiceReference(service).getServiceName() or ""
+		info = self.service_center.info(service)
+		serviceName = info.getName(service) or "<n/a>"
 		event = info.getEvent(service)
 		index = self.getCurrentIndex()
 		xoffset = 2
@@ -303,7 +303,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		# progressbar between servicenumber and servicename
 		if drawProgressbar and progressbarPosition == "0":
 			res.append(self.paintProgressBar(event, xoffset, width, height))
-			xoffset += 60	
+			xoffset += 60
 		addtimedisplay = ""
 		addtimedisplayWidth = 0
 		if config.usage.configselection_showadditionaltimedisplay.value != "0" and event and isPlayable:
@@ -408,7 +408,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				if drawProgressbar and progressbarPosition == "2":
 					xoffset = xoffset + rwidth + 5
 					res.append(self.paintProgressBar(event, xoffset, width, height))
-					xoffset += 60	
+					xoffset += 60
 				elif addtimedisplay != "":
 					xoffset = xoffset + rwidth
 				# add time text at last position
@@ -431,7 +431,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				else:
 					text = "(%s)" % (event.getEventName())
 				if drawProgressbar and progressbarPosition == "2":
-					# progressbar after service description	
+					# progressbar after service description
 					length = width-xoffset - 60
 				else:
 					length = width-xoffset
@@ -554,14 +554,14 @@ class ServiceList(HTMLComponent, GUIComponent):
 			return self.instance.atEnd()
 		else:
 			return True
-		
+
 	def pageUp(self):
 		cur = None
 		if self.current_marked:
 			cur = self.l.getCurrentSelection()
 		self.instance.moveSelection(self.instance.pageUp)
 		if self.current_marked:
-			self.moveServicePageUpDown(cur)		
+			self.moveServiceToSelection(cur)
 
 	def pageDown(self):
 		cur = None
@@ -569,7 +569,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 			cur = self.l.getCurrentSelection()
 		self.instance.moveSelection(self.instance.pageDown)
 		if self.current_marked:
-			self.moveServicePageUpDown(cur)
+			self.moveServiceToSelection(cur)
 
 	def moveUp(self):
 		if self.current_marked:
@@ -606,8 +606,8 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.list[index], self.list[newindex] = self.list[newindex], self.list[index]
 		if (service1.flags & eServiceReference.isMarker) or (service2.flags & eServiceReference.isMarker):
 			self.buildMarkerList()
-			
-	def moveServicePageUpDown(self, cur):
+
+	def moveServiceToSelection(self, cur):
 		if cur and cur[0]:
 			index = self.getCurrentIndex()
 			self.list.remove(cur)
@@ -621,7 +621,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		for s in self.list:
 			service = s[0]
 			info = self.service_center.info(service)
-			serviceName = info.getName(service) or ServiceReference(service).getServiceName() or ""
+			serviceName = info.getName(service) or ""
 			if serviceName != "":
 				idx=0
 				length = len(serviceName) -1
@@ -636,7 +636,9 @@ class ServiceList(HTMLComponent, GUIComponent):
 				break
 			else:
 				index += 1
-		return index
+		if found:
+			return index
+		return -1
 
 	def moveToChar(self, char):
 		print "Next char: ", char
@@ -645,8 +647,16 @@ class ServiceList(HTMLComponent, GUIComponent):
 		if indexup != 0:
 			if (index > indexup or index == 0):
 				index = indexup
+		if index > -1:
+			self.instance.moveSelectionTo(index)
+			print "Moving to character " + str(char)
+		else:
+			print "Couldn't find a service starting with the character " + str(char)
+
+	def moveServiceToIndex(self, index):
+		cur = self.l.getCurrentSelection()
 		self.instance.moveSelectionTo(index)
-		print "Moving to character " + str(char)
+		self.moveServiceToSelection(cur)
 
 	def moveToNextMarker(self):
 		index = self.getCurrentIndex()
@@ -655,7 +665,10 @@ class ServiceList(HTMLComponent, GUIComponent):
 			if index < marker:
 				idx = marker
 				break
-		self.instance.moveSelectionTo(idx)
+		if self.current_marked:
+			self.moveServiceToIndex(idx)
+		else:
+			self.instance.moveSelectionTo(idx)
 
 	def moveToPrevMarker(self):
 		index = self.getCurrentIndex()
@@ -664,7 +677,10 @@ class ServiceList(HTMLComponent, GUIComponent):
 			if index > marker:
 				idx = marker
 				break
-		self.instance.moveSelectionTo(idx)
+		if self.current_marked:
+			self.moveServiceToIndex(idx)
+		else:
+			self.instance.moveSelectionTo(idx)
 
 	def moveToIndex(self, index):
 		self.instance.moveSelectionTo(index)
@@ -673,7 +689,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		return self.instance.getCurrentIndex()
 
 	GUI_WIDGET = eListbox
-	
+
 	def postWidgetCreate(self, instance):
 		instance.setWrapAround(True)
 		instance.setContent(self.l)
@@ -752,7 +768,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 					self.buildMarkerList()
 					self.l.invalidate()
 					break
-		
+
 	def buildMarkerList(self):
 		index = 0
 		self.marker_list = []
@@ -775,12 +791,16 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.textRenderer.setFont(self.serviceNameFont)
 		self.size = len(self.list)
 		if sort:
-			self.list.sort(self.sortList)
+			def keyFunc(key):
+				tmp = key[0]
+				# "current transponder" should be sorted to first list position
+				if tmp.flags & eServiceReference.sort1:
+					return -1801
+				tmp = tmp.getUnsignedData(4) >> 16
+				return tmp >= 1800 and tmp-3600 or tmp
+			self.list.sort(key=keyFunc)
 		self.l.setList(self.list)
 		self.instance.moveSelectionTo(0)
-
-	def sortList(self, a, b):
-		return cmp(a[0].getUnsignedData(4), b[0].getUnsignedData(4))
 
 # stuff for multiple marks (edit mode / later multiepg)
 	def clearMarks(self):
@@ -829,7 +849,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				else:
 					print "no list available!"
 			self.l.invalidateEntry(self.getCurrentIndex())
-			
+
 
 	def setMode(self, mode):
 		self.mode = mode
