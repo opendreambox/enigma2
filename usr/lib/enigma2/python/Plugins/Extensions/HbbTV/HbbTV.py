@@ -199,7 +199,7 @@ class HbbTV(object):
 			file = parsed.path.split("/")[-1].split(".")
 			host = parsed.netloc.split(":")[0]
 			datestring = datetime.now().strftime("%Y%m%d_%H%M")
-			extension = file[1]
+			extension = "mp4"
 			filename = "%s_%s_%s.%s" % (datestring, host, file[0], extension)
 			path = "%s%s" % (path, filename)
 			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename))

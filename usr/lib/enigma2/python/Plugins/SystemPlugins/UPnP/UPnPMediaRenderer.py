@@ -134,7 +134,7 @@ class UPnPPlayer(object):
 			print "[UPnPPlayer.stop]"
 			if self._handlePlayback:
 				self.session.nav.stopService()
-				self.__onStop()
+			self.__onStop()
 
 	def unpause(self):
 		print "[UPnPPlayer.unpause]"
@@ -142,10 +142,13 @@ class UPnPPlayer(object):
 			pausable = self.getPausable()
 			if pausable is not None:
 				pausable.unpause()
-				self.startPolling()
 				self.__onPlay()
 				return True
-			return False
+			else:
+				return False
+		else:
+			self.__onPlay()
+			return True
 
 	def getMute(self):
 		print "[UPnPPlayer.getMute]"
@@ -244,18 +247,13 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		connection_manager = self.server.connection_manager_server
 		av_transport = self.server.av_transport_server
 		conn_id = connection_manager.lookup_avt_id(self.current_connection_id)
-		if current == self.STATE_PLAYING:
-			state = self.STATE_PLAYING
-			av_transport.set_variable(conn_id, 'TransportState', 'PLAYING')
-		elif current == self.STATE_PAUSED:
-			state = self.STATE_PAUSED
-			av_transport.set_variable(conn_id, 'TransportState', 'PAUSED_PLAYBACK')
+
+		if current in ( self.STATE_PLAYING, self.STATE_PAUSED ):
+			self._update_transport_state(current)
 		elif self.playcontainer != None and message == self.MESSAGE_EOF and \
 			self.playcontainer[0] + 1 < len(self.playcontainer[2]):
-			state = self.STATE_TRANSITIONING
-			self.player.transition()
-			av_transport.set_variable(conn_id, 'TransportState', 'TRANSITIONING')
 
+			self._transition()
 			next_track = ()
 			item = self.playcontainer[2][self.playcontainer[0] + 1]
 			infos = connection_manager.get_variable('SinkProtocolInfo')
@@ -276,14 +274,13 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 											self.playcontainer[0] + 1)
 				self.load(next_track[0], next_track[1], next_track[2])
 				self.play()
+
 			else:
-				state = self.STATE_IDLE
-				av_transport.set_variable(conn_id, 'TransportState', 'STOPPED')
+				self._update_transport_state(self.STATE_IDLE)
 		elif message == self.MESSAGE_EOF and \
 			len(av_transport.get_variable('NextAVTransportURI').value) > 0:
-			state = self.STATE_TRANSITIONING
-			self.player.transition()
-			av_transport.set_variable(conn_id, 'TransportState', 'TRANSITIONING')
+			self._transition()
+
 			CurrentURI = av_transport.get_variable('NextAVTransportURI').value
 			metadata = av_transport.get_variable('NextAVTransportURIMetaData')
 			CurrentURIMetaData = metadata.value
@@ -296,34 +293,46 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 			if r == {}:
 				self.play()
 			else:
-				state = self.STATE_IDLE
-				av_transport.set_variable(conn_id, 'TransportState', 'STOPPED')
+				self._update_transport_state(self.STATE_IDLE)
 		else:
-			state = self.STATE_IDLE
-			av_transport.set_variable(conn_id, 'TransportState', 'STOPPED')
+			self._update_transport_state(self.STATE_IDLE)
 
-		self.info("update %r" % state)
-		self._update_transport_position(state)
+		self._update_transport_position()
 
-	def _update_transport_position(self, state):
+	def _transition(self):
+		self.player.transition()
+		self._update_transport_state(self.STATE_TRANSITIONING)
+
+	def _update_transport_state(self, state):
+		self.warning('_update_transport_state: %s' %state)
+		state = {
+			self.STATE_IDLE : 'STOPPED',
+			self.STATE_PAUSED : 'PAUSED_PLAYBACK',
+			self.STATE_PLAYING : 'PLAYING',
+			self.STATE_TRANSITIONING : 'TRANSITIONING'}.get(state)
+
+		conn_id = self.server.connection_manager_server.lookup_avt_id(self.current_connection_id)
+		self.server.av_transport_server.set_variable(conn_id, 'TransportState', state)
+
+	def _update_transport_position(self):
 		connection_manager = self.server.connection_manager_server
-		av_transport = self.server.av_transport_server
+		avt = self.server.av_transport_server
 		conn_id = connection_manager.lookup_avt_id(self.current_connection_id)
 
 		position = self._format_time(self.player.getPosition())
 		duration = self._format_time(self.player.getLength())
 
-		av_transport.set_variable(conn_id, 'CurrentTrackDuration', duration)
-		av_transport.set_variable(conn_id, 'CurrentMediaDuration', duration)
-		av_transport.set_variable(conn_id, 'RelativeTimePosition', position)
-		av_transport.set_variable(conn_id, 'AbsoluteTimePosition', position)
+		avt.set_variable(conn_id, 'CurrentTrackDuration', duration)
+		avt.set_variable(conn_id, 'CurrentMediaDuration', duration)
+		avt.set_variable(conn_id, 'RelativeTimePosition', position)
+		avt.set_variable(conn_id, 'AbsoluteTimePosition', position)
 
 		if self.metadata != None and len(self.metadata) > 0:
 			if self.server != None:
-				av_transport.set_variable(conn_id,
+				avt.set_variable(conn_id,
 											'AVTransportURIMetaData',
 											self.metadata)
-				av_transport.set_variable(conn_id,
+				avt.set_variable(conn_id,
 											'CurrentTrackMetaData',
 											self.metadata)
 
@@ -384,13 +393,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 				transport_actions.add('PREVIOUS')
 
 		self.server.av_transport_server.set_variable(connection_id, 'CurrentTransportActions', transport_actions)
-
-# I think it is wrong to call play from within load
-# UPnP RenderingClients actually call "play" themselves after calling SetAVTransportURI (which causes load to be called)
-# The code stays until we're sure!
-#		if state == self.STATE_PLAYING:
-#			self.info("was playing...")
-#			self.play()
 		self.update()
 
 	def start(self, uri):

@@ -1,6 +1,6 @@
 from enigma import eEnv, eConsoleAppContainer, eTimer
 
-from Components.config import config, ConfigYesNo, ConfigEnableDisable, ConfigText, ConfigInteger, ConfigSubList, ConfigSubsection, ConfigSelection, ConfigDirectory, getConfigListEntry
+from Components.config import config, ConfigYesNo, ConfigEnableDisable, ConfigText, ConfigInteger, ConfigSubList, ConfigLocations, ConfigSubsection, ConfigSelection, ConfigDirectory, getConfigListEntry
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.Harddisk import harddiskmanager
@@ -10,7 +10,6 @@ from Plugins.Plugin import PluginDescriptor
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.HardwareInfo import HardwareInfo
-
 from os import path as os_path
 
 iNetwork = resourcemanager.getResource("iNetwork")
@@ -133,9 +132,8 @@ class MiniDLNAConfig:
 
 		self.bool_options = ("inotify", "enable_tivo", "strict_dlna")
 		self.hostname = HardwareInfo().get_device_name()
-		if len(config.plugins.minidlna.media_dirs) == 0 and config.plugins.minidlna.share_videodirs.value:
-			for dir in config.movielist.videodirs.value:
-				config.plugins.minidlna.media_dirs.append(ConfigText(default=dir, fixed_size = False))
+		if len(config.plugins.minidlna.media_dirs.value) == 0 and config.plugins.minidlna.share_videodirs.value:
+			config.plugins.minidlna.media_dirs.value = config.movielist.videodirs.value
 
 		self._config = {
 			"port" : config.plugins.minidlna.port,
@@ -202,14 +200,14 @@ class MiniDLNAConfig:
 				locations = []
 				if config.plugins.minidlna.share_videodirs.value:
 					locations = config.movielist.videodirs.value or []
-				for cfgtxt in item:
-					locations.append(cfgtxt.value)
+				for loc in item.value:
+					locations.append(loc)
 
 				locations = self._unifyLocations( locations )
-				config.plugins.minidlna.media_dirs = ConfigSubList()
+				config.plugins.minidlna.media_dirs.value = locations
 				for loc in locations:
 					lines.append("%s=%s\n" %(key, loc))
-					config.plugins.minidlna.media_dirs.append(ConfigText(default=loc, fixed_size = False))
+				config.plugins.minidlna.media_dirs.save()
 				self._config[key] = config.plugins.minidlna.media_dirs
 			else:
 				value = item.value
@@ -250,7 +248,7 @@ config.plugins.minidlna.enabled = ConfigEnableDisable(default=False)
 config.plugins.minidlna.share_videodirs = ConfigYesNo(default=True)
 config.plugins.minidlna.port = ConfigInteger(default=8200, limits = (1, 65535))
 config.plugins.minidlna.network_interface = ConfigText(default=",".join(iNetwork.getAdapterList()) or "eth0", fixed_size = False)
-config.plugins.minidlna.media_dirs = ConfigSubList()
+config.plugins.minidlna.media_dirs = ConfigLocations()
 config.plugins.minidlna.friendly_name = ConfigText(default="%s Mediaserver" %(HardwareInfo().get_device_name()), fixed_size = False)
 config.plugins.minidlna.db_dir = ConfigDirectory(default="/media/hdd")
 config.plugins.minidlna.log_dir = ConfigText(default="/tmp/log", fixed_size = False)
@@ -372,8 +370,12 @@ class MiniDLNAShareSetup(ConfigListScreen, Screen):
 		<screen name="MiniDLNAShareSetup" position="center,center" size="560,400" title="Mediaserver (DLNA) Shares">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
 			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
 			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
 		</screen>"""
 
@@ -381,22 +383,29 @@ class MiniDLNAShareSetup(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 		ConfigListScreen.__init__(self, [])
 
-		self["key_red"] = StaticText(_("Remove"))
-		self["key_green"] = StaticText(_("Add"))
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("OK"))
+		self["key_yellow"] = StaticText(_("Add"))
+		self["key_blue"] = StaticText(_("Remove"))
+
 		self["setupActions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
-			"red": self._removeDirectory,
-			"green" : self._addDirectory,
+			"red": self.close,
+			"green" : self.save,
+			"yellow" : self._addDirectory,
+			"blue": self._removeDirectory,
 			"cancel": self.save,
 			"ok" : self.save,
 		}, -2)
 
-		self._shares = dlna_config.get()['media_dir']
+		self._config = dlna_config.get()['media_dir']
+		self._shares = [ConfigText(x, fixed_size=False) for x in self._config.value]
+
 		self.createSetup()
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def _addDirectory(self):
-		self._shares.append(ConfigText(default="/media/", fixed_size = False))
+		self._shares.append(ConfigText(default="/media/", fixed_size=False))
 		self.createSetup()
 
 	def _removeDirectory(self):
@@ -438,13 +447,14 @@ class MiniDLNAShareSetup(ConfigListScreen, Screen):
 			self._save()
 
 	def _save(self):
-		self._shares.save()
+		lst = [x.value for x in self._shares]
+		self._config.value = lst
+		self._config.save()
 		self.close()
 
 	def _onSaveErrorDecision(self, decision):
 		if decision:
 			self._save()
-
 def main(session, **kwargs):
 	session.open(MiniDLNASetup)
 

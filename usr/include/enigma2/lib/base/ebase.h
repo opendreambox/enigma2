@@ -276,6 +276,7 @@ public:
 			// werden in einer mainloop verarbeitet
 class eMainloop_native: public eMainloop
 {
+	bool m_timer_sn_thread_checks;
 protected:
 	std::multimap<int, eSocketNotifier*> m_notifiers;
 	std::multimap<int, eSocketNotifier*> m_notifiers_new;

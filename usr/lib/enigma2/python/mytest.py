@@ -120,6 +120,7 @@ InitFallbackFiles()
 profile("config.misc")
 
 config.misc.radiopic = ConfigText(default = resolveFilename(SCOPE_CURRENT_SKIN, "radio.mvi"))
+config.misc.disable_timer_sn_thread_checks = ConfigYesNo(default=False)
 config.misc.isNextRecordTimerAfterEventActionAuto = ConfigYesNo(default=False)
 config.misc.useTransponderTime = ConfigYesNo(default=True)
 config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
