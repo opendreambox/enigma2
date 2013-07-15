@@ -464,7 +464,7 @@ public:
 	enum { bitErrorRate, signalPower, signalQuality, locked, synced, frontendNumber, signalQualitydB };
 };
 
-SWIG_IGNORE(iDVBFrontend);
+SWIG_IGNORE_ENUMS(iDVBFrontend);
 class iDVBFrontend: public iDVBFrontend_ENUMS, public iObject
 {
 public:

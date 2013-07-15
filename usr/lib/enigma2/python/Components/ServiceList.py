@@ -5,7 +5,7 @@ from enigma import eListbox, eRect, eEnv
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, fileExists
 from Components.config import config
-from enigma import RT_WRAP, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, gFont, eListbox, eServiceReference, eServiceCenter, iServiceInformation, eListboxPythonMultiContent, eEPGCache
+from enigma import RT_WRAP, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, gFont, eListbox, eServiceReference, eServiceCenter, iServiceInformation, eListboxPythonMultiContent, eListboxServiceContent, eEPGCache
 from ServiceReference import ServiceReference
 from Components.MultiContent import MultiContentEntryText
 from time import time
@@ -14,7 +14,6 @@ from skin import TemplatedColors
 import NavigationInstance
 from time import localtime
 from timer import TimerEntry
-
 
 class PiconLoader():
 	def __init__(self):
@@ -101,7 +100,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.picServiceEventProgressbar = None
 		self.selectionPixmapStandard = None
 		self.selectionPixmapBig = None
-		self.l = eListboxPythonMultiContent()
+		self.l = eListboxServiceContent()
 		self.l.setBuildFunc(self.buildOptionEntry, True)
 		self.l.setFont(0, gFont("Regular", 18)) # AdditionalInfoFont
 		self.l.setFont(1, gFont("Regular", 20)) # ServiceNumberFont
@@ -115,9 +114,6 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.service_center = eServiceCenter.getInstance()
 		self.numberoffset = 0
 		self.is_playable_ignore = eServiceReference()
-		self.current_marked = False
-		self.marked = set()
-		self.marker_list = []
 		self.root = None
 		self.mode = self.MODE_NORMAL
 		self.itemHeight = 28
@@ -129,7 +125,6 @@ class ServiceList(HTMLComponent, GUIComponent):
 			self.session.nav.RecordTimer.on_state_change.append(self.onTimerEntryStateChange)
 		config.usage.configselection_showrecordings.addNotifier(self.getRecordingList, initial_call = True)
 		config.usage.configselection_bigpicons.addNotifier(self.setItemHeight, initial_call = True)
-		self.l.lookupService = self.lookupService # compatibility to old eListboxServiceContent class
 
 	def getRecordingList(self,configElement = None):
 		self.recordingList = {}
@@ -205,9 +200,9 @@ class ServiceList(HTMLComponent, GUIComponent):
 							break
 
 		marked = 0
-		if self.current_marked and selected:
+		if self.l.isCurrentMarked() and selected:
 			marked = 2
-		elif service in self.marked:
+		elif self.l.isMarked(service):
 			if selected:
 				marked = 2
 			else:
@@ -270,12 +265,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		if self.mode != self.MODE_NORMAL:
 			# servicenumber
 			if not (service.flags & eServiceReference.isMarker) and showListNumbers:
-				markers_before = 0
-				for markers in self.marker_list:
-					if index > markers:
-						markers_before += 1
-					else:
-						break
+				markers_before = self.l.getNumMarkersBeforeCurrent()
 				text = "%d" % (self.numberoffset + index + 1 - markers_before)
 				res.append((eListboxPythonMultiContent.TYPE_TEXT, xoffset, 0, 50 , height, 1, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text, forgroundColor, forgroundColorSel, backgroundColor, backgroundColorSel))
 				xoffset += 60
@@ -529,158 +519,43 @@ class ServiceList(HTMLComponent, GUIComponent):
 			x()
 
 	def setCurrent(self, ref):
-		index = 0
-		i = 0
-		for x in self.list:
-			if x[0] == ref:
-				index = i
-				break
-			i += 1
-		self.instance.moveSelectionTo(index)
+		self.l.setCurrent(ref)
 
 	def getCurrent(self):
 		r = eServiceReference()
-		cur = self.l.getCurrentSelection()
-		return (cur and cur[0]) or r
+		self.l.getCurrent(r)
+		return r
 
 	def atBegin(self):
-		if self.list:
-			return self.instance.atBegin()
-		else:
-			return True
+		return self.instance.atBegin()
 
 	def atEnd(self):
-		if self.list:
-			return self.instance.atEnd()
-		else:
-			return True
-
-	def pageUp(self):
-		cur = None
-		if self.current_marked:
-			cur = self.l.getCurrentSelection()
-		self.instance.moveSelection(self.instance.pageUp)
-		if self.current_marked:
-			self.moveServiceToSelection(cur)
-
-	def pageDown(self):
-		cur = None
-		if self.current_marked:
-			cur = self.l.getCurrentSelection()
-		self.instance.moveSelection(self.instance.pageDown)
-		if self.current_marked:
-			self.moveServiceToSelection(cur)
+		return self.instance.atEnd()
 
 	def moveUp(self):
-		if self.current_marked:
-			cur = self.l.getCurrentSelection()
-			if cur and cur[0]:
-				index = self.list.index(cur)
-				newindex = index - 1
-				if newindex < 0:
-					self.list.remove(cur)
-					self.list.append(cur)
-					self.buildMarkerList()
-				else:
-					self.swapService(index, newindex)
 		self.instance.moveSelection(self.instance.moveUp)
 
 	def moveDown(self):
-		if self.current_marked:
-			cur = self.l.getCurrentSelection()
-			if cur and cur[0]:
-				index = self.list.index(cur)
-				newindex = index +1
-				list_size = len(self.list) -1
-				if newindex > list_size:
-					self.list.remove(cur)
-					self.list.insert(0,cur)
-					self.buildMarkerList()
-				else:
-					self.swapService(index, newindex)
 		self.instance.moveSelection(self.instance.moveDown)
-
-	def swapService(self, index, newindex):
-		service1 = self.list[index][0]
-		service2 = self.list[newindex][0]
-		self.list[index], self.list[newindex] = self.list[newindex], self.list[index]
-		if (service1.flags & eServiceReference.isMarker) or (service2.flags & eServiceReference.isMarker):
-			self.buildMarkerList()
-
-	def moveServiceToSelection(self, cur):
-		if cur and cur[0]:
-			index = self.getCurrentIndex()
-			self.list.remove(cur)
-			self.list.insert(index,cur)
-			self.buildMarkerList()
-			self.l.invalidate()
-
-	def getNextBeginningWithChar(self, char):
-		found = False
-		index = 0
-		for s in self.list:
-			service = s[0]
-			info = self.service_center.info(service)
-			serviceName = info.getName(service) or ""
-			if serviceName != "":
-				idx=0
-				length = len(serviceName) -1
-				while idx <= length:
-					cc = serviceName[idx]
-					if ( ord(cc) >= 33 and ord(cc) < 127):
-						if (cc == char):
-							found = True
-						break
-					idx += 1
-			if found:
-				break
-			else:
-				index += 1
-		if found:
-			return index
-		return -1
 
 	def moveToChar(self, char):
 		print "Next char: ", char
-		index = self.getNextBeginningWithChar(char)
-		indexup = self.getNextBeginningWithChar(char.upper())
+		index = self.l.getNextBeginningWithChar(char)
+		indexup = self.l.getNextBeginningWithChar(char.upper())
 		if indexup != 0:
 			if (index > indexup or index == 0):
 				index = indexup
-		if index > -1:
-			self.instance.moveSelectionTo(index)
-			print "Moving to character " + str(char)
-		else:
-			print "Couldn't find a service starting with the character " + str(char)
 
-	def moveServiceToIndex(self, index):
-		cur = self.l.getCurrentSelection()
 		self.instance.moveSelectionTo(index)
-		self.moveServiceToSelection(cur)
+		print "Moving to character " + str(char)
 
 	def moveToNextMarker(self):
-		index = self.getCurrentIndex()
-		idx = self.size - 1
-		for marker in self.marker_list:
-			if index < marker:
-				idx = marker
-				break
-		if self.current_marked:
-			self.moveServiceToIndex(idx)
-		else:
-			self.instance.moveSelectionTo(idx)
+		idx = self.l.getNextMarkerPos()
+		self.instance.moveSelectionTo(idx)
 
 	def moveToPrevMarker(self):
-		index = self.getCurrentIndex()
-		idx = 0
-		for marker in reversed(self.marker_list):
-			if index > marker:
-				idx = marker
-				break
-		if self.current_marked:
-			self.moveServiceToIndex(idx)
-		else:
-			self.instance.moveSelectionTo(idx)
+		idx = self.l.getPrevMarkerPos()
+		self.instance.moveSelectionTo(idx)
 
 	def moveToIndex(self, index):
 		self.instance.moveSelectionTo(index)
@@ -729,137 +604,49 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.is_playable_ignore = ref
 
 	def setRoot(self, root, justSet=False):
-		self.list = []
 		self.root = root
-		self.marker_list = []
-		if justSet:
-			self.l.setList(self.list)
-			self.size = 0
-			return
-
-		service_list = self.service_center.list(self.root)
-		service_list = service_list.getContent("R", True)
-		index = 0
-		for s in service_list:
-			self.list.append((s,))
-			if (s.flags & eServiceReference.isMarker):
-				self.marker_list.append(index)
-			index += 1
-
-		self.setItemHeight()
-		self.finishFill(sort = False)
+		self.l.setRoot(root, justSet)
+		if not justSet:
+			self.l.sort()
 		self.selectionChanged()
 
 	def removeCurrent(self):
-		if self.list:
-			cur = self.l.getCurrentSelection()
-			if cur and cur[0]:
-				self.list.remove(cur)
-				self.size -= 1
-				self.buildMarkerList()
-				self.l.invalidate()
-
-	def removeService(self, service):
-		if self.list:
-			for s in self.list:
-				if s[0] == service:
-					self.list.remove(s)
-					self.size -= 1
-					self.buildMarkerList()
-					self.l.invalidate()
-					break
-
-	def buildMarkerList(self):
-		index = 0
-		self.marker_list = []
-		for service in self.list:
-			if (service[0].flags & eServiceReference.isMarker):
-				self.marker_list.append(index)
-			index += 1
+		self.l.removeCurrent()
 
 	def addService(self, service, beforeCurrent=False):
-		if  beforeCurrent and self.size:
-			index = self.getCurrentIndex()
-			self.list.insert(index,(service,))
-		else:
-			self.list.append((service,))
-		self.buildMarkerList()
-		self.size += 1
-		self.l.invalidate()
+		self.l.addService(service, beforeCurrent)
 
-	def finishFill(self, sort = True):
-		self.textRenderer.setFont(self.serviceNameFont)
-		self.size = len(self.list)
-		if sort:
-			def keyFunc(key):
-				tmp = key[0]
-				# "current transponder" should be sorted to first list position
-				if tmp.flags & eServiceReference.sort1:
-					return -1801
-				tmp = tmp.getUnsignedData(4) >> 16
-				return tmp >= 1800 and tmp-3600 or tmp
-			self.list.sort(key=keyFunc)
-		self.l.setList(self.list)
-		self.instance.moveSelectionTo(0)
+	def finishFill(self):
+		self.l.FillFinished()
+		self.l.sort()
 
 # stuff for multiple marks (edit mode / later multiepg)
 	def clearMarks(self):
-		self.marked = set()
+		self.l.initMarked()
 
 	def isMarked(self, ref):
-		return ref in self.marked
+		return self.l.isMarked(ref)
 
 	def addMarked(self, ref):
-		self.marked.add(ref)
-		self.l.invalidateEntry(self.getCurrentIndex())
+		self.l.addMarked(ref)
 
 	def removeMarked(self, ref):
-		self.marked.remove(ref)
-		self.l.invalidateEntry(self.getCurrentIndex())
+		self.l.removeMarked(ref)
 
 	def getMarked(self):
-		return [ mark.toString() for mark in self.marked ]
-
-	def lookupService(self, ref):
-		index = 0
-		for x in self.list:
-			if x[0] == ref:
-				return index
-			index += 1
-		return index
+		i = self.l
+		i.markedQueryStart()
+		ref = eServiceReference()
+		marked = [ ]
+		while i.markedQueryNext(ref) == 0:
+			marked.append(ref.toString())
+			ref = eServiceReference()
+		return marked
 
 #just for movemode.. only one marked entry..
 	def setCurrentMarked(self, state):
-		prev = self.current_marked
-		self.current_marked = state
-		if state != prev:
-			if not state:
-				list = self.service_center.list(self.root)
-				if list is not None:
-					mutableList = list.startEdit()
-					if mutableList:
-						position = self.getCurrentIndex()
-						cur = self.l.getCurrentSelection()
-						if cur and cur[0]:
-							mutableList.moveService(cur[0], position)
-						else:
-							print "no ref selected"
-					else:
-						print "no editable list"
-				else:
-					print "no list available!"
-			self.l.invalidateEntry(self.getCurrentIndex())
-
+		self.l.setCurrentMarked(state)
 
 	def setMode(self, mode):
 		self.mode = mode
 		self.setItemHeight()
-
-	def isBouquetList(self, ref):
-		service_list = self.service_center.list(ref)
-		service_list = service_list.getContent("R", True)
-		isBouquetList = False
-		if len(service_list) > 0:
-			service = service_list[-1]
-			isBouquetList = bool(service.flags & eServiceReference.isDirectory)
-		return isBouquetList

@@ -186,12 +186,8 @@ public:
 
 	long hash() const; // provides an hash... but take care a hash must NOT be unique!
 };
-
-#ifdef SWIG
-%pythoncode %{eServiceReference.__hash__ = eServiceReference.hash%}
-#endif
-
 SWIG_ALLOW_OUTPUT_SIMPLE(eServiceReference);
+SWIG_HASH_FUNC(eServiceReference,hash);
 
 extern PyObject *New_eServiceReference(const eServiceReference &ref); // defined in enigma_python.i
 
@@ -389,7 +385,7 @@ we like to write iServiceInformation.sVideoType.
 So until swig have no Solution for this Problem we call in lib/python/Makefile.am a python script named
 enigma_py_patcher.py to remove the "_ENUMS" strings in enigma.py at all needed locations. */
 
-SWIG_IGNORE(iServiceInformation);
+SWIG_IGNORE_ENUMS(iServiceInformation);
 class iServiceInformation: public iServiceInformation_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -427,7 +423,7 @@ public:
 	};
 };
 
-SWIG_IGNORE(iFrontendInformation);
+SWIG_IGNORE_ENUMS(iFrontendInformation);
 class iFrontendInformation: public iFrontendInformation_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -472,7 +468,7 @@ public:
 	enum { dirForward = +1, dirBackward = -1 };
 };
 
-SWIG_IGNORE(iSeekableService);
+SWIG_IGNORE_ENUMS(iSeekableService);
 class iSeekableService: public iSeekableService_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -531,7 +527,7 @@ public:
 	enum { LEFT, STEREO, RIGHT };
 };
 
-SWIG_IGNORE(iAudioChannelSelection);
+SWIG_IGNORE_ENUMS(iAudioChannelSelection);
 class iAudioChannelSelection: public iAudioChannelSelection_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -569,7 +565,7 @@ public:
 	enum { RadioText, RtpText };
 };
 
-SWIG_IGNORE(iRdsDecoder);
+SWIG_IGNORE_ENUMS(iRdsDecoder);
 class iRdsDecoder: public iObject, public iRdsDecoder_ENUMS
 {
 #ifdef SWIG
@@ -627,7 +623,7 @@ public:
 	enum { cutIn = 0, cutOut = 1, cutMark = 2 };
 };
 
-SWIG_IGNORE(iCueSheet);
+SWIG_IGNORE_ENUMS(iCueSheet);
 class iCueSheet: public iCueSheet_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -790,7 +786,7 @@ public:
 	};
 };
 
-SWIG_IGNORE(iServiceKeys);
+SWIG_IGNORE_ENUMS(iServiceKeys);
 class iServiceKeys: public iServiceKeys_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -867,7 +863,7 @@ public:
 	};
 };
 
-SWIG_IGNORE(iPlayableService);
+SWIG_IGNORE_ENUMS(iPlayableService);
 class iPlayableService: public iPlayableService_ENUMS, public iObject
 {
 #ifdef SWIG
@@ -933,7 +929,7 @@ public:
 	};
 };
 
-SWIG_IGNORE(iRecordableService);
+SWIG_IGNORE_ENUMS(iRecordableService);
 class iRecordableService: public iRecordableService_ENUMS, public iObject
 {
 #ifdef SWIG

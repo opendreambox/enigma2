@@ -6,7 +6,11 @@ def saveFile(filename, data, mode=0644):
 	try:
 		f = NamedTemporaryFile(prefix='.%s.' % path.basename(filename), dir=path.dirname(filename), delete=False)
 		tmpFilename = f.name
-		f.write(data)
+		if isinstance(data, list):
+			for x in data:
+				f.write(x)
+		else:
+			f.write(data)
 		f.flush()
 		fsync(f.fileno())
 		fchmod(f.fileno(), mode)

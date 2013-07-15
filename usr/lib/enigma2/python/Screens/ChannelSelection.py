@@ -719,7 +719,8 @@ class ChannelSelectionEdit:
 
 	def handleEditCancel(self):
 		if self.movemode: #movemode active?
-			self.channelSelected() # unmark
+			if self.entry_marked:
+				self.channelSelected() # unmark
 			self.toggleMoveMode() # disable move mode
 		elif self.bouquet_mark_edit != OFF:
 			self.endMarkedEdit(True) # abort edit mode
@@ -793,10 +794,6 @@ class ChannelSelectionBase(Screen):
 				"nextMarker": self.nextMarker,
 				"prevMarker": self.prevMarker,
 				"gotAsciiCode": self.keyAsciiCode,
-				"selectServiceDown": self.moveDown,
-				"selectServiceUp": self.moveUp,
-				"selectServicePageDown": self.pageDown,
-				"selectServicePageUp": self.pageUp,
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
 				"3": self.keyNumberGlobal,
@@ -807,7 +804,7 @@ class ChannelSelectionBase(Screen):
 				"8": self.keyNumberGlobal,
 				"9": self.keyNumberGlobal,
 				"0": self.keyNumber0
-			}, -1)
+			})
 		self.recallBouquetMode()
 
 	def getBouquetNumOffset(self, bouquet):
@@ -876,10 +873,16 @@ class ChannelSelectionBase(Screen):
 
 	def setRoot(self, root, justSet=False):
 		path = root.getPath()
-		inBouquetRootList = path.find('FROM BOUQUET "bouquets.') != -1 #FIXME HACK
-		isBouquetList = self.servicelist.isBouquetList(root)
+		setModeFavourites = False
 
-		if not isBouquetList:
+		serviceHandler = eServiceCenter.getInstance()
+		list = root and serviceHandler.list(root)
+		if list is not None:
+			if list.startEdit():
+				ref = list.getNext()
+				setModeFavourites = not (ref.flags & eServiceReference.isDirectory)
+
+		if setModeFavourites:
 			self.servicelist.setMode(ServiceList.MODE_FAVOURITES)
 			self.servicelist.setNumberOffset(self.getBouquetNumOffset(root))
 		else:
@@ -940,12 +943,6 @@ class ChannelSelectionBase(Screen):
 
 	def moveDown(self):
 		self.servicelist.moveDown()
-
-	def pageUp(self):
-		self.servicelist.pageUp()
-		
-	def pageDown(self):
-		self.servicelist.pageDown()
 
 	def clearPath(self):
 		del self.servicePath[:]
@@ -1045,6 +1042,7 @@ class ChannelSelectionBase(Screen):
 									service_name = ("%d.%d" + h) % (orbpos / 10, orbpos % 10)
 							service.setName("%s - %s" % (service_name, service_type))
 							self.servicelist.addService(service)
+						self.servicelist.finishFill()
 						cur_ref = self.session.nav.getCurrentlyPlayingServiceReference()
 						if cur_ref:
 							pos = self.service_types.rfind(':')
@@ -1056,8 +1054,8 @@ class ChannelSelectionBase(Screen):
 							ref = eServiceReference(refstr)
 							ref.flags |= eServiceReference.sort1 # needed for sort
 							ref.setName(_("Current Transponder"))
-							self.servicelist.addService(ref)
-						self.servicelist.finishFill()
+							self.servicelist.addService(ref, True)
+							self.servicelist.moveUp()
 						if prev is not None:
 							self.setCurrentSelection(prev)
 

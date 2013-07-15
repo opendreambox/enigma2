@@ -1,4 +1,4 @@
-from os import system, path as os_path, listdir
+from os import system, path as os_path, listdir, fsync
 from re import compile as re_compile, search as re_search
 from enigma import eConsoleAppContainer
 from Components.Console import Console
@@ -184,6 +184,8 @@ class Network:
 				if iface["predown"] is not False:
 					fp.write(newLineHelper(iface["predown"]))
 			fp.write('\n')
+		fp.flush()
+		fsync(fp.fileno())
 		fp.close()
 		self.configuredNetworkAdapters = self.configuredInterfaces
 

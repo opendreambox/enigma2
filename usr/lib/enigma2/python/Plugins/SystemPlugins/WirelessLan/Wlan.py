@@ -2,7 +2,7 @@ from Components.config import config, ConfigYesNo, NoSave, ConfigSubsection, Con
 from Components.Console import Console
 from Components.Network import iNetwork
 
-from os import system, path as os_path
+from os import system, path as os_path, fsync
 from string import maketrans
 from pythonwifi.iwlibs import Wireless, getWNICnames
 from pythonwifi import flags as wififlags
@@ -173,6 +173,8 @@ class wpaSupplicant:
 			fp.write('\tkey_mgmt=NONE\n')
 		fp.write('}')
 		fp.write('\n')
+		fp.flush()
+		fsync(fp.fileno())
 		fp.close()
 		#system('cat ' + getWlanConfigName(iface))
 		

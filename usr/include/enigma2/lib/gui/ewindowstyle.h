@@ -34,7 +34,7 @@ public:
 	};
 };
 
-SWIG_IGNORE(eWindowStyle);
+SWIG_IGNORE_ENUMS(eWindowStyle);
 class eWindowStyle: public eWindowStyle_ENUMS, public iObject
 {
 #ifdef SWIG

@@ -446,7 +446,10 @@ class TunerScreen(ScanSetup):
 			if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 				self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec))
 			elif self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
-				self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2))
+				if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_QPSK:
+					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_qpsk))
+				else:
+					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_8psk))
 				self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
 				self.list.append(self.modulationEntry)
 				self.list.append(getConfigListEntry(_('Roll-off'), self.scan_sat.rolloff))
@@ -531,7 +534,10 @@ class TunerScreen(ScanSetup):
 		satpos = int(tuning.sat.value)
 		if tuning.type.value == "manual_transponder":
 			if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
-				fec = self.scan_sat.fec_s2.value
+				if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_QPSK:
+					fec = self.scan_sat.fec_s2_qpsk.value
+				else:
+					fec = self.scan_sat.fec_s2_8psk.value
 			else:
 				fec = self.scan_sat.fec.value
 			returnvalue = (

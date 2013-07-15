@@ -11,7 +11,7 @@ from Plugins.Plugin import PluginDescriptor
 from xml.etree.cElementTree import parse as ci_parse
 from enigma import eDVBCI_UI, eDVBCIInterfaces, eEnv, eServiceReference, eServiceCenter
 
-from os import path as os_path
+from os import path as os_path, fsync
 
 class CIselectMainMenu(Screen):
 	skin = """
@@ -249,6 +249,8 @@ class CIconfigMenu(Screen):
 						fp.write("\t\t<service name=\"%s\" ref=\"%s\" />\n"  % (item[0], item[3]))
 			fp.write("\t</slot>\n")
 			fp.write("</ci>\n")
+			fp.flush()
+			fsync(fp.fileno())
 			fp.close()
 		except:
 			print "[CI_Config_CI%d] xml not written" %self.ci_slot

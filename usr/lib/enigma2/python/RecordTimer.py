@@ -9,6 +9,7 @@ from Screens.MessageBox import MessageBox
 import Screens.Standby
 from Tools import Directories, Notifications, ASCIItranslit
 from Tools.XMLTools import stringToXML
+from Tools.IO import saveFile
 
 import timer
 import xml.etree.cElementTree
@@ -635,10 +636,7 @@ class RecordTimer(timer.Timer):
 
 		list.append('</timers>\n')
 
-		file = open(self.Filename, "w")
-		for x in list:
-			file.write(x)
-		file.close()
+		saveFile(self.Filename, list)
 
 	def getNextZapTime(self):
 		now = time()

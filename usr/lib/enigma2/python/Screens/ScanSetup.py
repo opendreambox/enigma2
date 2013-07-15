@@ -811,7 +811,10 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec))
 				elif self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
-					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2))
+					if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_8PSK:
+						self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_8psk))
+					else:
+						self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_qpsk))
 					self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
 					self.list.append(self.modulationEntry)
 					self.list.append(getConfigListEntry(_('Roll-off'), self.scan_sat.rolloff))
@@ -929,7 +932,8 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				"symbolrate": 27500,
 				"polarization": eDVBFrontendParametersSatellite.Polarisation_Horizontal,
 				"fec": eDVBFrontendParametersSatellite.FEC_Auto,
-				"fec_s2": eDVBFrontendParametersSatellite.FEC_9_10,
+				"fec_s2_8psk": eDVBFrontendParametersSatellite.FEC_2_3,
+				"fec_s2_qpsk": eDVBFrontendParametersSatellite.FEC_2_3,
 				"modulation": eDVBFrontendParametersSatellite.Modulation_QPSK }
 			defaultCab = {
 				"frequency": 466,
@@ -956,13 +960,16 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 					defaultSat["inversion"] = frontendData.get("inversion", eDVBFrontendParametersSatellite.Inversion_Unknown)
 					defaultSat["symbolrate"] = frontendData.get("symbol_rate", 0) / 1000
 					defaultSat["polarization"] = frontendData.get("polarization", eDVBFrontendParametersSatellite.Polarisation_Horizontal)
+					defaultSat["modulation"] = frontendData.get("modulation", eDVBFrontendParametersSatellite.Modulation_QPSK)
 					if defaultSat["system"] == eDVBFrontendParametersSatellite.System_DVB_S2:
-						defaultSat["fec_s2"] = frontendData.get("fec_inner", eDVBFrontendParametersSatellite.FEC_Auto)
+						if defaultSat["modulation"] == eDVBFrontendParametersSatellite.Modulation_QPSK:
+							defaultSat["fec_s2_qpsk"] = frontendData.get("fec_inner", eDVBFrontendParametersSatellite.FEC_2_3)
+						else:
+							defaultSat["fec_s2_8psk"] = frontendData.get("fec_inner", eDVBFrontendParametersSatellite.FEC_2_3)
 						defaultSat["rolloff"] = frontendData.get("rolloff", eDVBFrontendParametersSatellite.RollOff_alpha_0_35)
 						defaultSat["pilot"] = frontendData.get("pilot", eDVBFrontendParametersSatellite.Pilot_Unknown)
 					else:
 						defaultSat["fec"] = frontendData.get("fec_inner", eDVBFrontendParametersSatellite.FEC_Auto)
-					defaultSat["modulation"] = frontendData.get("modulation", eDVBFrontendParametersSatellite.Modulation_QPSK)
 					defaultSat["orbpos"] = frontendData.get("orbital_position", 0)
 				elif ttype == "DVB-C":
 					defaultCab["frequency"] = frontendData.get("frequency", 0) / 1000
@@ -1039,14 +1046,20 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				(eDVBFrontendParametersSatellite.FEC_5_6, "5/6"),
 				(eDVBFrontendParametersSatellite.FEC_7_8, "7/8"),
 				(eDVBFrontendParametersSatellite.FEC_None, _("None"))])
-			self.scan_sat.fec_s2 = ConfigSelection(default = defaultSat["fec_s2"], choices = [
+			self.scan_sat.fec_s2_qpsk = ConfigSelection(default = defaultSat["fec_s2_qpsk"], choices = [
 				(eDVBFrontendParametersSatellite.FEC_1_2, "1/2"),
 				(eDVBFrontendParametersSatellite.FEC_2_3, "2/3"),
 				(eDVBFrontendParametersSatellite.FEC_3_4, "3/4"),
 				(eDVBFrontendParametersSatellite.FEC_3_5, "3/5"),
 				(eDVBFrontendParametersSatellite.FEC_4_5, "4/5"),
 				(eDVBFrontendParametersSatellite.FEC_5_6, "5/6"),
-				(eDVBFrontendParametersSatellite.FEC_7_8, "7/8"),
+				(eDVBFrontendParametersSatellite.FEC_8_9, "8/9"),
+				(eDVBFrontendParametersSatellite.FEC_9_10, "9/10")])
+			self.scan_sat.fec_s2_8psk = ConfigSelection(default = defaultSat["fec_s2_8psk"], choices = [
+				(eDVBFrontendParametersSatellite.FEC_2_3, "2/3"),
+				(eDVBFrontendParametersSatellite.FEC_3_4, "3/4"),
+				(eDVBFrontendParametersSatellite.FEC_3_5, "3/5"),
+				(eDVBFrontendParametersSatellite.FEC_5_6, "5/6"),
 				(eDVBFrontendParametersSatellite.FEC_8_9, "8/9"),
 				(eDVBFrontendParametersSatellite.FEC_9_10, "9/10")])
 			self.scan_sat.modulation = ConfigSelection(default = defaultSat["modulation"], choices = [
@@ -1239,7 +1252,10 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 					if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 						fec = self.scan_sat.fec.value
 					else:
-						fec = self.scan_sat.fec_s2.value
+						if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_QPSK:
+							fec = self.scan_sat.fec_s2_qpsk.value
+						else:
+							fec = self.scan_sat.fec_s2_8psk.value
 					print "add sat transponder"
 					self.addSatTransponder(tlist, self.scan_sat.frequency.value,
 								self.scan_sat.symbolrate.value,
