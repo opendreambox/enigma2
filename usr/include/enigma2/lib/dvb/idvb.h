@@ -267,6 +267,25 @@ struct eServiceReferenceDVB: public eServiceReference
 		:eServiceReference(string)
 	{
 	}
+
+	bool compareDVB(const eServiceReferenceDVB& r) const
+	{
+		if ((unsigned int)data[4] < (unsigned int)r.data[4])
+			return true;
+		if (data[4] == r.data[4])
+		{
+			if (data[3] < r.data[3])
+				return true;
+			if (data[3] == r.data[3])
+			{
+				if (data[2] < r.data[2])
+					return true;
+				if (data[2] == r.data[2])
+					return data[1] < r.data[1];
+			}
+		}
+		return false;
+	}
 };
 
 

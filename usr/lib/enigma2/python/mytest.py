@@ -254,6 +254,7 @@ class Session:
 		self.delay_timer.callback.append(self.processDelay)
 
 		self.current_dialog = None
+		self.next_dialog = None
 
 		self.dialog_stack = [ ]
 		self.summary_stack = [ ]
@@ -281,6 +282,13 @@ class Session:
 		self.popCurrent()
 		if callback is not None:
 			callback(*retval)
+
+		if self.next_dialog:
+			dlg = self.next_dialog
+			self.next_dialog = None
+			self.pushCurrent()
+			self.current_dialog = dlg
+			self.execBegin()
 
 	def execBegin(self, first=True, do_show = True):
 		assert not self.in_exec 
@@ -374,11 +382,16 @@ class Session:
 			self.current_dialog = None
 
 	def execDialog(self, dialog):
-		self.pushCurrent()
-		self.current_dialog = dialog
-		self.current_dialog.isTmp = False
-		self.current_dialog.callback = None # would cause re-entrancy problems.
-		self.execBegin()
+		dialog.isTmp = False
+		dialog.callback = None # would cause re-entrancy problems.
+
+		if self.delay_timer.isActive():
+			assert not self.next_dialog
+			self.next_dialog = dialog
+		else:
+			self.pushCurrent()
+			self.current_dialog = dialog
+			self.execBegin()
 
 	def openWithCallback(self, callback, screen, *arguments, **kwargs):
 		dlg = self.open(screen, *arguments, **kwargs)

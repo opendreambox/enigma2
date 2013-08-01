@@ -171,14 +171,14 @@ class ServiceList(HTMLComponent, GUIComponent):
 		selected = args["selected"]
 		res = [ None ]
 		showListNumbers = config.usage.configselection_showlistnumbers.value
-		showPicons = config.usage.configselection_showpicons.value
-		showServiceName = config.usage.configselection_showservicename.value
+		showPicons = self.mode == self.MODE_FAVOURITES and config.usage.configselection_showpicons.value
+		showServiceName = self.mode == self.MODE_NORMAL or (self.mode == self.MODE_FAVOURITES and config.usage.configselection_showservicename.value)
 		showProgressbar = config.usage.show_event_progress_in_servicelist.value
 		progressbarPosition = config.usage.configselection_progressbarposition.value
 		servicenameWidth = config.usage.configselection_servicenamecolwidth.value
 		columnStyle = config.usage.configselection_columnstyle.value
 		additionalposition = config.usage.configselection_additionaltimedisplayposition.value
-		bigPicons = config.usage.configselection_bigpicons.value
+		bigPicons = self.mode == self.MODE_FAVOURITES and config.usage.configselection_bigpicons.value
 		secondlineinfo = config.usage.configselection_secondlineinfo.value
 		# get service information
 		service_info = self.service_center.info(service)

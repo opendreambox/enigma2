@@ -440,12 +440,19 @@ class SatBlindscanState(Screen):
 			Q = []
 			I = []
 			for pos in range(0,30,2):
-				val = int(bitmap[pos:pos+2], 16)
+				try:
+					val = int(bitmap[pos:pos+2], 16)
+				except ValueError:
+					print "I constellation data broken at pos", pos
+					val = 0
 				I.append(val)
 			for pos in range(30,60,2):
-				val = int(bitmap[pos:pos+2], 16)
+				try:
+					val = int(bitmap[pos:pos+2], 16)
+				except ValueError:
+					print "Q constellation data broken at pos", pos
+					val = 0
 				Q.append(val)
-				pos += 2
 			for i in range(15):
 				self["constellation"].fill(I[i],Q[i],1,1,0x25ffffff)
 		self["constellation"].flush()

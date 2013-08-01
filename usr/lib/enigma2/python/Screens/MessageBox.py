@@ -4,7 +4,7 @@ from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.Sources.StaticText import StaticText
 from Components.MenuList import MenuList
-from enigma import eTimer
+from enigma import eTimer, eActionMap
 
 class MessageBox(Screen):
 	TYPE_YESNO = 0
@@ -12,7 +12,7 @@ class MessageBox(Screen):
 	TYPE_WARNING = 2
 	TYPE_ERROR = 3
 
-	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, title = None):
+	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, title = None, additionalActionMap=None):
 		self.type = type
 		Screen.__init__(self, session)
 		
@@ -53,20 +53,26 @@ class MessageBox(Screen):
 		self.onFirstExecBegin.append(self._onFirstExecBegin)
 
 		if enable_input:
-			self["actions"] = ActionMap(["MsgBoxActions", "DirectionActions"], 
-				{
-					"cancel": self.cancel,
-					"ok": self.ok,
-					"alwaysOK": self.alwaysOK,
-					"up": self.up,
-					"down": self.down,
-					"left": self.left,
-					"right": self.right,
-					"upRepeated": self.up,
-					"downRepeated": self.down,
-					"leftRepeated": self.left,
-					"rightRepeated": self.right
-				}, -1)
+			if close_on_any_key:
+				if additionalActionMap is not None:
+					self["additionalActions"] = additionalActionMap
+				eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.closeAnyKey)
+				self.onClose.append(lambda: eActionMap.getInstance().unbindAction('', self.closeAnyKey))
+			else:
+				self["actions"] = ActionMap(["MsgBoxActions", "DirectionActions"], 
+					{
+						"cancel": self.cancel,
+						"ok": self.ok,
+						"alwaysOK": self.alwaysOK,
+						"up": self.up,
+						"down": self.down,
+						"left": self.left,
+						"right": self.right,
+						"upRepeated": self.up,
+						"downRepeated": self.down,
+						"leftRepeated": self.left,
+						"rightRepeated": self.right
+					}, -1)
 
 	def _onFirstExecBegin(self):
 		if self.title != None:
@@ -112,6 +118,11 @@ class MessageBox(Screen):
 				self.timerRunning = False
 				self.timeoutCallback()
 
+	def closeAnyKey(self, key, flag):
+		self.close(True)
+		if self.get("additionalActions", None):
+			return 0
+
 	def timeoutCallback(self):
 		print "Timeout!"
 		self.ok()
@@ -141,8 +152,6 @@ class MessageBox(Screen):
 		self.move(self["list"].instance.pageDown)
 
 	def move(self, direction):
-		if self.close_on_any_key:
-			self.close(True)
 		self["list"].instance.moveSelection(direction)
 		if self.list:
 			self["selectedChoice"].setText(self["list"].getCurrent()[0])

@@ -2400,6 +2400,7 @@ class InfoBarServiceErrorPopupSupport:
 		}.get(error) #this returns None when the key not exist in the dict
 
 		if error is not None:
-			Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError", domain = "ZapError")
+			actions = self.get("ChannelSelectActions", None)
+			Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError", domain = "ZapError", additionalActionMap=actions)
 		else:
 			Notifications.RemovePopup(id = "ZapError")

@@ -60,11 +60,11 @@ def RemovePopup(id):
 
 from Screens.MessageBox import MessageBox
 
-def AddPopup(text, type, timeout, id = None, domain = None):
+def AddPopup(text, type, timeout, id = None, domain = None, screen=MessageBox, additionalActionMap=None):
 	if id is not None:
 		RemovePopup(id)
 	print "AddPopup, id =", id, "domain =", domain
-	AddNotificationWithID(id, MessageBox, text = text, type = type, timeout = timeout, close_on_any_key = True, domain = domain)
+	AddNotificationWithID(id, screen, text = text, type = type, timeout = timeout, close_on_any_key = True, domain = domain, additionalActionMap = additionalActionMap)
 
 ICON_DEFAULT = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/marker.png'))
 ICON_MAIL = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/notification_mail.png'))

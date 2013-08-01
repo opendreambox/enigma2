@@ -66,6 +66,9 @@ unicable (version)
 			<product name="GS-404-L1" scr1="1280" scr2="1382" scr3="1484"/>
 			<product name="GS-406-L1" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790"/>
 		</manufacturer>
+		<manufacturer name="GT-SAT">
+			<product name="GT-S3SCR4" scr1="1210" scr2="1420" scr3="1680" scr4="2040"/>
+		</manufacturer>
 		<manufacturer name="Humax">
 			<product name="150 SCR" scr1="1210" scr2="1420" scr3="1680" scr4="2040"/>
 		</manufacturer>
