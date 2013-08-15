@@ -20,7 +20,7 @@ class ServiceInfo(Converter, object):
 	SID = 14
 	FRAMERATE = 15
 	TRANSFERBPS = 16
-	
+	HAS_SUBTITLES = 17
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -42,6 +42,7 @@ class ServiceInfo(Converter, object):
 				"Sid": (self.SID, (iPlayableService.evUpdatedInfo,)),
 				"Framerate": (self.FRAMERATE, (iPlayableService.evVideoSizeChanged,iPlayableService.evUpdatedInfo,)),
 				"TransferBPS": (self.TRANSFERBPS, (iPlayableService.evUpdatedInfo,)),
+				"HasSubtitles": (self.HAS_SUBTITLES, (iPlayableService.evUpdatedInfo,)),
 			}[type]
 
 	def getServiceInfoString(self, info, what, convert = lambda x: "%d" % x):
@@ -55,6 +56,12 @@ class ServiceInfo(Converter, object):
 	@cached
 	def getBoolean(self):
 		service = self.source.service
+		if self.type == self.HAS_SUBTITLES:
+			subtitle = service and service.subtitle()
+			if subtitle and subtitle.getSubtitleList():
+				return True
+			return False
+
 		info = service and service.info()
 		if not info:
 			return False

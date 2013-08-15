@@ -45,6 +45,13 @@
 	<fonts>
 		<font filename="nmsbd.ttf" name="Display" scale="90"/>
 	</fonts>
+	<subtitles>
+		<sub name="Subtitle_TTX" font="Regular;30" shadowColor="#40101010" shadowOffset="3,3" />
+		<sub name="Subtitle_Regular" font="Regular;30" foregroundColor="#DCDCDC" shadowColor="#40101010" shadowOffset="3,3" />
+		<sub name="Subtitle_Bold" font="Replacement;30" foregroundColor="#DCDCDC" shadowColor="#40101010" shadowOffset="3,3" />
+		<sub name="Subtitle_Italic" font="Regular;30" foregroundColor="#DCAAAA" shadowColor="#40101010" shadowOffset="3,3" />
+		<!-- omitting foregroundColor attribute will enable auto-assignment of color -->
+	</subtitles>
 	<!-- Screwed Stone II skin (skin_default.xml) /Nemesis -->
 	<!-- About screen -->
 	<screen name="About" position="center,center" size="420,350" title="About">
@@ -1115,13 +1122,13 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, orgpos.y()))
 		<widget name="arrowup2" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
 	</screen>
 	<!-- Subservice quickzap -->
-	<screen name="SubservicesQuickzap" position="center,center" size="512,200" title="Subservices" backgroundColor="transparent" flags="wfNoBorder">
-		<widget source="session.RecordState" render="Pixmap" pixmap="skin_default/icons/record.png" position="450,0" zPosition="2" size="14,14" alphatest="on" >
+	<screen name="SubservicesQuickzap" position="center,center" size="600,300" title="Subservices" backgroundColor="transparent" flags="wfNoBorder">
+		<widget source="session.RecordState" render="Pixmap" pixmap="skin_default/icons/record.png" position="450,0" zPosition="2" size="14,14" alphatest="on">
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
-		<eLabel text="Subservices" position="0,0" size="470,20" font="Regular;13" backgroundColor="#33294a6b" />
-		<widget name="CurrentSubserviceNumber" position="0,20" size="50,34" font="Regular;22" backgroundColor="#33294a6b" shadowColor="black" shadowOffset="-1,-1" />
-		<widget source="session.CurrentService" render="Label" position="50,20" size="420,34" font="Regular;22" backgroundColor="#33294a6b" shadowColor="black" shadowOffset="-1,-1">
+		<eLabel text="Subservices" position="0,0" size="600,20" font="Regular;13" backgroundColor="#33294a6b" />
+		<widget name="CurrentSubserviceNumber" position="0,20" size="50,68" font="Regular;22" backgroundColor="#33294a6b" shadowColor="black" shadowOffset="-1,-1" />
+		<widget source="session.CurrentService" render="Label" position="50,20" size="550,68" font="Regular;22" backgroundColor="#33294a6b" shadowColor="black" shadowOffset="-1,-1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
 	</screen>

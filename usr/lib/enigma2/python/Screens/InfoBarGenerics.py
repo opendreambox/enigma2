@@ -1883,7 +1883,12 @@ class InfoBarSubserviceSelection:
 				if newservice.valid():
 					del subservices
 					del service
-					self.session.nav.playService(newservice, False)
+					self.playSubservice(newservice)
+
+	def playSubservice(self, ref):
+		if ref.getUnsignedData(6) == 0:
+			ref.setName("")
+		self.session.nav.playService(ref, False)
 
 	def subserviceSelection(self):
 		service = self.session.nav.getCurrentService()
@@ -1895,14 +1900,17 @@ class InfoBarSubserviceSelection:
 			ref = self.session.nav.getCurrentlyPlayingServiceReference()
 			tlist = []
 			idx = 0
+			cnt_parent = 0
 			while idx < n:
 				i = subservices.getSubservice(idx)
-				if i.toString() == ref.toString():
+				if i == ref:
 					selection = idx
 				tlist.append((i.getName(), i))
+				if i.getUnsignedData(6):
+					cnt_parent += 1
 				idx += 1
 
-			if self.bouquets and len(self.bouquets):
+			if cnt_parent and self.bouquets and len(self.bouquets):
 				keys = ["red", "blue", "",  "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
 				if config.usage.multibouquet.value:
 					tlist = [(_("Quickzap"), "quickzap", service.subServices()), (_("Add to bouquet"), "CALLFUNC", self.addSubserviceToBouquetCallback), ("--", "")] + tlist
@@ -1925,7 +1933,7 @@ class InfoBarSubserviceSelection:
 					self.session.open(SubservicesQuickzap, service[2])
 			else:
 				self["SubserviceQuickzapAction"].setEnabled(True)
-				self.session.nav.playService(service[1], False)
+				self.playSubservice(service[1])
 
 	def addSubserviceToBouquetCallback(self, service):
 		if len(service) > 1 and isinstance(service[1], eServiceReference):

@@ -8,6 +8,8 @@ config.plugins.cec = ConfigSubsection()
 config.plugins.cec.sendpower = ConfigEnableDisable(default=True)
 config.plugins.cec.receivepower = ConfigEnableDisable(default=False)
 
+from enigma import getExitCode
+
 class Cec(object):
 	session = None
 
@@ -51,10 +53,18 @@ def autostart(reason, **kwargs):
 		cec.session = session
 	if reason == 0:
 		if session is not None:
+			from sys import maxint
 			#only send cec power on if it hasn been a record-timer that issued poweron
-			if not session.nav.wasTimerWakeup() or session.nav.RecordTimer.getNextRecordingTime() > session.nav.RecordTimer.getNextZapTime():
+			nextRecTime = session.nav.RecordTimer.getNextRecordingTime()
+			if nextRecTime == -1:
+				nextRecTime = maxint
+			nextZapTime = session.nav.RecordTimer.getNextZapTime()
+			if nextZapTime == -1:
+				nextZapTime = maxint
+			wasTimerWakeup = session.nav.wasTimerWakeup()
+			if not wasTimerWakeup or nextZapTime <= nextRecTime:
 				cec.powerOn()
-	else:
+	elif getExitCode() == 1: # send CEC poweroff only on complete box shutdown
 		cec.powerOff()
 
 def conf(session, **kwargs):

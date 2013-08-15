@@ -235,6 +235,7 @@ eServiceEvent.getEventName = new_instancemethod(_enigma.eServiceEvent_getEventNa
 eServiceEvent.getShortDescription = new_instancemethod(_enigma.eServiceEvent_getShortDescription,None,eServiceEvent)
 eServiceEvent.getExtendedDescription = new_instancemethod(_enigma.eServiceEvent_getExtendedDescription,None,eServiceEvent)
 eServiceEvent.getBeginTimeString = new_instancemethod(_enigma.eServiceEvent_getBeginTimeString,None,eServiceEvent)
+eServiceEvent.getNumComponent = new_instancemethod(_enigma.eServiceEvent_getNumComponent,None,eServiceEvent)
 eServiceEvent.getComponentData = new_instancemethod(_enigma.eServiceEvent_getComponentData,None,eServiceEvent)
 eServiceEvent.getNumOfLinkageServices = new_instancemethod(_enigma.eServiceEvent_getNumOfLinkageServices,None,eServiceEvent)
 eServiceEvent.getLinkageService = new_instancemethod(_enigma.eServiceEvent_getLinkageService,None,eServiceEvent)
@@ -3003,6 +3004,10 @@ getBestPlayableServiceReference = _enigma.getBestPlayableServiceReference
 def setTunerTypePriorityOrder(*args):
   return _enigma.setTunerTypePriorityOrder(*args)
 setTunerTypePriorityOrder = _enigma.setTunerTypePriorityOrder
+
+def getExitCode():
+  return _enigma.getExitCode()
+getExitCode = _enigma.getExitCode
 
 def addFont(*args):
   return _enigma.addFont(*args)

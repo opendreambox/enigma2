@@ -2,6 +2,7 @@ from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayab
 from Components.ParentalControl import parentalControl
 from Tools.BoundFunction import boundFunction
 from Tools.DreamboxHardware import setFPWakeuptime, getFPWakeuptime, getFPWasTimerWakeup, clearFPWasTimerWakeup
+from Tools import Notifications
 from time import time
 import RecordTimer
 import SleepTimer
@@ -38,7 +39,7 @@ class Navigation:
 				self.__wasTimerWakeup = True
 				if nextRecordTimerAfterEventActionAuto and (len(self.getRecordings()) or abs(self.RecordTimer.getNextRecordingTime() - time()) <= 360):
 					if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
-						RecordTimer.RecordTimerEntry.TryQuitMainloop(False) # start shutdown handling
+						Notifications.AddNotification(Screens.Standby.Standby, domain="RecordTimer")
 		self.SleepTimer = SleepTimer.SleepTimer()
 
 	def wasTimerWakeup(self):

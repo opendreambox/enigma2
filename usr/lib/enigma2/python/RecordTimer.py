@@ -81,6 +81,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 	@staticmethod
 	def TryQuitMainloop(default_yes = True):
+		assert Screens.Standby.inStandby, "its not allowed to call RecordTimerEntry.TryQuitMainloop without open standby screen!!"
 		if not RecordTimerEntry.receiveRecordEvents:
 			print "RecordTimer.TryQuitMainloop"
 			NavigationInstance.instance.record_event.append(RecordTimerEntry.staticGotRecordEvent)
@@ -88,8 +89,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			# send fake event.. to check if another recordings are running or
 			# other timers start in a few seconds
 			RecordTimerEntry.staticGotRecordEvent(None, iRecordableService.evEnd)
-			# send normal notification for the case the user leave the standby now..
-			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, onSessionOpenCallback=RecordTimerEntry.stopTryQuitMainloop, default_yes = default_yes, domain="RecordTimer")
+			Screens.Standby.inStandby.onClose.append(RecordTimerEntry.stopTryQuitMainloop)
 #################################################################
 
 	def __init__(self, serviceref, begin, end, name, description, eit, disabled = False, justplay = False, afterEvent = AFTEREVENT.AUTO, checkOldTimers = False, dirname = None, tags = None, plugins = {}):
@@ -295,13 +295,14 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				self.state -= 1
 				return True
 			self.log(12, "stop recording")
+			force_auto_shutdown = NavigationInstance.instance.wasTimerWakeup() and Screens.Standby.inStandby and config.misc.standbyCounter.value == 1
 			if not self.justplay:
 				NavigationInstance.instance.stopRecordService(self.record_service)
 				self.record_service = None
 			if self.afterEvent == AFTEREVENT.STANDBY:
 				if not Screens.Standby.inStandby: # not already in standby
 					Notifications.AddNotificationWithCallback(self.sendStandbyNotification, MessageBox, _("A finished record timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20, domain="RecordTimer")
-			elif self.afterEvent == AFTEREVENT.DEEPSTANDBY:
+			elif self.afterEvent == AFTEREVENT.DEEPSTANDBY or force_auto_shutdown:
 				if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
 					if Screens.Standby.inStandby: # in standby
 						RecordTimerEntry.TryQuitMainloop() # start shutdown handling without screen

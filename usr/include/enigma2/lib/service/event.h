@@ -64,6 +64,7 @@ public:
 	std::string getShortDescription() const { return m_short_description; }
 	std::string getExtendedDescription() const { return m_extended_description; }
 	std::string getBeginTimeString() const;
+	int getNumComponent() { return m_component_data.size(); }
 	SWIG_VOID(RESULT) getComponentData(ePtr<eComponentData> &SWIG_OUTPUT, int tagnum) const;
 	PyObject *getComponentData() const;
 	int getNumOfLinkageServices() const { return m_linkage_services.size(); }
