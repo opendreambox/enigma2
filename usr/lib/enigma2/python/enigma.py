@@ -2463,6 +2463,7 @@ class eDVBServicePMTHandler(object):
     eventNoPMT = _enigma.eDVBServicePMTHandler_eventNoPMT
     eventNewProgramInfo = _enigma.eDVBServicePMTHandler_eventNewProgramInfo
     eventTuned = _enigma.eDVBServicePMTHandler_eventTuned
+    eventNewSDT = _enigma.eDVBServicePMTHandler_eventNewSDT
     eventPreStart = _enigma.eDVBServicePMTHandler_eventPreStart
     eventSOF = _enigma.eDVBServicePMTHandler_eventSOF
     eventEOF = _enigma.eDVBServicePMTHandler_eventEOF

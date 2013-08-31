@@ -3,6 +3,7 @@
 
 #ifndef SWIG
 #include <map>
+#include <set>
 #include <lib/base/buffer.h>
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/dvb.h>
@@ -76,12 +77,18 @@ class eDVBServicePMTHandler: public sigc::trackable
 	eServiceReferenceDVB m_reference;
 	ePtr<eDVBService> m_service;
 
+	static std::map<uint32_t, uint8_t> sdt_versions;
+
 	int m_last_channel_state;
 	eDVBCAService *m_ca_servicePtr;
 	ePtr<eDVBScan> m_dvb_scan; // for sdt scan
 
 	eAUTable<eTable<ProgramMapSection> > m_PMT;
 	eAUTable<eTable<ProgramAssociationSection> > m_PAT;
+
+	ePtr<eConnection> m_SDTConn;
+	ePtr<iDVBSectionReader> m_SDTReader;
+	void readSDTdata(const __u8 *data, int len);
 
 	eUsePtr<iDVBChannel> m_channel;
 	eUsePtr<iDVBPVRChannel> m_pvr_channel;
@@ -97,9 +104,8 @@ class eDVBServicePMTHandler: public sigc::trackable
 
 	void PMTready(int error);
 	void PATready(int error);
-	
 	int m_pmt_pid;
-	
+
 	int m_use_decode_demux;
 	uint8_t m_decode_demux_num;
 	ePtr<eTimer> m_no_pat_entry_delay;
@@ -123,6 +129,7 @@ public:
 		eventNoPMT,        // no pmt could be received (timeout)
 		eventNewProgramInfo, // we just received a PMT
 		eventTuned,        // a channel was sucessfully (re-)tuned in, you may start additional filters now
+		eventNewSDT,
 		
 		eventPreStart,     // before start filepush thread
 		eventSOF,          // seek pre start

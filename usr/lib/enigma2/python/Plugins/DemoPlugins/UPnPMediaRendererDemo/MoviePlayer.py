@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from enigma import eTimer
 from Components.ActionMap import ActionMap
+from Components.Label import Label
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
@@ -187,11 +188,6 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		self.playNext()
 		if self.stopCB != None:
 			self.stopCB(True)
-
-# -*- coding: UTF-8 -*-
-
-from Components.Label import Label
-from Screens.Screen import Screen
 
 class SimpleLCDScreen(Screen):
 	skin = (

@@ -44,6 +44,10 @@ class ServiceInfo(Converter, object):
 				"TransferBPS": (self.TRANSFERBPS, (iPlayableService.evUpdatedInfo,)),
 				"HasSubtitles": (self.HAS_SUBTITLES, (iPlayableService.evUpdatedInfo,)),
 			}[type]
+		self.need_wa = iPlayableService.evVideoSizeChanged in self.interesting_events
+
+	def reuse(self):
+		self.need_wa = iPlayableService.evVideoSizeChanged in self.interesting_events
 
 	def getServiceInfoString(self, info, what, convert = lambda x: "%d" % x):
 		v = info.getInfo(what)
@@ -140,6 +144,8 @@ class ServiceInfo(Converter, object):
 			return info.getInfo(iServiceInformation.sVideoHeight)
 		if self.type == self.FRAMERATE:
 			return info.getInfo(iServiceInformation.sFrameRate)
+		if self.type == self.IS_WIDESCREEN:
+			return info.getInfo(iServiceInformation.sAspect)
 
 		return -1
 
@@ -148,3 +154,7 @@ class ServiceInfo(Converter, object):
 	def changed(self, what):
 		if what[0] != self.CHANGED_SPECIFIC or what[1] in self.interesting_events:
 			Converter.changed(self, what)
+		elif self.need_wa:
+			if self.getValue() != -1:
+				Converter.changed(self, (self.CHANGED_SPECIFIC, iPlayableService.evVideoSizeChanged))
+				self.need_wa = False

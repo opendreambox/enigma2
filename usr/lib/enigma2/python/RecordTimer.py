@@ -295,7 +295,9 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				self.state -= 1
 				return True
 			self.log(12, "stop recording")
-			force_auto_shutdown = NavigationInstance.instance.wasTimerWakeup() and Screens.Standby.inStandby and config.misc.standbyCounter.value == 1
+			force_auto_shutdown = NavigationInstance.instance.wasTimerWakeup() and \
+				config.misc.isNextRecordTimerAfterEventActionAuto.value and \
+				Screens.Standby.inStandby and config.misc.standbyCounter.value == 1
 			if not self.justplay:
 				NavigationInstance.instance.stopRecordService(self.record_service)
 				self.record_service = None
@@ -345,11 +347,11 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 	def sendStandbyNotification(self, answer):
 		if answer:
-			Notifications.AddNotification(Screens.Standby.Standby, domain="RecordTimer")
+			Notifications.AddNotificationWithID("Standby", Screens.Standby.Standby, domain="RecordTimer")
 
 	def sendTryQuitMainloopNotification(self, answer):
 		if answer:
-			Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, domain="RecordTimer")
+			Notifications.AddNotificationWithID("Shutdown", Screens.Standby.TryQuitMainloop, 1, domain="RecordTimer")
 
 	def getNextActivation(self):
 		if self.state == self.StateEnded:

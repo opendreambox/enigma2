@@ -9,6 +9,7 @@ config.plugins.cec.sendpower = ConfigEnableDisable(default=True)
 config.plugins.cec.receivepower = ConfigEnableDisable(default=False)
 
 from enigma import getExitCode
+from Tools.Notifications import isPendingOrVisibleNotificationID
 
 class Cec(object):
 	session = None
@@ -53,16 +54,7 @@ def autostart(reason, **kwargs):
 		cec.session = session
 	if reason == 0:
 		if session is not None:
-			from sys import maxint
-			#only send cec power on if it hasn been a record-timer that issued poweron
-			nextRecTime = session.nav.RecordTimer.getNextRecordingTime()
-			if nextRecTime == -1:
-				nextRecTime = maxint
-			nextZapTime = session.nav.RecordTimer.getNextZapTime()
-			if nextZapTime == -1:
-				nextZapTime = maxint
-			wasTimerWakeup = session.nav.wasTimerWakeup()
-			if not wasTimerWakeup or nextZapTime <= nextRecTime:
+			if not isPendingOrVisibleNotificationID("Standby"):
 				cec.powerOn()
 	elif getExitCode() == 1: # send CEC poweroff only on complete box shutdown
 		cec.powerOff()

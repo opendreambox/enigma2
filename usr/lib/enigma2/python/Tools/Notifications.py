@@ -37,6 +37,10 @@ class NotificationQueueEntry():
 			self.text = screen.__name__
 		#print "[NotificationQueueEntry] QueueEntry created", self.timestamp, "function:", self.fnc, "screen:", self.screen, "id:", self.id, "args:", self.args, "kwargs:", self,kwargs, "domain:", self.domain, "text:", self.text
 
+def isPendingOrVisibleNotificationID(id):
+	q = notificationQueue
+	return q.isVisibleID(id) or q.isPendingID(id)
+
 def __AddNotification(fnc, screen, id, *args, **kwargs):
 	entry = NotificationQueueEntry(fnc, screen, id, *args, **kwargs)
 	notificationQueue.addEntry(entry)
@@ -48,6 +52,10 @@ def AddNotificationWithCallback(fnc, screen, *args, **kwargs):
 	__AddNotification(fnc, screen, None, *args, **kwargs)
 
 def AddNotificationWithID(id, screen, *args, **kwargs):
+	q = notificationQueue
+	if q.isVisibleID(id) or q.isPendingID(id):
+		print "ignore duplicate notification", id, screen
+		return
 	__AddNotification(None, screen, id, *args, **kwargs)
 
 # we don't support notifications with callback and ID as this
@@ -64,7 +72,7 @@ def AddPopup(text, type, timeout, id = None, domain = None, screen=MessageBox, a
 	if id is not None:
 		RemovePopup(id)
 	print "AddPopup, id =", id, "domain =", domain
-	AddNotificationWithID(id, screen, text = text, type = type, timeout = timeout, close_on_any_key = True, domain = domain, additionalActionMap = additionalActionMap)
+	__AddNotification(None, screen, id, text = text, type = type, timeout = timeout, close_on_any_key = True, domain = domain, additionalActionMap = additionalActionMap)
 
 ICON_DEFAULT = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/marker.png'))
 ICON_MAIL = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/notification_mail.png'))
@@ -93,6 +101,18 @@ class NotificationQueue():
 		self.queue.append(entry)
 		for x in self.addedCB:
 			x()
+
+	def isPendingID(self, id):
+		for entry in self.queue:
+			if entry.pending and entry.id == id:
+				return True
+		return False
+
+	def isVisibleID(self, id):
+		for entry, dlg in self.current:
+			if entry.id == id:
+				return True
+		return False
 
 	def removeSameID(self, id):
 		for entry in self.queue:

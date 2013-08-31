@@ -655,6 +655,7 @@ def readSkin(screen, skin, names, desktop):
 					c.connect(source)
 				else:
 					print "reused converter!"
+					hasattr(c, "reuse") and c.reuse()
 
 				source = c
 

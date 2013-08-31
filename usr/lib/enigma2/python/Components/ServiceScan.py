@@ -2,19 +2,18 @@ from enigma import eComponentScan, iDVBFrontend
 from Components.NimManager import nimmanager as nimmgr
 
 class ServiceScan:
-	
 	Idle = 1
 	Running = 2
 	Done = 3
 	Error = 4
-	
+
 	Errors = { 
 		0: "error starting scanning",
 		1: "error while scanning",
 		2: "no resource manager",
 		3: "no channel list"
 		}
-	
+
 	def scanStatusChanged(self):
 		if self.state == self.Running:
 			self.progressbar.setValue(self.scan.getProgress())
@@ -90,23 +89,24 @@ class ServiceScan:
 						print "unknown transponder type in scanStatusChanged"
 				self.network.setText(network)
 				self.transponder.setText(tp_text)
-		
+
 		if self.state == self.Done:
 			if self.scan.getNumServices() == 0:
 				self.text.setText(_("scan done!") + ' ' + _("%d services found!") % 0 )
 			else:
 				self.text.setText(_("scan done!") + ' ' + _("%d services found!") % (self.foundServices + self.scan.getNumServices()))
-		
+
 		if self.state == self.Error:
 			self.text.setText(_("ERROR - failed to scan (%s)!") % (self.Errors[self.errorcode]) )
-			
+
 		if self.state == self.Done or self.state == self.Error:
+			foundServices = self.scan.getNumServices()
+			self.execEnd()
 			if self.run != len(self.scanList) - 1:
-				self.foundServices += self.scan.getNumServices()
-				self.execEnd()
+				self.foundServices += foundServices
 				self.run += 1
 				self.execBegin()
-	
+
 	def __init__(self, progressbar, text, servicelist, passNumber, scanList, network, transponder, frontendInfo, lcd_summary):
 		self.foundServices = 0
 		self.progressbar = progressbar
@@ -127,7 +127,7 @@ class ServiceScan:
 		self.flags = self.scanList[self.run]["flags"]
 		self.state = self.Idle
 		self.scanStatusChanged()
-		
+
 		for x in self.scanList[self.run]["transponders"]:
 			self.scan.addInitial(x)
 

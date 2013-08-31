@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
 from enigma import eServiceReference
 from Components.ResourceManager import resourcemanager
+from Screens.MessageBox import MessageBox
 from Plugins.SystemPlugins.UPnP.UPnPMediaRenderer import UPnPMediaRenderer, UPnPPlayer
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 from Plugins.Plugin import PluginDescriptor
-from Screens.Standby import Standby
 
 from MoviePlayer import MoviePlayer
 
@@ -71,7 +71,6 @@ class ExtendedPlayer(UPnPPlayer):
 		import time, mimetypes, os
 
 		if self._picView is not None:
-			self._picView.close()
 			try:
 				os.remove(self._imageFile)
 			except:
@@ -93,7 +92,10 @@ class ExtendedPlayer(UPnPPlayer):
 			filelist = [((self._imageFile, False), None)]
 
 			print "[ExtendedPlayer._onPictureReady] path=%s, name=%s, filelist=%s" %(path, name, filelist)
-			self._picView = self.session.open(Pic_Full_View, filelist, 0, path)
+			if self._picView is None:
+				self._picView = self.session.open(Pic_Full_View, filelist, 0, path)
+			else:
+				self._picView.setFileList(filelist, 0, path)
 			self._picView.onClose.append(self._reset)
 		except Exception as e:
 			print e

@@ -251,24 +251,20 @@ class DVDISO639Language(ISO639Language):
 	def __init__(self):
 		ISO639Language.__init__(self, self.PRIMARY)
 
-	def get_dvd_id(self, lang):
+	def get_dvd_id(self, language):
 		ret = "nolang"
-		if lang in self.idlist_by_name:
-			for lang, id_list in self.idlist_by_name.iteritems():
-				for id in id_list:
-					if len(id) == 2:
-						ret = id
-						break
+		if language in self.idlist_by_name:
+			for lang in self.idlist_by_name[language]:
+				if len(lang) == 2:
+					return lang
 		return ret
 
-	def get_bludisc_id(self, lang):
+	def get_bludisc_id(self, language):
 		ret = "und"
-		if lang in self.idlist_by_name:
-			for lang, id_list in self.idlist_by_name.iteritems():
-				for id in id_list:
-					if len(id) == 3:
-						ret = id
-						break
+		if language in self.idlist_by_name:
+			for lang in self.idlist_by_name[language]:
+				if len(lang) == 3:
+					return lang
 		return ret
 
 iso639language = DVDISO639Language()

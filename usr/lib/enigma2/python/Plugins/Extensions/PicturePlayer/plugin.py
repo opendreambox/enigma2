@@ -512,6 +512,18 @@ class Pic_Full_View(Screen):
 		self["file"] = StaticText(_("please wait, loading picture..."))
 
 		self.picVisible = False
+		self._layoutFinished = False
+		self.setFileList(filelist, index, path)
+
+		self.picload = ePicLoad()
+		self.picload.PictureData.get().append(self.finish_decode)
+
+		self.slideTimer = eTimer()
+		self.slideTimer.timeout.callback.append(self.slidePic)
+
+		self.onLayoutFinish.append(self._onLayoutFinished)
+
+	def setFileList(self, filelist, index, path):
 		self.picReady = False
 		self.old_index = 0
 		self.filelist = []
@@ -519,6 +531,7 @@ class Pic_Full_View(Screen):
 		self.shownow = True
 		self.dirlistcount = 0
 		self.direction = 1 #cache next picture
+		self.shownow = True
 
 		for x in filelist:
 			if len(filelist[0]) == 3: #orig. filelist
@@ -538,15 +551,13 @@ class Pic_Full_View(Screen):
 		self.index = index - self.dirlistcount
 		if self.index < 0:
 			self.index = 0
+		if self._layoutFinished and self.maxentry >= 0:
+			self.start_decode()
 
-		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.finish_decode)
-
-		self.slideTimer = eTimer()
-		self.slideTimer.callback.append(self.slidePic)
-
+	def _onLayoutFinished(self):
+		self._layoutFinished = True
 		if self.maxentry >= 0:
-			self.onLayoutFinish.append(self.setPicloadConf)
+			self.setPicloadConf()
 
 	def setPicloadConf(self):
 		sc = getScale()

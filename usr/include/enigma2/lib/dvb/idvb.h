@@ -349,6 +349,8 @@ public:
 
 		/* for filtering: */
 	int checkFilter(const eServiceReferenceDVB &ref, const eDVBChannelQuery &query);
+
+	int m_running_state; // only valid for services on onid 0x85 yet...
 };
 
 //////////////////

@@ -99,8 +99,8 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 		self.updateSubservices()
 		if number == 0:
 			self.playSubservice(self.lastservice)
-		elif self.n is not None and number <= self.n - 1:
-			self.playSubservice(number)
+		elif self.n is not None and number <= self.n:
+			self.playSubservice(number-1)
 	
 	def showSelection(self):
 		self.updateSubservices()
@@ -113,7 +113,7 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 				tlist.append((i.getName(), idx))
 				idx += 1
 
-		keys = [ "", "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
+		keys = [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ] + [""] * n
 		self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = self.currentlyPlayingSubservice, keys = keys)
 	
 	def subserviceSelected(self, service):
@@ -140,5 +140,5 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 			self.session.nav.stopService()
 			self.session.nav.playService(newservice, False)
 			self.currentlyPlayingSubservice = number
-			self.currentSubserviceNumberLabel.setText(str(number))
+			self.currentSubserviceNumberLabel.setText(str(number+1))
 			self.doShow()

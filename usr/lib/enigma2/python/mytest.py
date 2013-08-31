@@ -130,6 +130,7 @@ config.misc.epgcache_timespan = ConfigSelection(default = "28", choices = [("7",
 config.misc.epgcache_outdated_timespan = ConfigInteger(default = 0, limits=(0,96))
 config.misc.record_io_buffer = ConfigInteger(default=192512*5)
 config.misc.record_dmx_buffer = ConfigInteger(default=1024*1024)
+config.misc.prev_wakeup_time = ConfigInteger(default=0)
 
 def setEPGCachePath(configElement):
 	eEPGCache.getInstance().setCacheFile(configElement.value)
@@ -564,13 +565,14 @@ def runScreenTest():
 			quitMainloop(*result)
 			return
 
-		screen = screensToRun[0][1]
-		args = screensToRun[0][2:]
-
 		if screensToRun:
-			session.openWithCallback(boundFunction(runNextScreen, session, screensToRun[1:]), screen, *args)
-		else:
-			session.open(screen, *args)
+			screen = screensToRun[0][1]
+			args = screensToRun[0][2:]
+	
+			if screensToRun:
+				session.openWithCallback(boundFunction(runNextScreen, session, screensToRun[1:]), screen, *args)
+			else:
+				session.open(screen, *args)
 
 	config.misc.epgcache_outdated_timespan.addNotifier(setOutdatedEPGTimespan)
 	config.misc.epgcache_timespan.addNotifier(setEPGCacheTimespan)
@@ -591,6 +593,12 @@ def runScreenTest():
 	profile("RunReactor")
 	profile_final()
 	runReactor()
+
+	while session.current_dialog:
+		if not isinstance(session.current_dialog, Screens.InfoBar.InfoBar):
+			session.current_dialog.callback = None
+		Screen.close(session.current_dialog)
+		session.processDelay()
 
 	config.misc.startCounter.save()
 
@@ -621,6 +629,10 @@ def runScreenTest():
 		print "set wakeup time to", strftime("%Y/%m/%d %H:%M", localtime(wptime))
 		setFPWakeuptime(wptime)
 		recordTimerWakeupAuto = startTime[1] == 0 and startTime[2]
+		config.misc.prev_wakeup_time.value = startTime[0]
+	else:
+		config.misc.prev_wakeup_time.value = 0
+	config.misc.prev_wakeup_time.save()
 	config.misc.isNextRecordTimerAfterEventActionAuto.value = recordTimerWakeupAuto
 	config.misc.isNextRecordTimerAfterEventActionAuto.save()
 

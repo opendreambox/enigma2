@@ -44,12 +44,12 @@ class SleepTimerEntry(timer.TimerEntry):
 	def shutdown(self, answer):
 		if answer is not None:
 			if answer and not Screens.Standby.inTryQuitMainloop:
-				Notifications.AddNotification(Screens.Standby.TryQuitMainloop, 1, domain="SleepTimer")
+				Notifications.AddNotificationWithID("Shutdown", Screens.Standby.TryQuitMainloop, 1, domain="SleepTimer")
 
 	def standby(self, answer):
 		if answer is not None:
 			if answer and not Screens.Standby.inStandby:
-				Notifications.AddNotification(Screens.Standby.Standby, domain="SleepTimer")
+				Notifications.AddNotificationWithID("Standby", Screens.Standby.Standby, domain="SleepTimer")
 
 class SleepTimer(timer.Timer):
 	def __init__(self):

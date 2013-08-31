@@ -84,6 +84,8 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 
 		self.showHarddiskPopup()
 
+		self.onClose.append(self.__onClose)
+
 	def showHarddiskPopup(self, dev = None, media_state = None):
 		from Components.Harddisk import harddiskmanager
 		if not self.HDDDetectedCB in harddiskmanager.delayed_device_Notifier:

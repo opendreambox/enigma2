@@ -304,7 +304,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		self._update_transport_state(self.STATE_TRANSITIONING)
 
 	def _update_transport_state(self, state):
-		self.warning('_update_transport_state: %s' %state)
+		self.info('_update_transport_state: %s' %state)
 		state = {
 			self.STATE_IDLE : 'STOPPED',
 			self.STATE_PAUSED : 'PAUSED_PLAYBACK',
