@@ -63,6 +63,7 @@
 			<item level="2" text="Alternative services tuner priority">config.usage.alternatives_priority</item>
 			<item level="2" text="Limited character set for recording filenames">config.recording.ascii_filenames</item>
 			<item level="2" text="Composition of the recording filenames">config.recording.filename_composition</item>
+			<item level="1" text="Use legacy virtual subservices detection">config.misc.use_legacy_virtual_subservices_detection</item>
 		</setup>
 		<setup key="harddisk" title="Harddisk setup" >
 			<item level="0" text="Harddisk standby after">config.usage.hdd_standby</item>

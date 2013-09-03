@@ -131,6 +131,7 @@ config.misc.epgcache_outdated_timespan = ConfigInteger(default = 0, limits=(0,96
 config.misc.record_io_buffer = ConfigInteger(default=192512*5)
 config.misc.record_dmx_buffer = ConfigInteger(default=1024*1024)
 config.misc.prev_wakeup_time = ConfigInteger(default=0)
+config.misc.use_legacy_virtual_subservices_detection = ConfigYesNo(default=False)
 
 def setEPGCachePath(configElement):
 	eEPGCache.getInstance().setCacheFile(configElement.value)

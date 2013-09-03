@@ -120,13 +120,17 @@ class Screen(dict, GUISkin):
 			val.disconnectAll()  # disconnected converter/sources and probably destroy them. Sources will not be destroyed.
 
 		del self.session
+
+		# we can have multiple dict entries with different names but same Element
+		# but we dont can call destroy multiple times
 		for name in self.keys():
 			val = self[name]
-			if val:
+			del self[name] # remove from dict
+			if val: # is not a duplicate...
 				val.destroy()
-			for (n, v) in self.items():
-				if v == val:
-					self[n] = None
+				for (n, v) in self.items():
+					if v == val: # check if it is the same Element
+						self[n] = None # mark as duplicate
 
 		self.renderer = [ ]
 
