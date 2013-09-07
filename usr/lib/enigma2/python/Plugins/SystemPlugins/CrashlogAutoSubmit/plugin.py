@@ -318,14 +318,12 @@ def mxServerFound(mxServer,session):
 			config.plugins.crashlogautosubmit.sendmail.save()
 			config.plugins.crashlogautosubmit.save()
 			config.plugins.save()
-			config.save()
 			send_mail()
 		elif answer in ( None, "send_never"):
 			config.plugins.crashlogautosubmit.sendmail.value = "send_never"
 			config.plugins.crashlogautosubmit.sendmail.save()
 			config.plugins.crashlogautosubmit.save()
 			config.plugins.save()
-			config.save()
 		elif answer == "send_not":
 			print "[CrashlogAutoSubmit] - not sending crashlogs for this time."
 

@@ -14,7 +14,47 @@ def BaseInitUsageConfig():
 		("intermediate", _("Intermediate")),
 		("expert", _("Expert")) ])
 
+	config.seek = ConfigSubsection()
+	config.seek.selfdefined_13 = ConfigNumber(default=15)
+	config.seek.selfdefined_46 = ConfigNumber(default=60)
+	config.seek.selfdefined_79 = ConfigNumber(default=300)
+
+	config.seek.speeds_forward = ConfigSet(default=[2, 4, 8, 16, 32, 64, 128], choices=[2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128])
+	config.seek.speeds_backward = ConfigSet(default=[2, 4, 8, 16, 32, 64, 128], choices=[1, 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128])
+	config.seek.speeds_slowmotion = ConfigSet(default=[2, 4, 8], choices=[2, 4, 6, 8, 12, 16, 25])
+
+	config.seek.enter_forward = ConfigSelection(default = "2", choices = ["2", "4", "6", "8", "12", "16", "24", "32", "48", "64", "96", "128"])
+	config.seek.enter_backward = ConfigSelection(default = "1", choices = ["1", "2", "4", "6", "8", "12", "16", "24", "32", "48", "64", "96", "128"])
+
+	def updateEnterForward(configElement):
+		if not configElement.value:
+			configElement.value = [2]
+		updateChoices(config.seek.enter_forward, configElement.value)
+	config.seek.speeds_forward.addNotifier(updateEnterForward, immediate_feedback = False)
+
+	def updateEnterBackward(configElement):
+		if not configElement.value:
+			configElement.value = [2]
+		updateChoices(config.seek.enter_backward, configElement.value)
+	config.seek.speeds_backward.addNotifier(updateEnterBackward, immediate_feedback = False)
+
+
 def FinalInitUsageConfig():
+	try:
+		usage_old = config.usage.dict().copy()
+	except KeyError:
+		usage_old = { }
+
+	try:
+		seek_old = config.seek.dict().copy()
+	except KeyError:
+		seek_old = { }
+
+	config.seek.on_pause = ConfigSelection(default = "play", choices = [
+		("play", _("Play")),
+		("step", _("Singlestep (GOP)")),
+		("last", _("Last speed")) ])
+
 	inactivity_shutdown_choices = [ ("never", _("disabled")) ]
 	for i in range(1,6):
 		inactivity_shutdown_choices.extend([("%d" % i, ngettext("%(num)d hour", "%(num)d hours",i) % {"num" : i})])
@@ -85,56 +125,9 @@ def FinalInitUsageConfig():
 
 	config.usage.load_length_of_movies_in_moviellist = ConfigYesNo(default = True)
 
-	def TunerTypePriorityOrderChanged(configElement):
-		setTunerTypePriorityOrder(int(configElement.value))
-	config.usage.alternatives_priority.addNotifier(TunerTypePriorityOrderChanged, immediate_feedback=False)
-
-	def setHDDStandby(configElement):
-		for hdd in harddiskmanager.HDDList():
-			hdd[1].setIdleTime(int(configElement.value))
-	config.usage.hdd_standby.addNotifier(setHDDStandby, immediate_feedback=False)
-
-	def set12VOutput(configElement):
-		if configElement.value == "on":
-			Misc_Options.getInstance().set_12V_output(1)
-		elif configElement.value == "off":
-			Misc_Options.getInstance().set_12V_output(0)
-	config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
-
 	SystemInfo["12V_Output"] = Misc_Options.getInstance().detected_12V_output()
 
-	config.seek = ConfigSubsection()
-	config.seek.selfdefined_13 = ConfigNumber(default=15)
-	config.seek.selfdefined_46 = ConfigNumber(default=60)
-	config.seek.selfdefined_79 = ConfigNumber(default=300)
-
-	config.seek.speeds_forward = ConfigSet(default=[2, 4, 8, 16, 32, 64, 128], choices=[2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128])
-	config.seek.speeds_backward = ConfigSet(default=[2, 4, 8, 16, 32, 64, 128], choices=[1, 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128])
-	config.seek.speeds_slowmotion = ConfigSet(default=[2, 4, 8], choices=[2, 4, 6, 8, 12, 16, 25])
-
-	config.seek.enter_forward = ConfigSelection(default = "2", choices = ["2", "4", "6", "8", "12", "16", "24", "32", "48", "64", "96", "128"])
-	config.seek.enter_backward = ConfigSelection(default = "1", choices = ["1", "2", "4", "6", "8", "12", "16", "24", "32", "48", "64", "96", "128"])
-
-	config.seek.on_pause = ConfigSelection(default = "play", choices = [
-		("play", _("Play")),
-		("step", _("Singlestep (GOP)")),
-		("last", _("Last speed")) ])
-
 	config.usage.timerlist_finished_timer_position = ConfigSelection(default = "beginning", choices = [("beginning", _("at beginning")), ("end", _("at end"))])
-
-	def updateEnterForward(configElement):
-		if not configElement.value:
-			configElement.value = [2]
-		updateChoices(config.seek.enter_forward, configElement.value)
-
-	config.seek.speeds_forward.addNotifier(updateEnterForward, immediate_feedback = False)
-
-	def updateEnterBackward(configElement):
-		if not configElement.value:
-			configElement.value = [2]
-		updateChoices(config.seek.enter_backward, configElement.value)
-
-	config.seek.speeds_backward.addNotifier(updateEnterBackward, immediate_feedback = False)
 
 	config.usage.text_subtitle_presentation = ConfigSelection(default = "black box", choices = [("black box", _("black box")), ("drop-shadow", _("drop-shadow"))])
 
@@ -162,6 +155,45 @@ def FinalInitUsageConfig():
 
 	config.usage.configselection_showrecordings = ConfigYesNo(default=False)
 	config.usage.standby_zaptimer_wakeup = ConfigYesNo(default=True)
+
+	seek = config.seek.dict()
+	for (key, value) in seek_old.items():
+		value_old = value.value
+		configEntry = seek[key]
+		value_new = configEntry.value
+		if value_old != value_new:
+			configEntry.value = value_old
+		configEntry._ConfigElement__notifiers = value._ConfigElement__notifiers
+		configEntry._ConfigElement__notifiers_final = value._ConfigElement__notifiers_final
+
+	usage = config.usage.dict()
+	for (key, value) in usage_old.items():
+		value_old = value.value
+		configEntry = usage[key]
+		value_new = configEntry.value
+		if value_old != value_new:
+			configEntry.value = value_old
+		configEntry._ConfigElement__notifiers = value._ConfigElement__notifiers
+		configEntry._ConfigElement__notifiers_final = value._ConfigElement__notifiers_final
+
+	if usage_old.get("alternatives_priority", None) == None:
+		def TunerTypePriorityOrderChanged(configElement):
+			setTunerTypePriorityOrder(int(configElement.value))
+		config.usage.alternatives_priority.addNotifier(TunerTypePriorityOrderChanged, immediate_feedback=False)
+
+	if usage_old.get("hdd_standby", None) == None:
+		def setHDDStandby(configElement):
+			for hdd in harddiskmanager.HDDList():
+				hdd[1].setIdleTime(int(configElement.value))
+		config.usage.hdd_standby.addNotifier(setHDDStandby, immediate_feedback=False)
+
+	if usage_old.get("output_12V", None) == None:
+		def set12VOutput(configElement):
+			if configElement.value == "on":
+				Misc_Options.getInstance().set_12V_output(1)
+			elif configElement.value == "off":
+				Misc_Options.getInstance().set_12V_output(0)
+		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
 
 def updateChoices(sel, choices):
 	if choices:

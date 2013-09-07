@@ -169,7 +169,6 @@ class BackupSelection(Screen):
 		config.plugins.configurationbackup.backupdirs.value = self.selectedFiles
 		config.plugins.configurationbackup.backupdirs.save()
 		config.plugins.configurationbackup.save()
-		config.save()
 		self.close(None)
 
 	def exit(self):

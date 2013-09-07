@@ -131,6 +131,8 @@ config.misc.epgcache_outdated_timespan = ConfigInteger(default = 0, limits=(0,96
 config.misc.record_io_buffer = ConfigInteger(default=192512*5)
 config.misc.record_dmx_buffer = ConfigInteger(default=1024*1024)
 config.misc.prev_wakeup_time = ConfigInteger(default=0)
+#config.misc.prev_wakeup_time_type is only valid when wakeup_time is not 0
+config.misc.prev_wakeup_time_type = ConfigInteger(default=0) # 0 = RecordTimer, 1 = SleepTimer, 2 = Plugin
 config.misc.use_legacy_virtual_subservices_detection = ConfigYesNo(default=False)
 
 def setEPGCachePath(configElement):
@@ -631,6 +633,8 @@ def runScreenTest():
 		setFPWakeuptime(wptime)
 		recordTimerWakeupAuto = startTime[1] == 0 and startTime[2]
 		config.misc.prev_wakeup_time.value = startTime[0]
+		config.misc.prev_wakeup_time_type.value = startTime[1]
+		config.misc.prev_wakeup_time_type.save()
 	else:
 		config.misc.prev_wakeup_time.value = 0
 	config.misc.prev_wakeup_time.save()

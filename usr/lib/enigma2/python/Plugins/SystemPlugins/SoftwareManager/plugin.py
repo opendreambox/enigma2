@@ -252,7 +252,6 @@ class UpdatePluginMenu(Screen):
 		self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs.value )
 		config.plugins.configurationbackup.backupdirs.save()
 		config.plugins.configurationbackup.save()
-		config.save()
 		
 	def backuplocation_choosen(self, option):
 		oldpath = config.plugins.configurationbackup.backuplocation.getValue()
@@ -260,7 +259,6 @@ class UpdatePluginMenu(Screen):
 			config.plugins.configurationbackup.backuplocation.value = str(option[1])
 		config.plugins.configurationbackup.backuplocation.save()
 		config.plugins.configurationbackup.save()
-		config.save()
 		newpath = config.plugins.configurationbackup.backuplocation.getValue()
 		if newpath != oldpath:
 			self.createBackupfolders()

@@ -361,6 +361,11 @@ class InfoBarChannelSelection:
 			})
 
 		self.onServiceListRootChanged = []
+		self.onClose.append(self.__delChannelSelectionScreen)
+
+	def __delChannelSelectionScreen(self):
+		self.session.deleteDialog(self.servicelist)
+		self.servicelist = None
 
 	def __onServiceListRootChanged(self, ref):
 		for fnc in self.onServiceListRootChanged:

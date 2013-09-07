@@ -119,6 +119,7 @@ class ServiceScan:
 		self.network = network
 		self.run = 0
 		self.lcd_summary = lcd_summary
+		self.scan = None
 
 	def doRun(self):
 		self.scan = eComponentScan()
@@ -151,12 +152,13 @@ class ServiceScan:
 		self.scanStatusChanged()
 	
 	def execEnd(self):
-		self.scan.statusChanged.get().remove(self.scanStatusChanged)
-		self.scan.newService.get().remove(self.newService)
-		if not self.isDone():
-			print "*** warning *** scan was not finished!"
-		
-		del self.scan
+		if self.scan:
+			self.scan.statusChanged.get().remove(self.scanStatusChanged)
+			self.scan.newService.get().remove(self.newService)
+			if not self.isDone():
+				print "*** warning *** scan was not finished!"
+
+			self.scan = None
 
 	def isDone(self):
 		return self.state == self.Done or self.state == self.Error

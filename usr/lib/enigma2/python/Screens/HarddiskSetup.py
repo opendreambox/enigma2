@@ -67,7 +67,6 @@ def updateVideoDirs(uuid = None):
 	config.movielist.videodirs.value = tmp
 	config.movielist.videodirs.save()
 	config.movielist.save()
-	config.save()
 	configfile.save()
 	print "updateVideoDirs:",config.movielist.videodirs.value
 
@@ -137,7 +136,6 @@ def hddConfirmed(confirmed, stype, hdd, partition = None, callback = None ):
 		if defaultStorageDevice() in UUIDPartitionList: # we initialized the 'current' default storage device
 			config.storage_options.default_device.value = "<undefined>"
 		config.storage.save()
-		config.save()
 		configfile.save()
 	elif stype == HARDDISK_CHECK:
 		deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hdd,partition)
@@ -1283,7 +1281,6 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 				config.storage_options.default_device.save()
 				config.storage_options.save()
 			config.storage.save()
-			config.save()
 			configfile.save()
 			self.setButtons()
 			self.updateList()

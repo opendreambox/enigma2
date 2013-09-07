@@ -1689,7 +1689,6 @@ class ConfigFile:
 			print "unable to load config (%s), assuming defaults..." % str(e)
 
 	def save(self):
-#		config.save()
 		config.saveToFile(self.CONFIG_FILE)
 
 	def __resolveValue(self, pickles, cmap):

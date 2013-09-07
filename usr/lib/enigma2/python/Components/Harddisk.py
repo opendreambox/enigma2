@@ -584,7 +584,10 @@ class Harddisk:
 		self.timer = eTimer()
 		self.timer.callback.append(self.runIdle)
 		self.idle_running = True
-		self.setIdleTime(self.max_idle_time) # kick the idle polling loop
+		try:
+			self.setIdleTime(int(config.usage.hdd_standby.value))
+		except KeyError:
+			self.setIdleTime(self.max_idle_time) # kick the idle polling loop
 
 	def runIdle(self):
 		if not self.max_idle_time:
@@ -1030,7 +1033,6 @@ class HarddiskManager:
 				if not config.storage[uuid]['enabled'].value:
 					del config.storage[uuid]
 					config.storage.save()
-					config.save()
 					print "[removeHotplugPartition] - remove uuid %s from temporary drive add" % (uuid)
 			if p.mountpoint != "/media/hdd":
 				self.partitions.remove(p)
@@ -1083,7 +1085,6 @@ class HarddiskManager:
 					if config.storage.get(p.uuid, None) is not None:
 						del config.storage[p.uuid] #delete old uuid reference entries
 						config.storage.save()
-						config.save()
 			p.updatePartitionInfo()
 		else:
 			forced = True
@@ -1103,7 +1104,6 @@ class HarddiskManager:
 				if config.storage.get(x.uuid, None) is not None:
 					del config.storage[x.uuid] #delete old uuid reference entries
 					config.storage.save()
-					config.save()
 				x.mountpoint = device_mountpoint
 				x.force_mounted = True
 				x.updatePartitionInfo()
@@ -1469,7 +1469,6 @@ class HarddiskManager:
 		config.storage_options.default_device.save()
 		config.storage_options.save()
 		config.storage.save()
-		config.save()
 		configfile.save()
 		print "changeStorageDevice default is now:",config.storage_options.default_device.value
 		return successfully
@@ -1792,7 +1791,6 @@ class HarddiskManager:
 				else:
 					del config.storage[uuid]
 					config.storage.save()
-					config.save()
 		if dev is not None:
 			uuid = self.getPartitionUUID(dev)
 			if uuid is not None:
@@ -1872,7 +1870,6 @@ class HarddiskManager:
 					cfg_uuid["mountpoint"].value = "/media/hdd"
 					config.storage[uuid].save()
 					config.storage.save()
-					config.save()
 					self.modifyFstabEntry("/dev/disk/by-uuid/" + uuid, "/media/hdd", mode = "add_activated")
 					self.storageDeviceChanged(uuid)
 
