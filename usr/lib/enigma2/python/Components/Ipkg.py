@@ -28,6 +28,8 @@ class IpkgComponent:
 	CMD_UPDATE = 3
 	CMD_UPGRADE = 4
 
+	cleanup_package_data = True
+
 	def __init__(self, ipkg = 'opkg'):
 		self.ipkg = ipkg
 		self.cmd = eConsoleAppContainer()
@@ -41,30 +43,31 @@ class IpkgComponent:
 			self.cleanupPackageData()
 
 	def cleanupPackageData(self):
-		list_dirs = [ ]
-		feed_names = [ ]
-		for name in glob("/etc/opkg/*.conf"):
-			f = open(name)
-			for line in f.readlines():
-				try:
-					if line.startswith('lists_dir'):
-						lists_dir = line.split(' ')[2].rstrip('\n\t ')
-						if not lists_dir in list_dirs:
-							list_dirs.append(lists_dir)
-					elif line.startswith('src'):
-						feed_name = line.split(' ')[1]
-						if not feed_name in feed_names:
-							feed_names.append(feed_name)
-				except:
-					print 'IpkgComponent error parsing', name, 'line', line.rstrip('\n\t ')
-			f.close()
-		if not '/var/lib/opkg' in list_dirs:
-			list_dirs.append('/var/lib/opkg')
-		for feed in feed_names:
-			for list_dir in list_dirs:
-				path = list_dir + '/' + feed
-				if erase(path):
-					print 'IpkgComponent erased', path
+		if IpkgComponent.cleanup_package_data:
+			list_dirs = [ ]
+			feed_names = [ ]
+			for name in glob("/etc/opkg/*.conf"):
+				f = open(name)
+				for line in f.readlines():
+					try:
+						if line.startswith('lists_dir'):
+							lists_dir = line.split(' ')[2].rstrip('\n\t ')
+							if not lists_dir in list_dirs:
+								list_dirs.append(lists_dir)
+						elif line.startswith('src'):
+							feed_name = line.split(' ')[1]
+							if not feed_name in feed_names:
+								feed_names.append(feed_name)
+					except:
+						print 'IpkgComponent error parsing', name, 'line', line.rstrip('\n\t ')
+				f.close()
+			if not '/var/lib/opkg' in list_dirs:
+				list_dirs.append('/var/lib/opkg')
+			for feed in feed_names:
+				for list_dir in list_dirs:
+					path = list_dir + '/' + feed
+					if erase(path):
+						print 'IpkgComponent erased', path
 		self.update_done = False
 
 	def setCurrentCommand(self, command = None):

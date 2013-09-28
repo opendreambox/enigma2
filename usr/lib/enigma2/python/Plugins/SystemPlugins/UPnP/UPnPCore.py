@@ -6,6 +6,7 @@ from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.devices.media_renderer import MediaRenderer
 from coherence.upnp.devices.media_server import MediaServer
 from coherence.upnp.devices.media_server_client import MediaServerClient
+from HTMLParser import HTMLParser
 
 class Statics:
 	CONTAINER_ID_ROOT = 0
@@ -32,6 +33,7 @@ class Statics:
 	META_TITLE = 'title'
 	META_TYPE = 'type'
 	META_URI = 'uri'
+	META_COVER_URI = 'cover_uri'
 
 	SORT_TITLE_ASC = "+dc:title"
 	SORT_TITLE_DSC = "+dc:title"
@@ -84,7 +86,6 @@ class ManagedControlPoint(object):
 	def _onMediaRendererRemoved(self, udn):
 		print "[DLNA] MediaRenderer removed: %s" % (udn)
 		if self.__mediaRendererClients.get(udn, None) != None:
-			client = self.__mediaRendererClients[udn]
 			del self.__mediaRendererClients[udn]
 			for fnc in self.onMediaRendererRemoved:
 				fnc(udn)
@@ -110,7 +111,7 @@ class ManagedControlPoint(object):
 		return self.__mediaRendererClients.values()
 
 	def getDeviceName(self, client):
-		return client.device.get_friendly_name().encode( "utf-8" )
+		return Item.ue(client.device.get_friendly_name())
 
 	def shutdown(self):
 		for device in self.__devices:
@@ -118,13 +119,19 @@ class ManagedControlPoint(object):
 		self._controlPoint.shutdown()
 
 class Item(object):
+	htmlparser = HTMLParser()
+
+	@staticmethod
+	def ue(val):
+		return Item.htmlparser.unescape(val).encode("utf-8")
+
 	@staticmethod
 	def getItemType(item):
 		if item != None:
 			if item.__class__.__name__ == MediaServerClient.__name__:
 				return Statics.ITEM_TYPE_SERVER
 
-			itemClass = item.upnp_class.encode( "utf-8" )
+			itemClass = Item.ue(item.upnp_class)
 			if Item.isContainer(item):
 				return Statics.ITEM_TYPE_CONTAINER
 
@@ -145,7 +152,7 @@ class Item(object):
 
 	@staticmethod
 	def getServerName(client):
-		return client.device.get_friendly_name().encode( "utf-8" )
+		return Item.ue(client.device.get_friendly_name())
 
 	'''
 	Returns the title of the current item
@@ -156,7 +163,7 @@ class Item(object):
 			return Item.getServerName(item)
 
 		if item.title != None:
-			return item.title.encode( "utf-8" )
+			return Item.ue(item.title)
 		else:
 			return "<missing title>"
 
@@ -178,10 +185,9 @@ class Item(object):
 	@staticmethod
 	def getItemUriMeta(item):
 		assert not Item.isContainer(item)
-
 		for res in item.res:
-			uri = res.data.encode( "utf-8" )
-			meta = res.protocolInfo.split(":")[2].encode( "utf-8" )
+			uri = Item.ue(res.data)
+			meta = Item.ue(res.protocolInfo.split(":")[2])
 			print "URL: %s\nMeta:%s" %(uri, meta)
 			if uri:
 				return {Statics.META_URI : uri, Statics.META_METATYPE : meta}
@@ -197,7 +203,7 @@ class Item(object):
 	def getAttrOrDefault(instance, attr, default=None):
 		val = getattr(instance, attr, default) or default
 		try:
-			return val.encode( "utf-8" )
+			return Item.ue(val)
 		except:
 			return val
 
@@ -206,6 +212,7 @@ class Item(object):
 		type = Item.getItemType(item)
 		meta = {}
 		metaNA = _('n/a')
+		cover_uri = None
 
 		if type == Statics.ITEM_TYPE_SERVER:
 			meta = {
@@ -214,43 +221,54 @@ class Item(object):
 				}
 
 		elif type == Statics.ITEM_TYPE_CONTAINER:
-				meta = {
-						Statics.META_TYPE : type,
-						Statics.META_TITLE : Item.getAttrOrDefault(item, 'title', metaNA).encode( "utf-8" ),
-						Statics.META_CHILD_COUNT : Item.getItemChildCount(item),
-					}
+			meta = {
+					Statics.META_TYPE : type,
+					Statics.META_TITLE : Item.getAttrOrDefault(item, 'title', metaNA),
+					Statics.META_CHILD_COUNT : Item.getItemChildCount(item),
+				}
 		elif type == Statics.ITEM_TYPE_PICTURE or type == Statics.ITEM_TYPE_VIDEO:
 			for res in item.res:
-				meta = {
-						Statics.META_TYPE : type,
-						Statics.META_METATYPE : res.protocolInfo.split(":")[2].encode( "utf-8" ),
-						Statics.META_TITLE : Item.getAttrOrDefault(item, 'title', metaNA).encode( "utf-8" ),
-						Statics.META_DATE : Item.getAttrOrDefault(item, 'date', metaNA).encode( "utf-8" ),
-						Statics.META_RESOLUTION : Item.getAttrOrDefault(item, 'resolution', metaNA).encode( "utf-8" ),
-						Statics.META_SIZE : Item.getAttrOrDefault(item, 'size', -1),
-						Statics.META_URI : Item.getAttrOrDefault(res, 'data'),
-					}
+				content_format = Item.ue( res.protocolInfo.split(':')[2] )
+				if ( type == Statics.ITEM_TYPE_VIDEO and content_format.startswith("video") ) or type == Statics.ITEM_TYPE_PICTURE:
+					meta = {
+							Statics.META_TYPE : type,
+							Statics.META_METATYPE : content_format,
+							Statics.META_TITLE : Item.getAttrOrDefault(item, 'title', metaNA),
+							Statics.META_DATE : Item.getAttrOrDefault(item, 'date', metaNA),
+							Statics.META_RESOLUTION : Item.getAttrOrDefault(item, 'resolution', metaNA),
+							Statics.META_SIZE : Item.getAttrOrDefault(item, 'size', -1),
+							Statics.META_URI : Item.getAttrOrDefault(res, 'data'),
+						}
+				elif type == Statics.ITEM_TYPE_VIDEO and content_format.startswith("image"):
+					cover_uri = Item.getAttrOrDefault(res, 'data')
+
 				if type == Statics.ITEM_TYPE_PICTURE:
-					meta[Statics.META_ALBUM] = Item.getAttrOrDefault(item, 'album', metaNA).encode( "utf-8" )
+					meta[Statics.META_ALBUM] = Item.getAttrOrDefault(item, 'album', metaNA)
 				elif type == Statics.ITEM_TYPE_VIDEO:
 					meta[Statics.META_ALBUM_ART_URI] = Item.getAttrOrDefault(item, 'albumArtURI')
 
-				return meta
 		elif type == Statics.ITEM_TYPE_AUDIO:
 			for res in item.res:
-				meta = {
-						Statics.META_TYPE : type,
-						Statics.META_METATYPE : res.protocolInfo.split(":")[2].encode( "utf-8" ),
-						Statics.META_TITLE : Item.getAttrOrDefault(item, 'title', metaNA).encode( "utf-8" ),
-						Statics.META_ALBUM : Item.getAttrOrDefault(item, 'album', metaNA).encode( "utf-8" ),
-						Statics.META_ARTIST : Item.getAttrOrDefault(item, 'artist', metaNA).encode( "utf-8" ),
-						Statics.META_GENRE : Item.getAttrOrDefault(item, 'genre', metaNA).encode( "utf-8" ),
-						Statics.META_DURATION : Item.getAttrOrDefault(item, 'duration', "0"),
-						Statics.META_BITRATE : Item.getAttrOrDefault(item, 'bitrate', "0"),
-						Statics.META_SIZE : Item.getAttrOrDefault(item, 'size', -1),
-						Statics.META_ALBUM_ART_URI : Item.getAttrOrDefault(item, 'albumArtURI'),
-						Statics.META_URI : Item.getAttrOrDefault(res, 'data'),
-					}
+				content_format = Item.ue( res.protocolInfo.split(':')[2] )
+				if content_format.startswith("audio"):
+					meta = {
+							Statics.META_TYPE : type,
+							Statics.META_METATYPE : content_format,
+							Statics.META_TITLE : Item.getAttrOrDefault(item, 'title', metaNA),
+							Statics.META_ALBUM : Item.getAttrOrDefault(item, 'album', metaNA),
+							Statics.META_ARTIST : Item.getAttrOrDefault(item, 'artist', metaNA),
+							Statics.META_GENRE : Item.getAttrOrDefault(item, 'genre', metaNA),
+							Statics.META_DURATION : Item.getAttrOrDefault(item, 'duration', "0"),
+							Statics.META_BITRATE : Item.getAttrOrDefault(item, 'bitrate', "0"),
+							Statics.META_SIZE : Item.getAttrOrDefault(item, 'size', -1),
+							Statics.META_ALBUM_ART_URI : Item.getAttrOrDefault(item, 'albumArtURI'),
+							Statics.META_URI : Item.getAttrOrDefault(res, 'data'),
+						}
+				elif content_format.startswith("image"):
+					cover_uri = Item.getAttrOrDefault(res, 'data')
+		if cover_uri != None:
+			meta[Statics.META_COVER_URI] = cover_uri
+
 		return meta
 
 	@staticmethod

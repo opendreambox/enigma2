@@ -939,6 +939,7 @@ class PluginManager(Screen, DreamInfoHandler):
 
 	def runUpgrade(self, result):
 		if result:
+			IpkgComponent.cleanup_package_data = False
 			if self.rebootRequired:
 				quitMainloop(7)
 			else:
@@ -1503,6 +1504,7 @@ class UpdatePlugin(Screen):
 
 	def runUpgrade(self, result):
 		if result:
+			IpkgComponent.cleanup_package_data = False
 			if self.rebootRequired:
 				quitMainloop(7)
 			else:

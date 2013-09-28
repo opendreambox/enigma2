@@ -78,6 +78,7 @@ class eDVBServicePMTHandler: public sigc::trackable
 	ePtr<eDVBService> m_service;
 
 	static std::map<uint32_t, uint8_t> sdt_versions;
+	static bool ddp_support;
 
 	int m_last_channel_state;
 	eDVBCAService *m_ca_servicePtr;
@@ -119,6 +120,7 @@ private:
 	eDVBServicePMTHandler();
 public:
 #endif
+	static void setDDPSupport(bool b) { ddp_support = b; }
 
 	enum
 	{
@@ -152,7 +154,7 @@ public:
 	{
 		int pid,
 		    rdsPid; // hack for some radio services which transmit radiotext on different pid (i.e. harmony fm, HIT RADIO FFH, ...)
-		enum { atMPEG, atAC3, atDTS, atAAC, atAACHE, atLPCM, atDTSHD };
+		enum { atMPEG, atAC3, atDTS, atAAC, atAACHE, atLPCM, atDTSHD, atDDP };
 		int type; // mpeg2, ac3, dts, ...
 		
 		int component_tag;

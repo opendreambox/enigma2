@@ -790,6 +790,12 @@ class InfoBarRdsDecoder:
 		self.onLayoutFinish.append(self.rds_display.show)
 		self.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
 
+		self.onClose.append(self.__delRdsInfoDisplayScreen)
+
+	def __delRdsInfoDisplayScreen(self):
+		self.session.deleteDialog(self.rds_display)
+		self.rds_display = None
+
 	def RassInteractivePossibilityChanged(self, state):
 		self["RdsActions"].setEnabled(state)
 

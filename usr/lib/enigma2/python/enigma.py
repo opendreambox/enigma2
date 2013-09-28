@@ -2456,6 +2456,7 @@ class eDVBServicePMTHandler(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
+    setDDPSupport = staticmethod(_enigma.eDVBServicePMTHandler_setDDPSupport)
     eventNoResources = _enigma.eDVBServicePMTHandler_eventNoResources
     eventTuneFailed = _enigma.eDVBServicePMTHandler_eventTuneFailed
     eventNoPAT = _enigma.eDVBServicePMTHandler_eventNoPAT
@@ -2471,6 +2472,10 @@ class eDVBServicePMTHandler(object):
     __swig_destroy__ = _enigma.delete_eDVBServicePMTHandler
 eDVBServicePMTHandler_swigregister = _enigma.eDVBServicePMTHandler_swigregister
 eDVBServicePMTHandler_swigregister(eDVBServicePMTHandler)
+
+def eDVBServicePMTHandler_setDDPSupport(*args):
+  return _enigma.eDVBServicePMTHandler_setDDPSupport(*args)
+eDVBServicePMTHandler_setDDPSupport = _enigma.eDVBServicePMTHandler_setDDPSupport
 
 class eComponentScan(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

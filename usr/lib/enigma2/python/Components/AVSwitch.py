@@ -1,6 +1,6 @@
 from config import config, ConfigSlider, ConfigSelection, ConfigYesNo, \
 	ConfigEnableDisable, ConfigSubsection, ConfigBoolean, ConfigSelectionNumber, ConfigNothing, NoSave
-from enigma import eAVSwitch, getDesktop
+from enigma import eAVSwitch, getDesktop, eDVBServicePMTHandler
 from SystemInfo import SystemInfo
 from os import path as os_path
 
@@ -158,6 +158,22 @@ def InitAVSwitch():
 		can_osd_alpha = open("/proc/stb/video/alpha", "r") and True or False
 	except:
 		can_osd_alpha = False
+
+	ac3plus_support = False
+
+	try:
+		if open("/proc/stb/audio/ac3plus_choices", "r").read()[:-1].find("force_ac3") != -1:
+			eDVBServicePMTHandler.setDDPSupport(True)
+			ac3plus_support = True
+	except:
+		pass
+
+	SystemInfo["SupportsAC3Plus"] = ac3plus_support
+	if ac3plus_support:
+		def setAC3PlusConvert(configElement):
+			open("/proc/stb/audio/ac3plus", "w").write(configElement.value)
+		config.av.convert_ac3plus = ConfigSelection(choices = [ ("use_hdmi_caps",  _("controlled by HDMI")), ("force_ac3", _("always")) ], default = "use_hdmi_caps")
+		config.av.convert_ac3plus.addNotifier(setAC3PlusConvert)
 
 	SystemInfo["CanChangeOsdAlpha"] = can_osd_alpha
 

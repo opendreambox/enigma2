@@ -81,7 +81,6 @@ public:
 class eSingleLock
 {
 	pthread_mutex_t m_lock;
-	eSingleLock(eSingleLock &);
 public:
 	eSingleLock(bool recursive=false)
 	{

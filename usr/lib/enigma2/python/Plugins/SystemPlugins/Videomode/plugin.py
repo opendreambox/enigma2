@@ -98,6 +98,8 @@ class VideoSetup(Screen, ConfigListScreen):
 				getConfigListEntry(_("General AC3 Delay"), config.av.generalAC3delay),
 				getConfigListEntry(_("General PCM Delay"), config.av.generalPCMdelay)
 			))
+			if SystemInfo["SupportsAC3Plus"]:
+				self.list.append(getConfigListEntry(_("Convert AC3+ to AC3"), config.av.convert_ac3plus))
 
 		if SystemInfo["CanChangeOsdAlpha"]:
 			self.list.append(getConfigListEntry(_("OSD visibility"), config.av.osd_alpha))
