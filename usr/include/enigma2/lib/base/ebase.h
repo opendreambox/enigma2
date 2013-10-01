@@ -18,6 +18,7 @@
 #define E_UNUSED(x)	(void)x;
 
 class eMainloop;
+class MainloopList;
 
 extern eMainloop* eApp;
 
@@ -144,6 +145,7 @@ static inline int64_t timeout_msec ( const timespec & orig, const timespec &now 
 
 #endif
 
+class MainloopList;
 class eSocketNotifier;
 class eTimer;
 class PSignal;
@@ -161,6 +163,7 @@ class eMainloop
 	virtual void addTimer(eTimer* e) = 0;
 	virtual void removeTimer(eTimer* e) = 0;
 
+	ePtr<MainloopList> m_ml_list;
 protected:
 	int m_is_idle;
 	int m_idle_count;
@@ -204,6 +207,7 @@ private:
 	int fd;
 	int state;
 	int requested;		// requested events (POLLIN, ...)
+	ePtr<MainloopList> m_ml_list;
 public:
 	/**
 	 * \brief Constructs a eSocketNotifier.
@@ -244,6 +248,7 @@ class eTimer: public iObject
 	int interval;
 	bool bSingleShot;
 	bool bActive;
+	ePtr<MainloopList> m_ml_list;
 protected:
 	eMainloop *context;
 	eTimer(eMainloop *context);
@@ -270,6 +275,7 @@ public:
 	void changeInterval(int msek);
 	void startLongTimer(int seconds);
 	bool operator<(const eTimer& t) const { return nextActivation < t.nextActivation; }
+
 	eSmartPtrList<iObject> m_clients;
 };
 

@@ -70,10 +70,11 @@ class Standby(Screen):
 	def __onClose(self):
 		global inStandby
 		inStandby = None
-		if self.prev_running_service:
-			self.session.nav.playService(self.prev_running_service)
-		elif self.paused_service:
-			self.paused_service.unPauseService()
+		if not self.session.shutdown:
+			if self.prev_running_service:
+				self.session.nav.playService(self.prev_running_service)
+			elif self.paused_service:
+				self.paused_service.unPauseService()
 		self.session.screen["Standby"].boolean = False
 		globalActionMap.setEnabled(True)
 

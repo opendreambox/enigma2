@@ -268,6 +268,8 @@ class Session:
 
 		self.screen = SessionGlobals(self)
 
+		self.shutdown = False
+
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_SESSIONSTART):
 			p(reason=0, session=self)
 
@@ -597,6 +599,7 @@ def runScreenTest():
 	profile_final()
 	runReactor()
 
+	session.shutdown = True
 	while session.current_dialog:
 		if not isinstance(session.current_dialog, Screens.InfoBar.InfoBar):
 			session.current_dialog.callback = None

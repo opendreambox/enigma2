@@ -8,6 +8,7 @@ from Tools import Notifications
 from Tools.Directories import resolveFilename, SCOPE_CONFIG
 from enigma import eTimer
 import time
+from os import fsync
 
 TYPE_SERVICE = "SERVICE"
 TYPE_BOUQUETSERVICE = "BOUQUETSERVICE"
@@ -261,7 +262,9 @@ class ParentalControl:
 			#This is the reason for the change in self.whitelist and self.blacklist
 			if TYPE_SERVICE in sType or TYPE_BOUQUET in sType:
 				file.write(str(sService) + "\n")
-		file.close
+		file.flush()
+		fsync(file.fileno())
+		file.close()
 
 	def openListFromFile(self,sWhichList):
 		#Replaces openWhiteList and openBlackList: 
@@ -278,8 +281,8 @@ class ParentalControl:
 			for x in lines:
 				sPlain = x.strip()
 				self.serviceMethodWrapper(sPlain, self.addServiceToList, vList)
-			file.close
-		except:
+			file.close()
+		except IOError:
 			pass
 	
 	def addServiceToList(self, service, type, vList):

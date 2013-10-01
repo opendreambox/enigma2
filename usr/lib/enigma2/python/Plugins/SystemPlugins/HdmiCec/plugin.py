@@ -30,14 +30,18 @@ class Cec(object):
 		config.misc.standbyCounter.addNotifier(self._onStandby, initial_call = False)
 		hdmi_cec.instance.receivedStandby.get().append(self.__receivedStandby)
 		hdmi_cec.instance.isNowActive.get().append(self.__receivedNowActive)
+		self.idle_to_standby = False
 
 	def powerOn(self):
 		if config.plugins.cec.sendpower.value:
-			print "[Cec] power on"
-			hdmi_cec.otp_source_enable()
+			if self.session.shutdown:
+				self.idle_to_standby = True
+			else:
+				print "[Cec] power on"
+				hdmi_cec.otp_source_enable()
 
 	def powerOff(self):
-		if config.plugins.cec.sendpower.value:
+		if config.plugins.cec.sendpower.value and not self.idle_to_standby:
 			print "[Cec] power off"
 			hdmi_cec.ss_standby()
 
