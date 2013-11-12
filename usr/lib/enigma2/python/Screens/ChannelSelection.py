@@ -167,6 +167,7 @@ class ChannelContextMenu(Screen):
 						append_when_current_valid(current, menu, (_("remove all new found flags"), self.removeAllNewFoundFlags), level = 0)
 				if inBouquet:
 					append_when_current_valid(current, menu, (_("remove entry"), self.removeCurrentService), level = 0)
+					append_when_current_valid(current, menu, (_("rename entry"), self.renameSelectedEntry), level = 0)
 				if current_root and current_root.getPath().find("flags == %d" %(FLAG_SERVICE_NEW_FOUND)) != -1:
 					append_when_current_valid(current, menu, (_("remove new found flag"), self.removeNewFoundFlag), level = 0)
 				if isPlayable and SystemInfo.get("NumVideoDecoders", 1) > 1 and not isinstance(self.csel, ChannelSelectionRadio):
@@ -175,6 +176,7 @@ class ChannelContextMenu(Screen):
 			else:
 					menu.append(ChoiceEntryComponent(text = (_("add bouquet"), self.showBouquetInputBox)))
 					append_when_current_valid(current, menu, (_("remove entry"), self.removeBouquet), level = 0)
+					append_when_current_valid(current, menu, (_("rename entry"), self.renameSelectedEntry), level = 0)
 
 		if inBouquet: # current list is editable?
 			if csel.bouquet_mark_edit == OFF:
@@ -329,6 +331,17 @@ class ChannelContextMenu(Screen):
 		self.csel.toggleMoveMode()
 		self.close()
 
+	def renameSelectedEntry(self):
+		cur = self.csel.getCurrentSelection()
+		eServiceCenterInstance = eServiceCenter.getInstance()
+		info = eServiceCenterInstance.info(cur)
+		name = info and info.getName(cur) or ""
+		#remove short name brakets
+		name.replace('\xc2\x86', '').replace('\xc2\x87', '')
+		if name:
+			self.session.openWithCallback(self.csel.renameEntry, InputBox, title=_("Please enter a new name:"), text=name, maxSize=False, visible_width = 56, type=Input.TEXT)
+		self.close()
+
 	def bouquetMarkStart(self):
 		self.csel.startMarkedEdit(EDIT_BOUQUET)
 		self.close()
@@ -470,6 +483,25 @@ class ChannelSelectionEdit:
 			else:
 				name += '_'
 		return name
+
+	def renameEntry(self, name):
+		cur = self.servicelist.getCurrent()
+		bouquet = self.getMutableList()
+		if bouquet:
+			idx = self.servicelist.getCurrentIndex()
+			if cur.flags & eServiceReference.mustDescent: # bouquet or service with alternatives
+				mutableList = self.getMutableList(cur)
+				mutableList.setListName(name)
+				mutableList.flushChanges()
+			cur.setName(name)
+			self.servicelist.addService(cur, True) # add the new entry above the current position
+			self.servicelist.removeCurrent()
+			if not self.servicelist.atEnd():
+				self.servicelist.moveUp()
+			bouquet.removeService(cur)
+			bouquet.addService(cur)
+			bouquet.moveService(cur, idx)
+			bouquet.flushChanges()
 
 	def addMarker(self, name):
 		current = self.servicelist.getCurrent()

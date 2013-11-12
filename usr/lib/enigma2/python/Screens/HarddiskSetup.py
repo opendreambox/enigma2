@@ -71,23 +71,23 @@ def updateVideoDirs(uuid = None):
 	print "updateVideoDirs:",config.movielist.videodirs.value
 
 def doFstabUpgrade(uuid, path, mp, callConfirmApply, applyCallback = None, answer = None, selection = None):
-	print "[doFstabUpgrade] - Removing hard mount entry from fstab.",path, mp
+	print "[doFstabUpgrade] - Removing hard mount entry from fstab.",path, mp, answer, selection
 	partitionPath = path
 	uuidpartitionPath = "/dev/disk/by-uuid/" + uuid
 	mountpath = mp
 	if harddiskmanager.isPartitionpathFsTabMount(uuid,mountpath):
 		harddiskmanager.unmountPartitionbyMountpoint(mountpath)
-		harddiskmanager.modifyFstabEntry(partitionPath, mountpath, mode = "add_deactivated")
+		harddiskmanager.modifyFstabEntry(partitionPath, mountpath, mode = "remove")
 	if harddiskmanager.isUUIDpathFsTabMount(uuid,mountpath):
 		harddiskmanager.unmountPartitionbyMountpoint(mountpath)
-		harddiskmanager.modifyFstabEntry(uuidpartitionPath, mountpath, mode = "add_deactivated")
+		harddiskmanager.modifyFstabEntry(uuidpartitionPath, mountpath, mode = "remove")
 	if mountpath != "/media/hdd":
 		if harddiskmanager.isPartitionpathFsTabMount(uuid,"/media/hdd"):
 			harddiskmanager.unmountPartitionbyMountpoint("/media/hdd")
-			harddiskmanager.modifyFstabEntry(partitionPath, "/media/hdd", mode = "add_deactivated")
+			harddiskmanager.modifyFstabEntry(partitionPath, "/media/hdd", mode = "remove")
 		if harddiskmanager.isUUIDpathFsTabMount(uuid,"/media/hdd"):
 			harddiskmanager.unmountPartitionbyMountpoint("/media/hdd")
-			harddiskmanager.modifyFstabEntry(uuidpartitionPath, "/media/hdd", mode = "add_deactivated")
+			harddiskmanager.modifyFstabEntry(uuidpartitionPath, "/media/hdd", mode = "remove")
 
 	if applyCallback is not None:
 		if harddiskmanager.get_fstab_mountstate(partitionPath, mountpath) == 'auto' or harddiskmanager.get_fstab_mountstate(uuidpartitionPath, mountpath) == 'auto' \
@@ -401,6 +401,8 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 					uuid_cfg = config.storage.get(self.UUID, None)
 					if uuid_cfg is not None:
 						if action in ("mount_default", "mount_only"):
+							if self.oldMountpath and self.oldMountpath != "":
+								harddiskmanager.modifyFstabEntry(self.uuidPath, self.oldMountpath, mode = "remove")
 							harddiskmanager.modifyFstabEntry(self.uuidPath, uuid_cfg['mountpoint'].value, mode = "add_activated")
 						updateVideoDirs(self.UUID)
 				else:

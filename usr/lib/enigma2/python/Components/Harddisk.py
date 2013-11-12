@@ -956,7 +956,7 @@ class HarddiskManager:
 				if src == partitionPath and dst == mountpoint:
 					if mode == 'remove':
 						continue
-					opts = set(mntops.split(',')) ^ { 'auto', 'noauto' }
+					opts = set(mntops.split(',')) - { 'auto', 'noauto' }
 					opts.add(newopt)
 					mntops = ','.join(opts)
 					output.append('\t'.join([src, dst, vfstype, mntops, freq, passno]))
@@ -1100,6 +1100,9 @@ class HarddiskManager:
 				p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = forced, device = device)
 				self.partitions.append(p)
 				self.on_partition_list_change("add", p)
+				cfg_uuid = config.storage.get(uuid, None)
+				if cfg_uuid is not None:
+					self.storageDeviceChanged(uuid)
 			else:	# found old partition entry
 				if config.storage.get(x.uuid, None) is not None:
 					del config.storage[x.uuid] #delete old uuid reference entries
@@ -1318,7 +1321,7 @@ class HarddiskManager:
 	def changeStorageDevice(self, uuid = None, action = None , mountData = None ):
 		# mountData should be [oldenable,oldmountpath, newenable,newmountpath]
 		print "[changeStorageDevice] uuid:'%s' - action:'%s' - mountData:'%s'" %(uuid, action, mountData)
-		currentDefaultStorageUUID = config.storage_options.default_device.value
+		oldcurrentDefaultStorageUUID = currentDefaultStorageUUID = config.storage_options.default_device.value
 		print "[changeStorageDevice]: currentDefaultStorageUUID:",currentDefaultStorageUUID
 		successfully = False
 		def_mp = "/media/hdd"
@@ -1384,10 +1387,6 @@ class HarddiskManager:
 									if path.exists(resolveFilename(SCOPE_HDD)):
 										successfully = True
 										config.storage_options.default_device.value = uuid
-										if new_default_cfg is not None:
-											new_default_cfg.save()
-										if cur_default_cfg is not None:
-											cur_default_cfg.save()
 		if action == "mount_only":
 			new_default = self.getPartitionbyUUID(uuid)
 			new_default_cfg = config.storage.get(uuid, None)
@@ -1426,7 +1425,6 @@ class HarddiskManager:
 							successfully = True
 							if uuid == currentDefaultStorageUUID:
 								config.storage_options.default_device.value = "<undefined>"
-							new_default_cfg.save()
 		if action == "unmount":
 			new_default = self.getPartitionbyUUID(uuid)
 			new_default_cfg = config.storage.get(uuid, None)
@@ -1450,23 +1448,54 @@ class HarddiskManager:
 					self.setupConfigEntries(initial_call = False, dev = new_default_dev)
 					if path.exists(old_new_default_mp) and not self.isMount(old_new_default_mp):
 						successfully = True
-						new_default_cfg.save()
 						if uuid == currentDefaultStorageUUID:
 							config.storage_options.default_device.value = "<undefined>"
 		if not successfully:
-			print "<< not successfully >>"
+			print "[changeStorageDevice]: << not successfully >>"
 			if cur_default_cfg is not None:
 				cur_default_cfg["mountpoint"].value = old_cur_default_mp
 				cur_default_cfg["enabled"].value = old_cur_default_enabled
-				cur_default_cfg.save()
 				if currentDefaultStorageUUID != "<undefined>":
 					self.storageDeviceChanged(currentDefaultStorageUUID)
 			if new_default_cfg is not None:
 				new_default_cfg["mountpoint"].value = old_new_default_mp
 				new_default_cfg["enabled"].value = old_new_default_enabled
-				new_default_cfg.save()
 				self.storageDeviceChanged(uuid)
-		config.storage_options.default_device.save()
+		else:
+			print "[changeStorageDevice]: successfully, verifying fstab entries"
+			cur_defaultPart = new_defaultPart = None
+			if action == "mount_default":
+				if (cur_default_dev is not None and new_default_dev is not None):
+					cur_defaultPart = self.getPartitionbyDevice(cur_default_dev)
+					new_defaultPart = self.getPartitionbyDevice(new_default_dev)
+					if cur_defaultPart is not None:
+						devpath = "/dev/disk/by-uuid/" + cur_defaultPart.uuid
+						if self.is_fstab_mountpoint(devpath, "/media/hdd"):
+							self.modifyFstabEntry(devpath, "/media/hdd", mode = "remove")
+						if not self.is_fstab_mountpoint(devpath, cur_default_newmp):
+							self.modifyFstabEntry(devpath, cur_default_newmp, mode = "add_activated")
+					if new_defaultPart is not None:
+						if old_new_default_mp != "":
+							devpath = "/dev/disk/by-uuid/" + new_defaultPart.uuid
+							if self.is_fstab_mountpoint(devpath, old_new_default_mp):
+								self.modifyFstabEntry(devpath, old_new_default_mp, mode = "remove")
+				if (cur_default_dev is None and new_default_dev is not None):
+					new_defaultPart = self.getPartitionbyDevice(new_default_dev)
+					if (new_defaultPart is not None and cur_default is None):
+						devpath = "/dev/disk/by-uuid/" + oldcurrentDefaultStorageUUID
+						if self.is_fstab_mountpoint(devpath, old_cur_default_mp):
+							self.modifyFstabEntry(devpath, old_cur_default_mp, mode = "remove")
+						if old_new_default_mp != "":
+							devpath = "/dev/disk/by-uuid/" + currentDefaultStorageUUID
+							if self.is_fstab_mountpoint(devpath, old_new_default_mp):
+								self.modifyFstabEntry(devpath, old_new_default_mp, mode = "remove")
+							devpath = "/dev/disk/by-uuid/" + config.storage_options.default_device.value
+							if self.is_fstab_mountpoint(devpath, old_new_default_mp):
+								self.modifyFstabEntry(devpath, old_new_default_mp, mode = "remove")
+						if cur_default_newmp != "":
+							devpath = "/dev/disk/by-uuid/" + oldcurrentDefaultStorageUUID
+							if not self.is_fstab_mountpoint(devpath, cur_default_newmp):
+								self.modifyFstabEntry(devpath, cur_default_newmp, mode = "add_activated")
 		config.storage_options.save()
 		config.storage.save()
 		configfile.save()
@@ -1860,7 +1889,7 @@ class HarddiskManager:
 		if tmpmount is not None and tmpmount != "/media/hdd":
 			isManualFstabMount = True
 		if not isManualFstabMount:
-			if not self.inside_mountpoint("/media/hdd") and not path.islink("/media/hdd") and not self.isPartitionpathFsTabMount(uuid, "/media/hdd"):
+			if not path.islink("/media/hdd") and not self.isPartitionpathFsTabMount(uuid, "/media/hdd"):
 				print "configureUuidAsDefault: using found %s as default storage device" % device
 				config.storage_options.default_device.value = uuid
 				config.storage_options.save()
@@ -1868,10 +1897,10 @@ class HarddiskManager:
 				if cfg_uuid is not None and not cfg_uuid["enabled"].value:
 					cfg_uuid["enabled"].value = True
 					cfg_uuid["mountpoint"].value = "/media/hdd"
-					config.storage[uuid].save()
 					config.storage.save()
 					self.modifyFstabEntry("/dev/disk/by-uuid/" + uuid, "/media/hdd", mode = "add_activated")
 					self.storageDeviceChanged(uuid)
+				configfile.save()
 
 	def isInitializedByEnigma2(self, hdd):
 		isInitializedByEnigma2 = False
@@ -1892,11 +1921,13 @@ class HarddiskManager:
 		return isInitializedByEnigma2,device,uuid
 
 	def verifyInstalledStorageDevices(self):
-		if config.storage_options.default_device.value == "<undefined>" and self.HDDCount() == 1 and not self.HDDEnabledCount(): #only one installed and unconfigured device
+		print "verifyInstalledStorageDevices"
+		if self.HDDCount() == 1 and not self.HDDEnabledCount(): #only one installed and unconfigured device
 			hdd = self.hdd[0]
 			isInitializedByEnigma2,device,uuid = self.isInitializedByEnigma2(hdd)
-			if isInitializedByEnigma2:
-				self.configureUuidAsDefault(uuid, device)
+			if config.storage_options.default_device.value == "<undefined>" or config.storage_options.default_device.value == uuid:
+				if isInitializedByEnigma2:
+					self.configureUuidAsDefault(uuid, device)
 
 
 harddiskmanager = HarddiskManager()

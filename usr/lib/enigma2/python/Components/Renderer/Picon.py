@@ -4,6 +4,7 @@
 from Renderer import Renderer
 from enigma import ePixmap, eEnv
 from Tools.Directories import fileExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, resolveFilename
+from re import compile
 
 class Picon(Renderer):
 	searchPaths = (eEnv.resolve('${datadir}/enigma2/%s/'),
@@ -15,6 +16,7 @@ class Picon(Renderer):
 		self.path = "picon"
 		self.nameCache = { }
 		self.pngname = ""
+		self.partnerbox = compile('1:0:[0-9a-fA-F]+:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[0-9a-fA-F]+:[0-9a-fA-F]+:[0-9a-fA-F]+:http')
 
 	def applySkin(self, desktop, parent):
 		attribs = [ ]
@@ -33,10 +35,12 @@ class Picon(Renderer):
 			pngname = ""
 			if what[0] != self.CHANGED_CLEAR:
 				sname = self.source.text
-				# strip all after last :
 				pos = sname.rfind(':')
-				if pos != -1:
-					sname = sname[:pos].rstrip(':').replace(':','_')
+				pos2 = sname.rfind(':', 0, pos)
+				if pos - pos2 == 1 or self.partnerbox.match(sname) is not None:
+					sname = sname[:pos2].replace(':', '_')
+				else:
+					sname = sname[:pos].replace(':', '_')
 				pngname = self.nameCache.get(sname, "")
 				if pngname == "":
 					pngname = self.findPicon(sname)

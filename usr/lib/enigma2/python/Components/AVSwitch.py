@@ -162,13 +162,15 @@ def InitAVSwitch():
 	ac3plus_support = False
 
 	try:
-		if open("/proc/stb/audio/ac3plus_choices", "r").read()[:-1].find("force_ac3") != -1:
+		ac3plus_choices = open("/proc/stb/audio/ac3plus_choices", "r").read()
+		if ac3plus_choices.find("use_hdmi_caps") != -1:
 			eDVBServicePMTHandler.setDDPSupport(True)
+		if ac3plus_choices.find("force_ac3") != -1:
 			ac3plus_support = True
 	except:
 		pass
 
-	SystemInfo["SupportsAC3Plus"] = ac3plus_support
+	SystemInfo["SupportsAC3PlusTranscode"] = ac3plus_support
 	if ac3plus_support:
 		def setAC3PlusConvert(configElement):
 			open("/proc/stb/audio/ac3plus", "w").write(configElement.value)

@@ -14,18 +14,21 @@ from skin import TemplatedColors
 import NavigationInstance
 from time import localtime
 from timer import TimerEntry
+from re import compile
 
 class PiconLoader():
 	def __init__(self):
 		self.nameCache = { }
 		config.usage.configselection_piconspath.addNotifier(self.piconPathChanged, initial_call = False)
+		self.partnerbox = compile('1:0:[0-9a-fA-F]+:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[0-9a-fA-F]+:[0-9a-fA-F]+:[0-9a-fA-F]+:http')
 
-	def getPiconFilename(self, sRef):
-		pngname = ""
-		# strip all after last :
+	def getPicon(self, sRef):
 		pos = sRef.rfind(':')
-		if pos != -1:
-			sRef = sRef[:pos].rstrip(':').replace(':','_')
+		pos2 = sRef.rfind(':', 0, pos)
+		if pos - pos2 == 1 or self.partnerbox.match(sRef) is not None:
+			sRef = sRef[:pos2].replace(':', '_')
+		else:
+			sRef = sRef[:pos].replace(':', '_')
 		pngname = self.nameCache.get(sRef, "")
 		if pngname == "":
 			pngname = self.findPicon(sRef)
@@ -37,12 +40,8 @@ class PiconLoader():
 					pngname = self.findPicon("picon_default")
 					if pngname != "":
 						self.nameCache["default"] = pngname
-		return pngname
-
-	def getPicon(self, pngname):
-		filename = self.getPiconFilename(pngname)
-		if fileExists(filename):
-			return LoadPixmap(cached = True, path = filename)
+		if fileExists(pngname):
+			return LoadPixmap(cached = True, path = pngname)
 		else:
 			return None
 
