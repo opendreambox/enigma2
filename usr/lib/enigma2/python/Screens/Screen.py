@@ -126,7 +126,7 @@ class Screen(dict, GUISkin):
 		for name in self.keys():
 			val = self[name]
 			del self[name] # remove from dict
-			if val: # is not a duplicate...
+			if val is not None: # is not a duplicate...
 				val.destroy()
 				for (n, v) in self.items():
 					if v == val: # check if it is the same Element

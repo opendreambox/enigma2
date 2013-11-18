@@ -1340,7 +1340,7 @@ class ConfigLocations(ConfigElement):
 	def isChanged(self):
 		sv = self.saved_value
 		locations = self.locations
-		if val is None and not locations:
+		if sv is None and not locations:
 			return False
 		return self.tostring([x[0] for x in locations]) != sv
 
@@ -1358,6 +1358,7 @@ class ConfigLocations(ConfigElement):
 				x[2] = False
 
 	def refreshMountpoints(self):
+		from Components.Harddisk import harddiskmanager
 		self.mountpoints = [p.mountpoint for p in harddiskmanager.getMountedPartitions() if p.mountpoint != "/"]
 		self.mountpoints.sort(key = lambda x: -len(x))
 
@@ -1714,9 +1715,7 @@ def NoSave(element):
 	return element
 
 configfile = ConfigFile()
-
 configfile.load()
-from Components.Harddisk import harddiskmanager
 
 def getConfigListEntry(*args):
 	assert len(args) > 1, "getConfigListEntry needs a minimum of two arguments (descr, configElement)"

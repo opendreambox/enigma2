@@ -74,15 +74,20 @@ from enigma import runMainloop, eDVBDB, eTimer, quitMainloop, \
 	eEPGCache
 from tools import *
 
+profile("LOAD:resourcemanager")
 from Components.ResourceManager import resourcemanager
+
+profile("LOAD:api")
 from API import api
 
 profile("ImageDefaults")
 from Components.DreamInfoHandler import ImageDefaultInstaller
 ImageDefaultInstaller()
 
-profile("LANGUAGE")
+profile("LOAD:harddiskmanager")
+from Components.Harddisk import harddiskmanager
 
+profile("LANGUAGE")
 from Components.Language import language
 
 def setEPGLanguage():

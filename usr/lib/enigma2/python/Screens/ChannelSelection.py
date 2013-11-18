@@ -487,7 +487,7 @@ class ChannelSelectionEdit:
 	def renameEntry(self, name):
 		cur = self.servicelist.getCurrent()
 		bouquet = self.getMutableList()
-		if bouquet:
+		if bouquet and name is not None:
 			idx = self.servicelist.getCurrentIndex()
 			if cur.flags & eServiceReference.mustDescent: # bouquet or service with alternatives
 				mutableList = self.getMutableList(cur)
