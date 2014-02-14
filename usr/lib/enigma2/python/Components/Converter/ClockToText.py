@@ -31,6 +31,10 @@ class ClockToText(Converter, object):
 			self.fmt_string = type[7:]
 		else:
 			self.type = self.DEFAULT
+		self.short_day = { "Mon": _("Mon"), "Tue": _("Tue"), "Wed": _("Wed"), "Thu": _("Thu"), "Fri": _("Fri"), "Sat": _("Sat"), "Sun": _("Sun") }
+		self.full_day = { "Monday": _("Monday"), "Tuesday": _("Tuesday"), "Wednesday": _("Wednesday"), "Thursday": _("Thursday"), "Friday": _("Friday"), "Saturday": _("Saturday"), "Sunday": _("Sunday") }
+		self.short_month = { "Jan": _("Jan"), "Feb": _("Feb"), "Mar": _("Mar"), "Apr": _("Apr"), "May": _("May"), "Jun": _("Jun"), "Jul": _("Jul"), "Aug": _("Aug"), "Sep": _("Sep"), "Oct": _("Oct"), "Nov": _("Nov"), "Dec": _("Dec") }
+		self.full_month = { "January": _("January"), "February": _("February"), "March": _("March"), "April": _("April"), "May": _("May"), "June": _("June"), "July": _("July"), "August": _("August"), "September": _("September"), "October": _("October"), "November": _("November"), "December": _("December") }
 
 	@cached
 	def getText(self):
@@ -53,16 +57,39 @@ class ClockToText(Converter, object):
 		elif self.type == self.DEFAULT:
 			return "%02d:%02d" % (t.tm_hour, t.tm_min)
 		elif self.type == self.DATE:
-			return strftime("%A %B %d, %Y", t)
+			line = strftime("%A %B")
+			line = line.split(" ")
+			fDay = self.full_day[line[0]]
+			fMonth = self.full_month[line[1]]
+			return "%s %s %s" % (fDay, fMonth, strftime("%d, %Y", t))
+
 		elif self.type == self.FORMAT:
 			spos = self.fmt_string.find('%')
-			if spos > 0:
+			if spos > -1:
 				s1 = self.fmt_string[:spos]
 				s2 = strftime(self.fmt_string[spos:], t)
-				return str(s1+s2)
+				shortDay = self.fmt_string.find('%a')
+				fullDay = self.fmt_string.find('%A')
+				shortMonth = self.fmt_string.find('%b')
+				fullMonth = self.fmt_string.find('%B')
+				line = str(s1+s2)
+				if shortDay > -1:
+					replaces = self.short_day
+					# http://stackoverflow.com/questions/6116978/python-replace-multiple-strings
+					line = reduce(lambda inline, outline: inline.replace(*outline), replaces.iteritems(), line)
+				if fullDay > -1:
+					replaces = self.full_day
+					line = reduce(lambda inline, outline: inline.replace(*outline), replaces.iteritems(), line)
+				if shortMonth > -1:
+					replaces = self.short_month
+					line = reduce(lambda inline, outline: inline.replace(*outline), replaces.iteritems(), line)
+				if fullMonth > -1:
+					replaces = self.full_month
+					line = reduce(lambda inline, outline: inline.replace(*outline), replaces.iteritems(), line)
+				return line
 			else:
 				return strftime(self.fmt_string, t)
-		
+
 		else:
 			return "???"
 

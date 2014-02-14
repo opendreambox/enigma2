@@ -493,15 +493,16 @@ class ChannelSelectionEdit:
 				mutableList = self.getMutableList(cur)
 				mutableList.setListName(name)
 				mutableList.flushChanges()
-			cur.setName(name)
-			self.servicelist.addService(cur, True) # add the new entry above the current position
-			self.servicelist.removeCurrent()
-			if not self.servicelist.atEnd():
-				self.servicelist.moveUp()
-			bouquet.removeService(cur)
-			bouquet.addService(cur)
-			bouquet.moveService(cur, idx)
-			bouquet.flushChanges()
+			else:
+				cur.setName(name)
+				self.servicelist.addService(cur, True) # add the new entry above the current position
+				self.servicelist.removeCurrent()
+				if not self.servicelist.atEnd():
+					self.servicelist.moveUp()
+				bouquet.removeService(cur)
+				bouquet.addService(cur)
+				bouquet.moveService(cur, idx)
+				bouquet.flushChanges()
 
 	def addMarker(self, name):
 		current = self.servicelist.getCurrent()

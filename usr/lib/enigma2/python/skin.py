@@ -121,7 +121,7 @@ def collectAttributes(skinAttributes, node, skin_path_prefix=None, ignore=[]):
 		attrib = a[0]
 		value = a[1]
 
-		if attrib in ("pixmap", "pointer", "seek_pointer", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
+		if attrib in ("pixmap", "pointer", "seek_pointer", "progress_pointer", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
 			value = resolveFilename(SCOPE_SKIN_IMAGE, value, path_prefix=skin_path_prefix)
 
 		if attrib not in ignore:
@@ -258,11 +258,11 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setWrapAround(True)
 		elif attrib == "backlogMode":
 			guiObject.setBacklogMode(True)
-		elif attrib == "pointer" or attrib == "seek_pointer":
+		elif attrib == "pointer" or attrib == "seek_pointer" or attrib == "progress_pointer":
 			(name, pos) = value.split(':')
 			pos = parsePosition(pos, scale)
 			ptr = loadPixmap(name, desktop)
-			guiObject.setPointer({"pointer": 0, "seek_pointer": 1}[attrib], ptr, pos)
+			guiObject.setPointer({"pointer": 0, "seek_pointer": 1, "progress_pointer": 2}[attrib], ptr, pos)
 		elif attrib == 'shadowOffset':
 			guiObject.setShadowOffset(parsePosition(value, scale))
 		elif attrib == 'noWrap':

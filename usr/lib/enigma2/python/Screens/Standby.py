@@ -4,7 +4,7 @@ from Components.config import config
 from Components.AVSwitch import AVSwitch
 from Components.SystemInfo import SystemInfo
 from GlobalActions import globalActionMap
-from enigma import eDVBVolumecontrol
+from enigma import eDVBVolumecontrol, eDVBLocalTimeHandler, eServiceReference
 
 inStandby = None
 
@@ -49,6 +49,8 @@ class Standby(Screen):
 
 		self.paused_service = None
 		self.prev_running_service = None
+		self.connected_time_handler = False
+
 		if self.session.current_dialog:
 			if self.session.current_dialog.ALLOW_SUSPEND == Screen.SUSPEND_STOPS:
 				#get currently playing service reference
@@ -67,9 +69,29 @@ class Standby(Screen):
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
 		self.onClose.append(self.__onClose)
 
+		if config.misc.standbyCounter.value == 0 and config.misc.useTransponderTime.value:
+			th = eDVBLocalTimeHandler.getInstance()
+			if not th.ready():
+				refstr = config.servicelist.lastmode.value == 'tv' and config.tv.lastservice.value or config.radio.lastservice.value
+				ref = eServiceReference(refstr)
+				if ref.valid():
+					th.m_timeUpdated.get().append(self.timeReady)
+					self.connected_time_handler = True
+					self.session.nav.playService(ref)
+
+	def timeReady(self):
+		if self.connected_time_handler:
+			th = eDVBLocalTimeHandler.getInstance()
+			th.m_timeUpdated.get().remove(self.timeReady)
+			self.connected_time_handler = False
+			self.session.nav.stopService()
+
 	def __onClose(self):
 		global inStandby
 		inStandby = None
+
+		self.timeReady()
+
 		if not self.session.shutdown:
 			if self.prev_running_service:
 				self.session.nav.playService(self.prev_running_service)

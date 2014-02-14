@@ -581,6 +581,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		multiplepartmsg = _("Multiple partitions found!")
 		needsattention_msg = _("Needs attention!")
 		systemountpoint_msg = _("Mounted by system!")
+		notmounted_msg = _("Not mounted!")
 
 		if isOfflineStorageDevice:
 			uuid = hd
@@ -699,7 +700,14 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 										except OSError:
 											isReadable = False
 										if isReadable:
-											device_info += " - " + nomountpoint_msg
+											if cfg_uuid is not None and cfg_uuid["enabled"].value:
+												devicepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/device_harddisk-attention.png"))
+												if hd.isRemovable:
+													devicepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/device_removable-attention.png"))
+												device_info += " - " + currentMountpoint
+												device_info += " - " + notmounted_msg
+											else:
+												device_info += " - " + nomountpoint_msg
 										else:
 											device_info += " - " + unsupportetpart_msg
 									else:
@@ -963,7 +971,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 				self.session.openWithCallback(self.mainMenuClosed, HarddiskDriveSetup, device = hd, partition = partNum)
 			else:
 				self.session.openWithCallback(self.mainMenuClosed, HarddiskDriveSetup, device = hd)
-		elif answer == "unmount":
+		elif answer in ("unmount", "eject"):
 			self.confirmApplyAnswer(True, answer, selection)
 		elif answer == "remove":
 			if isinstance(selection[1], (basestring, str)):
@@ -1112,6 +1120,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 			unmountmsg = (_("Unmount this %(desc)s.") % self.devicedescription, "unmount")
 			removemsg = (_("Remove this %(desc)s configuration.") % self.devicedescription, "remove")
 			initmsg = (_("Initialize this %(desc)s.") % self.devicedescription, "init")
+			ejectmsg = (_("Eject."), "eject")
 
 			choices = [ ]
 			if uuid_cfg is None: # uninitialized drive
@@ -1139,18 +1148,17 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 						choices.extend([defaultmsg, mountmsg, manualmsg])
 					else:
 						choices.extend([mountmsg, manualmsg])
-					choices.extend([mountmsg, manualmsg])
 			elif uuid_cfg is not None and uuid_cfg['enabled'].value: # configured drive
 				if selectedPart is not None and selectedPart.isInitialized:
 					if defaultStorageDevice() != uuid:
-						choices.extend([unmountmsg, defaultmsg, manualmsg])
+						choices.extend([unmountmsg, defaultmsg, manualmsg, ejectmsg])
 					elif defaultStorageDevice() == uuid:
-						choices.extend([unmountmsg, mountmsg, manualmsg])
+						choices.extend([unmountmsg, mountmsg, manualmsg, ejectmsg])
 				else:
 					if offline:
 						choices.extend([removemsg])
 					else:
-						choices.extend([unmountmsg, manualmsg])
+						choices.extend([unmountmsg, manualmsg, ejectmsg])
 			choices.append((_("Do nothing."), "nothing"))
 
 			if uuid_cfg is not None and not uuid_cfg['enabled'].value:

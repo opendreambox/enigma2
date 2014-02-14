@@ -801,6 +801,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 			self.list.append(self.typeOfScanEntry)
 
 		self.scan_networkScan.value = False
+		self.scan_otherSDT.value = False
 		if nim.isCompatible("DVB-S"):
 			if self.scan_type.value == "single_transponder":
 				self.updateSatList()
@@ -880,6 +881,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		self.list.append(getConfigListEntry(_("Clear before scan"), self.scan_clearallservices))
 		self.list.append(getConfigListEntry(_("Only Free scan"), self.scan_onlyfree))
 		if config.usage.setup_level.index >= 2:
+			self.list.append(getConfigListEntry(_("Lookup other SDT"), self.scan_otherSDT))
 			self.list.append(getConfigListEntry(_("Skip empty transponders"), self.scan_skipEmpty))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
@@ -1006,6 +1008,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 			self.scan_onlyfree = ConfigYesNo(default = False)
 			self.scan_networkScan = ConfigYesNo(default = False)
 			self.scan_skipEmpty = ConfigYesNo(default = True)
+			self.scan_otherSDT = ConfigYesNo(default = False)
 
 			nim_list = []
 			# collect all nims which are *not* set to "nothing"
@@ -1320,6 +1323,9 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 
 		flags = self.scan_networkScan.value and eComponentScan.scanNetworkSearch or 0
 
+		if self.scan_otherSDT.value:
+			flags |= eComponentScan.scanOtherSDT
+
 		if not self.scan_skipEmpty.value:
 			flags |= eComponentScan.scanDontSkipEmptyTransponders
 
@@ -1434,8 +1440,11 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 		self.nim_enable = [ ]
 
 		if len(nims_to_scan):
+			self.scan_otherSDT = ConfigYesNo(default = False)
 			self.scan_clearallservices = ConfigSelection(default = "yes", choices = [("no", _("no")), ("yes", _("yes")), ("yes_hold_feeds", _("yes (keep feeds)"))])
 			self.list.append(getConfigListEntry(_("Clear before scan"), self.scan_clearallservices))
+			if config.usage.setup_level.index >= 2:
+				self.list.append(getConfigListEntry(_("Lookup other SDT"), self.scan_otherSDT))
 
 			for nim in nims_to_scan:
 				nimconfig = ConfigYesNo(default = True)
@@ -1488,6 +1497,8 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 				else:
 					assert False
 
+				if self.scan_otherSDT.value:
+					flags |= eComponentScan.scanOtherSDT
 				flags |= eComponentScan.scanNetworkSearch #FIXMEEE.. use flags from cables / satellites / terrestrial.xml
 				tmp = self.scan_clearallservices.value
 				if tmp == "yes":
