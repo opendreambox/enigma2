@@ -27,7 +27,7 @@ def PlaylistEntryComponent(serviceref, state):
 		text = path.split(serviceref.getPath().split('/')[-1])[1]
 		if len(text) == 0:
 			text = serviceref.getPath()
-	res.append((eListboxPythonMultiContent.TYPE_TEXT,25, 1, 470, 22, 0, RT_VALIGN_CENTER, text))
+	res.append((eListboxPythonMultiContent.TYPE_TEXT,25, 1, 1000, 22, 0, RT_VALIGN_CENTER, text))
 	png = None
 	if state == STATE_PLAY:
 		png = PlayIcon
@@ -41,7 +41,7 @@ def PlaylistEntryComponent(serviceref, state):
 		png = ForwardIcon
 
 	if png is not None:
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 5, 3, 16, 16, png))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 5, 3, 16, 16, png))
 
 	return res
 

@@ -309,6 +309,7 @@ class AudioSelection(Screen, ConfigListScreen):
 			if self.settings.menupage.getValue() == PAGE_SUBTITLES and cur[0] is not None:
 				sel = self.infobar.selected_subtitle or ()
 				l = min(len(sel), len(cur[0]))
+				l = min(l, 4) # dont compare language code
 				if l and sel[:l] == cur[0][:l]:
 					self.enableSubtitle(None)
 					selectedidx = self["streams"].getIndex()

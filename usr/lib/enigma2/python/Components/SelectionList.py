@@ -8,10 +8,10 @@ selectionpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 
 def SelectionEntryComponent(description, value, index, selected):
 	res = [
 		(description, value, index, selected),
-		(eListboxPythonMultiContent.TYPE_TEXT, 30, 3, 500, 30, 0, RT_HALIGN_LEFT, description)
+		(eListboxPythonMultiContent.TYPE_TEXT, 30, 3, 1000, 30, 0, RT_HALIGN_LEFT, description)
 	]
 	if selected:
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 0, 0, 30, 30, selectionpng))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 0, 0, 30, 30, selectionpng))
 	return res
 
 class SelectionList(MenuList):

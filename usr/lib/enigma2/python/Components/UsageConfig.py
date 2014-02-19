@@ -130,6 +130,7 @@ def FinalInitUsageConfig():
 	config.usage.timerlist_finished_timer_position = ConfigSelection(default = "beginning", choices = [("beginning", _("at beginning")), ("end", _("at end"))])
 
 	config.usage.text_subtitle_presentation = ConfigSelection(default = "black box", choices = [("black box", _("black box")), ("drop-shadow", _("drop-shadow"))])
+	config.usage.ttx_subtitle_prefer_pmt_language_code = ConfigYesNo(default=True)
 
 	# Channelselection settings
 	config.usage.configselection_showsettingsincontextmenu = ConfigYesNo(default=True)

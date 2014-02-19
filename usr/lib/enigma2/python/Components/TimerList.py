@@ -72,7 +72,7 @@ class TimerList(HTMLComponent, GUIComponent, object):
 
 		if timer.disabled:
 			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/redx.png"))
-			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 490, 5, 40, 40, png))
+			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 490, 5, 40, 40, png))
 		return res
 
 	def __init__(self, list):

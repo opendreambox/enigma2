@@ -37,7 +37,7 @@ EXTENSIONS = {
 
 def FileEntryComponent(name, absolute = None, isDir = False):
 	res = [ (absolute, isDir) ]
-	res.append((eListboxPythonMultiContent.TYPE_TEXT, 35, 1, 470, 20, 0, RT_HALIGN_LEFT, name))
+	res.append((eListboxPythonMultiContent.TYPE_TEXT, 35, 1, 1000, 20, 0, RT_HALIGN_LEFT, name))
 	if isDir:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "extensions/directory.png"))
 	else:
@@ -265,7 +265,7 @@ class FileList(MenuList):
 
 def MultiFileSelectEntryComponent(name, absolute = None, isDir = False, selected = False):
 	res = [ (absolute, isDir, selected, name) ]
-	res.append((eListboxPythonMultiContent.TYPE_TEXT, 55, 1, 470, 20, 0, RT_HALIGN_LEFT, name))
+	res.append((eListboxPythonMultiContent.TYPE_TEXT, 55, 1, 1000, 20, 0, RT_HALIGN_LEFT, name))
 	if isDir:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "extensions/directory.png"))
 	else:
@@ -276,15 +276,15 @@ def MultiFileSelectEntryComponent(name, absolute = None, isDir = False, selected
 		else:
 			png = None
 	if png is not None:
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 30, 2, 20, 20, png))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 30, 2, 20, 20, png))
 
 	if not name.startswith('<'):
 		if selected is False:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_off.png"))
-			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 2, 0, 25, 25, icon))
+			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 0, 25, 25, icon))
 		else:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_on.png"))
-			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 2, 0, 25, 25, icon))
+			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 0, 25, 25, icon))
 
 	return res
 

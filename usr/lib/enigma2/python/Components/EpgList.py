@@ -186,7 +186,7 @@ class EPGList(HTMLComponent, GUIComponent):
 		]
 		if rec:
 			res.extend((
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, r3.left(), r3.top(), 21, 21, clock_pic),
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), r3.top(), 21, 21, clock_pic),
 				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + 25, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT, EventName)
 			))
 		else:
@@ -206,7 +206,7 @@ class EPGList(HTMLComponent, GUIComponent):
 		]
 		if rec:
 			res.extend((
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, r3.left(), r3.top(), 21, 21, clock_pic),
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), r3.top(), 21, 21, clock_pic),
 				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + 25, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT, service_name)
 			))
 		else:
@@ -223,7 +223,7 @@ class EPGList(HTMLComponent, GUIComponent):
 		if rec:
 			res.extend((
 				(eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width()-21, r1.height(), 0, RT_HALIGN_LEFT, service_name),
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, r1.left()+r1.width()-16, r1.top(), 21, 21, clock_pic)
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r1.left()+r1.width()-16, r1.top(), 21, 21, clock_pic)
 			))
 		else:
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width(), r1.height(), 0, RT_HALIGN_LEFT, service_name))
