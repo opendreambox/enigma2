@@ -834,7 +834,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 
 	def playEntry(self):
 		if len(self.playlist.getServiceRefList()):
-			audio_extensions = (".mp2", ".mp3", ".wav", ".ogg", "flac", "m4a")
+			audio_extensions = (".mp2", ".mp3", ".wav", ".ogg", ".flac", ".m4a", ".wma")
 			needsInfoUpdate = False
 			currref = self.playlist.getServiceRefList()[self.playlist.getCurrentIndex()]
 			if self.session.nav.getCurrentlyPlayingServiceReference() is None or currref != self.session.nav.getCurrentlyPlayingServiceReference():
@@ -1027,7 +1027,7 @@ def filescan(**kwargs):
 			description = _("View Video CD..."),
 			openfnc = filescan_open,
 		),
-		Scanner(mimetypes = ["audio/mpeg", "audio/x-wav", "application/ogg", "audio/x-flac"],
+		Scanner(mimetypes = ["audio/mpeg", "audio/x-wav", "application/ogg", "audio/x-flac", "audio/x-wma"],
 			paths_to_scan =
 				[
 					ScanPath(path = "", with_subdirs = False),
