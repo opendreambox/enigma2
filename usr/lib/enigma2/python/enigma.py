@@ -96,7 +96,6 @@ HAVE_PTHREAD = _enigma.HAVE_PTHREAD
 HAVE_PYTHON = _enigma.HAVE_PYTHON
 HAVE_QT = _enigma.HAVE_QT
 HAVE_QTWEBKIT = _enigma.HAVE_QTWEBKIT
-HAVE_QXMPP = _enigma.HAVE_QXMPP
 HAVE_SIGC20 = _enigma.HAVE_SIGC20
 HAVE_STDINT_H = _enigma.HAVE_STDINT_H
 HAVE_STDLIB_H = _enigma.HAVE_STDLIB_H
@@ -2839,8 +2838,12 @@ class hdmi_cec(object):
 hdmi_cec.cec_otp_source_enable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_enable,None,hdmi_cec)
 hdmi_cec.cec_otp_source_disable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_disable,None,hdmi_cec)
 hdmi_cec.cec_ss_standby = new_instancemethod(_enigma.hdmi_cec_cec_ss_standby,None,hdmi_cec)
+hdmi_cec.cec_give_sytem_audio_mode_status = new_instancemethod(_enigma.hdmi_cec_cec_give_sytem_audio_mode_status,None,hdmi_cec)
+hdmi_cec.cec_system_audio_mode_request = new_instancemethod(_enigma.hdmi_cec_cec_system_audio_mode_request,None,hdmi_cec)
+hdmi_cec.cec_sendkey = new_instancemethod(_enigma.hdmi_cec_cec_sendkey,None,hdmi_cec)
 hdmi_cec.cec_register_raw_command = new_instancemethod(_enigma.hdmi_cec_cec_register_raw_command,None,hdmi_cec)
 hdmi_cec.cec_unregister_raw_command = new_instancemethod(_enigma.hdmi_cec_cec_unregister_raw_command,None,hdmi_cec)
+hdmi_cec.get_volume_control_dest = new_instancemethod(_enigma.hdmi_cec_get_volume_control_dest,None,hdmi_cec)
 hdmi_cec_swigregister = _enigma.hdmi_cec_swigregister
 hdmi_cec_swigregister(hdmi_cec)
 

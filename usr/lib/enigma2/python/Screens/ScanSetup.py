@@ -92,6 +92,8 @@ cable_bands = {
 	"DVBC_BAND_US_HI" : 1 << 9,
 	"DVBC_BAND_US_SUPER" : 1 << 10,
 	"DVBC_BAND_US_HYPER" : 1 << 11,
+	"DVBC_BAND_US_ULTRA" : 1 << 12,
+	"DVBC_BAND_US_JUMBO" : 1 << 13,
 }
 
 class TransponderSearchSupport:
@@ -224,33 +226,112 @@ class CableTransponderSearchSupport:
 
 		if cmd is not None:
 			if cableConfig.scan_type.value == "bands":
-				cmd += " --scan-bands "
-				bands = 0
-				if cableConfig.scan_band_EU_VHF_I.value:
-					bands |= cable_bands["DVBC_BAND_EU_VHF_I"]
-				if cableConfig.scan_band_EU_MID.value:
-					bands |= cable_bands["DVBC_BAND_EU_MID"]
-				if cableConfig.scan_band_EU_VHF_III.value:
-					bands |= cable_bands["DVBC_BAND_EU_VHF_III"]
-				if cableConfig.scan_band_EU_UHF_IV.value:
-					bands |= cable_bands["DVBC_BAND_EU_UHF_IV"]
-				if cableConfig.scan_band_EU_UHF_V.value:
-					bands |= cable_bands["DVBC_BAND_EU_UHF_V"]
-				if cableConfig.scan_band_EU_SUPER.value:
-					bands |= cable_bands["DVBC_BAND_EU_SUPER"]
-				if cableConfig.scan_band_EU_HYPER.value:
-					bands |= cable_bands["DVBC_BAND_EU_HYPER"]
-				if cableConfig.scan_band_US_LOW.value:
-					bands |= cable_bands["DVBC_BAND_US_LO"]
-				if cableConfig.scan_band_US_MID.value:
-					bands |= cable_bands["DVBC_BAND_US_MID"]
-				if cableConfig.scan_band_US_HIGH.value:
-					bands |= cable_bands["DVBC_BAND_US_HI"]
-				if cableConfig.scan_band_US_SUPER.value:
-					bands |= cable_bands["DVBC_BAND_US_SUPER"]
-				if cableConfig.scan_band_US_HYPER.value:
-					bands |= cable_bands["DVBC_BAND_US_HYPER"]
-				cmd += str(bands)
+				if cmd.startswith("cxd1981") or cmd.startswith("tda1002x"):
+					cmd += " --scan-flags DVB-C"
+					EU = False
+					US = False
+					VHF_I = False
+					VHF_II = False
+					VHF_III = False
+					UHF_IV = False
+					UHF_V = False
+					SUPER = False
+					HYPER = False
+
+					if cableConfig.scan_band_EU_VHF_I.value:
+						VHF_I = True
+						EU = True
+					if cableConfig.scan_band_EU_MID.value:
+						VHF_II = True
+						EU = True
+					if cableConfig.scan_band_EU_VHF_III.value:
+						VHF_III = True
+						EU = True
+					if cableConfig.scan_band_EU_UHF_IV.value:
+						UHF_IV = True
+						EU = True
+					if cableConfig.scan_band_EU_UHF_V.value:
+						UHF_V = True
+						EU = True
+					if cableConfig.scan_band_EU_SUPER.value:
+						SUPER = True
+						EU = True
+					if cableConfig.scan_band_EU_HYPER.value:
+						HYPER = True
+						EU = True
+
+					if cableConfig.scan_band_US_LOW.value:
+						VHF_I = True
+						US = True
+					if cableConfig.scan_band_US_MID.value:
+						VHF_II = True
+						US = True
+					if cableConfig.scan_band_US_HIGH.value:
+						VHF_III = True
+						US = True
+					if cableConfig.scan_band_US_SUPER.value:
+						SUPER = True
+						US = True
+					if cableConfig.scan_band_US_HYPER.value:
+						HYPER = True
+						US = True
+					if cableConfig.scan_band_US_ULTRA.value:
+						UHF_IV = True
+						US = True
+					if cableConfig.scan_band_US_JUMBO.value:
+						UHF_V = True
+						US = True
+
+					if EU:
+						cmd += ":EU"
+					if US:
+						cmd += ":US"
+					if VHF_I:
+						cmd += ":VHF_I"
+					if VHF_II:
+						cmd += ":VHF_II"
+					if VHF_III:
+						cmd += ":VHF_III"
+					if UHF_IV:
+						cmd += ":UHF_IV"
+					if UHF_V:
+						cmd += ":UHF_V"
+					if SUPER:
+						cmd += ":SUPER"
+					if HYPER:
+						cmd += ":HYPER"
+				else: # legacy api maybe for external USB tuners...
+					cmd += " --scan-bands "
+					bands = 0
+					if cableConfig.scan_band_EU_VHF_I.value:
+						bands |= cable_bands["DVBC_BAND_EU_VHF_I"]
+					if cableConfig.scan_band_EU_MID.value:
+						bands |= cable_bands["DVBC_BAND_EU_MID"]
+					if cableConfig.scan_band_EU_VHF_III.value:
+						bands |= cable_bands["DVBC_BAND_EU_VHF_III"]
+					if cableConfig.scan_band_EU_UHF_IV.value:
+						bands |= cable_bands["DVBC_BAND_EU_UHF_IV"]
+					if cableConfig.scan_band_EU_UHF_V.value:
+						bands |= cable_bands["DVBC_BAND_EU_UHF_V"]
+					if cableConfig.scan_band_EU_SUPER.value:
+						bands |= cable_bands["DVBC_BAND_EU_SUPER"]
+					if cableConfig.scan_band_EU_HYPER.value:
+						bands |= cable_bands["DVBC_BAND_EU_HYPER"]
+					if cableConfig.scan_band_US_LOW.value:
+						bands |= cable_bands["DVBC_BAND_US_LO"]
+					if cableConfig.scan_band_US_MID.value:
+						bands |= cable_bands["DVBC_BAND_US_MID"]
+					if cableConfig.scan_band_US_HIGH.value:
+						bands |= cable_bands["DVBC_BAND_US_HI"]
+					if cableConfig.scan_band_US_SUPER.value:
+						bands |= cable_bands["DVBC_BAND_US_SUPER"]
+					if cableConfig.scan_band_US_HYPER.value:
+						bands |= cable_bands["DVBC_BAND_US_HYPER"]
+					if cableConfig.scan_band_US_ULTRA.value:
+						bands |= cable_bands["DVBC_BAND_US_ULTRA"]
+					if cableConfig.scan_band_US_JUMBO.value:
+						bands |= cable_bands["DVBC_BAND_US_JUMBO"]
+					cmd += str(bands)
 			else:
 				cmd += " --scan-stepsize "
 				cmd += str(cableConfig.scan_frequency_steps.value)
@@ -290,7 +371,7 @@ class CableTransponderSearchSupport:
 
 			if cableConfig.scan_type.value == "bands":
 				if cableConfig.scan_band_US_LOW.value:
-					frequencies.extend(range(48000, 84000 + 1, 6000))
+					frequencies.extend(range(54000, 84000 + 1, 6000))
 				if cableConfig.scan_band_US_MID.value:
 					frequencies.extend(range(91250, 115250 + 1, 6000))
 					frequencies.extend(range(120000, 168000 + 1, 6000))
@@ -299,12 +380,17 @@ class CableTransponderSearchSupport:
 				if cableConfig.scan_band_US_SUPER.value:
 					frequencies.extend(range(216000, 294000 + 1, 6000))
 				if cableConfig.scan_band_US_HYPER.value:
-					frequencies.extend(range(300000, 546000 + 1, 6000))
+					frequencies.extend(range(300000, 462000 + 1, 6000))
+				if cableConfig.scan_band_US_ULTRA.value:
+					frequencies.extend(range(468000, 642000 + 1, 6000))
+				if cableConfig.scan_band_US_JUMBO.value:
+					frequencies.extend(range(648000, 996000 + 1, 6000))
+
 				if cableConfig.scan_band_EU_VHF_I.value:
 					frequencies.extend(range(50500, 64500 + 1, 7000))
-					frequencies.extend(range(73000, 81000 + 1, 8000))
+					frequencies.extend(range(69000, 77000 + 1, 8000))
 				if cableConfig.scan_band_EU_MID.value:
-					frequencies.append(107500)
+					frequencies.append(101000)
 					frequencies.extend(range(113000, 121000 + 1, 8000))
 					frequencies.extend(range(128500, 170500 + 1, 7000))
 				if cableConfig.scan_band_EU_VHF_III.value:
@@ -318,7 +404,7 @@ class CableTransponderSearchSupport:
 				if cableConfig.scan_band_EU_UHF_V.value:
 					frequencies.extend(range(610000, 858000 + 1, 8000))
 			else:
-				frequencies.extend(range(17000, 887000 + 1, cableConfig.scan_frequency_steps.value))
+				frequencies.extend(range(17000, 999000 + 1, cableConfig.scan_frequency_steps.value))
 
 			if cableConfig.scan_mod_qam16.value:
 				modulations.append(eDVBFrontendParametersCable.Modulation_QAM16)

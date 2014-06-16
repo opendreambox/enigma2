@@ -57,7 +57,7 @@ class ClockToText(Converter, object):
 		elif self.type == self.DEFAULT:
 			return "%02d:%02d" % (t.tm_hour, t.tm_min)
 		elif self.type == self.DATE:
-			line = strftime("%A %B")
+			line = strftime("%A %B", t)
 			line = line.split(" ")
 			fDay = self.full_day[line[0]]
 			fMonth = self.full_month[line[1]]

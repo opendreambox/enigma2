@@ -183,6 +183,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 						self.list.append(getConfigListEntry(_("Scan band US HIGH"), self.nimConfig.cable.scan_band_US_HIGH))
 						self.list.append(getConfigListEntry(_("Scan band US SUPER"), self.nimConfig.cable.scan_band_US_SUPER))
 						self.list.append(getConfigListEntry(_("Scan band US HYPER"), self.nimConfig.cable.scan_band_US_HYPER))
+						self.list.append(getConfigListEntry(_("Scan band US JUMBO"), self.nimConfig.cable.scan_band_US_JUMBO))
+						self.list.append(getConfigListEntry(_("Scan band US ULTRA"), self.nimConfig.cable.scan_band_US_ULTRA))
+
 					elif self.nimConfig.cable.scan_type.value == "steps":
 						self.list.append(getConfigListEntry(_("Frequency scan step size(khz)"), self.nimConfig.cable.scan_frequency_steps))
 					self.list.append(getConfigListEntry(_("Scan QAM16"), self.nimConfig.cable.scan_mod_qam16))

@@ -46,8 +46,9 @@ class CecConfig(ConfigListScreen, Screen):
 
 	def _createSetup(self):
 		list = [
-			getConfigListEntry(_("Send HDMI CEC Power Events"), config.plugins.cec.sendpower),
-			getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.plugins.cec.receivepower),
+			getConfigListEntry(_("Send HDMI CEC Power Events"), config.cec.sendpower),
+			getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
+			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
 		]
 		self["config"].list = list
 		self["config"].l.setList(list)

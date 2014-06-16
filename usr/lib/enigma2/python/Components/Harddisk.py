@@ -388,7 +388,7 @@ class Harddisk:
 				sectors = self.diskSize(sectors = True)
 			cmd = 'parted --script --align=min ' + self.disk_path + ' -- mklabel msdos mkpart primary ext3 40s 100%'
 			if sectors and not self.isRemovable:
-				part1end = int(sectors-swapPartSize) #leaving 1GB for swap
+				part1end = int(sectors)-swapPartSize #leaving 1GB for swap
 				cmd = 'parted --script --align=min ' + self.disk_path + ' -- mklabel msdos mkpart primary ext3 40s ' + str(part1end) + 's'
 				cmd+=  ' mkpart primary linux-swap ' + str(int(part1end+1)) + 's -1s'
 				if sectors > maxSectorsMBR:
@@ -474,7 +474,7 @@ class Harddisk:
 
 		res = -1
 		if access(partitionPath, 0):
-			if partitionType in ("ext2", "ext3"):
+			if partitionType in ("ext2", "ext3", "ext4"):
 				cmd = "fsck." + partitionType + " -f -p -C 0 " + partitionPath
 				res = system(cmd)
 

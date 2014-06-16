@@ -1556,6 +1556,8 @@ def InitNimManager(nimmgr, slot_no = None):
 			nim.cable.scan_band_US_HIGH = ConfigYesNo(default = False)
 			nim.cable.scan_band_US_SUPER = ConfigYesNo(default = False)
 			nim.cable.scan_band_US_HYPER = ConfigYesNo(default = False)
+			nim.cable.scan_band_US_ULTRA = ConfigYesNo(default = False)
+			nim.cable.scan_band_US_JUMBO = ConfigYesNo(default = False)
 			nim.cable.scan_frequency_steps = ConfigInteger(default = 1000, limits = (1000, 10000))
 			nim.cable.scan_mod_qam16 = ConfigYesNo(default = False)
 			nim.cable.scan_mod_qam32 = ConfigYesNo(default = False)
