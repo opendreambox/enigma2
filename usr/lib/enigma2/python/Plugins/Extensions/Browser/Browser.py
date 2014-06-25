@@ -933,6 +933,12 @@ class Browser(Screen, HelpableScreen):
 			if url:
 				self.webnavigation.url = url
 
+	def getUserAgent(self):
+		return self.webnavigation.useragent
+
+	def setUserAgent(self, useragent):
+		self.webnavigation.useragent = useragent
+
 	def __actionAscii(self):
 		if self.urlInputEnabled:
 			self.urlInput.handleAscii(getPrevAsciiCode())

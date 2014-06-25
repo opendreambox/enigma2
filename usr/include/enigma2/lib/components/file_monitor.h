@@ -3,7 +3,9 @@
 #include <lib/base/thread.h>
 #include <lib/base/message.h>
 #include <lib/base/ebase.h>
+#include <lib/base/elock.h>
 
+#include <queue>
 #include <future>
 #include <sys/inotify.h>
 
@@ -20,7 +22,8 @@ class eFileMonitor: public eMainloop_native, public eThread, public sigc::tracka
 	int m_fd;
 	uint64_t m_watchcount; //watches total
 	ePtr<eSocketNotifier> m_sn;
-	std::vector<eFileEvent> m_eventqueue;
+	eSingleLock m_watch_lock, m_queue_lock;
+	std::queue<eFileEvent> m_eventqueue;
 	//lookup-tables
 	std::map<std::string, int> m_dir_wd; //key: directory, value: watch-descriptor-id
 	std::map<int, eFileWatch*> m_wd_watches; //key: watch-descriptor-id, value: related eFileWatch, required for getting all eFileWatches for an event
@@ -49,8 +52,6 @@ class eFileMonitor: public eMainloop_native, public eThread, public sigc::tracka
 	void onWatchMoved(eFileWatch *watch, const eFileEvent &event);
 
 public:
-	static pthread_mutex_t watch_lock;
-
 	eFileMonitor();
 	~eFileMonitor();
 

@@ -226,7 +226,7 @@ class CableTransponderSearchSupport:
 
 		if cmd is not None:
 			if cableConfig.scan_type.value == "bands":
-				if cmd.startswith("cxd1981") or cmd.startswith("tda1002x"):
+				if cmd.startswith("cxd1978") or cmd.startswith("tda1002x"):
 					cmd += " --scan-flags DVB-C"
 					EU = False
 					US = False

@@ -248,6 +248,8 @@ class HbbTV(object):
 		self._showVideoIfAvail()
 
 	def _playStream(self, sref):
+		if self.__browser:
+			config.mediaplayer.alternateUserAgent.value = self.__browser.getUserAgent()
 		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_CONNECTING)
 		self.session.nav.stopService()
 		self.session.nav.playService(eServiceReference(sref))

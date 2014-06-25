@@ -267,11 +267,14 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 			if self.justplay:
 				if Screens.Standby.inStandby:
-					self.log(11, "wakeup and zap")
-					#set service to zap after standby
-					Screens.Standby.inStandby.prev_running_service = self.service_ref.ref
-					#wakeup standby
-					Screens.Standby.inStandby.Power()
+					if config.usage.standby_zaptimer_wakeup.value:
+						self.log(11, "wakeup and zap")
+						#set service to zap after standby
+						Screens.Standby.inStandby.prev_running_service = self.service_ref.ref
+						#wakeup standby
+						Screens.Standby.inStandby.Power()
+					else:
+						print "ignore zaptimer in idle mode"
 				else:
 					self.log(11, "zapping")
 					NavigationInstance.instance.playService(self.service_ref.ref)

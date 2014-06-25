@@ -73,4 +73,7 @@ class WebView(Renderer):
 				self.instance.authenticationRequired.get().append(param)
 			elif cmd == WebNavigation.EVENT_PROXY_AUTH_REQUIRED:
 				self.instance.proxyAuthenticationRequired.get().append(param)
-
+			elif cmd == WebNavigation.COMMAND_GET_UA:
+				param(self.instance.getUserAgent())
+			elif cmd == WebNavigation.COMMAND_SET_UA:
+				self.instance.setUserAgent(param)

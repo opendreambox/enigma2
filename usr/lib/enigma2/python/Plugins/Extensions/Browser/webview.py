@@ -168,6 +168,9 @@ eWebView.setRawCookies = new_instancemethod(_webview.eWebView_setRawCookies,None
 eWebView.setBackgroundTransparent = new_instancemethod(_webview.eWebView_setBackgroundTransparent,None,eWebView)
 eWebView.setAcceptLanguage = new_instancemethod(_webview.eWebView_setAcceptLanguage,None,eWebView)
 eWebView.leftClick = new_instancemethod(_webview.eWebView_leftClick,None,eWebView)
+eWebView.getUserAgent = new_instancemethod(_webview.eWebView_getUserAgent,None,eWebView)
+eWebView.setUserAgent = new_instancemethod(_webview.eWebView_setUserAgent,None,eWebView)
+eWebView.resetUserAgent = new_instancemethod(_webview.eWebView_resetUserAgent,None,eWebView)
 eWebView_swigregister = _webview.eWebView_swigregister
 eWebView_swigregister(eWebView)
 

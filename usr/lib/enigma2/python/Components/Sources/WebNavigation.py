@@ -15,8 +15,10 @@ class WebNavigation(Source):
 	COMMAND_SET_TRANSPARENT = 0x011
 	COMMAND_SET_ACCEPT_LANGUAGE = 0x012
 	COMMAND_LEFT_CLICK = 0x013
-	COMMAND_GET_POS = 0x015
-	COMMAND_GET_SIZE = 0x014
+	COMMAND_GET_POS = 0x014
+	COMMAND_GET_SIZE = 0x015
+	COMMAND_GET_UA = 0x016
+	COMMAND_SET_UA = 0x017
 	
 	EVENT_URL_CHANGED = 0x100
 	EVENT_TITLE_CHANGED = 0x101
@@ -50,6 +52,7 @@ class WebNavigation(Source):
 		self.__cookies = None
 		self.__pos = None
 		self.__size = None
+		self.__useragent = None
 
 	def execBegin(self):
 		if self.__isFirstExec:
@@ -198,3 +201,16 @@ class WebNavigation(Source):
 	def __onProxyAuthRequired(self, token, user, password, realm):
 		for cb in self.onProxyAuthRequired:
 			cb(token, user, password, realm)
+
+	def __setUserAgentInternal(self, useragent):
+		self.__useragent = useragent
+
+	def __getUserAgent(self):
+		self.changed(self.COMMAND_GET_UA, self.__setUserAgentInternal)
+		return self.__useragent
+
+	def __setUserAgent(self, useragent):
+		self.changed(self.COMMAND_SET_UA, useragent)
+		self.__useragent = useragent
+
+	useragent = property(__getUserAgent, __setUserAgent)
