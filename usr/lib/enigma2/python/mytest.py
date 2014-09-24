@@ -119,7 +119,7 @@ from skin import readSkin
 
 profile("LOAD:Tools")
 from Tools.Directories import InitFallbackFiles, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
-from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, NoSave
+from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, NoSave, ConfigSubsection
 InitFallbackFiles()
 
 profile("config.misc")
@@ -139,6 +139,11 @@ config.misc.prev_wakeup_time = ConfigInteger(default=0)
 #config.misc.prev_wakeup_time_type is only valid when wakeup_time is not 0
 config.misc.prev_wakeup_time_type = ConfigInteger(default=0) # 0 = RecordTimer, 1 = SleepTimer, 2 = Plugin
 config.misc.use_legacy_virtual_subservices_detection = ConfigYesNo(default=False)
+
+#gstreamer User-Agent settings (used by servicemp3)
+config.mediaplayer = ConfigSubsection()
+config.mediaplayer.useAlternateUserAgent = NoSave(ConfigYesNo(default=False))
+config.mediaplayer.alternateUserAgent = ConfigText(default="")
 
 def setEPGCachePath(configElement):
 	eEPGCache.getInstance().setCacheFile(configElement.value)

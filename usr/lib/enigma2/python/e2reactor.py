@@ -24,6 +24,7 @@ from twisted.internet.posixbase import PosixReactorBase
 
 from ctypes import CDLL, Structure, c_long, c_int, POINTER, pointer, get_errno
 from os import strerror
+from sys import exc_info
 
 CLOCK_MONOTONIC = 1 # see <linux/time.h>
 
@@ -72,7 +73,7 @@ class TwistedSocketNotifier:
 				why = w.doRead()
 			except:
 				log.err()
-				why = sys.exc_info()[1]
+				why = exc_info()[1]
 			if why:
 				self.reactor._disconnectSelectable(w, why, True)
 		log.callWithLogger(w, _read)
@@ -86,7 +87,7 @@ class TwistedSocketNotifier:
 				why = w.doWrite()
 			except:
 				log.err()
-				why = sys.exc_info()[1]
+				why = exc_info()[1]
 			if why:
 				self.reactor._disconnectSelectable(w, why, False)
 		log.callWithLogger(w, _write)

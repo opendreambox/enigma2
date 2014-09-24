@@ -761,7 +761,7 @@ class NimManager:
 				entry["i2c"] = None
 			if entry.has_key("frontend_device"): # check if internally connectable
 				if path.exists("/proc/stb/frontend/%d/rf_switch" % entry["frontend_device"]):
-					entry["internally_connectable"] = entry["frontend_device"] - 1
+					entry["internally_connectable"] = id - 1
 				else:
 					entry["internally_connectable"] = None
 			else:

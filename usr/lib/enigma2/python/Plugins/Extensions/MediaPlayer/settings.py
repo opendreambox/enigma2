@@ -2,17 +2,14 @@ from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen
 from Components.FileList import FileList
 from Components.Sources.StaticText import StaticText
-from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigYesNo, ConfigDirectory
+from Components.config import config, getConfigListEntry, ConfigYesNo, ConfigDirectory
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 
-config.mediaplayer = ConfigSubsection()
 config.mediaplayer.repeat = ConfigYesNo(default=False)
 config.mediaplayer.savePlaylistOnExit = ConfigYesNo(default=True)
 config.mediaplayer.saveDirOnExit = ConfigYesNo(default=False)
 config.mediaplayer.defaultDir = ConfigDirectory()
-config.mediaplayer.useAlternateUserAgent = ConfigYesNo(default=False)
-config.mediaplayer.alternateUserAgent = ConfigText(default="")
 
 class DirectoryBrowser(Screen, HelpableScreen):
 

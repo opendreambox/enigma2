@@ -373,8 +373,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.list.append(self.advancedUsalsEntry)
 					if not Sat.usals.value:
 						self.list.append(getConfigListEntry(_("Stored position"), Sat.rotorposition))
-				if config.usage.setup_level.index >= 2: # expert
-					self.list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), self.nimConfig.positionerExclusively))
+					if config.usage.setup_level.index >= 2: # expert
+						self.list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), self.nimConfig.positionerExclusively))
 
 	def keySave(self):
 		old_configured_sats = nimmanager.getConfiguredSats()

@@ -1565,6 +1565,7 @@ class InfoBarPiP:
 	def showPiP(self):
 		if self.session.pipshown:
 			print "pip currently shown.... pointer:", self.session.pip
+			self.session.deleteDialog(self.session.pip)
 			del self.session.pip
 			print 'hasattr(self.session,"pip")', hasattr(self.session,"pip")
 			self.session.pipshown = False
@@ -1577,6 +1578,7 @@ class InfoBarPiP:
 				self.session.pip.servicePath = self.servicelist.getCurrentServicePath()
 			else:
 				self.session.pipshown = False
+				self.session.deleteDialog(self.session.pip)
 				del self.session.pip
 			self.session.nav.playService(newservice)
 

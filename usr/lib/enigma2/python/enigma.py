@@ -2851,6 +2851,7 @@ def hdmi_cec_getInstance():
   return _enigma.hdmi_cec_getInstance()
 hdmi_cec_getInstance = _enigma.hdmi_cec_getInstance
 
+HBBTV_USER_AGENT = _enigma.HBBTV_USER_AGENT
 class eHbbtv(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
