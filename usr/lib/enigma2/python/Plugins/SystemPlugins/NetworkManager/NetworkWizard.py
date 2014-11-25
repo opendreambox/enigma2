@@ -7,7 +7,7 @@ from Components.Sources.Boolean import Boolean
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
-from NetworkConfig import NetworkConfigGeneral, ServiceIPConfiguration, ServiceNSConfiguration, translateState
+from NetworkConfig import NetworkConfigGeneral, ServiceIPConfiguration, ServiceNSConfiguration
 
 class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 	STEP_ID_TECH = 3
@@ -81,7 +81,7 @@ class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 		self["button_yellow_text"] = Label(_("Rescan"))
 		self["button_yellow_text"].hide()
 		self["state_label"] = Label(_("Connection State:"))
-		self["state"] = Label( translateState(self._nm.state()) )
+		self["state"] = Label( NetworkConfigGeneral.translateState(self._nm.state()) )
 
 		self._ipconfig = None
 		self._nsconfig = None
@@ -122,8 +122,7 @@ class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 			self["button_yellow_text"].hide()
 			self._services.buildfunc = self._buildListEntry
 
-	def selChanged(self):
-		WizardLanguage.selChanged(self)
+	def checkButtons(self):
 		if self.currStep == self.STEP_ID_SVCS:
 			service = self._currentService
 			if service:
@@ -132,21 +131,28 @@ class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 				else:
 					self["button_green_text"].setText(_("Connect"))
 
+	def selChanged(self):
+		WizardLanguage.selChanged(self)
+		self.checkButtons()
+
 	def _technologiesChanged(self):
 		if self.currStep == self.STEP_ID_TECH:
 			self["config"].list = self.getTechnologyConfig()
+			self.checkButtons()
 
 	def _techPoweredChanged(self, powered):
 		if self.currStep == self.STEP_ID_TECH:
 			self["config"].list = self.getTechnologyConfig()
+			self.checkButtons()
 
 	def technologiesSet(self):
 		pass
 
 	def _servicesChanged(self, *args):
-		self["state"].setText( translateState( self._nm.state() ) )
+		self["state"].setText( NetworkConfigGeneral.translateState( self._nm.state() ) )
 		if self.currStep == self.STEP_ID_SVCS:
 			self["list"].updateList( self.getServiceList() )
+			self.checkButtons()
 
 	def ipConfigurationRequired(self):
 		return not self.isOnline()

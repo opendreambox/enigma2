@@ -7,7 +7,7 @@ config.cec.sendpower = ConfigOnOff(default=True)
 config.cec.receivepower = ConfigOnOff(default=False)
 config.cec.volume_forward = ConfigOnOff(default=False)
 
-class Hdmi_Cec:
+class HdmiCec:
 	KEY_ID_MUTE = 113
 	KEY_ID_VOLUME_DOWN = 114
 	KEY_ID_VOLUME_UP = 115
@@ -18,12 +18,13 @@ class Hdmi_Cec:
 		KEY_ID_VOLUME_UP: 0x41,
 	}
 
-	def __receivedStandby(self):
-		print "HDMI-CEC: Standby Received!"
+	POWER_STATE_ON = hdmi_cec.POWER_STATE_ON
+	POWER_STATE_STANDBY = hdmi_cec.POWER_STATE_STANDBY
+	POWER_STATE_TRANSITION_STANDBY_TO_ON = hdmi_cec.POWER_STATE_TRANSITION_STANDBY_TO_ON
+	POWER_STATE_TRANSITION_ON_TO_STANDBY = hdmi_cec.POWER_STATE_TRANSITION_ON_TO_STANDBY
 
 	def __init__(self):
 		self.instance = hdmi_cec.getInstance()
-		self.receivedStandby_conn = self.instance.receivedStandby.connect(self.__receivedStandby)
 
 	def otp_source_enable(self):
 		self.instance.cec_otp_source_enable()
@@ -42,4 +43,7 @@ class Hdmi_Cec:
 			code = self.CEC_KEY_MAP[keyid]
 			self.instance.cec_sendkey(dest, int(code))
 
-hdmi_cec = Hdmi_Cec()
+	def setPowerState(self, newstate):
+		self.instance.set_powerstate(newstate)
+
+hdmi_cec = HdmiCec()

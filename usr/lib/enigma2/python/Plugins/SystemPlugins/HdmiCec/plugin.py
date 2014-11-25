@@ -17,32 +17,47 @@ class Cec(object):
 		self.cec_recvStandby_conn = hdmi_cec.instance.receivedStandby.connect(self.__receivedStandby)
 		self.cec_isNowActive_conn = hdmi_cec.instance.isNowActive.connect(self.__receivedNowActive)
 		self.actionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keypress) #highest prio
-		self.idle_to_standby = False
+		self._idle_to_standby = False
+		self._skip_next_poweroff_message = False
+		self._skip_next_poweron_message = False
 
 	def __receivedStandby(self):
 		if config.cec.receivepower.value:
+			self._skip_next_poweroff_message = True
 			from Screens.Standby import Standby, inStandby
 			if not inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
 				self.session.open(Standby)
 
 	def __receivedNowActive(self):
 		if config.cec.receivepower.value:
+			self.powerOn(forceOtp=True)
+			self._skip_next_poweron_message = True
 			from Screens.Standby import inStandby
 			if inStandby != None:
 				inStandby.Power()
 
-	def powerOn(self):
-		if config.cec.sendpower.value:
-			if self.session.shutdown:
-				self.idle_to_standby = True
-			else:
-				print "[Cec] power on"
-				hdmi_cec.otp_source_enable()
+	def powerOn(self, forceOtp=False):
+		if self._skip_next_poweron_message:
+			self._skip_next_poweron_message = False
+			return
+		if self.session.shutdown:
+			self._idle_to_standby = True
+			return
+		hdmi_cec.setPowerState(hdmi_cec.POWER_STATE_ON)
+		if config.cec.sendpower.value or forceOtp:
+			print "[Cec] power on"
+			hdmi_cec.otp_source_enable()
 
 	def powerOff(self):
-		if config.cec.sendpower.value and not self.idle_to_standby:
+		if self._idle_to_standby:
+			return
+		hdmi_cec.setPowerState(hdmi_cec.POWER_STATE_STANDBY)
+		if config.cec.sendpower.value:
 			print "[Cec] power off"
-			hdmi_cec.ss_standby()
+			if self._skip_next_poweroff_message:
+				self._skip_next_poweroff_message = False
+			else:
+				hdmi_cec.ss_standby()
 
 	def _onStandby(self, element):
 		from Screens.Standby import inStandby

@@ -25,7 +25,7 @@ class IpData(NetworkData):
 		if self._data.has_key(eNetworkService.KEY_NETMASK):
 			return self._data.get(eNetworkService.KEY_NETMASK, self.default)
 		else:
-			return ord(self._data.get(eNetworkService.KEY_PREFIX_LENGTH, 0))
+			return ord( self._data.get(eNetworkService.KEY_PREFIX_LENGTH, chr(1)) )
 	netmask = property(getNetmask)
 
 	def getGateway(self):

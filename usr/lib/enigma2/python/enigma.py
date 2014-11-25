@@ -2048,10 +2048,13 @@ class eWindowAnimationManager(object):
     def __init__(self, *args): 
         _enigma.eWindowAnimationManager_swiginit(self,_enigma.new_eWindowAnimationManager(*args))
     __swig_destroy__ = _enigma.delete_eWindowAnimationManager
+    KEY_DISABLED = _enigma.eWindowAnimationManager_KEY_DISABLED
     setAnimationSet = staticmethod(_enigma.eWindowAnimationManager_setAnimationSet)
     getAnimationSet = staticmethod(_enigma.eWindowAnimationManager_getAnimationSet)
     getAnimations = staticmethod(_enigma.eWindowAnimationManager_getAnimations)
     setDefault = staticmethod(_enigma.eWindowAnimationManager_setDefault)
+    setAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_setAnimationsEnabled)
+    isAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_isAnimationsEnabled)
     defaultAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultAnimationChanged_get, _enigma.eWindowAnimationManager_defaultAnimationChanged_set)
 eWindowAnimationManager.__ref__ = new_instancemethod(_enigma.eWindowAnimationManager___ref__,None,eWindowAnimationManager)
 eWindowAnimationManager.getPtrString = new_instancemethod(_enigma.eWindowAnimationManager_getPtrString,None,eWindowAnimationManager)
@@ -2074,6 +2077,14 @@ eWindowAnimationManager_getAnimations = _enigma.eWindowAnimationManager_getAnima
 def eWindowAnimationManager_setDefault(*args):
   return _enigma.eWindowAnimationManager_setDefault(*args)
 eWindowAnimationManager_setDefault = _enigma.eWindowAnimationManager_setDefault
+
+def eWindowAnimationManager_setAnimationsEnabled(*args):
+  return _enigma.eWindowAnimationManager_setAnimationsEnabled(*args)
+eWindowAnimationManager_setAnimationsEnabled = _enigma.eWindowAnimationManager_setAnimationsEnabled
+
+def eWindowAnimationManager_isAnimationsEnabled():
+  return _enigma.eWindowAnimationManager_isAnimationsEnabled()
+eWindowAnimationManager_isAnimationsEnabled = _enigma.eWindowAnimationManager_isAnimationsEnabled
 
 class eWidget(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2123,7 +2134,7 @@ eWidget.isFading = new_instancemethod(_enigma.eWidget_isFading,None,eWidget)
 eWidget.disable = new_instancemethod(_enigma.eWidget_disable,None,eWidget)
 eWidget.enable = new_instancemethod(_enigma.eWidget_enable,None,eWidget)
 eWidget.isEnabled = new_instancemethod(_enigma.eWidget_isEnabled,None,eWidget)
-eWidget.onAnimationFinshed = new_instancemethod(_enigma.eWidget_onAnimationFinshed,None,eWidget)
+eWidget.onAnimationFinished = new_instancemethod(_enigma.eWidget_onAnimationFinished,None,eWidget)
 eWidget.signalHideAnimationFinished = new_instancemethod(_enigma.eWidget_signalHideAnimationFinished,None,eWidget)
 eWidget.canAnimate = new_instancemethod(_enigma.eWidget_canAnimate,None,eWidget)
 eWidget.isFinishedAnimating = new_instancemethod(_enigma.eWidget_isFinishedAnimating,None,eWidget)
@@ -2999,20 +3010,23 @@ def eDVBSatelliteEquipmentControl_setParam(*args):
   return _enigma.eDVBSatelliteEquipmentControl_setParam(*args)
 eDVBSatelliteEquipmentControl_setParam = _enigma.eDVBSatelliteEquipmentControl_setParam
 
-class EPGDBThread(object):
+class cachestate(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    def __init__(self, *args): 
-        _enigma.EPGDBThread_swiginit(self,_enigma.new_EPGDBThread(*args))
-    __swig_destroy__ = _enigma.delete_EPGDBThread
-EPGDBThread.sendData = new_instancemethod(_enigma.EPGDBThread_sendData,None,EPGDBThread)
-EPGDBThread.lockService = new_instancemethod(_enigma.EPGDBThread_lockService,None,EPGDBThread)
-EPGDBThread.unlockService = new_instancemethod(_enigma.EPGDBThread_unlockService,None,EPGDBThread)
-EPGDBThread.shutdown = new_instancemethod(_enigma.EPGDBThread_shutdown,None,EPGDBThread)
-EPGDBThread.start = new_instancemethod(_enigma.EPGDBThread_start,None,EPGDBThread)
-EPGDBThread.cleanupOutdated = new_instancemethod(_enigma.EPGDBThread_cleanupOutdated,None,EPGDBThread)
-EPGDBThread_swigregister = _enigma.EPGDBThread_swigregister
-EPGDBThread_swigregister(EPGDBThread)
+    state = _swig_property(_enigma.cachestate_state_get, _enigma.cachestate_state_set)
+    tsid = _swig_property(_enigma.cachestate_tsid_get, _enigma.cachestate_tsid_set)
+    onid = _swig_property(_enigma.cachestate_onid_get, _enigma.cachestate_onid_set)
+    dvbnamespace = _swig_property(_enigma.cachestate_dvbnamespace_get, _enigma.cachestate_dvbnamespace_set)
+    seconds = _swig_property(_enigma.cachestate_seconds_get, _enigma.cachestate_seconds_set)
+    started = _enigma.cachestate_started
+    stopped = _enigma.cachestate_stopped
+    aborted = _enigma.cachestate_aborted
+    deferred = _enigma.cachestate_deferred
+    __swig_destroy__ = _enigma.delete_cachestate
+cachestate.getTsid = new_instancemethod(_enigma.cachestate_getTsid,None,cachestate)
+cachestate_swigregister = _enigma.cachestate_swigregister
+cachestate_swigregister(cachestate)
 
 class eEPGCache(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -3026,6 +3040,7 @@ class eEPGCache(iObject):
     PARTIAL_DESCRIPTION_SEARCH = _enigma.eEPGCache_PARTIAL_DESCRIPTION_SEARCH
     CASE_CHECK = _enigma.eEPGCache_CASE_CHECK
     NO_CASE_CHECK = _enigma.eEPGCache_NO_CASE_CHECK
+    cacheState = _swig_property(_enigma.eEPGCache_cacheState_get, _enigma.eEPGCache_cacheState_set)
 eEPGCache.load = new_instancemethod(_enigma.eEPGCache_load,None,eEPGCache)
 eEPGCache.save = new_instancemethod(_enigma.eEPGCache_save,None,eEPGCache)
 eEPGCache.setCacheFile = new_instancemethod(_enigma.eEPGCache_setCacheFile,None,eEPGCache)
@@ -4939,13 +4954,122 @@ loadPic = _enigma.loadPic
 class hdmi_cec(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+    MSG_ACTIVE_SOURCE = _enigma.hdmi_cec_MSG_ACTIVE_SOURCE
+    MSG_IMAGE_VIEW_ON = _enigma.hdmi_cec_MSG_IMAGE_VIEW_ON
+    MSG_TEXT_VIEW_ON = _enigma.hdmi_cec_MSG_TEXT_VIEW_ON
+    MSG_INACTIVE_SOURCE = _enigma.hdmi_cec_MSG_INACTIVE_SOURCE
+    MSG_REQUEST_ACTIVE_SOURCE = _enigma.hdmi_cec_MSG_REQUEST_ACTIVE_SOURCE
+    MSG_ROUTING_CHANGE = _enigma.hdmi_cec_MSG_ROUTING_CHANGE
+    MSG_ROUTING_INFORMATION = _enigma.hdmi_cec_MSG_ROUTING_INFORMATION
+    MSG_SET_STREAMPATH = _enigma.hdmi_cec_MSG_SET_STREAMPATH
+    MSG_STANDBY = _enigma.hdmi_cec_MSG_STANDBY
+    MSG_VERSION = _enigma.hdmi_cec_MSG_VERSION
+    MSG_GET_CEC_VERSION = _enigma.hdmi_cec_MSG_GET_CEC_VERSION
+    MSG_GIVE_PHYS_ADDR = _enigma.hdmi_cec_MSG_GIVE_PHYS_ADDR
+    MSG_GET_MENU_LANG = _enigma.hdmi_cec_MSG_GET_MENU_LANG
+    MSG_REPORT_PHYS_ADDR = _enigma.hdmi_cec_MSG_REPORT_PHYS_ADDR
+    MSG_SET_MENU_LANG = _enigma.hdmi_cec_MSG_SET_MENU_LANG
+    MSG_DEVICE_VENDOR_ID = _enigma.hdmi_cec_MSG_DEVICE_VENDOR_ID
+    MSG_GIVE_DEVICE_VENDOR_ID = _enigma.hdmi_cec_MSG_GIVE_DEVICE_VENDOR_ID
+    MSG_VENDOR_COMMAND = _enigma.hdmi_cec_MSG_VENDOR_COMMAND
+    MSG_VENDOR_COMMAND_WITH_ID = _enigma.hdmi_cec_MSG_VENDOR_COMMAND_WITH_ID
+    MSG_VENDOR_REMOTE_BUTTON_DOWN = _enigma.hdmi_cec_MSG_VENDOR_REMOTE_BUTTON_DOWN
+    MSG_VENDOR_REMOTE_BUTTON_UP = _enigma.hdmi_cec_MSG_VENDOR_REMOTE_BUTTON_UP
+    MSG_SET_OSD_STRING = _enigma.hdmi_cec_MSG_SET_OSD_STRING
+    MSG_GIVE_OSD_NAME = _enigma.hdmi_cec_MSG_GIVE_OSD_NAME
+    MSG_SET_OSD_NAME = _enigma.hdmi_cec_MSG_SET_OSD_NAME
+    MSG_MENU_REQUEST = _enigma.hdmi_cec_MSG_MENU_REQUEST
+    MSG_MENU_STATUS = _enigma.hdmi_cec_MSG_MENU_STATUS
+    MSG_USER_CONTROL_PRESSED = _enigma.hdmi_cec_MSG_USER_CONTROL_PRESSED
+    MSG_USER_CONTROL_RELEASED = _enigma.hdmi_cec_MSG_USER_CONTROL_RELEASED
+    MSG_GIVE_DEVICE_POWER_STATUS = _enigma.hdmi_cec_MSG_GIVE_DEVICE_POWER_STATUS
+    MSG_REPORT_POWER_STATUS = _enigma.hdmi_cec_MSG_REPORT_POWER_STATUS
+    MSG_FEATURE_ABORT = _enigma.hdmi_cec_MSG_FEATURE_ABORT
+    MSG_ABORT_MESSAGE = _enigma.hdmi_cec_MSG_ABORT_MESSAGE
+    MSG_GIVE_AUDIO_STATUS = _enigma.hdmi_cec_MSG_GIVE_AUDIO_STATUS
+    MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS = _enigma.hdmi_cec_MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS
+    MSG_REPORT_AUDIO_STATUS = _enigma.hdmi_cec_MSG_REPORT_AUDIO_STATUS
+    MSG_SET_SYSTEM_AUDIO_MODE = _enigma.hdmi_cec_MSG_SET_SYSTEM_AUDIO_MODE
+    MSG_SYSTEM_AUDIO_MODE_REQUEST = _enigma.hdmi_cec_MSG_SYSTEM_AUDIO_MODE_REQUEST
+    MSG_SYSTEM_AUDIO_MODE_STATUS = _enigma.hdmi_cec_MSG_SYSTEM_AUDIO_MODE_STATUS
+    MSG_SET_AUDIO_RATE = _enigma.hdmi_cec_MSG_SET_AUDIO_RATE
+    ADDR_TV = _enigma.hdmi_cec_ADDR_TV
+    ADDR_RECORDING_DEVICE_1 = _enigma.hdmi_cec_ADDR_RECORDING_DEVICE_1
+    ADDR_ADDR_RECORDING_DEVICE_2 = _enigma.hdmi_cec_ADDR_ADDR_RECORDING_DEVICE_2
+    ADDR_TUNER_1 = _enigma.hdmi_cec_ADDR_TUNER_1
+    ADDR_PLAYBACK_DEVICE_1 = _enigma.hdmi_cec_ADDR_PLAYBACK_DEVICE_1
+    ADDR_AUDIO_SYSTEM = _enigma.hdmi_cec_ADDR_AUDIO_SYSTEM
+    ADDR_TUNER_2 = _enigma.hdmi_cec_ADDR_TUNER_2
+    ADDR_TUNER_3 = _enigma.hdmi_cec_ADDR_TUNER_3
+    ADDR_PLAYBACK_DEVICE_2 = _enigma.hdmi_cec_ADDR_PLAYBACK_DEVICE_2
+    ADDR_RECORDING_DEVICE_2 = _enigma.hdmi_cec_ADDR_RECORDING_DEVICE_2
+    ADDR_TUNER_4 = _enigma.hdmi_cec_ADDR_TUNER_4
+    ADDR_PLAYBACK_DEVICE_3 = _enigma.hdmi_cec_ADDR_PLAYBACK_DEVICE_3
+    ADDR_RESERVED_1 = _enigma.hdmi_cec_ADDR_RESERVED_1
+    ADDR_RESERVED_2 = _enigma.hdmi_cec_ADDR_RESERVED_2
+    ADDR_FREE_USE = _enigma.hdmi_cec_ADDR_FREE_USE
+    ADDR_UNREGISTERED_BROADCAST = _enigma.hdmi_cec_ADDR_UNREGISTERED_BROADCAST
+    POWER_STATE_ON = _enigma.hdmi_cec_POWER_STATE_ON
+    POWER_STATE_STANDBY = _enigma.hdmi_cec_POWER_STATE_STANDBY
+    POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.hdmi_cec_POWER_STATE_TRANSITION_STANDBY_TO_ON
+    POWER_STATE_TRANSITION_ON_TO_STANDBY = _enigma.hdmi_cec_POWER_STATE_TRANSITION_ON_TO_STANDBY
     def __init__(self): 
+        """__init__(hdmi_cec self) -> hdmi_cec"""
         _enigma.hdmi_cec_swiginit(self,_enigma.new_hdmi_cec())
     __swig_destroy__ = _enigma.delete_hdmi_cec
-    getInstance = staticmethod(_enigma.hdmi_cec_getInstance)
+    def getInstance():
+        """getInstance() -> hdmi_cec"""
+        return _enigma.hdmi_cec_getInstance()
+
+    getInstance = staticmethod(getInstance)
+    def set_powerstate(self, *args):
+        """set_powerstate(hdmi_cec self, uint8_t newstate)"""
+        return _enigma.hdmi_cec_set_powerstate(self, *args)
+
+    def cec_otp_source_enable(self):
+        """cec_otp_source_enable(hdmi_cec self)"""
+        return _enigma.hdmi_cec_cec_otp_source_enable(self)
+
+    def cec_otp_source_disable(self):
+        """cec_otp_source_disable(hdmi_cec self)"""
+        return _enigma.hdmi_cec_cec_otp_source_disable(self)
+
+    def cec_ss_standby(self, *args):
+        """cec_ss_standby(hdmi_cec self, int dest)"""
+        return _enigma.hdmi_cec_cec_ss_standby(self, *args)
+
+    def cec_give_sytem_audio_mode_status(self):
+        """cec_give_sytem_audio_mode_status(hdmi_cec self)"""
+        return _enigma.hdmi_cec_cec_give_sytem_audio_mode_status(self)
+
+    def cec_system_audio_mode_request(self):
+        """cec_system_audio_mode_request(hdmi_cec self)"""
+        return _enigma.hdmi_cec_cec_system_audio_mode_request(self)
+
+    def cec_sendkey(self, *args):
+        """
+        cec_sendkey(hdmi_cec self, int dest, int code, bool release=False)
+        cec_sendkey(hdmi_cec self, int dest, int code)
+        """
+        return _enigma.hdmi_cec_cec_sendkey(self, *args)
+
+    def cec_register_raw_command(self, *args):
+        """cec_register_raw_command(hdmi_cec self, unsigned char cmd)"""
+        return _enigma.hdmi_cec_cec_register_raw_command(self, *args)
+
+    def cec_unregister_raw_command(self, *args):
+        """cec_unregister_raw_command(hdmi_cec self, unsigned char cmd)"""
+        return _enigma.hdmi_cec_cec_unregister_raw_command(self, *args)
+
+    def get_volume_control_dest(self):
+        """get_volume_control_dest(hdmi_cec self) -> int"""
+        return _enigma.hdmi_cec_get_volume_control_dest(self)
+
     receivedStandby = _swig_property(_enigma.hdmi_cec_receivedStandby_get, _enigma.hdmi_cec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.hdmi_cec_isNowActive_get, _enigma.hdmi_cec_isNowActive_set)
     receivedRaw = _swig_property(_enigma.hdmi_cec_receivedRaw_get, _enigma.hdmi_cec_receivedRaw_set)
+    receivedMessage = _swig_property(_enigma.hdmi_cec_receivedMessage_get, _enigma.hdmi_cec_receivedMessage_set)
+hdmi_cec.set_powerstate = new_instancemethod(_enigma.hdmi_cec_set_powerstate,None,hdmi_cec)
 hdmi_cec.cec_otp_source_enable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_enable,None,hdmi_cec)
 hdmi_cec.cec_otp_source_disable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_disable,None,hdmi_cec)
 hdmi_cec.cec_ss_standby = new_instancemethod(_enigma.hdmi_cec_cec_ss_standby,None,hdmi_cec)
@@ -4959,8 +5083,8 @@ hdmi_cec_swigregister = _enigma.hdmi_cec_swigregister
 hdmi_cec_swigregister(hdmi_cec)
 
 def hdmi_cec_getInstance():
+  """hdmi_cec_getInstance() -> hdmi_cec"""
   return _enigma.hdmi_cec_getInstance()
-hdmi_cec_getInstance = _enigma.hdmi_cec_getInstance
 
 HBBTV_USER_AGENT = _enigma.HBBTV_USER_AGENT
 class eHbbtv(object):
@@ -5585,6 +5709,42 @@ class eSignal0X(object):
 eSignal0X.connect2 = new_instancemethod(_enigma.eSignal0X_connect2,None,eSignal0X)
 eSignal0X_swigregister = _enigma.eSignal0X_swigregister
 eSignal0X_swigregister(eSignal0X)
+
+class eSlot1Any(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1Any:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1Any_swiginit(self,_enigma.new_eSlot1Any(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1Any
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1Any(self)
+        return weakref_proxy(self)
+eSlot1Any.cb_func = new_instancemethod(_enigma.eSlot1Any_cb_func,None,eSlot1Any)
+eSlot1Any_swigregister = _enigma.eSlot1Any_swigregister
+eSlot1Any_swigregister(eSlot1Any)
+
+class eSignal1Any(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1Any(eSlot1Any):
+            def __init__(self, func):
+                eSlot1Any.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1Any(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1Any_swiginit(self,_enigma.new_eSignal1Any())
+    __swig_destroy__ = _enigma.delete_eSignal1Any
+eSignal1Any.connect2 = new_instancemethod(_enigma.eSignal1Any_connect2,None,eSignal1Any)
+eSignal1Any_swigregister = _enigma.eSignal1Any_swigregister
+eSignal1Any_swigregister(eSignal1Any)
 
 class eSlot1I(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

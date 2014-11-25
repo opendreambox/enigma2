@@ -23,7 +23,21 @@ def toIP4List(value):
 def toIP4String(cfg):
 	return cfg.tostring(cfg.value)
 
-NETWORK_STATE_MAP = {
+class NetworkConfigGeneral(object):
+	@staticmethod
+	def translateSecurity(security):
+		security_map = {
+			"none" : _("None"),
+			"wep"  : "WEP",
+			"psk"  : "WPA",
+			"wps"  : "WPS",
+			"ieee8021x" : "ieee8021x",
+		}
+		return security_map.get(security, security.upper())
+
+	@staticmethod
+	def translateState(state):
+		state_map = {
 			"idle" : _("Idle"),
 			"failure" : _("Failure"),
 			"association" : _("Association"),
@@ -31,19 +45,8 @@ NETWORK_STATE_MAP = {
 			"disconnect" : _("Disconnect"),
 			"online" : _("Connected"),
 		}
+		return state_map.get(state, state)
 
-SECURITY_TYPE_MAP = {
-			"none" : _("None"),
-			"wep"  : "WEP",
-			"psk"  : "WPA",
-			"wps"  : "WPS",
-			"ieee8021x" : "ieee8021x",
-		}
-
-def translateState(state):
-	return NETWORK_STATE_MAP.get(state, state)
-
-class NetworkConfigGeneral(object):
 	def __init__(self):
 		self._nm = eNetworkManager.getInstance()
 		self._nm_conn = [
@@ -164,9 +167,9 @@ class NetworkConfigGeneral(object):
 			strength = "%s%s" %(service.strength(), "%")
 			for sec in service.security():
 				if not security:
-					security = SECURITY_TYPE_MAP.get(sec, sec.upper())
+					security = NetworkConfigGeneral.translateSecurity(sec)
 				else:
-					security = "%s, %s" %(security, SECURITY_TYPE_MAP.get(sec, sec.upper()))
+					security = "%s, %s" %(security, NetworkConfigGeneral.translateSecurity(sec))
 			if service.connected():
 				interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wireless-active.png"))
 			else:
@@ -182,7 +185,7 @@ class NetworkConfigGeneral(object):
 				ip = service.ipv6().get(eNetworkService.KEY_ADDRESS, "")
 
 
-		return (service.path(), interfacepng, strength, service.name(), ip, translateState(service.state()), None, security)
+		return (service.path(), interfacepng, strength, service.name(), ip, NetworkConfigGeneral.translateState(service.state()), None, security)
 
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """

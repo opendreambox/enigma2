@@ -9,7 +9,7 @@ class ScreenAnimations(object):
 
 	def loadDefault(self):
 		animset = eWindowAnimationSet.create()
-		animset.setKey("_-disabled-_")
+		animset.setKey(eWindowAnimationManager.KEY_DISABLED)
 		animset.setName(_("Disable Animations"))
 		eWindowAnimationManager.setAnimationSet(animset)
 		f = resolveFilename(SCOPE_SKIN, "animations.xml")

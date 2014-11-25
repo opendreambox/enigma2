@@ -144,8 +144,6 @@ struct hash_uniqueEPGKey
 #define descriptorPair std::pair<int,__u8*>
 #define descriptorMap std::map<__u32, descriptorPair >
 
-#endif
-
 class eEPGCache;
 
 class EPGDBThread: public eMainloop_native, private eThread, public Object
@@ -199,6 +197,34 @@ public:
 	void shutdown();
 	void start();
 	void cleanupOutdated();
+};
+
+#endif
+
+class cachestate
+{
+public:
+	int state;
+	uint16_t tsid;
+	uint16_t onid;
+	uint32_t dvbnamespace;
+	int seconds; /* deferred seconds */
+	enum { started, stopped, aborted, deferred };
+	uint16_t getTsid() const { return tsid; }
+	~cachestate()
+	{
+	}
+#ifdef SWIG
+private:
+#endif
+	cachestate(const cachestate &s)
+		:state(s.state), tsid(s.tsid), onid(s.onid), dvbnamespace(s.dvbnamespace), seconds(s.seconds)
+	{
+	}
+	cachestate(int state, const eDVBChannelID &chid, int seconds=0)
+		:state(state), tsid(chid.transport_stream_id.get()), onid(chid.original_network_id.get()), dvbnamespace(chid.dvbnamespace.get()), seconds(seconds)
+	{
+	}
 };
 
 class eEPGCache: public iObject, public eMainloop_native, private eThread, public Object
@@ -281,6 +307,9 @@ public:
 			leaveChannel,
 			load,
 			save,
+			cacheStarted,
+			cacheStopped,
+			cacheDeferred,
 			quit,
 			got_private_pid,
 			got_mhw2_channel_pid,
@@ -310,6 +339,7 @@ public:
 			:type(type), time(time) {}
 	};
 	eFixedMessagePump<Message> messages;
+	eFixedMessagePump<Message> thread_messages;
 private:
 	friend class channel_data;
 	friend class EPGDBThread;
@@ -456,6 +486,8 @@ public:
 	// for use from python ( members: m_start_time, m_duration, m_short_description, m_extended_description )
 	SWIG_VOID(RESULT) lookupEventId(const eServiceReference &service, int event_id, ePtr<eServiceEvent> &SWIG_OUTPUT);
 	SWIG_VOID(RESULT) lookupEventTime(const eServiceReference &service, time_t, ePtr<eServiceEvent> &SWIG_OUTPUT, int direction=0);
+
+	eSignal1<void, boost::any> cacheState; // sent when data collecting has started/stopped/aborted/deferred
 };
 
 #ifndef SWIG

@@ -56,7 +56,7 @@ public:
 	void enable();
 	bool isEnabled(){ return m_enabled; };
 
-	void onAnimationFinshed();
+	void onAnimationFinished();
 	void signalHideAnimationFinished();
 	virtual bool canAnimate(){ return false; };
 	virtual bool isFinishedAnimating() const;

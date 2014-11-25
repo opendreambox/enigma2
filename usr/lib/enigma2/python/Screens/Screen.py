@@ -113,19 +113,18 @@ class Screen(dict, GUISkin):
 			immediate = True
 
 		def __onHideAnimationFinishedInternal():
-			del self._hideAnimFinishedConnInternal
-			self.doCloseInternal()
+			self._free()
 		if not immediate:
 			self._hideAnimFinishedConnInternal = self.instance.hideAnimationFinished.connect(__onHideAnimationFinishedInternal)
 
 		self.hide()
-		if immediate or not self.instance.isFading():
-			self.doCloseInternal()
+		self.doCloseInternal()
+		if immediate:
+			self._free()
 
 	def doCloseInternal(self):
 		for x in self.onClose:
 			x()
-		del self._hideAnimFinishedConn
 		# fixup circular references
 		del self.helpList
 		GUISkin.close(self)
@@ -136,10 +135,6 @@ class Screen(dict, GUISkin):
 		# anyway.
 		for val in self.renderer:
 			val.disconnectAll()  # disconnected converter/sources and probably destroy them. Sources will not be destroyed.
-
-		if self in self.session.fading_dialogs:
-			self.session.fading_dialogs.remove(self)
-		del self.session
 
 		# we can have multiple dict entries with different names but same Element
 		# but we dont can call destroy multiple times
@@ -153,9 +148,24 @@ class Screen(dict, GUISkin):
 						self[n] = None # mark as duplicate
 
 		self.renderer = [ ]
-
+		#these are the members that have to survive the __clear__()
+		session = self.session
+		onHideFinished = self.onHideFinished
+		persisted_members = (
+				self.instance,
+				self._hideAnimFinishedConn,
+				self._hideAnimFinishedConnInternal,
+			)
 		# really delete all elements now
 		self.__dict__.clear()
+		self.session = session
+		self.onHideFinished = onHideFinished
+		self.persisted_members = persisted_members
+
+	def _free(self):
+		self.persisted_members = []
+		if self in self.session.fading_dialogs:
+			self.session.fading_dialogs.remove(self)
 
 	def close(self, *retval):
 		if not self.execing:

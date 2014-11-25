@@ -2015,7 +2015,7 @@ class InfoBarNotifications:
 			if self.execing:
 				Notifications.notificationQueue.popNotification(self)
 		if immediate:
-			doCheck()
+			doCheck(self)
 		else:
 			from twisted.internet import reactor
 			reactor.callLater(0, doCheck, self)
