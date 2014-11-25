@@ -3937,6 +3937,10 @@ class eNetworkManager(object):
         """onServicesChanged(eNetworkManager self)"""
         return _enigma.eNetworkManager_onServicesChanged(self)
 
+    def onTechnologiesChanged(self):
+        """onTechnologiesChanged(eNetworkManager self)"""
+        return _enigma.eNetworkManager_onTechnologiesChanged(self)
+
     def online(self):
         """online(eNetworkManager self) -> bool"""
         return _enigma.eNetworkManager_online(self)
@@ -3972,6 +3976,7 @@ eNetworkManager.getServices = new_instancemethod(_enigma.eNetworkManager_getServ
 eNetworkManager.getTechnologies = new_instancemethod(_enigma.eNetworkManager_getTechnologies,None,eNetworkManager)
 eNetworkManager.sendUserReply = new_instancemethod(_enigma.eNetworkManager_sendUserReply,None,eNetworkManager)
 eNetworkManager.onServicesChanged = new_instancemethod(_enigma.eNetworkManager_onServicesChanged,None,eNetworkManager)
+eNetworkManager.onTechnologiesChanged = new_instancemethod(_enigma.eNetworkManager_onTechnologiesChanged,None,eNetworkManager)
 eNetworkManager.online = new_instancemethod(_enigma.eNetworkManager_online,None,eNetworkManager)
 eNetworkManager.getUserInputRequestFields = new_instancemethod(_enigma.eNetworkManager_getUserInputRequestFields,None,eNetworkManager)
 eNetworkManager_swigregister = _enigma.eNetworkManager_swigregister
@@ -4538,6 +4543,10 @@ class eNetworkTechnology(iObject):
         """scan(eNetworkTechnology self)"""
         return _enigma.eNetworkTechnology_scan(self)
 
+    def isScanning(self):
+        """isScanning(eNetworkTechnology self) -> bool"""
+        return _enigma.eNetworkTechnology_isScanning(self)
+
     poweredChanged = _swig_property(_enigma.eNetworkTechnology_poweredChanged_get, _enigma.eNetworkTechnology_poweredChanged_set)
     connectedChanged = _swig_property(_enigma.eNetworkTechnology_connectedChanged_get, _enigma.eNetworkTechnology_connectedChanged_set)
     scanFinished = _swig_property(_enigma.eNetworkTechnology_scanFinished_get, _enigma.eNetworkTechnology_scanFinished_set)
@@ -4561,6 +4570,7 @@ eNetworkTechnology.setTetheringId = new_instancemethod(_enigma.eNetworkTechnolog
 eNetworkTechnology.tetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnology_tetheringPassphrase,None,eNetworkTechnology)
 eNetworkTechnology.setTetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnology_setTetheringPassphrase,None,eNetworkTechnology)
 eNetworkTechnology.scan = new_instancemethod(_enigma.eNetworkTechnology_scan,None,eNetworkTechnology)
+eNetworkTechnology.isScanning = new_instancemethod(_enigma.eNetworkTechnology_isScanning,None,eNetworkTechnology)
 eNetworkTechnology_swigregister = _enigma.eNetworkTechnology_swigregister
 eNetworkTechnology_swigregister(eNetworkTechnology)
 
@@ -4634,6 +4644,10 @@ class eNetworkTechnologyPtr(object):
         """scan(eNetworkTechnologyPtr self)"""
         return _enigma.eNetworkTechnologyPtr_scan(self)
 
+    def isScanning(self):
+        """isScanning(eNetworkTechnologyPtr self) -> bool"""
+        return _enigma.eNetworkTechnologyPtr_isScanning(self)
+
     poweredChanged = _swig_property(_enigma.eNetworkTechnologyPtr_poweredChanged_get, _enigma.eNetworkTechnologyPtr_poweredChanged_set)
     connectedChanged = _swig_property(_enigma.eNetworkTechnologyPtr_connectedChanged_get, _enigma.eNetworkTechnologyPtr_connectedChanged_set)
     scanFinished = _swig_property(_enigma.eNetworkTechnologyPtr_scanFinished_get, _enigma.eNetworkTechnologyPtr_scanFinished_set)
@@ -4660,6 +4674,7 @@ eNetworkTechnologyPtr.setTetheringId = new_instancemethod(_enigma.eNetworkTechno
 eNetworkTechnologyPtr.tetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnologyPtr_tetheringPassphrase,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr.setTetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnologyPtr_setTetheringPassphrase,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr.scan = new_instancemethod(_enigma.eNetworkTechnologyPtr_scan,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.isScanning = new_instancemethod(_enigma.eNetworkTechnologyPtr_isScanning,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr_swigregister = _enigma.eNetworkTechnologyPtr_swigregister
 eNetworkTechnologyPtr_swigregister(eNetworkTechnologyPtr)
 

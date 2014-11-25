@@ -1,5 +1,5 @@
 <wizard>
-	<step id="start" nextstep="alreadyonline">
+	<step id="start" nextstep="alreadyconnected">
 		<text
 			value="Welcome.\n\nIf you want to connect your Dreambox to a network and/or the Internet, this wizard will guide you through the basic network setup of your Dreambox.\n\nPress OK to start configuring your network" />
 		<short_title value="Network connection" />
@@ -8,10 +8,10 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 		</code>
 		<condition>
-self.condition = not self.isOnline()
+self.condition = not self.isNetworkConnected()
 		</condition>
 	</step>
-	<step id="alreadyonline">
+	<step id="alreadyconnected">
 		<text value="Your Dreambox is already connected to the Internet.\nThere is no configuration required." />
 		<short_title value="Connected" />
 		<list>
@@ -19,7 +19,7 @@ self.condition = not self.isOnline()
 			<listentry caption="Run the Network wizard anyways" step="technologies" />
 		</list>
 		<condition>
-self.condition = self.isOnline()
+self.condition = self.isNetworkConnected()
 		</condition>
 	</step>
 	<step id="technologies" nextstep="services">

@@ -9,6 +9,7 @@ from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Screens.Screen import Screen
 
+from Tools.BoundFunction import boundFunction
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.Log import Log
 from Tools.LoadPixmap import LoadPixmap
@@ -22,13 +23,13 @@ def toIP4String(cfg):
 	return cfg.tostring(cfg.value)
 
 NETWORK_STATE_MAP = {
-			"idle" : _("idle"),
-			"failure" : _("failure"),
-			"association" : _("association"),
-			"configuration" : _("configuration"),
-			"ready" : _("ready"),
-			"disconnect" : _("disconnect"),
-			"online" : _("online"),
+			"idle" : _("Idle"),
+			"failure" : _("Failure"),
+			"association" : _("Association"),
+			"configuration" : _("Configuration"),
+			"ready" : _("Connected"),
+			"disconnect" : _("Disconnect"),
+			"online" : _("Online"),
 		}
 
 def translateState(state):
@@ -57,20 +58,30 @@ class NetworkConfigGeneral(object):
 		pass
 
 	def _techPoweredChanged(self, powered):
-		pass
+		if powered:
+			self._rescan()
 
 	def _setTechPowered(self, cfg):
 		tech = cfg.tech
 		powered = not tech.powered()
 		tech.setPowered(powered)
-		if tech.type() == eNetworkService.TYPE_WIFI and tech.powered():
-			tech.scan()
 
-	def _rescan(self):
+	def _scanFinished(self, tech):
+		pass
+
+	def _rescan(self, tech=None):
+		if tech is not None and  tech.type() == eNetworkService.TYPE_WIFI and tech.powered():
+			Log.i("Triggering rescan for '%s'" %tech.name())
+			tech.scan()
+			return True
+
+		res = False
 		for tech in self._nm.getTechnologies():
 			if tech.type() == eNetworkService.TYPE_WIFI and tech.powered():
 				Log.i("Triggering rescan for '%s'" %tech.name())
 				tech.scan()
+				res = True
+		return res
 
 	def _removeService(self):
 		service = self._currentService
@@ -88,10 +99,9 @@ class NetworkConfigGeneral(object):
 			cfg.tech = tech
 			cfg.addNotifier(self._setTechPowered, initial_call=False)
 			self._tech_conn.append(tech.poweredChanged.connect(self._techPoweredChanged))
+			self._tech_conn.append(tech.scanFinished.connect(boundFunction(self._scanFinished, tech)))
 			title = "%s (%s)" %(tech.name(), tech.type())
 			l.append(getConfigListEntry(title, cfg))
-			if tech.type() == eNetworkService.TYPE_WIFI:
-				tech.scan()
 		Log.w(l)
 		return l
 
@@ -106,9 +116,8 @@ class NetworkConfigGeneral(object):
 		if unified:
 			for tech in techs:
 				self._tech_conn.append(tech.poweredChanged.connect(self._techPoweredChanged))
+				self._tech_conn.append(tech.scanFinished.connect(boundFunction(self._scanFinished, tech)))
 				l.append( (tech.path(), tech,) )
-				if tech.type() == eNetworkService.TYPE_WIFI:
-					tech.scan()
 				for service in services:
 					if service.type() == tech.type():
 						l.append( (service.path(), service,) )
@@ -126,7 +135,10 @@ class NetworkConfigGeneral(object):
 	def _buildTechnologyListEntry(self, techpath, tech):
 		#Log.i("technology: %s/%s" %(tech.name(), tech.type()))
 		enabled = _("on") if tech.powered() else _("off")
-		return (tech.path(), None, enabled, None, None, None, tech.name())
+		name = tech.name()
+		if tech.isScanning():
+			name = "%s - scanning..." %name
+		return (tech.path(), None, enabled, None, None, None, name)
 
 	def _buildServiceListEntry(self, svcpath, service):
 		#Log.i("service: %s/%s/%s" %(service.name(), service.type(), service.strength()))
@@ -158,7 +170,7 @@ class NetworkConfigGeneral(object):
 
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
-		<screen name="NetworkServiceConfig" position="center,center" size="560,600" title="Network Configuration" zPosition="0">
+		<screen name="NetworkServiceConfig" position="center,center" size="560,500" title="Network Configuration" zPosition="0">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
@@ -169,7 +181,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			<widget name="key_yellow" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget name="key_blue" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 
-			<widget source="list" render="Listbox" position="5,50" size="550,520" scrollbarMode="showOnDemand" zPosition="1">
+			<widget source="list" render="Listbox" position="5,50" size="550,420" scrollbarMode="showOnDemand" zPosition="1">
 				<convert type="TemplatedMultiContent">
 					{"template":[
 							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
@@ -184,7 +196,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 					}
 				</convert>
 			</widget>
-			<widget name="hint" position="5,580" zPosition="1" size="550,20" font="Regular;16" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget name="hint" position="5,480" zPosition="1" size="560,20" font="Regular;16" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -192,7 +204,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		NetworkConfigGeneral.__init__(self)
 
 		self["key_red"] = Label(_("Reset"))
-		self["key_green"] = Label(_("Rescan"))
+		self["key_green"] = Label(_("Scan"))
 		self["key_yellow"] = Label(_("IP"))
 		self["key_blue"] = Label(_("DNS"))
 		self["hint"] = Label(_("Press OK to connect"))
@@ -210,6 +222,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		}, -2)
 
 		self["list"] = self._services
+		self._hasWireless = False
 
 		self._services.buildfunc = self._buildListEntry
 		self._services.onSelectionChanged.append(self._selectionChanged)
@@ -219,7 +232,18 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 
 		self.onClose.append(self._onClose)
 		self.onLayoutFinish.append(self.layoutFinished)
-		self.onLayoutFinish.append(self._checkButtons)
+
+	def _rescan(self):
+		if isinstance(self._currentService, eNetworkServicePtr):
+			return
+		if self._currentService.type() != eNetworkService.TYPE_WIFI:
+			return
+		if NetworkConfigGeneral._rescan(self, self._currentService):
+			self._createSetup()
+
+	def _scanFinished(self, tech):
+		Log.i("finished!")
+		self._createSetup()
 
 	def _removeService(self):
 		NetworkConfigGeneral._removeService(self)
@@ -229,7 +253,9 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self._checkButtons()
 
 	def _checkButtons(self):
+		self["hint"].setText("")
 		if isinstance(self._currentService, eNetworkServicePtr): #a service
+			self["key_green"].hide()
 			if self._currentService.connected():
 				self["hint"].setText(_("Press OK to disconnect"))
 			else:
@@ -242,6 +268,10 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			self["key_blue"].show()
 			self["ServiceActions"].setEnabled(True)
 		else: #a technology
+			if self._currentService and self._currentService.type() == eNetworkService.TYPE_WIFI:
+				self["key_green"].show()
+			else:
+				self["key_green"].hide()
 			self["key_red"].hide()
 			if self._currentService:
 				if self._currentService.powered():
@@ -271,7 +301,6 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self._createSetup()
 
 	def _servicesChanged(self, *args):
-		self._checkButtons()
 		self._createSetup()
 
 	def _addNotifiers(self):
@@ -306,14 +335,21 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			item.setPowered(not item.powered())
 
 	def _createSetup(self):
+		self._hasWireless = False
+		for tech in self._nm.getTechnologies():
+			if tech.type() == eNetworkService.TYPE_WIFI and tech.powered():
+				self._hasWireless = True
 		self._services.updateList(self.getServiceList(unified=True))
+		self._checkButtons()
 
 	def _techPoweredChanged(self, powered):
-		self._checkButtons()
+		if powered:
+			self._rescan()
 		self._createSetup()
 
 	def layoutFinished(self):
 		self.setTitle(_("Network Config"))
+		self._checkButtons()
 
 class ServiceBoundConfiguration(object):
 	def __init__(self, service):

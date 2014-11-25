@@ -169,7 +169,7 @@ config.ParentalControl.configured.save()
 from Components.config import config
 from ParentalControlSetup import ParentalControlChangePin
 if self["list"].index == 0:
-	self.session.open(ParentalControlChangePin, config.ParentalControl.servicepin[0], _("parental control pin"))
+	self.openScreen(ParentalControlChangePin, config.ParentalControl.servicepin[0], _("parental control pin"))
 			</code>
 		</step>
 		<step id="warnpin">

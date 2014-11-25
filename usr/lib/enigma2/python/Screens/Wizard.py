@@ -317,6 +317,10 @@ class Wizard(Screen):
 	def _initAnimation(self):
 		self.setShowHideAnimation(self.__nextStepAnimation)
 
+	def openScreen(self, *args, **kwargs):
+		self.onHideFinished.remove(self.__hideFinished)
+		self.session.openWithCallback(self.__foreignScreenInstanceFinished, *args, **kwargs)
+
 	def red(self):
 		print "red"
 		pass
@@ -464,12 +468,12 @@ class Wizard(Screen):
 					# we need to remove the callback so it doesn't show the wizard screen after hiding it. the onHideFinished is
 					# fired glpbally, not just for our own Screen
 					self.onHideFinished.remove(self.__hideFinished)
-					self.configInstance.runAsync(self.__configInstanceFinished)
+					self.configInstance.runAsync(self.__foreignScreenInstanceFinished)
 				else:
 					self.configInstance.run()
 		self.finished()
 
-	def __configInstanceFinished(self):
+	def __foreignScreenInstanceFinished(self, *args, **kwargs):
 		# re-register the callback for the next wizard steps
 		self.onHideFinished.append(self.__hideFinished)
 
