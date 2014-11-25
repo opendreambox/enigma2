@@ -1,5 +1,6 @@
 <wizard nextstepanimation="wizard_next" previousstepanimation="wizard_previous">
 		<step id="start" nextstep="welcome">
+			<short_title value="Language" />
 			<text value="Please use the UP and DOWN keys to select your language. Afterwards press the OK button." />
 			<multicontentlist type="dynamic" setfunction="setLanguageList" onselect="onLanguageSelect" evaluation="languageSave" />
 			<code>
@@ -9,6 +10,7 @@ self.selectKey("DOWN")
 			</code>
 		</step>
 		<step id="welcome" nextstep="introduction">
+			<short_title value="Startwizard" />
 			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your Dreambox.\nPress the OK button on your remote control to move to the next step." />
 			<code>
 self.clearSelectedKeys()
@@ -16,6 +18,7 @@ self.selectKey("OK")
 			</code>
 		</step>
 		<step id="introduction" >
+			<short_title value="Startwizard" />
 			<text value="Use the up/down keys on your remote control to select an option. After that, press OK." />
 			<list>
 				<listentry caption="Use wizard to set up basic features" step="nima" />
@@ -34,6 +37,7 @@ from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 0 and not nimmanager.nim_slots[0].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
 			<text dynamictext="setTunerText" />
+			<short_title value="Tuner A" />
 			<config screen="NimSetup" module="Satconfig" args="0" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -48,6 +52,7 @@ from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 1 and not nimmanager.nim_slots[1].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
 			<text dynamictext="setTunerText" />
+			<short_title value="Tuner B" />
 			<config screen="NimSetup" module="Satconfig" args="1" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -62,6 +67,7 @@ from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 2 and not nimmanager.nim_slots[2].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
 			<text dynamictext="setTunerText" />
+			<short_title value="Tuner C" />
 			<config screen="NimSetup" module="Satconfig" args="2" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -76,6 +82,7 @@ from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 3 and not nimmanager.nim_slots[3].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
 			<text dynamictext="setTunerText" />
+			<short_title value="Tuner D" />
 			<config screen="NimSetup" module="Satconfig" args="3" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -85,6 +92,7 @@ self.selectKey("RIGHT")
 		</step>
 		<step id="satlistsquestion">
 			<text value="Do you want to install default sat lists?" />
+			<short_title value="Sat lists" />
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
@@ -95,33 +103,19 @@ self.hideRc()
 			</code>
 			<list>
 				<listentry caption="Yes" step="startdefaultlists" />
-				<listentry caption="No" step="scanquestion" />
+				<listentry caption="No, but do an automatic scan now" step="scan" />
+				<listentry caption="No, but do a manual scan now" step="manualscan" />
+				<listentry caption="No, scan later manually" step="setautomaticstandby" />
 			</list>
 		</step>
-
-		<step id="scanquestion">
-			<text value="Do you want to do a service scan?" />
-			<condition>
-from Components.config import config
-from Components.NimManager import nimmanager
-self.condition = config.misc.startwizard.doservicescan.value and nimmanager.somethingConnected()
-			</condition>
-			<code>
-self.hideRc()
-			</code>
-			<list>
-				<listentry caption="Yes, do an automatic scan now" step="scan" />
-				<listentry caption="Yes, do a manual scan now" step="manualscan" />
-				<listentry caption="No, scan later manually" step="finisheddefaultsatlists" />
-			</list>
-		</step>
-		<step id="scan" nextstep="finisheddefaultsatlists">
+		<step id="scan" nextstep="setautomaticstandby">
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = config.misc.startwizard.doservicescan.value and nimmanager.somethingConnected()
 			</condition>			
 			<text value="What do you want to scan?" />
+			<short_title value="Simple Scan" />
 			<config screen="ScanSimple" module="ScanSetup" type="ConfigList" />
 		</step>
 		<step id="manualscan">
@@ -131,6 +125,7 @@ from Components.NimManager import nimmanager
 self.condition = config.misc.startwizard.doservicescan.value and nimmanager.somethingConnected()
 			</condition>
 			<text value="What do you want to scan?" />
+			<short_title value="Manual scan" />
 			<config screen="ScanSetup" module="ScanSetup" type="ConfigList" />
 		</step>
 		<step id="nextscan">
@@ -140,13 +135,15 @@ from Components.NimManager import nimmanager
 self.condition = config.misc.startwizard.doservicescan.value and nimmanager.somethingConnected()
 			</condition>
 			<text value="Do you want to do another manual service scan?" />
+			<short_title value="Manual scan" />
 			<list>
 				<listentry caption="Yes, do another manual scan now" step="manualscan" />
-				<listentry caption="No, scan later manually" step="finisheddefaultsatlists" />
+				<listentry caption="No, scan later manually" step="setautomaticstandby" />
 			</list>
 		</step>
-		<step id="finisheddefaultsatlists">
+		<step id="setautomaticstandby">
 			<text value="Automatic standby mode\n\nIf you don't press any button on the remote control, your Dreambox can enter the standby mode automatically. You can choose the period after which the standby mode will be activated or disable this functionality now." />
+			<short_title value="Auto Standby" />
 			<list type="config" configelement="config.usage.inactivity_shutdown" />
 			<code pos="after">
 config.usage.inactivity_shutdown_initialized.value = True
@@ -155,6 +152,7 @@ config.usage.inactivity_shutdown_initialized.save()
 		</step>
 		<step id="enableparentalcontrol">
 			<text value="Do you want to enable the parental control feature on your dreambox?" />
+			<short_title value="ParentControl" />
 			<list>
 				<listentry caption="Yes" step="parentalsetup" />
 				<listentry caption="No" step="expert" />
@@ -170,6 +168,7 @@ config.ParentalControl.configured.save()
 		</step>
 		<step id="parentalsetup">
 			<text value="You need to set a PIN code and hide it from your children.\n\nDo you want to set the pin now?" />
+			<short_title value="Parent PIN" />
 			<list>
 				<listentry caption="Yes" step="finishparentalsetup" />
 				<listentry caption="No" step="warnpin" />
@@ -183,6 +182,7 @@ if self["list"].index == 0:
 		</step>
 		<step id="warnpin">
 			<text value="Please be aware, that anyone can disable the parental control, if you have not set a PIN." />
+			<short_title value="PIN WARNING" />
 		</step>
 		<step id="finishparentalsetup">
 			<code>
@@ -199,9 +199,11 @@ config.ParentalControl.setuppin.save()
 			</code>
 
 			<text value="After the start wizard is completed, you need to protect single services. Refer to your dreambox's manual on how to do that." />
+			<short_title value="ParentControl Finished" />
 		</step>
 		<step id="expert">
 			<text value="Your Dreambox offers three levels of configuration options:\n\nSimple - We suggest this level if this is your first contact with a Dreambox.\nIntermediate - This level enables you to change some more options, mainly the graphical user interface and the behaviour of your Dreambox.\nExpert - This gives you full control over all available settings of your Dreambox.\n\nWarning: Higher levels may lead to increased usage complexity." />
+			<short_title value="Userlevel" />
 			<list type="config" configelement="config.usage.setup_level" />
 		</step>
 		<step id="multibouquets">
@@ -210,6 +212,7 @@ from Components.config import config
 self.condition = config.usage.setup_level.value != "simple" 
 			</condition>
 			<text value="Multiple Bouquets Feature\n\nYour Dreambox offers a multiple bouquets feature. If this feature is active, you can manage multiple favorite lists of TV and radio services. If deactivated, only one favorite list is available which makes navigation a bit easier.\n\nWould you like to activate the multiple bouquets feature now?" />
+			<short_title value="MultiBouquet" />
 			<list type="config" configelement="config.usage.multibouquet" />
 		</step>
 		<step id="end" laststep="true">
@@ -217,5 +220,6 @@ self.condition = config.usage.setup_level.value != "simple"
 self.condition = self.isLastWizard
 			</condition>
 			<text value="Thank you for using the wizard. Your box is now ready to use.\nPlease press OK to start using your Dreambox." />
+			<short_title value="Finished" />
 		</step>
 </wizard>

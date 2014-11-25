@@ -219,7 +219,7 @@ public:
 		int pmtPid;
 		int textPid;
 		bool isCrypted() { return !caids.empty(); }
-		std::map<std::string, boost::any> createDataMap();
+		std::map<std::string, boost::any> createDataMap(bool includeEit=true);
 	};
 
 	int getProgramInfo(program &program);

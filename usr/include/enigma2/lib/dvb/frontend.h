@@ -122,7 +122,7 @@ private:
 	void feEvent(int);
 	void timeout();
 	void lostLock(); // called by m_lostLockTimer
-	void tuneLoop();  // called by m_tuneTimer
+	void tuneLoop();  // called by m_tuneTimer from tune thread
 	int tuneLoopInt();
 	void setFrontend(bool recvEvents=true);
 	bool setSecSequencePos(int steps);

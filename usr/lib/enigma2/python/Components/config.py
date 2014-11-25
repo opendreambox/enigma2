@@ -100,14 +100,16 @@ class ConfigElement(object):
 
 	def changed(self, save_or_cancel=False):
 		for (func, val) in self.__notifiers.iteritems():
-			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != self.value):
-				self.__notifiers[func] = (val[0], self.value, val[2])
+			strval = str(self.value)
+			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != strval):
+				self.__notifiers[func] = (val[0], strval, val[2])
 				val[0](self)
 
 	def changedFinal(self, save_or_cancel=False):
 		for (func, val) in self.__notifiers_final.iteritems():
-			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != self.value):
-				self.__notifiers_final[func] = (val[0], self.value, val[2])
+			strval = str(self.value)
+			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != strval):
+				self.__notifiers_final[func] = (val[0], strval, val[2])
 				val[0](self)
 
 	# immediate_feedback = True means call notifier on every value CHANGE
@@ -116,9 +118,9 @@ class ConfigElement(object):
 	def addNotifier(self, notifier, initial_call = True, immediate_feedback = True, call_on_save_or_cancel = False):
 		assert callable(notifier), "notifiers must be callable"
 		if immediate_feedback:
-			self.__notifiers[str(notifier)] = (notifier, self.value, call_on_save_or_cancel)
+			self.__notifiers[str(notifier)] = (notifier, str(self.value), call_on_save_or_cancel)
 		else:
-			self.__notifiers_final[str(notifier)] = (notifier, self.value, call_on_save_or_cancel)
+			self.__notifiers_final[str(notifier)] = (notifier, str(self.value), call_on_save_or_cancel)
 		# CHECKME:
 		# do we want to call the notifier
 		#  - at all when adding it? (yes, though optional)

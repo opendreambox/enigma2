@@ -6,6 +6,7 @@ self.runWizard = (len(packagelist) > 0)
 self.condition = self.runWizard
 		</condition>
 		<text value="Please choose the default services lists you want to install." />
+		<short_title value="Choose Satlist" />
 		<!--list type="dynamic" source="listDefaults" evaluation="selectionMade" /-->
 		<config type="dynamic" source="getConfigList" evaluation="selectionMade" />
 		<code pos="after">
@@ -14,8 +15,9 @@ self.disableKeys = True
 	</step>
 
 	<!--step id="nopackages" nextstep="finisheddefaultsatlists"-->
-	<step id="nopackages" nextstep="scanquestion">
+	<step id="nopackages" nextstep="satlistsquestion">
 		<text value="There are no default services lists in your image." />
+		<short_title value="No Satlists available" />
 	</step>
 	
 	<!--step id="nothingtoinstall" nextstep="finisheddefaultsatlists"-->
@@ -31,6 +33,7 @@ else:
 	self.condition = False
 		</condition>
 		<text value="You chose not to install any default services lists." />
+		<short_title value="Skip Satlists" />
 		<!--list type="dynamic" source="listDefaults" evaluation="selectionMade" /-->
 		<code>
 self.disableKeys = False
@@ -51,6 +54,7 @@ self.disableKeys = True
 self.installPackages(self.indexList)
 		</code>
 		<text value="Installing default sat lists... Please wait..." />
+		<short_title value="Installing..." />
 	</step>
 	
 	<step id="finisheddefaultsatlists">

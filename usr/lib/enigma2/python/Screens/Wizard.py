@@ -13,6 +13,7 @@ from Components.config import config
 from enigma import eTimer, eEnv
 
 from Tools.BoundFunction import boundFunction
+from Tools.Log import Log
 
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
@@ -41,10 +42,11 @@ class WizardSummary(Screen):
 		self.onShow.append(self.setCallback)
 		
 	def setCallback(self):
-		self.parent.setLCDTextCallback(self.setText)
-		
-	def setText(self, text):
-		self["text"].setText(text)
+		self.parent.setLCDTextCallback(self.setTitle)
+
+	def setTitle(self, title):
+		Log.i(title)
+		self["text"].setText(title)
 
 class Wizard(Screen):
 	def createSummary(self):
@@ -94,8 +96,8 @@ class Wizard(Screen):
 					self.wizard[self.lastStep]["dynamictext"] = str(attrs.get('dynamictext'))
 				else:
 					self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
-			elif (name == "displaytext"):
-				self.wizard[self.lastStep]["displaytext"] = str(attrs.get('value')).replace("\\n", "\n")
+			elif name == "displaytext" or name =="short_title":
+				self.wizard[self.lastStep]["short_title"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif (name == "list"):
 				if (attrs.has_key('type')):
 					if attrs["type"] == "dynamic":
@@ -188,9 +190,8 @@ class Wizard(Screen):
 		self.isLastWizard = False # can be used to skip a "goodbye"-screen in a wizard
 
 		self.stepHistory = []
-		
-		self.__nextStepAnimation = "wizard_next"
-		self.__previousStepAnimation = "wizard_previous"
+		self.__nextStepAnimation = Wizard.NEXT_STEP_ANIMATION_KEY
+		self.__previousStepAnimation = Wizard.PREVIOUS_STEP_ANIMATION_KEY
 
 		self.wizard = {}
 		parser = make_parser()
@@ -263,6 +264,7 @@ class Wizard(Screen):
 			"blue":self.blue,
 			"deleteBackward": self.deleteBackward,
 			"deleteForward": self.deleteForward,
+			"video": self.setNoAnimations,
 			"1": self.keyNumberGlobal,
 			"2": self.keyNumberGlobal,
 			"3": self.keyNumberGlobal,
@@ -287,11 +289,20 @@ class Wizard(Screen):
 
 	NEXT_STEP_ANIMATION = 0
 	PREVIOUS_STEP_ANIMATION = 1
+	NEXT_STEP_ANIMATION_KEY = "wizard_next"
+	PREVIOUS_STEP_ANIMATION_KEY = "wizard_previous"
 	def setAnimation(self, type, animation):
 		if type == self.NEXT_STEP_ANIMATION:
 			self.__nextStepAnimation = animation
 		elif type == self.PREVIOUS_STEP_ANIMATION:
 			self.__previousStepAnimation = animation
+
+	def setNoAnimations(self):
+		key = ""
+		Wizard.NEXT_STEP_ANIMATION_KEY = key
+		Wizard.PREVIOUS_STEP_ANIMATION_KEY = key
+		self.setAnimation(self.NEXT_STEP_ANIMATION, key)
+		self.setAnimation(self.PREVIOUS_STEP_ANIMATION, key)
 
 	def _initAnimation(self):
 		self.setShowHideAnimation(self.__nextStepAnimation)
@@ -581,11 +592,11 @@ class Wizard(Screen):
 				self.currStep += 1
 				self.updateValues()
 		else:
-			if self.wizard[self.currStep].has_key("displaytext"):
-				displaytext = self.wizard[self.currStep]["displaytext"]
+			if self.wizard[self.currStep].has_key("short_title"):
+				short_title = self.wizard[self.currStep]["short_title"]
 				print "set LCD text"
 				for x in self.lcdCallbacks:
-					x(displaytext)
+					x(short_title)
 			if len(self.stepHistory) == 0 or self.stepHistory[-1] != self.currStep:
 				self.stepHistory.append(self.currStep)
 			print "wizard step:", self.wizard[self.currStep]
@@ -601,11 +612,11 @@ class Wizard(Screen):
 			
 			print "wizard text", self.getTranslation(self.wizard[self.currStep]["text"])
 			self.updateText(firstset = True)
-			if self.wizard[self.currStep].has_key("displaytext"):
-				displaytext = self.wizard[self.currStep]["displaytext"]
+			if self.wizard[self.currStep].has_key("short_title"):
+				short_title = self.wizard[self.currStep]["short_title"]
 				print "set LCD text"
 				for x in self.lcdCallbacks:
-					x(displaytext)
+					x(short_title)
 				
 			self.codeafter=False
 			self.runCode(self.wizard[self.currStep]["code"])

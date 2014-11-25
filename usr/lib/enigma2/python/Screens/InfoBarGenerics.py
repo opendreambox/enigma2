@@ -2010,8 +2010,15 @@ class InfoBarNotifications:
 		if self.execing:
 			self.checkNotifications()
 
-	def checkNotifications(self):
-		Notifications.notificationQueue.popNotification(self)
+	def checkNotifications(self, immediate=False):
+		def doCheck(self):
+			if self.execing:
+				Notifications.notificationQueue.popNotification(self)
+		if immediate:
+			doCheck()
+		else:
+			from twisted.internet import reactor
+			reactor.callLater(0, doCheck, self)
 
 	def getEntryText(self):
 		numPending = len(Notifications.notificationQueue.getPending())

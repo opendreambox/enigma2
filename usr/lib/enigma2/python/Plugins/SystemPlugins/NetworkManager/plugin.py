@@ -46,50 +46,46 @@ class NetworkAgent(object):
 		if svc:
 			windowTitle = svc.name()
 
+		prev = dialog_values.get("PreviousPassphrase", None)
+		if prev:
+			del dialog_values["PreviousPassphrase"]
+
 		if len(dialog_values) == 1:
-			info = dialog_values.values()[0]
+			request_part = dialog_values.values()[0]
 			title = self._userInputField = dialog_values.keys()[0]
-			if info["Requirement"] == "mandatory":
+			if request_part["Requirement"] == "mandatory":
 				title = "%s" %title
-			title = "%s (%s)" %(title, info["Type"])
+			title = "%s (%s)" %(title, request_part["Type"])
 			self._userInputScreen = self.session.openWithCallback(self._onUserInput, InputBox, title=title, windowTitle=windowTitle)
 		elif len(dialog_values) == 2:
-			fkey, skey = dialog_values.keys()
-			#first field
-			finfo = dialog_values[fkey]
-			freq = finfo["Requirement"] == "mandatory"
-			ftype = Input.TEXT
-			if finfo["Type"] in ["psk", "wpspin"]:
-				ftype = Input.PIN
-			falt = finfo.get("Alternates", [])
-			#second field
-			sinfo = dialog_values[skey]
-			sreq = sinfo["Requirement"] == "mandatory"
-			stype = Input.TEXT
-			if sinfo["Type"] in ["psk", "wpspin"]:
-				stype = Input.PIN
-			salt = sinfo.get("Alternates", [])
+			first, second = dialog_values.keys()
 			input_config = {
-				"first" : {
-					"key" : fkey,
-					"value" : "",
-					"title" : fkey,
-					"required" : freq,
-					"type" : ftype,
-					"alternatives" : falt,
-					},
-				"second" : {
-					"key" : skey,
-					"value" : "",
-					"title" : skey,
-					"required" : sreq,
-					"type" : stype,
-					"alternatives" : salt,
-					},
+				"first" : self._createInputConfig(first, dialog_values[first], prev),
+				"second" : self._createInputConfig(second, dialog_values[second], prev),
 			}
 			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=windowTitle, config=input_config)
 		else:
 			self._nm.sendUserReply(StringMap()) #Cancel
+
+	def _createInputConfig(self, key, request_part, previousPassphrase):
+			requirement = request_part["Requirement"] == "mandatory"
+			val_type = Input.TEXT
+			if request_part["Type"] == "wpspin":
+				val_type = Input.PIN
+
+			value = ""
+			if previousPassphrase and request_part["Type"] == previousPassphrase["Type"]:
+				value = str(previousPassphrase["value"])
+
+			alternatives = request_part.get("Alternates", [])
+			return {
+				"key" : key,
+				"value" : value,
+				"title" : key,
+				"required" : requirement,
+				"type" : val_type,
+				"alternatives" : alternatives,
+			}
 
 	def _userInputCanceled(self):
 		if self._userInputScreen:

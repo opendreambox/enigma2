@@ -240,6 +240,9 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			self["key_blue"].hide()
 			self["ServiceActions"].setEnabled(False)
 
+	def _configChanged(self, *args, **kwargs):
+		self._createSetup()
+
 	def _configIP(self):
 		service = self._currentService
 		if service:
@@ -253,7 +256,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	def _technologiesChanged(self):
 		self._createSetup()
 
-	def _servicesChanged(self, *args, **kwargs):
+	def _servicesChanged(self, *args):
 		self._checkButtons()
 		self._createSetup()
 
@@ -336,10 +339,18 @@ class ServiceIPConfiguration(object):
 		self._ipv6Changed = False
 		self._addNotifiers()
 
+		self._service_conn = [
+			self._service.ipv4Changed.connect(self._serviceChanged),
+			self._service.ipv6Changed.connect(self._serviceChanged),
+		]
+
+	def _serviceChanged(self, *args):
+		self.reload(force=False)
+
 	def _addNotifiers(self):
 		#Setup refresh
-		self._config_ip4_method.addNotifier(self._methodChanged, initial_call=False)
-		self._config_ip6_method.addNotifier(self._methodChanged, initial_call=False)
+		self._config_ip4_method.addNotifier(self._changed, initial_call=False)
+		self._config_ip6_method.addNotifier(self._changed, initial_call=False)
 
 		#change tracking
 		#ipv4
@@ -356,33 +367,39 @@ class ServiceIPConfiguration(object):
 
 	def _changedIP4(self, element):
 		if not self._isReloading:
-			Log.i()
 			self._ipv4Changed = True
+		self._changed(element)
 
 	def _changedIP6(self, element):
 		if not self._isReloading:
-			Log.i()
 			self._ipv6Changed = True
+		self._changed(element)
 
-	def _methodChanged(self, element):
-		for fnc in self.onChanged:
-			fnc()
+	def _changed(self, element):
+		if not self._isReloading:
+			Log.i()
+			for fnc in self.onChanged:
+				fnc()
 
-	def reload(self):
+	def reload(self, force=True):
 		self._isReloading = True
-		ip4 = self._service.ipv4()
-		Log.i(ip4)
-		self._config_ip4_method.value = ip4.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
-		self._config_ip4_address.value = toIP4List( ip4.get("Address", "0.0.0.0") )
-		self._config_ip4_mask.value = toIP4List( ip4.get(eNetworkService.KEY_NETMASK, "0.0.0.0") )
-		self._config_ip4_gw.value = toIP4List( ip4.get(eNetworkService.KEY_GATEWAY, "0.0.0.0") )
-
-		ip6 = self._service.ipv6()
-		self._config_ip6_method.value = ip6.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
-		self._config_ip6_address.value = ip6.get(eNetworkService.KEY_ADDRESS, "::")
-		self._config_ip6_mask.value = ip6.get(eNetworkService.KEY_NETMASK, "::")
-		self._config_ip6_gw.value = ip6.get(eNetworkService.KEY_GATEWAY, "::")
-		self._config_ip6_privacy.value = ip6.get(eNetworkService.KEY_PRIVACY, eNetworkService.IPV6_PRIVACY_DISABLED)
+		if force:
+			self._ipv4Changed = False
+			self._ipv6Changed = False
+		if not self._ipv6Changed:
+			ip4 = self._service.ipv4()
+			self._config_ip4_method.value = ip4.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
+			self._config_ip4_address.value = toIP4List( ip4.get("Address", "0.0.0.0") )
+			self._config_ip4_mask.value = toIP4List( ip4.get(eNetworkService.KEY_NETMASK, "0.0.0.0") )
+			self._config_ip4_gw.value = toIP4List( ip4.get(eNetworkService.KEY_GATEWAY, "0.0.0.0") )
+		if not self._ipv6Changed:
+			ip6 = self._service.ipv6()
+			Log.i(dict(ip6))
+			self._config_ip6_method.value = ip6.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
+			self._config_ip6_address.value = ip6.get(eNetworkService.KEY_ADDRESS, "::")
+			self._config_ip6_mask.value = ip6.get(eNetworkService.KEY_NETMASK, "::")
+			self._config_ip6_gw.value = ip6.get(eNetworkService.KEY_GATEWAY, "::")
+			self._config_ip6_privacy.value = ip6.get(eNetworkService.KEY_PRIVACY, eNetworkService.IPV6_PRIVACY_DISABLED)
 		self._isReloading = False
 
 	def getList(self):
@@ -406,17 +423,21 @@ class ServiceIPConfiguration(object):
 
 	def save(self):
 		if self._ipv4Changed:
+			Log.i("IPv4 Changed, saving!")
 			if self._config_ip4_method.value == eNetworkService.METHOD_MANUAL:
 				ip4_config = {
 						eNetworkService.KEY_METHOD : self._config_ip4_method.value,
-						eNetworkService.KEY_ADDRESS : self._config_ip4_address.tostring(),
-						eNetworkService.KEY_NETMASK : self._config_ip4_mask.tostring(),
-						eNetworkService.KEY_GATEWAY : self._config_ip4_gw.tostring(),
+						eNetworkService.KEY_ADDRESS : toIP4String(self._config_ip4_address),
+						eNetworkService.KEY_NETMASK : toIP4String(self._config_ip4_mask),
+						eNetworkService.KEY_GATEWAY : toIP4String(self._config_ip4_gw),
 					}
 			else:
 				ip4_config = { eNetworkService.KEY_METHOD : self._config_ip4_method.value }
+			Log.i(ip4_config)
 			self._service.setIpv4Config(StringMap(ip4_config))
+
 		if self._ipv6Changed:
+			Log.i("IPv6 Changed, saving!")
 			if self._config_ip6_method.value == eNetworkService.METHOD_MANUAL:
 				ip6_config = {
 						eNetworkService.KEY_METHOD : self._config_ip6_method.value,
@@ -430,7 +451,11 @@ class ServiceIPConfiguration(object):
 				#one can not configure 6to4, it will automatically be applied by connman if applicable -> change it to auto
 				if val == eNetworkService.METHOD_6TO4:
 					val = eNetworkService.METHOD_AUTO
-				ip6_config = { eNetworkService.KEY_METHOD : val , eNetworkService.KEY_PRIVACY : self._config_ip6_privacy.value }
+
+				ip6_config = { eNetworkService.KEY_METHOD : val }
+				if val != eNetworkService.METHOD_OFF:
+					ip6_config[eNetworkService.KEY_PRIVACY] = self._config_ip6_privacy.value
+			Log.i(ip6_config)
 			self._service.setIpv6Config(StringMap(ip6_config))
 
 class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
@@ -473,6 +498,7 @@ class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 		self.onClose.append(self.__onClose)
 
 	def __onClose(self):
+		self._ipconfig.onChanged.remove(self._createSetup)
 		self._apply()
 
 	def _apply(self):

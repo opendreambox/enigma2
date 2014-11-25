@@ -1,0 +1,20 @@
+<keymap>
+	<map context="NetworkManagerInputActions">
+		<key id="KEY_NEXT" mapto="delete" flags="m" />
+		<key id="KEY_PREVIOUS" mapto="backspace" flags="m" />
+		<key id="KEY_ASCII" mapto="ascii" flags="mr" />
+		<key id="KEY_BACKSPACE" mapto="backspace" flags="mr" />
+		<key id="KEY_DELETE" mapto="delete" flags="mr" />
+		<key id="KEY_LEFT" mapto="left" flags="mr" />
+		<key id="KEY_RIGHT" mapto="right" flags="mr" />
+		<key id="KEY_UP" mapto="up" flags="mr" />
+		<key id="KEY_DOWN" mapto="down" flags="mr" />
+		<key id="KEY_OK" mapto="ok" flags="m" />
+		<key id="KEY_EXIT" mapto="exit" flags="m" />
+		<key id="KEY_ESC" mapto="exit" flags="m" />
+		<key id="KEY_ASCII" mapto="ascii" flags="mr" />
+		<key id="KEY_ENTER" mapto="ok" flags="m"/>
+		<key id="KEY_KPENTER" mapto="ok" flags="m"/>
+	</map>
+</keymap>
+

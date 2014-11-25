@@ -757,7 +757,7 @@ public:
 			}
 			with type being "video", "audio", "pmt", "pat"...
 		*/
-	virtual std::map<std::string, boost::any> getStreamingData()=0;
+	virtual std::map<std::string, boost::any> getStreamingData(bool includeEit=true)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamableService>, iStreamableServicePtr);
 

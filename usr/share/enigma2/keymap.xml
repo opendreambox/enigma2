@@ -38,6 +38,7 @@
 			<key id="KEY_BACKSPACE" mapto="deleteBackward" flags="mr" />
 		</device>
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
@@ -137,6 +138,7 @@
 		<key id="KEY_DOWN" mapto="down" flags="mr" />
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
 	</map>
@@ -152,6 +154,7 @@
 		<key id="KEY_RIGHT" mapto="right" flags="mr" />
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_EXIT" mapto="back" flags="m" />
 		<key id="KEY_ESC" mapto="back" flags="m" />
 		<device name="compatible: pcKeyboard">
@@ -187,9 +190,11 @@
 		<key id="KEY_DOWN" mapto="down" flags="mr" />
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_EXIT" mapto="back" flags="m" />
 		<key id="KEY_ESC" mapto="back" flags="m" />
 		<key id="KEY_TEXT" mapto="text" flags="m" />
+		<key id="KEY_VIDEO" mapto="video" flags="m" />
 	</map>
 	
 	<map context="InfobarMenuActions">
@@ -209,6 +214,7 @@
 	<map context="InfobarShowHideActions">
 		<key id="KEY_OK" mapto="toggleShow" flags="m" />
 		<key id="KEY_ENTER" mapto="toggleShow" flags="m" />
+		<key id="KEY_KPENTER" mapto="toggleShow" flags="m" />
 		<key id="KEY_EXIT" mapto="hide" flags="m" />
 		<key id="KEY_ESC" mapto="hide" flags="m" />
 	</map>
@@ -613,6 +619,7 @@
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
 	</map>
 	
@@ -654,6 +661,7 @@
 		<key id="KEY_GREEN" mapto="alwaysOK" flags="m" />
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_RED" mapto="cancel" flags="m" />
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
@@ -692,6 +700,7 @@
 		</device>
 		<key id="KEY_OK" mapto="select" flags="m" />
 		<key id="KEY_ENTER" mapto="select" flags="m" />
+		<key id="KEY_KPENTER" mapto="select" flags="m" />
 		<key id="KEY_EXIT" mapto="exit" flags="m" />
 		<key id="KEY_ESC" mapto="exit" flags="m" />
 		<key id="KEY_1" mapto="1" flags="m" />
@@ -725,6 +734,7 @@
 		<key id="KEY_EXIT" mapto="cancel" flags="m" />
 		<key id="KEY_ESC" mapto="cancel" flags="m" />
 		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
 		<key id="KEY_OK" mapto="ok" flags="m" />
 		<key id="KEY_CHANNELUP" mapto="size+" flags="mr" />
 		<key id="KEY_CHANNELDOWN" mapto="size-" flags="mr" />

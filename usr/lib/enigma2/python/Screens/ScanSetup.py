@@ -138,8 +138,8 @@ class CableTransponderSearchSupport:
 
 	def cableTransponderSearchSessionClosed(self, *val):
 		print "cableTransponderSearchSessionClosed, val", val
-		self.cable_search_container.appClosed.remove(self.cableTransponderSearchClosed)
-		self.cable_search_container.dataAvail.remove(self.getCableTransponderData)
+		del self.appClosed_conn
+		del self.dataAvail_conn
 		if val and len(val):
 			if val[0]:
 				self.setTransponderSearchResult(self.__tlist)

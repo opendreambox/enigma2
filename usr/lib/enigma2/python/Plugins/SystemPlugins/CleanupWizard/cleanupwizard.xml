@@ -1,7 +1,7 @@
 <wizard>
 	<step id="welcome">
 		<text value="Welcome to the cleanup wizard.\n\nWe have detected that your available internal memory has dropped below 2MB.\nTo ensure stable operation of your Dreambox, the internal memory should be cleaned up.\nYou can use this wizard to remove some extensions.\n" />
-		<displaytext value="Cleanup Wizard" />
+		<short_title value="Cleanup Wizard" />
 		<list type="dynamic" source="listAction" evaluation="ActionSelectionMade" onselect="ActionSelectionMoved" />
 		<code>
 self.clearSelectedKeys()
@@ -14,7 +14,7 @@ self.buildList(self.selectedAction)
 
 	<step id="removeextensions">
 		<text value="Please select an extension to remove." />
-		<displaytext value="Select package" />
+		<short_title value="Select package" />
 		<list type="dynamic" source="listInstalledPackages" evaluation="PackageSelectionMade" onselect="PackageSelectionMoved" />
 		<code>
 self.clearSelectedKeys()
@@ -29,7 +29,7 @@ self.removeExtension(self.selectedPackage)
 
 	<step id="StatusRemoveOK">
 		<text value="Package removed successfully.\n" />
-		<displaytext value="Removed successfully." />
+		<short_title value="Removed successfully." />
 		<list type="dynamic" source="listAgainAction" evaluation="ActionSelectionMade" onselect="ActionSelectionMoved" />
 		<code>
 self["text"].setText(self.Text)
@@ -42,7 +42,7 @@ self.buildList(self.selectedAction)
 	</step>
 	<step id="StatusRemoveERROR">
 		<text value="Package removal failed.\n" />
-		<displaytext value="Remove failed." />
+		<short_title value="Remove failed." />
 		<list type="dynamic" source="listAgainAction" evaluation="ActionSelectionMade" onselect="ActionSelectionMoved" />
 		<code>
 self["text"].setText(self.Text)

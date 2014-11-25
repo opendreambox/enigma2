@@ -35,7 +35,7 @@ class MultiInputBox(Screen):
 			"title" : _("Password"),
 			"required" : True,
 			"type" : Input.PIN,
-			"alternative" : None
+			"alternatives" : None
 			},
 	}
 
@@ -63,7 +63,7 @@ class MultiInputBox(Screen):
 		self._inputSecond = Input( self._second, type=second["type"] )
 		self["second"] = self._inputSecond
 
-		self["actions"] = ActionMap(["SimpleEditorActions"],
+		self["actions"] = ActionMap(["NetworkManagerInputActions"],
 		{
 			"ok" : self._ok,
 			"exit" : self._cancel,
@@ -96,10 +96,32 @@ class MultiInputBox(Screen):
 	def _ok(self):
 		first = self._inputFirst.getText()
 		second = self._inputSecond.getText()
-		if first != None and second != None and first != "":
-			self.close( { self._config["first"]["key"] : first, self._config["second"]["key"] : second} )
+
+		if self._checkInput():
+			ret = {}
+			if first:
+				ret[ self._config["first"]["key"] ] = first
+			if second:
+				ret[ self._config["second"]["key"] ] = second
+			self.close( ret )
 		else:
 			self.close(None)
+
+	def _checkInput(self):
+		_first = self._config["first"]
+		_second = self._config["second"]
+		first = self._inputFirst.getText()
+		second = self._inputSecond.getText()
+
+		firstok = self._checkSingleInput(first, _first)
+		secondok = self._checkSingleInput(second, _second)
+		if not ( _first["required"] and _second["required"] ):
+			return firstok or secondok
+
+		return firstok and secondok
+
+	def _checkSingleInput(self, value, config):
+		return value != None and value != ""
 
 	def _cancel(self):
 		self.close(None)

@@ -29,7 +29,7 @@ profile("LOAD:HelpableScreen")
 from Screens.HelpMenu import HelpableScreen
 
 config.misc.initialharddisknotification = ConfigBoolean(True)
-config.misc.missingdefaultstoragenotification = ConfigBoolean(True)
+config.misc.missingdefaultstoragenotification = ConfigBoolean(False)
 
 from Tools import Notifications
 Notifications.notificationQueue.registerDomain("InfoBar", _("InfoBar"), Notifications.ICON_DEFAULT)

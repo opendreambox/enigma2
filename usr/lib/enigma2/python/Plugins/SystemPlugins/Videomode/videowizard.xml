@@ -4,7 +4,7 @@
 self.condition = len(self.listInputChannels()) > 1 or self.selectDVI()
 		</condition>		
 		<text value="Video input selection\n\nPlease press OK if you can see this page on your TV (or select a different input port).\n\nThe next input port will be automatically probed in 20 seconds." />
-		<displaytext value="Select video input with up/down buttons" />
+		<short_title value="Select video input with up/down buttons" />
 		<list type="dynamic" source="listInputChannels" evaluation="inputSelectionMade" onselect="inputSelectionMoved" />
 		<code>
 self["portpic"].show()
@@ -14,7 +14,7 @@ self.selectKey("OK")
 	</step>
 	<step id="modeselection" nextstep="rateselection" timeout="20" timeoutaction="selectnext">
 		<text value="Video mode selection\n\nPlease press OK if you can see this page on your TV (or select a different video mode).\n\nThe next video mode will be automatically probed in 20 seconds." />
-		<displaytext value="Select video mode with up/down buttons" />
+		<short_title value="Select video mode with up/down buttons" />
 		<list type="dynamic" source="listModes" evaluation="modeSelectionMade" onselect="modeSelectionMoved" />
 		<code>
 self.clearSelectedKeys()
@@ -28,7 +28,7 @@ self["portpic"].hide()
 self.condition = (self.port != "DVI" or self.mode == "PC")
 		</condition>		
 		<text value="Refresh rate selection." />
-		<displaytext value="Select refresh rate" />
+		<short_title value="Select refresh rate" />
 		<list type="dynamic" source="listRates" evaluation="rateSelectionMade" onselect="rateSelectionMoved" />
 		<code>
 self.clearSelectedKeys()
@@ -41,7 +41,7 @@ self.selectKey("DOWN")
 self.condition = (self.port == "DVI" and self.mode in ["720p", "1080p", "1080i"])
 		</condition>
 		<text value="We will now test if your TV can also display this resolution at 50hz. If your screen goes black, wait 20 seconds and it will switch back to 60hz.\nPlease press OK to begin." />
-		<displaytext value="Please follow the instructions on the TV" />
+		<short_title value="Please follow the instructions on the TV" />
 		<code>
 self.clearSelectedKeys()
 self.selectKey("UP")
@@ -54,7 +54,7 @@ self.rateSelect("60Hz")
 self.condition = (self.port == "DVI" and self.mode in ["720p", "1080p", "1080i"])
 		</condition>
 		<text value="If you can see this page, please press OK." />
-		<displaytext value="" />
+		<short_title value="" />
 		<list>
 			<listentry caption="50 Hz" step="working50Hz" />
 		</list>
@@ -73,7 +73,7 @@ self.rateSelect("60Hz")
 self.condition = (self.port == "DVI" and self.mode in ["720p", "1080p", "1080i"])
 		</condition>
 		<text value="No 50 Hz, sorry. :(" />
-		<displaytext value="" />
+		<short_title value="" />
 		<code>
 self.clearSelectedKeys()
 self.selectKey("UP")
@@ -85,7 +85,7 @@ self.selectKey("DOWN")
 self.condition = (self.port == "DVI" and self.mode in ["720p", "1080p", "1080i"])
 		</condition>
 		<text value="Your TV works with 50 Hz. Good!" />
-		<displaytext value="" />
+		<short_title value="" />
 		<code>
 self.clearSelectedKeys()
 self.selectKey("UP")
@@ -100,6 +100,6 @@ from Components.config import configfile
 configfile.save() 
 		</code>
 		<text value="You have successfully finished the video setup. If you want to change the settings later, you can do this in the settings menu."/>
-		<displaytext value="No picture on TV? Press EXIT and retry." />
+		<short_title value="No picture on TV? Press EXIT and retry." />
 		</step>
 </wizard>

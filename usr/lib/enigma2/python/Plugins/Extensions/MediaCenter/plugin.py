@@ -63,8 +63,11 @@ class MainMenu(Screen):
 			self.onShown.append(self.runOnFirstExec)
 
 	def menu(self):
-		pass
-		#self.session.open(ConfigScreen)
+		try:
+			from Plugins.SystemPlugins.MediaDatabaseManager.MediaDatabaseManager import MediaDatabaseManager
+			self.session.open(MediaDatabaseManager)
+		except:
+			pass
 
 	def createSummary(self):
 		return MediaPlayerLCDScreen

@@ -132,7 +132,7 @@ class JobView(InfoBarNotifications, Screen, ConfigListScreen):
 				Notifications.AddNotificationWithCallback(self.sendStandbyNotification, MessageBox, _("A sleep timer wants to set your\nDreambox to standby. Do that now?"), timeout = 20, domain = "JobManager")
 
 	def checkNotifications(self):
-		InfoBarNotifications.checkNotifications(self)
+		InfoBarNotifications.checkNotifications(self, immediate=True)
 		pending = Notifications.notificationQueue.getPending("JobMananger")
 		if pending:
 			print "[JobView] have pending JobMananger Notification(s):", pending

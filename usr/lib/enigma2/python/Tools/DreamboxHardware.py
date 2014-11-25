@@ -4,7 +4,7 @@ from struct import pack, unpack
 def getFPVersion():
 	ret = None
 	try:
-		ret = long(open("/proc/stb/fp/version", "r").read())
+		ret = float(open("/proc/stb/fp/version", "r").read().strip())
 	except IOError:
 		try:
 			fp = open("/dev/dbox/fp0")
