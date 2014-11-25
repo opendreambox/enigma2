@@ -8,7 +8,11 @@ from Components.Label import Label
 from Components.PluginComponent import plugins
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
-from Components.Sources.HbbtvApplication import HbbtvApplication
+try:
+	from Components.Sources.HbbtvApplication import HbbtvApplication
+	haveHbbtvApplication = True
+except:
+	haveHbbtvApplication = False
 from Components.config import config, ConfigBoolean, ConfigClock
 from Components.SystemInfo import SystemInfo
 from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath, defaultStorageDevice
@@ -48,18 +52,21 @@ from Menu import MainMenu, mdom
 
 class InfoBarDish:
 	def __init__(self):
-		self.dishDialog = self.session.instantiateDialog(Dish)
+		self.dishDialog = self.session.instantiateDialog(Dish,zPosition=10000)
+		self.dishDialog.instance.neverAnimate()
 
 class InfoBarUnhandledKey:
 	def __init__(self):
-		self.unhandledKeyDialog = self.session.instantiateDialog(UnhandledKey)
+		self.unhandledKeyDialog = self.session.instantiateDialog(UnhandledKey,zPosition=10000)
+		self.unhandledKeyDialog.instance.neverAnimate()
+
 		self.hideUnhandledKeySymbolTimer = eTimer()
-		self.hideUnhandledKeySymbolTimer.callback.append(self.unhandledKeyDialog.hide)
+		self.hideUnhandledKeySymbolTimer_conn = self.hideUnhandledKeySymbolTimer.timeout.connect(self.unhandledKeyDialog.hide)
 		self.checkUnusedTimer = eTimer()
-		self.checkUnusedTimer.callback.append(self.checkUnused)
+		self.checkUnusedTimer_conn = self.checkUnusedTimer.timeout.connect(self.checkUnused)
 		self.onLayoutFinish.append(self.unhandledKeyDialog.hide)
-		eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.actionA) #highest prio
-		eActionMap.getInstance().bindAction('', 0x7FFFFFFF, self.actionB) #lowest prio
+		self.actionASlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.actionA) #highest prio
+		self.actionBSlot = eActionMap.getInstance().bindAction('', 0x7FFFFFFF, self.actionB) #lowest prio
 		self.flags = (1<<1);
 		self.uflags = 0;
 
@@ -77,6 +84,7 @@ class InfoBarUnhandledKey:
 	def actionB(self, key, flag):
 		if flag != 4:
 			self.uflags |= (1<<flag)
+		return 1
 
 	def checkUnused(self):
 		if self.flags == self.uflags:
@@ -86,9 +94,9 @@ class InfoBarUnhandledKey:
 class InfoBarAutoSleepTimer:
 	def __init__(self):
 		self.inactivityTimer = eTimer()
-		self.inactivityTimer.callback.append(self.inactive)
+		self.inactivityTimer_conn = self.inactivityTimer.timeout.connect(self.inactive)
 		self.keypress(None, 1)
-		eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keypress) #highest prio
+		self.highPrioActionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keypress) #highest prio
 		if not config.usage.inactivity_shutdown_initialized.value:
 			choicelist = [ (x[1],x[0]) for x in config.usage.inactivity_shutdown.getChoices() ] #we actually need to switch key/value for the choicebox
 			Notifications.AddNotificationWithCallback(
@@ -162,7 +170,7 @@ class InfoBarShowHide:
 		self.__locked = 0
 
 		self.hideTimer = eTimer()
-		self.hideTimer.callback.append(self.doTimerHide)
+		self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
 		self.hideTimer.start(5000, True)
 
 		self.onShow.append(self.__onShow)
@@ -262,7 +270,7 @@ class NumberZap(Screen):
 			})
 
 		self.Timer = eTimer()
-		self.Timer.callback.append(self.keyOK)
+		self.Timer_conn = self.Timer.timeout.connect(self.keyOK)
 		self.Timer.start(3000, True)
 
 class InfoBarNumberZap:
@@ -772,6 +780,7 @@ class InfoBarRdsDecoder:
 	"""provides RDS and Rass support/display"""
 	def __init__(self):
 		self.rds_display = self.session.instantiateDialog(RdsInfoDisplay)
+		self.rds_display.instance.neverAnimate()
 		self.rass_interactive = None
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
@@ -1201,6 +1210,7 @@ class InfoBarPVRState:
 	def __init__(self, screen=PVRState, force_show = False):
 		self.onPlayStateChanged.append(self.__playStateChanged)
 		self.pvrStateDialog = self.session.instantiateDialog(screen)
+		self.pvrStateDialog.instance.neverAnimate()
 		self.onShow.append(self._mayShow)
 		self.onHide.append(self.pvrStateDialog.hide)
 		self.force_show = force_show
@@ -1224,7 +1234,7 @@ class InfoBarTimeshiftState(InfoBarPVRState):
 	def __init__(self):
 		InfoBarPVRState.__init__(self, screen=TimeshiftState, force_show = True)
 		self.__hideTimer = eTimer()
-		self.__hideTimer.callback.append(self.__hideTimeshiftState)
+		self.__hideTimer_conn = self.__hideTimer.timeout.connect(self.__hideTimeshiftState)
 
 	def _mayShow(self):
 		if self.execing and self.timeshift_enabled:
@@ -1292,7 +1302,7 @@ class InfoBarTimeshift:
 		self.timeshift_enabled = 0
 		self.timeshift_state = 0
 		self.ts_rewind_timer = eTimer()
-		self.ts_rewind_timer.callback.append(self.rewindService)
+		self.ts_rewind_timer_conn = self.ts_rewind_timer.timeout.connect(self.rewindService)
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
@@ -1571,6 +1581,7 @@ class InfoBarPiP:
 			self.session.pipshown = False
 		else:
 			self.session.pip = self.session.instantiateDialog(PictureInPicture)
+			self.session.pip.instance.neverAnimate()
 			self.session.pip.show()
 			newservice = self.session.nav.getCurrentlyPlayingServiceReference()
 			if self.session.pip.playService(newservice):
@@ -2051,6 +2062,7 @@ class InfoBarCueSheetSupport:
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evStart: self.__serviceStarted,
+				iPlayableService.evCuesheetChanged: self.__downloadChangedCuesheet
 			})
 
 	def __serviceStarted(self):
@@ -2222,6 +2234,9 @@ class InfoBarCueSheetSupport:
 			return
 		cue.setCutList(self.cut_list)
 
+	def __downloadChangedCuesheet(self):
+		self.downloadCuesheet()
+
 	def downloadCuesheet(self):
 		cue = self.__getCuesheet()
 
@@ -2311,7 +2326,7 @@ class InfoBarTeletextPlugin:
 
 class InfobarHbbtvPlugin:
 	def __init__(self):
-		if not self["ShowRecordOnRed"].boolean:
+		if not self["ShowRecordOnRed"].boolean and haveHbbtvApplication:
 			self["HbbtvActions"] = HelpableActionMap(self, "InfobarHbbtvActions",
 				{
 					"hbbtvAutostart" : (self.startHbbtv, _("Start HbbTV..."))

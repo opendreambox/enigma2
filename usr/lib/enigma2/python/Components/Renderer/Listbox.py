@@ -37,7 +37,7 @@ class Listbox(Renderer, object):
 	def postWidgetCreate(self, instance):
 		if self.__content is not None:
 			instance.setContent(self.__content)
-		instance.selectionChanged.get().append(self.selectionChanged)
+		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		self.wrap_around = self.wrap_around # trigger
 		self.selection_enabled = self.selection_enabled # trigger
 		for (attrib, value) in self.skinAttributes:
@@ -49,7 +49,7 @@ class Listbox(Renderer, object):
 
 	def preWidgetRemove(self, instance):
 		instance.setContent(None)
-		instance.selectionChanged.get().remove(self.selectionChanged)
+		self.selectionChanged_conn = None
 
 	def setWrapAround(self, wrap_around):
 		self.__wrap_around = wrap_around

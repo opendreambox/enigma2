@@ -19,6 +19,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <boost/any.hpp>
+
 class eDVBCAService;
 class eDVBScan;
 
@@ -41,13 +43,14 @@ class eDVBCAService: public sigc::trackable
 	ePtr<eSocketNotifier> m_sn;
 	eServiceReferenceDVB m_service;
 	uint8_t m_used_demux[32];
-	unsigned int m_prev_build_hash;
 
-	int m_sock, m_clilen; 
+	int m_sock, m_clilen;
 	struct sockaddr_un m_servaddr;
 	unsigned int m_sendstate;
+	bool m_sent;
 	unsigned char m_capmt[2048];
 	ePtr<eTimer> m_retryTimer;
+
 	void sendCAPMT();
 	void Connect();
 	void socketCB(int what);
@@ -65,7 +68,7 @@ public:
 	static void registerChannelCallback(eDVBResourceManager *res_mgr);
 	static RESULT register_service( const eServiceReferenceDVB &ref, int demux_nums[2], eDVBCAService *&caservice );
 	static RESULT unregister_service( const eServiceReferenceDVB &ref, int demux_nums[2], eTable<ProgramMapSection> *ptr );
-	void buildCAPMT(eTable<ProgramMapSection> *ptr);
+	void buildCAPMT(eTable<ProgramMapSection> *ptr, bool haveCaIds);
 };
 
 #endif
@@ -94,7 +97,8 @@ class eDVBServicePMTHandler: public sigc::trackable
 	eUsePtr<iDVBChannel> m_channel;
 	eUsePtr<iDVBPVRChannel> m_pvr_channel;
 	ePtr<eDVBResourceManager> m_resourceManager;
-	ePtr<iDVBDemux> m_demux, m_pvr_demux_tmp;
+	ePtr<iDVBDemux> m_demux;
+	bool m_first_tune;
 
 	void channelStateChanged(iDVBChannel *);
 	ePtr<eConnection> m_channelStateChanged_connection;
@@ -105,6 +109,7 @@ class eDVBServicePMTHandler: public sigc::trackable
 
 	void PMTready(int error);
 	void PATready(int error);
+	
 	int m_pmt_pid;
 
 	int m_use_decode_demux;
@@ -130,9 +135,10 @@ public:
 		eventNoPATEntry,   // no pat entry for the corresponding SID could be found
 		eventNoPMT,        // no pmt could be received (timeout)
 		eventNewProgramInfo, // we just received a PMT
+		eventUpdateDecoder, // is sent directly after tune start to speedup picture view...
 		eventTuned,        // a channel was sucessfully (re-)tuned in, you may start additional filters now
 		eventNewSDT,
-		
+
 		eventPreStart,     // before start filepush thread
 		eventSOF,          // seek pre start
 		eventEOF,          // a file playback did end
@@ -213,13 +219,13 @@ public:
 		int pmtPid;
 		int textPid;
 		bool isCrypted() { return !caids.empty(); }
-		PyObject *createPythonObject();
+		std::map<std::string, boost::any> createDataMap();
 	};
 
 	int getProgramInfo(program &program);
 	int getDataDemux(ePtr<iDVBDemux> &demux);
 	int getDecodeDemux(ePtr<iDVBDemux> &demux);
-	PyObject *getCaIds(bool pair=false); // caid / ecmpid pair
+	boost::any getCaIds(bool pair=false); // caid / ecmpid pair
 	
 	int getPVRChannel(ePtr<iDVBPVRChannel> &pvr_channel);
 	int getServiceReference(eServiceReferenceDVB &service) { service = m_reference; return 0; }

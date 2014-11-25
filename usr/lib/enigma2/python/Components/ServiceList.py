@@ -437,39 +437,39 @@ class ServiceList(HTMLComponent, GUIComponent):
 		attribs = [ ]
 		for (attrib, value) in self.skinAttributes:
 			if attrib == "foregroundColorMarked":
-				self.markedForeground = parseColor(value).argb()
+				self.markedForeground = parseColor(value)
 			elif attrib == "foregroundColorMarkedSelected":
-				self.markedForegroundSelected = parseColor(value).argb()
+				self.markedForegroundSelected = parseColor(value)
 			elif attrib == "backgroundColorMarked":
-				self.markedBackground = parseColor(value).argb()
+				self.markedBackground = parseColor(value)
 			elif attrib == "backgroundColorMarkedSelected":
-				self.markedBackgroundSelected = parseColor(value).argb()
+				self.markedBackgroundSelected = parseColor(value)
 			elif attrib == "foregroundColorServiceNotAvail":
-				self.serviceNotAvail = parseColor(value).argb()
+				self.serviceNotAvail = parseColor(value)
 			elif attrib == "colorEventProgressbar":
-				self.serviceEventProgressbarColor = parseColor(value).argb()
+				self.serviceEventProgressbarColor = parseColor(value)
 			elif attrib == "colorEventProgressbarSelected":
-				self.serviceEventProgressbarColorSelected = parseColor(value).argb()
+				self.serviceEventProgressbarColorSelected = parseColor(value)
 			elif attrib == "forgroundColorEventProgressbarBorder":
-				self.serviceEventProgressbarBackColor = parseColor(value).argb()
+				self.serviceEventProgressbarBackColor = parseColor(value)
 			elif attrib == "backgroundColorEventProgressbarBorderSelected":
-				self.serviceEventProgressbarBackColorSelected = parseColor(value).argb()
+				self.serviceEventProgressbarBackColorSelected = parseColor(value)
 			elif attrib == "colorEventProgressbarBorder":
-				self.serviceEventProgressbarBorderColor = parseColor(value).argb()
+				self.serviceEventProgressbarBorderColor = parseColor(value)
 			elif attrib == "colorEventProgressbarBorderSelected":
-				self.serviceEventProgressbarBorderColorSelected = parseColor(value).argb()
+				self.serviceEventProgressbarBorderColorSelected = parseColor(value)
 			elif attrib == "colorServiceDescription":
-				self.serviceDescriptionColor = parseColor(value).argb()
+				self.serviceDescriptionColor = parseColor(value)
 			elif attrib == "colorServiceDescriptionSelected":
-				self.serviceDescriptionColorSelected = parseColor(value).argb()
+				self.serviceDescriptionColorSelected = parseColor(value)
 			elif attrib == "colorRecording":
-				self.recordingColor = parseColor(value).argb()
+				self.recordingColor = parseColor(value)
 			elif attrib == "colorRecordingSelected":
-				self.recordingColorSelected = parseColor(value).argb()
+				self.recordingColorSelected = parseColor(value)
 			elif attrib == "colorAdditionalInfo":
-				self.additionalInfoColor = parseColor(value).argb()
+				self.additionalInfoColor = parseColor(value)
 			elif attrib == "colorAdditionalInfoSelected":
-				self.additionalInfoColorSelected = parseColor(value).argb()
+				self.additionalInfoColorSelected = parseColor(value)
 			elif attrib == "picServiceEventProgressbar":
 				pic = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, value))
 				if pic:
@@ -567,7 +567,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 	def postWidgetCreate(self, instance):
 		instance.setWrapAround(True)
 		instance.setContent(self.l)
-		instance.selectionChanged.get().append(self.selectionChanged)
+		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		self.setMode(self.mode)
 		self.textRenderer = eLabel(self.instance)
 		self.textRenderer.resize(eSize(400,0))
@@ -577,7 +577,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		if self.session:
 			self.session.nav.RecordTimer.on_state_change.remove(self.onTimerEntryStateChange)
 		instance.setContent(None)
-		instance.selectionChanged.get().remove(self.selectionChanged)
+		self.selectionChanged_conn = None
 		config.usage.configselection_showrecordings.removeNotifier(self.getRecordingList)
 
 	def getRoot(self):

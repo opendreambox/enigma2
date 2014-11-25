@@ -81,21 +81,30 @@ def _swig_setattr_nondynamic_method(set):
     return set_attr
 
 
+try:
+    import weakref
+    weakref_proxy = weakref.proxy
+except:
+    weakref_proxy = lambda x: x
+
+
+__ENIGMA_PYTHON_I_INSIDE__ = _enigma.__ENIGMA_PYTHON_I_INSIDE__
+COMPOSITION_MODE_BUFFERED = _enigma.COMPOSITION_MODE_BUFFERED
 DEBUG = _enigma.DEBUG
 DISPLAY_FBDEV = _enigma.DISPLAY_FBDEV
 ENABLE_EWEBVIEW = _enigma.ENABLE_EWEBVIEW
+ENABLE_LCD = _enigma.ENABLE_LCD
 HAVE_DBOX_FP_H = _enigma.HAVE_DBOX_FP_H
 HAVE_DBOX_LCD_KS0713_H = _enigma.HAVE_DBOX_LCD_KS0713_H
 HAVE_DLFCN_H = _enigma.HAVE_DLFCN_H
-HAVE_DVB = _enigma.HAVE_DVB
-HAVE_DVB_API_VERSION = _enigma.HAVE_DVB_API_VERSION
 HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
-HAVE_LINUX_DVB_VERSION_H = _enigma.HAVE_LINUX_DVB_VERSION_H
+HAVE_LIBSYSTEMD_DAEMON = _enigma.HAVE_LIBSYSTEMD_DAEMON
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
 HAVE_PTHREAD = _enigma.HAVE_PTHREAD
 HAVE_PYTHON = _enigma.HAVE_PYTHON
 HAVE_QT = _enigma.HAVE_QT
-HAVE_QTWEBKIT = _enigma.HAVE_QTWEBKIT
+HAVE_QT_GUI = _enigma.HAVE_QT_GUI
+HAVE_QWEBSETTINGS_WEBSECURITY_ENABLED = _enigma.HAVE_QWEBSETTINGS_WEBSECURITY_ENABLED
 HAVE_SIGC20 = _enigma.HAVE_SIGC20
 HAVE_STDINT_H = _enigma.HAVE_STDINT_H
 HAVE_STDLIB_H = _enigma.HAVE_STDLIB_H
@@ -104,6 +113,7 @@ HAVE_STRING_H = _enigma.HAVE_STRING_H
 HAVE_SYS_STAT_H = _enigma.HAVE_SYS_STAT_H
 HAVE_SYS_TYPES_H = _enigma.HAVE_SYS_TYPES_H
 HAVE_UNISTD_H = _enigma.HAVE_UNISTD_H
+HAVE_V3DDRIVER = _enigma.HAVE_V3DDRIVER
 LT_OBJDIR = _enigma.LT_OBJDIR
 PACKAGE_BUGREPORT = _enigma.PACKAGE_BUGREPORT
 PACKAGE_NAME = _enigma.PACKAGE_NAME
@@ -117,23 +127,32 @@ _GNU_SOURCE = _enigma._GNU_SOURCE
 _POSIX_PTHREAD_SEMANTICS = _enigma._POSIX_PTHREAD_SEMANTICS
 _TANDEM_SOURCE = _enigma._TANDEM_SOURCE
 __EXTENSIONS__ = _enigma.__EXTENSIONS__
+_DARWIN_USE_64_BIT_INODE = _enigma._DARWIN_USE_64_BIT_INODE
 _FILE_OFFSET_BITS = _enigma._FILE_OFFSET_BITS
-class stdStringArray(object):
+class SwigPyIterator(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
-    def __init__(self, *args): 
-        _enigma.stdStringArray_swiginit(self,_enigma.new_stdStringArray(*args))
-    __swig_destroy__ = _enigma.delete_stdStringArray
-    frompointer = staticmethod(_enigma.stdStringArray_frompointer)
-stdStringArray.__getitem__ = new_instancemethod(_enigma.stdStringArray___getitem__,None,stdStringArray)
-stdStringArray.__setitem__ = new_instancemethod(_enigma.stdStringArray___setitem__,None,stdStringArray)
-stdStringArray.cast = new_instancemethod(_enigma.stdStringArray_cast,None,stdStringArray)
-stdStringArray_swigregister = _enigma.stdStringArray_swigregister
-stdStringArray_swigregister(stdStringArray)
-
-def stdStringArray_frompointer(*args):
-  return _enigma.stdStringArray_frompointer(*args)
-stdStringArray_frompointer = _enigma.stdStringArray_frompointer
+    __swig_destroy__ = _enigma.delete_SwigPyIterator
+    def __iter__(self): return self
+SwigPyIterator.value = new_instancemethod(_enigma.SwigPyIterator_value,None,SwigPyIterator)
+SwigPyIterator.incr = new_instancemethod(_enigma.SwigPyIterator_incr,None,SwigPyIterator)
+SwigPyIterator.decr = new_instancemethod(_enigma.SwigPyIterator_decr,None,SwigPyIterator)
+SwigPyIterator.distance = new_instancemethod(_enigma.SwigPyIterator_distance,None,SwigPyIterator)
+SwigPyIterator.equal = new_instancemethod(_enigma.SwigPyIterator_equal,None,SwigPyIterator)
+SwigPyIterator.copy = new_instancemethod(_enigma.SwigPyIterator_copy,None,SwigPyIterator)
+SwigPyIterator.next = new_instancemethod(_enigma.SwigPyIterator_next,None,SwigPyIterator)
+SwigPyIterator.__next__ = new_instancemethod(_enigma.SwigPyIterator___next__,None,SwigPyIterator)
+SwigPyIterator.previous = new_instancemethod(_enigma.SwigPyIterator_previous,None,SwigPyIterator)
+SwigPyIterator.advance = new_instancemethod(_enigma.SwigPyIterator_advance,None,SwigPyIterator)
+SwigPyIterator.__eq__ = new_instancemethod(_enigma.SwigPyIterator___eq__,None,SwigPyIterator)
+SwigPyIterator.__ne__ = new_instancemethod(_enigma.SwigPyIterator___ne__,None,SwigPyIterator)
+SwigPyIterator.__iadd__ = new_instancemethod(_enigma.SwigPyIterator___iadd__,None,SwigPyIterator)
+SwigPyIterator.__isub__ = new_instancemethod(_enigma.SwigPyIterator___isub__,None,SwigPyIterator)
+SwigPyIterator.__add__ = new_instancemethod(_enigma.SwigPyIterator___add__,None,SwigPyIterator)
+SwigPyIterator.__sub__ = new_instancemethod(_enigma.SwigPyIterator___sub__,None,SwigPyIterator)
+SwigPyIterator_swigregister = _enigma.SwigPyIterator_swigregister
+SwigPyIterator_swigregister(SwigPyIterator)
 
 class iObject(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -142,6 +161,88 @@ class iObject(object):
     __swig_destroy__ = _enigma.delete_iObject
 iObject_swigregister = _enigma.iObject_swigregister
 iObject_swigregister(iObject)
+
+class eMainloop(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+eMainloop.runLoop = new_instancemethod(_enigma.eMainloop_runLoop,None,eMainloop)
+eMainloop.isIdle = new_instancemethod(_enigma.eMainloop_isIdle,None,eMainloop)
+eMainloop.idleCount = new_instancemethod(_enigma.eMainloop_idleCount,None,eMainloop)
+eMainloop.argc = new_instancemethod(_enigma.eMainloop_argc,None,eMainloop)
+eMainloop.argv = new_instancemethod(_enigma.eMainloop_argv,None,eMainloop)
+eMainloop_swigregister = _enigma.eMainloop_swigregister
+eMainloop_swigregister(eMainloop)
+cvar = _enigma.cvar
+
+class eSocketNotifier(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    Read = _enigma.eSocketNotifier_Read
+    Write = _enigma.eSocketNotifier_Write
+    Priority = _enigma.eSocketNotifier_Priority
+    Error = _enigma.eSocketNotifier_Error
+    Hungup = _enigma.eSocketNotifier_Hungup
+    __swig_destroy__ = _enigma.delete_eSocketNotifier
+    activated = _swig_property(_enigma.eSocketNotifier_activated_get, _enigma.eSocketNotifier_activated_set)
+    def __init__(self, *args): 
+        _enigma.eSocketNotifier_swiginit(self,_enigma.new_eSocketNotifier(*args))
+eSocketNotifier.start = new_instancemethod(_enigma.eSocketNotifier_start,None,eSocketNotifier)
+eSocketNotifier.stop = new_instancemethod(_enigma.eSocketNotifier_stop,None,eSocketNotifier)
+eSocketNotifier.isRunning = new_instancemethod(_enigma.eSocketNotifier_isRunning,None,eSocketNotifier)
+eSocketNotifier.getFD = new_instancemethod(_enigma.eSocketNotifier_getFD,None,eSocketNotifier)
+eSocketNotifier.getRequested = new_instancemethod(_enigma.eSocketNotifier_getRequested,None,eSocketNotifier)
+eSocketNotifier.setRequested = new_instancemethod(_enigma.eSocketNotifier_setRequested,None,eSocketNotifier)
+eSocketNotifier.getState = new_instancemethod(_enigma.eSocketNotifier_getState,None,eSocketNotifier)
+eSocketNotifier.activate = new_instancemethod(_enigma.eSocketNotifier_activate,None,eSocketNotifier)
+eSocketNotifier_swigregister = _enigma.eSocketNotifier_swigregister
+eSocketNotifier_swigregister(eSocketNotifier)
+
+class eTimer(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    __swig_destroy__ = _enigma.delete_eTimer
+    timeout = _swig_property(_enigma.eTimer_timeout_get, _enigma.eTimer_timeout_set)
+    def __init__(self): 
+        _enigma.eTimer_swiginit(self,_enigma.new_eTimer())
+eTimer.isActive = new_instancemethod(_enigma.eTimer_isActive,None,eTimer)
+eTimer.getNextActivation = new_instancemethod(_enigma.eTimer_getNextActivation,None,eTimer)
+eTimer.getInterval = new_instancemethod(_enigma.eTimer_getInterval,None,eTimer)
+eTimer.activate = new_instancemethod(_enigma.eTimer_activate,None,eTimer)
+eTimer.start = new_instancemethod(_enigma.eTimer_start,None,eTimer)
+eTimer.stop = new_instancemethod(_enigma.eTimer_stop,None,eTimer)
+eTimer.changeInterval = new_instancemethod(_enigma.eTimer_changeInterval,None,eTimer)
+eTimer.startLongTimer = new_instancemethod(_enigma.eTimer_startLongTimer,None,eTimer)
+eTimer_swigregister = _enigma.eTimer_swigregister
+eTimer_swigregister(eTimer)
+
+class eConsoleAppContainer(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        _enigma.eConsoleAppContainer_swiginit(self,_enigma.new_eConsoleAppContainer())
+    __swig_destroy__ = _enigma.delete_eConsoleAppContainer
+    dataAvail = _swig_property(_enigma.eConsoleAppContainer_dataAvail_get, _enigma.eConsoleAppContainer_dataAvail_set)
+    stdoutAvail = _swig_property(_enigma.eConsoleAppContainer_stdoutAvail_get, _enigma.eConsoleAppContainer_stdoutAvail_set)
+    stderrAvail = _swig_property(_enigma.eConsoleAppContainer_stderrAvail_get, _enigma.eConsoleAppContainer_stderrAvail_set)
+    dataSent = _swig_property(_enigma.eConsoleAppContainer_dataSent_get, _enigma.eConsoleAppContainer_dataSent_set)
+    appClosed = _swig_property(_enigma.eConsoleAppContainer_appClosed_get, _enigma.eConsoleAppContainer_appClosed_set)
+    def execute(self, *args):
+        if len(args) > 1:
+            return self.exec2(args[0], args[1:])
+        return self.exec1(args[0])
+eConsoleAppContainer.setCWD = new_instancemethod(_enigma.eConsoleAppContainer_setCWD,None,eConsoleAppContainer)
+eConsoleAppContainer.exec1 = new_instancemethod(_enigma.eConsoleAppContainer_exec1,None,eConsoleAppContainer)
+eConsoleAppContainer.exec2 = new_instancemethod(_enigma.eConsoleAppContainer_exec2,None,eConsoleAppContainer)
+eConsoleAppContainer.getPID = new_instancemethod(_enigma.eConsoleAppContainer_getPID,None,eConsoleAppContainer)
+eConsoleAppContainer.kill = new_instancemethod(_enigma.eConsoleAppContainer_kill,None,eConsoleAppContainer)
+eConsoleAppContainer.sendCtrlC = new_instancemethod(_enigma.eConsoleAppContainer_sendCtrlC,None,eConsoleAppContainer)
+eConsoleAppContainer.sendEOF = new_instancemethod(_enigma.eConsoleAppContainer_sendEOF,None,eConsoleAppContainer)
+eConsoleAppContainer.write = new_instancemethod(_enigma.eConsoleAppContainer_write,None,eConsoleAppContainer)
+eConsoleAppContainer.setFileFD = new_instancemethod(_enigma.eConsoleAppContainer_setFileFD,None,eConsoleAppContainer)
+eConsoleAppContainer.running = new_instancemethod(_enigma.eConsoleAppContainer_running,None,eConsoleAppContainer)
+eConsoleAppContainer_swigregister = _enigma.eConsoleAppContainer_swigregister
+eConsoleAppContainer_swigregister(eConsoleAppContainer)
 
 class eDict(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -185,37 +286,27 @@ NULL = _enigma.NULL
 def ePythonOutput(*args):
   return _enigma.ePythonOutput(*args)
 ePythonOutput = _enigma.ePythonOutput
-class eMainloop(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
-    __repr__ = _swig_repr
-eMainloop.runLoop = new_instancemethod(_enigma.eMainloop_runLoop,None,eMainloop)
-eMainloop.isIdle = new_instancemethod(_enigma.eMainloop_isIdle,None,eMainloop)
-eMainloop.idleCount = new_instancemethod(_enigma.eMainloop_idleCount,None,eMainloop)
-eMainloop_swigregister = _enigma.eMainloop_swigregister
-eMainloop_swigregister(eMainloop)
-cvar = _enigma.cvar
-
 
 def ptrAssert(*args):
   return _enigma.ptrAssert(*args)
 ptrAssert = _enigma.ptrAssert
-class eComponentDataPtr(object):
+MALLOC = _enigma.MALLOC
+NEW = _enigma.NEW
+class BufferPtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
-        _enigma.eComponentDataPtr_swiginit(self,_enigma.new_eComponentDataPtr(*args))
-    __swig_destroy__ = _enigma.delete_eComponentDataPtr
-eComponentDataPtr.__ref__ = new_instancemethod(_enigma.eComponentDataPtr___ref__,None,eComponentDataPtr)
-eComponentDataPtr.getPtrString = new_instancemethod(_enigma.eComponentDataPtr_getPtrString,None,eComponentDataPtr)
-eComponentDataPtr.__deref__ = new_instancemethod(_enigma.eComponentDataPtr___deref__,None,eComponentDataPtr)
-eComponentDataPtr.getStreamContent = new_instancemethod(_enigma.eComponentDataPtr_getStreamContent,None,eComponentDataPtr)
-eComponentDataPtr.getComponentType = new_instancemethod(_enigma.eComponentDataPtr_getComponentType,None,eComponentDataPtr)
-eComponentDataPtr.getComponentTag = new_instancemethod(_enigma.eComponentDataPtr_getComponentTag,None,eComponentDataPtr)
-eComponentDataPtr.getIso639LanguageCode = new_instancemethod(_enigma.eComponentDataPtr_getIso639LanguageCode,None,eComponentDataPtr)
-eComponentDataPtr.getText = new_instancemethod(_enigma.eComponentDataPtr_getText,None,eComponentDataPtr)
-eComponentDataPtr_swigregister = _enigma.eComponentDataPtr_swigregister
-eComponentDataPtr_swigregister(eComponentDataPtr)
+        _enigma.BufferPtr_swiginit(self,_enigma.new_BufferPtr(*args))
+    __swig_destroy__ = _enigma.delete_BufferPtr
+BufferPtr.__ref__ = new_instancemethod(_enigma.BufferPtr___ref__,None,BufferPtr)
+BufferPtr.getPtrString = new_instancemethod(_enigma.BufferPtr_getPtrString,None,BufferPtr)
+BufferPtr.__deref__ = new_instancemethod(_enigma.BufferPtr___deref__,None,BufferPtr)
+BufferPtr.data = new_instancemethod(_enigma.BufferPtr_data,None,BufferPtr)
+BufferPtr.size = new_instancemethod(_enigma.BufferPtr_size,None,BufferPtr)
+BufferPtr.setBuffer = new_instancemethod(_enigma.BufferPtr_setBuffer,None,BufferPtr)
+BufferPtr.setSize = new_instancemethod(_enigma.BufferPtr_setSize,None,BufferPtr)
+BufferPtr_swigregister = _enigma.BufferPtr_swigregister
+BufferPtr_swigregister(BufferPtr)
 
 class eServiceEvent(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -335,6 +426,7 @@ class iServiceInformation_ENUMS(object):
     sNamespace = _enigma.iServiceInformation_ENUMS_sNamespace
     sProvider = _enigma.iServiceInformation_ENUMS_sProvider
     sDescription = _enigma.iServiceInformation_ENUMS_sDescription
+    sDatabaseFileId = _enigma.iServiceInformation_ENUMS_sDatabaseFileId
     sServiceref = _enigma.iServiceInformation_ENUMS_sServiceref
     sTimeCreate = _enigma.iServiceInformation_ENUMS_sTimeCreate
     sFileSize = _enigma.iServiceInformation_ENUMS_sFileSize
@@ -1009,13 +1101,13 @@ class ePythonConfigQuery(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    setQueryFunc = staticmethod(_enigma.ePythonConfigQuery_setQueryFunc)
+    getQueryFuncSignal = staticmethod(_enigma.ePythonConfigQuery_getQueryFuncSignal)
 ePythonConfigQuery_swigregister = _enigma.ePythonConfigQuery_swigregister
 ePythonConfigQuery_swigregister(ePythonConfigQuery)
 
-def ePythonConfigQuery_setQueryFunc(*args):
-  return _enigma.ePythonConfigQuery_setQueryFunc(*args)
-ePythonConfigQuery_setQueryFunc = _enigma.ePythonConfigQuery_setQueryFunc
+def ePythonConfigQuery_getQueryFuncSignal():
+  return _enigma.ePythonConfigQuery_getQueryFuncSignal()
+ePythonConfigQuery_getQueryFuncSignal = _enigma.ePythonConfigQuery_getQueryFuncSignal
 
 class eRCInput(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -1065,38 +1157,7 @@ def fontRenderClass_getInstance():
   return _enigma.fontRenderClass_getInstance()
 fontRenderClass_getInstance = _enigma.fontRenderClass_getInstance
 
-class gRGB(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    b = _swig_property(_enigma.gRGB_b_get, _enigma.gRGB_b_set)
-    g = _swig_property(_enigma.gRGB_g_get, _enigma.gRGB_g_set)
-    r = _swig_property(_enigma.gRGB_r_get, _enigma.gRGB_r_set)
-    a = _swig_property(_enigma.gRGB_a_get, _enigma.gRGB_a_set)
-    def __init__(self, *args): 
-        _enigma.gRGB_swiginit(self,_enigma.new_gRGB(*args))
-    __swig_destroy__ = _enigma.delete_gRGB
-gRGB.argb = new_instancemethod(_enigma.gRGB_argb,None,gRGB)
-gRGB.__lt__ = new_instancemethod(_enigma.gRGB___lt__,None,gRGB)
-gRGB.__eq__ = new_instancemethod(_enigma.gRGB___eq__,None,gRGB)
-gRGB_swigregister = _enigma.gRGB_swigregister
-gRGB_swigregister(gRGB)
-
-ARGB = _enigma.ARGB
-ABGR = _enigma.ABGR
-RGBA = _enigma.RGBA
-BGRA = _enigma.BGRA
-INDEXED = _enigma.INDEXED
-RGB = _enigma.RGB
-BGR = _enigma.BGR
-DISABLED = _enigma.DISABLED
-BILINEAR = _enigma.BILINEAR
-ANISOTROPIC = _enigma.ANISOTROPIC
-SHARP = _enigma.SHARP
-SHARPER = _enigma.SHARPER
-BLURRY = _enigma.BLURRY
-ANTI_FLUTTER = _enigma.ANTI_FLUTTER
-ANTI_FLUTTER_BLURRY = _enigma.ANTI_FLUTTER_BLURRY
-ANTI_FLUTTER_SHARP = _enigma.ANTI_FLUTTER_SHARP
+__GPIXMAP_H_INSIDE__ = _enigma.__GPIXMAP_H_INSIDE__
 class gPixmapPtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -1107,16 +1168,15 @@ gPixmapPtr.__ref__ = new_instancemethod(_enigma.gPixmapPtr___ref__,None,gPixmapP
 gPixmapPtr.getPtrString = new_instancemethod(_enigma.gPixmapPtr_getPtrString,None,gPixmapPtr)
 gPixmapPtr.__deref__ = new_instancemethod(_enigma.gPixmapPtr___deref__,None,gPixmapPtr)
 gPixmapPtr.size = new_instancemethod(_enigma.gPixmapPtr_size,None,gPixmapPtr)
-gPixmapPtr.scaleSize = new_instancemethod(_enigma.gPixmapPtr_scaleSize,None,gPixmapPtr)
 gPixmapPtr.color = new_instancemethod(_enigma.gPixmapPtr_color,None,gPixmapPtr)
 gPixmapPtr.colorCount = new_instancemethod(_enigma.gPixmapPtr_colorCount,None,gPixmapPtr)
 gPixmapPtr.colorTable = new_instancemethod(_enigma.gPixmapPtr_colorTable,None,gPixmapPtr)
 gPixmapPtr.setColor = new_instancemethod(_enigma.gPixmapPtr_setColor,None,gPixmapPtr)
 gPixmapPtr.setColorCount = new_instancemethod(_enigma.gPixmapPtr_setColorCount,None,gPixmapPtr)
 gPixmapPtr.setColorTable = new_instancemethod(_enigma.gPixmapPtr_setColorTable,None,gPixmapPtr)
-gPixmapPtr.setColorFormat = new_instancemethod(_enigma.gPixmapPtr_setColorFormat,None,gPixmapPtr)
 gPixmapPtr.setScaleFilter = new_instancemethod(_enigma.gPixmapPtr_setScaleFilter,None,gPixmapPtr)
-gPixmapPtr.setScaleSize = new_instancemethod(_enigma.gPixmapPtr_setScaleSize,None,gPixmapPtr)
+gPixmapPtr.scale = new_instancemethod(_enigma.gPixmapPtr_scale,None,gPixmapPtr)
+gPixmapPtr.read = new_instancemethod(_enigma.gPixmapPtr_read,None,gPixmapPtr)
 gPixmapPtr_swigregister = _enigma.gPixmapPtr_swigregister
 gPixmapPtr_swigregister(gPixmapPtr)
 
@@ -1130,7 +1190,6 @@ class gMainDC(object):
 gMainDC.__ref__ = new_instancemethod(_enigma.gMainDC___ref__,None,gMainDC)
 gMainDC.getPtrString = new_instancemethod(_enigma.gMainDC_getPtrString,None,gMainDC)
 gMainDC.__deref__ = new_instancemethod(_enigma.gMainDC___deref__,None,gMainDC)
-gMainDC.haveDoubleBuffering = new_instancemethod(_enigma.gMainDC_haveDoubleBuffering,None,gMainDC)
 gMainDC.setResolution = new_instancemethod(_enigma.gMainDC_setResolution,None,gMainDC)
 gMainDC_swigregister = _enigma.gMainDC_swigregister
 gMainDC_swigregister(gMainDC)
@@ -1212,6 +1271,7 @@ eRect.height = new_instancemethod(_enigma.eRect_height,None,eRect)
 eRect.setWidth = new_instancemethod(_enigma.eRect_setWidth,None,eRect)
 eRect.setHeight = new_instancemethod(_enigma.eRect_setHeight,None,eRect)
 eRect.setSize = new_instancemethod(_enigma.eRect_setSize,None,eRect)
+eRect.setEmpty = new_instancemethod(_enigma.eRect_setEmpty,None,eRect)
 eRect.__or__ = new_instancemethod(_enigma.eRect___or__,None,eRect)
 eRect.__and__ = new_instancemethod(_enigma.eRect___and__,None,eRect)
 eRect.__ior__ = new_instancemethod(_enigma.eRect___ior__,None,eRect)
@@ -1246,6 +1306,7 @@ eSize.height = new_instancemethod(_enigma.eSize_height,None,eSize)
 eSize.setWidth = new_instancemethod(_enigma.eSize_setWidth,None,eSize)
 eSize.setHeight = new_instancemethod(_enigma.eSize_setHeight,None,eSize)
 eSize.transpose = new_instancemethod(_enigma.eSize_transpose,None,eSize)
+eSize.scale = new_instancemethod(_enigma.eSize_scale,None,eSize)
 eSize.expandedTo = new_instancemethod(_enigma.eSize_expandedTo,None,eSize)
 eSize.boundedTo = new_instancemethod(_enigma.eSize_boundedTo,None,eSize)
 eSize.rwidth = new_instancemethod(_enigma.eSize_rwidth,None,eSize)
@@ -1257,18 +1318,460 @@ eSize.__idiv__ = new_instancemethod(_enigma.eSize___idiv__,None,eSize)
 eSize_swigregister = _enigma.eSize_swigregister
 eSize_swigregister(eSize)
 
-MAX_LAYER = _enigma.MAX_LAYER
+class eMatrix(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eMatrix_swiginit(self,_enigma.new_eMatrix(*args))
+    __swig_destroy__ = _enigma.delete_eMatrix
+eMatrix.__call__ = new_instancemethod(_enigma.eMatrix___call__,None,eMatrix)
+eMatrix.__eq__ = new_instancemethod(_enigma.eMatrix___eq__,None,eMatrix)
+eMatrix.__ne__ = new_instancemethod(_enigma.eMatrix___ne__,None,eMatrix)
+eMatrix.__imul__ = new_instancemethod(_enigma.eMatrix___imul__,None,eMatrix)
+eMatrix.__mul__ = new_instancemethod(_enigma.eMatrix___mul__,None,eMatrix)
+eMatrix.__iadd__ = new_instancemethod(_enigma.eMatrix___iadd__,None,eMatrix)
+eMatrix.__add__ = new_instancemethod(_enigma.eMatrix___add__,None,eMatrix)
+eMatrix.__isub__ = new_instancemethod(_enigma.eMatrix___isub__,None,eMatrix)
+eMatrix.__sub__ = new_instancemethod(_enigma.eMatrix___sub__,None,eMatrix)
+eMatrix_swigregister = _enigma.eMatrix_swigregister
+eMatrix_swigregister(eMatrix)
+
+class eSquareMatrix(eMatrix):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    NullMatrix = _enigma.eSquareMatrix_NullMatrix
+    IdentityMatrix = _enigma.eSquareMatrix_IdentityMatrix
+    def __init__(self, *args): 
+        _enigma.eSquareMatrix_swiginit(self,_enigma.new_eSquareMatrix(*args))
+    __swig_destroy__ = _enigma.delete_eSquareMatrix
+eSquareMatrix_swigregister = _enigma.eSquareMatrix_swigregister
+eSquareMatrix_swigregister(eSquareMatrix)
+
+class eMatrix4x4(eSquareMatrix):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eMatrix4x4_swiginit(self,_enigma.new_eMatrix4x4(*args))
+    identity = staticmethod(_enigma.eMatrix4x4_identity)
+    orthographic = staticmethod(_enigma.eMatrix4x4_orthographic)
+    perspective = staticmethod(_enigma.eMatrix4x4_perspective)
+    rotateX = staticmethod(_enigma.eMatrix4x4_rotateX)
+    rotateY = staticmethod(_enigma.eMatrix4x4_rotateY)
+    rotateZ = staticmethod(_enigma.eMatrix4x4_rotateZ)
+    scale = staticmethod(_enigma.eMatrix4x4_scale)
+    __swig_destroy__ = _enigma.delete_eMatrix4x4
+eMatrix4x4.translate = new_instancemethod(_enigma.eMatrix4x4_translate,None,eMatrix4x4)
+eMatrix4x4_swigregister = _enigma.eMatrix4x4_swigregister
+eMatrix4x4_swigregister(eMatrix4x4)
+
+def eMatrix4x4_identity():
+  return _enigma.eMatrix4x4_identity()
+eMatrix4x4_identity = _enigma.eMatrix4x4_identity
+
+def eMatrix4x4_orthographic(*args):
+  return _enigma.eMatrix4x4_orthographic(*args)
+eMatrix4x4_orthographic = _enigma.eMatrix4x4_orthographic
+
+def eMatrix4x4_perspective(*args):
+  return _enigma.eMatrix4x4_perspective(*args)
+eMatrix4x4_perspective = _enigma.eMatrix4x4_perspective
+
+def eMatrix4x4_rotateX(*args):
+  return _enigma.eMatrix4x4_rotateX(*args)
+eMatrix4x4_rotateX = _enigma.eMatrix4x4_rotateX
+
+def eMatrix4x4_rotateY(*args):
+  return _enigma.eMatrix4x4_rotateY(*args)
+eMatrix4x4_rotateY = _enigma.eMatrix4x4_rotateY
+
+def eMatrix4x4_rotateZ(*args):
+  return _enigma.eMatrix4x4_rotateZ(*args)
+eMatrix4x4_rotateZ = _enigma.eMatrix4x4_rotateZ
+
+def eMatrix4x4_scale(*args):
+  return _enigma.eMatrix4x4_scale(*args)
+eMatrix4x4_scale = _enigma.eMatrix4x4_scale
+
+class gRGBA(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    r = _swig_property(_enigma.gRGBA_r_get, _enigma.gRGBA_r_set)
+    g = _swig_property(_enigma.gRGBA_g_get, _enigma.gRGBA_g_set)
+    b = _swig_property(_enigma.gRGBA_b_get, _enigma.gRGBA_b_set)
+    a = _swig_property(_enigma.gRGBA_a_get, _enigma.gRGBA_a_set)
+    def __init__(self, *args): 
+        _enigma.gRGBA_swiginit(self,_enigma.new_gRGBA(*args))
+    fromArgb = staticmethod(_enigma.gRGBA_fromArgb)
+    premultiplyChannel = staticmethod(_enigma.gRGBA_premultiplyChannel)
+    __swig_destroy__ = _enigma.delete_gRGBA
+gRGBA.argb = new_instancemethod(_enigma.gRGBA_argb,None,gRGBA)
+gRGBA.__lt__ = new_instancemethod(_enigma.gRGBA___lt__,None,gRGBA)
+gRGBA.__eq__ = new_instancemethod(_enigma.gRGBA___eq__,None,gRGBA)
+gRGBA.__ne__ = new_instancemethod(_enigma.gRGBA___ne__,None,gRGBA)
+gRGBA.premultiplyAlpha = new_instancemethod(_enigma.gRGBA_premultiplyAlpha,None,gRGBA)
+gRGBA.set = new_instancemethod(_enigma.gRGBA_set,None,gRGBA)
+gRGBA.pixel = new_instancemethod(_enigma.gRGBA_pixel,None,gRGBA)
+gRGBA.fromPixel = new_instancemethod(_enigma.gRGBA_fromPixel,None,gRGBA)
+gRGBA_swigregister = _enigma.gRGBA_swigregister
+gRGBA_swigregister(gRGBA)
+
+def gRGBA_fromArgb(*args):
+  return _enigma.gRGBA_fromArgb(*args)
+gRGBA_fromArgb = _enigma.gRGBA_fromArgb
+
+def gRGBA_premultiplyChannel(*args):
+  return _enigma.gRGBA_premultiplyChannel(*args)
+gRGBA_premultiplyChannel = _enigma.gRGBA_premultiplyChannel
+
+class gRGB(gRGBA):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    a = _swig_property(_enigma.gRGB_a_get, _enigma.gRGB_a_set)
+    def __init__(self, *args): 
+        _enigma.gRGB_swiginit(self,_enigma.new_gRGB(*args))
+    __swig_destroy__ = _enigma.delete_gRGB
+gRGB.argb = new_instancemethod(_enigma.gRGB_argb,None,gRGB)
+gRGB_swigregister = _enigma.gRGB_swigregister
+gRGB_swigregister(gRGB)
+
+DISABLED = _enigma.DISABLED
+BILINEAR = _enigma.BILINEAR
+ANISOTROPIC = _enigma.ANISOTROPIC
+SHARP = _enigma.SHARP
+SHARPER = _enigma.SHARPER
+BLURRY = _enigma.BLURRY
+ANTI_FLUTTER = _enigma.ANTI_FLUTTER
+ANTI_FLUTTER_BLURRY = _enigma.ANTI_FLUTTER_BLURRY
+ANTI_FLUTTER_SHARP = _enigma.ANTI_FLUTTER_SHARP
+class iProgressInterpolator(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.iProgressInterpolator_swiginit(self,_enigma.new_iProgressInterpolator(*args))
+    __swig_destroy__ = _enigma.delete_iProgressInterpolator
+iProgressInterpolator.__ref__ = new_instancemethod(_enigma.iProgressInterpolator___ref__,None,iProgressInterpolator)
+iProgressInterpolator.getPtrString = new_instancemethod(_enigma.iProgressInterpolator_getPtrString,None,iProgressInterpolator)
+iProgressInterpolator.__deref__ = new_instancemethod(_enigma.iProgressInterpolator___deref__,None,iProgressInterpolator)
+iProgressInterpolator.at = new_instancemethod(_enigma.iProgressInterpolator_at,None,iProgressInterpolator)
+iProgressInterpolator_swigregister = _enigma.iProgressInterpolator_swigregister
+iProgressInterpolator_swigregister(iProgressInterpolator)
+
+class eLinearInterpolator(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eLinearInterpolator_swiginit(self,_enigma.new_eLinearInterpolator(*args))
+    __swig_destroy__ = _enigma.delete_eLinearInterpolator
+    create = staticmethod(_enigma.eLinearInterpolator_create)
+eLinearInterpolator.__ref__ = new_instancemethod(_enigma.eLinearInterpolator___ref__,None,eLinearInterpolator)
+eLinearInterpolator.getPtrString = new_instancemethod(_enigma.eLinearInterpolator_getPtrString,None,eLinearInterpolator)
+eLinearInterpolator.__deref__ = new_instancemethod(_enigma.eLinearInterpolator___deref__,None,eLinearInterpolator)
+eLinearInterpolator.at = new_instancemethod(_enigma.eLinearInterpolator_at,None,eLinearInterpolator)
+eLinearInterpolator_swigregister = _enigma.eLinearInterpolator_swigregister
+eLinearInterpolator_swigregister(eLinearInterpolator)
+
+def eLinearInterpolator_create():
+  return _enigma.eLinearInterpolator_create()
+eLinearInterpolator_create = _enigma.eLinearInterpolator_create
+
+class eAcclerateInterpolator(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eAcclerateInterpolator_swiginit(self,_enigma.new_eAcclerateInterpolator(*args))
+    __swig_destroy__ = _enigma.delete_eAcclerateInterpolator
+    create = staticmethod(_enigma.eAcclerateInterpolator_create)
+eAcclerateInterpolator.__ref__ = new_instancemethod(_enigma.eAcclerateInterpolator___ref__,None,eAcclerateInterpolator)
+eAcclerateInterpolator.getPtrString = new_instancemethod(_enigma.eAcclerateInterpolator_getPtrString,None,eAcclerateInterpolator)
+eAcclerateInterpolator.__deref__ = new_instancemethod(_enigma.eAcclerateInterpolator___deref__,None,eAcclerateInterpolator)
+eAcclerateInterpolator.at = new_instancemethod(_enigma.eAcclerateInterpolator_at,None,eAcclerateInterpolator)
+eAcclerateInterpolator_swigregister = _enigma.eAcclerateInterpolator_swigregister
+eAcclerateInterpolator_swigregister(eAcclerateInterpolator)
+
+def eAcclerateInterpolator_create(factor=1.0):
+  return _enigma.eAcclerateInterpolator_create(factor)
+eAcclerateInterpolator_create = _enigma.eAcclerateInterpolator_create
+
+class eDecelerateInterpolator(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eDecelerateInterpolator_swiginit(self,_enigma.new_eDecelerateInterpolator(*args))
+    __swig_destroy__ = _enigma.delete_eDecelerateInterpolator
+    create = staticmethod(_enigma.eDecelerateInterpolator_create)
+eDecelerateInterpolator.__ref__ = new_instancemethod(_enigma.eDecelerateInterpolator___ref__,None,eDecelerateInterpolator)
+eDecelerateInterpolator.getPtrString = new_instancemethod(_enigma.eDecelerateInterpolator_getPtrString,None,eDecelerateInterpolator)
+eDecelerateInterpolator.__deref__ = new_instancemethod(_enigma.eDecelerateInterpolator___deref__,None,eDecelerateInterpolator)
+eDecelerateInterpolator.at = new_instancemethod(_enigma.eDecelerateInterpolator_at,None,eDecelerateInterpolator)
+eDecelerateInterpolator_swigregister = _enigma.eDecelerateInterpolator_swigregister
+eDecelerateInterpolator_swigregister(eDecelerateInterpolator)
+
+def eDecelerateInterpolator_create(factor=1.0):
+  return _enigma.eDecelerateInterpolator_create(factor)
+eDecelerateInterpolator_create = _enigma.eDecelerateInterpolator_create
+
+class eOvershootInterpolator(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eOvershootInterpolator_swiginit(self,_enigma.new_eOvershootInterpolator(*args))
+    __swig_destroy__ = _enigma.delete_eOvershootInterpolator
+    create = staticmethod(_enigma.eOvershootInterpolator_create)
+eOvershootInterpolator.__ref__ = new_instancemethod(_enigma.eOvershootInterpolator___ref__,None,eOvershootInterpolator)
+eOvershootInterpolator.getPtrString = new_instancemethod(_enigma.eOvershootInterpolator_getPtrString,None,eOvershootInterpolator)
+eOvershootInterpolator.__deref__ = new_instancemethod(_enigma.eOvershootInterpolator___deref__,None,eOvershootInterpolator)
+eOvershootInterpolator.at = new_instancemethod(_enigma.eOvershootInterpolator_at,None,eOvershootInterpolator)
+eOvershootInterpolator_swigregister = _enigma.eOvershootInterpolator_swigregister
+eOvershootInterpolator_swigregister(eOvershootInterpolator)
+
+def eOvershootInterpolator_create(tension=2.0):
+  return _enigma.eOvershootInterpolator_create(tension)
+eOvershootInterpolator_create = _enigma.eOvershootInterpolator_create
+
+class eBounceInterpolator(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eBounceInterpolator_swiginit(self,_enigma.new_eBounceInterpolator(*args))
+    __swig_destroy__ = _enigma.delete_eBounceInterpolator
+    create = staticmethod(_enigma.eBounceInterpolator_create)
+eBounceInterpolator.__ref__ = new_instancemethod(_enigma.eBounceInterpolator___ref__,None,eBounceInterpolator)
+eBounceInterpolator.getPtrString = new_instancemethod(_enigma.eBounceInterpolator_getPtrString,None,eBounceInterpolator)
+eBounceInterpolator.__deref__ = new_instancemethod(_enigma.eBounceInterpolator___deref__,None,eBounceInterpolator)
+eBounceInterpolator.at = new_instancemethod(_enigma.eBounceInterpolator_at,None,eBounceInterpolator)
+eBounceInterpolator_swigregister = _enigma.eBounceInterpolator_swigregister
+eBounceInterpolator_swigregister(eBounceInterpolator)
+
+def eBounceInterpolator_create():
+  return _enigma.eBounceInterpolator_create()
+eBounceInterpolator_create = _enigma.eBounceInterpolator_create
+
+class eWidgetAnimationFloat(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+eWidgetAnimationFloat.reset = new_instancemethod(_enigma.eWidgetAnimationFloat_reset,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.getDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_getDuration,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.setDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_setDuration,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.setFromValue = new_instancemethod(_enigma.eWidgetAnimationFloat_setFromValue,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.setToValue = new_instancemethod(_enigma.eWidgetAnimationFloat_setToValue,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.copy = new_instancemethod(_enigma.eWidgetAnimationFloat_copy,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat_swigregister = _enigma.eWidgetAnimationFloat_swigregister
+eWidgetAnimationFloat_swigregister(eWidgetAnimationFloat)
+
+class eFloatAnimation(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eFloatAnimation_swiginit(self,_enigma.new_eFloatAnimation(*args))
+    __swig_destroy__ = _enigma.delete_eFloatAnimation
+    create = staticmethod(_enigma.eFloatAnimation_create)
+eFloatAnimation.__ref__ = new_instancemethod(_enigma.eFloatAnimation___ref__,None,eFloatAnimation)
+eFloatAnimation.getPtrString = new_instancemethod(_enigma.eFloatAnimation_getPtrString,None,eFloatAnimation)
+eFloatAnimation.__deref__ = new_instancemethod(_enigma.eFloatAnimation___deref__,None,eFloatAnimation)
+eFloatAnimation_swigregister = _enigma.eFloatAnimation_swigregister
+eFloatAnimation_swigregister(eFloatAnimation)
+
+def eFloatAnimation_create(*args):
+  return _enigma.eFloatAnimation_create(*args)
+eFloatAnimation_create = _enigma.eFloatAnimation_create
+
+class eWidgetAnimationPoint(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+eWidgetAnimationPoint.reset = new_instancemethod(_enigma.eWidgetAnimationPoint_reset,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.getDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_getDuration,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.setDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_setDuration,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.setFromValue = new_instancemethod(_enigma.eWidgetAnimationPoint_setFromValue,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.setToValue = new_instancemethod(_enigma.eWidgetAnimationPoint_setToValue,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.copy = new_instancemethod(_enigma.eWidgetAnimationPoint_copy,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint_swigregister = _enigma.eWidgetAnimationPoint_swigregister
+eWidgetAnimationPoint_swigregister(eWidgetAnimationPoint)
+
+class ePointAnimation(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.ePointAnimation_swiginit(self,_enigma.new_ePointAnimation(*args))
+    __swig_destroy__ = _enigma.delete_ePointAnimation
+    create = staticmethod(_enigma.ePointAnimation_create)
+ePointAnimation.__ref__ = new_instancemethod(_enigma.ePointAnimation___ref__,None,ePointAnimation)
+ePointAnimation.getPtrString = new_instancemethod(_enigma.ePointAnimation_getPtrString,None,ePointAnimation)
+ePointAnimation.__deref__ = new_instancemethod(_enigma.ePointAnimation___deref__,None,ePointAnimation)
+ePointAnimation.at = new_instancemethod(_enigma.ePointAnimation_at,None,ePointAnimation)
+ePointAnimation.animateX = new_instancemethod(_enigma.ePointAnimation_animateX,None,ePointAnimation)
+ePointAnimation.animateY = new_instancemethod(_enigma.ePointAnimation_animateY,None,ePointAnimation)
+ePointAnimation.animateXY = new_instancemethod(_enigma.ePointAnimation_animateXY,None,ePointAnimation)
+ePointAnimation_swigregister = _enigma.ePointAnimation_swigregister
+ePointAnimation_swigregister(ePointAnimation)
+
+def ePointAnimation_create(*args):
+  return _enigma.ePointAnimation_create(*args)
+ePointAnimation_create = _enigma.ePointAnimation_create
+
+class eWidgetAnimationSize(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+eWidgetAnimationSize.reset = new_instancemethod(_enigma.eWidgetAnimationSize_reset,None,eWidgetAnimationSize)
+eWidgetAnimationSize.getDuration = new_instancemethod(_enigma.eWidgetAnimationSize_getDuration,None,eWidgetAnimationSize)
+eWidgetAnimationSize.setDuration = new_instancemethod(_enigma.eWidgetAnimationSize_setDuration,None,eWidgetAnimationSize)
+eWidgetAnimationSize.setFromValue = new_instancemethod(_enigma.eWidgetAnimationSize_setFromValue,None,eWidgetAnimationSize)
+eWidgetAnimationSize.setToValue = new_instancemethod(_enigma.eWidgetAnimationSize_setToValue,None,eWidgetAnimationSize)
+eWidgetAnimationSize.copy = new_instancemethod(_enigma.eWidgetAnimationSize_copy,None,eWidgetAnimationSize)
+eWidgetAnimationSize_swigregister = _enigma.eWidgetAnimationSize_swigregister
+eWidgetAnimationSize_swigregister(eWidgetAnimationSize)
+
+class eSizeAnimation(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eSizeAnimation_swiginit(self,_enigma.new_eSizeAnimation(*args))
+    __swig_destroy__ = _enigma.delete_eSizeAnimation
+    create = staticmethod(_enigma.eSizeAnimation_create)
+eSizeAnimation.__ref__ = new_instancemethod(_enigma.eSizeAnimation___ref__,None,eSizeAnimation)
+eSizeAnimation.getPtrString = new_instancemethod(_enigma.eSizeAnimation_getPtrString,None,eSizeAnimation)
+eSizeAnimation.__deref__ = new_instancemethod(_enigma.eSizeAnimation___deref__,None,eSizeAnimation)
+eSizeAnimation_swigregister = _enigma.eSizeAnimation_swigregister
+eSizeAnimation_swigregister(eSizeAnimation)
+
+def eSizeAnimation_create(*args):
+  return _enigma.eSizeAnimation_create(*args)
+eSizeAnimation_create = _enigma.eSizeAnimation_create
+
+class eWidgetAnimationMatrix(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+eWidgetAnimationMatrix.reset = new_instancemethod(_enigma.eWidgetAnimationMatrix_reset,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.getDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_getDuration,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.setDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_setDuration,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.setFromValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_setFromValue,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.setToValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_setToValue,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.copy = new_instancemethod(_enigma.eWidgetAnimationMatrix_copy,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix_swigregister = _enigma.eWidgetAnimationMatrix_swigregister
+eWidgetAnimationMatrix_swigregister(eWidgetAnimationMatrix)
+
+class eMatrixAnimation(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eMatrixAnimation_swiginit(self,_enigma.new_eMatrixAnimation(*args))
+    __swig_destroy__ = _enigma.delete_eMatrixAnimation
+    create = staticmethod(_enigma.eMatrixAnimation_create)
+eMatrixAnimation.__ref__ = new_instancemethod(_enigma.eMatrixAnimation___ref__,None,eMatrixAnimation)
+eMatrixAnimation.getPtrString = new_instancemethod(_enigma.eMatrixAnimation_getPtrString,None,eMatrixAnimation)
+eMatrixAnimation.__deref__ = new_instancemethod(_enigma.eMatrixAnimation___deref__,None,eMatrixAnimation)
+eMatrixAnimation_swigregister = _enigma.eMatrixAnimation_swigregister
+eMatrixAnimation_swigregister(eMatrixAnimation)
+
+def eMatrixAnimation_create(*args):
+  return _enigma.eMatrixAnimation_create(*args)
+eMatrixAnimation_create = _enigma.eMatrixAnimation_create
+
+class eWidgetAnimationSet(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eWidgetAnimationSet_swiginit(self,_enigma.new_eWidgetAnimationSet(*args))
+    __swig_destroy__ = _enigma.delete_eWidgetAnimationSet
+eWidgetAnimationSet.__ref__ = new_instancemethod(_enigma.eWidgetAnimationSet___ref__,None,eWidgetAnimationSet)
+eWidgetAnimationSet.getPtrString = new_instancemethod(_enigma.eWidgetAnimationSet_getPtrString,None,eWidgetAnimationSet)
+eWidgetAnimationSet.__deref__ = new_instancemethod(_enigma.eWidgetAnimationSet___deref__,None,eWidgetAnimationSet)
+eWidgetAnimationSet.isValid = new_instancemethod(_enigma.eWidgetAnimationSet_isValid,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setAlphaAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setAlphaAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setAlphaReverseAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setAlphaReverseAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setPositionAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setPositionAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setPositionReverseAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setPositionReverseAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setSizeAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setSizeAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setSizeReverseAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setSizeReverseAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setPerspectiveAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setPerspectiveAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.setPerspectiveReverseAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setPerspectiveReverseAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet_swigregister = _enigma.eWidgetAnimationSet_swigregister
+eWidgetAnimationSet_swigregister(eWidgetAnimationSet)
+
+class eWindowAnimationSet(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eWindowAnimationSet_swiginit(self,_enigma.new_eWindowAnimationSet(*args))
+    __swig_destroy__ = _enigma.delete_eWindowAnimationSet
+    create = staticmethod(_enigma.eWindowAnimationSet_create)
+eWindowAnimationSet.__ref__ = new_instancemethod(_enigma.eWindowAnimationSet___ref__,None,eWindowAnimationSet)
+eWindowAnimationSet.getPtrString = new_instancemethod(_enigma.eWindowAnimationSet_getPtrString,None,eWindowAnimationSet)
+eWindowAnimationSet.__deref__ = new_instancemethod(_enigma.eWindowAnimationSet___deref__,None,eWindowAnimationSet)
+eWindowAnimationSet.getKey = new_instancemethod(_enigma.eWindowAnimationSet_getKey,None,eWindowAnimationSet)
+eWindowAnimationSet.getName = new_instancemethod(_enigma.eWindowAnimationSet_getName,None,eWindowAnimationSet)
+eWindowAnimationSet.getAlpha = new_instancemethod(_enigma.eWindowAnimationSet_getAlpha,None,eWindowAnimationSet)
+eWindowAnimationSet.getAlphaReverse = new_instancemethod(_enigma.eWindowAnimationSet_getAlphaReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.getPos = new_instancemethod(_enigma.eWindowAnimationSet_getPos,None,eWindowAnimationSet)
+eWindowAnimationSet.getPosReverse = new_instancemethod(_enigma.eWindowAnimationSet_getPosReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.getSize = new_instancemethod(_enigma.eWindowAnimationSet_getSize,None,eWindowAnimationSet)
+eWindowAnimationSet.getSizeReverse = new_instancemethod(_enigma.eWindowAnimationSet_getSizeReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.getMatrix = new_instancemethod(_enigma.eWindowAnimationSet_getMatrix,None,eWindowAnimationSet)
+eWindowAnimationSet.getMatrixReverse = new_instancemethod(_enigma.eWindowAnimationSet_getMatrixReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.setKey = new_instancemethod(_enigma.eWindowAnimationSet_setKey,None,eWindowAnimationSet)
+eWindowAnimationSet.setName = new_instancemethod(_enigma.eWindowAnimationSet_setName,None,eWindowAnimationSet)
+eWindowAnimationSet.setAlpha = new_instancemethod(_enigma.eWindowAnimationSet_setAlpha,None,eWindowAnimationSet)
+eWindowAnimationSet.setAlphaReverse = new_instancemethod(_enigma.eWindowAnimationSet_setAlphaReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.setPos = new_instancemethod(_enigma.eWindowAnimationSet_setPos,None,eWindowAnimationSet)
+eWindowAnimationSet.setPosReverse = new_instancemethod(_enigma.eWindowAnimationSet_setPosReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.setSize = new_instancemethod(_enigma.eWindowAnimationSet_setSize,None,eWindowAnimationSet)
+eWindowAnimationSet.setSizeReverse = new_instancemethod(_enigma.eWindowAnimationSet_setSizeReverse,None,eWindowAnimationSet)
+eWindowAnimationSet.setMatrix = new_instancemethod(_enigma.eWindowAnimationSet_setMatrix,None,eWindowAnimationSet)
+eWindowAnimationSet.setMatrixReverse = new_instancemethod(_enigma.eWindowAnimationSet_setMatrixReverse,None,eWindowAnimationSet)
+eWindowAnimationSet_swigregister = _enigma.eWindowAnimationSet_swigregister
+eWindowAnimationSet_swigregister(eWindowAnimationSet)
+
+def eWindowAnimationSet_create():
+  return _enigma.eWindowAnimationSet_create()
+eWindowAnimationSet_create = _enigma.eWindowAnimationSet_create
+
+class eWindowAnimationManager(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eWindowAnimationManager_swiginit(self,_enigma.new_eWindowAnimationManager(*args))
+    __swig_destroy__ = _enigma.delete_eWindowAnimationManager
+    setAnimationSet = staticmethod(_enigma.eWindowAnimationManager_setAnimationSet)
+    getAnimationSet = staticmethod(_enigma.eWindowAnimationManager_getAnimationSet)
+    getAnimations = staticmethod(_enigma.eWindowAnimationManager_getAnimations)
+    setDefault = staticmethod(_enigma.eWindowAnimationManager_setDefault)
+    defaultAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultAnimationChanged_get, _enigma.eWindowAnimationManager_defaultAnimationChanged_set)
+eWindowAnimationManager.__ref__ = new_instancemethod(_enigma.eWindowAnimationManager___ref__,None,eWindowAnimationManager)
+eWindowAnimationManager.getPtrString = new_instancemethod(_enigma.eWindowAnimationManager_getPtrString,None,eWindowAnimationManager)
+eWindowAnimationManager.__deref__ = new_instancemethod(_enigma.eWindowAnimationManager___deref__,None,eWindowAnimationManager)
+eWindowAnimationManager_swigregister = _enigma.eWindowAnimationManager_swigregister
+eWindowAnimationManager_swigregister(eWindowAnimationManager)
+
+def eWindowAnimationManager_setAnimationSet(*args):
+  return _enigma.eWindowAnimationManager_setAnimationSet(*args)
+eWindowAnimationManager_setAnimationSet = _enigma.eWindowAnimationManager_setAnimationSet
+
+def eWindowAnimationManager_getAnimationSet(*args):
+  return _enigma.eWindowAnimationManager_getAnimationSet(*args)
+eWindowAnimationManager_getAnimationSet = _enigma.eWindowAnimationManager_getAnimationSet
+
+def eWindowAnimationManager_getAnimations():
+  return _enigma.eWindowAnimationManager_getAnimations()
+eWindowAnimationManager_getAnimations = _enigma.eWindowAnimationManager_getAnimations
+
+def eWindowAnimationManager_setDefault(*args):
+  return _enigma.eWindowAnimationManager_setDefault(*args)
+eWindowAnimationManager_setDefault = _enigma.eWindowAnimationManager_setDefault
+
 class eWidget(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
         _enigma.eWidget_swiginit(self,_enigma.new_eWidget(*args))
     __swig_destroy__ = _enigma.delete_eWidget
-    m_animation = _swig_property(_enigma.eWidget_m_animation_get, _enigma.eWidget_m_animation_set)
+    hideAnimationFinished = _swig_property(_enigma.eWidget_hideAnimationFinished_get, _enigma.eWidget_hideAnimationFinished_set)
+    showAnimationFinished = _swig_property(_enigma.eWidget_showAnimationFinished_get, _enigma.eWidget_showAnimationFinished_set)
     m_clip_region = _swig_property(_enigma.eWidget_m_clip_region_get, _enigma.eWidget_m_clip_region_set)
     m_visible_region = _swig_property(_enigma.eWidget_m_visible_region_get, _enigma.eWidget_m_visible_region_set)
     m_visible_with_childs = _swig_property(_enigma.eWidget_m_visible_with_childs_get, _enigma.eWidget_m_visible_with_childs_set)
-    m_comp_buffer = _swig_property(_enigma.eWidget_m_comp_buffer_get, _enigma.eWidget_m_comp_buffer_set)
     evtPaint = _enigma.eWidget_evtPaint
     evtKey = _enigma.eWidget_evtKey
     evtChangedPosition = _enigma.eWidget_evtChangedPosition
@@ -1286,10 +1789,13 @@ eWidget.resize = new_instancemethod(_enigma.eWidget_resize,None,eWidget)
 eWidget.position = new_instancemethod(_enigma.eWidget_position,None,eWidget)
 eWidget.size = new_instancemethod(_enigma.eWidget_size,None,eWidget)
 eWidget.csize = new_instancemethod(_enigma.eWidget_csize,None,eWidget)
+eWidget.parentSize = new_instancemethod(_enigma.eWidget_parentSize,None,eWidget)
+eWidget.parentCsize = new_instancemethod(_enigma.eWidget_parentCsize,None,eWidget)
 eWidget.invalidate = new_instancemethod(_enigma.eWidget_invalidate,None,eWidget)
 eWidget.child = new_instancemethod(_enigma.eWidget_child,None,eWidget)
 eWidget.show = new_instancemethod(_enigma.eWidget_show,None,eWidget)
 eWidget.hide = new_instancemethod(_enigma.eWidget_hide,None,eWidget)
+eWidget.doHide = new_instancemethod(_enigma.eWidget_doHide,None,eWidget)
 eWidget.destruct = new_instancemethod(_enigma.eWidget_destruct,None,eWidget)
 eWidget.getStyle = new_instancemethod(_enigma.eWidget_getStyle,None,eWidget)
 eWidget.setStyle = new_instancemethod(_enigma.eWidget_setStyle,None,eWidget)
@@ -1298,6 +1804,13 @@ eWidget.clearBackgroundColor = new_instancemethod(_enigma.eWidget_clearBackgroun
 eWidget.setZPosition = new_instancemethod(_enigma.eWidget_setZPosition,None,eWidget)
 eWidget.setTransparent = new_instancemethod(_enigma.eWidget_setTransparent,None,eWidget)
 eWidget.isVisible = new_instancemethod(_enigma.eWidget_isVisible,None,eWidget)
+eWidget.isFading = new_instancemethod(_enigma.eWidget_isFading,None,eWidget)
+eWidget.disable = new_instancemethod(_enigma.eWidget_disable,None,eWidget)
+eWidget.enable = new_instancemethod(_enigma.eWidget_enable,None,eWidget)
+eWidget.isEnabled = new_instancemethod(_enigma.eWidget_isEnabled,None,eWidget)
+eWidget.onAnimationFinshed = new_instancemethod(_enigma.eWidget_onAnimationFinshed,None,eWidget)
+eWidget.signalHideAnimationFinished = new_instancemethod(_enigma.eWidget_signalHideAnimationFinished,None,eWidget)
+eWidget.canAnimate = new_instancemethod(_enigma.eWidget_canAnimate,None,eWidget)
 eWidget.isTransparent = new_instancemethod(_enigma.eWidget_isTransparent,None,eWidget)
 eWidget.getAbsolutePosition = new_instancemethod(_enigma.eWidget_getAbsolutePosition,None,eWidget)
 eWidget.event = new_instancemethod(_enigma.eWidget_event,None,eWidget)
@@ -1343,14 +1856,21 @@ class ePixmap(eWidget):
     __repr__ = _swig_repr
     def __init__(self, *args): 
         _enigma.ePixmap_swiginit(self,_enigma.new_ePixmap(*args))
+    FMT_GIF = _enigma.ePixmap_FMT_GIF
+    FMT_JPEG = _enigma.ePixmap_FMT_JPEG
+    FMT_PNG = _enigma.ePixmap_FMT_PNG
     __swig_destroy__ = _enigma.delete_ePixmap
 ePixmap.setPixmap = new_instancemethod(_enigma.ePixmap_setPixmap,None,ePixmap)
 ePixmap.setPixmapFromFile = new_instancemethod(_enigma.ePixmap_setPixmapFromFile,None,ePixmap)
+ePixmap.setPixmapFromUI = new_instancemethod(_enigma.ePixmap_setPixmapFromUI,None,ePixmap)
+ePixmap.setPixmapFromScreen = new_instancemethod(_enigma.ePixmap_setPixmapFromScreen,None,ePixmap)
+ePixmap.setPixmapFromVideo = new_instancemethod(_enigma.ePixmap_setPixmapFromVideo,None,ePixmap)
 ePixmap.setAlphatest = new_instancemethod(_enigma.ePixmap_setAlphatest,None,ePixmap)
 ePixmap.setScale = new_instancemethod(_enigma.ePixmap_setScale,None,ePixmap)
 ePixmap.setScaleDest = new_instancemethod(_enigma.ePixmap_setScaleDest,None,ePixmap)
 ePixmap.setBorderWidth = new_instancemethod(_enigma.ePixmap_setBorderWidth,None,ePixmap)
 ePixmap.setBorderColor = new_instancemethod(_enigma.ePixmap_setBorderColor,None,ePixmap)
+ePixmap.save = new_instancemethod(_enigma.ePixmap_save,None,ePixmap)
 ePixmap_swigregister = _enigma.ePixmap_swigregister
 ePixmap_swigregister(ePixmap)
 
@@ -1385,6 +1905,8 @@ class eWindow(eWidget):
         _enigma.eWindow_swiginit(self,_enigma.new_eWindow(*args))
     __swig_destroy__ = _enigma.delete_eWindow
     wfNoBorder = _enigma.eWindow_wfNoBorder
+eWindow.setShowHideAnimation = new_instancemethod(_enigma.eWindow_setShowHideAnimation,None,eWindow)
+eWindow.neverAnimate = new_instancemethod(_enigma.eWindow_neverAnimate,None,eWindow)
 eWindow.setTitle = new_instancemethod(_enigma.eWindow_setTitle,None,eWindow)
 eWindow.getTitle = new_instancemethod(_enigma.eWindow_getTitle,None,eWindow)
 eWindow.setBackgroundColor = new_instancemethod(_enigma.eWindow_setBackgroundColor,None,eWindow)
@@ -1436,21 +1958,6 @@ ePositionGauge.setSeekPosition = new_instancemethod(_enigma.ePositionGauge_setSe
 ePositionGauge_swigregister = _enigma.ePositionGauge_swigregister
 ePositionGauge_swigregister(ePositionGauge)
 
-class eWidgetDesktopCompBuffer(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    m_position = _swig_property(_enigma.eWidgetDesktopCompBuffer_m_position_get, _enigma.eWidgetDesktopCompBuffer_m_position_set)
-    m_screen_size = _swig_property(_enigma.eWidgetDesktopCompBuffer_m_screen_size_get, _enigma.eWidgetDesktopCompBuffer_m_screen_size_set)
-    m_dirty_region = _swig_property(_enigma.eWidgetDesktopCompBuffer_m_dirty_region_get, _enigma.eWidgetDesktopCompBuffer_m_dirty_region_set)
-    m_background_region = _swig_property(_enigma.eWidgetDesktopCompBuffer_m_background_region_get, _enigma.eWidgetDesktopCompBuffer_m_background_region_set)
-    m_dc = _swig_property(_enigma.eWidgetDesktopCompBuffer_m_dc_get, _enigma.eWidgetDesktopCompBuffer_m_dc_set)
-    m_background_color = _swig_property(_enigma.eWidgetDesktopCompBuffer_m_background_color_get, _enigma.eWidgetDesktopCompBuffer_m_background_color_set)
-    def __init__(self): 
-        _enigma.eWidgetDesktopCompBuffer_swiginit(self,_enigma.new_eWidgetDesktopCompBuffer())
-    __swig_destroy__ = _enigma.delete_eWidgetDesktopCompBuffer
-eWidgetDesktopCompBuffer_swigregister = _enigma.eWidgetDesktopCompBuffer_swigregister
-eWidgetDesktopCompBuffer_swigregister(eWidgetDesktopCompBuffer)
-
 class eWidgetDesktop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -1463,21 +1970,22 @@ eWidgetDesktop.addRootWidget = new_instancemethod(_enigma.eWidgetDesktop_addRoot
 eWidgetDesktop.removeRootWidget = new_instancemethod(_enigma.eWidgetDesktop_removeRootWidget,None,eWidgetDesktop)
 eWidgetDesktop.movedWidget = new_instancemethod(_enigma.eWidgetDesktop_movedWidget,None,eWidgetDesktop)
 eWidgetDesktop.recalcClipRegions = new_instancemethod(_enigma.eWidgetDesktop_recalcClipRegions,None,eWidgetDesktop)
-eWidgetDesktop.invalidateWidgetLayer = new_instancemethod(_enigma.eWidgetDesktop_invalidateWidgetLayer,None,eWidgetDesktop)
-eWidgetDesktop.invalidateWidget = new_instancemethod(_enigma.eWidgetDesktop_invalidateWidget,None,eWidgetDesktop)
 eWidgetDesktop.invalidate = new_instancemethod(_enigma.eWidgetDesktop_invalidate,None,eWidgetDesktop)
-eWidgetDesktop.paintLayer = new_instancemethod(_enigma.eWidgetDesktop_paintLayer,None,eWidgetDesktop)
 eWidgetDesktop.paint = new_instancemethod(_enigma.eWidgetDesktop_paint,None,eWidgetDesktop)
 eWidgetDesktop.setDC = new_instancemethod(_enigma.eWidgetDesktop_setDC,None,eWidgetDesktop)
 eWidgetDesktop.setBackgroundColor = new_instancemethod(_enigma.eWidgetDesktop_setBackgroundColor,None,eWidgetDesktop)
 eWidgetDesktop.setPalette = new_instancemethod(_enigma.eWidgetDesktop_setPalette,None,eWidgetDesktop)
 eWidgetDesktop.setRedrawTask = new_instancemethod(_enigma.eWidgetDesktop_setRedrawTask,None,eWidgetDesktop)
 eWidgetDesktop.makeCompatiblePixmap = new_instancemethod(_enigma.eWidgetDesktop_makeCompatiblePixmap,None,eWidgetDesktop)
+eWidgetDesktop.pixelFormat = new_instancemethod(_enigma.eWidgetDesktop_pixelFormat,None,eWidgetDesktop)
+eWidgetDesktop.compositionMode = new_instancemethod(_enigma.eWidgetDesktop_compositionMode,None,eWidgetDesktop)
 eWidgetDesktop.setCompositionMode = new_instancemethod(_enigma.eWidgetDesktop_setCompositionMode,None,eWidgetDesktop)
 eWidgetDesktop.getStyleID = new_instancemethod(_enigma.eWidgetDesktop_getStyleID,None,eWidgetDesktop)
 eWidgetDesktop.setStyleID = new_instancemethod(_enigma.eWidgetDesktop_setStyleID,None,eWidgetDesktop)
 eWidgetDesktop.resize = new_instancemethod(_enigma.eWidgetDesktop_resize,None,eWidgetDesktop)
 eWidgetDesktop.size = new_instancemethod(_enigma.eWidgetDesktop_size,None,eWidgetDesktop)
+eWidgetDesktop.isDimmable = new_instancemethod(_enigma.eWidgetDesktop_isDimmable,None,eWidgetDesktop)
+eWidgetDesktop.createScreenshot = new_instancemethod(_enigma.eWidgetDesktop_createScreenshot,None,eWidgetDesktop)
 eWidgetDesktop_swigregister = _enigma.eWidgetDesktop_swigregister
 eWidgetDesktop_swigregister(eWidgetDesktop)
 
@@ -1730,6 +2238,7 @@ class eWindowStyleSkinned(object):
     colListboxMarkedAndSelectedForeground = _enigma.eWindowStyleSkinned_colListboxMarkedAndSelectedForeground
     colWindowTitleForeground = _enigma.eWindowStyleSkinned_colWindowTitleForeground
     colWindowTitleBackground = _enigma.eWindowStyleSkinned_colWindowTitleBackground
+    colWindowDimmer = _enigma.eWindowStyleSkinned_colWindowDimmer
     colMax = _enigma.eWindowStyleSkinned_colMax
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle,None,eWindowStyleSkinned)
@@ -1758,18 +2267,6 @@ eWindowStyleScrollbar.setScrollbarWidth = new_instancemethod(_enigma.eWindowStyl
 eWindowStyleScrollbar.setScrollbarBorderWidth = new_instancemethod(_enigma.eWindowStyleScrollbar_setScrollbarBorderWidth,None,eWindowStyleScrollbar)
 eWindowStyleScrollbar_swigregister = _enigma.eWindowStyleScrollbar_swigregister
 eWindowStyleScrollbar_swigregister(eWindowStyleScrollbar)
-
-class eWidgetAnimation(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        _enigma.eWidgetAnimation_swiginit(self,_enigma.new_eWidgetAnimation(*args))
-    m_active = _swig_property(_enigma.eWidgetAnimation_m_active_get, _enigma.eWidgetAnimation_m_active_set)
-    __swig_destroy__ = _enigma.delete_eWidgetAnimation
-eWidgetAnimation.tick = new_instancemethod(_enigma.eWidgetAnimation_tick,None,eWidgetAnimation)
-eWidgetAnimation.startMoveAnimation = new_instancemethod(_enigma.eWidgetAnimation_startMoveAnimation,None,eWidgetAnimation)
-eWidgetAnimation_swigregister = _enigma.eWidgetAnimation_swigregister
-eWidgetAnimation_swigregister(eWidgetAnimation)
 
 class eVideoWidget(eLabel):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -1907,6 +2404,25 @@ pNavigation.getRecordings = new_instancemethod(_enigma.pNavigation_getRecordings
 pNavigation_swigregister = _enigma.pNavigation_swigregister
 pNavigation_swigregister(pNavigation)
 
+class eActionSlot(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eActionSlot:
+            _self = None
+        else:
+            _self = self
+        _enigma.eActionSlot_swiginit(self,_enigma.new_eActionSlot(_self, ))
+    __swig_destroy__ = _enigma.delete_eActionSlot
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eActionSlot(self)
+        return weakref_proxy(self)
+eActionSlot.action_func1 = new_instancemethod(_enigma.eActionSlot_action_func1,None,eActionSlot)
+eActionSlot.action_func2 = new_instancemethod(_enigma.eActionSlot_action_func2,None,eActionSlot)
+eActionSlot_swigregister = _enigma.eActionSlot_swigregister
+eActionSlot_swigregister(eActionSlot)
+
 class eActionMap(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -1914,11 +2430,23 @@ class eActionMap(object):
         _enigma.eActionMap_swiginit(self,_enigma.new_eActionMap(*args))
     __swig_destroy__ = _enigma.delete_eActionMap
     getInstance = staticmethod(_enigma.eActionMap_getInstance)
+    def bindAction(self, context, prio, func):
+        class ePythonActionSlot(eActionSlot):
+            def __init__(self, func1=None, func2=None):
+                eActionSlot.__init__(self)
+                if func1 is None:
+                    self.action_func2=func2
+                else:
+                    self.action_func1=func1
+        weak_ref = WeakMethodReference(func)
+        slot = context and ePythonActionSlot(func2=weak_ref) \
+               or ePythonActionSlot(func1=weak_ref)
+        self.bindActionSlot(context, prio, slot)
+        return slot
 eActionMap.__ref__ = new_instancemethod(_enigma.eActionMap___ref__,None,eActionMap)
 eActionMap.getPtrString = new_instancemethod(_enigma.eActionMap_getPtrString,None,eActionMap)
 eActionMap.__deref__ = new_instancemethod(_enigma.eActionMap___deref__,None,eActionMap)
-eActionMap.bindAction = new_instancemethod(_enigma.eActionMap_bindAction,None,eActionMap)
-eActionMap.unbindAction = new_instancemethod(_enigma.eActionMap_unbindAction,None,eActionMap)
+eActionMap.bindActionSlot = new_instancemethod(_enigma.eActionMap_bindActionSlot,None,eActionMap)
 eActionMap.bindKey = new_instancemethod(_enigma.eActionMap_bindKey,None,eActionMap)
 eActionMap.unbindKeyDomain = new_instancemethod(_enigma.eActionMap_unbindKeyDomain,None,eActionMap)
 eActionMap.keyPressed = new_instancemethod(_enigma.eActionMap_keyPressed,None,eActionMap)
@@ -1952,10 +2480,6 @@ loadPNG = _enigma.loadPNG
 def loadJPG(*args):
   return _enigma.loadJPG(*args)
 loadJPG = _enigma.loadJPG
-
-def savePNG(*args):
-  return _enigma.savePNG(*args)
-savePNG = _enigma.savePNG
 class eDVBVolumecontrol(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
@@ -2125,30 +2649,43 @@ def eDVBSatelliteEquipmentControl_setParam(*args):
   return _enigma.eDVBSatelliteEquipmentControl_setParam(*args)
 eDVBSatelliteEquipmentControl_setParam = _enigma.eDVBSatelliteEquipmentControl_setParam
 
-ENABLE_PRIVATE_EPG = _enigma.ENABLE_PRIVATE_EPG
-class eEPGCache(object):
+class EPGDBThread(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.EPGDBThread_swiginit(self,_enigma.new_EPGDBThread(*args))
+    __swig_destroy__ = _enigma.delete_EPGDBThread
+EPGDBThread.sendData = new_instancemethod(_enigma.EPGDBThread_sendData,None,EPGDBThread)
+EPGDBThread.lockService = new_instancemethod(_enigma.EPGDBThread_lockService,None,EPGDBThread)
+EPGDBThread.unlockService = new_instancemethod(_enigma.EPGDBThread_unlockService,None,EPGDBThread)
+EPGDBThread.shutdown = new_instancemethod(_enigma.EPGDBThread_shutdown,None,EPGDBThread)
+EPGDBThread.start = new_instancemethod(_enigma.EPGDBThread_start,None,EPGDBThread)
+EPGDBThread.cleanupOutdated = new_instancemethod(_enigma.EPGDBThread_cleanupOutdated,None,EPGDBThread)
+EPGDBThread_swigregister = _enigma.EPGDBThread_swigregister
+EPGDBThread_swigregister(EPGDBThread)
+
+class eEPGCache(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
     getInstance = staticmethod(_enigma.eEPGCache_getInstance)
     SIMILAR_BROADCASTINGS_SEARCH = _enigma.eEPGCache_SIMILAR_BROADCASTINGS_SEARCH
     EXAKT_TITLE_SEARCH = _enigma.eEPGCache_EXAKT_TITLE_SEARCH
     PARTIAL_TITLE_SEARCH = _enigma.eEPGCache_PARTIAL_TITLE_SEARCH
+    PARTIAL_DESCRIPTION_SEARCH = _enigma.eEPGCache_PARTIAL_DESCRIPTION_SEARCH
     CASE_CHECK = _enigma.eEPGCache_CASE_CHECK
     NO_CASE_CHECK = _enigma.eEPGCache_NO_CASE_CHECK
+eEPGCache.load = new_instancemethod(_enigma.eEPGCache_load,None,eEPGCache)
+eEPGCache.save = new_instancemethod(_enigma.eEPGCache_save,None,eEPGCache)
 eEPGCache.setCacheFile = new_instancemethod(_enigma.eEPGCache_setCacheFile,None,eEPGCache)
 eEPGCache.setCacheTimespan = new_instancemethod(_enigma.eEPGCache_setCacheTimespan,None,eEPGCache)
 eEPGCache.setOutdatedEPGTimespan = new_instancemethod(_enigma.eEPGCache_setOutdatedEPGTimespan,None,eEPGCache)
-eEPGCache.load = new_instancemethod(_enigma.eEPGCache_load,None,eEPGCache)
-eEPGCache.save = new_instancemethod(_enigma.eEPGCache_save,None,eEPGCache)
 eEPGCache.Lock = new_instancemethod(_enigma.eEPGCache_Lock,None,eEPGCache)
 eEPGCache.Unlock = new_instancemethod(_enigma.eEPGCache_Unlock,None,eEPGCache)
-eEPGCache.startTimeQuery = new_instancemethod(_enigma.eEPGCache_startTimeQuery,None,eEPGCache)
 eEPGCache.lookupEvent = new_instancemethod(_enigma.eEPGCache_lookupEvent,None,eEPGCache)
 eEPGCache.search = new_instancemethod(_enigma.eEPGCache_search,None,eEPGCache)
 eEPGCache.lookupEventId = new_instancemethod(_enigma.eEPGCache_lookupEventId,None,eEPGCache)
 eEPGCache.lookupEventTime = new_instancemethod(_enigma.eEPGCache_lookupEventTime,None,eEPGCache)
-eEPGCache.getNextTimeEntry = new_instancemethod(_enigma.eEPGCache_getNextTimeEntry,None,eEPGCache)
 eEPGCache_swigregister = _enigma.eEPGCache_swigregister
 eEPGCache_swigregister(eEPGCache)
 
@@ -2285,7 +2822,7 @@ class eDVBFrontendParametersTerrestrial(object):
 eDVBFrontendParametersTerrestrial_swigregister = _enigma.eDVBFrontendParametersTerrestrial_swigregister
 eDVBFrontendParametersTerrestrial_swigregister(eDVBFrontendParametersTerrestrial)
 
-class eDVBLocalTimeHandler(object):
+class eDVBLocalTimeHandler(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
@@ -2462,6 +2999,7 @@ class eDVBServicePMTHandler(object):
     eventNoPATEntry = _enigma.eDVBServicePMTHandler_eventNoPATEntry
     eventNoPMT = _enigma.eDVBServicePMTHandler_eventNoPMT
     eventNewProgramInfo = _enigma.eDVBServicePMTHandler_eventNewProgramInfo
+    eventUpdateDecoder = _enigma.eDVBServicePMTHandler_eventUpdateDecoder
     eventTuned = _enigma.eDVBServicePMTHandler_eventTuned
     eventNewSDT = _enigma.eDVBServicePMTHandler_eventNewSDT
     eventPreStart = _enigma.eDVBServicePMTHandler_eventPreStart
@@ -2475,6 +3013,19 @@ eDVBServicePMTHandler_swigregister(eDVBServicePMTHandler)
 def eDVBServicePMTHandler_setDDPSupport(*args):
   return _enigma.eDVBServicePMTHandler_setDDPSupport(*args)
 eDVBServicePMTHandler_setDDPSupport = _enigma.eDVBServicePMTHandler_setDDPSupport
+
+class eDeviceEventManager(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        _enigma.eDeviceEventManager_swiginit(self,_enigma.new_eDeviceEventManager())
+    __swig_destroy__ = _enigma.delete_eDeviceEventManager
+    event = _swig_property(_enigma.eDeviceEventManager_event_get, _enigma.eDeviceEventManager_event_set)
+eDeviceEventManager.addSubsystemFilter = new_instancemethod(_enigma.eDeviceEventManager_addSubsystemFilter,None,eDeviceEventManager)
+eDeviceEventManager.monitor = new_instancemethod(_enigma.eDeviceEventManager_monitor,None,eDeviceEventManager)
+eDeviceEventManager.trigger = new_instancemethod(_enigma.eDeviceEventManager_trigger,None,eDeviceEventManager)
+eDeviceEventManager_swigregister = _enigma.eDeviceEventManager_swigregister
+eDeviceEventManager_swigregister(eDeviceEventManager)
 
 class eComponentScan(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2500,6 +3051,7 @@ eComponentScan.getError = new_instancemethod(_enigma.eComponentScan_getError,Non
 eComponentScan.clear = new_instancemethod(_enigma.eComponentScan_clear,None,eComponentScan)
 eComponentScan.addInitial = new_instancemethod(_enigma.eComponentScan_addInitial,None,eComponentScan)
 eComponentScan.start = new_instancemethod(_enigma.eComponentScan_start,None,eComponentScan)
+eComponentScan.setAdditionalTsidOnidCheckFunc = new_instancemethod(_enigma.eComponentScan_setAdditionalTsidOnidCheckFunc,None,eComponentScan)
 eComponentScan.getFrontend = new_instancemethod(_enigma.eComponentScan_getFrontend,None,eComponentScan)
 eComponentScan.getCurrentTransponder = new_instancemethod(_enigma.eComponentScan_getCurrentTransponder,None,eComponentScan)
 eComponentScan_swigregister = _enigma.eComponentScan_swigregister
@@ -2533,6 +3085,504 @@ eMusicPlayer.Stop = new_instancemethod(_enigma.eMusicPlayer_Stop,None,eMusicPlay
 eMusicPlayer.setBands = new_instancemethod(_enigma.eMusicPlayer_setBands,None,eMusicPlayer)
 eMusicPlayer_swigregister = _enigma.eMusicPlayer_swigregister
 eMusicPlayer_swigregister(eMusicPlayer)
+
+class eMediaDatabaseResult(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        _enigma.eMediaDatabaseResult_swiginit(self,_enigma.new_eMediaDatabaseResult())
+    __swig_destroy__ = _enigma.delete_eMediaDatabaseResult
+eMediaDatabaseResult.error = new_instancemethod(_enigma.eMediaDatabaseResult_error,None,eMediaDatabaseResult)
+eMediaDatabaseResult.rowsAffected = new_instancemethod(_enigma.eMediaDatabaseResult_rowsAffected,None,eMediaDatabaseResult)
+eMediaDatabaseResult.lastInsertId = new_instancemethod(_enigma.eMediaDatabaseResult_lastInsertId,None,eMediaDatabaseResult)
+eMediaDatabaseResult.errorDriverText = new_instancemethod(_enigma.eMediaDatabaseResult_errorDriverText,None,eMediaDatabaseResult)
+eMediaDatabaseResult.errorDatabaseText = new_instancemethod(_enigma.eMediaDatabaseResult_errorDatabaseText,None,eMediaDatabaseResult)
+eMediaDatabaseResult.data = new_instancemethod(_enigma.eMediaDatabaseResult_data,None,eMediaDatabaseResult)
+eMediaDatabaseResult_swigregister = _enigma.eMediaDatabaseResult_swigregister
+eMediaDatabaseResult_swigregister(eMediaDatabaseResult)
+
+class eMediaDatabase(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    getInstance = staticmethod(_enigma.eMediaDatabase_getInstance)
+    scanStatistics = _swig_property(_enigma.eMediaDatabase_scanStatistics_get, _enigma.eMediaDatabase_scanStatistics_set)
+    scanFinished = _swig_property(_enigma.eMediaDatabase_scanFinished_get, _enigma.eMediaDatabase_scanFinished_set)
+    insertFinished = _swig_property(_enigma.eMediaDatabase_insertFinished_get, _enigma.eMediaDatabase_insertFinished_set)
+    priorityInsertFinished = _swig_property(_enigma.eMediaDatabase_priorityInsertFinished_get, _enigma.eMediaDatabase_priorityInsertFinished_set)
+eMediaDatabase.getCurrentScanPath = new_instancemethod(_enigma.eMediaDatabase_getCurrentScanPath,None,eMediaDatabase)
+eMediaDatabase.getEnqueuedPaths = new_instancemethod(_enigma.eMediaDatabase_getEnqueuedPaths,None,eMediaDatabase)
+eMediaDatabase.addPath = new_instancemethod(_enigma.eMediaDatabase_addPath,None,eMediaDatabase)
+eMediaDatabase.rescanPath = new_instancemethod(_enigma.eMediaDatabase_rescanPath,None,eMediaDatabase)
+eMediaDatabase.requestScanStatistics = new_instancemethod(_enigma.eMediaDatabase_requestScanStatistics,None,eMediaDatabase)
+eMediaDatabase.setParentDirectoryWatched = new_instancemethod(_enigma.eMediaDatabase_setParentDirectoryWatched,None,eMediaDatabase)
+eMediaDatabase.deleteParentDirectory = new_instancemethod(_enigma.eMediaDatabase_deleteParentDirectory,None,eMediaDatabase)
+eMediaDatabase.getParentDirectories = new_instancemethod(_enigma.eMediaDatabase_getParentDirectories,None,eMediaDatabase)
+eMediaDatabase.filterAudio = new_instancemethod(_enigma.eMediaDatabase_filterAudio,None,eMediaDatabase)
+eMediaDatabase.filterByAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByAlbum,None,eMediaDatabase)
+eMediaDatabase.filterByArtistAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByArtistAlbum,None,eMediaDatabase)
+eMediaDatabase.filterByArtist = new_instancemethod(_enigma.eMediaDatabase_filterByArtist,None,eMediaDatabase)
+eMediaDatabase.filterByGenre = new_instancemethod(_enigma.eMediaDatabase_filterByGenre,None,eMediaDatabase)
+eMediaDatabase.filterByTitle = new_instancemethod(_enigma.eMediaDatabase_filterByTitle,None,eMediaDatabase)
+eMediaDatabase.getAllArtists = new_instancemethod(_enigma.eMediaDatabase_getAllArtists,None,eMediaDatabase)
+eMediaDatabase.getArtists = new_instancemethod(_enigma.eMediaDatabase_getArtists,None,eMediaDatabase)
+eMediaDatabase.getAllAlbums = new_instancemethod(_enigma.eMediaDatabase_getAllAlbums,None,eMediaDatabase)
+eMediaDatabase.getAlbums = new_instancemethod(_enigma.eMediaDatabase_getAlbums,None,eMediaDatabase)
+eMediaDatabase.getAlbumsByArtist = new_instancemethod(_enigma.eMediaDatabase_getAlbumsByArtist,None,eMediaDatabase)
+eMediaDatabase.getAllAudio = new_instancemethod(_enigma.eMediaDatabase_getAllAudio,None,eMediaDatabase)
+eMediaDatabase.getAllVideos = new_instancemethod(_enigma.eMediaDatabase_getAllVideos,None,eMediaDatabase)
+eMediaDatabase.addRecording = new_instancemethod(_enigma.eMediaDatabase_addRecording,None,eMediaDatabase)
+eMediaDatabase.getAllRecordings = new_instancemethod(_enigma.eMediaDatabase_getAllRecordings,None,eMediaDatabase)
+eMediaDatabase.getRecordings = new_instancemethod(_enigma.eMediaDatabase_getRecordings,None,eMediaDatabase)
+eMediaDatabase.getRecordMeta = new_instancemethod(_enigma.eMediaDatabase_getRecordMeta,None,eMediaDatabase)
+eMediaDatabase.setRecordMeta = new_instancemethod(_enigma.eMediaDatabase_setRecordMeta,None,eMediaDatabase)
+eMediaDatabase.getRecordEit = new_instancemethod(_enigma.eMediaDatabase_getRecordEit,None,eMediaDatabase)
+eMediaDatabase.setRecordEit = new_instancemethod(_enigma.eMediaDatabase_setRecordEit,None,eMediaDatabase)
+eMediaDatabase.getFileByPath = new_instancemethod(_enigma.eMediaDatabase_getFileByPath,None,eMediaDatabase)
+eMediaDatabase.setFileAttribute = new_instancemethod(_enigma.eMediaDatabase_setFileAttribute,None,eMediaDatabase)
+eMediaDatabase.deleteFileAttribute = new_instancemethod(_enigma.eMediaDatabase_deleteFileAttribute,None,eMediaDatabase)
+eMediaDatabase.getFileAttributes = new_instancemethod(_enigma.eMediaDatabase_getFileAttributes,None,eMediaDatabase)
+eMediaDatabase.getFileAttribute = new_instancemethod(_enigma.eMediaDatabase_getFileAttribute,None,eMediaDatabase)
+eMediaDatabase.addPlaylist = new_instancemethod(_enigma.eMediaDatabase_addPlaylist,None,eMediaDatabase)
+eMediaDatabase.getPlaylist = new_instancemethod(_enigma.eMediaDatabase_getPlaylist,None,eMediaDatabase)
+eMediaDatabase.getPlaylistByName = new_instancemethod(_enigma.eMediaDatabase_getPlaylistByName,None,eMediaDatabase)
+eMediaDatabase.getPlaylistItemsById = new_instancemethod(_enigma.eMediaDatabase_getPlaylistItemsById,None,eMediaDatabase)
+eMediaDatabase.getPlaylistItemsByName = new_instancemethod(_enigma.eMediaDatabase_getPlaylistItemsByName,None,eMediaDatabase)
+eMediaDatabase.getPlaylists = new_instancemethod(_enigma.eMediaDatabase_getPlaylists,None,eMediaDatabase)
+eMediaDatabase.addToPlaylistById = new_instancemethod(_enigma.eMediaDatabase_addToPlaylistById,None,eMediaDatabase)
+eMediaDatabase.addToPlaylistByUri = new_instancemethod(_enigma.eMediaDatabase_addToPlaylistByUri,None,eMediaDatabase)
+eMediaDatabase.updatePlaylistItem = new_instancemethod(_enigma.eMediaDatabase_updatePlaylistItem,None,eMediaDatabase)
+eMediaDatabase.clearPlaylist = new_instancemethod(_enigma.eMediaDatabase_clearPlaylist,None,eMediaDatabase)
+eMediaDatabase.savePlaylist = new_instancemethod(_enigma.eMediaDatabase_savePlaylist,None,eMediaDatabase)
+eMediaDatabase.removeFile = new_instancemethod(_enigma.eMediaDatabase_removeFile,None,eMediaDatabase)
+eMediaDatabase.query = new_instancemethod(_enigma.eMediaDatabase_query,None,eMediaDatabase)
+eMediaDatabase_swigregister = _enigma.eMediaDatabase_swigregister
+eMediaDatabase_swigregister(eMediaDatabase)
+eMediaDatabase.FIELD_ID = _enigma.cvar.eMediaDatabase_FIELD_ID
+eMediaDatabase.FIELD_FILE_ID = _enigma.cvar.eMediaDatabase_FIELD_FILE_ID
+eMediaDatabase.FIELD_DIR_ID = _enigma.cvar.eMediaDatabase_FIELD_DIR_ID
+eMediaDatabase.FIELD_ALBUM_ID = _enigma.cvar.eMediaDatabase_FIELD_ALBUM_ID
+eMediaDatabase.FIELD_ARTIST_ID = _enigma.cvar.eMediaDatabase_FIELD_ARTIST_ID
+eMediaDatabase.FIELD_GENRE_ID = _enigma.cvar.eMediaDatabase_FIELD_GENRE_ID
+eMediaDatabase.FIELD_CODEC_ID = _enigma.cvar.eMediaDatabase_FIELD_CODEC_ID
+eMediaDatabase.FIELD_PATH = _enigma.cvar.eMediaDatabase_FIELD_PATH
+eMediaDatabase.FIELD_FILENAME = _enigma.cvar.eMediaDatabase_FIELD_FILENAME
+eMediaDatabase.FIELD_SIZE = _enigma.cvar.eMediaDatabase_FIELD_SIZE
+eMediaDatabase.FIELD_DURATION = _enigma.cvar.eMediaDatabase_FIELD_DURATION
+eMediaDatabase.FIELD_POPULARITY = _enigma.cvar.eMediaDatabase_FIELD_POPULARITY
+eMediaDatabase.FIELD_LASTPLAYPOS = _enigma.cvar.eMediaDatabase_FIELD_LASTPLAYPOS
+eMediaDatabase.FIELD_LASTPLAYED = _enigma.cvar.eMediaDatabase_FIELD_LASTPLAYED
+eMediaDatabase.FIELD_LASTMODIFIED = _enigma.cvar.eMediaDatabase_FIELD_LASTMODIFIED
+eMediaDatabase.FIELD_LASTUPDATED = _enigma.cvar.eMediaDatabase_FIELD_LASTUPDATED
+eMediaDatabase.FIELD_TITLE = _enigma.cvar.eMediaDatabase_FIELD_TITLE
+eMediaDatabase.FIELD_TRACK = _enigma.cvar.eMediaDatabase_FIELD_TRACK
+eMediaDatabase.FIELD_TRACKS_TOTAL = _enigma.cvar.eMediaDatabase_FIELD_TRACKS_TOTAL
+eMediaDatabase.FIELD_DATE = _enigma.cvar.eMediaDatabase_FIELD_DATE
+eMediaDatabase.FIELD_COMMENT = _enigma.cvar.eMediaDatabase_FIELD_COMMENT
+eMediaDatabase.FIELD_ARTIST = _enigma.cvar.eMediaDatabase_FIELD_ARTIST
+eMediaDatabase.FIELD_ALBUM = _enigma.cvar.eMediaDatabase_FIELD_ALBUM
+eMediaDatabase.FIELD_GENRE = _enigma.cvar.eMediaDatabase_FIELD_GENRE
+eMediaDatabase.FIELD_CODEC = _enigma.cvar.eMediaDatabase_FIELD_CODEC
+eMediaDatabase.FIELD_CODEC_LONG = _enigma.cvar.eMediaDatabase_FIELD_CODEC_LONG
+eMediaDatabase.FIELD_WIDTH = _enigma.cvar.eMediaDatabase_FIELD_WIDTH
+eMediaDatabase.FIELD_HEIGHT = _enigma.cvar.eMediaDatabase_FIELD_HEIGHT
+eMediaDatabase.FIELD_FRAMERATE = _enigma.cvar.eMediaDatabase_FIELD_FRAMERATE
+eMediaDatabase.FIELD_HD = _enigma.cvar.eMediaDatabase_FIELD_HD
+eMediaDatabase.FIELD_WIDESCREEN = _enigma.cvar.eMediaDatabase_FIELD_WIDESCREEN
+eMediaDatabase.FIELD_RECORDING = _enigma.cvar.eMediaDatabase_FIELD_RECORDING
+eMediaDatabase.FIELD_PLAYLIST_NAME = _enigma.cvar.eMediaDatabase_FIELD_PLAYLIST_NAME
+eMediaDatabase.FIELD_FILE_URI = _enigma.cvar.eMediaDatabase_FIELD_FILE_URI
+eMediaDatabase.FIELD_POS = _enigma.cvar.eMediaDatabase_FIELD_POS
+eMediaDatabase.FIELD_DESCRIPTION = _enigma.cvar.eMediaDatabase_FIELD_DESCRIPTION
+eMediaDatabase.FIELD_SERVICEREFRENCE = _enigma.cvar.eMediaDatabase_FIELD_SERVICEREFRENCE
+eMediaDatabase.FIELD_TYPE = _enigma.cvar.eMediaDatabase_FIELD_TYPE
+eMediaDatabase.FIELD_NAME = _enigma.cvar.eMediaDatabase_FIELD_NAME
+
+def eMediaDatabase_getInstance():
+  return _enigma.eMediaDatabase_getInstance()
+eMediaDatabase_getInstance = _enigma.eMediaDatabase_getInstance
+
+class eMediaDatabaseResultPtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eMediaDatabaseResultPtr_swiginit(self,_enigma.new_eMediaDatabaseResultPtr(*args))
+    __swig_destroy__ = _enigma.delete_eMediaDatabaseResultPtr
+eMediaDatabaseResultPtr.__ref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___ref__,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.getPtrString = new_instancemethod(_enigma.eMediaDatabaseResultPtr_getPtrString,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.__deref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___deref__,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.error = new_instancemethod(_enigma.eMediaDatabaseResultPtr_error,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.rowsAffected = new_instancemethod(_enigma.eMediaDatabaseResultPtr_rowsAffected,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.lastInsertId = new_instancemethod(_enigma.eMediaDatabaseResultPtr_lastInsertId,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.errorDriverText = new_instancemethod(_enigma.eMediaDatabaseResultPtr_errorDriverText,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.errorDatabaseText = new_instancemethod(_enigma.eMediaDatabaseResultPtr_errorDatabaseText,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.data = new_instancemethod(_enigma.eMediaDatabaseResultPtr_data,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr_swigregister = _enigma.eMediaDatabaseResultPtr_swigregister
+eMediaDatabaseResultPtr_swigregister(eMediaDatabaseResultPtr)
+
+class eNetworkManager(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    getInstance = staticmethod(_enigma.eNetworkManager_getInstance)
+    availabilityChanged = _swig_property(_enigma.eNetworkManager_availabilityChanged_get, _enigma.eNetworkManager_availabilityChanged_set)
+    stateChanged = _swig_property(_enigma.eNetworkManager_stateChanged_get, _enigma.eNetworkManager_stateChanged_set)
+    onlineChanged = _swig_property(_enigma.eNetworkManager_onlineChanged_get, _enigma.eNetworkManager_onlineChanged_set)
+    offlineModeChanged = _swig_property(_enigma.eNetworkManager_offlineModeChanged_get, _enigma.eNetworkManager_offlineModeChanged_set)
+    technologiesChanged = _swig_property(_enigma.eNetworkManager_technologiesChanged_get, _enigma.eNetworkManager_technologiesChanged_set)
+    servicesChanged = _swig_property(_enigma.eNetworkManager_servicesChanged_get, _enigma.eNetworkManager_servicesChanged_set)
+    savedServicesChanged = _swig_property(_enigma.eNetworkManager_savedServicesChanged_get, _enigma.eNetworkManager_savedServicesChanged_set)
+    defaultRouteChanged = _swig_property(_enigma.eNetworkManager_defaultRouteChanged_get, _enigma.eNetworkManager_defaultRouteChanged_set)
+    sessionModeChanged = _swig_property(_enigma.eNetworkManager_sessionModeChanged_get, _enigma.eNetworkManager_sessionModeChanged_set)
+    servicesListChanged = _swig_property(_enigma.eNetworkManager_servicesListChanged_get, _enigma.eNetworkManager_servicesListChanged_set)
+    serviceAdded = _swig_property(_enigma.eNetworkManager_serviceAdded_get, _enigma.eNetworkManager_serviceAdded_set)
+    serviceRemoved = _swig_property(_enigma.eNetworkManager_serviceRemoved_get, _enigma.eNetworkManager_serviceRemoved_set)
+    userInputRequested = _swig_property(_enigma.eNetworkManager_userInputRequested_get, _enigma.eNetworkManager_userInputRequested_set)
+    userInputCanceled = _swig_property(_enigma.eNetworkManager_userInputCanceled_get, _enigma.eNetworkManager_userInputCanceled_set)
+    errorReported = _swig_property(_enigma.eNetworkManager_errorReported_get, _enigma.eNetworkManager_errorReported_set)
+    browserRequested = _swig_property(_enigma.eNetworkManager_browserRequested_get, _enigma.eNetworkManager_browserRequested_set)
+    userConnectRequested = _swig_property(_enigma.eNetworkManager_userConnectRequested_get, _enigma.eNetworkManager_userConnectRequested_set)
+    connectionRequest = _swig_property(_enigma.eNetworkManager_connectionRequest_get, _enigma.eNetworkManager_connectionRequest_set)
+eNetworkManager.state = new_instancemethod(_enigma.eNetworkManager_state,None,eNetworkManager)
+eNetworkManager.offlineMode = new_instancemethod(_enigma.eNetworkManager_offlineMode,None,eNetworkManager)
+eNetworkManager.defaultRoute = new_instancemethod(_enigma.eNetworkManager_defaultRoute,None,eNetworkManager)
+eNetworkManager.setOfflineMode = new_instancemethod(_enigma.eNetworkManager_setOfflineMode,None,eNetworkManager)
+eNetworkManager.getService = new_instancemethod(_enigma.eNetworkManager_getService,None,eNetworkManager)
+eNetworkManager.getServices = new_instancemethod(_enigma.eNetworkManager_getServices,None,eNetworkManager)
+eNetworkManager.getTechnologies = new_instancemethod(_enigma.eNetworkManager_getTechnologies,None,eNetworkManager)
+eNetworkManager.sendUserReply = new_instancemethod(_enigma.eNetworkManager_sendUserReply,None,eNetworkManager)
+eNetworkManager.onServicesChanged = new_instancemethod(_enigma.eNetworkManager_onServicesChanged,None,eNetworkManager)
+eNetworkManager.online = new_instancemethod(_enigma.eNetworkManager_online,None,eNetworkManager)
+eNetworkManager.getUserInputRequestFields = new_instancemethod(_enigma.eNetworkManager_getUserInputRequestFields,None,eNetworkManager)
+eNetworkManager_swigregister = _enigma.eNetworkManager_swigregister
+eNetworkManager_swigregister(eNetworkManager)
+eNetworkManager.STATE_IDLE = _enigma.cvar.eNetworkManager_STATE_IDLE
+eNetworkManager.STATE_OFFLINE = _enigma.cvar.eNetworkManager_STATE_OFFLINE
+eNetworkManager.STATE_ONLINE = _enigma.cvar.eNetworkManager_STATE_ONLINE
+eNetworkManager.STATE_READY = _enigma.cvar.eNetworkManager_STATE_READY
+eNetworkManager.STATE_FAILURE = _enigma.cvar.eNetworkManager_STATE_FAILURE
+
+def eNetworkManager_getInstance():
+  return _enigma.eNetworkManager_getInstance()
+eNetworkManager_getInstance = _enigma.eNetworkManager_getInstance
+
+class eNetworkService(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    nameChanged = _swig_property(_enigma.eNetworkService_nameChanged_get, _enigma.eNetworkService_nameChanged_set)
+    stateChanged = _swig_property(_enigma.eNetworkService_stateChanged_get, _enigma.eNetworkService_stateChanged_set)
+    errorChanged = _swig_property(_enigma.eNetworkService_errorChanged_get, _enigma.eNetworkService_errorChanged_set)
+    securityChanged = _swig_property(_enigma.eNetworkService_securityChanged_get, _enigma.eNetworkService_securityChanged_set)
+    strengthChanged = _swig_property(_enigma.eNetworkService_strengthChanged_get, _enigma.eNetworkService_strengthChanged_set)
+    favoriteChanged = _swig_property(_enigma.eNetworkService_favoriteChanged_get, _enigma.eNetworkService_favoriteChanged_set)
+    autoConnectChanged = _swig_property(_enigma.eNetworkService_autoConnectChanged_get, _enigma.eNetworkService_autoConnectChanged_set)
+    pathChanged = _swig_property(_enigma.eNetworkService_pathChanged_get, _enigma.eNetworkService_pathChanged_set)
+    ipv4Changed = _swig_property(_enigma.eNetworkService_ipv4Changed_get, _enigma.eNetworkService_ipv4Changed_set)
+    ipv4ConfigChanged = _swig_property(_enigma.eNetworkService_ipv4ConfigChanged_get, _enigma.eNetworkService_ipv4ConfigChanged_set)
+    ipv6Changed = _swig_property(_enigma.eNetworkService_ipv6Changed_get, _enigma.eNetworkService_ipv6Changed_set)
+    ipv6ConfigChanged = _swig_property(_enigma.eNetworkService_ipv6ConfigChanged_get, _enigma.eNetworkService_ipv6ConfigChanged_set)
+    nameserversChanged = _swig_property(_enigma.eNetworkService_nameserversChanged_get, _enigma.eNetworkService_nameserversChanged_set)
+    nameserversConfigChanged = _swig_property(_enigma.eNetworkService_nameserversConfigChanged_get, _enigma.eNetworkService_nameserversConfigChanged_set)
+    domainsChanged = _swig_property(_enigma.eNetworkService_domainsChanged_get, _enigma.eNetworkService_domainsChanged_set)
+    domainsConfigChanged = _swig_property(_enigma.eNetworkService_domainsConfigChanged_get, _enigma.eNetworkService_domainsConfigChanged_set)
+    proxyChanged = _swig_property(_enigma.eNetworkService_proxyChanged_get, _enigma.eNetworkService_proxyChanged_set)
+    proxyConfigChanged = _swig_property(_enigma.eNetworkService_proxyConfigChanged_get, _enigma.eNetworkService_proxyConfigChanged_set)
+    ethernetChanged = _swig_property(_enigma.eNetworkService_ethernetChanged_get, _enigma.eNetworkService_ethernetChanged_set)
+    connectRequestFailed = _swig_property(_enigma.eNetworkService_connectRequestFailed_get, _enigma.eNetworkService_connectRequestFailed_set)
+    typeChanged = _swig_property(_enigma.eNetworkService_typeChanged_get, _enigma.eNetworkService_typeChanged_set)
+    roamingChanged = _swig_property(_enigma.eNetworkService_roamingChanged_get, _enigma.eNetworkService_roamingChanged_set)
+    serviceConnectionStarted = _swig_property(_enigma.eNetworkService_serviceConnectionStarted_get, _enigma.eNetworkService_serviceConnectionStarted_set)
+    serviceDisconnectionStarted = _swig_property(_enigma.eNetworkService_serviceDisconnectionStarted_get, _enigma.eNetworkService_serviceDisconnectionStarted_set)
+    connectedChanged = _swig_property(_enigma.eNetworkService_connectedChanged_get, _enigma.eNetworkService_connectedChanged_set)
+eNetworkService.name = new_instancemethod(_enigma.eNetworkService_name,None,eNetworkService)
+eNetworkService.type = new_instancemethod(_enigma.eNetworkService_type,None,eNetworkService)
+eNetworkService.state = new_instancemethod(_enigma.eNetworkService_state,None,eNetworkService)
+eNetworkService.error = new_instancemethod(_enigma.eNetworkService_error,None,eNetworkService)
+eNetworkService.security = new_instancemethod(_enigma.eNetworkService_security,None,eNetworkService)
+eNetworkService.autoConnect = new_instancemethod(_enigma.eNetworkService_autoConnect,None,eNetworkService)
+eNetworkService.strength = new_instancemethod(_enigma.eNetworkService_strength,None,eNetworkService)
+eNetworkService.favorite = new_instancemethod(_enigma.eNetworkService_favorite,None,eNetworkService)
+eNetworkService.path = new_instancemethod(_enigma.eNetworkService_path,None,eNetworkService)
+eNetworkService.ipv4 = new_instancemethod(_enigma.eNetworkService_ipv4,None,eNetworkService)
+eNetworkService.ipv4Config = new_instancemethod(_enigma.eNetworkService_ipv4Config,None,eNetworkService)
+eNetworkService.ipv6 = new_instancemethod(_enigma.eNetworkService_ipv6,None,eNetworkService)
+eNetworkService.ipv6Config = new_instancemethod(_enigma.eNetworkService_ipv6Config,None,eNetworkService)
+eNetworkService.nameservers = new_instancemethod(_enigma.eNetworkService_nameservers,None,eNetworkService)
+eNetworkService.nameserversConfig = new_instancemethod(_enigma.eNetworkService_nameserversConfig,None,eNetworkService)
+eNetworkService.domains = new_instancemethod(_enigma.eNetworkService_domains,None,eNetworkService)
+eNetworkService.domainsConfig = new_instancemethod(_enigma.eNetworkService_domainsConfig,None,eNetworkService)
+eNetworkService.proxy = new_instancemethod(_enigma.eNetworkService_proxy,None,eNetworkService)
+eNetworkService.proxyConfig = new_instancemethod(_enigma.eNetworkService_proxyConfig,None,eNetworkService)
+eNetworkService.ethernet = new_instancemethod(_enigma.eNetworkService_ethernet,None,eNetworkService)
+eNetworkService.roaming = new_instancemethod(_enigma.eNetworkService_roaming,None,eNetworkService)
+eNetworkService.setPath = new_instancemethod(_enigma.eNetworkService_setPath,None,eNetworkService)
+eNetworkService.updateProperties = new_instancemethod(_enigma.eNetworkService_updateProperties,None,eNetworkService)
+eNetworkService.connected = new_instancemethod(_enigma.eNetworkService_connected,None,eNetworkService)
+eNetworkService.requestConnect = new_instancemethod(_enigma.eNetworkService_requestConnect,None,eNetworkService)
+eNetworkService.requestDisconnect = new_instancemethod(_enigma.eNetworkService_requestDisconnect,None,eNetworkService)
+eNetworkService.remove = new_instancemethod(_enigma.eNetworkService_remove,None,eNetworkService)
+eNetworkService.setAutoConnect = new_instancemethod(_enigma.eNetworkService_setAutoConnect,None,eNetworkService)
+eNetworkService.setIpv4Config = new_instancemethod(_enigma.eNetworkService_setIpv4Config,None,eNetworkService)
+eNetworkService.setIpv6Config = new_instancemethod(_enigma.eNetworkService_setIpv6Config,None,eNetworkService)
+eNetworkService.setNameserversConfig = new_instancemethod(_enigma.eNetworkService_setNameserversConfig,None,eNetworkService)
+eNetworkService.setDomainsConfig = new_instancemethod(_enigma.eNetworkService_setDomainsConfig,None,eNetworkService)
+eNetworkService.setProxyConfig = new_instancemethod(_enigma.eNetworkService_setProxyConfig,None,eNetworkService)
+eNetworkService.resetCounters = new_instancemethod(_enigma.eNetworkService_resetCounters,None,eNetworkService)
+eNetworkService_swigregister = _enigma.eNetworkService_swigregister
+eNetworkService_swigregister(eNetworkService)
+eNetworkService.KEY_METHOD = _enigma.cvar.eNetworkService_KEY_METHOD
+eNetworkService.KEY_ADDRESS = _enigma.cvar.eNetworkService_KEY_ADDRESS
+eNetworkService.KEY_NETMASK = _enigma.cvar.eNetworkService_KEY_NETMASK
+eNetworkService.KEY_GATEWAY = _enigma.cvar.eNetworkService_KEY_GATEWAY
+eNetworkService.KEY_PRIVACY = _enigma.cvar.eNetworkService_KEY_PRIVACY
+eNetworkService.KEY_INTERFACE = _enigma.cvar.eNetworkService_KEY_INTERFACE
+eNetworkService.METHOD_DHCP = _enigma.cvar.eNetworkService_METHOD_DHCP
+eNetworkService.METHOD_AUTO = _enigma.cvar.eNetworkService_METHOD_AUTO
+eNetworkService.METHOD_6TO4 = _enigma.cvar.eNetworkService_METHOD_6TO4
+eNetworkService.METHOD_FIXED = _enigma.cvar.eNetworkService_METHOD_FIXED
+eNetworkService.METHOD_MANUAL = _enigma.cvar.eNetworkService_METHOD_MANUAL
+eNetworkService.METHOD_OFF = _enigma.cvar.eNetworkService_METHOD_OFF
+eNetworkService.TYPE_ETHERNET = _enigma.cvar.eNetworkService_TYPE_ETHERNET
+eNetworkService.TYPE_WIFI = _enigma.cvar.eNetworkService_TYPE_WIFI
+eNetworkService.IPV6_PRIVACY_DISABLED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_DISABLED
+eNetworkService.IPV6_PRIVACY_PREFERRED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_PREFERRED
+eNetworkService.IPV6_PRIVACY_ENABLED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_ENABLED
+
+class eNetworkServicePtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eNetworkServicePtr_swiginit(self,_enigma.new_eNetworkServicePtr(*args))
+    __swig_destroy__ = _enigma.delete_eNetworkServicePtr
+    KEY_METHOD = _swig_property(_enigma.eNetworkServicePtr_KEY_METHOD_get)
+    KEY_ADDRESS = _swig_property(_enigma.eNetworkServicePtr_KEY_ADDRESS_get)
+    KEY_NETMASK = _swig_property(_enigma.eNetworkServicePtr_KEY_NETMASK_get)
+    KEY_GATEWAY = _swig_property(_enigma.eNetworkServicePtr_KEY_GATEWAY_get)
+    KEY_PRIVACY = _swig_property(_enigma.eNetworkServicePtr_KEY_PRIVACY_get)
+    KEY_INTERFACE = _swig_property(_enigma.eNetworkServicePtr_KEY_INTERFACE_get)
+    METHOD_DHCP = _swig_property(_enigma.eNetworkServicePtr_METHOD_DHCP_get)
+    METHOD_AUTO = _swig_property(_enigma.eNetworkServicePtr_METHOD_AUTO_get)
+    METHOD_6TO4 = _swig_property(_enigma.eNetworkServicePtr_METHOD_6TO4_get)
+    METHOD_FIXED = _swig_property(_enigma.eNetworkServicePtr_METHOD_FIXED_get)
+    METHOD_MANUAL = _swig_property(_enigma.eNetworkServicePtr_METHOD_MANUAL_get)
+    METHOD_OFF = _swig_property(_enigma.eNetworkServicePtr_METHOD_OFF_get)
+    TYPE_ETHERNET = _swig_property(_enigma.eNetworkServicePtr_TYPE_ETHERNET_get)
+    TYPE_WIFI = _swig_property(_enigma.eNetworkServicePtr_TYPE_WIFI_get)
+    IPV6_PRIVACY_DISABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_DISABLED_get)
+    IPV6_PRIVACY_PREFERRED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_PREFERRED_get)
+    IPV6_PRIVACY_ENABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_ENABLED_get)
+    nameChanged = _swig_property(_enigma.eNetworkServicePtr_nameChanged_get, _enigma.eNetworkServicePtr_nameChanged_set)
+    stateChanged = _swig_property(_enigma.eNetworkServicePtr_stateChanged_get, _enigma.eNetworkServicePtr_stateChanged_set)
+    errorChanged = _swig_property(_enigma.eNetworkServicePtr_errorChanged_get, _enigma.eNetworkServicePtr_errorChanged_set)
+    securityChanged = _swig_property(_enigma.eNetworkServicePtr_securityChanged_get, _enigma.eNetworkServicePtr_securityChanged_set)
+    strengthChanged = _swig_property(_enigma.eNetworkServicePtr_strengthChanged_get, _enigma.eNetworkServicePtr_strengthChanged_set)
+    favoriteChanged = _swig_property(_enigma.eNetworkServicePtr_favoriteChanged_get, _enigma.eNetworkServicePtr_favoriteChanged_set)
+    autoConnectChanged = _swig_property(_enigma.eNetworkServicePtr_autoConnectChanged_get, _enigma.eNetworkServicePtr_autoConnectChanged_set)
+    pathChanged = _swig_property(_enigma.eNetworkServicePtr_pathChanged_get, _enigma.eNetworkServicePtr_pathChanged_set)
+    ipv4Changed = _swig_property(_enigma.eNetworkServicePtr_ipv4Changed_get, _enigma.eNetworkServicePtr_ipv4Changed_set)
+    ipv4ConfigChanged = _swig_property(_enigma.eNetworkServicePtr_ipv4ConfigChanged_get, _enigma.eNetworkServicePtr_ipv4ConfigChanged_set)
+    ipv6Changed = _swig_property(_enigma.eNetworkServicePtr_ipv6Changed_get, _enigma.eNetworkServicePtr_ipv6Changed_set)
+    ipv6ConfigChanged = _swig_property(_enigma.eNetworkServicePtr_ipv6ConfigChanged_get, _enigma.eNetworkServicePtr_ipv6ConfigChanged_set)
+    nameserversChanged = _swig_property(_enigma.eNetworkServicePtr_nameserversChanged_get, _enigma.eNetworkServicePtr_nameserversChanged_set)
+    nameserversConfigChanged = _swig_property(_enigma.eNetworkServicePtr_nameserversConfigChanged_get, _enigma.eNetworkServicePtr_nameserversConfigChanged_set)
+    domainsChanged = _swig_property(_enigma.eNetworkServicePtr_domainsChanged_get, _enigma.eNetworkServicePtr_domainsChanged_set)
+    domainsConfigChanged = _swig_property(_enigma.eNetworkServicePtr_domainsConfigChanged_get, _enigma.eNetworkServicePtr_domainsConfigChanged_set)
+    proxyChanged = _swig_property(_enigma.eNetworkServicePtr_proxyChanged_get, _enigma.eNetworkServicePtr_proxyChanged_set)
+    proxyConfigChanged = _swig_property(_enigma.eNetworkServicePtr_proxyConfigChanged_get, _enigma.eNetworkServicePtr_proxyConfigChanged_set)
+    ethernetChanged = _swig_property(_enigma.eNetworkServicePtr_ethernetChanged_get, _enigma.eNetworkServicePtr_ethernetChanged_set)
+    connectRequestFailed = _swig_property(_enigma.eNetworkServicePtr_connectRequestFailed_get, _enigma.eNetworkServicePtr_connectRequestFailed_set)
+    typeChanged = _swig_property(_enigma.eNetworkServicePtr_typeChanged_get, _enigma.eNetworkServicePtr_typeChanged_set)
+    roamingChanged = _swig_property(_enigma.eNetworkServicePtr_roamingChanged_get, _enigma.eNetworkServicePtr_roamingChanged_set)
+    serviceConnectionStarted = _swig_property(_enigma.eNetworkServicePtr_serviceConnectionStarted_get, _enigma.eNetworkServicePtr_serviceConnectionStarted_set)
+    serviceDisconnectionStarted = _swig_property(_enigma.eNetworkServicePtr_serviceDisconnectionStarted_get, _enigma.eNetworkServicePtr_serviceDisconnectionStarted_set)
+    connectedChanged = _swig_property(_enigma.eNetworkServicePtr_connectedChanged_get, _enigma.eNetworkServicePtr_connectedChanged_set)
+eNetworkServicePtr.__ref__ = new_instancemethod(_enigma.eNetworkServicePtr___ref__,None,eNetworkServicePtr)
+eNetworkServicePtr.getPtrString = new_instancemethod(_enigma.eNetworkServicePtr_getPtrString,None,eNetworkServicePtr)
+eNetworkServicePtr.__deref__ = new_instancemethod(_enigma.eNetworkServicePtr___deref__,None,eNetworkServicePtr)
+eNetworkServicePtr.name = new_instancemethod(_enigma.eNetworkServicePtr_name,None,eNetworkServicePtr)
+eNetworkServicePtr.type = new_instancemethod(_enigma.eNetworkServicePtr_type,None,eNetworkServicePtr)
+eNetworkServicePtr.state = new_instancemethod(_enigma.eNetworkServicePtr_state,None,eNetworkServicePtr)
+eNetworkServicePtr.error = new_instancemethod(_enigma.eNetworkServicePtr_error,None,eNetworkServicePtr)
+eNetworkServicePtr.security = new_instancemethod(_enigma.eNetworkServicePtr_security,None,eNetworkServicePtr)
+eNetworkServicePtr.autoConnect = new_instancemethod(_enigma.eNetworkServicePtr_autoConnect,None,eNetworkServicePtr)
+eNetworkServicePtr.strength = new_instancemethod(_enigma.eNetworkServicePtr_strength,None,eNetworkServicePtr)
+eNetworkServicePtr.favorite = new_instancemethod(_enigma.eNetworkServicePtr_favorite,None,eNetworkServicePtr)
+eNetworkServicePtr.path = new_instancemethod(_enigma.eNetworkServicePtr_path,None,eNetworkServicePtr)
+eNetworkServicePtr.ipv4 = new_instancemethod(_enigma.eNetworkServicePtr_ipv4,None,eNetworkServicePtr)
+eNetworkServicePtr.ipv4Config = new_instancemethod(_enigma.eNetworkServicePtr_ipv4Config,None,eNetworkServicePtr)
+eNetworkServicePtr.ipv6 = new_instancemethod(_enigma.eNetworkServicePtr_ipv6,None,eNetworkServicePtr)
+eNetworkServicePtr.ipv6Config = new_instancemethod(_enigma.eNetworkServicePtr_ipv6Config,None,eNetworkServicePtr)
+eNetworkServicePtr.nameservers = new_instancemethod(_enigma.eNetworkServicePtr_nameservers,None,eNetworkServicePtr)
+eNetworkServicePtr.nameserversConfig = new_instancemethod(_enigma.eNetworkServicePtr_nameserversConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.domains = new_instancemethod(_enigma.eNetworkServicePtr_domains,None,eNetworkServicePtr)
+eNetworkServicePtr.domainsConfig = new_instancemethod(_enigma.eNetworkServicePtr_domainsConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.proxy = new_instancemethod(_enigma.eNetworkServicePtr_proxy,None,eNetworkServicePtr)
+eNetworkServicePtr.proxyConfig = new_instancemethod(_enigma.eNetworkServicePtr_proxyConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.ethernet = new_instancemethod(_enigma.eNetworkServicePtr_ethernet,None,eNetworkServicePtr)
+eNetworkServicePtr.roaming = new_instancemethod(_enigma.eNetworkServicePtr_roaming,None,eNetworkServicePtr)
+eNetworkServicePtr.setPath = new_instancemethod(_enigma.eNetworkServicePtr_setPath,None,eNetworkServicePtr)
+eNetworkServicePtr.updateProperties = new_instancemethod(_enigma.eNetworkServicePtr_updateProperties,None,eNetworkServicePtr)
+eNetworkServicePtr.connected = new_instancemethod(_enigma.eNetworkServicePtr_connected,None,eNetworkServicePtr)
+eNetworkServicePtr.requestConnect = new_instancemethod(_enigma.eNetworkServicePtr_requestConnect,None,eNetworkServicePtr)
+eNetworkServicePtr.requestDisconnect = new_instancemethod(_enigma.eNetworkServicePtr_requestDisconnect,None,eNetworkServicePtr)
+eNetworkServicePtr.remove = new_instancemethod(_enigma.eNetworkServicePtr_remove,None,eNetworkServicePtr)
+eNetworkServicePtr.setAutoConnect = new_instancemethod(_enigma.eNetworkServicePtr_setAutoConnect,None,eNetworkServicePtr)
+eNetworkServicePtr.setIpv4Config = new_instancemethod(_enigma.eNetworkServicePtr_setIpv4Config,None,eNetworkServicePtr)
+eNetworkServicePtr.setIpv6Config = new_instancemethod(_enigma.eNetworkServicePtr_setIpv6Config,None,eNetworkServicePtr)
+eNetworkServicePtr.setNameserversConfig = new_instancemethod(_enigma.eNetworkServicePtr_setNameserversConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.setDomainsConfig = new_instancemethod(_enigma.eNetworkServicePtr_setDomainsConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.setProxyConfig = new_instancemethod(_enigma.eNetworkServicePtr_setProxyConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.resetCounters = new_instancemethod(_enigma.eNetworkServicePtr_resetCounters,None,eNetworkServicePtr)
+eNetworkServicePtr_swigregister = _enigma.eNetworkServicePtr_swigregister
+eNetworkServicePtr_swigregister(eNetworkServicePtr)
+
+class eNetworkServicePtrVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.eNetworkServicePtrVector_swiginit(self,_enigma.new_eNetworkServicePtrVector(*args))
+    __swig_destroy__ = _enigma.delete_eNetworkServicePtrVector
+eNetworkServicePtrVector.iterator = new_instancemethod(_enigma.eNetworkServicePtrVector_iterator,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__nonzero__ = new_instancemethod(_enigma.eNetworkServicePtrVector___nonzero__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__bool__ = new_instancemethod(_enigma.eNetworkServicePtrVector___bool__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__len__ = new_instancemethod(_enigma.eNetworkServicePtrVector___len__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.pop = new_instancemethod(_enigma.eNetworkServicePtrVector_pop,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__getslice__ = new_instancemethod(_enigma.eNetworkServicePtrVector___getslice__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__setslice__ = new_instancemethod(_enigma.eNetworkServicePtrVector___setslice__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__delslice__ = new_instancemethod(_enigma.eNetworkServicePtrVector___delslice__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__delitem__ = new_instancemethod(_enigma.eNetworkServicePtrVector___delitem__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__getitem__ = new_instancemethod(_enigma.eNetworkServicePtrVector___getitem__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.__setitem__ = new_instancemethod(_enigma.eNetworkServicePtrVector___setitem__,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.append = new_instancemethod(_enigma.eNetworkServicePtrVector_append,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.empty = new_instancemethod(_enigma.eNetworkServicePtrVector_empty,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.size = new_instancemethod(_enigma.eNetworkServicePtrVector_size,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.clear = new_instancemethod(_enigma.eNetworkServicePtrVector_clear,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.swap = new_instancemethod(_enigma.eNetworkServicePtrVector_swap,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.get_allocator = new_instancemethod(_enigma.eNetworkServicePtrVector_get_allocator,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.begin = new_instancemethod(_enigma.eNetworkServicePtrVector_begin,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.end = new_instancemethod(_enigma.eNetworkServicePtrVector_end,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.rbegin = new_instancemethod(_enigma.eNetworkServicePtrVector_rbegin,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.rend = new_instancemethod(_enigma.eNetworkServicePtrVector_rend,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.pop_back = new_instancemethod(_enigma.eNetworkServicePtrVector_pop_back,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.erase = new_instancemethod(_enigma.eNetworkServicePtrVector_erase,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.push_back = new_instancemethod(_enigma.eNetworkServicePtrVector_push_back,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.front = new_instancemethod(_enigma.eNetworkServicePtrVector_front,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.back = new_instancemethod(_enigma.eNetworkServicePtrVector_back,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.assign = new_instancemethod(_enigma.eNetworkServicePtrVector_assign,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.resize = new_instancemethod(_enigma.eNetworkServicePtrVector_resize,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.insert = new_instancemethod(_enigma.eNetworkServicePtrVector_insert,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.reserve = new_instancemethod(_enigma.eNetworkServicePtrVector_reserve,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector.capacity = new_instancemethod(_enigma.eNetworkServicePtrVector_capacity,None,eNetworkServicePtrVector)
+eNetworkServicePtrVector_swigregister = _enigma.eNetworkServicePtrVector_swigregister
+eNetworkServicePtrVector_swigregister(eNetworkServicePtrVector)
+
+class eNetworkTechnology(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    poweredChanged = _swig_property(_enigma.eNetworkTechnology_poweredChanged_get, _enigma.eNetworkTechnology_poweredChanged_set)
+    connectedChanged = _swig_property(_enigma.eNetworkTechnology_connectedChanged_get, _enigma.eNetworkTechnology_connectedChanged_set)
+    scanFinished = _swig_property(_enigma.eNetworkTechnology_scanFinished_get, _enigma.eNetworkTechnology_scanFinished_set)
+    idleTimeoutChanged = _swig_property(_enigma.eNetworkTechnology_idleTimeoutChanged_get, _enigma.eNetworkTechnology_idleTimeoutChanged_set)
+    tetheringChanged = _swig_property(_enigma.eNetworkTechnology_tetheringChanged_get, _enigma.eNetworkTechnology_tetheringChanged_set)
+    tetheringIdChanged = _swig_property(_enigma.eNetworkTechnology_tetheringIdChanged_get, _enigma.eNetworkTechnology_tetheringIdChanged_set)
+    tetheringPassphraseChanged = _swig_property(_enigma.eNetworkTechnology_tetheringPassphraseChanged_get, _enigma.eNetworkTechnology_tetheringPassphraseChanged_set)
+eNetworkTechnology.name = new_instancemethod(_enigma.eNetworkTechnology_name,None,eNetworkTechnology)
+eNetworkTechnology.type = new_instancemethod(_enigma.eNetworkTechnology_type,None,eNetworkTechnology)
+eNetworkTechnology.powered = new_instancemethod(_enigma.eNetworkTechnology_powered,None,eNetworkTechnology)
+eNetworkTechnology.setPowered = new_instancemethod(_enigma.eNetworkTechnology_setPowered,None,eNetworkTechnology)
+eNetworkTechnology.connected = new_instancemethod(_enigma.eNetworkTechnology_connected,None,eNetworkTechnology)
+eNetworkTechnology.objPath = new_instancemethod(_enigma.eNetworkTechnology_objPath,None,eNetworkTechnology)
+eNetworkTechnology.path = new_instancemethod(_enigma.eNetworkTechnology_path,None,eNetworkTechnology)
+eNetworkTechnology.idleTimeout = new_instancemethod(_enigma.eNetworkTechnology_idleTimeout,None,eNetworkTechnology)
+eNetworkTechnology.setIdleTimeout = new_instancemethod(_enigma.eNetworkTechnology_setIdleTimeout,None,eNetworkTechnology)
+eNetworkTechnology.tethering = new_instancemethod(_enigma.eNetworkTechnology_tethering,None,eNetworkTechnology)
+eNetworkTechnology.setTethering = new_instancemethod(_enigma.eNetworkTechnology_setTethering,None,eNetworkTechnology)
+eNetworkTechnology.tetheringId = new_instancemethod(_enigma.eNetworkTechnology_tetheringId,None,eNetworkTechnology)
+eNetworkTechnology.setTetheringId = new_instancemethod(_enigma.eNetworkTechnology_setTetheringId,None,eNetworkTechnology)
+eNetworkTechnology.tetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnology_tetheringPassphrase,None,eNetworkTechnology)
+eNetworkTechnology.setTetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnology_setTetheringPassphrase,None,eNetworkTechnology)
+eNetworkTechnology.scan = new_instancemethod(_enigma.eNetworkTechnology_scan,None,eNetworkTechnology)
+eNetworkTechnology_swigregister = _enigma.eNetworkTechnology_swigregister
+eNetworkTechnology_swigregister(eNetworkTechnology)
+
+class eNetworkTechnologyPtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eNetworkTechnologyPtr_swiginit(self,_enigma.new_eNetworkTechnologyPtr(*args))
+    __swig_destroy__ = _enigma.delete_eNetworkTechnologyPtr
+    poweredChanged = _swig_property(_enigma.eNetworkTechnologyPtr_poweredChanged_get, _enigma.eNetworkTechnologyPtr_poweredChanged_set)
+    connectedChanged = _swig_property(_enigma.eNetworkTechnologyPtr_connectedChanged_get, _enigma.eNetworkTechnologyPtr_connectedChanged_set)
+    scanFinished = _swig_property(_enigma.eNetworkTechnologyPtr_scanFinished_get, _enigma.eNetworkTechnologyPtr_scanFinished_set)
+    idleTimeoutChanged = _swig_property(_enigma.eNetworkTechnologyPtr_idleTimeoutChanged_get, _enigma.eNetworkTechnologyPtr_idleTimeoutChanged_set)
+    tetheringChanged = _swig_property(_enigma.eNetworkTechnologyPtr_tetheringChanged_get, _enigma.eNetworkTechnologyPtr_tetheringChanged_set)
+    tetheringIdChanged = _swig_property(_enigma.eNetworkTechnologyPtr_tetheringIdChanged_get, _enigma.eNetworkTechnologyPtr_tetheringIdChanged_set)
+    tetheringPassphraseChanged = _swig_property(_enigma.eNetworkTechnologyPtr_tetheringPassphraseChanged_get, _enigma.eNetworkTechnologyPtr_tetheringPassphraseChanged_set)
+eNetworkTechnologyPtr.__ref__ = new_instancemethod(_enigma.eNetworkTechnologyPtr___ref__,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.getPtrString = new_instancemethod(_enigma.eNetworkTechnologyPtr_getPtrString,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.__deref__ = new_instancemethod(_enigma.eNetworkTechnologyPtr___deref__,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.name = new_instancemethod(_enigma.eNetworkTechnologyPtr_name,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.type = new_instancemethod(_enigma.eNetworkTechnologyPtr_type,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.powered = new_instancemethod(_enigma.eNetworkTechnologyPtr_powered,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.setPowered = new_instancemethod(_enigma.eNetworkTechnologyPtr_setPowered,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.connected = new_instancemethod(_enigma.eNetworkTechnologyPtr_connected,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.objPath = new_instancemethod(_enigma.eNetworkTechnologyPtr_objPath,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.path = new_instancemethod(_enigma.eNetworkTechnologyPtr_path,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.idleTimeout = new_instancemethod(_enigma.eNetworkTechnologyPtr_idleTimeout,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.setIdleTimeout = new_instancemethod(_enigma.eNetworkTechnologyPtr_setIdleTimeout,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.tethering = new_instancemethod(_enigma.eNetworkTechnologyPtr_tethering,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.setTethering = new_instancemethod(_enigma.eNetworkTechnologyPtr_setTethering,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.tetheringId = new_instancemethod(_enigma.eNetworkTechnologyPtr_tetheringId,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.setTetheringId = new_instancemethod(_enigma.eNetworkTechnologyPtr_setTetheringId,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.tetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnologyPtr_tetheringPassphrase,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.setTetheringPassphrase = new_instancemethod(_enigma.eNetworkTechnologyPtr_setTetheringPassphrase,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.scan = new_instancemethod(_enigma.eNetworkTechnologyPtr_scan,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr_swigregister = _enigma.eNetworkTechnologyPtr_swigregister
+eNetworkTechnologyPtr_swigregister(eNetworkTechnologyPtr)
+
+class eNetworkTechnologyPtrVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.eNetworkTechnologyPtrVector_swiginit(self,_enigma.new_eNetworkTechnologyPtrVector(*args))
+    __swig_destroy__ = _enigma.delete_eNetworkTechnologyPtrVector
+eNetworkTechnologyPtrVector.iterator = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_iterator,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__nonzero__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___nonzero__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__bool__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___bool__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__len__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___len__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.pop = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_pop,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__getslice__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___getslice__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__setslice__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___setslice__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__delslice__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___delslice__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__delitem__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___delitem__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__getitem__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___getitem__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.__setitem__ = new_instancemethod(_enigma.eNetworkTechnologyPtrVector___setitem__,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.append = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_append,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.empty = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_empty,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.size = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_size,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.clear = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_clear,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.swap = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_swap,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.get_allocator = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_get_allocator,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.begin = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_begin,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.end = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_end,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.rbegin = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_rbegin,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.rend = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_rend,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.pop_back = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_pop_back,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.erase = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_erase,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.push_back = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_push_back,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.front = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_front,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.back = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_back,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.assign = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_assign,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.resize = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_resize,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.insert = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_insert,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.reserve = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_reserve,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector.capacity = new_instancemethod(_enigma.eNetworkTechnologyPtrVector_capacity,None,eNetworkTechnologyPtrVector)
+eNetworkTechnologyPtrVector_swigregister = _enigma.eNetworkTechnologyPtrVector_swigregister
+eNetworkTechnologyPtrVector_swigregister(eNetworkTechnologyPtrVector)
 
 class eAVSwitch(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2625,7 +3675,6 @@ def eDBoxLCD_getInstance():
   return _enigma.eDBoxLCD_getInstance()
 eDBoxLCD_getInstance = _enigma.eDBoxLCD_getInstance
 
-_POSIX_C_SOURCE = _enigma._POSIX_C_SOURCE
 class eMMI_UI(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
@@ -2645,9 +3694,14 @@ class eDVBCIInterfaces(object):
     __repr__ = _swig_repr
     getInstance = staticmethod(_enigma.eDVBCIInterfaces_getInstance)
 eDVBCIInterfaces.getNumOfSlots = new_instancemethod(_enigma.eDVBCIInterfaces_getNumOfSlots,None,eDVBCIInterfaces)
-eDVBCIInterfaces.getDescrambleRules = new_instancemethod(_enigma.eDVBCIInterfaces_getDescrambleRules,None,eDVBCIInterfaces)
-eDVBCIInterfaces.setDescrambleRules = new_instancemethod(_enigma.eDVBCIInterfaces_setDescrambleRules,None,eDVBCIInterfaces)
+eDVBCIInterfaces.getProviderRules = new_instancemethod(_enigma.eDVBCIInterfaces_getProviderRules,None,eDVBCIInterfaces)
+eDVBCIInterfaces.getServiceRules = new_instancemethod(_enigma.eDVBCIInterfaces_getServiceRules,None,eDVBCIInterfaces)
+eDVBCIInterfaces.getCaidRules = new_instancemethod(_enigma.eDVBCIInterfaces_getCaidRules,None,eDVBCIInterfaces)
+eDVBCIInterfaces.setProviderRules = new_instancemethod(_enigma.eDVBCIInterfaces_setProviderRules,None,eDVBCIInterfaces)
+eDVBCIInterfaces.setServiceRules = new_instancemethod(_enigma.eDVBCIInterfaces_setServiceRules,None,eDVBCIInterfaces)
+eDVBCIInterfaces.setCaidRules = new_instancemethod(_enigma.eDVBCIInterfaces_setCaidRules,None,eDVBCIInterfaces)
 eDVBCIInterfaces.readCICaIds = new_instancemethod(_enigma.eDVBCIInterfaces_readCICaIds,None,eDVBCIInterfaces)
+eDVBCIInterfaces.getTunerTsInput = new_instancemethod(_enigma.eDVBCIInterfaces_getTunerTsInput,None,eDVBCIInterfaces)
 eDVBCIInterfaces_swigregister = _enigma.eDVBCIInterfaces_swigregister
 eDVBCIInterfaces_swigregister(eDVBCIInterfaces)
 
@@ -2705,107 +3759,6 @@ def eDVBDB_getInstance():
   return _enigma.eDVBDB_getInstance()
 eDVBDB_getInstance = _enigma.eDVBDB_getInstance
 
-class PSignal(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PSignal_swiginit(self,_enigma.new_PSignal())
-    __swig_destroy__ = _enigma.delete_PSignal
-PSignal.get = new_instancemethod(_enigma.PSignal_get,None,PSignal)
-PSignal_swigregister = _enigma.PSignal_swigregister
-PSignal_swigregister(PSignal)
-
-
-def PyDict_SetItem_DECREF(*args):
-  return _enigma.PyDict_SetItem_DECREF(*args)
-PyDict_SetItem_DECREF = _enigma.PyDict_SetItem_DECREF
-
-def PySet_Add_DECREF(*args):
-  return _enigma.PySet_Add_DECREF(*args)
-PySet_Add_DECREF = _enigma.PySet_Add_DECREF
-class PyConv(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    PyFrom = staticmethod(_enigma.PyConv_PyFrom)
-    def __init__(self): 
-        _enigma.PyConv_swiginit(self,_enigma.new_PyConv())
-    __swig_destroy__ = _enigma.delete_PyConv
-PyConv_swigregister = _enigma.PyConv_swigregister
-PyConv_swigregister(PyConv)
-
-def PyConv_PyFrom(*args):
-  return _enigma.PyConv_PyFrom(*args)
-PyConv_PyFrom = _enigma.PyConv_PyFrom
-
-class PySignalArg(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        _enigma.PySignalArg_swiginit(self,_enigma.new_PySignalArg(*args))
-    __swig_destroy__ = _enigma.delete_PySignalArg
-PySignalArg_swigregister = _enigma.PySignalArg_swigregister
-PySignalArg_swigregister(PySignalArg)
-
-class PySignal0(PSignal):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PySignal0_swiginit(self,_enigma.new_PySignal0())
-    __swig_destroy__ = _enigma.delete_PySignal0
-PySignal0.__call__ = new_instancemethod(_enigma.PySignal0___call__,None,PySignal0)
-PySignal0_swigregister = _enigma.PySignal0_swigregister
-PySignal0_swigregister(PySignal0)
-
-class PySignal1(PSignal):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PySignal1_swiginit(self,_enigma.new_PySignal1())
-    __swig_destroy__ = _enigma.delete_PySignal1
-PySignal1.__call__ = new_instancemethod(_enigma.PySignal1___call__,None,PySignal1)
-PySignal1_swigregister = _enigma.PySignal1_swigregister
-PySignal1_swigregister(PySignal1)
-
-class PySignal2(PSignal):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PySignal2_swiginit(self,_enigma.new_PySignal2())
-    __swig_destroy__ = _enigma.delete_PySignal2
-PySignal2.__call__ = new_instancemethod(_enigma.PySignal2___call__,None,PySignal2)
-PySignal2_swigregister = _enigma.PySignal2_swigregister
-PySignal2_swigregister(PySignal2)
-
-class PySignal3(PSignal):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PySignal3_swiginit(self,_enigma.new_PySignal3())
-    __swig_destroy__ = _enigma.delete_PySignal3
-PySignal3.__call__ = new_instancemethod(_enigma.PySignal3___call__,None,PySignal3)
-PySignal3_swigregister = _enigma.PySignal3_swigregister
-PySignal3_swigregister(PySignal3)
-
-class PySignal4(PSignal):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PySignal4_swiginit(self,_enigma.new_PySignal4())
-    __swig_destroy__ = _enigma.delete_PySignal4
-PySignal4.__call__ = new_instancemethod(_enigma.PySignal4___call__,None,PySignal4)
-PySignal4_swigregister = _enigma.PySignal4_swigregister
-PySignal4_swigregister(PySignal4)
-
-class PySignal5(PSignal):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PySignal5_swiginit(self,_enigma.new_PySignal5())
-    __swig_destroy__ = _enigma.delete_PySignal5
-PySignal5.__call__ = new_instancemethod(_enigma.PySignal5___call__,None,PySignal5)
-PySignal5_swigregister = _enigma.PySignal5_swigregister
-PySignal5_swigregister(PySignal5)
-
 class ePicLoad(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -2854,10 +3807,8 @@ hdmi_cec_getInstance = _enigma.hdmi_cec_getInstance
 HBBTV_USER_AGENT = _enigma.HBBTV_USER_AGENT
 class eHbbtv(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.eHbbtv_swiginit(self,_enigma.new_eHbbtv())
-    __swig_destroy__ = _enigma.delete_eHbbtv
     VERSION_MAJOR = _enigma.eHbbtv_VERSION_MAJOR
     VERSION_MINOR = _enigma.eHbbtv_VERSION_MINOR
     VERSION_MICRO = _enigma.eHbbtv_VERSION_MICRO
@@ -2957,55 +3908,1494 @@ def eOipfApplication_getById(*args):
   return _enigma.eOipfApplication_getById(*args)
 eOipfApplication_getById = _enigma.eOipfApplication_getById
 
-class PSignal0V(PSignal):
+class PseudoDict(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PSignal0V_swiginit(self,_enigma.new_PSignal0V())
-    __swig_destroy__ = _enigma.delete_PSignal0V
-PSignal0V.__call__ = new_instancemethod(_enigma.PSignal0V___call__,None,PSignal0V)
-PSignal0V_swigregister = _enigma.PSignal0V_swigregister
-PSignal0V_swigregister(PSignal0V)
+    def __iter__(self): return self.iterator()
+    def __iter__(self): return self.key_iterator()
+    def iterkeys(self): return self.key_iterator()
+    def itervalues(self): return self.value_iterator()
+    def iteritems(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.PseudoDict_swiginit(self,_enigma.new_PseudoDict(*args))
+    def get(self, key, default=None):
+        if self.has_key(key):
+            return self[key]
+        return default
+    __swig_destroy__ = _enigma.delete_PseudoDict
+PseudoDict.iterator = new_instancemethod(_enigma.PseudoDict_iterator,None,PseudoDict)
+PseudoDict.__nonzero__ = new_instancemethod(_enigma.PseudoDict___nonzero__,None,PseudoDict)
+PseudoDict.__bool__ = new_instancemethod(_enigma.PseudoDict___bool__,None,PseudoDict)
+PseudoDict.__len__ = new_instancemethod(_enigma.PseudoDict___len__,None,PseudoDict)
+PseudoDict.__getitem__ = new_instancemethod(_enigma.PseudoDict___getitem__,None,PseudoDict)
+PseudoDict.__delitem__ = new_instancemethod(_enigma.PseudoDict___delitem__,None,PseudoDict)
+PseudoDict.has_key = new_instancemethod(_enigma.PseudoDict_has_key,None,PseudoDict)
+PseudoDict.keys = new_instancemethod(_enigma.PseudoDict_keys,None,PseudoDict)
+PseudoDict.values = new_instancemethod(_enigma.PseudoDict_values,None,PseudoDict)
+PseudoDict.items = new_instancemethod(_enigma.PseudoDict_items,None,PseudoDict)
+PseudoDict.__contains__ = new_instancemethod(_enigma.PseudoDict___contains__,None,PseudoDict)
+PseudoDict.key_iterator = new_instancemethod(_enigma.PseudoDict_key_iterator,None,PseudoDict)
+PseudoDict.value_iterator = new_instancemethod(_enigma.PseudoDict_value_iterator,None,PseudoDict)
+PseudoDict.__setitem__ = new_instancemethod(_enigma.PseudoDict___setitem__,None,PseudoDict)
+PseudoDict.asdict = new_instancemethod(_enigma.PseudoDict_asdict,None,PseudoDict)
+PseudoDict.empty = new_instancemethod(_enigma.PseudoDict_empty,None,PseudoDict)
+PseudoDict.size = new_instancemethod(_enigma.PseudoDict_size,None,PseudoDict)
+PseudoDict.clear = new_instancemethod(_enigma.PseudoDict_clear,None,PseudoDict)
+PseudoDict.swap = new_instancemethod(_enigma.PseudoDict_swap,None,PseudoDict)
+PseudoDict.get_allocator = new_instancemethod(_enigma.PseudoDict_get_allocator,None,PseudoDict)
+PseudoDict.begin = new_instancemethod(_enigma.PseudoDict_begin,None,PseudoDict)
+PseudoDict.end = new_instancemethod(_enigma.PseudoDict_end,None,PseudoDict)
+PseudoDict.rbegin = new_instancemethod(_enigma.PseudoDict_rbegin,None,PseudoDict)
+PseudoDict.rend = new_instancemethod(_enigma.PseudoDict_rend,None,PseudoDict)
+PseudoDict.count = new_instancemethod(_enigma.PseudoDict_count,None,PseudoDict)
+PseudoDict.erase = new_instancemethod(_enigma.PseudoDict_erase,None,PseudoDict)
+PseudoDict.find = new_instancemethod(_enigma.PseudoDict_find,None,PseudoDict)
+PseudoDict.lower_bound = new_instancemethod(_enigma.PseudoDict_lower_bound,None,PseudoDict)
+PseudoDict.upper_bound = new_instancemethod(_enigma.PseudoDict_upper_bound,None,PseudoDict)
+PseudoDict_swigregister = _enigma.PseudoDict_swigregister
+PseudoDict_swigregister(PseudoDict)
 
-class PSignal1VI(PSignal):
+class StringList(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PSignal1VI_swiginit(self,_enigma.new_PSignal1VI())
-    __swig_destroy__ = _enigma.delete_PSignal1VI
-PSignal1VI.__call__ = new_instancemethod(_enigma.PSignal1VI___call__,None,PSignal1VI)
-PSignal1VI_swigregister = _enigma.PSignal1VI_swigregister
-PSignal1VI_swigregister(PSignal1VI)
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.StringList_swiginit(self,_enigma.new_StringList(*args))
+    __swig_destroy__ = _enigma.delete_StringList
+StringList.iterator = new_instancemethod(_enigma.StringList_iterator,None,StringList)
+StringList.__nonzero__ = new_instancemethod(_enigma.StringList___nonzero__,None,StringList)
+StringList.__bool__ = new_instancemethod(_enigma.StringList___bool__,None,StringList)
+StringList.__len__ = new_instancemethod(_enigma.StringList___len__,None,StringList)
+StringList.pop = new_instancemethod(_enigma.StringList_pop,None,StringList)
+StringList.__getslice__ = new_instancemethod(_enigma.StringList___getslice__,None,StringList)
+StringList.__setslice__ = new_instancemethod(_enigma.StringList___setslice__,None,StringList)
+StringList.__delslice__ = new_instancemethod(_enigma.StringList___delslice__,None,StringList)
+StringList.__delitem__ = new_instancemethod(_enigma.StringList___delitem__,None,StringList)
+StringList.__getitem__ = new_instancemethod(_enigma.StringList___getitem__,None,StringList)
+StringList.__setitem__ = new_instancemethod(_enigma.StringList___setitem__,None,StringList)
+StringList.append = new_instancemethod(_enigma.StringList_append,None,StringList)
+StringList.empty = new_instancemethod(_enigma.StringList_empty,None,StringList)
+StringList.size = new_instancemethod(_enigma.StringList_size,None,StringList)
+StringList.clear = new_instancemethod(_enigma.StringList_clear,None,StringList)
+StringList.swap = new_instancemethod(_enigma.StringList_swap,None,StringList)
+StringList.get_allocator = new_instancemethod(_enigma.StringList_get_allocator,None,StringList)
+StringList.begin = new_instancemethod(_enigma.StringList_begin,None,StringList)
+StringList.end = new_instancemethod(_enigma.StringList_end,None,StringList)
+StringList.rbegin = new_instancemethod(_enigma.StringList_rbegin,None,StringList)
+StringList.rend = new_instancemethod(_enigma.StringList_rend,None,StringList)
+StringList.pop_back = new_instancemethod(_enigma.StringList_pop_back,None,StringList)
+StringList.erase = new_instancemethod(_enigma.StringList_erase,None,StringList)
+StringList.push_back = new_instancemethod(_enigma.StringList_push_back,None,StringList)
+StringList.front = new_instancemethod(_enigma.StringList_front,None,StringList)
+StringList.back = new_instancemethod(_enigma.StringList_back,None,StringList)
+StringList.assign = new_instancemethod(_enigma.StringList_assign,None,StringList)
+StringList.resize = new_instancemethod(_enigma.StringList_resize,None,StringList)
+StringList.insert = new_instancemethod(_enigma.StringList_insert,None,StringList)
+StringList.pop_front = new_instancemethod(_enigma.StringList_pop_front,None,StringList)
+StringList.push_front = new_instancemethod(_enigma.StringList_push_front,None,StringList)
+StringList.reverse = new_instancemethod(_enigma.StringList_reverse,None,StringList)
+StringList_swigregister = _enigma.StringList_swigregister
+StringList_swigregister(StringList)
 
-class PSignal1VS(PSignal):
+class StringSet(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PSignal1VS_swiginit(self,_enigma.new_PSignal1VS())
-    __swig_destroy__ = _enigma.delete_PSignal1VS
-PSignal1VS.__call__ = new_instancemethod(_enigma.PSignal1VS___call__,None,PSignal1VS)
-PSignal1VS_swigregister = _enigma.PSignal1VS_swigregister
-PSignal1VS_swigregister(PSignal1VS)
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.StringSet_swiginit(self,_enigma.new_StringSet(*args))
+    __swig_destroy__ = _enigma.delete_StringSet
+StringSet.iterator = new_instancemethod(_enigma.StringSet_iterator,None,StringSet)
+StringSet.__nonzero__ = new_instancemethod(_enigma.StringSet___nonzero__,None,StringSet)
+StringSet.__bool__ = new_instancemethod(_enigma.StringSet___bool__,None,StringSet)
+StringSet.__len__ = new_instancemethod(_enigma.StringSet___len__,None,StringSet)
+StringSet.append = new_instancemethod(_enigma.StringSet_append,None,StringSet)
+StringSet.__contains__ = new_instancemethod(_enigma.StringSet___contains__,None,StringSet)
+StringSet.__getitem__ = new_instancemethod(_enigma.StringSet___getitem__,None,StringSet)
+StringSet.add = new_instancemethod(_enigma.StringSet_add,None,StringSet)
+StringSet.discard = new_instancemethod(_enigma.StringSet_discard,None,StringSet)
+StringSet.empty = new_instancemethod(_enigma.StringSet_empty,None,StringSet)
+StringSet.size = new_instancemethod(_enigma.StringSet_size,None,StringSet)
+StringSet.clear = new_instancemethod(_enigma.StringSet_clear,None,StringSet)
+StringSet.swap = new_instancemethod(_enigma.StringSet_swap,None,StringSet)
+StringSet.count = new_instancemethod(_enigma.StringSet_count,None,StringSet)
+StringSet.begin = new_instancemethod(_enigma.StringSet_begin,None,StringSet)
+StringSet.end = new_instancemethod(_enigma.StringSet_end,None,StringSet)
+StringSet.rbegin = new_instancemethod(_enigma.StringSet_rbegin,None,StringSet)
+StringSet.rend = new_instancemethod(_enigma.StringSet_rend,None,StringSet)
+StringSet.erase = new_instancemethod(_enigma.StringSet_erase,None,StringSet)
+StringSet.find = new_instancemethod(_enigma.StringSet_find,None,StringSet)
+StringSet.lower_bound = new_instancemethod(_enigma.StringSet_lower_bound,None,StringSet)
+StringSet.upper_bound = new_instancemethod(_enigma.StringSet_upper_bound,None,StringSet)
+StringSet.equal_range = new_instancemethod(_enigma.StringSet_equal_range,None,StringSet)
+StringSet.insert = new_instancemethod(_enigma.StringSet_insert,None,StringSet)
+StringSet_swigregister = _enigma.StringSet_swigregister
+StringSet_swigregister(StringSet)
 
-class PSignal2VoidIRecordableServiceInt(PSignal):
+class StringMap(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    def __init__(self): 
-        _enigma.PSignal2VoidIRecordableServiceInt_swiginit(self,_enigma.new_PSignal2VoidIRecordableServiceInt())
-    __swig_destroy__ = _enigma.delete_PSignal2VoidIRecordableServiceInt
-PSignal2VoidIRecordableServiceInt.__call__ = new_instancemethod(_enigma.PSignal2VoidIRecordableServiceInt___call__,None,PSignal2VoidIRecordableServiceInt)
-PSignal2VoidIRecordableServiceInt_swigregister = _enigma.PSignal2VoidIRecordableServiceInt_swigregister
-PSignal2VoidIRecordableServiceInt_swigregister(PSignal2VoidIRecordableServiceInt)
+    def __iter__(self): return self.iterator()
+    def __iter__(self): return self.key_iterator()
+    def iterkeys(self): return self.key_iterator()
+    def itervalues(self): return self.value_iterator()
+    def iteritems(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.StringMap_swiginit(self,_enigma.new_StringMap(*args))
+    def get(self, key, default=None):
+        if self.has_key(key):
+            return self[key]
+        return default
+    __swig_destroy__ = _enigma.delete_StringMap
+StringMap.iterator = new_instancemethod(_enigma.StringMap_iterator,None,StringMap)
+StringMap.__nonzero__ = new_instancemethod(_enigma.StringMap___nonzero__,None,StringMap)
+StringMap.__bool__ = new_instancemethod(_enigma.StringMap___bool__,None,StringMap)
+StringMap.__len__ = new_instancemethod(_enigma.StringMap___len__,None,StringMap)
+StringMap.__getitem__ = new_instancemethod(_enigma.StringMap___getitem__,None,StringMap)
+StringMap.__delitem__ = new_instancemethod(_enigma.StringMap___delitem__,None,StringMap)
+StringMap.has_key = new_instancemethod(_enigma.StringMap_has_key,None,StringMap)
+StringMap.keys = new_instancemethod(_enigma.StringMap_keys,None,StringMap)
+StringMap.values = new_instancemethod(_enigma.StringMap_values,None,StringMap)
+StringMap.items = new_instancemethod(_enigma.StringMap_items,None,StringMap)
+StringMap.__contains__ = new_instancemethod(_enigma.StringMap___contains__,None,StringMap)
+StringMap.key_iterator = new_instancemethod(_enigma.StringMap_key_iterator,None,StringMap)
+StringMap.value_iterator = new_instancemethod(_enigma.StringMap_value_iterator,None,StringMap)
+StringMap.__setitem__ = new_instancemethod(_enigma.StringMap___setitem__,None,StringMap)
+StringMap.asdict = new_instancemethod(_enigma.StringMap_asdict,None,StringMap)
+StringMap.empty = new_instancemethod(_enigma.StringMap_empty,None,StringMap)
+StringMap.size = new_instancemethod(_enigma.StringMap_size,None,StringMap)
+StringMap.clear = new_instancemethod(_enigma.StringMap_clear,None,StringMap)
+StringMap.swap = new_instancemethod(_enigma.StringMap_swap,None,StringMap)
+StringMap.get_allocator = new_instancemethod(_enigma.StringMap_get_allocator,None,StringMap)
+StringMap.begin = new_instancemethod(_enigma.StringMap_begin,None,StringMap)
+StringMap.end = new_instancemethod(_enigma.StringMap_end,None,StringMap)
+StringMap.rbegin = new_instancemethod(_enigma.StringMap_rbegin,None,StringMap)
+StringMap.rend = new_instancemethod(_enigma.StringMap_rend,None,StringMap)
+StringMap.count = new_instancemethod(_enigma.StringMap_count,None,StringMap)
+StringMap.erase = new_instancemethod(_enigma.StringMap_erase,None,StringMap)
+StringMap.find = new_instancemethod(_enigma.StringMap_find,None,StringMap)
+StringMap.lower_bound = new_instancemethod(_enigma.StringMap_lower_bound,None,StringMap)
+StringMap.upper_bound = new_instancemethod(_enigma.StringMap_upper_bound,None,StringMap)
+StringMap_swigregister = _enigma.StringMap_swigregister
+StringMap_swigregister(StringMap)
 
-class PSignal2VoidIntPyObject(PSignal):
+class StringMapVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.StringMapVector_swiginit(self,_enigma.new_StringMapVector(*args))
+    __swig_destroy__ = _enigma.delete_StringMapVector
+StringMapVector.iterator = new_instancemethod(_enigma.StringMapVector_iterator,None,StringMapVector)
+StringMapVector.__nonzero__ = new_instancemethod(_enigma.StringMapVector___nonzero__,None,StringMapVector)
+StringMapVector.__bool__ = new_instancemethod(_enigma.StringMapVector___bool__,None,StringMapVector)
+StringMapVector.__len__ = new_instancemethod(_enigma.StringMapVector___len__,None,StringMapVector)
+StringMapVector.pop = new_instancemethod(_enigma.StringMapVector_pop,None,StringMapVector)
+StringMapVector.__getslice__ = new_instancemethod(_enigma.StringMapVector___getslice__,None,StringMapVector)
+StringMapVector.__setslice__ = new_instancemethod(_enigma.StringMapVector___setslice__,None,StringMapVector)
+StringMapVector.__delslice__ = new_instancemethod(_enigma.StringMapVector___delslice__,None,StringMapVector)
+StringMapVector.__delitem__ = new_instancemethod(_enigma.StringMapVector___delitem__,None,StringMapVector)
+StringMapVector.__getitem__ = new_instancemethod(_enigma.StringMapVector___getitem__,None,StringMapVector)
+StringMapVector.__setitem__ = new_instancemethod(_enigma.StringMapVector___setitem__,None,StringMapVector)
+StringMapVector.append = new_instancemethod(_enigma.StringMapVector_append,None,StringMapVector)
+StringMapVector.empty = new_instancemethod(_enigma.StringMapVector_empty,None,StringMapVector)
+StringMapVector.size = new_instancemethod(_enigma.StringMapVector_size,None,StringMapVector)
+StringMapVector.clear = new_instancemethod(_enigma.StringMapVector_clear,None,StringMapVector)
+StringMapVector.swap = new_instancemethod(_enigma.StringMapVector_swap,None,StringMapVector)
+StringMapVector.get_allocator = new_instancemethod(_enigma.StringMapVector_get_allocator,None,StringMapVector)
+StringMapVector.begin = new_instancemethod(_enigma.StringMapVector_begin,None,StringMapVector)
+StringMapVector.end = new_instancemethod(_enigma.StringMapVector_end,None,StringMapVector)
+StringMapVector.rbegin = new_instancemethod(_enigma.StringMapVector_rbegin,None,StringMapVector)
+StringMapVector.rend = new_instancemethod(_enigma.StringMapVector_rend,None,StringMapVector)
+StringMapVector.pop_back = new_instancemethod(_enigma.StringMapVector_pop_back,None,StringMapVector)
+StringMapVector.erase = new_instancemethod(_enigma.StringMapVector_erase,None,StringMapVector)
+StringMapVector.push_back = new_instancemethod(_enigma.StringMapVector_push_back,None,StringMapVector)
+StringMapVector.front = new_instancemethod(_enigma.StringMapVector_front,None,StringMapVector)
+StringMapVector.back = new_instancemethod(_enigma.StringMapVector_back,None,StringMapVector)
+StringMapVector.assign = new_instancemethod(_enigma.StringMapVector_assign,None,StringMapVector)
+StringMapVector.resize = new_instancemethod(_enigma.StringMapVector_resize,None,StringMapVector)
+StringMapVector.insert = new_instancemethod(_enigma.StringMapVector_insert,None,StringMapVector)
+StringMapVector.reserve = new_instancemethod(_enigma.StringMapVector_reserve,None,StringMapVector)
+StringMapVector.capacity = new_instancemethod(_enigma.StringMapVector_capacity,None,StringMapVector)
+StringMapVector_swigregister = _enigma.StringMapVector_swigregister
+StringMapVector_swigregister(StringMapVector)
+
+class StringVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.StringVector_swiginit(self,_enigma.new_StringVector(*args))
+    __swig_destroy__ = _enigma.delete_StringVector
+StringVector.iterator = new_instancemethod(_enigma.StringVector_iterator,None,StringVector)
+StringVector.__nonzero__ = new_instancemethod(_enigma.StringVector___nonzero__,None,StringVector)
+StringVector.__bool__ = new_instancemethod(_enigma.StringVector___bool__,None,StringVector)
+StringVector.__len__ = new_instancemethod(_enigma.StringVector___len__,None,StringVector)
+StringVector.pop = new_instancemethod(_enigma.StringVector_pop,None,StringVector)
+StringVector.__getslice__ = new_instancemethod(_enigma.StringVector___getslice__,None,StringVector)
+StringVector.__setslice__ = new_instancemethod(_enigma.StringVector___setslice__,None,StringVector)
+StringVector.__delslice__ = new_instancemethod(_enigma.StringVector___delslice__,None,StringVector)
+StringVector.__delitem__ = new_instancemethod(_enigma.StringVector___delitem__,None,StringVector)
+StringVector.__getitem__ = new_instancemethod(_enigma.StringVector___getitem__,None,StringVector)
+StringVector.__setitem__ = new_instancemethod(_enigma.StringVector___setitem__,None,StringVector)
+StringVector.append = new_instancemethod(_enigma.StringVector_append,None,StringVector)
+StringVector.empty = new_instancemethod(_enigma.StringVector_empty,None,StringVector)
+StringVector.size = new_instancemethod(_enigma.StringVector_size,None,StringVector)
+StringVector.clear = new_instancemethod(_enigma.StringVector_clear,None,StringVector)
+StringVector.swap = new_instancemethod(_enigma.StringVector_swap,None,StringVector)
+StringVector.get_allocator = new_instancemethod(_enigma.StringVector_get_allocator,None,StringVector)
+StringVector.begin = new_instancemethod(_enigma.StringVector_begin,None,StringVector)
+StringVector.end = new_instancemethod(_enigma.StringVector_end,None,StringVector)
+StringVector.rbegin = new_instancemethod(_enigma.StringVector_rbegin,None,StringVector)
+StringVector.rend = new_instancemethod(_enigma.StringVector_rend,None,StringVector)
+StringVector.pop_back = new_instancemethod(_enigma.StringVector_pop_back,None,StringVector)
+StringVector.erase = new_instancemethod(_enigma.StringVector_erase,None,StringVector)
+StringVector.push_back = new_instancemethod(_enigma.StringVector_push_back,None,StringVector)
+StringVector.front = new_instancemethod(_enigma.StringVector_front,None,StringVector)
+StringVector.back = new_instancemethod(_enigma.StringVector_back,None,StringVector)
+StringVector.assign = new_instancemethod(_enigma.StringVector_assign,None,StringVector)
+StringVector.resize = new_instancemethod(_enigma.StringVector_resize,None,StringVector)
+StringVector.insert = new_instancemethod(_enigma.StringVector_insert,None,StringVector)
+StringVector.reserve = new_instancemethod(_enigma.StringVector_reserve,None,StringVector)
+StringVector.capacity = new_instancemethod(_enigma.StringVector_capacity,None,StringVector)
+StringVector_swigregister = _enigma.StringVector_swigregister
+StringVector_swigregister(StringVector)
+
+class IntList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.IntList_swiginit(self,_enigma.new_IntList(*args))
+    __swig_destroy__ = _enigma.delete_IntList
+IntList.iterator = new_instancemethod(_enigma.IntList_iterator,None,IntList)
+IntList.__nonzero__ = new_instancemethod(_enigma.IntList___nonzero__,None,IntList)
+IntList.__bool__ = new_instancemethod(_enigma.IntList___bool__,None,IntList)
+IntList.__len__ = new_instancemethod(_enigma.IntList___len__,None,IntList)
+IntList.pop = new_instancemethod(_enigma.IntList_pop,None,IntList)
+IntList.__getslice__ = new_instancemethod(_enigma.IntList___getslice__,None,IntList)
+IntList.__setslice__ = new_instancemethod(_enigma.IntList___setslice__,None,IntList)
+IntList.__delslice__ = new_instancemethod(_enigma.IntList___delslice__,None,IntList)
+IntList.__delitem__ = new_instancemethod(_enigma.IntList___delitem__,None,IntList)
+IntList.__getitem__ = new_instancemethod(_enigma.IntList___getitem__,None,IntList)
+IntList.__setitem__ = new_instancemethod(_enigma.IntList___setitem__,None,IntList)
+IntList.append = new_instancemethod(_enigma.IntList_append,None,IntList)
+IntList.empty = new_instancemethod(_enigma.IntList_empty,None,IntList)
+IntList.size = new_instancemethod(_enigma.IntList_size,None,IntList)
+IntList.clear = new_instancemethod(_enigma.IntList_clear,None,IntList)
+IntList.swap = new_instancemethod(_enigma.IntList_swap,None,IntList)
+IntList.get_allocator = new_instancemethod(_enigma.IntList_get_allocator,None,IntList)
+IntList.begin = new_instancemethod(_enigma.IntList_begin,None,IntList)
+IntList.end = new_instancemethod(_enigma.IntList_end,None,IntList)
+IntList.rbegin = new_instancemethod(_enigma.IntList_rbegin,None,IntList)
+IntList.rend = new_instancemethod(_enigma.IntList_rend,None,IntList)
+IntList.pop_back = new_instancemethod(_enigma.IntList_pop_back,None,IntList)
+IntList.erase = new_instancemethod(_enigma.IntList_erase,None,IntList)
+IntList.push_back = new_instancemethod(_enigma.IntList_push_back,None,IntList)
+IntList.front = new_instancemethod(_enigma.IntList_front,None,IntList)
+IntList.back = new_instancemethod(_enigma.IntList_back,None,IntList)
+IntList.assign = new_instancemethod(_enigma.IntList_assign,None,IntList)
+IntList.resize = new_instancemethod(_enigma.IntList_resize,None,IntList)
+IntList.insert = new_instancemethod(_enigma.IntList_insert,None,IntList)
+IntList.pop_front = new_instancemethod(_enigma.IntList_pop_front,None,IntList)
+IntList.push_front = new_instancemethod(_enigma.IntList_push_front,None,IntList)
+IntList.reverse = new_instancemethod(_enigma.IntList_reverse,None,IntList)
+IntList_swigregister = _enigma.IntList_swigregister
+IntList_swigregister(IntList)
+
+class WindowAnimationSetMap(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __iter__(self): return self.key_iterator()
+    def iterkeys(self): return self.key_iterator()
+    def itervalues(self): return self.value_iterator()
+    def iteritems(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.WindowAnimationSetMap_swiginit(self,_enigma.new_WindowAnimationSetMap(*args))
+    __swig_destroy__ = _enigma.delete_WindowAnimationSetMap
+WindowAnimationSetMap.iterator = new_instancemethod(_enigma.WindowAnimationSetMap_iterator,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__nonzero__ = new_instancemethod(_enigma.WindowAnimationSetMap___nonzero__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__bool__ = new_instancemethod(_enigma.WindowAnimationSetMap___bool__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__len__ = new_instancemethod(_enigma.WindowAnimationSetMap___len__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__getitem__ = new_instancemethod(_enigma.WindowAnimationSetMap___getitem__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__delitem__ = new_instancemethod(_enigma.WindowAnimationSetMap___delitem__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.has_key = new_instancemethod(_enigma.WindowAnimationSetMap_has_key,None,WindowAnimationSetMap)
+WindowAnimationSetMap.keys = new_instancemethod(_enigma.WindowAnimationSetMap_keys,None,WindowAnimationSetMap)
+WindowAnimationSetMap.values = new_instancemethod(_enigma.WindowAnimationSetMap_values,None,WindowAnimationSetMap)
+WindowAnimationSetMap.items = new_instancemethod(_enigma.WindowAnimationSetMap_items,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__contains__ = new_instancemethod(_enigma.WindowAnimationSetMap___contains__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.key_iterator = new_instancemethod(_enigma.WindowAnimationSetMap_key_iterator,None,WindowAnimationSetMap)
+WindowAnimationSetMap.value_iterator = new_instancemethod(_enigma.WindowAnimationSetMap_value_iterator,None,WindowAnimationSetMap)
+WindowAnimationSetMap.__setitem__ = new_instancemethod(_enigma.WindowAnimationSetMap___setitem__,None,WindowAnimationSetMap)
+WindowAnimationSetMap.asdict = new_instancemethod(_enigma.WindowAnimationSetMap_asdict,None,WindowAnimationSetMap)
+WindowAnimationSetMap.empty = new_instancemethod(_enigma.WindowAnimationSetMap_empty,None,WindowAnimationSetMap)
+WindowAnimationSetMap.size = new_instancemethod(_enigma.WindowAnimationSetMap_size,None,WindowAnimationSetMap)
+WindowAnimationSetMap.clear = new_instancemethod(_enigma.WindowAnimationSetMap_clear,None,WindowAnimationSetMap)
+WindowAnimationSetMap.swap = new_instancemethod(_enigma.WindowAnimationSetMap_swap,None,WindowAnimationSetMap)
+WindowAnimationSetMap.get_allocator = new_instancemethod(_enigma.WindowAnimationSetMap_get_allocator,None,WindowAnimationSetMap)
+WindowAnimationSetMap.begin = new_instancemethod(_enigma.WindowAnimationSetMap_begin,None,WindowAnimationSetMap)
+WindowAnimationSetMap.end = new_instancemethod(_enigma.WindowAnimationSetMap_end,None,WindowAnimationSetMap)
+WindowAnimationSetMap.rbegin = new_instancemethod(_enigma.WindowAnimationSetMap_rbegin,None,WindowAnimationSetMap)
+WindowAnimationSetMap.rend = new_instancemethod(_enigma.WindowAnimationSetMap_rend,None,WindowAnimationSetMap)
+WindowAnimationSetMap.count = new_instancemethod(_enigma.WindowAnimationSetMap_count,None,WindowAnimationSetMap)
+WindowAnimationSetMap.erase = new_instancemethod(_enigma.WindowAnimationSetMap_erase,None,WindowAnimationSetMap)
+WindowAnimationSetMap.find = new_instancemethod(_enigma.WindowAnimationSetMap_find,None,WindowAnimationSetMap)
+WindowAnimationSetMap.lower_bound = new_instancemethod(_enigma.WindowAnimationSetMap_lower_bound,None,WindowAnimationSetMap)
+WindowAnimationSetMap.upper_bound = new_instancemethod(_enigma.WindowAnimationSetMap_upper_bound,None,WindowAnimationSetMap)
+WindowAnimationSetMap_swigregister = _enigma.WindowAnimationSetMap_swigregister
+WindowAnimationSetMap_swigregister(WindowAnimationSetMap)
+
+"""
+Provides an implementation of a WeakMethodReference
+for weak references to functions and methods.
+
+The standard weakref module in Python cannot store
+references to non-bound functions and should not
+be used to perform this task.
+
+Code borrowed from the following places:
+
+http://code.activestate.com/recipes/81253/
+http://stackoverflow.com/questions/3942303/how-does-a-python-set-check-if-two-objects-are-equal-what-methods-does-an-o
+
+Created on 29/02/2012
+
+@author: adam
+"""
+
+import weakref
+import new
+
+class WeakMethodReference( object ):
+    """
+    Stores a reference to an object's method or a
+    function.
+
+    This class also provides comparison operators to
+    allow proper usage in containers such as set([]).
+
+    The ability to change the weak reference is not
+    supported to prevent mutability. This is important
+    for container support as the object hash would
+    change after storing it.
+    """
+
+    def __init__(self, function = None ):
+        """
+        Initialises the weak reference with
+        a function or class method.
+        """
+        object.__init__(self)
+
+        try:
+            if function.im_self is not None:
+                # bound method
+                self._obj = weakref.ref( function.im_self )
+            else:
+                # unbound method
+                self._obj = None
+            self._func = function.im_func
+            self._class = function.im_class
+        except AttributeError:
+            # not a method
+            self._obj = None
+            self._func = function
+            self._class = None
+
+    def __call__( self, *args, **kwargs ):
+        """
+        @return Returns a new bound-method like the original, or
+        the original function if refers just to a function or
+        unbound method.
+        Returns None if the original object doesn't exist
+        """
+
+        if self.is_dead():
+            print "dead weakref is not callable!", self
+            return None
+        if self._obj is not None:
+            # we have an instance: return a bound method
+            ret = new.instancemethod(
+                self._func,
+                self._obj(),
+                self._class
+                )
+        else:
+            # we don't have an instance: return just the
+            # function
+            ret = self._func
+
+        return ret(*args, **kwargs)
+
+    def is_dead( self ):
+        """
+        Returns True if the referenced callable was a bound method and
+        the instance no longer exists. Otherwise, return False.
+        """
+        if self._obj is None and self._func is not None:
+            return False
+        if self._obj is not None and self._obj() is None:
+            return True
+        return False
+
+    def is_alive( self ):
+        """
+        The equivalent to 'not is_dead()'
+        Make a positive method call because
+        double negatives suck
+        """
+        return not self.is_dead()
+
+    def __eq__( self, other ):
+        """
+        Enables comparison between different weak
+        pointer objects that point to the same
+        object based on the contents instead of the
+        object pointer.
+        """
+        return (
+            isinstance(other, self.__class__ ) \
+            and self.__dict__ == other.__dict__
+            )
+
+    def __ne__( self, other ):
+        """
+        Enables comparison between different weak
+        pointer objects that point to the same
+        object based on the contents instead of the
+        object pointer.
+        """
+        return not self.__eq__(other)
+
+    def __hash__( self ):
+        """
+        this method is provided to allow comparison of
+        references inside of containers like set([])
+
+        http://stackoverflow.com/questions/3942303/how-does-a-python-set-check-if-two-objects-are-equal-what-methods-does-an-o
+
+        """
+        return hash( (self._obj, self._func, self._class) )
+
+def eServiceReference_create(refstr):
+    return eServiceReference(refstr)
+
+class eSlot(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    __swig_destroy__ = _enigma.delete_eSlot
+    def __init__(self): 
+        _enigma.eSlot_swiginit(self,_enigma.new_eSlot())
+eSlot_swigregister = _enigma.eSlot_swigregister
+eSlot_swigregister(eSlot)
+
+class eSlot0X(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self): 
-        _enigma.PSignal2VoidIntPyObject_swiginit(self,_enigma.new_PSignal2VoidIntPyObject())
-    __swig_destroy__ = _enigma.delete_PSignal2VoidIntPyObject
-PSignal2VoidIntPyObject.__call__ = new_instancemethod(_enigma.PSignal2VoidIntPyObject___call__,None,PSignal2VoidIntPyObject)
-PSignal2VoidIntPyObject_swigregister = _enigma.PSignal2VoidIntPyObject_swigregister
-PSignal2VoidIntPyObject_swigregister(PSignal2VoidIntPyObject)
+        if self.__class__ == eSlot0X:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot0X_swiginit(self,_enigma.new_eSlot0X(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot0X
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot0X(self)
+        return weakref_proxy(self)
+eSlot0X.cb_func = new_instancemethod(_enigma.eSlot0X_cb_func,None,eSlot0X)
+eSlot0X_swigregister = _enigma.eSlot0X_swigregister
+eSlot0X_swigregister(eSlot0X)
+
+class eSignal0X(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot0X(eSlot0X):
+            def __init__(self, func):
+                eSlot0X.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot0X(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal0X_swiginit(self,_enigma.new_eSignal0X())
+    __swig_destroy__ = _enigma.delete_eSignal0X
+eSignal0X.connect2 = new_instancemethod(_enigma.eSignal0X_connect2,None,eSignal0X)
+eSignal0X_swigregister = _enigma.eSignal0X_swigregister
+eSignal0X_swigregister(eSignal0X)
+
+class eSlot1I(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1I:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1I_swiginit(self,_enigma.new_eSlot1I(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1I
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1I(self)
+        return weakref_proxy(self)
+eSlot1I.cb_func = new_instancemethod(_enigma.eSlot1I_cb_func,None,eSlot1I)
+eSlot1I_swigregister = _enigma.eSlot1I_swigregister
+eSlot1I_swigregister(eSlot1I)
+
+class eSignal1I(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1I(eSlot1I):
+            def __init__(self, func):
+                eSlot1I.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1I(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1I_swiginit(self,_enigma.new_eSignal1I())
+    __swig_destroy__ = _enigma.delete_eSignal1I
+eSignal1I.connect2 = new_instancemethod(_enigma.eSignal1I_connect2,None,eSignal1I)
+eSignal1I_swigregister = _enigma.eSignal1I_swigregister
+eSignal1I_swigregister(eSignal1I)
+
+class eSlot1CStr(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1CStr:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1CStr_swiginit(self,_enigma.new_eSlot1CStr(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1CStr
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1CStr(self)
+        return weakref_proxy(self)
+eSlot1CStr.cb_func = new_instancemethod(_enigma.eSlot1CStr_cb_func,None,eSlot1CStr)
+eSlot1CStr_swigregister = _enigma.eSlot1CStr_swigregister
+eSlot1CStr_swigregister(eSlot1CStr)
+
+class eSignal1CStr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1CStr(eSlot1CStr):
+            def __init__(self, func):
+                eSlot1CStr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1CStr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1CStr_swiginit(self,_enigma.new_eSignal1CStr())
+    __swig_destroy__ = _enigma.delete_eSignal1CStr
+eSignal1CStr.connect2 = new_instancemethod(_enigma.eSignal1CStr_connect2,None,eSignal1CStr)
+eSignal1CStr_swigregister = _enigma.eSignal1CStr_swigregister
+eSignal1CStr_swigregister(eSignal1CStr)
+
+class eSlot1LL(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1LL:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1LL_swiginit(self,_enigma.new_eSlot1LL(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1LL
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1LL(self)
+        return weakref_proxy(self)
+eSlot1LL.cb_func = new_instancemethod(_enigma.eSlot1LL_cb_func,None,eSlot1LL)
+eSlot1LL_swigregister = _enigma.eSlot1LL_swigregister
+eSlot1LL_swigregister(eSlot1LL)
+
+class eSignal1LL(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1LL(eSlot1LL):
+            def __init__(self, func):
+                eSlot1LL.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1LL(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1LL_swiginit(self,_enigma.new_eSignal1LL())
+    __swig_destroy__ = _enigma.delete_eSignal1LL
+eSignal1LL.connect2 = new_instancemethod(_enigma.eSignal1LL_connect2,None,eSignal1LL)
+eSignal1LL_swigregister = _enigma.eSignal1LL_swigregister
+eSignal1LL_swigregister(eSignal1LL)
+
+class eSlot1CStrRCStr(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1CStrRCStr:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1CStrRCStr_swiginit(self,_enigma.new_eSlot1CStrRCStr(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1CStrRCStr
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1CStrRCStr(self)
+        return weakref_proxy(self)
+eSlot1CStrRCStr.cb_func = new_instancemethod(_enigma.eSlot1CStrRCStr_cb_func,None,eSlot1CStrRCStr)
+eSlot1CStrRCStr_swigregister = _enigma.eSlot1CStrRCStr_swigregister
+eSlot1CStrRCStr_swigregister(eSlot1CStrRCStr)
+
+class eSignal1CStrRCStr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1CStrRCStr(eSlot1CStrRCStr):
+            def __init__(self, func):
+                eSlot1CStrRCStr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1CStrRCStr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1CStrRCStr_swiginit(self,_enigma.new_eSignal1CStrRCStr())
+    __swig_destroy__ = _enigma.delete_eSignal1CStrRCStr
+eSignal1CStrRCStr.connect2 = new_instancemethod(_enigma.eSignal1CStrRCStr_connect2,None,eSignal1CStrRCStr)
+eSignal1CStrRCStr_swigregister = _enigma.eSignal1CStrRCStr_swigregister
+eSignal1CStrRCStr_swigregister(eSignal1CStrRCStr)
+
+class eSlot1iDvbFrontendPtr(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1iDvbFrontendPtr:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1iDvbFrontendPtr_swiginit(self,_enigma.new_eSlot1iDvbFrontendPtr(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1iDvbFrontendPtr
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1iDvbFrontendPtr(self)
+        return weakref_proxy(self)
+eSlot1iDvbFrontendPtr.cb_func = new_instancemethod(_enigma.eSlot1iDvbFrontendPtr_cb_func,None,eSlot1iDvbFrontendPtr)
+eSlot1iDvbFrontendPtr_swigregister = _enigma.eSlot1iDvbFrontendPtr_swigregister
+eSlot1iDvbFrontendPtr_swigregister(eSlot1iDvbFrontendPtr)
+
+class eSignal1iDvbFrontendPtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1iDvbFrontendPtr(eSlot1iDvbFrontendPtr):
+            def __init__(self, func):
+                eSlot1iDvbFrontendPtr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1iDvbFrontendPtr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1iDvbFrontendPtr_swiginit(self,_enigma.new_eSignal1iDvbFrontendPtr())
+    __swig_destroy__ = _enigma.delete_eSignal1iDvbFrontendPtr
+eSignal1iDvbFrontendPtr.connect2 = new_instancemethod(_enigma.eSignal1iDvbFrontendPtr_connect2,None,eSignal1iDvbFrontendPtr)
+eSignal1iDvbFrontendPtr_swigregister = _enigma.eSignal1iDvbFrontendPtr_swigregister
+eSignal1iDvbFrontendPtr_swigregister(eSignal1iDvbFrontendPtr)
+
+class eSlot3IIIRetI(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot3IIIRetI:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot3IIIRetI_swiginit(self,_enigma.new_eSlot3IIIRetI(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot3IIIRetI
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot3IIIRetI(self)
+        return weakref_proxy(self)
+eSlot3IIIRetI.cb_func = new_instancemethod(_enigma.eSlot3IIIRetI_cb_func,None,eSlot3IIIRetI)
+eSlot3IIIRetI_swigregister = _enigma.eSlot3IIIRetI_swigregister
+eSlot3IIIRetI_swigregister(eSlot3IIIRetI)
+
+class eSignal3IIIRetI(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot3IIIRetI(eSlot3IIIRetI):
+            def __init__(self, func):
+                eSlot3IIIRetI.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot3IIIRetI(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal3IIIRetI_swiginit(self,_enigma.new_eSignal3IIIRetI())
+    __swig_destroy__ = _enigma.delete_eSignal3IIIRetI
+eSignal3IIIRetI.connect2 = new_instancemethod(_enigma.eSignal3IIIRetI_connect2,None,eSignal3IIIRetI)
+eSignal3IIIRetI_swigregister = _enigma.eSignal3IIIRetI_swigregister
+eSignal3IIIRetI_swigregister(eSignal3IIIRetI)
+
+class eSlot2IRecordableServicePtrInt(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2IRecordableServicePtrInt:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2IRecordableServicePtrInt_swiginit(self,_enigma.new_eSlot2IRecordableServicePtrInt(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2IRecordableServicePtrInt
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2IRecordableServicePtrInt(self)
+        return weakref_proxy(self)
+eSlot2IRecordableServicePtrInt.cb_func = new_instancemethod(_enigma.eSlot2IRecordableServicePtrInt_cb_func,None,eSlot2IRecordableServicePtrInt)
+eSlot2IRecordableServicePtrInt_swigregister = _enigma.eSlot2IRecordableServicePtrInt_swigregister
+eSlot2IRecordableServicePtrInt_swigregister(eSlot2IRecordableServicePtrInt)
+
+class eSignal2IRecordableServicePtrInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2IRecordableServicePtrInt(eSlot2IRecordableServicePtrInt):
+            def __init__(self, func):
+                eSlot2IRecordableServicePtrInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2IRecordableServicePtrInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2IRecordableServicePtrInt_swiginit(self,_enigma.new_eSignal2IRecordableServicePtrInt())
+    __swig_destroy__ = _enigma.delete_eSignal2IRecordableServicePtrInt
+eSignal2IRecordableServicePtrInt.connect2 = new_instancemethod(_enigma.eSignal2IRecordableServicePtrInt_connect2,None,eSignal2IRecordableServicePtrInt)
+eSignal2IRecordableServicePtrInt_swigregister = _enigma.eSignal2IRecordableServicePtrInt_swigregister
+eSignal2IRecordableServicePtrInt_swigregister(eSignal2IRecordableServicePtrInt)
+
+class eSlot1StrMap(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1StrMap:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1StrMap_swiginit(self,_enigma.new_eSlot1StrMap(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1StrMap
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1StrMap(self)
+        return weakref_proxy(self)
+eSlot1StrMap.cb_func = new_instancemethod(_enigma.eSlot1StrMap_cb_func,None,eSlot1StrMap)
+eSlot1StrMap_swigregister = _enigma.eSlot1StrMap_swigregister
+eSlot1StrMap_swigregister(eSlot1StrMap)
+
+class eSignal1StrMap(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1StrMap(eSlot1StrMap):
+            def __init__(self, func):
+                eSlot1StrMap.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1StrMap(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1StrMap_swiginit(self,_enigma.new_eSignal1StrMap())
+    __swig_destroy__ = _enigma.delete_eSignal1StrMap
+eSignal1StrMap.connect2 = new_instancemethod(_enigma.eSignal1StrMap_connect2,None,eSignal1StrMap)
+eSignal1StrMap_swigregister = _enigma.eSignal1StrMap_swigregister
+eSignal1StrMap_swigregister(eSignal1StrMap)
+
+class eSlot2StrMapBool(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2StrMapBool:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2StrMapBool_swiginit(self,_enigma.new_eSlot2StrMapBool(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2StrMapBool
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2StrMapBool(self)
+        return weakref_proxy(self)
+eSlot2StrMapBool.cb_func = new_instancemethod(_enigma.eSlot2StrMapBool_cb_func,None,eSlot2StrMapBool)
+eSlot2StrMapBool_swigregister = _enigma.eSlot2StrMapBool_swigregister
+eSlot2StrMapBool_swigregister(eSlot2StrMapBool)
+
+class eSignal2StrMapBool(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2StrMapBool(eSlot2StrMapBool):
+            def __init__(self, func):
+                eSlot2StrMapBool.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2StrMapBool(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2StrMapBool_swiginit(self,_enigma.new_eSignal2StrMapBool())
+    __swig_destroy__ = _enigma.delete_eSignal2StrMapBool
+eSignal2StrMapBool.connect2 = new_instancemethod(_enigma.eSignal2StrMapBool_connect2,None,eSignal2StrMapBool)
+eSignal2StrMapBool_swigregister = _enigma.eSignal2StrMapBool_swigregister
+eSignal2StrMapBool_swigregister(eSignal2StrMapBool)
+
+class eSlot2StrMapStrSet(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2StrMapStrSet:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2StrMapStrSet_swiginit(self,_enigma.new_eSlot2StrMapStrSet(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2StrMapStrSet
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2StrMapStrSet(self)
+        return weakref_proxy(self)
+eSlot2StrMapStrSet.cb_func = new_instancemethod(_enigma.eSlot2StrMapStrSet_cb_func,None,eSlot2StrMapStrSet)
+eSlot2StrMapStrSet_swigregister = _enigma.eSlot2StrMapStrSet_swigregister
+eSlot2StrMapStrSet_swigregister(eSlot2StrMapStrSet)
+
+class eSignal2StrMapStrSet(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2StrMapStrSet(eSlot2StrMapStrSet):
+            def __init__(self, func):
+                eSlot2StrMapStrSet.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2StrMapStrSet(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2StrMapStrSet_swiginit(self,_enigma.new_eSignal2StrMapStrSet())
+    __swig_destroy__ = _enigma.delete_eSignal2StrMapStrSet
+eSignal2StrMapStrSet.connect2 = new_instancemethod(_enigma.eSignal2StrMapStrSet_connect2,None,eSignal2StrMapStrSet)
+eSignal2StrMapStrSet_swigregister = _enigma.eSignal2StrMapStrSet_swigregister
+eSignal2StrMapStrSet_swigregister(eSignal2StrMapStrSet)
+
+class eSlot2StrMapStrMapVector(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2StrMapStrMapVector:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2StrMapStrMapVector_swiginit(self,_enigma.new_eSlot2StrMapStrMapVector(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2StrMapStrMapVector
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2StrMapStrMapVector(self)
+        return weakref_proxy(self)
+eSlot2StrMapStrMapVector.cb_func = new_instancemethod(_enigma.eSlot2StrMapStrMapVector_cb_func,None,eSlot2StrMapStrMapVector)
+eSlot2StrMapStrMapVector_swigregister = _enigma.eSlot2StrMapStrMapVector_swigregister
+eSlot2StrMapStrMapVector_swigregister(eSlot2StrMapStrMapVector)
+
+class eSignal2StrMapStrMapVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2StrMapStrMapVector(eSlot2StrMapStrMapVector):
+            def __init__(self, func):
+                eSlot2StrMapStrMapVector.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2StrMapStrMapVector(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2StrMapStrMapVector_swiginit(self,_enigma.new_eSignal2StrMapStrMapVector())
+    __swig_destroy__ = _enigma.delete_eSignal2StrMapStrMapVector
+eSignal2StrMapStrMapVector.connect2 = new_instancemethod(_enigma.eSignal2StrMapStrMapVector_connect2,None,eSignal2StrMapStrMapVector)
+eSignal2StrMapStrMapVector_swigregister = _enigma.eSignal2StrMapStrMapVector_swigregister
+eSignal2StrMapStrMapVector_swigregister(eSignal2StrMapStrMapVector)
+
+class eSlot3StrMapLLLL(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot3StrMapLLLL:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot3StrMapLLLL_swiginit(self,_enigma.new_eSlot3StrMapLLLL(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot3StrMapLLLL
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot3StrMapLLLL(self)
+        return weakref_proxy(self)
+eSlot3StrMapLLLL.cb_func = new_instancemethod(_enigma.eSlot3StrMapLLLL_cb_func,None,eSlot3StrMapLLLL)
+eSlot3StrMapLLLL_swigregister = _enigma.eSlot3StrMapLLLL_swigregister
+eSlot3StrMapLLLL_swigregister(eSlot3StrMapLLLL)
+
+class eSignal3StrMapLLLL(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot3StrMapLLLL(eSlot3StrMapLLLL):
+            def __init__(self, func):
+                eSlot3StrMapLLLL.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot3StrMapLLLL(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal3StrMapLLLL_swiginit(self,_enigma.new_eSignal3StrMapLLLL())
+    __swig_destroy__ = _enigma.delete_eSignal3StrMapLLLL
+eSignal3StrMapLLLL.connect2 = new_instancemethod(_enigma.eSignal3StrMapLLLL_connect2,None,eSignal3StrMapLLLL)
+eSignal3StrMapLLLL_swigregister = _enigma.eSignal3StrMapLLLL_swigregister
+eSignal3StrMapLLLL_swigregister(eSignal3StrMapLLLL)
+
+class eSlot3StrMapStrMapVectorStrList(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot3StrMapStrMapVectorStrList:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot3StrMapStrMapVectorStrList_swiginit(self,_enigma.new_eSlot3StrMapStrMapVectorStrList(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot3StrMapStrMapVectorStrList
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot3StrMapStrMapVectorStrList(self)
+        return weakref_proxy(self)
+eSlot3StrMapStrMapVectorStrList.cb_func = new_instancemethod(_enigma.eSlot3StrMapStrMapVectorStrList_cb_func,None,eSlot3StrMapStrMapVectorStrList)
+eSlot3StrMapStrMapVectorStrList_swigregister = _enigma.eSlot3StrMapStrMapVectorStrList_swigregister
+eSlot3StrMapStrMapVectorStrList_swigregister(eSlot3StrMapStrMapVectorStrList)
+
+class eSignal3StrMapStrMapVectorStrList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot3StrMapStrMapVectorStrList(eSlot3StrMapStrMapVectorStrList):
+            def __init__(self, func):
+                eSlot3StrMapStrMapVectorStrList.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot3StrMapStrMapVectorStrList(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal3StrMapStrMapVectorStrList_swiginit(self,_enigma.new_eSignal3StrMapStrMapVectorStrList())
+    __swig_destroy__ = _enigma.delete_eSignal3StrMapStrMapVectorStrList
+eSignal3StrMapStrMapVectorStrList.connect2 = new_instancemethod(_enigma.eSignal3StrMapStrMapVectorStrList_connect2,None,eSignal3StrMapStrMapVectorStrList)
+eSignal3StrMapStrMapVectorStrList_swigregister = _enigma.eSignal3StrMapStrMapVectorStrList_swigregister
+eSignal3StrMapStrMapVectorStrList_swigregister(eSignal3StrMapStrMapVectorStrList)
+
+class eSlot2IntAny(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2IntAny:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2IntAny_swiginit(self,_enigma.new_eSlot2IntAny(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2IntAny
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2IntAny(self)
+        return weakref_proxy(self)
+eSlot2IntAny.cb_func = new_instancemethod(_enigma.eSlot2IntAny_cb_func,None,eSlot2IntAny)
+eSlot2IntAny_swigregister = _enigma.eSlot2IntAny_swigregister
+eSlot2IntAny_swigregister(eSlot2IntAny)
+
+class eSignal2IntAny(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2IntAny(eSlot2IntAny):
+            def __init__(self, func):
+                eSlot2IntAny.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2IntAny(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2IntAny_swiginit(self,_enigma.new_eSignal2IntAny())
+    __swig_destroy__ = _enigma.delete_eSignal2IntAny
+eSignal2IntAny.connect2 = new_instancemethod(_enigma.eSignal2IntAny_connect2,None,eSignal2IntAny)
+eSignal2IntAny_swigregister = _enigma.eSignal2IntAny_swigregister
+eSignal2IntAny_swigregister(eSignal2IntAny)
+
+class eSlot4StrUInt64UInt64UInt64(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot4StrUInt64UInt64UInt64:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot4StrUInt64UInt64UInt64_swiginit(self,_enigma.new_eSlot4StrUInt64UInt64UInt64(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot4StrUInt64UInt64UInt64
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot4StrUInt64UInt64UInt64(self)
+        return weakref_proxy(self)
+eSlot4StrUInt64UInt64UInt64.cb_func = new_instancemethod(_enigma.eSlot4StrUInt64UInt64UInt64_cb_func,None,eSlot4StrUInt64UInt64UInt64)
+eSlot4StrUInt64UInt64UInt64_swigregister = _enigma.eSlot4StrUInt64UInt64UInt64_swigregister
+eSlot4StrUInt64UInt64UInt64_swigregister(eSlot4StrUInt64UInt64UInt64)
+
+class eSignal4StrUInt64UInt64UInt64(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot4StrUInt64UInt64UInt64(eSlot4StrUInt64UInt64UInt64):
+            def __init__(self, func):
+                eSlot4StrUInt64UInt64UInt64.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot4StrUInt64UInt64UInt64(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal4StrUInt64UInt64UInt64_swiginit(self,_enigma.new_eSignal4StrUInt64UInt64UInt64())
+    __swig_destroy__ = _enigma.delete_eSignal4StrUInt64UInt64UInt64
+eSignal4StrUInt64UInt64UInt64.connect2 = new_instancemethod(_enigma.eSignal4StrUInt64UInt64UInt64_connect2,None,eSignal4StrUInt64UInt64UInt64)
+eSignal4StrUInt64UInt64UInt64_swigregister = _enigma.eSignal4StrUInt64UInt64UInt64_swigregister
+eSignal4StrUInt64UInt64UInt64_swigregister(eSignal4StrUInt64UInt64UInt64)
+
+class eSlot4UInt64UInt64UInt64IntList(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot4UInt64UInt64UInt64IntList:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot4UInt64UInt64UInt64IntList_swiginit(self,_enigma.new_eSlot4UInt64UInt64UInt64IntList(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot4UInt64UInt64UInt64IntList
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot4UInt64UInt64UInt64IntList(self)
+        return weakref_proxy(self)
+eSlot4UInt64UInt64UInt64IntList.cb_func = new_instancemethod(_enigma.eSlot4UInt64UInt64UInt64IntList_cb_func,None,eSlot4UInt64UInt64UInt64IntList)
+eSlot4UInt64UInt64UInt64IntList_swigregister = _enigma.eSlot4UInt64UInt64UInt64IntList_swigregister
+eSlot4UInt64UInt64UInt64IntList_swigregister(eSlot4UInt64UInt64UInt64IntList)
+
+class eSignal4UInt64UInt64UInt64IntList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot4UInt64UInt64UInt64IntList(eSlot4UInt64UInt64UInt64IntList):
+            def __init__(self, func):
+                eSlot4UInt64UInt64UInt64IntList.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot4UInt64UInt64UInt64IntList(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal4UInt64UInt64UInt64IntList_swiginit(self,_enigma.new_eSignal4UInt64UInt64UInt64IntList())
+    __swig_destroy__ = _enigma.delete_eSignal4UInt64UInt64UInt64IntList
+eSignal4UInt64UInt64UInt64IntList.connect2 = new_instancemethod(_enigma.eSignal4UInt64UInt64UInt64IntList_connect2,None,eSignal4UInt64UInt64UInt64IntList)
+eSignal4UInt64UInt64UInt64IntList_swigregister = _enigma.eSignal4UInt64UInt64UInt64IntList_swigregister
+eSignal4UInt64UInt64UInt64IntList_swigregister(eSignal4UInt64UInt64UInt64IntList)
+
+class eSlot5CStrUInt64UInt64UInt64Int(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot5CStrUInt64UInt64UInt64Int:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot5CStrUInt64UInt64UInt64Int_swiginit(self,_enigma.new_eSlot5CStrUInt64UInt64UInt64Int(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot5CStrUInt64UInt64UInt64Int
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot5CStrUInt64UInt64UInt64Int(self)
+        return weakref_proxy(self)
+eSlot5CStrUInt64UInt64UInt64Int.cb_func = new_instancemethod(_enigma.eSlot5CStrUInt64UInt64UInt64Int_cb_func,None,eSlot5CStrUInt64UInt64UInt64Int)
+eSlot5CStrUInt64UInt64UInt64Int_swigregister = _enigma.eSlot5CStrUInt64UInt64UInt64Int_swigregister
+eSlot5CStrUInt64UInt64UInt64Int_swigregister(eSlot5CStrUInt64UInt64UInt64Int)
+
+class eSignal5CStrUInt64UInt64UInt64Int(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot5CStrUInt64UInt64UInt64Int(eSlot5CStrUInt64UInt64UInt64Int):
+            def __init__(self, func):
+                eSlot5CStrUInt64UInt64UInt64Int.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot5CStrUInt64UInt64UInt64Int(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal5CStrUInt64UInt64UInt64Int_swiginit(self,_enigma.new_eSignal5CStrUInt64UInt64UInt64Int())
+    __swig_destroy__ = _enigma.delete_eSignal5CStrUInt64UInt64UInt64Int
+eSignal5CStrUInt64UInt64UInt64Int.connect2 = new_instancemethod(_enigma.eSignal5CStrUInt64UInt64UInt64Int_connect2,None,eSignal5CStrUInt64UInt64UInt64Int)
+eSignal5CStrUInt64UInt64UInt64Int_swigregister = _enigma.eSignal5CStrUInt64UInt64UInt64Int_swigregister
+eSignal5CStrUInt64UInt64UInt64Int_swigregister(eSignal5CStrUInt64UInt64UInt64Int)
+
+class eSlot1Bool(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1Bool:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1Bool_swiginit(self,_enigma.new_eSlot1Bool(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1Bool
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1Bool(self)
+        return weakref_proxy(self)
+eSlot1Bool.cb_func = new_instancemethod(_enigma.eSlot1Bool_cb_func,None,eSlot1Bool)
+eSlot1Bool_swigregister = _enigma.eSlot1Bool_swigregister
+eSlot1Bool_swigregister(eSlot1Bool)
+
+class eSignal1Bool(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1Bool(eSlot1Bool):
+            def __init__(self, func):
+                eSlot1Bool.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1Bool(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1Bool_swiginit(self,_enigma.new_eSignal1Bool())
+    __swig_destroy__ = _enigma.delete_eSignal1Bool
+eSignal1Bool.connect2 = new_instancemethod(_enigma.eSignal1Bool_connect2,None,eSignal1Bool)
+eSignal1Bool_swigregister = _enigma.eSignal1Bool_swigregister
+eSignal1Bool_swigregister(eSignal1Bool)
+
+class eSlot1Str(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1Str:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1Str_swiginit(self,_enigma.new_eSlot1Str(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1Str
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1Str(self)
+        return weakref_proxy(self)
+eSlot1Str.cb_func = new_instancemethod(_enigma.eSlot1Str_cb_func,None,eSlot1Str)
+eSlot1Str_swigregister = _enigma.eSlot1Str_swigregister
+eSlot1Str_swigregister(eSlot1Str)
+
+class eSignal1Str(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1Str(eSlot1Str):
+            def __init__(self, func):
+                eSlot1Str.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1Str(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1Str_swiginit(self,_enigma.new_eSignal1Str())
+    __swig_destroy__ = _enigma.delete_eSignal1Str
+eSignal1Str.connect2 = new_instancemethod(_enigma.eSignal1Str_connect2,None,eSignal1Str)
+eSignal1Str_swigregister = _enigma.eSignal1Str_swigregister
+eSignal1Str_swigregister(eSignal1Str)
+
+class eSlot1NetworkService(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1NetworkService:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1NetworkService_swiginit(self,_enigma.new_eSlot1NetworkService(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1NetworkService
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1NetworkService(self)
+        return weakref_proxy(self)
+eSlot1NetworkService.cb_func = new_instancemethod(_enigma.eSlot1NetworkService_cb_func,None,eSlot1NetworkService)
+eSlot1NetworkService_swigregister = _enigma.eSlot1NetworkService_swigregister
+eSlot1NetworkService_swigregister(eSlot1NetworkService)
+
+class eSignal1NetworkService(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1NetworkService(eSlot1NetworkService):
+            def __init__(self, func):
+                eSlot1NetworkService.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1NetworkService(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1NetworkService_swiginit(self,_enigma.new_eSignal1NetworkService())
+    __swig_destroy__ = _enigma.delete_eSignal1NetworkService
+eSignal1NetworkService.connect2 = new_instancemethod(_enigma.eSignal1NetworkService_connect2,None,eSignal1NetworkService)
+eSignal1NetworkService_swigregister = _enigma.eSignal1NetworkService_swigregister
+eSignal1NetworkService_swigregister(eSignal1NetworkService)
+
+class eSlot1StringList(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1StringList:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1StringList_swiginit(self,_enigma.new_eSlot1StringList(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1StringList
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1StringList(self)
+        return weakref_proxy(self)
+eSlot1StringList.cb_func = new_instancemethod(_enigma.eSlot1StringList_cb_func,None,eSlot1StringList)
+eSlot1StringList_swigregister = _enigma.eSlot1StringList_swigregister
+eSlot1StringList_swigregister(eSlot1StringList)
+
+class eSignal1StringList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1StringList(eSlot1StringList):
+            def __init__(self, func):
+                eSlot1StringList.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1StringList(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1StringList_swiginit(self,_enigma.new_eSignal1StringList())
+    __swig_destroy__ = _enigma.delete_eSignal1StringList
+eSignal1StringList.connect2 = new_instancemethod(_enigma.eSignal1StringList_connect2,None,eSignal1StringList)
+eSignal1StringList_swigregister = _enigma.eSignal1StringList_swigregister
+eSignal1StringList_swigregister(eSignal1StringList)
+
+class eSlot2StrMapStrAny(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2StrMapStrAny:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2StrMapStrAny_swiginit(self,_enigma.new_eSlot2StrMapStrAny(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2StrMapStrAny
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2StrMapStrAny(self)
+        return weakref_proxy(self)
+eSlot2StrMapStrAny.cb_func = new_instancemethod(_enigma.eSlot2StrMapStrAny_cb_func,None,eSlot2StrMapStrAny)
+eSlot2StrMapStrAny_swigregister = _enigma.eSlot2StrMapStrAny_swigregister
+eSlot2StrMapStrAny_swigregister(eSlot2StrMapStrAny)
+
+class eSignal2StrMapStrAny(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2StrMapStrAny(eSlot2StrMapStrAny):
+            def __init__(self, func):
+                eSlot2StrMapStrAny.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2StrMapStrAny(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2StrMapStrAny_swiginit(self,_enigma.new_eSignal2StrMapStrAny())
+    __swig_destroy__ = _enigma.delete_eSignal2StrMapStrAny
+eSignal2StrMapStrAny.connect2 = new_instancemethod(_enigma.eSignal2StrMapStrAny_connect2,None,eSignal2StrMapStrAny)
+eSignal2StrMapStrAny_swigregister = _enigma.eSignal2StrMapStrAny_swigregister
+eSignal2StrMapStrAny_swigregister(eSignal2StrMapStrAny)
+
+class eSlot2StrStr(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2StrStr:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2StrStr_swiginit(self,_enigma.new_eSlot2StrStr(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2StrStr
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2StrStr(self)
+        return weakref_proxy(self)
+eSlot2StrStr.cb_func = new_instancemethod(_enigma.eSlot2StrStr_cb_func,None,eSlot2StrStr)
+eSlot2StrStr_swigregister = _enigma.eSlot2StrStr_swigregister
+eSlot2StrStr_swigregister(eSlot2StrStr)
+
+class eSignal2StrStr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2StrStr(eSlot2StrStr):
+            def __init__(self, func):
+                eSlot2StrStr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2StrStr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2StrStr_swiginit(self,_enigma.new_eSignal2StrStr())
+    __swig_destroy__ = _enigma.delete_eSignal2StrStr
+eSignal2StrStr.connect2 = new_instancemethod(_enigma.eSignal2StrStr_connect2,None,eSignal2StrStr)
+eSignal2StrStr_swigregister = _enigma.eSignal2StrStr_swigregister
+eSignal2StrStr_swigregister(eSignal2StrStr)
+
+class eSlot1UInt(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1UInt:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1UInt_swiginit(self,_enigma.new_eSlot1UInt(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1UInt
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1UInt(self)
+        return weakref_proxy(self)
+eSlot1UInt.cb_func = new_instancemethod(_enigma.eSlot1UInt_cb_func,None,eSlot1UInt)
+eSlot1UInt_swigregister = _enigma.eSlot1UInt_swigregister
+eSlot1UInt_swigregister(eSlot1UInt)
+
+class eSignal1UInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1UInt(eSlot1UInt):
+            def __init__(self, func):
+                eSlot1UInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1UInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1UInt_swiginit(self,_enigma.new_eSignal1UInt())
+    __swig_destroy__ = _enigma.delete_eSignal1UInt
+eSignal1UInt.connect2 = new_instancemethod(_enigma.eSignal1UInt_connect2,None,eSignal1UInt)
+eSignal1UInt_swigregister = _enigma.eSignal1UInt_swigregister
+eSignal1UInt_swigregister(eSignal1UInt)
+
+class eSlot1MapStrAny(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1MapStrAny:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1MapStrAny_swiginit(self,_enigma.new_eSlot1MapStrAny(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1MapStrAny
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1MapStrAny(self)
+        return weakref_proxy(self)
+eSlot1MapStrAny.cb_func = new_instancemethod(_enigma.eSlot1MapStrAny_cb_func,None,eSlot1MapStrAny)
+eSlot1MapStrAny_swigregister = _enigma.eSlot1MapStrAny_swigregister
+eSlot1MapStrAny_swigregister(eSlot1MapStrAny)
+
+class eSignal1MapStrAny(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1MapStrAny(eSlot1MapStrAny):
+            def __init__(self, func):
+                eSlot1MapStrAny.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1MapStrAny(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1MapStrAny_swiginit(self,_enigma.new_eSignal1MapStrAny())
+    __swig_destroy__ = _enigma.delete_eSignal1MapStrAny
+eSignal1MapStrAny.connect2 = new_instancemethod(_enigma.eSignal1MapStrAny_connect2,None,eSignal1MapStrAny)
+eSignal1MapStrAny_swigregister = _enigma.eSignal1MapStrAny_swigregister
+eSignal1MapStrAny_swigregister(eSignal1MapStrAny)
+
+class eSlot1UInt32(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot1UInt32:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1UInt32_swiginit(self,_enigma.new_eSlot1UInt32(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1UInt32
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1UInt32(self)
+        return weakref_proxy(self)
+eSlot1UInt32.cb_func = new_instancemethod(_enigma.eSlot1UInt32_cb_func,None,eSlot1UInt32)
+eSlot1UInt32_swigregister = _enigma.eSlot1UInt32_swigregister
+eSlot1UInt32_swigregister(eSlot1UInt32)
+
+class eSignal1UInt32(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot1UInt32(eSlot1UInt32):
+            def __init__(self, func):
+                eSlot1UInt32.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1UInt32(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal1UInt32_swiginit(self,_enigma.new_eSignal1UInt32())
+    __swig_destroy__ = _enigma.delete_eSignal1UInt32
+eSignal1UInt32.connect2 = new_instancemethod(_enigma.eSignal1UInt32_connect2,None,eSignal1UInt32)
+eSignal1UInt32_swigregister = _enigma.eSignal1UInt32_swigregister
+eSignal1UInt32_swigregister(eSignal1UInt32)
+
+class eSlot4UIntUIntUIntUInt(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot4UIntUIntUIntUInt:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot4UIntUIntUIntUInt_swiginit(self,_enigma.new_eSlot4UIntUIntUIntUInt(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot4UIntUIntUIntUInt
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot4UIntUIntUIntUInt(self)
+        return weakref_proxy(self)
+eSlot4UIntUIntUIntUInt.cb_func = new_instancemethod(_enigma.eSlot4UIntUIntUIntUInt_cb_func,None,eSlot4UIntUIntUIntUInt)
+eSlot4UIntUIntUIntUInt_swigregister = _enigma.eSlot4UIntUIntUIntUInt_swigregister
+eSlot4UIntUIntUIntUInt_swigregister(eSlot4UIntUIntUIntUInt)
+
+class eSignal4UIntUIntUIntUInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot4UIntUIntUIntUInt(eSlot4UIntUIntUIntUInt):
+            def __init__(self, func):
+                eSlot4UIntUIntUIntUInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot4UIntUIntUIntUInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal4UIntUIntUIntUInt_swiginit(self,_enigma.new_eSignal4UIntUIntUIntUInt())
+    __swig_destroy__ = _enigma.delete_eSignal4UIntUIntUIntUInt
+eSignal4UIntUIntUIntUInt.connect2 = new_instancemethod(_enigma.eSignal4UIntUIntUIntUInt_connect2,None,eSignal4UIntUIntUIntUInt)
+eSignal4UIntUIntUIntUInt_swigregister = _enigma.eSignal4UIntUIntUIntUInt_swigregister
+eSignal4UIntUIntUIntUInt_swigregister(eSignal4UIntUIntUIntUInt)
 
 
 def getBestPlayableServiceReference(*args):
@@ -3035,10 +5425,6 @@ runMainloop = _enigma.runMainloop
 def quitMainloop(*args):
   return _enigma.quitMainloop(*args)
 quitMainloop = _enigma.quitMainloop
-
-def getApplication():
-  return _enigma.getApplication()
-getApplication = _enigma.getApplication
 
 def getEnigmaVersionString():
   return _enigma.getEnigmaVersionString()

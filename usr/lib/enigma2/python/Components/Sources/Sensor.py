@@ -12,7 +12,7 @@ class SensorSource(Source):
 
 		if sensorid is not None:
 			self.update_timer = eTimer()
-			self.update_timer.callback.append(self.updateValue)
+			self.update_timer_conn = self.update_timer.timeout.connect(self.updateValue)
 			self.update_timer.start(self.update_interval)
 
 	def getValue(self):
@@ -27,5 +27,5 @@ class SensorSource(Source):
 		self.changed((self.CHANGED_POLL,))
 
 	def destroy(self):
-		if self.sensorid is not None:
-			self.update_timer.callback.remove(self.updateValue)
+		self.update_timer_conn = None
+

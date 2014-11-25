@@ -59,10 +59,10 @@ class TwistedSocketNotifier:
 			self.fn = self.read
 		elif type == POLLOUT:
 			self.fn = self.write
-		self.sn.callback.append(self.fn)
+		self.sn_conn = self.sn.activated.connect(self.fn)
 
 	def shutdown(self):
-		self.fn = self.watcher = None
+		self.sn_conn = self.fn = self.watcher = None
 		del self.sn
 
 	def read(self, sock):
@@ -112,7 +112,7 @@ class e2reactor(PosixReactorBase):
 		self._writes = {}
 		self.savedTimeout = None
 		self._timer = eTimer()
-		self._timer.callback.append(self.simulate)
+		self._timer_conn = self._timer.timeout.connect(self.simulate)
 		self._insimulate = False
 		self._wakeupPending = False
 		# to limit the systemcalls per loop
@@ -189,6 +189,7 @@ class e2reactor(PosixReactorBase):
 
 	def cleanup(self):
 		if self._timer is not None:
+			self._timer_conn = None
 			self._timer.stop()
 			self._timer = None
 

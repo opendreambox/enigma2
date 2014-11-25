@@ -14,10 +14,13 @@ class UPnPBrowser(object):
 		self._requestedID = -1
 
 		self.onListReady = []
+		self.onBrowseError = []
 		self.list = []
 
 		self.onMediaServerDetected = []
 		self.onMediaServerRemoved  = []
+
+		self.currentPath = ""
 
 		self.controlPoint.onMediaServerDetected.append(self._onMediaServerDetected)
 		self.controlPoint.onMediaServerRemoved.append(self._onMediaServerRemoved)
@@ -141,10 +144,12 @@ class UPnPBrowser(object):
 		print "[UPnPBrowser].ascend currentID='%s'" %(self._currentID)
 		if len(self._idHistory) > 0:
 			self._requestedID = self._idHistory[-1]
+			self.currentPath = self.currentPath[0:self.currentPath.rfind(' > ')]
 			self.browse(container_id=self._requestedID)
 			return True
 		elif self._currentID == 0:
 			self._currentID = Statics.CONTAINER_ID_SERVERLIST
+			self.currentPath = _("Servers")
 			self._onListReady(self.controlPoint.getServerList())
 			return True
 		return False
@@ -154,10 +159,13 @@ class UPnPBrowser(object):
 
 	def descend(self, item = None):
 		type = self.getItemType(item)
+		title = self.getItemTitle(item)
 		if type == Statics.ITEM_TYPE_SERVER:
 			self.browse(container_id=Statics.CONTAINER_ID_ROOT, item=item)
+			self.currentPath = title
 			return True
 		elif type == Statics.ITEM_TYPE_CONTAINER:
+			self.currentPath = "%s > %s" %(self.currentPath, title)
 			self.browse(container_id=item.id)
 			return True
 
@@ -166,8 +174,9 @@ class UPnPBrowser(object):
 	def refresh(self):
 		self.browse(self._currentID)
 
-	def browse(self, container_id=Statics.CONTAINER_ID_SERVERLIST, sort_criteria=Statics.SORT_TITLE_ASC, start_index=0, item_count=500, item=None):
+	def browse(self, container_id=Statics.CONTAINER_ID_SERVERLIST, sort_criteria="", start_index=0, item_count=500, item=None):
 		if item is None and container_id == Statics.CONTAINER_ID_SERVERLIST:
+			self.currentPath = _("Servers")
 			self._onListReady(self.getServerList())
 			self._currentID = Statics.CONTAINER_ID_SERVERLIST
 			return
@@ -249,7 +258,11 @@ class UPnPBrowser(object):
 		self._onListReady(list)
 
 	def _onBrowseError(self, err):
-		print "[UPnPBrowser]._onBrowseError %s" %err
+		print "[UPnPBrowser]._onBrowseError"
+		err.printTraceback()
+		self._currentID = self._requestedID
+		for fnc in self.onBrowseError:
+			fnc(err)
 
 	def _onListReady(self, list):
 		self.list = list

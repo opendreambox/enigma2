@@ -37,6 +37,7 @@ protected:
 	virtual void AddRef()=0;
 	virtual void Release()=0;
 #endif
+	virtual void Delete()=0;
 public:
 	iObject() { }
 #ifndef SWIG
@@ -61,15 +62,40 @@ public:
 	#endif
 		}
 	};
+	struct oBoolean
+	{
+		bool value;
+		oBoolean(): value(false) { }
+		operator bool() const { return value; }
+		void operator=(bool operand) { value = operand; }
+	};
+
+	#define __DECLARE_REF_COMMON(c)			\
+		public:					\
+			void AddRef(); 			\
+			void Release();			\
+		protected:				\
+			void Delete();			\
+		private:				\
+			oRefCount ref;			\
+			oBoolean __isDeleted;
+
+	#define __DEFINE_REF_COMMON(c)			\
+		void c::Delete()			\
+		{					\
+			if (!__isDeleted) {		\
+				__isDeleted = true;	\
+				delete this;		\
+			}				\
+		}
 
 	#if defined(OBJECT_DEBUG)
 		extern int object_total_remaining;
 		#define DECLARE_REF(x) 			\
-			public: void AddRef(); 		\
-					void Release();		\
-			private:oRefCount ref; 		\
-					eSingleLock ref_lock;
-		#define DEFINE_REF(c) \
+			__DECLARE_REF_COMMON(x)		\
+			eSingleLock ref_lock;
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
 			void c::AddRef() \
 			{ \
 				eSingleLocker l(ref_lock); \
@@ -86,14 +112,13 @@ public:
 					eDebug("OBJECT_DEBUG " #c "-%p now %d", this, (int)ref); \
 				} \
 				if (!ref) \
-					delete this; \
+					Delete(); \
 			}
 	#elif defined(__mips__)
 		#define DECLARE_REF(x) 			\
-			public: void AddRef(); 		\
-					void Release();		\
-			private: oRefCount ref; 
-		#define DEFINE_REF(c) \
+			__DECLARE_REF_COMMON(x)
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
 			void c::AddRef() \
 			{ \
 				unsigned long temp; \
@@ -126,14 +151,13 @@ public:
 				: "m" (ref.count) \
 				: ); \
 				if (!ref) \
-					delete this; \
+					Delete(); \
 			}
 	#elif defined(__arm__)
 		#define DECLARE_REF(x) 			\
-			public: void AddRef(); 		\
-				void Release();		\
-			private: oRefCount ref;
-		#define DEFINE_REF(c) \
+			__DECLARE_REF_COMMON(x)
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
 			void c::AddRef() \
 			{ \
 				unsigned long tmp; \
@@ -162,14 +186,13 @@ public:
 				: "r" (&ref.count), "Ir" (1) \
 				: "cc"); \
 				if (!ref) \
-					delete this; \
+					Delete(); \
 			}
 	#elif defined(__ppc__) || defined(__powerpc__)
 		#define DECLARE_REF(x) 			\
-			public: void AddRef(); 		\
-					void Release();		\
-			private: oRefCount ref;
-		#define DEFINE_REF(c) \
+			__DECLARE_REF_COMMON(x)
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
 			void c::AddRef() \
 			{ \
 				int temp; \
@@ -196,14 +219,13 @@ public:
 				: "r" (1), "r" (&ref.count), "m" (ref.count) \
 				: "cc"); \
 				if (!ref) \
-					delete this; \
+					Delete(); \
 			}
 	#elif defined(__i386__) || defined(__x86_64__)
 		#define DECLARE_REF(x) 			\
-			public: void AddRef(); 		\
-					void Release();		\
-			private: oRefCount ref;
-		#define DEFINE_REF(c) \
+			__DECLARE_REF_COMMON(x)
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
 			void c::AddRef() \
 			{ \
 				__asm__ __volatile__( \
@@ -218,16 +240,15 @@ public:
 				: "=m" (ref.count) \
 				: "m" (ref.count)); \
 				if (!ref) \
-					delete this; \
+					Delete(); \
 			}
 	#else
 		#warning use non optimized implementation of refcounting.
 		#define DECLARE_REF(x) 			\
-			public: void AddRef(); 		\
-					void Release();		\
-			private:oRefCount ref; 	\
-					eSingleLock ref_lock;
-		#define DEFINE_REF(c) \
+			__DECLARE_REF_COMMON(x)		\
+			eSingleLock ref_lock;
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
 			void c::AddRef() \
 			{ \
 				eSingleLocker l(ref_lock); \
@@ -240,14 +261,15 @@ public:
 					--ref; \
 				} \
 				if (!ref) \
-					delete this; \
+					Delete(); \
 			}
 	#endif
 #else  // SWIG
 	#define DECLARE_REF(x) \
 		private: \
 			void AddRef(); \
-			void Release();
+			void Release(); \
+			void Delete();
 #endif  // SWIG
 
 #endif  // __base_object_h

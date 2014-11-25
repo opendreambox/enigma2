@@ -1,4 +1,5 @@
 from Screens.Screen import Screen
+from Components.Sources.Clock import Clock
 from Components.Sources.CurrentService import CurrentService
 from Components.Sources.EventInfo import EventInfo
 from Components.Sources.FrontendStatus import FrontendStatus
@@ -14,6 +15,7 @@ class SessionGlobals(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self["CurrentService"] = CurrentService(session.nav)
+		self["CurrentTime"] = Clock()
 		self["Event_Now"] = EventInfo(session.nav, EventInfo.NOW)
 		self["Event_Next"] = EventInfo(session.nav, EventInfo.NEXT)
 		self["FrontendStatus"] = FrontendStatus(service_source = session.nav.getCurrentService)

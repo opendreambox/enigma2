@@ -59,7 +59,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 
 		# Quickselect Timer
 		self.qs_timer = eTimer()
-		self.qs_timer.callback.append(self.timeout)
+		self.qs_timer_conn = self.qs_timer.timeout.connect(self.timeout)
 		self.qs_timer_type = 0
 
 		# Initialize Quickselect
@@ -185,7 +185,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 			self.switchToFileList()
 
 	def disableTimer(self):
-		self.qs_timer.callback.remove(self.timeout)
+		self.qs_timer_conn = None
 
 	def showHideRename(self):
 		# Don't allow renaming when filename is empty

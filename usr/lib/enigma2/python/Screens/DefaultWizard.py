@@ -12,10 +12,11 @@ from os import system as os_system, path as os_path, mkdir
 config.misc.defaultchosen = ConfigBoolean(default = True)
 
 class DefaultWizard(WizardLanguage, DreamInfoHandler):
-	def __init__(self, session, silent = True, showSteps = False, neededTag = None):
+	def __init__(self, session, silent = True, showSteps = False, neededTag = None, default = False):
 		DreamInfoHandler.__init__(self, self.statusCallback, neededTag = neededTag)
 		self.silent = silent
 		self.setDirectory()
+		self.default = default
 
 		WizardLanguage.__init__(self, session, showSteps = False)
 		self["wizard"] = Pixmap()
@@ -48,7 +49,7 @@ class DefaultWizard(WizardLanguage, DreamInfoHandler):
 		self.fillPackagesList()
 		self.packagesConfig = []
 		for x in range(len(self.packageslist)):
-			entry = ConfigYesNo()
+			entry = ConfigYesNo(default = self.default)
 			self.packagesConfig.append(entry)
 			configList.append(getConfigListEntry(self.packageslist[x][0]["attributes"]["name"], entry))
 		return configList

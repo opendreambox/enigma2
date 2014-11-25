@@ -98,7 +98,7 @@ def pppdClosed(ret):
 
 connected = False
 conn = eConsoleAppContainer()
-conn.appClosed.append(pppdClosed)
+appClosed_conn = conn.appClosed.connect(pppdClosed)
 
 class ModemSetup(Screen):
 	skin = """
@@ -164,10 +164,10 @@ class ModemSetup(Screen):
 		}, -1)
 
 		self.stateTimer = eTimer()
-		self.stateTimer.callback.append(self.stateLoop)
+		self.stateTimer_conn = self.stateTimer.timeout.connect(self.stateLoop)
 
-		conn.appClosed.append(self.pppdClosed)
-		conn.dataAvail.append(self.dataAvail)
+		self.appClosed_conn = conn.appClosed.connect(self.pppdClosed)
+		self.dataAvail_conn = conn.dataAvail.connect(self.dataAvail)
 
 		Screen.__init__(self, session)
 		self.onClose.append(self.__closed)
@@ -186,8 +186,8 @@ class ModemSetup(Screen):
 
 	def __closed(self):
 		global connected
-		conn.appClosed.remove(self.pppdClosed)
-		conn.dataAvail.remove(self.dataAvail)
+		self.appClosed_conn = None
+		self.dataAvail_conn = None
 		if not connected:
 			conn.sendCtrlC()
 		setOptions(self.phone.getText(), self.username.getText())

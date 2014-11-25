@@ -1,0 +1,15 @@
+#!/bin/sh
+
+mkdir -p /run/enigma2
+
+LD_PRELOAD=""
+for lib in libopen.so libpagecache.so libpassthrough.so; do
+	if [ -f /usr/lib/${lib} ]; then
+		LD_PRELOAD="${LD_PRELOAD} /usr/lib/${lib}"
+	fi
+done
+echo LD_PRELOAD=\"${LD_PRELOAD}\" > /run/enigma2/environment
+
+if [ -f /usr/lib/libpagecache.so ]; then
+	echo PAGECACHE_FLUSH_INTERVAL=$((512*1024)) >> /run/enigma2/environment
+fi

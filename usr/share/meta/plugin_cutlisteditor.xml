@@ -3,7 +3,7 @@
                     <tag type="Recording" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>CutListEditor</name>
                     <packagename>enigma2-plugin-extensions-cutlisteditor</packagename>
                     <shortdescription>CutListEditor allows you to edit your movies</shortdescription>

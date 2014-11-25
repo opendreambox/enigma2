@@ -4,7 +4,7 @@
                     <tag type="Skin" />
 	  </prerequisites>
           <info language="en">
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>SkinSelector</name>
                     <packagename>enigma2-plugin-systemplugins-skinselector</packagename>
                     <shortdescription>SkinSelector shows a menu with selectable skins</shortdescription>

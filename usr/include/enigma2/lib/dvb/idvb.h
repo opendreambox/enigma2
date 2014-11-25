@@ -3,14 +3,8 @@
 
 #ifndef SWIG
 
-#if HAVE_DVB_API_VERSION < 3
-#include <ost/frontend.h>
-#define FRONTENDPARAMETERS FrontendParameters
-#else
-#include <linux/dvb/frontend.h>
+#include <linux/dvb/dmx.h>
 #include <linux/dvb/video.h>
-#define FRONTENDPARAMETERS struct dvb_frontend_parameters
-#endif
 #include <lib/dvb/frontendparms.h>
 #include <lib/base/object.h>
 #include <lib/base/ebase.h>
@@ -28,9 +22,9 @@
 #define CAID_LIST std::slist<uint16_t>
 #endif
 
-#ifndef DMX_FILTER_SIZE
-#define DMX_FILTER_SIZE   16
-#endif
+#include <boost/any.hpp>
+
+struct dvb_frontend_parameters;
 
 struct eDVBSectionFilterMask
 {
@@ -301,7 +295,14 @@ class eDVBService: public iStaticServiceInformation
 	DECLARE_REF(eDVBService);
 	int *m_cache;
 	void initCache();
-	void copyCache(int *source);
+	void copyCache(const eDVBService &source);
+
+	std::string m_service_name, m_service_name_sort;
+	std::string m_provider_name;
+	int m_flags;
+	CAID_LIST m_ca;
+	int m_running_state; // only valid for services on onid 0x85 yet...
+
 public:
 	enum cacheID
 	{
@@ -315,14 +316,32 @@ public:
 
 	bool cacheEmpty() const;
 
+	const std::string &getServiceName() const;
+	void setServiceName(const std::string &name);
+	void setServiceName(const char *name);
+
+	const std::string &getServiceNameSort() const;
+	void setServiceNameSort(const std::string &name);
+	void setServiceNameSort(const char *name);
+
+	const std::string &getProviderName() const;
+	void setProviderName(const std::string &name);
+	void setProviderName(const char *name);
+
+	int getFlags() const;
+	void setFlags(int);
+
+	const CAID_LIST &getCaIds() const;
+	void setCaIds(const CAID_LIST &ca);
+
+	int getRunningState() const;
+	void setRunningState(int);
+
 	eDVBService();
 		/* m_service_name_sort is uppercase, with special chars removed, to increase sort performance. */
-	std::string m_service_name, m_service_name_sort;
-	std::string m_provider_name;
-	
+
 	void genSortName();
 
-	int m_flags;
 	enum
 	{
 		dxNoSDT=1,    // don't get SDT
@@ -335,8 +354,6 @@ public:
 	bool usePMT() const { return !(m_flags & dxNoDVB); }
 	bool isHidden() const { return m_flags & dxDontshow; }
 
-	CAID_LIST m_ca;
-
 	virtual ~eDVBService();
 	
 	eDVBService &operator=(const eDVBService &);
@@ -345,12 +362,12 @@ public:
 	RESULT getName(const eServiceReference &ref, std::string &name);
 	RESULT getEvent(const eServiceReference &ref, ePtr<eServiceEvent> &ptr, time_t start_time);
 	int isPlayable(const eServiceReference &ref, const eServiceReference &ignore, bool simulate=false);
-	PyObject *getInfoObject(const eServiceReference &ref, int);  // implemented in lib/service/servicedvb.h
+	boost::any getInfoObject(const eServiceReference &ref, int);  // implemented in lib/service/servicedvb.h
 
 		/* for filtering: */
 	int checkFilter(const eServiceReferenceDVB &ref, const eDVBChannelQuery &query);
 
-	int m_running_state; // only valid for services on onid 0x85 yet...
+
 };
 
 //////////////////
@@ -458,10 +475,6 @@ public:
 #endif
 	int len;
 	__u8 data[MAX_DISEQC_LENGTH];
-#if HAVE_DVB_API_VERSION < 3
-	int tone;
-	int voltage;
-#endif
 #ifdef SWIG
 public:
 #endif
@@ -485,6 +498,8 @@ public:
 	enum { bitErrorRate, signalPower, signalQuality, locked, synced, frontendNumber, signalQualitydB };
 };
 
+typedef std::map<std::string, int> FrontendDataMap;
+
 SWIG_IGNORE_ENUMS(iDVBFrontend);
 class iDVBFrontend: public iDVBFrontend_ENUMS, public iObject
 {
@@ -506,10 +521,10 @@ public:
 	virtual RESULT setSecSequence(eSecCommandList &list)=0;
 #endif
 	virtual int readFrontendData(int type)=0;
-	virtual void getFrontendStatus(SWIG_PYOBJECT(ePyObject) dest)=0;
-	virtual void getTransponderData(SWIG_PYOBJECT(ePyObject) dest, bool original)=0;
-	virtual void getFrontendData(SWIG_PYOBJECT(ePyObject) dest)=0;
-	virtual SWIG_PYOBJECT(ePyObject) getStateChangeSignal()=0;
+	virtual RESULT getFrontendStatus(FrontendDataMap &INOUT)=0;
+	virtual RESULT getTransponderData(FrontendDataMap &INOUT, bool original)=0;
+	virtual RESULT getFrontendData(FrontendDataMap &INOUT)=0;
+	virtual eSignal1<void,iDVBFrontend*> &getStateChangeSignal()=0;
 #ifndef SWIG
 	virtual RESULT getData(int num, long &data)=0;
 	virtual RESULT setData(int num, long val)=0;
@@ -524,7 +539,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iDVBFrontend>, iDVBFrontendPtr);
 class iDVBSatelliteEquipmentControl: public iObject
 {
 public:
-	virtual RESULT prepare(iDVBFrontend &frontend, FRONTENDPARAMETERS &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int timeout)=0;
+	virtual RESULT prepare(iDVBFrontend &frontend, dvb_frontend_parameters &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int timeout)=0;
 	virtual void prepareClose(iDVBFrontend &frontend)=0;
 	virtual int canTune(const eDVBFrontendParametersSatellite &feparm, iDVBFrontend *fe, int frontend_id, int *highest_score_lnb=0)=0;
 	virtual void setRotorMoving(int slotid, bool)=0;
@@ -537,7 +552,7 @@ class iDVBChannel: public iObject
 public:
 		/* direct frontend access for raw channels and/or status inquiries. */
 	virtual SWIG_VOID(RESULT) getFrontend(ePtr<iDVBFrontend> &SWIG_OUTPUT)=0;
-	virtual RESULT requestTsidOnid(SWIG_PYOBJECT(ePyObject) callback) { E_UNUSED(callback); return -1; }
+	virtual RESULT requestTsidOnid(eSlot1<void, int> &callback) { E_UNUSED(callback); return -1; }
 	virtual int reserveDemux() { return -1; }
 #ifndef SWIG
 	enum
@@ -666,11 +681,6 @@ public:
 	virtual RESULT flush()=0;
 	virtual int openDVR(int flags)=0;
 };
-
-#if HAVE_DVB_API_VERSION < 3 && !defined(VIDEO_EVENT_SIZE_CHANGED)
-#define VIDEO_EVENT_SIZE_CHANGED 1
-#define VIDEO_EVENT_FRAME_RATE_CHANGED 2
-#endif
 
 class iTSMPEGDecoder: public iObject
 {

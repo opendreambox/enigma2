@@ -1,6 +1,6 @@
 import _webview
 from webview import eWebView
-from enigma import eEnv, getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint
+from enigma import getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint
 import enigma
 enigma.eWebView = eWebView
 
@@ -66,31 +66,32 @@ class Browser(Screen, HelpableScreen):
 				<widget source="webnavigation" render="WebView" position="0,25" zPosition="0" size="%(w)d,%(mainH)d" transparent="1"/>
 				<widget source="canvas" render="Canvas" position="0,25" zPosition="1" size="%(w)d,%(mainH)d" backgroundColor="#FF000000" transparent="1" alphatest="on"/>
 
-				<widget name="buttonBar" position="0,%(btnBarY)d" size="%(w)d,30" zPosition="0" backgroundColor="background" transparent="0" />
-				<ePixmap pixmap="skin_default/buttons/button_red_off.png" position="5,%(btnY)d" size="15,16" alphatest="on" />
-				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="5,%(btnY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1" />
+				<group name="_buttonBar">
+					<widget name="buttonBar" position="0,%(btnBarY)d" size="%(w)d,30" zPosition="0" backgroundColor="background" transparent="0" />
+					<ePixmap pixmap="skin_default/buttons/button_red_off.png" position="5,%(btnY)d" size="15,16" alphatest="on" />
+					<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="5,%(btnY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="red" position="25,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1" />
 
-				<ePixmap pixmap="skin_default/buttons/button_green_off.png" position="195,%(btnY)d" size="15,16" alphatest="on" />
-				<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="195,%(btnY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+					<ePixmap pixmap="skin_default/buttons/button_green_off.png" position="195,%(btnY)d" size="15,16" alphatest="on" />
+					<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="195,%(btnY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="green" position="215,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<ePixmap pixmap="skin_default/buttons/button_yellow_off.png" position="385,%(btnY)d" size="15,16" alphatest="on" />
-				<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="385,%(btnY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+					<ePixmap pixmap="skin_default/buttons/button_yellow_off.png" position="385,%(btnY)d" size="15,16" alphatest="on" />
+					<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="385,%(btnY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="yellow" position="405,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<ePixmap pixmap="skin_default/buttons/button_blue_off.png" position="585,%(btnY)d" size="15,16" alphatest="on" />
-				<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="585,%(btnY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
-
+					<ePixmap pixmap="skin_default/buttons/button_blue_off.png" position="585,%(btnY)d" size="15,16" alphatest="on" />
+					<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="585,%(btnY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="blue" position="605,%(btnTxtY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				</group>
 				<widget name="statuslabel" position="%(notifX)d,%(btnTxtY)d" size="350,20" font="Regular;18"  zPosition="3" halign="right" valign="center" backgroundColor="background" />
 			</screen>
 			""" %{	"w" : width,
@@ -114,38 +115,40 @@ class Browser(Screen, HelpableScreen):
 				<widget source="webnavigation" render="WebView" position="0,0" zPosition="0" size="%(w)d,%(h)d" transparent="1"/>
 				<widget source="canvas" render="Canvas" position="0,0" zPosition="1" size="%(w)d,%(h)d" backgroundColor="#FF000000" transparent="1" alphatest="on"/>
 
-				<widget name="buttonBar" position="%(btnBarX)d,%(btnBarY)d" size="200,110" zPosition="0" backgroundColor="background" transparent="0" />
-				<widget source="button_red_off" render="Pixmap" pixmap="skin_default/buttons/button_red_off.png" position="%(btnX)d,%(btnRedY)d" size="15,16" zPosition="1" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="%(btnX)d,%(btnRedY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="red" position="%(btnTxtX)d,%(btnRedY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				<group name="_buttonBar">
+					<widget name="buttonBar" position="%(btnBarX)d,%(btnBarY)d" size="200,110" zPosition="0" backgroundColor="background" transparent="0" />
+					<widget source="button_red_off" render="Pixmap" pixmap="skin_default/buttons/button_red_off.png" position="%(btnX)d,%(btnRedY)d" size="15,16" zPosition="1" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget source="button_red" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_red.png" position="%(btnX)d,%(btnRedY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="red" position="%(btnTxtX)d,%(btnRedY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget source="button_green_off" render="Pixmap" pixmap="skin_default/buttons/button_green_off.png" position="%(btnX)d,%(btnGreenY)d" size="15,16" zPosition="1" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="%(btnX)d,%(btnGreenY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="green" position="%(btnTxtX)d,%(btnGreenY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+					<widget source="button_green_off" render="Pixmap" pixmap="skin_default/buttons/button_green_off.png" position="%(btnX)d,%(btnGreenY)d" size="15,16" zPosition="1" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="%(btnX)d,%(btnGreenY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="green" position="%(btnTxtX)d,%(btnGreenY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget source="button_yellow_off" render="Pixmap" pixmap="skin_default/buttons/button_yellow_off.png" position="%(btnX)d,%(btnYellowY)d" size="15,16" zPosition="1" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="%(btnX)d,%(btnYellowY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="yellow" position="%(btnTxtX)d,%(btnYellowY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+					<widget source="button_yellow_off" render="Pixmap" pixmap="skin_default/buttons/button_yellow_off.png" position="%(btnX)d,%(btnYellowY)d" size="15,16" zPosition="1" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget source="button_yellow" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="%(btnX)d,%(btnYellowY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="yellow" position="%(btnTxtX)d,%(btnYellowY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
 
-				<widget source="button_blue_off" render="Pixmap" pixmap="skin_default/buttons/button_blue_off.png" position="%(btnX)d,%(btnBlueY)d" size="15,16" zPosition="1" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="%(btnX)d,%(btnBlueY)d" size="15,16" alphatest="on">
-					<convert type="ConditionalShowHide" />
-				</widget>
-				<widget name="blue" position="%(btnTxtX)d,%(btnBlueY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+					<widget source="button_blue_off" render="Pixmap" pixmap="skin_default/buttons/button_blue_off.png" position="%(btnX)d,%(btnBlueY)d" size="15,16" zPosition="1" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="%(btnX)d,%(btnBlueY)d" size="15,16" alphatest="on">
+						<convert type="ConditionalShowHide" />
+					</widget>
+					<widget name="blue" position="%(btnTxtX)d,%(btnBlueY)d" size="160,25" zPosition="1" font="Regular;18" halign="left" valign="top" backgroundColor="background" transparent="1"/>
+				</group>
 
 				<widget name="statuslabel" position="%(notifX)d,%(loadingY)d" size="350,50" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="background" transparent="0" />
 			</screen>
@@ -234,11 +237,11 @@ class Browser(Screen, HelpableScreen):
 		self.pageTitle = ""
 
 		self.__urlSuggestionTimer = eTimer()
-		self.__urlSuggestionTimer.callback.append(self.__onSuggestionTimeout)
+		self.__urlSuggestionTimer_conn = self.__urlSuggestionTimer.timeout.connect(self.__onSuggestionTimeout)
 		self.__inputTimer = eTimer()
-		self.__inputTimer.callback.append(self.onInputTimer)
+		self.__inputTimer_conn = self.__inputTimer.timeout.connect(self.onInputTimer)
 		self.__statusTimer = eTimer()
-		self.__statusTimer.callback.append(self.__hideStatus)
+		self.__statusTimer_conn = self.__statusTimer.timeout.connect(self.__hideStatus)
 
 		self.__scrollMode = False
 		self.__zoomMode = False
@@ -535,26 +538,17 @@ class Browser(Screen, HelpableScreen):
 			self.__showHideBars(False)
 
 	def __showHideButtonBar(self, visible = True):
-		self["button_red_off"].setBoolean(visible)
-		self["button_green_off"].setBoolean(visible)
-		self["button_yellow_off"].setBoolean(visible)
-		self["button_blue_off"].setBoolean(visible)
-		self["button_red"].setBoolean(visible)
-		self["button_green"].setBoolean(False)
-		self["button_yellow"].setBoolean(visible)
-		self["button_blue"].setBoolean(visible)
 		if visible:
-			self["buttonBar"].show()
-			self["red"].show()
-			self["green"].show()
-			self["yellow"].show()
-			self["blue"].show()
+			self["_buttonBar"].show()
 		else:
-			self["buttonBar"].hide()
-			self["red"].hide()
-			self["green"].hide()
-			self["yellow"].hide()
-			self["blue"].hide()
+			self["_buttonBar"].hide()
+			
+		used_buttons = ("button_red_off", "button_green_off", "button_yellow_off",
+			"button_blue_off", "button_red", "button_yellow", "button_blue")
+		for button in used_buttons:
+			self[button].setBoolean(visible)
+		#disable green
+		self["button_green"].setBoolean(False)
 
 	def __showHideBars(self, visible = True):
 		if self.__fullscreen:
@@ -869,11 +863,12 @@ class Browser(Screen, HelpableScreen):
 	def __onSslErrors(self, token, errors, pems):
 		print "[Browser].__onSslErrors :: 'token='%s', errors='%s'" %(token, errors)
 		self.__hasSslErrors = True
-
 		cnt = 0
 		perrors = {}
+		pems = list(pems)
 		pems.sort()
-		for pem in pems:
+		for bytes in pems:
+			pem = "".join(map(chr, bytes))
 			if pem.strip() != "":
 				messages = perrors.get(pem, [])
 				messages.append(errors[cnt])
@@ -1096,10 +1091,10 @@ class HttpAuthenticationDialog(Screen):
 		self["userActive"] = Label("<")
 		self["passwordActive"] = Label("<")
 
-		self.inputUser = EnhancedInput( self.user )
-		self["user"] = self.inputUser
-		self.inputPassword = EnhancedInput( self.password, type = Input.PIN )
-		self["password"] = self.inputPassword
+		self._inputFirst = EnhancedInput( self.user )
+		self["user"] = self._inputFirst
+		self._inputSecond = EnhancedInput( self.password, type = Input.PIN )
+		self["password"] = self._inputSecond
 
 		self["actions"] = ActionMap(["SimpleEditorActions"],
 		{
@@ -1131,8 +1126,8 @@ class HttpAuthenticationDialog(Screen):
 		self.onShow.append(self.__toggleInput)
 
 	def __ok(self):
-		user = self.inputUser.getText()
-		password = self.inputPassword.getText()
+		user = self._inputFirst.getText()
+		password = self._inputSecond.getText()
 		if user != None and password != None and user != "":
 			self.close( { "user" : user, "password" : password, "realm" : self.realm} )
 		else:
@@ -1151,47 +1146,47 @@ class HttpAuthenticationDialog(Screen):
 		self.userFocus = not self.userFocus
 		if self.userFocus:
 			self["userActive"].show()
-			self.inputUser.end()
+			self._inputFirst.end()
 			self["passwordActive"].hide()
-			self.inputPassword.markNone()
+			self._inputSecond.markNone()
 		else:
 			self["userActive"].hide()
-			self.inputUser.markNone()
+			self._inputFirst.markNone()
 			self["passwordActive"].show()
-			self.inputPassword.end()
+			self._inputSecond.end()
 
 	def __left(self):
 		if self.userFocus:
-			self.inputUser.left()
+			self._inputFirst.left()
 		else:
-			self.inputPassword.left()
+			self._inputSecond.left()
 
 	def __right(self):
 		if self.userFocus:
-			self.inputUser.right()
+			self._inputFirst.right()
 		else:
-			self.inputPassword.right()
+			self._inputSecond.right()
 
 	def __delete(self):
 		if self.userFocus:
-			self.inputUser.delete()
+			self._inputFirst.delete()
 		else:
-			self.inputPassword.delete()
+			self._inputSecond.delete()
 
 	def __backspace(self):
 		if self.userFocus:
-			self.inputUser.deleteBackward()
+			self._inputFirst.deleteBackward()
 		else:
-			self.inputPassword.deleteBackward()
+			self._inputSecond.deleteBackward()
 
 	def __keyNumberGlobal(self, number):
 		if self.userFocus:
-			self.inputUser.number(number)
+			self._inputFirst.number(number)
 		else:
-			self.inputPassword.number(number)
+			self._inputSecond.number(number)
 
 	def __ascii(self):
 		if self.userFocus:
-			self.inputUser.handleAscii(getPrevAsciiCode())
+			self._inputFirst.handleAscii(getPrevAsciiCode())
 		else:
-			self.inputPassword.handleAscii(getPrevAsciiCode())
+			self._inputSecond.handleAscii(getPrevAsciiCode())

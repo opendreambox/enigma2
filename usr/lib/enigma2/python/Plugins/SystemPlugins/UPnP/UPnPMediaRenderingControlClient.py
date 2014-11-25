@@ -1,3 +1,5 @@
+from coherence.upnp.core import DIDLLite
+
 class UPnPMediaRenderingControlClient(object):
 	STATE_STOPPED = "STOPPED"
 	STATE_PAUSED_PLAYBACK = "PAUSED_PLAYBACK"
@@ -25,29 +27,24 @@ class UPnPMediaRenderingControlClient(object):
 		self.__subscribe()
 
 	def __subscribe(self):
-		for var in ["TransportStatus", "TransportState", "CurrentTrackDuration", "AbsoluteTimePosition"]:
-			self.__transport.subscribe_for_variable(var, self.__onStateVariableChanged, signal=True)
+		self.__transport.subscribe_for_variable("LastChange", self.__onStateChanged, signal=True)
 
-	def __onStateVariableChanged(self, variable):
-		print "__onStateVariableChanged: %s=%s" %(variable.name, variable.value)
-		if variable.name == "TransportStatus":
-			self.__onTransportStatusChanged(variable.value)
-		elif variable.name == "TransportState":
-			self.__onTransportStateChanged(variable.value)
-		elif variable.name == "CurrentTrackDuration":
-			self.__onDurationChanged(variable.value)
-		elif variable.name == "AbsoluteTimePosition":
-			self.__onPositionChanged(variable.value)
+	def __onStateChanged(self, variable):
+		print "__onStateChanged: %s" %(variable.name)
+		self.__onTransportStatusChanged(self.__transport.service.get_state_variable("TransportStatus"))
+		self.__onTransportStateChanged(self.__transport.service.get_state_variable("TransportState"))
+		self.__onDurationChanged(self.__transport.service.get_state_variable("CurrentTrackDuration"))
+		self.__onPositionChanged(self.__transport.service.get_state_variable("AbsoluteTimePosition"))
 
 	def __onTransportStatusChanged(self, status):
-		print "__onTransportStatusChanged status=%s" %(status)
+		print "__onTransportStatusChanged status=%s" %(status.value)
 		for fnc in self.onTransportStatusChanged:
-			fnc(status)
+			fnc(status.value)
 
 	def __onTransportStateChanged(self, state):
-		print "__onTransportStateChanged state=%s" %(state)
+		print "__onTransportStateChanged state=%s" %(state.value)
 		for fnc in self.onPlaybackStatusChanged:
-			fnc(state)
+			fnc(state.value)
 
 	'''
 	converts a upnp timestamp in the format HH:mm:ss to seconds
@@ -59,19 +56,22 @@ class UPnPMediaRenderingControlClient(object):
 		return secs
 
 	def __onDurationChanged(self, duration):
-		print "[UPnPMediaRenderingControlClient].__onDurationChanged, duration=%s" %duration
+		print "[UPnPMediaRenderingControlClient].__onDurationChanged, duration=%s" %duration.value
 		for fnc in self.onDurationChanged:
-			fnc( self.__tsToSecs(duration) )
+			fnc( self.__tsToSecs(duration.value) )
 
 	def __onPositionChanged(self, pos):
-		print "[UPnPMediaRenderingControlClient].__onPositionChanged, pos=%s" %pos
+		print "[UPnPMediaRenderingControlClient].__onPositionChanged, pos=%s" %pos.value
 		for fnc in self.onPositionChanged:
-			fnc( self.__tsToSecs(pos) )
+			fnc( self.__tsToSecs(pos.value) )
 
 	def getDeviceName(self):
 		return self.__client.device.get_friendly_name()
 
-	def setMediaUri(self, uri = '', metadata = ''):
+	def setMediaUri(self, uri, item):
+		elt = DIDLLite.DIDLElement()
+		elt.addItem(item)
+		metadata = elt.toString()
 		self.__transport.set_av_transport_uri(current_uri=uri, current_uri_metadata=metadata)
 
 	def setNextMediaUri(self, uri = '', metadata = ''):

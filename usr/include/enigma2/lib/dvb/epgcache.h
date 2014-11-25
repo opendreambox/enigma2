@@ -1,7 +1,7 @@
 #ifndef __epgcache_h_
 #define __epgcache_h_
 
-#define ENABLE_PRIVATE_EPG 1
+//#define ENABLE_PRIVATE_EPG 1
 //#define ENABLE_MHW_EPG 1
 
 #ifndef SWIG
@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <list>
+#include <queue>
 #if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #include <unordered_map>
 #include <unordered_set>
@@ -26,10 +27,7 @@
 
 #include <errno.h>
 
-#include <lib/dvb/lowlevel/eit.h>
-#ifdef ENABLE_MHW_EPG
-#include <lib/dvb/lowlevel/mhw.h>
-#endif
+#include <lib/dvb/eit.h>
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/demux.h>
 #include <lib/dvb/dvbtime.h>
@@ -39,58 +37,71 @@
 #include <lib/service/event.h>
 #include <lib/python/python.h>
 
+#include <QSqlQuery>
+#include <QSqlDatabase>
+
 #define CLEAN_INTERVAL 60000    //  1 min
 #define UPDATE_INTERVAL 3600000  // 60 min
 #define ZAP_DELAY 2000          // 2 sek
 
 #define HILO(x) (x##_hi << 8 | x##_lo)
 
-class eventData;
+class cacheData;
 class eServiceReferenceDVB;
 class eDVBServicePMTHandler;
 
 struct uniqueEPGKey
 {
-	int sid, onid, tsid;
+	int sid, onid, tsid, dvbnamespace;
 	uniqueEPGKey( const eServiceReference &ref )
 		:sid( ref.type != eServiceReference::idInvalid ? ((eServiceReferenceDVB&)ref).getServiceID().get() : -1 )
 		,onid( ref.type != eServiceReference::idInvalid ? ((eServiceReferenceDVB&)ref).getOriginalNetworkID().get() : -1 )
 		,tsid( ref.type != eServiceReference::idInvalid ? ((eServiceReferenceDVB&)ref).getTransportStreamID().get() : -1 )
+		,dvbnamespace( ref.type != eServiceReference::idInvalid ? ((eServiceReferenceDVB&)ref).getDVBNamespace().get() : -1 )
 	{
 	}
 	uniqueEPGKey()
-		:sid(-1), onid(-1), tsid(-1)
+		:sid(-1), onid(-1), tsid(-1), dvbnamespace(-1)
 	{
 	}
-	uniqueEPGKey( int sid, int onid, int tsid )
-		:sid(sid), onid(onid), tsid(tsid)
+	uniqueEPGKey( int sid, int onid, int tsid, int dvbnamespace )
+		:sid(sid), onid(onid), tsid(tsid), dvbnamespace(dvbnamespace)
 	{
 	}
-	bool operator <(const uniqueEPGKey &a) const
+	bool operator<(const uniqueEPGKey &a) const
 	{
-		return memcmp( &sid, &a.sid, sizeof(int)*3)<0;
-	}
-	operator bool() const
-	{ 
-		return !(sid == -1 && onid == -1 && tsid == -1); 
+		return dvbnamespace < a.dvbnamespace || (dvbnamespace == a.dvbnamespace
+		    && (onid < a.onid || (onid == a.onid
+		    && (tsid < a.tsid || (tsid == a.tsid
+		    && sid < a.sid)))));
 	}
 	bool operator==(const uniqueEPGKey &a) const
 	{
-		return !memcmp( &sid, &a.sid, sizeof(int)*3);
+		return dvbnamespace == a.dvbnamespace
+		    && onid == a.onid
+		    && tsid == a.tsid
+		    && sid == a.sid;
+	}
+	operator bool() const
+	{
+		return sid != -1
+		    || onid != -1
+		    || tsid != -1
+		    || dvbnamespace != -1;
 	}
 	struct equal
 	{
 		bool operator()(const uniqueEPGKey &a, const uniqueEPGKey &b) const
 		{
-			return !memcmp( &a.sid, &b.sid, sizeof(int)*3);
+			return a == b;
 		}
 	};
 };
 
 //eventMap is sorted by event_id
-#define eventMap std::map<__u16, eventData*>
+#define eventMap std::map<__u16, cacheData*>
 //timeMap is sorted by beginTime
-#define timeMap std::map<time_t, eventData*>
+#define timeMap std::map<time_t, cacheData*>
 
 #define channelMapIterator std::map<iDVBChannel*, channel_data*>::iterator
 #define updateMap std::map<eDVBChannelID, time_t>
@@ -111,6 +122,7 @@ struct hash_uniqueEPGKey
 		#define contentMap std::unordered_map<int, contentTimeMap >
 		#define contentMaps std::unordered_map<uniqueEPGKey, contentMap, hash_uniqueEPGKey, uniqueEPGKey::equal >
 	#endif
+	#define pulledDBDataMap std::unordered_map<uniqueEPGKey, std::pair<std::set<uint32_t>, std::set<uint32_t> >, hash_uniqueEPGKey, uniqueEPGKey::equal>
 #elif __GNUC_PREREQ(3,1)
 	#define eventCache __gnu_cxx::hash_map<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, uniqueEPGKey::equal>
 	#ifdef ENABLE_PRIVATE_EPG
@@ -118,6 +130,7 @@ struct hash_uniqueEPGKey
 		#define contentMap __gnu_cxx::hash_map<int, contentTimeMap >
 		#define contentMaps __gnu_cxx::hash_map<uniqueEPGKey, contentMap, hash_uniqueEPGKey, uniqueEPGKey::equal >
 	#endif
+	#define pulledDBDataMap __gnu_cxx::hash_map<uniqueEPGKey, std::pair<std::set<int>, std::set<int> >, hash_uniqueEPGKey, uniqueEPGKey::equal>
 #else // for older gcc use following
 	#define eventCache std::hash_map<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, uniqueEPGKey::equal >
 	#ifdef ENABLE_PRIVATE_EPG
@@ -125,47 +138,70 @@ struct hash_uniqueEPGKey
 		#define contentMap std::hash_map<int, contentTimeMap >
 		#define contentMaps std::hash_map<uniqueEPGKey, contentMap, hash_uniqueEPGKey, uniqueEPGKey::equal>
 	#endif
+	#define pulledDBDataMap std::hash_map<uniqueEPGKey, std::pair<std::set<int>, std::set<int> >, hash_uniqueEPGKey, uniqueEPGKey::equal>
 #endif
 
 #define descriptorPair std::pair<int,__u8*>
 #define descriptorMap std::map<__u32, descriptorPair >
 
-class eventData
-{
-	friend class eEPGCache;
-private:
-	__u8* EITdata;
-	__u8 ByteSize;
-	__u8 type;
-	static descriptorMap descriptors;
-	static __u8 data[4108];
-	static int CacheSize;
-	static void load(FILE *);
-	static void save(FILE *);
-public:
-	eventData(const eit_event_struct* e=NULL, int size=0, int type=0);
-	~eventData();
-	const eit_event_struct* get() const;
-	operator const eit_event_struct*() const
-	{
-		return get();
-	}
-	int getEventID()
-	{
-		return (EITdata[0] << 8) | EITdata[1];
-	}
-	time_t getStartTime()
-	{
-		return parseDVBtime(EITdata[2], EITdata[3], EITdata[4], EITdata[5], EITdata[6]);
-	}
-	int getDuration()
-	{
-		return fromBCD(EITdata[7])*3600+fromBCD(EITdata[8])*60+fromBCD(EITdata[9]);
-	}
-};
 #endif
 
-class eEPGCache: public eMainloop_native, private eThread, public sigc::trackable
+class eEPGCache;
+
+class EPGDBThread: public eMainloop_native, private eThread, public Object
+{
+	struct Message
+	{
+		enum { unknown, process_data, shutdown, lock_service, unlock_service, unlock_first, cleanup_outdated };
+		Message()
+			:type(unknown)
+		{
+		}
+		Message(const Message &msg)
+			:type(msg.type), data(msg.data), service(msg.service), source(msg.source)
+		{
+		}
+		Message(const struct uniqueEPGKey &service, int type)
+			:type(type), service(service)
+		{
+		}
+		Message(const struct uniqueEPGKey &service, const __u8 *data, int source)
+			:type(process_data), data(data), service(service), source(source)
+		{
+		}
+		Message(int type)
+			:type(type)
+		{
+		}
+		int type;
+		const __u8 *data;
+		struct uniqueEPGKey service;
+		int source;
+	};
+	eEPGCache *m_epg_cache;
+	QSqlDatabase &m_db_rw;
+
+	pthread_mutex_t m_mutex;
+	pthread_cond_t m_cond;
+	std::queue<struct Message> m_queue;
+	int m_running;
+
+	std::map<uniqueEPGKey, int> m_locked_services;
+
+	void gotMessage(const Message &message);
+	void thread();
+public:
+	EPGDBThread(eEPGCache *cache, QSqlDatabase &db);
+	/* this functions are called from main thread */
+	void sendData(const uniqueEPGKey &service, const __u8 *data, int source);
+	void lockService(const uniqueEPGKey &service);
+	void unlockService(const uniqueEPGKey &service, bool first=false);
+	void shutdown();
+	void start();
+	void cleanupOutdated();
+};
+
+class eEPGCache: public iObject, public eMainloop_native, private eThread, public Object
 {
 #ifndef SWIG
 	DECLARE_REF(eEPGCache)
@@ -182,6 +218,7 @@ class eEPGCache: public eMainloop_native, private eThread, public sigc::trackabl
 		ePtr<eConnection> m_stateChangedConn, m_NowNextConn, m_ScheduleConn, m_ScheduleOtherConn, m_ViasatConn;
 		ePtr<iDVBSectionReader> m_NowNextReader, m_ScheduleReader, m_ScheduleOtherReader, m_ViasatReader;
 		tidMap seenSections[4], calcedSections[4];
+		std::set<uniqueEPGKey> m_seen_services;
 #ifdef ENABLE_PRIVATE_EPG
 		ePtr<eTimer> startPrivateTimer;
 		int m_PrevVersion;
@@ -205,8 +242,8 @@ class eEPGCache: public eMainloop_native, private eThread, public sigc::trackabl
 		__u16 m_mhw2_channel_pid, m_mhw2_title_pid, m_mhw2_summary_pid;
 		bool m_MHWTimeoutet;
 		void MHWTimeout() { m_MHWTimeoutet=true; }
-		void readMHWData(const __u8 *data, int len);
-		void readMHWData2(const __u8 *data, int len);
+		void readMHWData(const __u8 *data);
+		void readMHWData2(const __u8 *data);
 		void startMHWReader(__u16 pid, __u8 tid);
 		void startMHWReader2(__u16 pid, __u8 tid, int ext=-1);
 		void startTimeout(int msek);
@@ -225,6 +262,7 @@ class eEPGCache: public eMainloop_native, private eThread, public sigc::trackabl
 		bool finishEPG();
 		void abortEPG();
 		void abortNonAvail();
+		bool isCaching();
 	};
 	bool FixOverlapping(std::pair<eventMap,timeMap> &servicemap, time_t TM, int duration, const timeMap::iterator &tm_it, const uniqueEPGKey &service);
 public:
@@ -241,12 +279,13 @@ public:
 			flush,
 			startChannel,
 			leaveChannel,
+			load,
+			save,
 			quit,
 			got_private_pid,
 			got_mhw2_channel_pid,
 			got_mhw2_title_pid,
 			got_mhw2_summary_pid,
-			timeChanged
 		};
 		int type;
 		iDVBChannel *channel;
@@ -271,44 +310,102 @@ public:
 			:type(type), time(time) {}
 	};
 	eFixedMessagePump<Message> messages;
-
 private:
 	friend class channel_data;
+	friend class EPGDBThread;
 	static eEPGCache *instance;
 
 	ePtr<eTimer> cleanTimer;
+	ePtr<eTimer> stopTransaktionTimer;
+
+//	ePtr<eTimer> flushToDBTimer;
 	std::map<iDVBChannel*, channel_data*> m_knownChannels;
 	ePtr<eConnection> m_chanAddedConn;
 
 	eventCache eventDB;
 	updateMap channelLastUpdated;
+	pulledDBDataMap pulledData;
 	static pthread_mutex_t cache_lock, channel_map_lock;
 
 #ifdef ENABLE_PRIVATE_EPG
 	contentMaps content_time_tables;
 #endif
 
-	void thread();  // thread function
-
-// called from epgcache thread
 	int m_running;
+	int m_outdated_epg_timespan;
 	char m_filename[1024];
 
-	int m_outdated_epg_timespan;
+	QSqlDatabase m_db_rw, m_db_ro;
+	QSqlQuery m_stmt_service_id_q;
+	QSqlQuery m_stmt_service_add;
 
+	QSqlQuery m_stmt_event_id_q;
+	QSqlQuery m_stmt_event_add;
+	QSqlQuery m_stmt_event_update;
+	QSqlQuery m_stmt_event_delete;
+	QSqlQuery m_stmt_event_cleanup_outdated;
+
+	QSqlQuery m_stmt_event_service_q;
+
+	QSqlQuery m_stmt_title_id_q;
+	QSqlQuery m_stmt_title_add;
+
+	QSqlQuery m_stmt_short_description_id_q;
+	QSqlQuery m_stmt_short_description_add;
+
+	QSqlQuery m_stmt_extended_description_id_q;
+	QSqlQuery m_stmt_extended_description_add;
+
+	QSqlQuery m_stmt_data_id_q;
+	QSqlQuery m_stmt_data_add;
+	QSqlQuery m_stmt_data_update;
+	QSqlQuery m_stmt_data_delete;
+
+	// queries for public access
+	QSqlQuery m_stmt_lookup_begin_time;
+	QSqlQuery m_stmt_lookup_event_id;
+	QSqlQuery m_stmt_lookup_now;
+	QSqlQuery m_stmt_lookup_before;
+
+	QSqlQuery m_stmt_lookup_all;
+	QSqlQuery m_stmt_lookup_end_time;
+
+	EPGDBThread m_db_thread;
+	__u8 *m_next_section_buffer;
+
+// called from epgcache thread
+	void loadInternal();
+	void saveInternal();
+
+	void thread();  // thread function
+	bool copyDatabase(QSqlDatabase *memorydb, char* filename, bool save);
 #ifdef ENABLE_PRIVATE_EPG
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif
 	void sectionRead(const __u8 *data, int source, channel_data *channel);
 	void gotMessage(const Message &message);
 	void flushEPG(const uniqueEPGKey & s=uniqueEPGKey());
-	void cleanLoop();
+
+// called from db thread
+	void processData(const struct uniqueEPGKey &service, const __u8 *data, int source);
+	void pushToDB(const uniqueEPGKey &);
+	void pullFromDB(const uniqueEPGKey &);
+	void cleanupAfterPullPush();
+	void cleanupOutdated();
 
 // called from main thread
+	void cleanupOutdatedTimer();
 	void timeUpdated();
 	void DVBChannelAdded(eDVBChannel*);
 	void DVBChannelStateChanged(iDVBChannel*);
 	void DVBChannelRunning(iDVBChannel *);
+
+// just for internal use to query events in temporary cache maps (when cache is running)
+	RESULT startTimeQueryTemp(const eServiceReference &service, time_t begin=-1, int minutes=-1);
+	RESULT lookupEventIdTemp(const eServiceReference &service, int event_id, const cacheData *&);
+	RESULT lookupEventTimeTemp(const eServiceReference &service, time_t, const cacheData *&, int direction=0);
+
+	__u8 *allocateSectionBuffer();
 
 	timeMap::iterator m_timemap_cursor, m_timemap_end;
 	int currentQueryTsidOnid; // needed for getNextTimeEntry.. only valid until next startTimeQuery call
@@ -329,57 +426,35 @@ public:
 #endif
 
 #endif
-	// must be called once after setting cachetimespan and outdated timespan
+	void load();
+	void save();
+
+	// must be called once!
 	void setCacheFile(const char *filename);
 	void setCacheTimespan(int days);
 	void setOutdatedEPGTimespan(int hours);
-
-	void load();
-	void save();
 
 	// called from main thread
 	inline void Lock();
 	inline void Unlock();
 
-	// at moment just for one service..
-	RESULT startTimeQuery(const eServiceReference &service, time_t begin=-1, int minutes=-1);
-
-#ifndef SWIG
-	// eventData's are plain entrys out of the cache.. it's not safe to use them after cache unlock
-	// but its faster in use... its not allowed to delete this pointers via delete or free..
-	RESULT lookupEventId(const eServiceReference &service, int event_id, const eventData *&);
-	RESULT lookupEventTime(const eServiceReference &service, time_t, const eventData *&, int direction=0);
-	RESULT getNextTimeEntry(const eventData *&);
-
-	// eit_event_struct's are plain dvb eit_events .. it's not safe to use them after cache unlock
-	// its not allowed to delete this pointers via delete or free..
-	RESULT lookupEventId(const eServiceReference &service, int event_id, const eit_event_struct *&);
-	RESULT lookupEventTime(const eServiceReference &service, time_t , const eit_event_struct *&, int direction=0);
-	RESULT getNextTimeEntry(const eit_event_struct *&);
-
-	// Event's are parsed epg events.. it's safe to use them after cache unlock
-	// after use this Events must be deleted (memleaks)
-	RESULT lookupEventId(const eServiceReference &service, int event_id, Event* &);
-	RESULT lookupEventTime(const eServiceReference &service, time_t, Event* &, int direction=0);
-	RESULT getNextTimeEntry(Event *&);
-#endif
 	enum {
 		SIMILAR_BROADCASTINGS_SEARCH,
 		EXAKT_TITLE_SEARCH,
-		PARTIAL_TITLE_SEARCH
+		PARTIAL_TITLE_SEARCH,
+		PARTIAL_DESCRIPTION_SEARCH
 	};
 	enum {
 		CASE_CHECK,
 		NO_CASE_CHECK
 	};
-	PyObject *lookupEvent(SWIG_PYOBJECT(ePyObject) list, SWIG_PYOBJECT(ePyObject) convertFunc=(PyObject*)0);
+	PyObject *lookupEvent(SWIG_PYOBJECT(ePyObject) list);
 	PyObject *search(SWIG_PYOBJECT(ePyObject));
 
 	// eServiceEvent are parsed epg events.. it's safe to use them after cache unlock
 	// for use from python ( members: m_start_time, m_duration, m_short_description, m_extended_description )
 	SWIG_VOID(RESULT) lookupEventId(const eServiceReference &service, int event_id, ePtr<eServiceEvent> &SWIG_OUTPUT);
 	SWIG_VOID(RESULT) lookupEventTime(const eServiceReference &service, time_t, ePtr<eServiceEvent> &SWIG_OUTPUT, int direction=0);
-	SWIG_VOID(RESULT) getNextTimeEntry(ePtr<eServiceEvent> &SWIG_OUTPUT);
 };
 
 #ifndef SWIG

@@ -1,12 +1,11 @@
 # -*- coding: iso-8859-1 -*-
-from enigma import eTPM
+from enigma import eTPM, eNetworkManager
 from Components.Console import Console
 from Components.About import about
 from Components.DreamInfoHandler import DreamInfoHandler
 from Components.Language import language
 from Components.Sources.List import List
 from Components.Ipkg import IpkgComponent
-from Components.Network import iNetwork
 from Tools.Directories import resolveFilename, SCOPE_METADIR
 from Tools.HardwareInfo import HardwareInfo
 import hashlib
@@ -94,39 +93,35 @@ class SoftwareTools(DreamInfoHandler):
 	def startSoftwareTools(self, callback = None):
 		if callback is not None:
 			self.NotifierCallback = callback
-		iNetwork.checkNetworkState(self.checkNetworkCB)
 
-	def checkNetworkCB(self,data):
-		if data is not None:
-			if data <= 2:
-				self.NetworkConnectionAvailable = True
-				self.getUpdates()
-			else:
-				self.NetworkConnectionAvailable = False
-				self.getUpdates()
+		if eNetworkManager.getInstance().online():
+			self.NetworkConnectionAvailable = True
+			self.getUpdates()
+		else:
+			self.NetworkConnectionAvailable = False
+			self.getUpdates()
 
 	def getUpdates(self, callback = None):
 		if self.lastDownloadDate is None:
-			if  self.hardware_info.device_name != "dm7025":
-				etpm = eTPM()
-				l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
-				if l2cert is None:
-					return
-				l2key = validate_cert(l2cert, rootkey)
-				if l2key is None:
-					return
-				l3cert = etpm.getData(eTPM.DT_LEVEL3_CERT)
-				if l3cert is None:
-					return
-				l3key = validate_cert(l3cert, l2key)
-				if l3key is None:
-					return
-				rnd = read_random()
-				if rnd is None:
-					return
-				val = etpm.computeSignature(rnd)
-				result = decrypt_block(val, l3key)
-			if self.hardware_info.device_name == "dm7025" or result[80:88] == rnd:
+			etpm = eTPM()
+			l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
+			if l2cert is None:
+				return
+			l2key = validate_cert(l2cert, rootkey)
+			if l2key is None:
+				return
+			l3cert = etpm.getData(eTPM.DT_LEVEL3_CERT)
+			if l3cert is None:
+				return
+			l3key = validate_cert(l3cert, l2key)
+			if l3key is None:
+				return
+			rnd = read_random()
+			if rnd is None:
+				return
+			val = etpm.computeSignature(rnd)
+			result = decrypt_block(val, l3key)
+			if result[80:88] == rnd:
 				if self.NetworkConnectionAvailable == True:
 					self.lastDownloadDate = time()
 					if self.list_updating is False and callback is None:
@@ -165,26 +160,25 @@ class SoftwareTools(DreamInfoHandler):
 					self.NotifierCallback = callback
 			else:
 				if self.list_updating and callback is not None:
-					if  self.hardware_info.device_name != "dm7025":
-						etpm = eTPM()
-						l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
-						if l2cert is None:
-							return
-						l2key = validate_cert(l2cert, rootkey)
-						if l2key is None:
-							return
-						l3cert = etpm.getData(eTPM.DT_LEVEL3_CERT)
-						if l3cert is None:
-							return
-						l3key = validate_cert(l3cert, l2key)
-						if l3key is None:
-							return
-						rnd = read_random()
-						if rnd is None:
-							return
-						val = etpm.computeSignature(rnd)
-						result = decrypt_block(val, l3key)
-					if self.hardware_info.device_name == "dm7025" or result[80:88] == rnd:
+					etpm = eTPM()
+					l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
+					if l2cert is None:
+						return
+					l2key = validate_cert(l2cert, rootkey)
+					if l2key is None:
+						return
+					l3cert = etpm.getData(eTPM.DT_LEVEL3_CERT)
+					if l3cert is None:
+						return
+					l3key = validate_cert(l3cert, l2key)
+					if l3key is None:
+						return
+					rnd = read_random()
+					if rnd is None:
+						return
+					val = etpm.computeSignature(rnd)
+					result = decrypt_block(val, l3key)
+					if result[80:88] == rnd:
 						self.NotifierCallback = callback
 						self.startIpkgListAvailable()
 				else:	
@@ -211,7 +205,7 @@ class SoftwareTools(DreamInfoHandler):
 		if self.list_updating:
 			if not self.UpdateConsole:
 				self.UpdateConsole = Console()
-			cmd = "cd /tmp && opkg list"
+			cmd = "opkg list | grep -e '^[a-z][a-z0-9+.-]'"
 			self.UpdateConsole.ePopen(cmd, self.IpkgListAvailableCB, callback)
 
 	def IpkgListAvailableCB(self, result, retval, extra_args = None):
@@ -247,7 +241,7 @@ class SoftwareTools(DreamInfoHandler):
 			if self.NetworkConnectionAvailable == True:
 				if not self.UpdateConsole:
 					self.UpdateConsole = Console()
-				cmd = "cd /tmp && opkg install enigma2-meta enigma2-plugins-meta enigma2-skins-meta"
+				cmd = "opkg install enigma2-meta enigma2-plugins-meta enigma2-skins-meta"
 				self.UpdateConsole.ePopen(cmd, self.InstallMetaPackageCB, callback)
 			else:
 				self.InstallMetaPackageCB(True)
@@ -275,7 +269,7 @@ class SoftwareTools(DreamInfoHandler):
 		if self.list_updating:
 			if not self.UpdateConsole:
 				self.UpdateConsole = Console()
-			cmd = "cd /tmp && opkg list-installed"
+			cmd = "opkg list-installed"
 			self.UpdateConsole.ePopen(cmd, self.IpkgListInstalledCB, callback)
 
 	def IpkgListInstalledCB(self, result, retval, extra_args = None):
@@ -314,7 +308,7 @@ class SoftwareTools(DreamInfoHandler):
 		self.list_updating = True
 		if not self.UpgradeConsole:
 			self.UpgradeConsole = Console()
-		cmd = "cd /tmp && opkg list-upgradable"
+		cmd = "opkg list-upgradable"
 		self.UpgradeConsole.ePopen(cmd, self.listUpgradableCB, callback)
 
 	def listUpgradableCB(self, result, retval, extra_args = None):
@@ -368,7 +362,6 @@ class SoftwareTools(DreamInfoHandler):
 			if len(self.UpgradeConsole.appContainers):
 				for name in self.UpgradeConsole.appContainers.keys():
 					self.UpgradeConsole.kill(name)
-		self.ipkg.cleanupPackageData()
 
 	def verifyPrerequisites(self, prerequisites):
 		if prerequisites.has_key("hardware"):
@@ -382,4 +375,3 @@ class SoftwareTools(DreamInfoHandler):
 
 
 iSoftwareTools = SoftwareTools()
-iSoftwareTools.cleanupSoftwareTools()

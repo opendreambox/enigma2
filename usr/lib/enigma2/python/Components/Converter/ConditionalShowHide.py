@@ -10,7 +10,7 @@ class ConditionalShowHide(Converter, object):
 		if self.blink:
 			self.blinktime = 500
 			self.timer = eTimer()
-			self.timer.callback.append(self.blinkFunc)
+			self.timer_conn = self.timer.timeout.connect(self.blinkFunc)
 		else:
 			self.timer = None
 
@@ -60,5 +60,4 @@ class ConditionalShowHide(Converter, object):
 			downstream.visible = self.calcVisibility()
 
 	def destroy(self):
-		if self.timer:
-			self.timer.callback.remove(self.blinkFunc)
+		self.timer_conn = None

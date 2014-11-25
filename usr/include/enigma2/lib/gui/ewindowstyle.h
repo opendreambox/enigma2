@@ -50,7 +50,7 @@ public:
 	virtual RESULT getFont(int what, ePtr<gFont> &font) = 0;
 	virtual	void getScrollbarValues(ePtr<gPixmap> &backgroundpixmap, ePtr<gPixmap> &valuepixmap, int &top_backgroundpixmap_height, int &bottom_backgroundpixmap_height, int &top_valuepixmap_height, int &bottom_valuepixmap_height, int &scrollbar_width, int &scrollbar_border_width)=0;
 #endif
-	virtual RESULT getColor(int what, gRGB &color) = 0;
+	virtual RESULT getColor(int what, gRGBA &color) = 0;
 	virtual ~eWindowStyle() = 0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eWindowStyle>, eWindowStylePtr);
@@ -84,6 +84,7 @@ SWIG_EXTEND(ePtr<eWindowStyleManager>,
 	}
 );
 
+#if 0
 #ifndef SWIG
 class eWindowStyleSimple: public eWindowStyle
 {
@@ -100,9 +101,10 @@ public:
 	void setStyle(gPainter &painter, int what);
 	void drawFrame(gPainter &painter, const eRect &frame, int what);
 	RESULT getFont(int what, ePtr<gFont> &font);
-	RESULT getColor(int what, gRGB &color);
+	RESULT getColor(int what, gRGBA &color);
 	void getScrollbarValues(ePtr<gPixmap> &backgroundpixmap, ePtr<gPixmap> &valuepixmap, int &top_backgroundpixmap_height, int &bottom_backgroundpixmap_height, int &top_valuepixmap_height, int &bottom_valuepixmap_height, int &scrollbar_width, int &scrollbar_border_width) {return;}
 };
+#endif
 #endif
 
 #endif

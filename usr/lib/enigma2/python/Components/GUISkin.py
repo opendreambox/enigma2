@@ -1,17 +1,19 @@
 from GUIComponent import GUIComponent
 from skin import applyAllAttributes
 from Tools.CList import CList
+from Tools.Log import Log
 from Sources.StaticText import StaticText
 
 class GUISkin:
 	__module__ = __name__
-
+	IS_DIALOG = False
 	def __init__(self):
 		self["Title"] = StaticText()
 		self.onLayoutFinish = [ ]
 		self.summaries = CList()
 		self.instance = None
 		self.desktop = None
+		self._zPosition = None
 
 	def createGUIScreen(self, parent, desktop, updateonly = False):
 		for val in self.renderer:
@@ -97,8 +99,9 @@ class GUISkin:
 				baseres = tuple([int(x) for x in value.split(',')])
 			idx += 1
 		self.scale = ((baseres[0], baseres[0]), (baseres[1], baseres[1]))
-
 		if not self.instance:
+			if self._zPosition != None:
+				z = self._zPosition
 			from enigma import eWindow
 			self.instance = eWindow(self.desktop, z)
 
@@ -107,6 +110,11 @@ class GUISkin:
 
 		# we need to make sure that certain attributes come last
 		self.skinAttributes.sort(key=lambda a: {"position": 1}.get(a[0], 0))
-
-		applyAllAttributes(self.instance, self.desktop, self.skinAttributes, self.scale)
+		applyAllAttributes(self.instance, self.desktop, self.skinAttributes, self.scale, skipZPosition=True)
 		self.createGUIScreen(self.instance, self.desktop)
+
+	def setZPosition(self, z):
+		if not self.instance:
+			self._zPosition = z
+		else:
+			Log.w("setZPosition has to be called before applySkin (e.g. in __init__)!")

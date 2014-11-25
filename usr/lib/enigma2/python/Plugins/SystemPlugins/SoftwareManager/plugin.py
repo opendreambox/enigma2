@@ -1,3 +1,5 @@
+from enigma import eNetworkManager
+
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
@@ -21,7 +23,6 @@ from Components.PluginComponent import plugins
 from Components.DreamInfoHandler import DreamInfoHandler
 from Components.Language import language
 from Components.AVSwitch import AVSwitch
-from Components.Network import iNetwork
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_PLUGIN, SCOPE_CURRENT_SKIN, SCOPE_METADIR
 from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
@@ -237,9 +238,9 @@ class UpdatePluginMenu(Screen):
 						if not access(x[1], F_OK|R_OK|W_OK) or x[1] == '/':
 							parts.remove(x)
 					if len(parts):
-						self.session.openWithCallback(self.backuplocation_choosen, ChoiceBox, title = _("Please select medium to use as backup location"), list = parts)
+						self.session.openWithCallback(self.backuplocation_chosen, ChoiceBox, title = _("Please select medium to use as backup location"), list = parts)
 				elif (currentEntry == "backupfiles"):
-					self.session.openWithCallback(self.backupfiles_choosen,BackupSelection)
+					self.session.openWithCallback(self.backupfiles_chosen,BackupSelection)
 				elif (currentEntry == "advancedrestore"):
 					self.session.open(RestoreMenu, self.skin_path)
 				elif (currentEntry == "ipkg-source"):
@@ -248,12 +249,12 @@ class UpdatePluginMenu(Screen):
 					self.extended = current[3]
 					self.extended(self.session, None)
 
-	def backupfiles_choosen(self, ret):
+	def backupfiles_chosen(self, ret):
 		self.backupdirs = ' '.join( config.plugins.configurationbackup.backupdirs.value )
 		config.plugins.configurationbackup.backupdirs.save()
 		config.plugins.configurationbackup.save()
 		
-	def backuplocation_choosen(self, option):
+	def backuplocation_chosen(self, option):
 		oldpath = config.plugins.configurationbackup.backuplocation.getValue()
 		if option is not None:
 			config.plugins.configurationbackup.backuplocation.value = str(option[1])
@@ -905,45 +906,12 @@ class PluginManager(Screen, DreamInfoHandler):
 	def runExecute(self, result = None):
 		if result is not None:
 			if result[0] is True:
-				upgradeNeeded = False
-				if self.device_name in ("dm500hd", "dm800se"):
-					print "dm500/dm800se detected. opkgfb needed for upgrade"
-					for entry in self.cmdList:
-						if entry[0] == IpkgComponent.CMD_UPGRADE:
-							upgradeNeeded = True
-				if upgradeNeeded:
-					opkgfb_cmdfile = '/tmp/opkgfb_cmds'
-					fp = file(opkgfb_cmdfile, 'w')
-					for entry in self.cmdList:
-						if entry[0] == IpkgComponent.CMD_INSTALL:
-							if entry[1].has_key("package"):
-								fp.write("install " + entry[1]["package"] + "\n")
-						if entry[0] == IpkgComponent.CMD_REMOVE:
-							if entry[1].has_key("package"):
-								fp.write("remove " + entry[1]["package"] + "\n")
-					fp.close()
-					for package in iSoftwareTools.upgradable_packages.keys():
-						if any(package.endswith(x) for x in iSoftwareTools.reboot_required_packages ):
-							self.rebootRequired = True
-					if self.rebootRequired:
-						self.session.openWithCallback(self.runUpgrade, MessageBox, _("In order to perform the upgrade, Enigma2 will now be stopped and the update tool will be started.")+"\n"+_("Enigma2 will restart automatically upon completion!"))
-					else:
-						self.session.openWithCallback(self.runUpgrade, MessageBox, _("In order to perform the upgrade, Enigma2 will now be stopped and the update tool will be started.")+"\n"+_("Your Dreambox will reboot automatically upon completion!"))
-				else:
-					self.session.openWithCallback(self.runExecuteFinished, Ipkg, cmdList = self.cmdList)
+				self.session.openWithCallback(self.runExecuteFinished, Ipkg, cmdList = self.cmdList)
 			elif result[0] is False:
 				self.cmdList = result[1]
 				self.session.openWithCallback(self.runExecuteFinished, Ipkg, cmdList = self.cmdList)
 		else:
 			self.close()
-
-	def runUpgrade(self, result):
-		if result:
-			IpkgComponent.cleanup_package_data = False
-			if self.rebootRequired:
-				quitMainloop(7)
-			else:
-				quitMainloop(6)
 
 	def runExecuteFinished(self):
 		self.reloadPluginlist()
@@ -1203,7 +1171,7 @@ class PluginDetails(Screen, DreamInfoHandler):
 		self.cmdList = []
 		self.oktext = _("\nAfter pressing OK, please wait!")
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.paintScreenshotPixmapCB)
+		self.picload_conn = self.picload.PictureData.connect(self.paintScreenshotPixmapCB)
 		self.onShown.append(self.setWindowTitle)
 		self.onLayoutFinish.append(self.setInfos)
 
@@ -1341,9 +1309,6 @@ class PluginDetails(Screen, DreamInfoHandler):
 		else:
 			self.close(True)
 
-	def runRemoveFinished(self):
-		self.close(True)
-
 	def reloadPluginlist(self):
 		plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
 
@@ -1383,7 +1348,7 @@ class UpdatePlugin(Screen):
 
 		self.activity = 0
 		self.activityTimer = eTimer()
-		self.activityTimer.callback.append(self.doActivityTimer)
+		self.activityTimer_conn = self.activityTimer.timeout.connect(self.doActivityTimer)
 
 		self.ipkg = IpkgComponent()
 		self.ipkg.addCallback(self.ipkgCallback)
@@ -1398,25 +1363,23 @@ class UpdatePlugin(Screen):
 			"back": self.exit
 		}, -1)
 		
-		iNetwork.checkNetworkState(self.checkNetworkCB)
+		self.checkNetwork()
 		self.onClose.append(self.cleanup)
 
 
 	def cleanup(self):
-		iNetwork.stopPingConsole()
 		iSoftwareTools.cleanupSoftwareTools()
 
-	def checkNetworkCB(self,data):
-		if data is not None:
-			if data <= 2:
-				self.updating = True
-				self.activityTimer.start(100, False)
-				self.package.setText(_("Package list update"))
-				self.status.setText(_("Upgrading Dreambox... Please wait"))
-				self.ipkg.startCmd(IpkgComponent.CMD_UPDATE)
-			else:
-				self.package.setText(_("Your network is not working. Please try again."))
-				self.status.setText(self.oktext)
+	def checkNetwork(self):
+		if eNetworkManager.getInstance().online():
+			self.updating = True
+			self.activityTimer.start(100, False)
+			self.package.setText(_("Package list update"))
+			self.status.setText(_("Upgrading Dreambox... Please wait"))
+			self.ipkg.startCmd(IpkgComponent.CMD_UPDATE)
+		else:
+			self.package.setText(_("Your network is not working. Please try again."))
+			self.status.setText(self.oktext)
 
 	def doActivityTimer(self):
 		self.activity += 1
@@ -1450,8 +1413,6 @@ class UpdatePlugin(Screen):
 		elif event == IpkgComponent.EVENT_CONFIGURING:
 			self.package.setText(param)
 			self.status.setText(_("Configuring"))
-		elif event == IpkgComponent.EVENT_MODIFIED:
-			self.ipkg.write("Y")
 		elif event == IpkgComponent.EVENT_ERROR:
 			self.error += 1
 		elif event == IpkgComponent.EVENT_DONE:
@@ -1486,32 +1447,11 @@ class UpdatePlugin(Screen):
 			self.package.setText(_("Done - No updates available."))
 			self.status.setText(self.oktext)
 		else:
-			if self.device_name in ("dm500hd", "dm800se"):
-				print "dm500/dm800se detected. opkgfb needed for upgrade"
-				for package in iSoftwareTools.upgradable_packages.keys():
-					if any(package.endswith(x) for x in iSoftwareTools.reboot_required_packages ):
-						self.rebootRequired = True
-				if self.rebootRequired:
-					self.session.openWithCallback(self.runUpgrade, MessageBox, _("In order to perform the upgrade, Enigma2 will now be stopped and the update tool will be started.")+"\n"+_("Enigma2 will restart automatically upon completion!"))
-				else:
-					self.session.openWithCallback(self.runUpgrade, MessageBox, _("In order to perform the upgrade, Enigma2 will now be stopped and the update tool will be started.")+"\n"+_("Your Dreambox will reboot automatically upon completion!"))
-			else:
-				self.updating = False
-				upgrade_args = {'use_maintainer' : True, 'test_only': False}
-				if config.plugins.softwaremanager.overwriteConfigFiles.value == 'N':
-					upgrade_args = {'use_maintainer' : False, 'test_only': False}
-				self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE, args = upgrade_args)
-
-	def runUpgrade(self, result):
-		if result:
-			IpkgComponent.cleanup_package_data = False
-			if self.rebootRequired:
-				quitMainloop(7)
-			else:
-				quitMainloop(6)
-
-	def modificationCallback(self, res):
-		self.ipkg.write(res and "N" or "Y")
+			self.updating = False
+			upgrade_args = {'use_maintainer' : True, 'test_only': False}
+			if config.plugins.softwaremanager.overwriteConfigFiles.value == 'N':
+				upgrade_args = {'use_maintainer' : False, 'test_only': False}
+			self.ipkg.startCmd(IpkgComponent.CMD_UPGRADE, args = upgrade_args)
 
 	def exit(self):
 		if not self.ipkg.isRunning():
@@ -1922,7 +1862,7 @@ class PacketManager(Screen, NumericalTextInput):
 				self.list_updating = False
 				if not self.Console:
 					self.Console = Console()
-				cmd = "cd /tmp && opkg list"
+				cmd = "opkg list"
 				self.Console.ePopen(cmd, self.IpkgList_Finished)
 		#print event, "-", param
 		pass
@@ -1945,7 +1885,7 @@ class PacketManager(Screen, NumericalTextInput):
 
 		if not self.Console:
 			self.Console = Console()
-		cmd = "cd /tmp && opkg list-installed"
+		cmd = "opkg list-installed"
 		self.Console.ePopen(cmd, self.IpkgListInstalled_Finished)
 
 	def IpkgListInstalled_Finished(self, result, retval, extra_args = None):
@@ -1960,7 +1900,7 @@ class PacketManager(Screen, NumericalTextInput):
 					self.installed_packetlist[name] = version
 		if not self.Console:
 			self.Console = Console()
-		cmd = "cd /tmp && opkg list-upgradable"
+		cmd = "opkg list-upgradable"
 		self.Console.ePopen(cmd, self.OpkgListUpgradeable_Finished)
 
 	def OpkgListUpgradeable_Finished(self, result, retval, extra_args = None):

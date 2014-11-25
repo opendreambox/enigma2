@@ -1,5 +1,10 @@
 from Components.Converter.Converter import Converter
 from Components.Element import cached
+from enigma import iDVBFrontend
+
+feSatellite = iDVBFrontend.feSatellite
+feCable = iDVBFrontend.feCable
+feTerrestrial = iDVBFrontend.feTerrestrial
 
 class FrontendInfo(Converter, object):
 	BER = 0
@@ -47,7 +52,16 @@ class FrontendInfo(Converter, object):
 			elif self.source.snr is not None: #fallback to normal SNR...
 				percent = self.source.snr
 		elif self.type == self.TUNER_TYPE:
-			return self.source.frontend_type and self.frontend_type or "Unknown"
+			frontend_type = self.source.frontend_type
+			if frontend_type is None:
+				return "Unknown"
+			elif frontend_type == feSatellite:
+				return 'DVB-S'
+			elif frontend_type == feCable:
+				return 'DVB-C'
+			elif frontend_type == feTerrestrial:
+				return 'DVB-T'
+			return "Unknown"
 		if percent is None:
 			return "N/A"
 		return "%d %%" % (percent * 100 / 65536)
@@ -83,14 +97,7 @@ class FrontendInfo(Converter, object):
 			else:
 				return self.range
 		elif self.type == self.TUNER_TYPE:
-			type = self.source.frontend_type
-			if type == 'DVB-S':
-				return 0
-			elif type == 'DVB-C':
-				return 1
-			elif type == 'DVB-T':
-				return 2
-			return -1
+			return self.source.frontend_type
 		elif self.type == self.SLOT_NUMBER:
 			num = self.source.slot_number
 			return num is None and -1 or num

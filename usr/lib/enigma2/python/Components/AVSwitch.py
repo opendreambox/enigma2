@@ -69,9 +69,16 @@ def InitAVSwitch():
 	config.av = ConfigSubsection()
 	config.av.yuvenabled = ConfigBoolean(default=False)
 	colorformat_choices = {"cvbs": _("CVBS"), "rgb": _("RGB"), "svideo": _("S-Video")}
-	
+
+	try:
+		have_analog_output = open("/proc/stb/video/mode_choices", "r").read()[:-1].find("PAL") != -1
+	except:
+		have_analog_output = False
+
+	SystemInfo["AnalogOutput"] = have_analog_output
+
 	# when YUV is not enabled, don't let the user select it
-	if config.av.yuvenabled.value:
+	if config.av.yuvenabled.value and have_analog_output:
 		colorformat_choices["yuv"] = _("YPbPr")
 
 	config.av.colorformat = ConfigSelection(choices=colorformat_choices, default="rgb")
@@ -133,11 +140,19 @@ def InitAVSwitch():
 	def setWSS(configElement):
 		iAVSwitch.setAspectWSS()
 
-	# this will call the "setup-val" initial
-	config.av.colorformat.addNotifier(setColorFormat)
-	config.av.aspectratio.addNotifier(setAspectRatio)
-	config.av.tvsystem.addNotifier(setSystem)
-	config.av.wss.addNotifier(setWSS)
+	try:
+		have_analog_output = open("/proc/stb/video/mode_choices", "r").read()[:-1].find("PAL") != -1
+	except:
+		have_analog_output = False
+
+	SystemInfo["AnalogOutput"] = have_analog_output
+
+	if have_analog_output:
+		# this will call the "setup-val" initial
+		config.av.colorformat.addNotifier(setColorFormat)
+		config.av.aspectratio.addNotifier(setAspectRatio)
+		config.av.tvsystem.addNotifier(setSystem)
+		config.av.wss.addNotifier(setWSS)
 
 	iAVSwitch.setInput("ENCODER") # init on startup
 	SystemInfo["ScartSwitch"] = eAVSwitch.getInstance().haveScartSwitch()

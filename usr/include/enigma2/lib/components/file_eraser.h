@@ -36,7 +36,7 @@ public:
 #endif
 	int erase(const char * filename);
 	static eBackgroundFileEraser *getInstance() { return instance; }
-	PSignal1<void, const char*> fileErased;
+	eSignal1<void, const char*> fileErased;
 
 };
 

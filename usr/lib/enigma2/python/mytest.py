@@ -1,9 +1,4 @@
-import eConsoleImpl
-import eBaseImpl
 import enigma
-enigma.eTimer = eBaseImpl.eTimer
-enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
-enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 
 def gPixmapPtr_deref(self):
 	print "gPixmapPtr.__deref__() is deprecated please completely remove the \".__deref__()\" call!"
@@ -72,7 +67,6 @@ profile("PYTHON_START")
 from enigma import runMainloop, eDVBDB, eTimer, quitMainloop, \
 	getDesktop, ePythonConfigQuery, eAVSwitch, eServiceEvent, \
 	eEPGCache
-from tools import *
 
 profile("LOAD:resourcemanager")
 from Components.ResourceManager import resourcemanager
@@ -118,19 +112,18 @@ profile("LOAD:skin")
 from skin import readSkin
 
 profile("LOAD:Tools")
-from Tools.Directories import InitFallbackFiles, resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
+from Tools.Directories import InitFallbackFiles, resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS, SCOPE_CONFIG
 from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, NoSave, ConfigSubsection
 InitFallbackFiles()
 
 profile("config.misc")
 
 config.misc.radiopic = ConfigText(default = resolveFilename(SCOPE_CURRENT_SKIN, "radio.mvi"))
-config.misc.disable_timer_sn_thread_checks = ConfigYesNo(default=False)
 config.misc.isNextRecordTimerAfterEventActionAuto = ConfigYesNo(default=False)
 config.misc.useTransponderTime = ConfigYesNo(default=True)
 config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0)) # number of standby
-config.misc.epgcache_filename = ConfigText(default = "/media/hdd/epg.dat")
+config.misc.epgcache_filename = ConfigText(default = resolveFilename(SCOPE_CONFIG, "epg.db"))
 config.misc.epgcache_timespan = ConfigSelection(default = "28", choices = [("7", _("7 days")), ("14", _("14 days")), ("21", _("21 days")), ("28", _("28 days"))])
 config.misc.epgcache_outdated_timespan = ConfigInteger(default = 0, limits=(0,96))
 config.misc.record_io_buffer = ConfigInteger(default=192512*5)
@@ -227,12 +220,9 @@ def dump(dir, p = ""):
 # display
 
 profile("LOAD:ScreenGlobals")
-from Screens.Globals import Globals
 from Screens.SessionGlobals import SessionGlobals
 from Screens.Screen import Screen
-
 profile("Screen")
-Screen.global_screen = Globals()
 
 # Session.open:
 # * push current active dialog ('current_dialog') onto stack
@@ -265,12 +255,13 @@ class Session:
 		self.summary_desktop = summary_desktop
 		self.nav = navigation
 		self.delay_timer = eTimer()
-		self.delay_timer.callback.append(self.processDelay)
+		self.delay_timer_conn = self.delay_timer.timeout.connect(self.processDelay)
 
 		self.current_dialog = None
 		self.next_dialog = None
 
 		self.dialog_stack = [ ]
+		self.fading_dialogs = [ ]
 		self.summary_stack = [ ]
 		self.summary = None
 
@@ -288,10 +279,9 @@ class Session:
 
 		retval = self.current_dialog.returnValue
 
+		self.fading_dialogs.append(self.current_dialog)
 		if self.current_dialog.isTmp:
 			self.current_dialog.doClose()
-#			dump(self.current_dialog)
-			del self.current_dialog
 		else:
 			del self.current_dialog.callback
 
@@ -306,8 +296,8 @@ class Session:
 			self.current_dialog = dlg
 			self.execBegin()
 
-	def execBegin(self, first=True, do_show = True):
-		assert not self.in_exec 
+	def execBegin(self, first=True, do_show=True):
+		assert not self.in_exec
 		self.in_exec = True
 		c = self.current_dialog
 
@@ -317,25 +307,30 @@ class Session:
 			self.pushSummary()
 			summary = c.createSummary() or SimpleSummary
 			self.summary = self.instantiateSummaryDialog(summary, c)
-			self.summary.show()
-			c.addSummary(self.summary)
+			if self.summary:
+				self.summary.show()
+				c.addSummary(self.summary)
 
 		c.saveKeyboardMode()
+		c.enable()
 		c.execBegin()
 
 		# when execBegin opened a new dialog, don't bother showing the old one.
 		if c == self.current_dialog and do_show:
 			c.show()
 
-	def execEnd(self, last=True):
+	def execEnd(self, last=True, is_dialog=False):
 		assert self.in_exec
 		self.in_exec = False
 
 		self.current_dialog.execEnd()
 		self.current_dialog.restoreKeyboardMode()
-		self.current_dialog.hide()
+		if is_dialog:
+			self.current_dialog.disable()
+		else:
+			self.current_dialog.hide()
 
-		if last:
+		if last and self.summary:
 			self.current_dialog.removeSummary(self.summary)
 			self.popSummary()
 
@@ -353,15 +348,19 @@ class Session:
 		return self.doInstantiateDialog(screen, arguments, kwargs, self.desktop)
 
 	def deleteDialog(self, screen):
-		screen.hide()
-		screen.doClose()
+		screen.doClose(immediate=True)
 
 	def instantiateSummaryDialog(self, screen, *arguments, **kwargs):
+		if not self.summary_desktop:
+			return None
 		return self.doInstantiateDialog(screen, arguments, kwargs, self.summary_desktop)
 
 	def doInstantiateDialog(self, screen, arguments, kwargs, desktop):
 		# create dialog
-
+		z = None
+		if "zPosition" in kwargs:
+			z = kwargs["zPosition"]
+			del kwargs["zPosition"]
 		try:
 			dlg = self.create(screen, arguments, **kwargs)
 		except:
@@ -380,15 +379,16 @@ class Session:
 		# create GUI view of this dialog
 		assert desktop is not None
 
+		dlg.setZPosition(z)
 		dlg.setDesktop(desktop)
 		dlg.applySkin()
 
 		return dlg
 
-	def pushCurrent(self):
+	def pushCurrent(self, is_dialog=False):
 		if self.current_dialog is not None:
 			self.dialog_stack.append((self.current_dialog, self.current_dialog.shown))
-			self.execEnd(last=False)
+			self.execEnd(last=False, is_dialog=is_dialog)
 
 	def popCurrent(self):
 		if self.dialog_stack:
@@ -418,11 +418,30 @@ class Session:
 		if self.dialog_stack and not self.in_exec:
 			raise RuntimeError("modal open are allowed only from a screen which is modal!")
 			# ...unless it's the very first screen.
+		is_dialog = False
+		if self.desktop.isDimmable():
+			try:
+				is_dialog = screen.IS_DIALOG
+			except:
+				pass
 
-		self.pushCurrent()
+			if "is_dialog" in kwargs:
+				is_dialog = kwargs["is_dialog"]
+				del kwargs["is_dialog"]
+
+		custom_animation = None
+		if "custom_animation" in kwargs:
+			custom_animation = kwargs["custom_animation"]
+			del kwargs["custom_animation"]
+
+		self.pushCurrent(is_dialog=is_dialog)
 		dlg = self.current_dialog = self.instantiateDialog(screen, *arguments, **kwargs)
+
 		dlg.isTmp = True
 		dlg.callback = None
+		if custom_animation:
+			dlg.setShowHideAnimation(custom_animation)
+
 		self.execBegin()
 		return dlg
 
@@ -452,7 +471,7 @@ class Session:
 
 	def popSummary(self):
 		if self.summary is not None:
-			self.summary.doClose()
+			self.summary.doClose(immediate=True)
 		self.summary = self.summary_stack.pop()
 		if self.summary is not None:
 			self.summary.show()
@@ -528,7 +547,7 @@ class AutoScartControl:
 		else:
 			self.scartDialog = session.instantiateDialog(Scart, False)
 		config.av.vcrswitch.addNotifier(self.recheckVCRSb)
-		eAVSwitch.getInstance().vcr_sb_notifier.get().append(self.VCRSbChanged)
+		self.avs_conn = eAVSwitch.getInstance().vcr_sb_notifier.connect(self.VCRSbChanged)
 
 	def recheckVCRSb(self, configElement):
 		self.VCRSbChanged(self.current_vcr_sb)
@@ -556,6 +575,9 @@ def runScreenTest():
 	nav = Navigation(config.misc.isNextRecordTimerAfterEventActionAuto.value)
 	session = Session(desktop = getDesktop(0), summary_desktop = getDesktop(1), navigation = nav)
 
+	from Components.ScreenAnimations import ScreenAnimations
+	ScreenAnimations().loadDefault()
+
 	CiHandler.setSession(session)
 
 	screensToRun = [ p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD) ]
@@ -567,7 +589,7 @@ def runScreenTest():
 
 	screensToRun.sort()
 
-	ePythonConfigQuery.setQueryFunc(configfile.getResolvedKey)
+	queryFunc_conn = ePythonConfigQuery.getQueryFuncSignal().connect(configfile.getResolvedKey)
 
 #	eDVBCIInterfaces.getInstance().setDescrambleRules(0 # Slot Number
 #		,(	["1:0:1:24:4:85:C00000:0:0:0:"], #service_list
@@ -689,9 +711,6 @@ profile("keymapparser")
 import keymapparser
 keymapparser.readKeymap(config.usage.keymap.value)
 
-profile("Network")
-from Components.Network import iNetwork
-
 profile("LCD")
 import Components.Lcd
 Components.Lcd.InitLcd()
@@ -710,7 +729,7 @@ Screens.Ci.InitCiConfig()
 
 #from enigma import dump_malloc_stats
 #t = eTimer()
-#t.callback.append(dump_malloc_stats)
+#t_conn = t.timeout.connect(dump_malloc_stats)
 #t.start(1000)
 
 # first, setup a screen

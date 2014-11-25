@@ -473,7 +473,7 @@ class ImagePrepareTask(Task):
 		# we are doing it this weird way so that the TaskView Screen actually pops up before the spinner comes
 		from enigma import eTimer
 		self.delayTimer = eTimer()
-		self.delayTimer.callback.append(self.conduct)
+		self.delayTimer_conn = self.delayTimer.timeout.connect(self.conduct)
 		self.delayTimer.start(10,1)
 
 	def conduct(self):

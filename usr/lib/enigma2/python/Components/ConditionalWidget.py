@@ -9,7 +9,7 @@ class ConditionalWidget(GUIComponent):
 		
 		if (withTimer):
 			self.conditionCheckTimer = eTimer()
-			self.conditionCheckTimer.callback.append(self.update)
+			self.conditionCheckTimer.timeout.connect(self.update)
 			self.conditionCheckTimer.start(1000)
 
 	def postWidgetCreate(self, instance):
@@ -38,7 +38,7 @@ class BlinkingWidget(GUIComponent):
 		self.blinking = False
 		self.setBlinkTime(500)
 		self.timer = eTimer()
-		self.timer.callback.append(self.blink)
+		self.timer.timeout.connect(self.blink)
 	
 	def setBlinkTime(self, time):
 		self.blinktime = time

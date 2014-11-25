@@ -49,7 +49,7 @@ class Standby(Screen):
 
 		self.paused_service = None
 		self.prev_running_service = None
-		self.connected_time_handler = False
+		self.time_handler_conn = False
 
 		if self.session.current_dialog:
 			if self.session.current_dialog.ALLOW_SUSPEND == Screen.SUSPEND_STOPS:
@@ -75,15 +75,12 @@ class Standby(Screen):
 				refstr = config.servicelist.lastmode.value == 'tv' and config.tv.lastservice.value or config.radio.lastservice.value
 				ref = eServiceReference(refstr)
 				if ref.valid():
-					th.m_timeUpdated.get().append(self.timeReady)
-					self.connected_time_handler = True
+					self.time_handler_conn = th.m_timeUpdated.connect(self.timeReady)
 					self.session.nav.playService(ref)
 
 	def timeReady(self):
-		if self.connected_time_handler:
-			th = eDVBLocalTimeHandler.getInstance()
-			th.m_timeUpdated.get().remove(self.timeReady)
-			self.connected_time_handler = False
+		if self.time_handler_conn:
+			self.time_handler_conn = None
 			self.session.nav.stopService()
 
 	def __onClose(self):

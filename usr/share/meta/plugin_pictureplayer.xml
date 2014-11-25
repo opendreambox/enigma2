@@ -3,7 +3,7 @@
                     <tag type="Multimedia" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>PicturePlayer</name>
                     <packagename>enigma2-plugin-extensions-pictureplayer</packagename>
                     <shortdescription>Display your photos on the TV</shortdescription>

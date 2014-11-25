@@ -4,7 +4,7 @@
                     <tag type="Recording" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>GraphMultiEPG</name>
                     <packagename>enigma2-plugin-extensions-graphmultiepg</packagename>
 		    <shortdescription>GraphMultiEPG shows a graphical timeline EPG</shortdescription>

@@ -3,7 +3,7 @@
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>CleanupWizard</name>
                     <packagename>enigma2-plugin-systemplugins-cleanupwizard</packagename>
                     <shortdescription>Automatically informs you on low internal memory</shortdescription>

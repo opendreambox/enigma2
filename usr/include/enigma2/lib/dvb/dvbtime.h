@@ -44,7 +44,7 @@ public:
 
 #endif  // SWIG
 
-class eDVBLocalTimeHandler: public sigc::trackable
+class eDVBLocalTimeHandler: public iObject, public sigc::trackable
 {
 	DECLARE_REF(eDVBLocalTimeHandler);
 	struct channel_data
@@ -81,7 +81,7 @@ public:
 #endif
 	bool getUseDVBTime() { return m_use_dvb_time; }
 	void setUseDVBTime(bool b);
-	PSignal0<void> m_timeUpdated;
+	eSignal0<void> m_timeUpdated;
 	bool ready() const { return m_time_ready; }
 	static eDVBLocalTimeHandler *getInstance() { return instance; }
 };

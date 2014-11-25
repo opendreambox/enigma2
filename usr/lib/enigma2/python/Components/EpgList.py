@@ -110,11 +110,11 @@ class EPGList(HTMLComponent, GUIComponent):
 
 	def postWidgetCreate(self, instance):
 		instance.setWrapAround(True)
-		instance.selectionChanged.get().append(self.selectionChanged)
+		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		instance.setContent(self.l)
 
 	def preWidgetRemove(self, instance):
-		instance.selectionChanged.get().remove(self.selectionChanged)
+		self.selectionChanged_conn = None
 		instance.setContent(None)
 
 	def recalcEntrySize(self):

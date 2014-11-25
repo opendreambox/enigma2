@@ -32,8 +32,8 @@ class Console(Screen):
 		
 		self.container = eConsoleAppContainer()
 		self.run = 0
-		self.container.appClosed.append(self.runFinished)
-		self.container.dataAvail.append(self.dataAvail)
+		self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
+		self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
 		self.onLayoutFinish.append(self.startRun) # dont start before gui is finished
 
 	def updateTitle(self):
@@ -63,8 +63,8 @@ class Console(Screen):
 	def cancel(self):
 		if self.run == len(self.cmdlist):
 			self.close()
-			self.container.appClosed.remove(self.runFinished)
-			self.container.dataAvail.remove(self.dataAvail)
+			self.appClosed_conn = None
+			self.dataAvail_conn = None
 
 	def dataAvail(self, str):
 		self["text"].setText(self["text"].getText() + str)

@@ -149,8 +149,6 @@ class HarddiskWait(Screen):
 	def doInit(self):
 		self.timer.stop()
 		result = self.hdd.initialize(self.isFstabMounted, self.numpart)
-		if harddiskmanager.KernelVersion < "3.2":
-			harddiskmanager.trigger_udev()
 		self.close(result)
 
 	def doCheck(self):
@@ -185,10 +183,10 @@ class HarddiskWait(Screen):
 		self.timer = eTimer()
 		if stype == HARDDISK_INITIALIZE:
 			text = _("Initializing %(desc)s...") % self.devicedescription
-			self.timer.callback.append(self.doInit)
+			self.timer_conn = self.timer.timeout.connect(self.doInit)
 		elif stype == HARDDISK_CHECK:
 			text = _("Checking Filesystem...")
-			self.timer.callback.append(self.doCheck)
+			self.timer_conn = self.timer.timeout.connect(self.doCheck)
 		self["wait"] = Label(text)
 		self.timer.start(100)
 
@@ -908,7 +906,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 						if numPartitions <= 1:
 							introduction = mountpartition_msg
 							if not isInitializing and not isVerifying and not self.verifyInitOrCheck:
-								if partitionType is not None and partitionType in ( "ext2", "ext3" ):
+								if partitionType is not None and partitionType in ( "ext2", "ext3", "ext4" ):
 									self["key_green"].setText(check_btntxt)
 									self["GreenColorActions"].setEnabled(True)
 							if not isReadable and partitionType is None:
@@ -922,7 +920,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 					self["key_red"].setText("")
 					self["RedColorActions"].setEnabled(False)
 					if uuid is not None:
-						if partitionType is not None and partitionType in ( "ext2", "ext3" ):
+						if partitionType is not None and partitionType in ( "ext2", "ext3", "ext4" ):
 							self["key_green"].setText(check_btntxt)
 							self["GreenColorActions"].setEnabled(True)
 						introduction = mountpartition_msg
@@ -1208,7 +1206,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 			if stype == HARDDISK_INITIALIZE:
 				#we need to wait until udev has set up all new system links
 				self.timer = eTimer()
-				self.timer.callback.append(boundFunction(self.verifyInitialize, hdd))
+				self.timer_conn = self.timer.timeout.connect(boundFunction(self.verifyInitialize, hdd))
 				self["introduction"].setText(_("Verifying initialization. Please wait!"))
 				self.timer.start(3000,True)
 			elif stype == HARDDISK_CHECK:
@@ -1239,6 +1237,10 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 					action = "mount_default"
 				print "[HarddiskDriveSelection]- verifyInitialize -ACTION",action
 				successfully = harddiskmanager.changeStorageDevice(uuid, action, None)
+			else:
+				uuid_cfg = config.storage.get(uuid, None)
+				if uuid_cfg is not None and defaultStorageDevice() == uuid and harddiskmanager.HDDEnabledCount():
+					successfully = True
 			if successfully:
 				uuid_cfg = config.storage.get(uuid, None)
 				if uuid_cfg is not None:
@@ -1252,7 +1254,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		hdd.isInitializing = False
 		self.verifyInitOrCheck = True
 		self.timer = eTimer()
-		self.timer.callback.append(self.verifyInitializeOrCheck)
+		self.timer_conn = self.timer.timeout.connect(self.verifyInitializeOrCheck)
 		self.timer.start(3000,True)
 
 	def verifyInitializeOrCheck(self):

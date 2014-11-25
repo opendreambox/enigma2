@@ -3,7 +3,7 @@
                     <tag type="Multimedia" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>MediaPlayer</name>
                     <packagename>enigma2-plugin-extensions-mediaplayer</packagename>
                     <shortdescription>Plays your favorite music and videos</shortdescription>

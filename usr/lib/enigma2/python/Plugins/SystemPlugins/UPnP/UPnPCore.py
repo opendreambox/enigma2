@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
+from Components.ResourceManager import resourcemanager
 
 from coherence.base import Coherence
-
 from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.devices.media_renderer import MediaRenderer
 from coherence.upnp.devices.media_server import MediaServer
@@ -37,6 +37,52 @@ class Statics:
 
 	SORT_TITLE_ASC = "+dc:title"
 	SORT_TITLE_DSC = "+dc:title"
+
+
+def hs(intval):
+	"""
+	Convert an int into a 2-character hex string without the 0x prepended
+	e.g.: 1 -> 01
+	"""
+	return "%0.2X" %(intval)
+
+class DLNA(object):
+	"""
+	DLNA.ORG_CI: conversion indicator parameter (boolean integer)
+	0 not transcoded
+	1 transcoded
+	"""
+	DLNA_ORG_CONVERSION_KEY = "DLNA_ORG.CI"
+	DLNA_ORG_CONVERSION_NONE = 0,
+	DLNA_ORG_CONVERSION_TRANSCODED = 1,
+
+	"""
+	DLNA.ORG_OP: operations parameter (string)
+	"00" (or "0") neither time seek range nor range supported
+	"01" range supported
+	"10" time seek range supported
+	"11" both time seek range and range supported
+	"""
+	DLNA_ORG_OPERATION_KEY = "DLNA_ORG.OP"
+	DLNA_ORG_OPERATION_NONE		= 0x00,
+	DLNA_ORG_OPERATION_RANGE	= 0x01,
+	DLNA_ORG_OPERATION_TIMESEEK	= 0x10,
+
+	DLNA_ORG_PROFILE_NAME_KEY = "DLNA_ORG.PN"
+
+	LUT_MIME = {
+			"mp3"  : "audio/mpeg",
+			"aac"  : "audio/mp4",
+			"flac" : "audio/ogg",
+			"mkv"  : "video/x-matroska",
+			"mp4"  : "video/mp4",
+			"ts"   : "video/mpegts",
+			"mpg"  : "video/mpeg",
+		}
+
+	@staticmethod
+	def getMimeType(codec, default="audio/*"):
+		return DLNA.LUT_MIME.get(codec, default)
 
 '''
 This is a "managed" UPnP A/V Controlpoint which eases the use of UPnP, for Browsing media or adding a Renderer
@@ -112,6 +158,20 @@ class ManagedControlPoint(object):
 
 	def getDeviceName(self, client):
 		return Item.ue(client.device.get_friendly_name())
+
+	def getDevice(self, uuid):
+		for device in self.__devices:
+			if device.uuid == uuid:
+				return device
+		return None
+
+	def removeDevice(self, uuid):
+		device = self.getDevice(uuid)
+		if device:
+			device.unregister()
+			self.__devices.remove(device)
+			return True
+		return False
 
 	def shutdown(self):
 		for device in self.__devices:
@@ -273,7 +333,13 @@ class Item(object):
 
 	@staticmethod
 	def isContainer(item):
-		print item.__class__.__name__
 		if item.__class__.__name__ == MediaServerClient.__name__:
 			return True
 		return item.upnp_class.startswith("object.container")
+
+def removeUPnPDevice(uuid, cp=None):
+	if not cp:
+		cp = resourcemanager.getResource("UPnPControlPoint")
+	if cp:
+		return cp.removeDevice(uuid)
+	return False

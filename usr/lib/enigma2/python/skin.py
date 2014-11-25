@@ -50,7 +50,7 @@ def loadSkin(name, scope = SCOPE_SKIN):
 
 # example: loadSkin("nemesis_greenline/skin.xml")
 config.skin = ConfigSubsection()
-config.skin.primary_skin = ConfigText(default = "skin.xml")
+config.skin.primary_skin = ConfigText(default = "Default-HD/skin.xml")
 
 profile("LoadSkin")
 try:
@@ -70,30 +70,70 @@ profile("LoadSkinDefault")
 loadSkin('skin_default.xml')
 profile("LoadSkinDefaultDone")
 
+
+def parsePercent(val, base):
+	return int(val.replace("%", "")) / 100 * base
+
 def evalPos(pos, wsize, ssize, scale):
 	if pos == "center":
 		pos = (ssize - wsize) / 2
+	elif pos == "max":
+		pos = ssize - wsize
+	elif pos.endswith("%"):
+		pos = parsePercent(pos, ssize - wsize)
 	else:
 		pos = int(pos) * scale[0] / scale[1]
 	return int(pos)
 
-def parsePosition(str, scale, desktop = None, size = None):
-	x, y = str.split(',')
-	
+def getParentSize(desktop, guiObject):
+	parent_size = None
+	if guiObject is not None:
+		parent_size = guiObject.parentCsize()
+		if parent_size.isEmpty() and desktop is not None:
+			parent_size = desktop.size()
+	else:
+		parent_size = desktop.size()
+	return parent_size
+
+def parsePosition(str, scale, desktop = None, guiObject = None):
+	p = str.split(',')
+	x, y = p[0], p[1]
 	wsize = 1, 1
 	ssize = 1, 1
-	if desktop is not None:
-		ssize = desktop.size().width(), desktop.size().height()
+
+	size = parent_size = None
+	if guiObject:
+		size = guiObject.csize()
+		parent_size = getParentSize(desktop, guiObject)
+
+	if parent_size is not None and not parent_size.isEmpty():
+		ssize = parent_size.width(), parent_size.height()
 	if size is not None:
 		wsize = size.width(), size.height()
 
 	x = evalPos(x, wsize[0], ssize[0], scale[0])
 	y = evalPos(y, wsize[1], ssize[1], scale[1])
 
+	if len(p) == 4:
+		x = x + int(p[2])
+		y = y + int(p[3])
+
 	return ePoint(x, y)
 
-def parseSize(str, scale):
+def parseSize(str, scale, desktop = None, guiObject = None):
 	x, y = str.split(',')
+	if guiObject is not None:
+		parent_size = getParentSize(desktop, guiObject)
+		#width aliases
+		if x.endswith("%"):
+			x = parsePercent(x, parent_size.width())
+		elif x == "fill_parent":
+			x = parent_size.width()
+		#height aliases
+		if y.endswith("%"):
+			y = parsePercent(y, parent_size.height())
+		elif y == "fill_parent":
+			y = parent_size.height()
 	return eSize(int(x) * scale[0][0] / scale[0][1], int(y) * scale[1][0] / scale[1][1])
 
 def parseFont(str, scale):
@@ -143,9 +183,9 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 	# and set attributes
 	try:
 		if attrib == 'position':
-			guiObject.move(parsePosition(value, scale, desktop, guiObject.csize()))
+			guiObject.move(parsePosition(value, scale, desktop, guiObject))
 		elif attrib == 'size':
-			guiObject.resize(parseSize(value, scale))
+			guiObject.resize(parseSize(value, scale, desktop, guiObject))
 		elif attrib == 'title':
 			guiObject.setTitle(_(value))
 		elif attrib == 'text':
@@ -275,9 +315,28 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 # AttributeError:
 		print "widget %s (%s) doesn't support attribute %s!" % ("", guiObject.__class__.__name__, attrib)
 
-def applyAllAttributes(guiObject, desktop, attributes, scale):
+def applyAllAttributes(guiObject, desktop, attributes, scale, skipZPosition=False):
+	size_key = 'size'
+	pos_key = 'position'
+	zpos_key = 'zPosition'
+	size_val = pos_val = None
+
 	for (attrib, value) in attributes:
+		if attrib == pos_key:
+			pos_val = value
+			continue
+		elif attrib == size_key:
+			size_val = value
+			continue
+		elif skipZPosition and attrib == zpos_key:
+			continue
 		applySingleAttribute(guiObject, desktop, attrib, value, scale)
+
+	#relative positioning only works if we have the sized the widget before positioning
+	if size_val is not None:
+		applySingleAttribute(guiObject, desktop, size_key, size_val, scale)
+	if pos_val is not None:
+		applySingleAttribute(guiObject, desktop, pos_key, pos_val, scale)
 
 def loadSingleSkinData(desktop, skin, path_prefix):
 	"""loads skin data like colors, windowstyle etc."""
@@ -293,29 +352,13 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			id = 0
 		if id == 0: # framebuffer
 			for res in c.findall("resolution"):
-				get_attr = res.attrib.get
-				xres = get_attr("xres")
-				if xres:
-					xres = int(xres)
-				else:
-					xres = 720
-				yres = get_attr("yres")
-				if yres:
-					yres = int(yres)
-				else:
-					yres = 576
-				bpp = get_attr("bpp")
-				if bpp:
-					bpp = int(bpp)
-				else:
-					bpp = 32
-				#print "Resolution:", xres,yres,bpp
+				xres = int(res.get("xres", "720"))
+				yres = int(res.get("yres", "576"))
+				bpp = int(res.get("bpp", "32"))
 				from enigma import gMainDC
-				gMainDC.getInstance().setResolution(xres, yres)
+				gMainDC.getInstance().setResolution(xres, yres, bpp)
 				desktop.resize(eSize(xres, yres))
-				if bpp != 32:
-					# load palette (not yet implemented)
-					pass
+				break
 
 	for c in skin.findall("colors"):
 		for color in c.findall("color"):
@@ -509,6 +552,44 @@ def lookupScreen(name, style_id):
 					return x, path
 	return None, None
 
+class WidgetGroup():
+	def __init__(self, screen):
+		self.children = []
+		self._screen = screen
+		self.visible = 1
+
+	def append(self, child):
+		self.children.append(child)
+
+	def hide(self):
+		self.visible = 0
+		for child in self.children:
+			if isinstance(child, additionalWidget):
+				child.instance.hide()
+			elif isinstance(child, basestring):
+				self._screen[child].hide()
+			else:
+				child.hide()
+
+	def show(self):
+		self.visible = 1
+		for child in self.children:
+			if isinstance(child, additionalWidget):
+				child.instance.show()
+			elif isinstance(child, basestring):
+				self._screen[child].show()
+			else:
+				child.show()
+
+	def execBegin(self):
+		pass
+
+	def execEnd(self):
+		pass
+
+	def destroy(self):
+		pass
+
 class additionalWidget:
 	pass
 
@@ -563,121 +644,29 @@ def readSkin(screen, skin, names, desktop):
 	visited_components = set()
 
 	# now walk all widgets
-	for widget in myscreen.findall("widget"):
-		get_attr = widget.attrib.get
-		# ok, we either have 1:1-mapped widgets ('old style'), or 1:n-mapped
-		# widgets (source->renderer).
-
-		wname = get_attr('name')
-		wsource = get_attr('source')
-
-		if wname is None and wsource is None:
-			print "widget has no name and no source!"
-			continue
-
-		if wname:
-			#print "Widget name=", wname
-			visited_components.add(wname)
-
-			# get corresponding 'gui' object
-			try:
-				attributes = screen[wname].skinAttributes = [ ]
-			except:
-				raise SkinError("component with name '" + wname + "' was not found in skin of screen '" + name + "'!")
-				#print "WARNING: component with name '" + wname + "' was not found in skin of screen '" + name + "'!"
-
-#			assert screen[wname] is not Source
-
-			# and collect attributes for this
-			collectAttributes(attributes, widget, skin_path_prefix, ignore=['name'])
-		elif wsource:
-			# get corresponding source
-			#print "Widget source=", wsource
-
-			while True: # until we found a non-obsolete source
-
-				# parse our current "wsource", which might specifiy a "related screen" before the dot,
-				# for example to reference a parent, global or session-global screen.
-				scr = screen
-
-				# resolve all path components
-				path = wsource.split('.')
-				while len(path) > 1:
-					scr = screen.getRelatedScreen(path[0])
-					if scr is None:
-						#print wsource
-						#print name
-						raise SkinError("specified related screen '" + wsource + "' was not found in screen '" + name + "'!")
-					path = path[1:]
-
-				# resolve the source.
-				source = scr.get(path[0])
-				if isinstance(source, ObsoleteSource):
-					# however, if we found an "obsolete source", issue warning, and resolve the real source.
-					print "WARNING: SKIN '%s' USES OBSOLETE SOURCE '%s', USE '%s' INSTEAD!" % (name, wsource, source.new_source)
-					print "OBSOLETE SOURCE WILL BE REMOVED %s, PLEASE UPDATE!" % (source.removal_date)
-					if source.description:
-						print source.description
-
-					wsource = source.new_source
-				else:
-					# otherwise, use that source.
-					break
-
-			if source is None:
-				raise SkinError("source '" + wsource + "' was not found in screen '" + name + "'!")
-
-			wrender = get_attr('render')
-
-			if not wrender:
-				raise SkinError("you must define a renderer with render= for source '%s'" % (wsource))
-
-			for converter in widget.findall("convert"):
-				ctype = converter.get('type')
-				assert ctype, "'convert'-tag needs a 'type'-attribute"
-				#print "Converter:", ctype
-				try:
-					parms = converter.text.strip()
-				except:
-					parms = ""
-				#print "Params:", parms
-				converter_class = my_import('.'.join(("Components", "Converter", ctype))).__dict__.get(ctype)
-
-				c = None
-
-				for i in source.downstream_elements:
-					if isinstance(i, converter_class) and i.converter_arguments == parms:
-						c = i
-
-				if c is None:
-					print "allocating new converter!"
-					c = converter_class(parms)
-					c.connect(source)
-				else:
-					print "reused converter!"
-					hasattr(c, "reuse") and c.reuse()
-
-				source = c
-
-			renderer_class = my_import('.'.join(("Components", "Renderer", wrender))).__dict__.get(wrender)
-
-			renderer = renderer_class() # instantiate renderer
-
-			renderer.connect(source) # connect to source
-			attributes = renderer.skinAttributes = [ ]
-			collectAttributes(attributes, widget, skin_path_prefix, ignore=['render', 'source'])
-
-			screen.renderer.append(renderer)
+	parseWidgets(name, myscreen, screen, skin_path_prefix, visited_components)
 
 	from Components.GUIComponent import GUIComponent
 	nonvisited_components = [x for x in set(screen.keys()) - visited_components if isinstance(x, GUIComponent)]
 	assert not nonvisited_components, "the following components in %s don't have a skin entry: %s" % (name, ', '.join(nonvisited_components))
 
-	# now walk additional objects
-	for widget in myscreen.getchildren():
+def parseWidgets(name, node, screen, skin_path_prefix, visited_components, group=None):
+	for widget in node.getchildren():
 		w_tag = widget.tag
 
+		if w_tag == "group":
+			gname = widget.attrib.get('name')
+			assert(gname) not in screen.keys(), "element with name %s already exists in %s!" % (gname, screen.skinName)
+			inner_group = WidgetGroup(screen)
+			screen[gname] = inner_group
+			if group is not None:
+				group.append(inner_group)
+			visited_components.add(gname)
+			parseWidgets(name, widget, screen, skin_path_prefix, visited_components, inner_group)
+			continue
+
 		if w_tag == "widget":
+			parseWidget(name, widget, screen, skin_path_prefix, visited_components, group)
 			continue
 
 		if w_tag == "applet":
@@ -714,9 +703,121 @@ def readSkin(screen, skin, names, desktop):
 		w.skinAttributes = [ ]
 		collectAttributes(w.skinAttributes, widget, skin_path_prefix, ignore=['name'])
 
+		if group is not None:
+			group.append(w)
+
 		# applyAttributes(guiObject, widget, desktop)
 		# guiObject.thisown = 0
 		screen.additionalWidgets.append(w)
+
+def parseWidget(name, widget, screen, skin_path_prefix, visited_components, group):
+	get_attr = widget.attrib.get
+	# ok, we either have 1:1-mapped widgets ('old style'), or 1:n-mapped
+	# widgets (source->renderer).
+	wname = get_attr('name')
+	wsource = get_attr('source')
+
+	if wname is None and wsource is None:
+		print "widget has no name and no source!"
+		return
+
+	if wname:
+		# print "Widget name=", wname
+		visited_components.add(wname)
+
+		# get corresponding 'gui' object
+		try:
+			attributes = screen[wname].skinAttributes = [ ]
+			if group is not None:
+				group.append(wname)
+		except:
+			raise SkinError("component with name '" + wname + "' was not found in skin of screen '" + name + "'!")
+			# print "WARNING: component with name '" + wname + "' was not found in skin of screen '" + name + "'!"
+
+# 			assert screen[wname] is not Source
+
+		# and collect attributes for this
+		collectAttributes(attributes, widget, skin_path_prefix, ignore=['name'])
+	elif wsource:
+		# get corresponding source
+		# print "Widget source=", wsource
+
+		while True:  # until we found a non-obsolete source
+
+			# parse our current "wsource", which might specifiy a "related screen" before the dot,
+			# for example to reference a parent, global or session-global screen.
+			scr = screen
+
+			# resolve all path components
+			path = wsource.split('.')
+			while len(path) > 1:
+				scr = screen.getRelatedScreen(path[0])
+				if scr is None:
+					# print wsource
+					# print name
+					raise SkinError("specified related screen '" + wsource + "' was not found in screen '" + name + "'!")
+				path = path[1:]
+
+			# resolve the source.
+			source = scr.get(path[0])
+			if isinstance(source, ObsoleteSource):
+				# however, if we found an "obsolete source", issue warning, and resolve the real source.
+				print "WARNING: SKIN '%s' USES OBSOLETE SOURCE '%s', USE '%s' INSTEAD!" % (name, wsource, source.new_source)
+				print "OBSOLETE SOURCE WILL BE REMOVED %s, PLEASE UPDATE!" % (source.removal_date)
+				if source.description:
+					print source.description
+
+				wsource = source.new_source
+			else:
+				# otherwise, use that source.
+				break
+
+		if source is None:
+			raise SkinError("source '" + wsource + "' was not found in screen '" + name + "'!")
+
+		wrender = get_attr('render')
+
+		if not wrender:
+			raise SkinError("you must define a renderer with render= for source '%s'" % (wsource))
+
+		for converter in widget.findall("convert"):
+			ctype = converter.get('type')
+			assert ctype, "'convert'-tag needs a 'type'-attribute"
+			# print "Converter:", ctype
+			try:
+				parms = converter.text.strip()
+			except:
+				parms = ""
+			# print "Params:", parms
+			converter_class = my_import('.'.join(("Components", "Converter", ctype))).__dict__.get(ctype)
+
+			c = None
+
+			for i in source.downstream_elements:
+				if isinstance(i, converter_class) and i.converter_arguments == parms:
+					c = i
+
+			if c is None:
+				print "allocating new converter!"
+				c = converter_class(parms)
+				c.connect(source)
+			else:
+				print "reused converter!"
+				hasattr(c, "reuse") and c.reuse()
+
+			source = c
+
+		renderer_class = my_import('.'.join(("Components", "Renderer", wrender))).__dict__.get(wrender)
+
+		renderer = renderer_class()  # instantiate renderer
+
+		renderer.connect(source)  # connect to source
+		attributes = renderer.skinAttributes = [ ]
+		collectAttributes(attributes, widget, skin_path_prefix, ignore=['render', 'source'])
+
+		screen.renderer.append(renderer)
+		if group is not None:
+			group.append(renderer)
 
 class TemplatedColors():
 	def __init__(self, style_id = 0):
@@ -727,8 +828,8 @@ class TemplatedColors():
 		for color_name in ("Background", "LabelForeground", "ListboxForeground", "ListboxSelectedForeground", "ListboxBackground", "ListboxSelectedBackground", "ListboxMarkedForeground", "ListboxMarkedAndSelectedForeground", "ListboxMarkedBackground", "ListboxMarkedAndSelectedBackground", "WindowTitleForeground", "WindowTitleBackground"):
 			color = gRGB(0)
 			style.getColor(eWindowStyleSkinned.__dict__["col"+color_name], color)
-			self.colors[color_name] = color.argb()
-	
+			self.colors[color_name] = color
+
 	def __getitem__(self, color_name):
-		return color_name in self.colors and self.colors[color_name] or 0x000000
+		return color_name in self.colors and self.colors[color_name] or gRGB(0)
 

@@ -4,7 +4,7 @@
                     <tag type="Default" />
 	  </prerequisites>
           <info language="en">
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>DefaultServicesScanner</name>
                     <packagename>enigma2-plugin-systemplugins-defaultservicesscanner</packagename>
                     <shortdescription>Scans default lamedbs sorted by satellite</shortdescription>

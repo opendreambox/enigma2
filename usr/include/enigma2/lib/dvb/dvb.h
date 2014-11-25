@@ -60,7 +60,7 @@ public:
 	int m_inuse;
 };
 
-struct eDVBRegisteredDemux
+struct eDVBRegisteredDemux: public iObject
 {
 	DECLARE_REF(eDVBRegisteredDemux);
 public:
@@ -73,7 +73,7 @@ public:
 	{ }
 };
 
-class eDVBAllocatedFrontend
+class eDVBAllocatedFrontend: public iObject
 {
 	DECLARE_REF(eDVBAllocatedFrontend);
 public:
@@ -88,7 +88,7 @@ private:
 	eDVBRegisteredFrontend *m_fe;
 };
 
-class eDVBAllocatedDemux
+class eDVBAllocatedDemux: public iObject
 {
 	DECLARE_REF(eDVBAllocatedDemux);
 public:
@@ -150,9 +150,7 @@ class eDVBResourceManager: public iObject, public sigc::trackable
 	DECLARE_REF(eDVBResourceManager);
 	int avail, busy;
 
-	enum { DM7025, DM800, DM500HD, DM800SE, DM8000, DM7020HD, DM500HDV2, DM800SEV2 };
-
-	int m_boxtype;
+	enum boxtype { BT_GENERIC, BT_DM7025 } m_boxtype;
 
 	eSmartPtrList<iDVBAdapter> m_adapter;
 	eSmartPtrList<eDVBRegisteredDemux> m_demux;
@@ -237,9 +235,9 @@ public:
 #endif
 	int canAllocateFrontend(ePtr<iDVBFrontendParameters> &feparm, bool simulate=false);
 	bool canMeasureFrontendInputPower();
-	PSignal1<void,int> frontendUseMaskChanged;
+	eSignal1<void, int> frontendUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
-	PyObject *setFrontendSlotInformations(SWIG_PYOBJECT(ePyObject) list);
+	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, bool, int, std::string> >);
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eDVBResourceManager>, eDVBResourceManager);
 SWIG_EXTEND(ePtr<eDVBResourceManager>,
@@ -292,7 +290,7 @@ public:
 
 	int getUseCount() { return m_use_count; }
 
-	RESULT requestTsidOnid(ePyObject callback);
+	RESULT requestTsidOnid(eSlot1<void, int> &cb_func);
 	int reserveDemux();
 private:
 	ePtr<eDVBAllocatedFrontend> m_frontend;
@@ -336,7 +334,7 @@ private:
 	void ReleaseUse();
 
 		/* for tsid/onid read */
-	ePyObject m_tsid_onid_callback;
+	eSignal1<void, int> m_tsid_onid_cb;
 	ePtr<iDVBDemux> m_tsid_onid_demux;
 	ePtr<eTable<ServiceDescriptionSection> > m_SDT;
 	void SDTready(int err);

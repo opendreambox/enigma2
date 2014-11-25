@@ -4,7 +4,7 @@
 		<tag type="Multimedia" />
 	</prerequisites>
 	<info>
-		<author>Dream Multimedia</author>
+		<author>Dream Property GmbH</author>
 		<name>HbbTV</name>
 		<packagename>enigma2-plugin-extensions-hbbtv</packagename>
 		<packagetype>public</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->

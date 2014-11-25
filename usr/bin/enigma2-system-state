@@ -1,0 +1,15 @@
+#!/bin/sh
+if [ -f /run/enigma2/system-state ]; then
+	state=`cat /run/enigma2/system-state`
+	case "$state" in
+		"system-restart")
+			/sbin/reboot
+			;;
+		"system-standby")
+			/sbin/poweroff
+			;;
+		"ui-restart")
+			;;
+	esac
+	rm -f /run/enigma2/system-state
+fi

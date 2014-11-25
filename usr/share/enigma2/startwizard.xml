@@ -1,5 +1,14 @@
-<wizard>
-		<step id="start" nextstep="introduction">
+<wizard nextstepanimation="wizard_next" previousstepanimation="wizard_previous">
+		<step id="start" nextstep="welcome">
+			<text value="Please use the UP and DOWN keys to select your language. Afterwards press the OK button." />
+			<multicontentlist type="dynamic" setfunction="setLanguageList" onselect="onLanguageSelect" evaluation="languageSave" />
+			<code>
+self.clearSelectedKeys()
+self.selectKey("UP")
+self.selectKey("DOWN")
+			</code>
+		</step>
+		<step id="welcome" nextstep="introduction">
 			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your Dreambox.\nPress the OK button on your remote control to move to the next step." />
 			<code>
 self.clearSelectedKeys()
@@ -24,7 +33,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 0 and not nimmanager.nim_slots[0].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Use the left and right buttons to change an option.\n\nPlease set up tuner A" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="0" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -38,7 +47,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 1 and not nimmanager.nim_slots[1].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Please set up tuner B" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="1" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -52,7 +61,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 2 and not nimmanager.nim_slots[2].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Please set up tuner C" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="2" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -66,7 +75,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 3 and not nimmanager.nim_slots[3].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Please set up tuner D" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="3" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()

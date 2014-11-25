@@ -151,7 +151,7 @@ class DreamInfoHandler:
 		self.currentlyInstallingMetaIndex = None
 
 		self.console = eConsoleAppContainer()
-		self.console.appClosed.append(self.installNext)
+		self.appClosed_conn = self.console.appClosed.connect(self.installNext)
 		self.reloadFavourites = False
 
 		self.statusCallback = statusCallback

@@ -29,7 +29,7 @@ class Ipkg(Screen):
 		
 		self.activity = 0
 		self.activityTimer = eTimer()
-		self.activityTimer.callback.append(self.doActivityTimer)
+		self.activityTimer_conn = self.activityTimer.timeout.connect(self.doActivityTimer)
 		#self.activityTimer.start(100, False)
 				
 		self.ipkg = IpkgComponent()
@@ -108,15 +108,6 @@ class Ipkg(Screen):
 			self.error += 1
 		elif event == IpkgComponent.EVENT_DONE:
 			self.runNextCmd()
-		elif event == IpkgComponent.EVENT_MODIFIED:
-			self.session.openWithCallback(
-				self.modificationCallback,
-				MessageBox,
-				_("A configuration file (%s) was modified since Installation.\nDo you want to keep your version?") % (param)
-			)
-
-	def modificationCallback(self, res):
-		self.ipkg.write(res and "N" or "Y")
 
 	def exit(self):
 		if not self.ipkg.isRunning():

@@ -2,11 +2,12 @@
 	<prerequisites>
 		<hardware type="dm8000" />
 		<hardware type="dm7020hd" />
+		<hardware type="dm7080" />
 		<tag type="CI" />
 		<tag type="System" />
 	</prerequisites>
 	<info>
-		<author>Dream Multimedia</author>
+		<author>Dream Property GmbH</author>
 		<name>CommonInterfaceAssignment</name>
 		<packagename>enigma2-plugin-systemplugins-commoninterfaceassignment</packagename>
 		<shortdescription>Assigning providers/services/caids to a CI module</shortdescription>

@@ -1,0 +1,56 @@
+<wizard>
+	<step id="start" nextstep="alreadyonline">
+		<text
+			value="Welcome.\n\nIf you want to connect your Dreambox to a network and/or the Internet, this wizard will guide you through the basic network setup of your Dreambox.\n\nPress OK to start configuring your network" />
+		<code>
+self.clearSelectedKeys()
+self.selectKey("OK")
+		</code>
+	</step>
+	<step id="alreadyonline">
+		<text value="Your Dreambox is already connected to the Internet.\nThere is no configuration required." />
+		<list>
+			<listentry caption="Run the Network wizard anyways" step="technologies" />
+			<listentry caption="Exit wizard" step="end" />
+		</list>
+		<condition>
+self.condition = self.isNetworkConnected()
+		</condition>
+	</step>
+	<step id="technologies" nextstep="services">
+		<text
+			value="Please select one or more network technologies that should be used to connect your Dreambox to a Network and/or the Internet.\n\nYou may want to plug in USB Networking devices now (if you want to use any)." />
+		<config type="dynamic" source="getTechnologyConfig" evaluation="technologiesSet" />
+	</step>
+	<step id="services" nextstep="noconnection">
+		<text value="Please select the network service(s) you want to connect your Dreambox to.\nIt may take a few moments before wireless networks show up in the list below!" />
+		<list type="dynamic" source="getServiceList" />
+	</step>
+	<step id="noconnection">
+		<text value="There is no active connection." />
+		<list>
+			<listentry caption="Start over" step="technologies" />
+			<listentry caption="Exit wizard" step="end" />
+		</list>
+		<condition>
+self.condition = not self.isNetworkConnected()
+		</condition>
+	</step>
+	<step id="addressconfig" nextstep="dnsconfig">
+		<text value="Please configure at least on set of IP Addresses (IPv4 or IPv6)." />
+		<config type="dynamic" source="getAddressConfig" evaluation="saveAddressConfig" />
+		<condition>
+self.condition = self.ipConfigurationRequired()
+		</condition>
+	</step>
+	<step id="dnsconfig" nextstep="end">
+		<text value="Please configure at least one valid Nameserver (DNS)." />
+		<config type="dynamic" source="getNameserverConfig" evaluation="saveNameserverConfig" />
+		<condition>
+self.condition = not self.isOnline()
+		</condition>
+	</step>
+	<step id="end" laststep="true">
+		<text value="Your Network connection is now set up!" />
+	</step>
+</wizard>

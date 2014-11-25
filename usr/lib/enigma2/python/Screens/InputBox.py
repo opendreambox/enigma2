@@ -8,6 +8,7 @@ from Tools.BoundFunction import boundFunction
 from time import time
 
 class InputBox(Screen):
+	IS_DIALOG = True
 	def __init__(self, session, title = "", windowTitle = _("Input"), useableChars = None, **kwargs):
 		Screen.__init__(self, session)
 

@@ -1,13 +1,12 @@
-from enigma import getDesktop, eListboxPythonMultiContent, eListbox, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, gFont, eTimer, getPrevAsciiCode
+from enigma import getDesktop, eListbox, eTimer, getPrevAsciiCode
 
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.config import config, getConfigListEntry, KEY_LEFT, KEY_RIGHT, KEY_HOME, KEY_END, KEY_0, KEY_DELETE, KEY_BACKSPACE, KEY_OK, KEY_TOGGLEOW, KEY_ASCII
 from Components.ConfigList import ConfigList
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.Sources.List import List
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryProgress
 from Components.Sources.Boolean import Boolean
+from Components.Sources.List import List
 from Components.Sources.CanvasSource import CanvasSource
 
 from Screens.MessageBox import MessageBox
@@ -156,7 +155,7 @@ class BrowserMenu(Screen):
 		self["blue"] = self.blue
 
 		#Lists
-		self.detailList = List([], enableWrapAround = True, item_height = 55)
+		self.detailList = List([], enableWrapAround = True)
 		self.detailConfigList = ConfigList([])
 		self.detailConfigList.l.setSeperation( (BrowserMenu.width - 210) / 2 )
 		config.plugins.WebBrowser.storage.enabled.addNotifier(self.__cfgExpandableElementChanged, initial_call = False)
@@ -180,14 +179,14 @@ class BrowserMenu(Screen):
 		self.__ckList = None
 		self.__bmNeedle = ""
 		self.__bmFilterTimer = eTimer()
-		self.__bmFilterTimer.callback.append(self.__bmFilterCB)
+		self.__bmFilterTimer_conn = self.__bmFilterTimer.timeout.connect(self.__bmFilterCB)
 		self.__hisNeedle = ""
 		self.__hisFilterTimer = eTimer()
-		self.__hisFilterTimer.callback.append(self.__hisFilterCB)
+		self.__hisFilterTimer_conn = self.__hisFilterTimer.timeout.connect(self.__hisFilterCB)
 		self.__dlRefreshTimer = eTimer()
-		self.__dlRefreshTimer.callback.append(self.__dlBuildList)
+		self.__dlRefreshTimer_conn = self.__dlRefreshTimer.timeout.connect(self.__dlBuildList)
 		self.__statusTimer = eTimer()
-		self.__statusTimer.callback.append(self.__hideStatus)
+		self.__statusTimer_conn = self.__statusTimer.timeout.connect(self.__hideStatus)
 		self.__actions = []
 
 		self.onFirstExecBegin.append(self.__drawSeparator)
@@ -297,7 +296,7 @@ class BrowserMenu(Screen):
 				}
 		}
 
-	def __close(self):
+	def _close(self):
 		config.plugins.WebBrowser.storage.enabled.removeNotifier(self.__cfgExpandableElementChanged)
 		config.plugins.WebBrowser.storage.enabled.removeNotifier(self.__cfgStoragePathChanged)
 		config.plugins.WebBrowser.storage.path.removeNotifier(self.__cfgStoragePathChanged)
@@ -315,7 +314,7 @@ class BrowserMenu(Screen):
 		else:
 			if self.detailConfigList.isChanged():
 				self.__cfgSave()
-			self.__close()
+			self._close()
 
 	def __actionMenuUp(self):
 		self.menu.up()

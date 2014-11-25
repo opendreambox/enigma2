@@ -5,9 +5,9 @@ class InfoBarBase:
 		else:
 			nav = self.session.nav
 			ServiceEventTracker.setActiveInfoBar(self, not steal_current_service and nav.getCurrentService(), nav.getCurrentlyPlayingServiceReference())
-		self.onClose.append(self.__close)
+		self.onClose.append(self._close)
 
-	def __close(self):
+	def _close(self):
 		ServiceEventTracker.popActiveInfoBar()
 
 class ServiceEventTracker:

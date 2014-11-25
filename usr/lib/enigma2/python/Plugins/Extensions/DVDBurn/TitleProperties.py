@@ -38,7 +38,7 @@ class TitleProperties(Screen,ConfigListScreen):
 
 		self["thumbnail"] = Pixmap()
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.paintThumbPixmapCB)
+		self.picload_conn = self.picload.PictureData.connect(self.paintThumbPixmapCB)
 
 		self.properties = project.titles[title_idx].properties
 		ConfigListScreen.__init__(self, [])

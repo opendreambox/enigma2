@@ -147,11 +147,7 @@ def FinalInitUsageConfig():
 
 	config.usage.configselection_piconspath = ConfigSelection(default = eEnv.resolve('${datadir}/enigma2/picon_50x30/'), choices = [
 				(eEnv.resolve('${datadir}/enigma2/picon_50x30/'), eEnv.resolve('${datadir}/enigma2/picon_50x30')),
-				('/media/cf/picon_50x30/', '/media/cf/picon_50x30'),
-				('/media/usb/picon_50x30/', '/media/usb/picon_50x30'),
 				(eEnv.resolve('${datadir}/enigma2/picon/'), eEnv.resolve('${datadir}/enigma2/picon')),
-				('/media/cf/picon/', '/media/cf/picon'),
-				('/media/usb/picon/', '/media/usb/picon'),
 				])
 
 	config.usage.configselection_showrecordings = ConfigYesNo(default=False)

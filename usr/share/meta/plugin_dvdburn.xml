@@ -4,7 +4,7 @@
                     <tag type="Software" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>DVDBurn</name>
                     <packagename>enigma2-plugin-extensions-dvdburn</packagename>
                     <shortdescription>Burn your recordings to DVD</shortdescription>

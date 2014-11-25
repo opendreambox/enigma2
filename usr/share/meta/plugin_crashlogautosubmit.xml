@@ -3,7 +3,7 @@
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>CrashlogAutoSubmit</name>
                     <packagename>enigma2-plugin-systemplugins-crashlogautosubmit</packagename>
                     <shortdescription>Automatically send crashlogs to Dream Multimedia</shortdescription>

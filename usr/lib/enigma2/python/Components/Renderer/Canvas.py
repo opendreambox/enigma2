@@ -2,6 +2,7 @@ from Renderer import Renderer
 
 from enigma import eCanvas, eRect, gRGB, eSize
 from Components.AVSwitch import AVSwitch
+from skin import parseSize, parsePosition
 
 class Canvas(Renderer):
 	GUI_WIDGET = eCanvas
@@ -51,23 +52,22 @@ class Canvas(Renderer):
 		pos_idx = None
 		attribs = []
 
-		def parseValuePair(str):
-			a, b = str.split(',')
-			return (int(a), int(b))
-
 		idx = 0
 		for (attrib, value) in self.skinAttributes:
 			if attrib == "correct_aspect":
 				fix_fb_aspect = value
 				continue
 			elif attrib == "canvas_size":
-				canvas_size = parseValuePair(value)
+				s = parseSize(value, ((1,1),(1,1)), desktop=desktop, guiObject=self.instance)
+				canvas_size = s.width(), s.height()
 				continue
 			elif attrib == "size":
-				size = parseValuePair(value)
+				s = parseSize(value, ((1,1),(1,1)), desktop=desktop, guiObject=self.instance)
+				size = s.width(), s.height()
 				size_idx = idx
 			elif attrib == "position":
-				pos = parseValuePair(value)
+				p = parsePosition(value, ((1,1),(1,1)), desktop=desktop, guiObject=self.instance)
+				pos = p.x(), p.y()
 				pos_idx = idx
 			attribs.append((attrib, value))
 			idx += 1

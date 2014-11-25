@@ -1,10 +1,11 @@
 from enigma import hdmi_cec
-from Components.config import config, ConfigSubsection, ConfigEnableDisable
+
+from Components.config import config, ConfigSubsection, ConfigOnOff
 
 config.cec = ConfigSubsection()
-config.cec.sendpower = ConfigEnableDisable(default=True)
-config.cec.receivepower = ConfigEnableDisable(default=False)
-config.cec.volume_forward = ConfigEnableDisable(default=False)
+config.cec.sendpower = ConfigOnOff(default=True)
+config.cec.receivepower = ConfigOnOff(default=False)
+config.cec.volume_forward = ConfigOnOff(default=False)
 
 class Hdmi_Cec:
 	KEY_ID_MUTE = 113
@@ -22,8 +23,7 @@ class Hdmi_Cec:
 
 	def __init__(self):
 		self.instance = hdmi_cec.getInstance()
-		self.instance.receivedStandby.get().append(self.__receivedStandby)
-		self.volumeControl = True
+		self.receivedStandby_conn = self.instance.receivedStandby.connect(self.__receivedStandby)
 
 	def otp_source_enable(self):
 		self.instance.cec_otp_source_enable()

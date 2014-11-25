@@ -1,4 +1,5 @@
 from Components.config import config, ConfigSelection, ConfigSubDict, ConfigYesNo
+from Components.SystemInfo import SystemInfo
 
 from Tools.CList import CList
 from Tools.HardwareInfo import HardwareInfo
@@ -12,29 +13,54 @@ class VideoHardware:
 
 	modes = { }  # a list of (high-level) modes for a certain port.
 
-	rates["PAL"] =			{ "50Hz":		{ 50: "pal" },
-								"60Hz":		{ 60: "pal60" },
-								"multi":	{ 50: "pal", 60: "pal60" } }
+	if SystemInfo["AnalogOutput"]:
+		rates["PAL"] = {
+			"50Hz":		{ 50: "pal" },
+			"60Hz":		{ 60: "pal60" },
+			"multi":	{ 50: "pal", 60: "pal60" }
+		}
 
-	rates["NTSC"] =			{ "60Hz": 	{ 60: "ntsc" } }
+		rates["NTSC"] =	{
+			"60Hz": 	{ 60: "ntsc" }
+		}
 
-	rates["Multi"] =		{ "multi": 	{ 50: "pal", 60: "ntsc" } }
+		rates["Multi"] = {
+			"multi": 	{ 50: "pal", 60: "ntsc" }
+		}
 
-	rates["480i"] =			{ "60Hz": 	{ 60: "480i" } }
+	rates["480i"] = {
+		"60Hz": 	{ 60: "480i" }
+	}
 
-	rates["576i"] =			{ "50Hz": 	{ 50: "576i" } }
+	rates["576i"] = {
+		"50Hz": 	{ 50: "576i" }
+	}
 
-	rates["480p"] =			{ "60Hz": 	{ 60: "480p" } }
+	rates["480p"] = {
+		"60Hz": 	{ 60: "480p" }
+	}
 
-	rates["576p"] =			{ "50Hz": 	{ 50: "576p" } }
+	rates["576p"] =	{
+		"50Hz": 	{ 50: "576p" }
+	}
 
-	rates["720p"] =			{ "50Hz": 	{ 50: "720p50" },
-								"60Hz": 	{ 60: "720p" },
-								"multi": 	{ 50: "720p50", 60: "720p" } }
+	rates["720p"] = {
+		"50Hz": 	{ 50: "720p50" },
+		"60Hz": 	{ 60: "720p" },
+		"multi": 	{ 50: "720p50", 60: "720p" }
+	}
 
-	rates["1080i"] =		{ "50Hz":		{ 50: "1080i50" },
-								"60Hz":		{ 60: "1080i" },
-								"multi":	{ 50: "1080i50", 60: "1080i" } }
+	rates["1080i"] = {
+		"50Hz":		{ 50: "1080i50" },
+		"60Hz":		{ 60: "1080i" },
+		"multi":	{ 50: "1080i50", 60: "1080i" }
+	}
+
+	rates["1080p"] = {
+		"50Hz":		{ 50: "1080p50" },
+		"60Hz":		{ 60: "1080p" },
+		"multi":	{ 50: "1080p50", 60: "1080p" },
+	}
 
 	rates["PC"] = { 
 		"1024x768": { 60: "1024x768" }, # not possible on DM7025
@@ -52,12 +78,14 @@ class VideoHardware:
 		"640x480" : { 60: "640x480" }
 	}
 
-	modes["Scart"] = ["PAL", "NTSC", "Multi"]
-	modes["YPbPr"] = ["720p", "1080i", "576p", "480p", "576i", "480i"]
-	modes["DVI"] = ["720p", "1080i", "576p", "480p", "576i", "480i"]
+	if SystemInfo["AnalogOutput"]:
+		modes["Scart"] = ["PAL", "NTSC", "Multi"]
+		modes["YPbPr"] = ["720p", "1080p", "1080i", "576p", "480p", "576i", "480i"]
+
+	modes["DVI"] = ["1080i", "720p", "1080p", "576p", "480p", "576i", "480i"]
 	modes["DVI-PC"] = ["PC"]
 
-	widescreen_modes = set(["720p", "1080i"])
+	widescreen_modes = set(["720p", "1080p", "1080i"])
 
 	def getOutputAspect(self):
 		ret = (16,9)
@@ -113,13 +141,14 @@ class VideoHardware:
 		AVSwitch.getOutputAspect = self.getOutputAspect
 
 		config.av.aspect.addNotifier(self.updateAspect)
-		config.av.wss.addNotifier(self.updateAspect)
+		if SystemInfo["AnalogOutput"]:
+			config.av.wss.addNotifier(self.updateAspect)
 		config.av.policy_169.addNotifier(self.updateAspect)
 		config.av.policy_43.addNotifier(self.updateAspect)
 
 		# until we have the hotplug poll socket
 #		self.timer = eTimer()
-#		self.timer.callback.append(self.readPreferredModes)
+#		self.timer_conn = self.timer.timeout.connect(self.readPreferredModes)
 #		self.timer.start(1000)
 
 	def readAvailableModes(self):
@@ -244,9 +273,9 @@ class VideoHardware:
 		portlist = self.getPortList()
 		for port in portlist:
 			descr = port
-			if descr == 'DVI' and hw_type in ('dm500hd', 'dm500hdv2', 'dm800se', 'dm800sev2', 'dm7020hd'):
+			if descr == 'DVI' and hw_type not in ('dm800', 'dm8000'):
 				descr = 'HDMI'
-			elif descr == 'DVI-PC' and hw_type in ('dm500hd', 'dm500hdv2', 'dm800se', 'dm800sev2', 'dm7020hd'):
+			elif descr == 'DVI-PC' and hw_type not in ('dm800', 'dm8000'):
 				descr = 'HDMI-PC'
 			lst.append((port, descr))
 
@@ -328,7 +357,10 @@ class VideoHardware:
 		print "-> setting aspect, policy, policy2, wss", aspect, policy, policy2, wss
 		open("/proc/stb/video/aspect", "w").write(aspect)
 		open("/proc/stb/video/policy", "w").write(policy)
-		open("/proc/stb/denc/0/wss", "w").write(wss)
+
+		if SystemInfo["AnalogOutput"]:
+			open("/proc/stb/denc/0/wss", "w").write(wss)
+
 		try:
 			open("/proc/stb/video/policy2", "w").write(policy2)
 		except IOError:

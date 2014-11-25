@@ -1,7 +1,10 @@
 #ifndef __dvb_frontend_h
 #define __dvb_frontend_h
 
+#include <lib/base/message.h>
+#include <lib/base/thread.h>
 #include <lib/dvb/idvb.h>
+#include <linux/dvb/frontend.h>
 
 class eDVBFrontendParameters: public iDVBFrontendParameters
 {
@@ -43,7 +46,7 @@ public:
 #include <lib/dvb/sec.h>
 class eSecCommandList;
 
-class eDVBFrontend: public iDVBFrontend, public sigc::trackable
+class eDVBFrontend: public iDVBFrontend, public eThread, public eMainloop_native, public sigc::trackable
 {
 public:
 	enum {
@@ -68,7 +71,7 @@ public:
 		SATCR,                // current SatCR
 		NUM_DATA_ENTRIES
 	};
-	PSignal1<void,iDVBFrontend*> m_stateChanged;
+	eSignal1<void, iDVBFrontend*> m_stateChanged;
 private:
 	DECLARE_REF(eDVBFrontend);
 	bool m_simulate;
@@ -85,11 +88,8 @@ private:
 	bool m_seen_first_event;
 	char m_filename[128];
 	char m_description[128];
-#if HAVE_DVB_API_VERSION < 3
-	int m_secfd;
-	char m_sec_filename[128];
-#endif
-	FRONTENDPARAMETERS parm;
+	static int dvb_api_minor;
+	dvb_frontend_parameters parm;
 	union {
 		eDVBFrontendParametersSatellite sat;
 		eDVBFrontendParametersCable cab;
@@ -112,6 +112,12 @@ private:
 
 	int m_timeoutCount; // needed for timeout
 	int m_retryCount; // diseqc retry for rotor
+
+	bool m_ml_running;
+	eSingleLock m_sec_mutex;
+	eFixedMessagePump<int> m_pump, m_thread_pump;
+	void thread();
+	void gotMessage(int);
 
 	void feEvent(int);
 	void timeout();
@@ -144,15 +150,15 @@ public:
 	bool changeType(int type);
 
 	int readFrontendData(int type); // bitErrorRate, signalPower, signalQualitydB, signalQuality, locked, synced
-	void getFrontendStatus(ePyObject dest);
-	void getTransponderData(ePyObject dest, bool original);
-	void getFrontendData(ePyObject dest);
-	ePyObject getStateChangeSignal();
+	RESULT getFrontendStatus(FrontendDataMap &dest);
+	RESULT getTransponderData(FrontendDataMap &dest, bool original);
+	RESULT getFrontendData(FrontendDataMap &dest);
+	eSignal1<void, iDVBFrontend*> &getStateChangeSignal();
 
 	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm);
 	int getDVBID() { return m_dvbid; }
 	int getSlotID() { return m_slotid; }
-	bool setSlotInfo(ePyObject obj); // get a tuple (slotid, slotdescr)
+	bool setSlotInfo(std::tuple<int, std::string, bool, int, std::string>&); // get a tuple (slotid, slotdescr, enabled, dvbid, input_name)
 	static void setTypePriorityOrder(int val) { PriorityOrder = val; }
 	static int getTypePriorityOrder() { return PriorityOrder; }
 

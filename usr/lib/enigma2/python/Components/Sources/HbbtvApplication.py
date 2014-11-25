@@ -7,8 +7,8 @@ class HbbtvApplication(Source):
 		Source.__init__(self)
 		self._available = False
 		self._appname = ""
-		eHbbtv.getInstance().redButtonAppplicationReady.get().append(self._redButtonApplicationReady)
-		eHbbtv.getInstance().aitInvalidated.get().append(self._aitInvalidated)
+		self.redButtonAppplicationReady_conn = eHbbtv.getInstance().redButtonAppplicationReady.connect(self._redButtonApplicationReady)
+		self.aitInvalidated_conn = eHbbtv.getInstance().aitInvalidated.connect(self._aitInvalidated)
 	
 	def _redButtonApplicationReady(self, appid):
 		app = eHbbtv.getInstance().getApplication(appid)
@@ -25,8 +25,8 @@ class HbbtvApplication(Source):
 		self.changed((self.CHANGED_ALL,))
 	
 	def destroy(self):
-		eHbbtv.getInstance().redButtonAppplicationReady.get().remove(self._redButtonApplicationReady)
-		eHbbtv.getInstance().aitInvalidated.get().remove(self._aitInvalidated)
+		self.redButtonAppplicationReady_conn = None
+		self.aitInvalidated_conn = None
 		Source.destroy(self)
 
 	@cached

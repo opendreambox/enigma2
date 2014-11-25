@@ -67,8 +67,7 @@ FILE_MOVE = 1 # move files
 PATH_COPY = 2 # copy the complete fallback dir to the basedir
 PATH_MOVE = 3 # move the fallback dir to the basedir (can be used for changes in paths)
 fallbackPaths = {
-		SCOPE_CONFIG: [("/home/root/", FILE_MOVE),
-					   (eEnv.resolve("${datadir}/enigma2/defaults/"), FILE_COPY)],
+		SCOPE_CONFIG: [(eEnv.resolve("${datadir}/enigma2/defaults/"), FILE_COPY)],
 		SCOPE_HDD: [("/media/hdd/movies", PATH_MOVE)]
 	}
 

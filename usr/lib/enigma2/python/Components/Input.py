@@ -243,3 +243,13 @@ class Input(VariableText, HTMLComponent, GUIComponent, NumericalTextInput):
 		if self.type == self.PIN or self.type == self.NUMBER:
 			self.innerright()
 		self.update()
+
+	def markAll(self):
+		self.allmarked = True
+		self.update()
+
+	def markNone(self):
+		self.setMarkedPos(-1)
+
+	def clear(self):
+		self.setText("")

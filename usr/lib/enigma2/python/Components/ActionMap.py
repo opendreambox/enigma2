@@ -4,6 +4,7 @@ class ActionMap:
 	def __init__(self, contexts = [ ], actions = { }, prio=0):
 		self.actions = actions
 		self.contexts = contexts
+		self.slots = [ ]
 		self.prio = prio
 		self.p = eActionMap.getInstance()
 		self.bound = False
@@ -17,13 +18,13 @@ class ActionMap:
 	def doBind(self):
 		if not self.bound:
 			for ctx in self.contexts:
-				self.p.bindAction(ctx, self.prio, self.action)
+				self.slots.append(self.p.bindAction(ctx, self.prio, self.action))
 			self.bound = True
 
 	def doUnbind(self):
 		if self.bound:
-			for ctx in self.contexts:
-				self.p.unbindAction(ctx, self.action)
+			assert len(self.slots) == len(self.contexts)
+			self.slots = [ ]
 			self.bound = False
 
 	def checkBind(self):

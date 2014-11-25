@@ -1,4 +1,4 @@
-from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop, iPlayableService, eServiceMP3, eTimer, eDVBVolumecontrol
+from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop, eTimer, eDVBVolumecontrol
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
@@ -6,7 +6,6 @@ from Screens.MessageBox import MessageBox
 from Screens.LocationBox import MovieLocationBox
 from Components.config import config, ConfigSubsection, ConfigEnableDisable, ConfigSelection
 from Components.PluginComponent import plugins
-from Components.ServiceEventTracker import ServiceEventTracker
 from Components.UsageConfig import preferredPath
 from Components.VideoWindow import VideoWindow
 
@@ -20,8 +19,6 @@ config.plugins.hbbtv.text = ConfigEnableDisable(default=True)
 
 from datetime import datetime
 from urlparse import urlparse
-
-import time
 
 class HbbTVVideoWindow(Screen):
 	skin = """
@@ -98,46 +95,32 @@ class HbbTV(object):
 		self.__browser = None
 		self.__lastService = None
 		self.__restoreTimer = eTimer()
-		self.__restoreTimer.callback.append(self._restoreLastService)
+		self.__restoreTimer_conn = self.__restoreTimer.timeout.connect(self._restoreLastService)
 
 	def connectCallbacks(self):
 		print "[HbbTV] connecting callbacks"
-		self.eHbbtv.playServiceRequest.get().append(self.zap)
-		self.eHbbtv.playStreamRequest.get().append(self.playStream)
-		self.eHbbtv.pauseStreamRequest.get().append(self.pauseStream)
-		self.eHbbtv.seekStreamRequest.get().append(self.seekStream)
-		self.eHbbtv.stopStreamRequest.get().append(self.stopStream)
-		self.eHbbtv.nextServiceRequest.get().append(self.nextService)
-		self.eHbbtv.prevServiceRequest.get().append(self.prevService)
-		self.eHbbtv.setVolumeRequest.get().append(self.setVolume)
-		self.eHbbtv.setVideoWindowRequest.get().append(self.setVideoWindow)
+		self.conns = [ ]
+		self.conns.append(self.eHbbtv.playServiceRequest.connect(self.zap))
+		self.conns.append(self.eHbbtv.playStreamRequest.connect(self.playStream))
+		self.conns.append(self.eHbbtv.pauseStreamRequest.connect(self.pauseStream))
+		self.conns.append(self.eHbbtv.seekStreamRequest.connect(self.seekStream))
+		self.conns.append(self.eHbbtv.stopStreamRequest.connect(self.stopStream))
+		self.conns.append(self.eHbbtv.nextServiceRequest.connect(self.nextService))
+		self.conns.append(self.eHbbtv.prevServiceRequest.connect(self.prevService))
+		self.conns.append(self.eHbbtv.setVolumeRequest.connect(self.setVolume))
+		self.conns.append(self.eHbbtv.setVideoWindowRequest.connect(self.setVideoWindow))
 		#AIT
 		self.eHbbtv.setAitSignalsEnabled(True);
-		self.eHbbtv.redButtonAppplicationReady.get().append(self.redButtonAppplicationReady)
-		self.eHbbtv.textApplicationReady.get().append(self.textApplicationReady)
-		self.eHbbtv.aitInvalidated.get().append(self.aitInvalidated)
-		self.eHbbtv.createApplicationRequest.get().append(self.startApplicationByUri)
-		self.eHbbtv.show.get().append(self.showBrowser)
-		self.eHbbtv.hide.get().append(self.hideBrowser)
+		self.conns.append(self.eHbbtv.redButtonAppplicationReady.connect(self.redButtonAppplicationReady))
+		self.conns.append(self.eHbbtv.textApplicationReady.connect(self.textApplicationReady))
+		self.conns.append(self.eHbbtv.aitInvalidated.connect(self.aitInvalidated))
+		self.conns.append(self.eHbbtv.createApplicationRequest.connect(self.startApplicationByUri))
+		self.conns.append(self.eHbbtv.show.connect(self.showBrowser))
+		self.conns.append(self.eHbbtv.hide.connect(self.hideBrowser))
 
 	def disconnectCallbacks(self):
 		print "[HbbTV] disconnecting callbacks"
-		self.eHbbtv.playServiceRequest.get().remove(self.zap)
-		self.eHbbtv.playStreamRequest.get().remove(self.playStream)
-		self.eHbbtv.pauseStreamRequest.get().remove(self.pauseStream)
-		self.eHbbtv.seekStreamRequest.get().remove(self.seekStream)
-		self.eHbbtv.stopStreamRequest.get().remove(self.stopStream)
-		self.eHbbtv.nextServiceRequest.get().remove(self.nextService)
-		self.eHbbtv.prevServiceRequest.get().remove(self.prevService)
-		self.eHbbtv.setVolumeRequest.get().remove(self.setVolume)
-		self.eHbbtv.setVideoWindowRequest.get().remove(self.setVideoWindow)
-		#AIT
-		self.eHbbtv.redButtonAppplicationReady.get().remove(self.redButtonAppplicationReady)
-		self.eHbbtv.textApplicationReady.get().remove(self.textApplicationReady)
-		self.eHbbtv.aitInvalidated.get().remove(self.aitInvalidated)
-		self.eHbbtv.createApplicationRequest.get().remove(self.startApplicationByUri)
-		self.eHbbtv.show.get().remove(self.showBrowser)
-		self.eHbbtv.hide.get().remove(self.hideBrowser)
+		self.conns = None
 		for fnc in self.onClose:
 			fnc()
 
@@ -203,7 +186,7 @@ class HbbTV(object):
 			filename = "%s_%s_%s.%s" % (datestring, host, file[0], extension)
 			path = "%s%s" % (path, filename)
 			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename))
-			#self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
+			self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
 
 	def _onUrlChanged(self, url):
 		self.stopStream()

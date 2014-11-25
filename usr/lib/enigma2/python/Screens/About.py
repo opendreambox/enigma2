@@ -1,10 +1,11 @@
+from enigma import eNetworkManager
+
 from Screen import Screen
 from Components.About import about
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.Harddisk import harddiskmanager
 from Components.NimManager import nimmanager
-from Components.ResourceManager import resourcemanager
 from Tools.DreamboxHardware import getFPVersion
 
 class About(Screen):
@@ -40,24 +41,33 @@ class About(Screen):
 			self["hddA"] = StaticText(_("none"))
 
 		self["IPHeader"] = StaticText(_("Current IP Address:"))
-		iNetwork = resourcemanager.getResource("iNetwork")
-		ifaces = iNetwork.getConfiguredAdapters()
-		convertIP = lambda l: "%s.%s.%s.%s" % tuple(l) if l and len(l) == 4 else "0.0.0.0"
-		ipA = _("none")
-		if len(ifaces) > 0:
-			iface = ifaces[0]
-			ip = iNetwork.getAdapterAttribute(iface, "ip")
-			name = iNetwork.getFriendlyAdapterName(iface)
-			if ip != None:
-				ipA = "%s (%s)" %(convertIP(ip), name)
-		self["ipA"] = StaticText(ipA)
 
+		ipA = _("none")
+		services = eNetworkManager.getInstance().getServices()
+		for service in services:
+			ip = self.getServiceIP(service)
+			name = service.name()
+			if ip != None:
+				ipA = "%s (%s)" %(ip, name)
+		self["ipA"] = StaticText(ipA)
 		self["actions"] = ActionMap(["SetupActions", "ColorActions"],
 			{
 				"cancel": self.close,
 				"ok": self.close,
 				"green": self.showTranslationInfo
 			})
+
+	def getServiceIP(self, service):
+		ip = "0.0.0.0"
+		if service.state() == eNetworkManager.STATE_READY or service.state() == eNetworkManager.STATE_ONLINE:
+			ipv4 = service.ipv4()
+			ip = ipv4.get("Address", "0.0.0.0")
+		if ip == "0.0.0.0:":
+			ipv6 = self._service.ipv6()
+			ip6 = ipv6.get("Address", "::")
+			if ip6 != "::":
+				ip = ip6
+		return ip
 
 	def showTranslationInfo(self):
 		self.session.open(TranslationInfo)

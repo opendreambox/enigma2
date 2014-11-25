@@ -51,6 +51,7 @@
 				<item level="0" entryID="usage_setup" description="Configure Enigma2 interface and usage settings."><setup id="usage" /></item>
 				<item level="0" entryID="timezone_setup" description="Set up your system timezone."><setup id="timezone"/></item>
 				<item level="0" entryID="av_setup" description="Fine tuning for your Audio and Video settings."><setup id="avsetup"/></item>
+				<item level="0" text= "Animations" entryID="animation_setup" description="Setup UI animations"><screen module="AnimationSetup" screen="AnimationSetup" /></item>
 				<!--<item level="0" text="Video Setup" entryID="video_setup"><screen module="VideoSetup" /></item>-->
 				<item level="1" entryID="rfmod_setup" requires="RfModulator" description="Set up the the antenna output which you can hook up to old TV sets."><setup id="RFmod"/></item>
 				<item level="0" text="Storage devices" entryID="hardisk_selection" description="Set up your storage devices like harddisks and flash memory cards."><screen module="HarddiskSetup" screen="HarddiskDriveSelection" /></item>
@@ -62,7 +63,6 @@
 				</menu> -->
 				<!--<item text="Remote Control"><setup id="rc" /></item>-->
 				<!--<item text="OSD"><setup id="osd" /></item>-->
-				<item level="0" text="Network" entryID="network_setup" description="Configure and set up your network."><screen module="NetworkSetup" screen="NetworkAdapterSelection" /></item>
 				<item level="1" text="Input devices" entryID="input_device_setup" description="Configure your input devices."><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
 				<item requires="Display" entryID="display_setup" description="Configure your frontpanel OLED or LCD display."><setup level="1" id="lcd" /></item>
 				<item text="Keyboard" entryID="keyboard_setup" description="Set up your keyboard."><setup id="keyboard" /></item>

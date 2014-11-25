@@ -1,0 +1,15 @@
+<default>
+	<prerequisites>
+		<tag type="Multimedia" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>UPnP</name>
+		<packagename>enigma2-plugin-systemplugins-upnp</packagename>
+		<shortdescription>Basic UPnP/DLNA Support</shortdescription>
+		<description>Basic UPnP/DLNA including a MediaServer and browser components for the MediaCenter.</description>
+	</info>
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-upnp" />
+	</files>
+</default>

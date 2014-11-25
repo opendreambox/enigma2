@@ -17,10 +17,10 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		self.session = session
 
 	def execBegin(self):
-		self.timer.callback.append(self.timeout)
+		self.timer_conn = self.timer.timeout.connect(self.timeout)
 
 	def execEnd(self):
-		self.timer.callback.remove(self.timeout)
+		self.timer_conn = None
 
 	def toggle(self):
 		selection = self.getCurrent()
@@ -68,13 +68,13 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 			x()
 
 	def postWidgetCreate(self, instance):
-		instance.selectionChanged.get().append(self.selectionChanged)
+		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		instance.setContent(self.l)
 	
 	def preWidgetRemove(self, instance):
 		if isinstance(self.current,tuple) and len(self.current) > 1:
 			self.current[1].onDeselect(self.session)
-		instance.selectionChanged.get().remove(self.selectionChanged)
+		self.selectionChanged_conn = None
 		instance.setContent(None)
 
 	def setList(self, l):

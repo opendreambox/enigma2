@@ -4,8 +4,12 @@ from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label
 from ServiceReference import ServiceReference
-from enigma import eListboxPythonMultiContent, eListbox, gFont, iServiceInformation, eServiceCenter
+from enigma import eListboxPythonMultiContent, eListbox, gFont, iServiceInformation, eServiceCenter, iDVBFrontend
 from Tools.Transponder import ConvertToHumanReadable
+
+feSatellite = iDVBFrontend.feSatellite
+feCable = iDVBFrontend.feCable
+feTerrestrial = iDVBFrontend.feTerrestrial
 
 RT_HALIGN_LEFT = 0
 
@@ -181,7 +185,8 @@ class ServiceInfo(Screen):
 	def getFEData(self, frontendDataOrg):
 		if frontendDataOrg and len(frontendDataOrg):
 			frontendData = ConvertToHumanReadable(frontendDataOrg)
-			if frontendDataOrg["tuner_type"] == "DVB-S":
+			tunerType = frontendDataOrg["tuner_type"]
+			if tunerType == feSatellite:
 				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("System"), frontendData["system"], TYPE_TEXT),
@@ -194,7 +199,7 @@ class ServiceInfo(Screen):
 						(_("FEC"), frontendData["fec_inner"], TYPE_TEXT),
 						(_("Pilot"), frontendData.get("pilot", None), TYPE_TEXT),
 						(_("Roll-off"), frontendData.get("rolloff", None), TYPE_TEXT))
-			elif frontendDataOrg["tuner_type"] == "DVB-C":
+			elif tunerType == feCable:
 				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("Modulation"), frontendData["modulation"], TYPE_TEXT),
@@ -202,7 +207,7 @@ class ServiceInfo(Screen):
 						(_("Symbol rate"), frontendData["symbol_rate"], TYPE_VALUE_DEC),
 						(_("Inversion"), frontendData["inversion"], TYPE_TEXT),
 						(_("FEC"), frontendData["fec_inner"], TYPE_TEXT))
-			elif frontendDataOrg["tuner_type"] == "DVB-T":
+			elif tunerType == feTerrestrial:
 				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("Frequency"), frontendData["frequency"], TYPE_VALUE_DEC),

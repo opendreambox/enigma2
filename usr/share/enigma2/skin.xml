@@ -34,6 +34,7 @@
 		<color name="ListboxMarkedAndSelectedForeground" color="#ffffff" />
 		<color name="WindowTitleForeground" color="#ffffff" />
 		<color name="WindowTitleBackground" color="#25062748" />
+		<color name="WindowDimmer" color="#35000000" />
 		<!-- Main screen border png's -->
 		<borderset name="bsWindow">
 			<pixmap pos="bpTopLeft" filename="skin_default/b_tl.png" />
@@ -224,7 +225,7 @@
 		<widget source="TimeshiftPossible" render="FixedLabel" text="Timeshift" position="460,130" zPosition="1" size="85,22" font="Regular;16" backgroundColor="#182946" shadowColor="#1d354c" shadowOffset="-1,-1" transparent="1">
 			<convert type="ConditionalShowHide" />
 		</widget>
-		
+
 		<!-- Yellow button (used for audio on boxes with new rc?) -->
 		<widget source="ShowAudioOnYellow" render="Pixmap" pixmap="skin_default/buttons/button_yellow.png" position="440,130" zPosition="1" size="15,16" alphatest="on">
 			<convert type="ConditionalShowHide" />

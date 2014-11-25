@@ -69,7 +69,7 @@ class ParentalControl:
 		#time we call isServicePlayable. But this might probably slow down zapping, 
 		#That's why I decided to use a timer
 		self.sessionPinTimer = eTimer()
-		self.sessionPinTimer.callback.append(self.resetSessionPin)
+		self.sessionPinTimer_conn = self.sessionPinTimer.timeout.connect(self.resetSessionPin)
 	
 	def serviceMethodWrapper(self, service, method, *args):
 		#This method is used to call all functions that need a service as Parameter: 

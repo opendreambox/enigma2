@@ -2,7 +2,6 @@
 #define __lib_base_message_h
 
 #include <lib/base/ebase.h>
-#include <lib/python/connections.h>
 #include <lib/python/swig.h>
 #include <unistd.h>
 #include <lib/base/elock.h>
@@ -23,7 +22,7 @@ protected:
 	int ismt;
 public:
 	eMessagePump(int mt=0);
-	virtual ~eMessagePump();
+	~eMessagePump();
 protected:
 	int send(const void *data, int len);
 	int recv(void *data, int len); // blockierend
@@ -82,7 +81,7 @@ class ePythonMessagePump: public eMessagePump, public sigc::trackable
 		/*emit*/ recv_msg(msg);
 	}
 public:
-	PSignal1<void,int> recv_msg;
+	eSignal1<void, int> recv_msg;
 	void send(int msg)
 	{
 		eMessagePump::send(&msg, sizeof(msg));

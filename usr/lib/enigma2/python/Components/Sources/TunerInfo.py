@@ -9,7 +9,7 @@ class TunerInfo(Source):
 		self.tuner_use_mask = 0
 		res_mgr = eDVBResourceManager.getInstance()
 		if res_mgr:
-			res_mgr.frontendUseMaskChanged.get().append(self.tunerUseMaskChanged)
+			self.frontendUseMaskChanged_conn = res_mgr.frontendUseMaskChanged.connect(self.tunerUseMaskChanged)
 		else:
 			print "no res_mgr!!"
 
@@ -23,7 +23,7 @@ class TunerInfo(Source):
 	def destroy(self):
 		res_mgr = eDVBResourceManager.getInstance()
 		if res_mgr:
-			res_mgr.frontendUseMaskChanged.get().remove(self.tunerUseMaskChanged)
+			self.frontendUseMaskChanged_conn = None
 		else:
 			print "no res_mgr!!"
 		Source.destroy(self)

@@ -1,11 +1,13 @@
 from enigma import eRCInput, getPrevAsciiCode
-from Tools.NumericalTextInput import NumericalTextInput
+from Tools.NumericalTextInput import NumericalTextInput, NumericalHexInput
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
 from Tools.IO import saveFile
 from copy import copy as copy_copy
 from os import path as os_path
 from time import localtime, strftime
+from netaddr import IPAddress
 
+from Tools.Log import Log
 # ConfigElement, the base class of all ConfigElements.
 
 # it stores:
@@ -98,16 +100,14 @@ class ConfigElement(object):
 
 	def changed(self, save_or_cancel=False):
 		for (func, val) in self.__notifiers.iteritems():
-			strval = str(self.value)
-			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != strval):
-				self.__notifiers[func] = (val[0], strval, val[2])
+			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != self.value):
+				self.__notifiers[func] = (val[0], self.value, val[2])
 				val[0](self)
 
 	def changedFinal(self, save_or_cancel=False):
 		for (func, val) in self.__notifiers_final.iteritems():
-			strval = str(self.value)
-			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != strval):
-				self.__notifiers_final[func] = (val[0], strval, val[2])
+			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != self.value):
+				self.__notifiers_final[func] = (val[0], self.value, val[2])
 				val[0](self)
 
 	# immediate_feedback = True means call notifier on every value CHANGE
@@ -116,9 +116,9 @@ class ConfigElement(object):
 	def addNotifier(self, notifier, initial_call = True, immediate_feedback = True, call_on_save_or_cancel = False):
 		assert callable(notifier), "notifiers must be callable"
 		if immediate_feedback:
-			self.__notifiers[str(notifier)] = (notifier, str(self.value), call_on_save_or_cancel)
+			self.__notifiers[str(notifier)] = (notifier, self.value, call_on_save_or_cancel)
 		else:
-			self.__notifiers_final[str(notifier)] = (notifier, str(self.value), call_on_save_or_cancel)
+			self.__notifiers_final[str(notifier)] = (notifier, self.value, call_on_save_or_cancel)
 		# CHECKME:
 		# do we want to call the notifier
 		#  - at all when adding it? (yes, though optional)
@@ -458,10 +458,10 @@ class ConfigOnOff(ConfigBoolean):
 	def __init__(self, default = False):
 		ConfigBoolean.__init__(self, default = default, descriptions = on_off_descriptions)
 
-enable_disable_descriptions = {False: _("disable"), True: _("enable")}
-class ConfigEnableDisable(ConfigBoolean):
+class ConfigEnableDisable(ConfigOnOff):
 	def __init__(self, default = False):
-		ConfigBoolean.__init__(self, default = default, descriptions = enable_disable_descriptions)
+		print "WARNING! ConfigEnableDisable is deprecated, please use ConfigOnOff instead!"
+		ConfigOnOff.__init__(self, default = default)
 
 class ConfigDateTime(ConfigElement):
 	def __init__(self, default, formatstring, increment = 86400):
@@ -815,10 +815,9 @@ class ConfigFloat(ConfigSequence):
 	float = property(getFloat)
 
 # an editable text...
-class ConfigText(ConfigElement, NumericalTextInput):
+class ConfigTextBase(ConfigElement):
 	def __init__(self, default = "", fixed_size = True, visible_width = False):
 		ConfigElement.__init__(self)
-		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
 
 		self.marked_pos = 0
 		self.allmarked = (default != "")
@@ -990,7 +989,8 @@ class ConfigText(ConfigElement, NumericalTextInput):
 		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
 		if session is not None:
 			from Screens.NumericalTextInputHelpDialog import NumericalTextInputHelpDialog
-			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self)
+			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self, zPosition=5000)
+			self.help_window.setShowHideAnimation("simple_fade")
 			self.help_window.show()
 
 	def onDeselect(self, session):
@@ -1007,6 +1007,50 @@ class ConfigText(ConfigElement, NumericalTextInput):
 
 	def unsafeAssign(self, value):
 		self.value = str(value)
+
+class ConfigText(ConfigTextBase, NumericalTextInput):
+	def __init__(self, default = "", fixed_size = True, visible_width = False):
+		ConfigTextBase.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
+		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
+
+#IPv6 Address with validation and autoformatting
+class ConfigIP6(ConfigTextBase, NumericalHexInput):
+	def __init__(self, default = "::", visible_width=False):
+		ConfigTextBase.__init__(self, default=default, fixed_size=False, visible_width=False)
+		NumericalHexInput.__init__(self, nextFunc=self.nextFunc, handleTimeout=False)
+
+	def isValid(self):
+		try:
+			ip = IPAddress(self.text)
+			return ip.version == 6
+		except ValueError:
+			Log.w("%s is no valid v6 IP" %self.text)
+			return False
+
+	def getValue(self):
+		return IPAddress(self.text).format().encode("utf-8")
+
+	def setValue(self, val):
+		try:
+			val = val.decode("utf-8")
+			self.text = IPAddress(val).format()
+		except UnicodeDecodeError:
+			self._setDefault()
+			Log.w("Broken UTF8!")
+		except ValueError:
+			Log.w("No valid IPv6 Address")
+			self._setDefault()
+		self.changed()
+
+	def _setDefault(self):
+		if not self.text:
+			self.text = self.default
+
+	value = property(getValue, setValue)
+	_value = property(getValue, setValue)
+
+	def getText(self):
+		return IPAddress(self.text).format().encode("utf-8")
 
 class ConfigPassword(ConfigText):
 	def __init__(self, default = "", fixed_size = False, visible_width = False, censor = "*"):

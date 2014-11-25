@@ -1,7 +1,6 @@
 #ifndef __lib_service_listboxservice_h
 #define __lib_service_listboxservice_h
 
-#include <lib/gdi/gpixmap.h>
 #include <lib/gui/elistbox.h>
 #include <lib/gui/elistboxcontent.h>
 #include <lib/service/iservice.h>

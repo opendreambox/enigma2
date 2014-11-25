@@ -7,11 +7,12 @@
                     <hardware type="dm800se" />
                     <hardware type="dm800sev2" />
                     <hardware type="dm7020hd" />
+                    <hardware type="dm7080" />
                     <tag type="Display" />
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>VideoEnhancement</name>
                     <packagename>enigma2-plugin-systemplugins-videoenhancement</packagename>
                     <shortdescription>VideoEnhancement provides advanced video enhancement settings</shortdescription>

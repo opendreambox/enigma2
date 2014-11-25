@@ -11,8 +11,9 @@ class NumericalTextInput:
 
 		if handleTimeout:
 			self.timer = eTimer()
-			self.timer.callback.append(self.timeout)
+			self.timer_conn = self.timer.timeout.connect(self.timeout)
 		else:
+			self.timer_conn = None
 			self.timer = None
 		self.lastKey = -1
 		self.pos = -1
@@ -130,3 +131,19 @@ class NumericalTextInput:
 	def timeout(self):
 		if self.lastKey != -1:
 			self.nextChar()
+
+class NumericalHexInput(NumericalTextInput):
+	def __init__(self, nextFunc=None, handleTimeout = True, search = False):
+		NumericalTextInput.__init__(self, nextFunc, handleTimeout, search)
+		self.mapping = []
+		self.mapping.append (u"0:") # 0
+		self.mapping.append (u"1a") # 1
+		self.mapping.append (u"2b") # 2
+		self.mapping.append (u"3c") # 3
+		self.mapping.append (u"4d") # 4
+		self.mapping.append (u"5e") # 5
+		self.mapping.append (u"6f") # 6
+		self.mapping.append (u"7") # 7
+		self.mapping.append (u"8") # 8
+		self.mapping.append (u"9") # 9
+		self.setUseableChars('0123456789:abcdef')

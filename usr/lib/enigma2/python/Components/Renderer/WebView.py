@@ -52,27 +52,27 @@ class WebView(Renderer):
 			elif cmd == WebNavigation.COMMAND_GET_SIZE:
 				param(self.instance.size())
 			elif cmd == WebNavigation.EVENT_URL_CHANGED:
-				self.instance.urlChanged.get().append(param)
+				param[0].urlChanged_conn = self.instance.urlChanged.connect(param[1])
 			elif cmd == WebNavigation.EVENT_TITLE_CHANGED:
-				self.instance.titleChanged.get().append(param)
+				param[0].titleChanged_conn = self.instance.titleChanged.connect(param[1])
 			elif cmd == WebNavigation.EVENT_LOAD_PROGRESS:
-				self.instance.loadProgress.get().append(param)
+				param[0].loadProgress_conn = self.instance.loadProgress.connect(param[1])
 			elif cmd == WebNavigation.EVENT_LOAD_FINISHED:
-				self.instance.loadFinished.get().append(param)
+				param[0].loadFinished_conn = self.instance.loadFinished.connect(param[1])
 			elif cmd == WebNavigation.EVENT_DOWNLOAD_REQUESTED:
-				self.instance.downloadRequested.get().append(param)
+				param[0].downloadRequested_conn = self.instance.downloadRequested.connect(param[1])
 			elif cmd == WebNavigation.EVENT_UNSUPPORTED_CONTENT:
-				self.instance.unsupportedContent.get().append(param)
+				param[0].unsupportedContent_conn = self.instance.unsupportedContent.connect(param[1])
 			elif cmd == WebNavigation.EVENT_MICROFOCUS_CHANGED:
-				self.instance.microFocusChanged.get().append(param)
+				param[0].microFocusChanged_conn = self.instance.microFocusChanged.connect(param[1])
 			elif cmd == WebNavigation.EVENT_WINDOW_REQUESTED:
-				self.instance.windowRequested.get().append(param)
+				param[0].windowRequested_conn = self.instance.windowRequested.connect(param[1])
 			elif cmd == WebNavigation.EVENT_SSL_ERRORS:
-				self.instance.sslErrors.get().append(param)
+				param[0].sslErrors_conn = self.instance.sslErrors.connect(param[1])
 			elif cmd == WebNavigation.EVENT_AUTH_REQUIRED:
-				self.instance.authenticationRequired.get().append(param)
+				param[0].authenticationRequired_conn = self.instance.authenticationRequired.connect(param[1])
 			elif cmd == WebNavigation.EVENT_PROXY_AUTH_REQUIRED:
-				self.instance.proxyAuthenticationRequired.get().append(param)
+				param[0].proxyAuthentivationRequired_conn = self.instance.proxyAuthenticationRequired.connect(param[1])
 			elif cmd == WebNavigation.COMMAND_GET_UA:
 				param(self.instance.getUserAgent())
 			elif cmd == WebNavigation.COMMAND_SET_UA:

@@ -1,197 +1,24 @@
-#ifndef __gpixmap_h
-#define __gpixmap_h
+#ifndef __lib_gdi_gpixmap_h
+#define __lib_gdi_gpixmap_h
 
-#include <pthread.h>
-#include <string>
-#include <vector>
+#define __GPIXMAP_H_INSIDE__ 1
+
 #include <lib/base/object.h>
-#include <lib/base/smartptr.h>
-#include <lib/base/elock.h>
-#include <lib/gdi/erect.h>
-#include <lib/gdi/fb.h>
+#include <lib/gdi/esize.h>
+#include <lib/gdi/gpixelformat.h>
+#include <lib/gdi/matrix.h>
+#include <lib/gdi/rgba.h>
+#include <lib/gdi/scalefilter.h>
+#include <lib/gdi/surface_flags.h>
+#include <vector>
 
-class QBrush;
-class QColor;
-class QImage;
-typedef unsigned int QRgb;
+#undef __GPIXMAP_H_INSIDE__
 
-class gRGB
-{
-public:
-	unsigned char b, g, r, a;
-	gRGB(int r, int g, int b, int a=0): b(b), g(g), r(r), a(a)
-	{
-	}
-	gRGB(unsigned int val): b(val&0xFF), g((val>>8)&0xFF), r((val>>16)&0xFF), a((val>>24)&0xFF)		// ARGB
-	{
-	}
-	gRGB(): b(0), g(0), r(0), a(0)
-	{
-	}
-
-#if defined(HAVE_QT) && !defined(SWIG)
-	gRGB(const QBrush &);
-	gRGB(const QColor &);
-	operator QBrush() const;
-	operator QColor() const;
-	operator QRgb() const;
-#endif
-
-	unsigned int argb() const
-	{
-		return (a<<24)|(r<<16)|(g<<8)|b;
-	}
-
-	void operator=(unsigned int val)
-	{
-		b = val&0xFF;
-		g = (val>>8)&0xFF;
-		r = (val>>16)&0xFF;
-		a = (val>>24)&0xFF;
-	}
-	bool operator < (const gRGB &c) const
-	{
-		if (b < c.b)
-			return 1;
-		if (b == c.b)
-		{
-			if (g < c.g)
-				return 1;
-			if (g == c.g)
-			{
-				if (r < c.r)
-					return 1;
-				if (r == c.r)
-					return a < c.a;
-			}
-		}
-		return 0;
-	}
-	bool operator==(const gRGB &c) const
-	{
-		return (b == c.b) && (g == c.g) && (r == c.r) && (a == c.a);
-	}
-};
-
-#ifndef SWIG
-struct gColor
-{
-	int color;
-	gColor(int color): color(color)
-	{
-	}
-	gColor(): color(0)
-	{
-	}
-	operator int() const { return color; }
-	bool operator==(const gColor &o) const { return o.color==color; }
-};
-
-class gPalette
-{
-	friend class gDC;
-	friend class gDirectFBDC;
-	friend class gFBDC;
-	friend class gSDLDC;
-	friend class gPainter;
-	friend class gPixmap;
-
-	std::vector<gRGB> m_colorTable;
-
-	void setColorCount(int colorCount)
-	{
-		if (colorCount >= 0)
-			m_colorTable.resize(colorCount);
-	}
-
-	void setColor(int index, const gRGB &colorValue)
-	{
-		if ((index >= 0) && (index < colorCount()))
-			m_colorTable[index] = colorValue;
-	}
-
-	void setColorTable(const std::vector<gRGB> &colors)
-	{
-		m_colorTable = colors;
-	}
-
-public:
-	gPalette()
-	{
-	}
-
-	gPalette(const gPalette &p) :
-		m_colorTable(p.m_colorTable)
-	{
-	}
-
-	gColor findColor(const gRGB &rgb) const;
-
-	gRGB color(int index) const
-	{
-		if ((index >= 0) && (index < colorCount()))
-			return m_colorTable[index];
-
-		return gRGB();
-	}
-
-	int colorCount() const
-	{
-		return m_colorTable.size();
-	}
-
-	std::vector<gRGB> colorTable() const
-	{
-		return m_colorTable;
-	}
-};
-
-struct gLookup
-{
-	int size;
-	gColor *lookup;
-	gLookup(int size, const gPalette &pal, const gRGB &start, const gRGB &end);
-	gLookup();
-	~gLookup() { delete [] lookup; }
-	void build(int size, const gPalette &pal, const gRGB &start, const gRGB &end);
-};
-#endif
-
-typedef enum
-{
-    ARGB, ABGR, RGBA, BGRA, INDEXED, RGB, BGR
-} colorformat_t;
-
-typedef enum
-{
-    DISABLED, BILINEAR, ANISOTROPIC,
-    SHARP, SHARPER, BLURRY, ANTI_FLUTTER,
-    ANTI_FLUTTER_BLURRY, ANTI_FLUTTER_SHARP
-} scalefilter_t;
-
-#ifndef SWIG
-struct gSurface
-{
-	colorformat_t colorformat;
-	bool premult;	// premultiplied alpha
-	scalefilter_t scalefilter;
-
-	int type;
-	int x, y, bpp, bypp, stride;
-	gPalette clut;
-
-	void *data;
-	int data_phys;
-	int offset; // only for backbuffers
-	void *priv; // for accelerators
-
-	gSurface();
-	gSurface(eSize size, int bpp, int accel, bool premult = false);
-	~gSurface();
-};
-#endif
-
+class ePoint;
+class eRect;
+class gColor;
 class gRegion;
+class gSurface;
 
 SWIG_IGNORE(gPixmap);
 class gPixmap: public iObject
@@ -199,7 +26,28 @@ class gPixmap: public iObject
 	DECLARE_REF(gPixmap);
 	E_DISABLE_COPY(gPixmap)
 
-	eSize m_scale_size;
+	gRGBA m_invalidColor;
+	gSurface *m_surface;
+	bool m_glsl;
+
+	void drawPixel8(const ePoint &pos, unsigned int pixel);
+	void drawPixel16(const ePoint &pos, unsigned int pixel);
+	void drawPixel24(const ePoint &pos, unsigned int pixel);
+	void drawPixel32(const ePoint &pos, unsigned int pixel);
+	void drawLine(const gRegion &clip, const ePoint &start, const ePoint &dst, unsigned int pixel, const eMatrix4x4 &matrix);
+
+	void fillRect8(const eRect &area, unsigned int pixel);
+	void fillRect16(const eRect &area, unsigned int pixel);
+	void fillRect32(const eRect &area, unsigned int pixel);
+	void fillRegion(const gRegion &region, unsigned int pixel, int flags, const eMatrix4x4 &matrix);
+
+    #if defined(D_ENABLE_ASSERTIONS)
+	static void testBlit(ePtr<gPixmap> dst, ePtr<gPixmap> src, const char *name);
+	static void testBlitConstantAlpha(ePtr<gPixmap> dst, ePtr<gPixmap> src, float c_alpha, const char *name);
+	static void testBlitClip(ePtr<gPixmap> dst, ePtr<gPixmap> src, const char *name);
+	static void testFill(ePtr<gPixmap> pixmap, const gRGBA &color, const char *name);
+    #endif /* D_ENABLE_ASSERTIONS */
+
 public:
 #ifndef SWIG
 	enum
@@ -210,51 +58,67 @@ public:
 	};
 
 	gPixmap(gSurface *surface, bool takeOwnership = false);
-	gPixmap(eSize, int bpp, int accel = 0, bool premult = false);
+	gPixmap(gPixelFormat fmt, unsigned int flags, const eSize &size);
 
-	static ePtr<gPixmap> fromFile(const char *filename);
-#if defined(DISPLAY_QT)
-	gPixmap(const char *filename);
-#endif
-#if defined(HAVE_QT)
-	QImage &toQImage();
-#endif
+	static ePtr<gPixmap> fromFile(const char *filename, gPixelFormat = gPixel::preferredFormat());
+	static ePtr<gPixmap> fromFile(const char *filename, const eSize &dstSize, const eSize &aspect, gPixelFormat = gPixel::preferredFormat());
 
 	bool isNull() const;
-	gSurface *surface;
-	int final;
+	gSurface *surface();
+	const gSurface *surface() const;
+	gPixelFormat pixelFormat() const;
+	unsigned int flags() const;
+	bool needClut() const;
+	void drawPixel(const ePoint &pos, const gRGBA &color);
+	bool glTexture(unsigned int *glHandle, unsigned int *glTarget) const;
 
-	inline bool needClut() const { return surface && surface->bpp <= 8; }
+    #if defined(D_ENABLE_ASSERTIONS)
+	static void selftest();
+    #endif /* D_ENABLE_ASSERTIONS */
 #endif
 	virtual ~gPixmap();
-	eSize size() const { return eSize(surface->x, surface->y); }
-	const eSize &scaleSize() const { return m_scale_size; }
+	eSize size() const;
 
-	gRGB color(int index) const;
-	int colorCount() const;
-	std::vector<gRGB> colorTable() const;
-	void setColor(int index, const gRGB &colorValue);
-	void setColorCount(int colorCount);
-	void setColorTable(const std::vector<gRGB> &colors);
-	void setColorFormat(colorformat_t colorformat);
+	const gRGBA &color(unsigned int index) const;
+	unsigned int colorCount() const;
+	std::vector<gRGBA> colorTable() const;
+	void setColor(unsigned int index, const gRGBA &colorValue);
+	void setColorCount(unsigned int colorCount);
+	void setColorTable(const std::vector<gRGBA> &colors);
 	void setScaleFilter(scalefilter_t scalefilter);
-	void setScaleSize(const eSize &size) { m_scale_size = size; }
+
+	enum ScaleMode {
+		SimpleScale,
+		ColorScale,
+	};
+	ePtr<gPixmap> scale(const eSize &size, enum ScaleMode mode = ColorScale) const;
+	ePtr<gPixmap> read() const;
 
 private:
 	E_DECLARE_PRIVATE(gPixmap)
 
 	friend class gDC;
-	void fill(const gRegion &clip, const gColor &color);
-	void fill(const gRegion &clip, const gRGB &color);
+	void fill(const gRegion &clip, const gColor &color, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
+	void fill(const gRegion &clip, const gRGBA &color, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
+	void fill(const std::vector<eRect> &rects, const ePoint &offset, const gColor &c, const gRegion &clip, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
+	void fill(const std::vector<eRect> &rects, const ePoint &offset, const gRGBA &color, const gRegion &clip, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
+
+	void line(const gRegion &clip, const ePoint &start, const ePoint &end, const gColor &c, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
+	void line(const gRegion &clip, const ePoint &start, const ePoint &end, const gRGBA &c, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
 	
-	void blit(const gPixmap &src, const eRect &pos, const gRegion &clip, int flags=0);
+	void blit(const gPixmap &src, const eRect &pos, const gRegion &clip, int flags, float alpha = 1.0, const eMatrix4x4 &matrix = eMatrix4x4::identity());
+
+	void beginNativePainting();
+	void endNativePainting();
 	
+	ePtr<gPixmap> colorScale(ePtr<gPixmap> &dst, const eSize &size) const;
+	ePtr<gPixmap> simpleScale(ePtr<gPixmap> &dst, const eSize &size) const;
+
 	void mergePalette(const gPixmap &target);
-	void line(const gRegion &clip, ePoint start, ePoint end, gColor color);
 #ifdef SWIG
 	gPixmap();
 #endif
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<gPixmap>, gPixmapPtr);
 
-#endif
+#endif /* __lib_gdi_gpixmap_h */

@@ -56,7 +56,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 	@staticmethod
 	def shutdown():
-		quitMainloop(1)
+		quitMainloop(8)
 
 	@staticmethod
 	def staticGotRecordEvent(recservice, event):
@@ -237,7 +237,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				# i.e. cable / sat.. then the second recording needs an own extension... when we create the file
 				# here than calculateFilename is happy
 				if not self.justplay:
-					open(self.Filename + ".ts", "w").close() 
+					open(self.Filename + ".ts", "we").close()
 				# fine. it worked, resources are allocated.
 				self.next_activation = self.begin
 				self.backoff = 0

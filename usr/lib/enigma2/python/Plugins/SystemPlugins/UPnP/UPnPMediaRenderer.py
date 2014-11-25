@@ -1,10 +1,13 @@
+# -*- coding: UTF-8 -*-
 # Originally based on http://coherence.beebits.net/browser/trunk/Coherence/coherence/backends/gstreamer_renderer.py
 # Which has been licensed under the MIT license.
 # Sublicensed under the enigma2 license.
 from enigma import iPlayableService, eTimer, eDVBVolumecontrol, eServiceReference
 from Components.ServiceEventTracker import ServiceEventTracker
+from Components.ResourceManager import resourcemanager
 from GlobalActions import globalActionMap
 from Tools.HardwareInfo import HardwareInfo
+from Tools.Log import Log
 
 from sets import Set
 
@@ -18,7 +21,7 @@ from coherence import log
 import coherence.extern.louie as louie
 from coherence.extern.simple_plugin import Plugin
 
-from UPnPCore import Statics, Item
+from UPnPCore import Statics, Item, removeUPnPDevice
 
 import os
 
@@ -39,7 +42,7 @@ class UPnPPlayer(object):
 		self.onClose = [] #hack
 
 		self.__poll_pos_timer = eTimer()
-		self.__poll_pos_timer.callback.append(self.updatePosition)
+		self.__poll_pos_timer_conn = self.__poll_pos_timer.timeout.connect(self.updatePosition)
 
 		self.volctrl = eDVBVolumecontrol.getInstance() # this is not nice
 
@@ -86,18 +89,31 @@ class UPnPPlayer(object):
 		return None
 
 	def load(self, uri, metadata, mimetype=None):
-		print "[UPnPPlayer.load]\nuri=%s\nmimetype=%s\nmetadata=%s\n" %(uri, mimetype, metadata)
+		Log.i("uri=%s\nmimetype=%s\nmetadata=%s" %(uri, mimetype, metadata))
 		self.uri = uri
 		self.metadata = metadata
 		self.mimetype = mimetype
 
-	def play(self):
-		print "[UPnPPlayer.play] Will now play %s" %self.uri
-		if self._handlePlayback:
+	def play(self, avoidPlayback=False):
+		Log.i("Will now play %s" %self.uri)
+		if self._handlePlayback and not avoidPlayback:
 			if self._state == UPnPMediaRenderer.STATE_PAUSED:
 				if self.unpause():
 					return
 			service = eServiceReference(4097, 0, self.uri)
+			if self.metadata != None:
+				title = self.metadata.get(Statics.META_TITLE, None)
+				artist = self.metadata.get(Statics.META_ARTIST, None)
+				album = self.metadata.get(Statics.META_ALBUM, None)
+				if title != None:
+					if artist != None:
+						if album != None:
+							title = "%s - %s - %s" %(artist, album, title)
+						else:
+							title = "%s - %s" %(artist, title)
+					Log.i("Generated title is '%s'" %title)
+					service.setName(title)
+
 			self.session.nav.playService(service)
 		self.__onPlay()
 
@@ -106,19 +122,18 @@ class UPnPPlayer(object):
 		self.stopPolling()
 
 	def pause(self):
-		print "[UPnPPlayer.pause]"
-		res = False
+		Log.i()
 		if self._handlePlayback:
 			pausable = self.getPausable()
 			if pausable is not None:
 				self.stopPolling()
 				pausable.pause()
-				res = True
-		self.__onPause()
-		return res
+				return True;
+				self.__onPause()
+		return False
 
 	def seek(self, position):
-		print "[UPnPPlayer.seekable] position=%s" %position
+		Log.i("position=%s" %position)
 		self.stopPolling() #don't send a new position until we're done seeking
 		seekable = self.getSeekable()
 		if seekable != None:
@@ -128,16 +143,16 @@ class UPnPPlayer(object):
 
 	def stop(self, isEOF):
 		if isEOF:
-			print "[UPnPPlayer.stop :: EOF]"
+			Log.i("EOF")
 			self.__onEOF()
 		else:
-			print "[UPnPPlayer.stop]"
+			Log.i()
 			if self._handlePlayback:
 				self.session.nav.stopService()
 			self.__onStop()
 
 	def unpause(self):
-		print "[UPnPPlayer.unpause]"
+		Log.i()
 		if self._handlePlayback:
 			pausable = self.getPausable()
 			if pausable is not None:
@@ -151,25 +166,25 @@ class UPnPPlayer(object):
 			return True
 
 	def getMute(self):
-		print "[UPnPPlayer.getMute]"
+		Log.i()
 		return self.volctrl.isMuted()
 
 	def mute(self):
-		print "[UPnPPlayer.mute]"
+		Log.i()
 		if not self.volctrl.isMuted():
 			self.actionmap.actions["volumeMute"]()
 
 	def unmute(self):
-		print "[UPnPPlayer.unmute]"
+		Log.i()
 		if self.volctrl.isMuted():
 			self.actionmap.actions["volumeMute"]()
 
 	def getVolume(self):
-		print "[UPnPPlayer.getVolume]"
+		Log.i()
 		return self.volctrl.getVolume()
 
 	def setVolume(self, vol):
-		print "[UPnPPlayer.setVolume]"
+		Log.i()
 		self.volctrl.setVolume(vol, vol)
 
 	def getState(self):
@@ -177,12 +192,12 @@ class UPnPPlayer(object):
 		return self._state
 
 	def startPolling(self):
-		print "[UPnPPlayer.startPolling]"
+		Log.i()
 		self.__poll_pos_timer.stop()
 		self.__poll_pos_timer.start(1000, False)
 
 	def stopPolling(self):
-		print "[UPnPPlayer.stopPolling]"
+		Log.i()
 		self.__poll_pos_timer.stop()
 
 	def updatePosition(self):
@@ -349,8 +364,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		if(len(elt.getItems()) > 0):
 			meta = Item.getItemMetadata(elt.getItems()[0])
 		self.player.load(uri, meta, mimetype)
-
-		state = self.player.getState()
 		connection_id = self.server.connection_manager_server.lookup_avt_id(self.current_connection_id)
 		self.stop(silent=True) # the check whether a stop is really needed is done inside stop
 
@@ -401,7 +414,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 
 	def stop(self, silent=False):
 		self.info('Stopping: %r' % self.player.getUri())
-		if self.player.getUri() == None:
+		if not self.player.getUri() or self.player.getState() == UPnPMediaRenderer.STATE_IDLE:
 			return
 		self.player.stop()
 		if silent is True:
@@ -743,3 +756,10 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		DesiredVolume = int(kwargs['DesiredVolume'])
 		self.set_volume(DesiredVolume)
 		return {}
+
+def restartMediaRenderer(session, player, name, uuid):
+	cp = resourcemanager.getResource("UPnPControlPoint")
+	if cp:
+		removeUPnPDevice(uuid, cp)
+		return cp.registerRenderer(UPnPMediaRenderer, session=session, player=player, name=name, uuid=uuid)
+	return None

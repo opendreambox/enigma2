@@ -28,7 +28,7 @@ class EventViewBase:
 		self["key_red"] = Button("")
 		if similarEPGCB is not None:
 			self.SimilarBroadcastTimer = eTimer()
-			self.SimilarBroadcastTimer.callback.append(self.getSimilarEvents)
+			self.SimilarBroadcastTimer_conn = self.SimilarBroadcastTimer.timeout.connect(self.getSimilarEvents)
 		else:
 			self.SimilarBroadcastTimer = None
 		self.key_green_choice = self.ADD_TIMER

@@ -42,6 +42,11 @@
 			<tag type="Multimedia" />
 		</prerequisites>
 	</package>
+	<package details="plugin_mediarenderer.xml" name="MediaRenderer" packagename="enigma2-plugin-extensions-mediarenderer" shortdescription="A simple UPnP/DLNA Mediarenderer">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
 	<package details="plugin_mediascanner.xml" name="MediaScanner" packagename="enigma2-plugin-extensions-mediascanner" shortdescription="Scan devices for playable media files">
 		<prerequisites>
 			<tag type="System" />
@@ -71,6 +76,7 @@
 		<prerequisites>
 			<hardware type="dm8000" />
 			<hardware type="dm7020hd" />
+			<hardware type="dm7080" />
 			<tag type="CI" />
 			<tag type="System" />
 		</prerequisites>
@@ -108,27 +114,18 @@
 			<tag type="System" />
 		</prerequisites>
 	</package>
-	<package details="plugin_minidlnasetup.xml" name="DLNA Mediaserver Setup (miniDLNA)" packagename="enigma2-plugin-systemplugins-minidlnasetup" packagetype="public" shortdescription="Setup your DLNA Mediaserver (minidlna)">
+	<package details="plugin_jsonapi.xml" name="JSON API" packagename="enigma2-plugin-systemplugins-jsonapi" shortdescription="JSON-RPC API">
 		<prerequisites>
 			<tag type="System" />
-			<tag type="Network" />
+		</prerequisites>
+	</package>
+	<package details="plugin_mediadatabasemanager.xml" name="Media Database Manager" packagename="enigma2-plugin-systemplugins-mediadatabasemanager" shortdescription="Manage your Media Database">
+		<prerequisites>
 			<tag type="Multimedia" />
 		</prerequisites>
 	</package>
-	<package details="plugin_nfiflash.xml" name="NFIFlash" packagename="enigma2-plugin-systemplugins-nfiflash" shortdescription="Restore your Dreambox with a USB stick">
+	<package details="plugin_networkmanager.xml" name="NetworkManager" packagename="enigma2-plugin-systemplugins-networkmanager" packagetype="internal" shortdescription="Network management plugin">
 		<prerequisites>
-			<hardware type="dm8000" />
-			<tag type="System" />
-		</prerequisites>
-	</package>
-	<package details="plugin_networksetup.xml" name="NetworkSetup" packagename="enigma2-plugin-systemplugins-networksetup" packagetype="internal" shortdescription="Internal network setup plugin">
-		<prerequisites>
-			<tag type="System" />
-		</prerequisites>
-	</package>
-	<package details="plugin_networkwizard.xml" name="NetworkWizard" packagename="enigma2-plugin-systemplugins-networkwizard" shortdescription="Step by step network configuration">
-		<prerequisites>
-			<tag type="Network" />
 			<tag type="System" />
 		</prerequisites>
 	</package>
@@ -170,7 +167,13 @@
 			<hardware type="dm800se" />
 			<hardware type="dm800sev2" />
 			<hardware type="dm7020hd" />
+			<hardware type="dm7080" />
 			<tag type="System" />
+		</prerequisites>
+	</package>
+	<package details="plugin_upnp.xml" name="UPnP" packagename="enigma2-plugin-systemplugins-upnp" shortdescription="Basic UPnP/DLNA Support">
+		<prerequisites>
+			<tag type="Multimedia" />
 		</prerequisites>
 	</package>
 	<package details="plugin_videoenhancement.xml" name="VideoEnhancement" packagename="enigma2-plugin-systemplugins-videoenhancement" shortdescription="VideoEnhancement provides advanced video enhancement settings">
@@ -182,6 +185,7 @@
 			<hardware type="dm800se" />
 			<hardware type="dm800sev2" />
 			<hardware type="dm7020hd" />
+			<hardware type="dm7080" />
 			<tag type="Display" />
 			<tag type="System" />
 		</prerequisites>
@@ -195,12 +199,6 @@
 	<package details="plugin_videomode.xml" name="Videomode" packagename="enigma2-plugin-systemplugins-videomode" shortdescription="Videomode provides advanced video mode settings">
 		<prerequisites>
 			<tag type="Display" />
-			<tag type="System" />
-		</prerequisites>
-	</package>
-	<package details="plugin_wirelesslan.xml" name="WirelessLan" packagename="enigma2-plugin-systemplugins-wirelesslan" shortdescription="Configure your WLAN network interface">
-		<prerequisites>
-			<tag type="Network" />
 			<tag type="System" />
 		</prerequisites>
 	</package>

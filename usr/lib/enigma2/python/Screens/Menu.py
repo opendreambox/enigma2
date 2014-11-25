@@ -24,7 +24,7 @@ lastMenuID = None
 def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 	png = png_cache.get(entryID, None)
 	if png is None: # no cached entry
-		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")) #lets look for a dedicated icon
+		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png"), cached=True) #lets look for a dedicated icon
 		if png is None: # no dedicated icon found
 			if lastMenuID is not None:
 				png = png_cache.get(lastMenuID, None)
@@ -32,7 +32,7 @@ def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 	if png is None:
 		png = png_cache.get("missing", None)
 		if png is None:
-			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/missing.png"))
+			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/missing.png"), cached=True)
 			png_cache["missing"] = png
 	return png
 

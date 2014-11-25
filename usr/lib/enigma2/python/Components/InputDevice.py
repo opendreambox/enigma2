@@ -3,7 +3,8 @@ from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigTe
 
 import struct
 from fcntl import ioctl
-from os import listdir, open as os_open, close as os_close, write as os_write, O_RDWR, O_NONBLOCK
+from os import listdir, open as os_open, close as os_close, write as os_write, O_RDWR
+O_CLOEXEC = 02000000
 
 # asm-generic/ioctl.h
 IOC_NRBITS = 8L
@@ -35,10 +36,10 @@ class inputDevices:
 		for evdev in devices:
 			try:
 				buffer = "\0"*512
-				self.fd = os_open("/dev/input/" + evdev, O_RDWR | O_NONBLOCK)
-				self.name = ioctl(self.fd, EVIOCGNAME(256), buffer)
+				fd = os_open("/dev/input/" + evdev, O_RDWR | O_CLOEXEC)
+				self.name = ioctl(fd, EVIOCGNAME(256), buffer)
 				self.name = self.name[:self.name.find("\0")]
-				os_close(self.fd)
+				os_close(fd)
 			except (IOError,OSError), err:
 				print '[iInputDevices] getInputDevices  <ERROR: ioctl(EVIOCGNAME): ' + str(err) + ' >'
 				self.name = None
@@ -117,7 +118,7 @@ class inputDevices:
 		self.setDeviceAttribute(device, 'configuredName', None)
 		event_repeat = struct.pack('iihhi', 0, 0, 0x14, 0x01, 100)
 		event_delay = struct.pack('iihhi', 0, 0, 0x14, 0x00, 700)
-		fd = os_open("/dev/input/" + device, O_RDWR)
+		fd = os_open("/dev/input/" + device, O_RDWR | O_CLOEXEC)
 		os_write(fd, event_repeat)
 		os_write(fd, event_delay)
 		os_close(fd)
@@ -126,7 +127,7 @@ class inputDevices:
 		if self.getDeviceAttribute(device, 'enabled') == True:
 			print "[iInputDevices] setRepeat for device %s to %d ms" % (device,value)
 			event = struct.pack('iihhi', 0, 0, 0x14, 0x01, int(value))
-			fd = os_open("/dev/input/" + device, O_RDWR)
+			fd = os_open("/dev/input/" + device, O_RDWR | O_CLOEXEC)
 			os_write(fd, event)
 			os_close(fd)
 
@@ -134,7 +135,7 @@ class inputDevices:
 		if self.getDeviceAttribute(device, 'enabled') == True:
 			print "[iInputDevices] setDelay for device %s to %d ms" % (device,value)
 			event = struct.pack('iihhi', 0, 0, 0x14, 0x00, int(value))
-			fd = os_open("/dev/input/" + device, O_RDWR)
+			fd = os_open("/dev/input/" + device, O_RDWR | O_CLOEXEC)
 			os_write(fd, event)
 			os_close(fd)
 

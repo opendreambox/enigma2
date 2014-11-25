@@ -34,10 +34,10 @@ class FrontendInfo(Source, PerServiceBase):
 	def getFrontendData(self):
 		if self.frontend_source:
 			frontend = self.frontend_source()
-			dict = { }
+			data = { }
 			if frontend:
-				frontend.getFrontendData(dict)
-			return dict
+				frontend.getFrontendData(data)
+			return data
 		elif self.service_source:
 			service = self.navcore and self.service_source()
 			feinfo = service and service.frontendInfo()

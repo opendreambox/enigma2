@@ -12,6 +12,8 @@ from Components.Sources.List import List
 from Components.config import config
 from enigma import eTimer, eEnv
 
+from Tools.BoundFunction import boundFunction
+
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 
@@ -50,9 +52,10 @@ class Wizard(Screen):
 			return WizardSummary
 
 	class parseWizard(ContentHandler):
-		def __init__(self, wizard):
+		def __init__(self, wizard, parentWizard = None):
 			self.isPointsElement, self.isReboundsElement = 0, 0
 			self.wizard = wizard
+			self.parentWizard = parentWizard
 			self.currContent = ""
 			self.lastStep = 0	
 
@@ -87,7 +90,10 @@ class Wizard(Screen):
 				if attrs.has_key('laststep'):
 					self.wizard[self.lastStep]["laststep"] = str(attrs.get('laststep'))
 			elif (name == "text"):
-				self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
+				if attrs.has_key("dynamictext"):
+					self.wizard[self.lastStep]["dynamictext"] = str(attrs.get('dynamictext'))
+				else:
+					self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif (name == "displaytext"):
 				self.wizard[self.lastStep]["displaytext"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif (name == "list"):
@@ -99,7 +105,15 @@ class Wizard(Screen):
 				if (attrs.has_key("evaluation")):
 					self.wizard[self.lastStep]["listevaluation"] = attrs.get("evaluation")
 				if (attrs.has_key("onselect")):
-					self.wizard[self.lastStep]["onselect"] = attrs.get("onselect")			
+					self.wizard[self.lastStep]["onselect"] = attrs.get("onselect")
+			elif (name == "multicontentlist"):
+				if (attrs.has_key('type')):
+					if attrs["type"] == "dynamic":
+						self.wizard[self.lastStep]["dynamicmulticontentlist"] = attrs.get("setfunction")
+				if (attrs.has_key("onselect")):
+					self.wizard[self.lastStep]["onselect"] = attrs.get("onselect")
+				if (attrs.has_key("evaluation")):
+					self.wizard[self.lastStep]["evaluation"] = attrs.get("evaluation")
 			elif (name == "listentry"):
 				self.wizard[self.lastStep]["list"].append((str(attrs.get('caption')), str(attrs.get('step'))))
 			elif (name == "config"):
@@ -127,7 +141,13 @@ class Wizard(Screen):
 					self.codeafter = False
 			elif (name == "condition"):
 				pass
-			
+			elif (name == "wizard"):
+				if self.parentWizard is not None:
+					if (attrs.has_key('nextstepanimation')):
+						self.parentWizard.setAnimation(self.parentWizard.NEXT_STEP_ANIMATION, str(attrs.get('nextstepanimation')))
+					if (attrs.has_key('previousstepanimation')):
+						self.parentWizard.setAnimation(self.parentWizard.PREVIOUS_STEP_ANIMATION, str(attrs.get('previousstepanimation')))						
+
 		def endElement(self, name):
 			self.currContent = ""
 			if name == 'code':
@@ -162,19 +182,22 @@ class Wizard(Screen):
 			elif self.currContent == "condition":
 				 self.wizard[self.lastStep]["condition"] = self.wizard[self.lastStep]["condition"] + ch
 	
-	def __init__(self, session, showSteps = True, showStepSlider = True, showList = True, showConfig = True):
+	def __init__(self, session, showSteps = True, showStepSlider = True, showList = True, showConfig = True, showMulticontentList = False):
 		Screen.__init__(self, session)
 		
 		self.isLastWizard = False # can be used to skip a "goodbye"-screen in a wizard
 
 		self.stepHistory = []
+		
+		self.__nextStepAnimation = "wizard_next"
+		self.__previousStepAnimation = "wizard_previous"
 
 		self.wizard = {}
 		parser = make_parser()
 		if not isinstance(self.xmlfile, list):
 			self.xmlfile = [self.xmlfile]
 		print "Reading ", self.xmlfile
-		wizardHandler = self.parseWizard(self.wizard)
+		wizardHandler = self.parseWizard(self.wizard, self)
 		parser.setContentHandler(wizardHandler)
 		for xmlfile in self.xmlfile:
 			if xmlfile[0] != '/':
@@ -186,12 +209,13 @@ class Wizard(Screen):
 		self.showStepSlider = showStepSlider
 		self.showList = showList
 		self.showConfig = showConfig
+		self.showMulticontentList = showMulticontentList
 
 		self.numSteps = len(self.wizard)
 		self.currStep = self.getStepWithID("start") + 1
 		
 		self.timeoutTimer = eTimer()
-		self.timeoutTimer.callback.append(self.timeoutCounterFired)
+		self.timeoutTimer_conn = self.timeoutTimer.timeout.connect(self.timeoutCounterFired)
 
 		self["text"] = Label()
 
@@ -204,6 +228,11 @@ class Wizard(Screen):
 		if self.showStepSlider:
 			self["stepslider"] = Slider(1, self.numSteps)
 		
+		if self.showMulticontentList:
+			self.multicontentlist = []
+			self["multicontentlist"] = List(self.multicontentlist)
+			self["multicontentlist"].onSelectionChanged.append(self.selChanged)
+
 		if self.showList:
 			self.list = []
 			self["list"] = List(self.list, enableWrapAround = True)
@@ -253,6 +282,16 @@ class Wizard(Screen):
 		
 		self["VirtualKB"].setEnabled(False)
 		
+		self.onHideFinished.append(self.__hideFinished)
+	
+	NEXT_STEP_ANIMATION = 0
+	PREVIOUS_STEP_ANIMATION = 1
+	def setAnimation(self, type, animation):
+		if type == self.NEXT_STEP_ANIMATION:
+			self.__nextStepAnimation = animation
+		elif type == self.PREVIOUS_STEP_ANIMATION:
+			self.__previousStepAnimation = animation
+		
 	def red(self):
 		print "red"
 		pass
@@ -289,6 +328,7 @@ class Wizard(Screen):
 		self.lcdCallbacks.append(callback)
 
 	def back(self):
+		self.instance.setShowHideAnimation(self.__previousStepAnimation)
 		if self.disableKeys:
 			return
 		print "getting back..."
@@ -296,13 +336,14 @@ class Wizard(Screen):
 		if len(self.stepHistory) > 1:
 			self.currStep = self.stepHistory[-2]
 			self.stepHistory = self.stepHistory[:-2]
+			self.hide()
+			self.updateValues()
 		else:
 			self.session.openWithCallback(self.exitWizardQuestion, MessageBox, (_("Are you sure you want to exit this wizard?") ) )
 		if self.currStep < 1:
 			self.currStep = 1
 		print "currStep:", self.currStep
 		print "new stepHistory:", self.stepHistory
-		self.updateValues()
 		print "after updateValues stepHistory:", self.stepHistory
 		
 	def exitWizardQuestion(self, ret = False):
@@ -325,6 +366,8 @@ class Wizard(Screen):
 		return 0
 
 	def finished(self, gotoStep = None, *args, **kwargs):
+		self.hide()
+
 		print "finished"
 		currStep = self.currStep
 
@@ -336,7 +379,7 @@ class Wizard(Screen):
 				eval("self." + self.wizard[currStep]["config"]["evaluation"])()
 
 		if self.showList:
-			if (len(self.wizard[currStep]["evaluatedlist"]) > 0):
+			if (len(self.wizard[currStep].get("evaluatedlist", [])) > 0):
 				print "current:", self["list"].current
 				nextStep = self["list"].current[1]
 				if (self.wizard[currStep].has_key("listevaluation")):
@@ -348,6 +391,11 @@ class Wizard(Screen):
 						element.save()
 				else:
 					self.currStep = self.getStepWithID(nextStep)
+
+		if self.showMulticontentList:
+			if (len(self.wizard[currStep].get("evaluatedmulticontentlist", [])) > 0):
+				if (self.wizard[currStep].has_key("evaluation")):
+					exec("self." + self.wizard[self.currStep]["evaluation"] + "('" + self["multicontentlist"].current[0] + "')")
 
 		print_now = True
 		if ((currStep == self.numSteps and self.wizard[currStep]["nextstep"] is None) or self.wizard[currStep]["id"] == "end"): # wizard finished
@@ -368,8 +416,12 @@ class Wizard(Screen):
 		if print_now:
 			print "Now: " + str(self.currStep)
 
+	def __hideFinished(self):
+		self.show()
+
 	def ok(self):
 		print "OK"
+		self.instance.setShowHideAnimation(self.__nextStepAnimation)
 		if self.disableKeys:
 			return
 		currStep = self.currStep
@@ -429,6 +481,11 @@ class Wizard(Screen):
 				self.selection = self["list"].current[-1]
 				#self.selection = self.wizard[self.currStep]["evaluatedlist"][self["list"].l.getCurrentSelectionIndex()][1]
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
+		elif (self.showMulticontentList and len(self.wizard[self.currStep]["evaluatedmulticontentlist"]) > 0):
+			self["multicontentlist"].selectPrevious()
+			if self.wizard[self.currStep].has_key("onselect"):
+				self.selection = self["multicontentlist"].current
+				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 		print "up"
 		
 	def down(self):
@@ -446,6 +503,11 @@ class Wizard(Screen):
 				self.selection = self["list"].current[-1]
 				#self.selection = self.wizard[self.currStep]["evaluatedlist"][self["list"].l.getCurrentSelectionIndex()][1]
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
+		elif (self.showMulticontentList and len(self.wizard[self.currStep]["evaluatedmulticontentlist"]) > 0):
+			self["multicontentlist"].selectNext()
+			if self.wizard[self.currStep].has_key("onselect"):
+				self.selection = self["multicontentlist"].current
+				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 		print "down"
 		
 	def selChanged(self):
@@ -458,7 +520,7 @@ class Wizard(Screen):
 				self.selection = self["list"].current[-1]
 				print "self.selection:", self.selection
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
-		
+
 	def resetCounter(self):
 		self.timeoutCounter = self.wizard[self.currStep]["timeout"]
 		
@@ -473,7 +535,11 @@ class Wizard(Screen):
 		return _(text)
 			
 	def updateText(self, firstset = False):
-		text = self.getTranslation(self.wizard[self.currStep]["text"])
+		if self.wizard[self.currStep].has_key("dynamictext"):
+			text = eval("self." + self.wizard[self.currStep]["dynamictext"] + "(\"" + self.wizard[self.currStep]["id"] + "\")")
+		else:
+			text = self.wizard[self.currStep]["text"]
+		text = self.getTranslation(text)
 		if text.find("[timeout]") != -1:
 			text = text.replace("[timeout]", str(self.timeoutCounter))
 			self["text"].setText(text)
@@ -545,6 +611,20 @@ class Wizard(Screen):
 			else:
 				self.afterAsyncCode()
 
+	def showHideList(self, name, show = True):
+		for renderer in self.renderer:
+			rootrenderer = renderer
+			while renderer.source is not None:
+				if renderer.source is self[name]:
+					if show:
+						rootrenderer.instance.setZPosition(1)
+						rootrenderer.instance.show()
+					else:
+						rootrenderer.instance.setZPosition(0)
+						rootrenderer.instance.hide()
+
+				renderer = renderer.source
+
 	def afterAsyncCode(self):
 		if not self.updateValues in self.onShown:
 			self.onShown.append(self.updateValues)
@@ -561,14 +641,7 @@ class Wizard(Screen):
 			if self.showList:
 				print "showing list,", self.currStep
 				index = 0
-				for renderer in self.renderer:
-					rootrenderer = renderer
-					while renderer.source is not None:
-						print "self.list:", self["list"]
-						if renderer.source is self["list"]:
-							print "setZPosition"
-							rootrenderer.instance.setZPosition(1)
-						renderer = renderer.source
+				self.showHideList("list", show = True)
 
 				#self["list"].instance.setZPosition(1)
 				self.list = []
@@ -604,12 +677,27 @@ class Wizard(Screen):
 				self.wizard[self.currStep]["evaluatedlist"] = self.list
 				self["list"].list = self.list
 				self["list"].index = index
-			else:
-				self["list"].hide()
-	
+				if not self.list:
+					self.showHideList("list", show = False)
+# 			else:
+# 				self.showHideList("list", show = False)
+				
+			if self.showMulticontentList:
+				print "showing multi content list"
+				self.showHideList("multicontentlist", show = True)
+				self.multicontentlist = []
+				if (self.wizard[self.currStep].has_key("dynamicmulticontentlist")):
+					dynamiclist = self.wizard[self.currStep]["dynamicmulticontentlist"]
+					exec("self." + self.wizard[self.currStep]["dynamicmulticontentlist"] + "()")
+				else:
+					self.showHideList("multicontentlist", show = False)
+				self.wizard[self.currStep]["evaluatedmulticontentlist"] = self.multicontentlist
+# 			else:
+#  				self.showHideList("multicontentlist", show = False)
+
 			if self.showConfig:
 				print "showing config"
-				self["config"].instance.setZPosition(1)
+# 				self["config"].instance.setZPosition(1)
 				if self.wizard[self.currStep]["config"]["type"] == "dynamic":
 						print "config type is dynamic"
 						self["config"].instance.setZPosition(2)

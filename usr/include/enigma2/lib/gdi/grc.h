@@ -7,8 +7,8 @@
 	gPixmap aufsetzt (und damit unbeschleunigt ist).
 */
 
-#if defined(DISPLAY_COGL)
-#define SYNC_PAINT
+#if defined(Q_MOC_RUN)
+#include "enigma2_config.h"
 #endif
 
 #include <pthread.h>
@@ -18,14 +18,35 @@
 #include <string>
 #include <lib/base/elock.h>
 #include <lib/base/message.h>
+#include <lib/base/thread.h>
+#include <lib/gdi/color.h>
 #include <lib/gdi/erect.h>
 #include <lib/gdi/gpixmap.h>
+#include <lib/gdi/matrix.h>
 #include <lib/gdi/region.h>
 #include <lib/gdi/gfont.h>
-#include <lib/gdi/compositing.h>
+
+#if defined(DISPLAY_QT)
+#include <QThread>
+#define GRC_THREAD_BASE QThread
+#else
+class QThread;
+#define GRC_THREAD_BASE eThread
+#endif
+
+union eGLThread {
+	eGLThread() : tid(0)
+	{
+	}
+
+	bool operator==(const eGLThread &o) const { return tid == o.tid; }
+	bool operator!=(const eGLThread &o) const { return tid != o.tid; }
+	long tid;
+	QThread *qThread;
+};
 
 class eTextPara;
-
+class gPalette;
 
 class gDC;
 class gOpcode
@@ -33,11 +54,9 @@ class gOpcode
 public:
 	enum Opcode
 	{
-		renderText,
 		renderPara,
-		setFont,
 		
-		fill, fillRegion, clear,
+		fill, fillRegion, fillRects, clear,
 		blit,
 
 		setPalette,
@@ -58,14 +77,15 @@ public:
 		flush,
 		
 		waitVSync,
-		flip,
 		notify,
 		
 		enableSpinner, disableSpinner, incrementSpinner,
 		
-		setVideoMode, shutdown,
-		
-		setCompositing,
+		shutdown,
+
+		beginNativePainting, endNativePainting,
+		lockGL, unlockGL,
+		setMatrix,
 	} opcode;
 
 	gDC *dc;
@@ -75,30 +95,27 @@ public:
 		struct pfillRect
 		{
 			eRect area;
+			int flags;
 		} *fill;
 
 		struct pfillRegion
 		{
 			gRegion region;
+			int flags;
 		} *fillRegion;
 
-		struct prenderText
+		struct pfillRects
 		{
-			eRect area;
-			char *text;
+			std::vector<eRect> rects;
+			eRect bbox;
 			int flags;
-		} *renderText;
+		} *fillRects;
 
 		struct prenderPara
 		{
 			ePoint offset;
 			eTextPara *textpara;
 		} *renderPara;
-
-		struct psetFont
-		{
-			gFont *font;
-		} *setFont;
 
 		struct psetPalette
 		{
@@ -107,20 +124,22 @@ public:
 
 		struct pblit
 		{
-			gPixmap *pixmap;
+			ePtr<gPixmap> pixmap;
 			int flags;
 			eRect position;
 			eRect clip;
+			float alpha;
 		} *blit;
 
 		struct pmergePalette
 		{
-			gPixmap *target;
+			ePtr<gPixmap> target;
 		} *mergePalette;
 
 		struct pline
 		{
 			ePoint start, end;
+			int flags;
 		} *line;
 
 		struct psetClip
@@ -135,7 +154,7 @@ public:
 
 		struct psetColorRGB
 		{
-			gRGB color;
+			gRGBA color;
 		} *setColorRGB;
 
 		struct psetOffset
@@ -150,7 +169,15 @@ public:
 			unsigned int bpp;
 		} *videoMode;
 
-		gCompositingData *setCompositing;
+		struct pglThread
+		{
+			eGLThread thread;
+		} *glThread;
+
+		struct psetMatrix
+		{
+			eMatrix4x4 matrix;
+		} *setMatrix;
 
 		para()
 			:fill(NULL)
@@ -158,7 +185,8 @@ public:
 		}
 	} parm;
 
-	gOpcode();
+	gOpcode(enum Opcode o = shutdown);
+	gOpcode(enum Opcode o, ePtr<gDC> &dc);
 	std::string toString() const;
 private:
 	std::string parmString() const;
@@ -167,20 +195,25 @@ private:
 #define MAXSIZE 2048
 
 		/* gRC is the singleton which controls the fifo and dispatches commands */
-class gRC: public iObject, public sigc::trackable
+class gRC : public GRC_THREAD_BASE, public iObject, public sigc::trackable
 {
+#if defined(DISPLAY_QT)
+	Q_OBJECT
+#endif
 	DECLARE_REF(gRC);
 	friend class gPainter;
 	friend class gFBDC;
+	friend class gMainDC;
+	friend class gQtDC;
 	static gRC *instance;
 
-#ifndef SYNC_PAINT
-	static void *thread_wrapper(void *ptr);
-	pthread_t the_thread;
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
+#if defined(DISPLAY_QT)
+	virtual void run();
+#else
+	virtual void thread();
 #endif
-	void *thread();
 
 	gOpcode queue[MAXSIZE];
 	int rp, wp;
@@ -194,14 +227,12 @@ class gRC: public iObject, public sigc::trackable
 	void enableSpinner();
 	void disableSpinner();
 	
-	ePtr<gCompositingData> m_compositing;
-
 	int m_prev_idle_count;
 
-#ifndef SYNC_PAINT
 	void lock();
 	void unlock();
-#endif
+
+	eGLThread threadId();
 public:
 	gRC();
 	virtual ~gRC();
@@ -220,20 +251,22 @@ class gPainter
 {
 	ePtr<gDC> m_dc;
 	ePtr<gRC> m_rc;
+	ePtr<gFont> m_font;
 	friend class gRC;
 
-	gOpcode *beginptr;
 	void begin(const eRect &rect);
 	void end();
+
+	void submit(const gOpcode::Opcode o, const gOpcode::para &parm = gOpcode::para());
 public:
-	gPainter(gDC *dc, eRect rect=eRect());
-	virtual ~gPainter();
-	
+	gPainter(gDC *dc);
+	~gPainter();
+
 	void setBackgroundColor(const gColor &color);
 	void setForegroundColor(const gColor &color);
 
-	void setBackgroundColor(const gRGB &color);
-	void setForegroundColor(const gRGB &color);
+	void setBackgroundColor(const gRGBA &color);
+	void setForegroundColor(const gRGBA &color);
 
 	void setFont(gFont *font);
 		/* flags only THESE: */
@@ -254,31 +287,32 @@ public:
 	};
 	void renderText(const eRect &position, const std::string &string, int flags=0);
 	
-	void renderPara(eTextPara *para, ePoint offset=ePoint(0, 0));
+	void renderPara(eTextPara *para, const ePoint &offset = ePoint(0, 0));
 
-	void fill(const eRect &area);
-	void fill(const gRegion &area);
+	void fill(const eRect &area, int flags = 0);
+	void fill(const gRegion &area, int flags = 0);
+	void fill(const std::vector<eRect> &rects, const eRect &bbox = eRect::invalidRect(), int flags = 0);
 	
 	void clear();
 
 	enum
 	{
-		BT_ALPHATEST = 1,
-		BT_ALPHABLEND = 2,
-		BT_SCALE = 4 /* will be automatically set by blitScale */
+		BT_ALPHATEST = gPixmap::blitAlphaTest,
+		BT_ALPHABLEND = gPixmap::blitAlphaBlend,
+		BT_SCALE = gPixmap::blitScale, /* will be automatically set by blitScale */
 	};
 
-	void blit(gPixmap *pixmap, ePoint pos, const eRect &clip=eRect(), int flags=0);
-	void blitScale(gPixmap *pixmap, const eRect &pos, const eRect &clip=eRect(), int flags=0, int aflags = BT_SCALE);
+	void blit(const ePtr<gPixmap> &pixmap, const ePoint &pos, const eRect &clip=eRect(), int flags=0, float alpha = 1.0);
+	void blitScale(const ePtr<gPixmap> &pixmap, const eRect &pos, const eRect &clip=eRect(), int flags=0, float alpha = 1.0);
 
-	void setPalette(const gRGB *colors, unsigned int len=256);
+	void setPalette(const gRGBA *colors, unsigned int len=256);
 	void setPalette(const ePtr<gPixmap> &source);
-	void mergePalette(gPixmap *target);
+	void mergePalette(const ePtr<gPixmap> &target);
 	
-	void line(ePoint start, ePoint end);
+	void line(const ePoint &start, const ePoint &end, int flags = 0);
 
-	void setOffset(ePoint abs);
-	void moveOffset(ePoint rel);
+	void setOffset(const ePoint &abs);
+	void moveOffset(const ePoint &rel);
 	void resetOffset();
 	
 	void resetClip(const gRegion &clip);
@@ -286,45 +320,62 @@ public:
 	void clippop();
 
 	void waitVSync();
-	void flip();
 	void notify();
-	void setCompositing(gCompositingData *comp);
 	
 	void flush();
+
+	void beginNativePainting();
+	void endNativePainting();
+
+	void setMatrix(const eMatrix4x4 &matrix);
 };
 
 class gDC: public iObject
 {
 	DECLARE_REF(gDC);
+
+	gRegion m_dirtyRegion;
+
 protected:
 	ePtr<gPixmap> m_pixmap;
 
 	gColor m_foreground_color, m_background_color;
-	gRGB m_foreground_color_rgb, m_background_color_rgb;
-	ePtr<gFont> m_current_font;
+	gRGBA m_foreground_color_rgb, m_background_color_rgb;
 	ePoint m_current_offset;
 	
 	std::stack<gRegion> m_clip_stack;
 	gRegion m_current_clip;
+
+	eMatrix4x4 m_matrix;
 	
-	ePtr<gPixmap> m_spinner_saved, m_spinner_temp;
+	ePtr<gPixmap> m_spinner_saved;
 	ePtr<gPixmap> *m_spinner_pic;
 	eRect m_spinner_pos;
 	int m_spinner_num, m_spinner_i;
+
+	const gRegion &dirtyRegion() const { return m_dirtyRegion; }
+	void invalidate(const gRegion &region = gRegion::invalidRegion());
+
+	virtual gSurface *surface() const { return m_pixmap ? m_pixmap->surface() : 0; }
+
+	virtual void rcLockGL(eGLThread thread) {}
+	virtual void rcUnlockGL() {}
+
 public:
 	virtual void exec(const gOpcode *opcode);
-	gDC(gPixmap *pixmap);
+	gDC(ePtr<gPixmap> pixmap);
 	gDC();
 	virtual ~gDC();
 	gRegion &getClip() { return m_current_clip; }
 	int getPixmap(ePtr<gPixmap> &pm) { pm = m_pixmap; return 0; }
-	gRGB getRGB(gColor col);
-	virtual eSize size() { return m_pixmap->size(); }
+	gRGBA getRGB(gColor col);
+	virtual eSize size() { return m_pixmap ? m_pixmap->size() : eSize(0, 0); }
+	virtual gPixelFormat pixelFormat() const;
 	virtual int islocked() { return 0; }
 	
 	virtual void enableSpinner();
 	virtual void disableSpinner();
-	virtual void incrementSpinner();
+	virtual void incrementSpinner(bool resetBackground = true);
 	virtual void setSpinner(eRect pos, ePtr<gPixmap> *pic, int len);
 };
 

@@ -8,7 +8,7 @@ class Clock(Source):
 	def __init__(self):
 		Source.__init__(self)
 		self.clock_timer = eTimer()
-		self.clock_timer.callback.append(self.poll)
+		self.clock_timer_conn = self.clock_timer.timeout.connect(self.poll)
 
 	@cached
 	def getClock(self):
@@ -27,5 +27,5 @@ class Clock(Source):
 			self.poll()
 
 	def destroy(self):
-		self.clock_timer.callback.remove(self.poll)
+		self.clock_timer_conn = None
 		Source.destroy(self)

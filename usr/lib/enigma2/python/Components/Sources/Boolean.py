@@ -17,7 +17,7 @@ class Boolean(Source, object):
 		self.post_destroy = destroy
 		if poll > 0:
 			self.poll_timer = eTimer()
-			self.poll_timer.callback.append(self.poll)
+			self.poll_timer_conn = self.poll_timer.timeout.connect(self.poll)
 			self.poll_timer.start(poll)
 		else:
 			self.poll_timer = None
@@ -40,8 +40,7 @@ class Boolean(Source, object):
 		self.changed((self.CHANGED_ALL,))
 
 	def destroy(self):
-		if self.poll_timer:
-			self.poll_timer.callback.remove(self.poll)
+		self.poll_timer_conn = None
 		if self.post_destroy is not None:
 			self.fixed = self.post_destroy
 			self.poll()

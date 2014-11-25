@@ -1,0 +1,18 @@
+<default>
+	<prerequisites>
+		<tag type="System" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>NetworkManager</name>
+		<packagename>enigma2-plugin-systemplugins-networkmanager</packagename>
+		<packagetype>internal</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->
+		<shortdescription>Network management plugin</shortdescription>
+		<description>This plugin is used to setup the network on your dreambox.</description>
+	</info>
+
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-networkmanager" />
+	</files>
+
+</default>

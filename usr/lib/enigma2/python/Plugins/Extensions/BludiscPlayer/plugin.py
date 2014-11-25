@@ -10,7 +10,7 @@ from Components.Pixmap import Pixmap
 
 import bludiscmenu
 
-BD_PATHS = ["/media/bludisc/", "/media/net/bludisc", "/autofs/sr0/"]
+BD_PATHS = ["/autofs/sr0/"]
 BD_AACS_ERRORS = {-1: _("corrupted disc"), -2: _("AACS configuration file missing"), -3: _("no matching processing key"), -4: _("no valid AACS certificate"), -5: _("AACS certificate revoked"), -6: _("MMC authentication failed")}
 
 class BludiscMenu(Screen):
@@ -31,7 +31,7 @@ class BludiscMenu(Screen):
 		self.session = session
 		self.onFirstExecBegin.append(self.opened)
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.picdecodedCB)
+		self.picload_conn = self.picload.PictureData.connect(self.picdecodedCB)
 		sc = AVSwitch().getFramebufferScale()
 		self.picload.setPara((544, 306, sc[0], sc[1], False, 1, '#ff000000'))
 		self["pixmap"] = Pixmap()

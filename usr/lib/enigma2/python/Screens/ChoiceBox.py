@@ -5,6 +5,8 @@ from Components.ChoiceList import ChoiceEntryComponent, ChoiceList
 from Components.Sources.StaticText import StaticText
 
 class ChoiceBox(Screen):
+	IS_DIALOG = True
+
 	def __init__(self, session, title = "", list = [], keys = None, selection = 0, skin_name = [], titlebartext = None, allow_cancel = True):
 		Screen.__init__(self, session)
 

@@ -39,7 +39,7 @@ class MMIDialog(Screen):
 		self.slotid = slotid
 
 		self.timer = eTimer()
-		self.timer.callback.append(self.keyCancel)
+		self.timer_conn = self.timer.timeout.connect(self.keyCancel)
 
 		#else the skins fails
 		self["title"] = Label("")
@@ -239,7 +239,7 @@ class CiMessageHandler:
 		self.session = None
 		self.ci = { }
 		self.dlgs = { }
-		eDVBCI_UI.getInstance().ciStateChanged.get().append(self.ciStateChanged)
+		self.ciStateChanged_conn = eDVBCI_UI.getInstance().ciStateChanged.connect(self.ciStateChanged)
 		SystemInfo["CommonInterface"] = eDVBCIInterfaces.getInstance().getNumOfSlots() > 0
 		try:
 			file = open("/proc/stb/tsmux/ci0_tsclk", "r")

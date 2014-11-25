@@ -1,5 +1,10 @@
-from enigma import eComponentScan, iDVBFrontend
+from enigma import eComponentScan, iDVBFrontend, eSlot3IIIRetI
 from Components.NimManager import nimmanager as nimmgr
+from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
+
+feSatellite = iDVBFrontend.feSatellite
+feCable = iDVBFrontend.feCable
+feTerrestrial = iDVBFrontend.feTerrestrial
 
 class ServiceScan:
 	Idle = 1
@@ -35,7 +40,7 @@ class ServiceScan:
 				tp_text = ""
 				if transponder:
 					tp_type = transponder.getSystem()
-					if tp_type == iDVBFrontend.feSatellite:
+					if tp_type == feSatellite:
 						network = _("Satellite")
 						tp = transponder.getDVBS()
 						orb_pos = tp.orbital_position
@@ -64,7 +69,7 @@ class ServiceScan:
 								tp.FEC_3_4 : "3/4", tp.FEC_5_6 : "5/6", tp.FEC_7_8 : "7/8",
 								tp.FEC_8_9 : "8/9", tp.FEC_3_5 : "3/5", tp.FEC_4_5 : "4/5",
 								tp.FEC_9_10 : "9/10", tp.FEC_None : "NONE" }.get(tp.fec, tp.FEC_Auto))
-					elif tp_type == iDVBFrontend.feCable:
+					elif tp_type == feCable:
 						network = _("Cable")
 						tp = transponder.getDVBC()
 						tp_text = ("DVB-C %s %d / %d / %s") %( { tp.Modulation_Auto : "AUTO",
@@ -76,7 +81,7 @@ class ServiceScan:
 							{ tp.FEC_Auto : "AUTO", tp.FEC_1_2 : "1/2", tp.FEC_2_3 : "2/3",
 								tp.FEC_3_4 : "3/4", tp.FEC_5_6 : "5/6", tp.FEC_7_8 : "7/8",
 								tp.FEC_8_9 : "8/9", tp.FEC_None : "NONE" }.get(tp.fec_inner, tp.FEC_Auto))
-					elif tp_type == iDVBFrontend.feTerrestrial:
+					elif tp_type == feTerrestrial:
 						network = _("Terrestrial")
 						tp = transponder.getDVBT()
 						tp_text = ("DVB-T %s %d %s") %( { tp.Modulation_QPSK : "QPSK",
@@ -119,7 +124,14 @@ class ServiceScan:
 		self.network = network
 		self.run = 0
 		self.lcd_summary = lcd_summary
-		self.scan = None
+		self.show_exec_tsid_onid_valid_error = True
+
+		class eTsidOnidSlot(eSlot3IIIRetI):
+			def __init__(self, func):
+				eSlot3IIIRetI.__init__(self)
+				self.cb_func = func
+
+		self.checkTsidOnidValid_slot = eTsidOnidSlot(self.checkTsidOnidValid)
 
 	def doRun(self):
 		self.scan = eComponentScan()
@@ -136,12 +148,28 @@ class ServiceScan:
 		size = len(self.scanList)
 		if size > 1:
 			self.passNumber.setText(_("pass") + " " + str(self.run + 1) + "/" + str(size) + " (" + _("Tuner") + " " + str(self.scanList[self.run]["feid"]) + ")")
-		
+
+	def checkTsidOnidValid(self, tsid, onid, orbital_position):
+		d = { }
+		d['__builtins__'] = __builtins__
+		d['orbpos'] = orbital_position
+		d['tsid'] = tsid
+		d['onid'] = onid
+		try:
+			eval(self.scan_tp_valid_func, d, d)
+		except:
+			if self.show_exec_tsid_onid_valid_error:
+				print "execing /etc/enigma2/scan_tp_valid_check failed!\n"
+				"usable global variables in scan_tp_valid_check.py are 'orbpos', 'tsid', 'onid'\n"
+				"the return value must be stored in a global var named 'ret'"
+				self.show_exec_tsid_onid_valid_error = False
+		return d.get('ret', 1)
+
 	def execBegin(self):
 		self.doRun()
 		self.updatePass()
-		self.scan.statusChanged.get().append(self.scanStatusChanged)
-		self.scan.newService.get().append(self.newService)
+		self.scan_StatusChangedConn = self.scan.statusChanged.connect(self.scanStatusChanged)
+		self.scan_newServiceConn = self.scan.newService.connect(self.newService)
 		self.servicelist.clear()
 		self.state = self.Running
 		err = self.scan.start(self.feid, self.flags)
@@ -149,16 +177,25 @@ class ServiceScan:
 		if err:
 			self.state = self.Error
 			self.errorcode = 0
+		else:
+			fname = resolveFilename(SCOPE_CONFIG, "scan_tp_valid_check.py")
+			if fileExists(fname):
+				try:
+					self.scan_tp_valid_func = compile(file(fname).read(), fname, 'exec')
+				except:
+					print "content of", fname, "is not valid python code!!"
+				else:
+					self.scan.setAdditionalTsidOnidCheckFunc(self.checkTsidOnidValid_slot)
 		self.scanStatusChanged()
-	
-	def execEnd(self):
-		if self.scan:
-			self.scan.statusChanged.get().remove(self.scanStatusChanged)
-			self.scan.newService.get().remove(self.newService)
-			if not self.isDone():
-				print "*** warning *** scan was not finished!"
 
-			self.scan = None
+	def execEnd(self):
+		# its not implicitely needed to destroy the 'connection objects' here.. 
+		# its just for demonstration...
+		self.scan_StatusChangedConn = None
+		self.scan_newServiceConn = None
+		self.scan = None
+		if not self.isDone():
+			print "*** warning *** scan was not finished!"
 
 	def isDone(self):
 		return self.state == self.Done or self.state == self.Error

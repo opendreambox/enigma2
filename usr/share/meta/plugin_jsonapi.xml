@@ -1,0 +1,18 @@
+<default>
+	  <prerequisites>
+                    <tag type="System" />
+	  </prerequisites>
+          <info>
+                    <author>Dream Property GmbH</author>
+                    <name>JSON API</name>
+                    <packagename>enigma2-plugin-systemplugins-jsonapi</packagename>
+                    <shortdescription>JSON-RPC API</shortdescription>
+                    <description>The JSON API Plugin provides a JSON-RPC Api for enigma2.
+                    </description>
+          </info>
+
+	  <files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-jsonapi" />
+	</files>
+
+</default>

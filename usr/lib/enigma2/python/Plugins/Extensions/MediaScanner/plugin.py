@@ -10,7 +10,7 @@ def execute(option):
 	(_, scanner, files, session) = option
 	scanner.open(files, session)
 
-def mountpoint_choosen(option):
+def mountpoint_chosen(option):
 	if option is None:
 		return
 
@@ -23,16 +23,21 @@ def mountpoint_choosen(option):
 	list = [ (r.description, r, res[r], session) for r in res ]
 
 	if not list:
+		from Components.Harddisk import harddiskmanager
+		p = harddiskmanager.getPartitionbyMountpoint(mountpoint)
+
 		if mountpoint != "/":
-			from Components.Harddisk import harddiskmanager
-			p = harddiskmanager.getPartitionbyMountpoint(mountpoint)
 			if p is not None and p.uuid is None: #ignore partitions with unknown or no filesystem uuid
 				print "ignore", mountpoint, "because we have no uuid"
 				return
 
+		description = None
+		if p:
+			description = p.description
+
 		from Screens.MessageBox import MessageBox
 		if access(mountpoint, F_OK|R_OK):
-			session.open(MessageBox, _("No displayable files on this medium found!"), MessageBox.TYPE_ERROR)
+			session.open(MessageBox, _("No displayable files on this medium found!"), MessageBox.TYPE_ERROR, timeout = 10, title = description)
 		else:
 			print "ignore", mountpoint, "because its not accessible"
 		return
@@ -51,13 +56,13 @@ def scan(session):
 		for x in parts:
 			if not access(x[1], F_OK|R_OK):
 				parts.remove(x)	
-		session.openWithCallback(mountpoint_choosen, ChoiceBox, title = _("Please Select Medium to be Scanned"), list = parts)
+		session.openWithCallback(mountpoint_chosen, ChoiceBox, title = _("Please Select Medium to be Scanned"), list = parts)
 
 def main(session, **kwargs):
 	scan(session)
 
 def menuEntry(*args):
-	mountpoint_choosen(args)
+	mountpoint_chosen(args)
 
 from Components.Harddisk import harddiskmanager
 
@@ -78,7 +83,7 @@ def partitionListChanged(action, device):
 				print "mountpoint", device.mountpoint
 				print "description", device.description
 				print "force_mounted", device.force_mounted
-				mountpoint_choosen((device.description, device.mountpoint, global_session))
+				mountpoint_chosen((device.description, device.mountpoint, global_session))
 		else:
 			print "main infobar is not execing... so we ignore hotplug event!"
 	else:

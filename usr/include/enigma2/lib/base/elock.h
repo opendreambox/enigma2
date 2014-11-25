@@ -136,21 +136,12 @@ class eLock
 
 	int counter, max;
 public:
-	void lock(int res=100);
-	void unlock(int res=100);
+	void lock(int res);
+	void unlock(int res);
 	int lock_count();
 
-	eLock(int max=100);
+	eLock(int max);
 	~eLock();
-};
-
-class eLocker
-{
-	eLock &lock;
-	int res;
-public:
-	eLocker(eLock &lock, int res=100);
-	~eLocker();
 };
 
 class eSemaphore

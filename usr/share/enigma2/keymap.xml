@@ -567,6 +567,7 @@
 			<key id="KEY_F2" mapto="timerAdd" flags="m" />
 			<key id="KEY_F3" mapto="yellow" flags="mr" />
 			<key id="KEY_F4" mapto="blue" flags="mr" />
+			<key id="KEY_SPACE" mapto="input_date_time" flags="m" />
 		</device>
 		<key id="KEY_RED" mapto="red" flags="m" />
 		<key id="KEY_GREEN" mapto="timerAdd" flags="m" />

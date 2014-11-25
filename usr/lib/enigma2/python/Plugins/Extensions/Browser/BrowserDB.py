@@ -1,5 +1,4 @@
 from Tools.Directories import SCOPE_CONFIG, resolveFilename
-from Callable import Callable
 import sqlite3
 
 import os.path as os_path

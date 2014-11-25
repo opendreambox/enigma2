@@ -4,9 +4,21 @@
 #include "object.h"
 #include <stdio.h>
 #include <string.h>
+#include <typeinfo>
+#include <lib/base/eerror.h>
 #include <lib/python/swig.h>
+#include <cxxabi.h>
 
-inline void ptrAssert(void *p) { if (!p) *(unsigned long*)0=0; }
+inline void ptrAssert(void *p, const char *mangled_type)
+{
+	if (!p) {
+		int state;
+		char *demangled_type = abi::__cxa_demangle(mangled_type, 0, 0, &state);
+		eFatal("dereferenced ePtr<%s> NIL... abort!!", state ? mangled_type : demangled_type);
+		if (!state)
+			free(demangled_type);
+	}
+}
 
 template<class T>
 class ePtr
@@ -76,7 +88,7 @@ public:
 	T* &ptrref() { ASSERT(!ptr); return ptr; }
 	operator bool() const { return !!this->ptr; }
 #endif
-	T* operator->() const { ptrAssert(ptr); return ptr; }
+	T* operator->() const { ptrAssert(ptr, typeid(T).name()); return ptr; }
 	operator T*() const { return this->ptr; }
 };
 
@@ -150,7 +162,7 @@ public:
 	T* grabRef() { if (!ptr) return 0; ptr->AddRef(); ptr->AddUse(); return ptr; }
 	T* &ptrref() { ASSERT(!ptr); return ptr; }
 #endif
-	T* operator->() const { ptrAssert(ptr); return ptr; }
+	T* operator->() const { ptrAssert(ptr, typeid(T).name()); return ptr; }
 	operator T*() const { return this->ptr; }
 };
 
@@ -193,12 +205,12 @@ public:
 		ePtr<T>::operator=(c);
 		return *this;
 	}
-	ePtrHelper<T> operator->() { ptrAssert(ptr); return ePtrHelper<T>(ptr); }
+	ePtrHelper<T> operator->() { ptrAssert(ptr, typeid(T).name()); return ePtrHelper<T>(ptr); }
 			/* for const objects, we don't need the helper, as they can't */
 			/* be changed outside the program flow. at least this is */
 			/* what the compiler assumes, so in case you're using const */
 			/* eMutablePtrs note that they have to be const. */
-	const T* operator->() const { ptrAssert(ptr); return ptr; }
+	const T* operator->() const { ptrAssert(ptr, typeid(T).name()); return ptr; }
 };
 #endif
 

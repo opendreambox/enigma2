@@ -13,7 +13,13 @@ from Screens.MessageBox import MessageBox
 from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, \
 	eDVBSatelliteEquipmentControl as secClass, eDVBFrontendParametersTerrestrial, \
 	eDVBFrontendParametersCable, eConsoleAppContainer, eDVBResourceManager, \
-	eDVBFrontendParameters
+	eDVBFrontendParameters, iDVBFrontend
+
+feTerrestrial = iDVBFrontend.feTerrestrial
+feSatellite = iDVBFrontend.feSatellite
+feCable = iDVBFrontend.feCable
+stateLock = iDVBFrontend.stateLock
+stateFailed = iDVBFrontend.stateFailed
 
 def buildTerTransponder(frequency,
 		inversion=2, bandwidth = 3, fechigh = 6, feclow = 6,
@@ -214,8 +220,8 @@ class CableTransponderSearchSupport:
 					return
 		self.__tlist = [ ]
 		self.cable_search_container = eConsoleAppContainer()
-		self.cable_search_container.appClosed.append(self.cableTransponderSearchClosed)
-		self.cable_search_container.dataAvail.append(self.getCableTransponderData)
+		self.appClosed_conn = self.cable_search_container.appClosed.connect(self.cableTransponderSearchClosed)
+		self.dataAvail_conn = self.cable_search_container.dataAvail.connect(self.getCableTransponderData)
 		cableConfig = config.Nims[nim_idx].cable
 
 		cmd = None
@@ -467,7 +473,7 @@ class SatBlindscanState(Screen):
 		self["constellation"] = CanvasSource()
 		self.onLayoutFinish.append(self.updateConstellation)
 		self.tmr = eTimer()
-		self.tmr.callback.append(self.updateConstellation)
+		self.tmr_conn = self.tmr.timeout.connect(self.updateConstellation)
 		self.constellation_supported = None
 		if fe_num != -1:
 			self.post_action=1
@@ -559,7 +565,7 @@ class SatBlindscanState(Screen):
 class SatelliteTransponderSearchSupport:
 	def satelliteTransponderSearchSessionClosed(self, *val):
 		if self.frontend:
-			self.frontend.getStateChangeSignal().remove(self.frontendStateChanged)
+			self.frontendStateChanged_conn = None
 			self.frontend = None
 			self.channel = None
 		print "satelliteTransponderSearchSessionClosed, val", val
@@ -576,15 +582,16 @@ class SatelliteTransponderSearchSupport:
 		x = { }
 		self.frontend.getFrontendStatus(x)
 		assert x, "getFrontendStatus failed!"
-		if x["tuner_state"] in ("LOCKED", "FAILED"):
+		tuner_state = x["tuner_state"]
+		if tuner_state in (stateLock, stateFailed):
 			state = self.satellite_search_session
 
 			d = { }
 			self.frontend.getTransponderData(d, False)
-			d["tuner_type"] = 'DVB-S'
+			d["tuner_type"] = feSatellite
 			r = ConvertToHumanReadable(d)
 
-			if x["tuner_state"] == "LOCKED":
+			if tuner_state == stateLock:
 				freq = d["frequency"]
 				parm = eDVBFrontendParametersSatellite()
 				parm.frequency = int(round(float(freq*2) / 1000)) * 1000
@@ -661,7 +668,7 @@ class SatelliteTransponderSearchSupport:
 					tmpstr += _("%d transponders found at %d:%02dmin") %(len(self.tp_found),seconds_done / 60, seconds_done % 60)
 					state["progress"].setText(tmpstr)
 					state.setFinished()
-					self.frontend.getStateChangeSignal().remove(self.frontendStateChanged)
+					self.frontendStateChanged_conn = None
 					self.frontend = None
 					self.channel = None
 					return
@@ -763,7 +770,7 @@ class SatelliteTransponderSearchSupport:
 					if not self.frontend:
 						print "couldn't allocate tuner %d for blindscan!!!" %nim_idx
 						return
-			self.frontend.getStateChangeSignal().append(self.frontendStateChanged)
+			self.frontendStateChanged_conn = self.frontend.getStateChangeSignal().connect(self.frontendStateChanged)
 
 			if self.scan_sat.bs_vertical.value:
 				self.range_list.append((self.scan_sat.bs_freq_start.value * 1000, self.scan_sat.bs_freq_stop.value * 1000, eDVBFrontendParametersSatellite.Polarisation_Vertical))
@@ -786,12 +793,12 @@ class SatelliteTransponderSearchSupport:
 			tmpstr = _("Blindscan is not supported by this tuner (%s)") %tunername
 		self.satellite_search_session = self.session.openWithCallback(self.satelliteTransponderSearchSessionClosed, SatBlindscanState, tuner_no, tmpstr)
 		self.tuneNextTimer = eTimer()
-		self.tuneNextTimer.callback.append(self.tuneNext)
+		self.tuneNextTimer_conn = self.tuneNextTimer.timeout.connect(self.tuneNext)
 
 class DefaultSatLists(DefaultWizard):
-	def __init__(self, session, silent = True, showSteps = False):
+	def __init__(self, session, silent = True, showSteps = False, default = False):
 		self.xmlfile = "defaultsatlists.xml"
-		DefaultWizard.__init__(self, session, silent, showSteps, neededTag = "services")
+		DefaultWizard.__init__(self, session, silent, showSteps, neededTag = "services", default = default)
 		print "configuredSats:", nimmanager.getConfiguredSats()
 
 	def setDirectory(self):
@@ -834,7 +841,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		}, -2)
 
 		self.statusTimer = eTimer()
-		self.statusTimer.callback.append(self.updateStatus)
+		self.statusTimer_conn = self.statusTimer.timeout.connect(self.updateStatus)
 		#self.statusTimer.start(5000, True)
 
 		self.list = []
@@ -1048,8 +1055,8 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				"hierarchy": eDVBFrontendParametersTerrestrial.Hierarchy_Auto }
 
 			if frontendData is not None:
-				ttype = frontendData.get("tuner_type", "UNKNOWN")
-				if ttype == "DVB-S":
+				ttype = frontendData.get("tuner_type", -1)
+				if ttype == feSatellite:
 					defaultSat["system"] = frontendData.get("system", eDVBFrontendParametersSatellite.System_DVB_S)
 					defaultSat["frequency"] = frontendData.get("frequency", 0) / 1000
 					defaultSat["inversion"] = frontendData.get("inversion", eDVBFrontendParametersSatellite.Inversion_Unknown)
@@ -1066,13 +1073,13 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 					else:
 						defaultSat["fec"] = frontendData.get("fec_inner", eDVBFrontendParametersSatellite.FEC_Auto)
 					defaultSat["orbpos"] = frontendData.get("orbital_position", 0)
-				elif ttype == "DVB-C":
+				elif ttype == feCable:
 					defaultCab["frequency"] = frontendData.get("frequency", 0) / 1000
 					defaultCab["symbolrate"] = frontendData.get("symbol_rate", 0) / 1000
 					defaultCab["inversion"] = frontendData.get("inversion", eDVBFrontendParametersCable.Inversion_Unknown)
 					defaultCab["fec"] = frontendData.get("fec_inner", eDVBFrontendParametersCable.FEC_Auto)
 					defaultCab["modulation"] = frontendData.get("modulation", eDVBFrontendParametersCable.Modulation_QAM16)
-				elif ttype == "DVB-T":
+				elif ttype == feTerrestrial:
 					defaultTer["frequency"] = frontendData.get("frequency", 0)
 					defaultTer["inversion"] = frontendData.get("inversion", eDVBFrontendParametersTerrestrial.Inversion_Unknown)
 					defaultTer["bandwidth"] = frontendData.get("bandwidth", eDVBFrontendParametersTerrestrial.Bandwidth_7MHz)

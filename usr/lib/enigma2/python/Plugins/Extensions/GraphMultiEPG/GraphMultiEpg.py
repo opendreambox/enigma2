@@ -63,19 +63,19 @@ class EPGList(HTMLComponent, GUIComponent):
 			attribs = [ ]
 			for (attrib, value) in self.skinAttributes:
 				if attrib == "EntryForegroundColor":
-					self.foreColor = parseColor(value).argb()
+					self.foreColor = parseColor(value)
 				elif attrib == "EntryForegroundColorSelected":
-					self.foreColorSelected = parseColor(value).argb()
+					self.foreColorSelected = parseColor(value)
 				elif attrib == "EntryBorderColor":
-					self.borderColor = parseColor(value).argb()
+					self.borderColor = parseColor(value)
 				elif attrib == "EntryBackgroundColor":
-					self.backColor = parseColor(value).argb()
+					self.backColor = parseColor(value)
 				elif attrib == "EntryBackgroundColorSelected":
-					self.backColorSelected = parseColor(value).argb()
+					self.backColorSelected = parseColor(value)
 				elif attrib == "ServiceNameForegroundColor":
-					self.foreColorService = parseColor(value).argb()
+					self.foreColorService = parseColor(value)
 				elif attrib == "ServiceNameBackgroundColor":
-					self.backColorService = parseColor(value).argb()
+					self.backColorService = parseColor(value)
 				else:
 					attribs.append((attrib,value))
 			self.skinAttributes = attribs
@@ -187,14 +187,14 @@ class EPGList(HTMLComponent, GUIComponent):
 
 	def postWidgetCreate(self, instance):
 		instance.setWrapAround(True)
-		instance.selectionChanged.get().append(self.serviceChanged)
+		self.selectionChanged_conn = instance.selectionChanged.connect(self.serviceChanged)
 		instance.setContent(self.l)
 		self.l.setFont(0, gFont("Regular", 20))
 		self.l.setFont(1, gFont("Regular", 14))
 		self.l.setSelectionClip(eRect(0,0,0,0), False)
 
 	def preWidgetRemove(self, instance):
-		instance.selectionChanged.get().remove(self.serviceChanged)
+		self.selectionChanged_conn = None
 		instance.setContent(None)
 
 	def recalcEntrySize(self):
@@ -457,7 +457,7 @@ class GraphMultiEPG(Screen):
 			},-1)
 
 		self.updateTimelineTimer = eTimer()
-		self.updateTimelineTimer.callback.append(self.moveTimeLines)
+		self.updateTimelineTimer_conn = self.updateTimelineTimer.timeout.connect(self.moveTimeLines)
 		self.updateTimelineTimer.start(60*1000)
 		self.onLayoutFinish.append(self.onCreate)
 

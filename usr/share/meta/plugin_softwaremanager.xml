@@ -4,7 +4,7 @@
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>SoftwareManager</name>
                     <packagename>enigma2-plugin-systemplugins-softwaremanager</packagename>
                     <packagetype>internal</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->

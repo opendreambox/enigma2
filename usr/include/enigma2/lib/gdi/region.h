@@ -5,10 +5,6 @@
 #include <lib/gdi/erect.h>
 #include <vector>
 
-#if defined(HAVE_QT) && !defined(SWIG)
-class QRegion;
-#endif
-
 class gRegion
 {
 private:
@@ -28,13 +24,13 @@ private:
 		std::vector<eRect>::const_iterator r,
 		std::vector<eRect>::const_iterator rEnd)
 	{
-		rects.insert(rects.end(), r, rEnd);
+		m_rects.insert(m_rects.end(), r, rEnd);
 	}
 
 	int do_coalesce(int prevStart, unsigned int curStart);
 	inline void coalesce(int &prevBand, unsigned int curBand)
 	{
-		if (curBand - prevBand == rects.size() - curBand) {
+		if (curBand - prevBand == m_rects.size() - curBand) {
 			prevBand = do_coalesce(prevBand, curBand);
 		} else {
 			prevBand = curBand;
@@ -48,26 +44,27 @@ private:
 			std::vector<eRect>::const_iterator r1End,
 			std::vector<eRect>::const_iterator r2,
 			std::vector<eRect>::const_iterator r2End,
-			int y1, int y2,
-			int &overlap);
+			int y1, int y2);
 	void subtractO(
 			std::vector<eRect>::const_iterator r1,
 			std::vector<eRect>::const_iterator r1End,
 			std::vector<eRect>::const_iterator r2,
 			std::vector<eRect>::const_iterator r2End,
-			int y1, int y2,
-			int &overlap);
+			int y1, int y2);
 	void mergeO(
 			std::vector<eRect>::const_iterator r1,
 			std::vector<eRect>::const_iterator r1End,
 			std::vector<eRect>::const_iterator r2,
 			std::vector<eRect>::const_iterator r2End,
-			int y1, int y2,
-			int &overlap);
-	void regionOp(const gRegion &reg1, const gRegion &reg2, int opcode, int &overlap);
+			int y1, int y2);
+	void regionOp(const gRegion &reg1, const gRegion &reg2, int opcode);
+
+	std::vector<eRect> m_rects;
+	eRect m_extends;
 public:
-	std::vector<eRect> rects;
-	eRect extends;
+
+	const std::vector<eRect> &rects() const { return m_rects; };
+	const eRect &extends() const { return m_extends; }
 	
 	enum
 	{
@@ -77,15 +74,9 @@ public:
 		OP_UNION     = 3
 	};
 	
+	gRegion(const std::vector<eRect> &rects);
 	gRegion(const eRect &rect);
 	gRegion();
-	virtual ~gRegion();
-
-#if defined(HAVE_QT) && !defined(SWIG)
-	gRegion(const QRect &r);
-	gRegion(const QRegion &r);
-	operator QRegion();
-#endif
 
 	gRegion operator&(const gRegion &r2) const;
 	gRegion operator-(const gRegion &r2) const;
@@ -98,14 +89,81 @@ public:
 	void subtract(const gRegion &r1, const gRegion &r2);
 	void merge(const gRegion &r1, const gRegion &r2);
 	
-	void moveBy(ePoint offset);
+	void moveBy(const ePoint &offset);
 	
-	bool empty() const { return extends.empty(); }
-	bool valid() const { return extends.valid(); }
+	bool empty() const { return m_extends.empty(); }
+	bool valid() const { return m_extends.valid(); }
+	bool isRect() const { return valid() && (m_rects.size() == 1); }
 	
+	void setEmpty();
+	void setRect(const eRect &rect);
+	void setRects(const std::vector<eRect> &rects);
+
 	static gRegion invalidRegion() { return gRegion(eRect::invalidRect()); }
 	
 	void scale(int x_n, int x_d, int y_n, int y_d);
 };
+
+inline gRegion::gRegion(const std::vector<eRect> &rects)
+{
+	setRects(rects);
+}
+
+inline gRegion::gRegion(const eRect &rect)
+{
+	setRect(rect);
+}
+
+inline gRegion::gRegion()
+{
+	setRect(eRect::emptyRect());
+}
+
+inline void gRegion::setEmpty()
+{
+	setRect(eRect::emptyRect());
+}
+
+inline gRegion gRegion::operator&(const gRegion &r2) const
+{
+	gRegion res;
+	res.intersect(*this, r2);
+	return res;
+}
+
+inline gRegion gRegion::operator-(const gRegion &r2) const 
+{
+	gRegion res;
+	res.subtract(*this, r2);
+	return res;
+}
+
+inline gRegion gRegion::operator|(const gRegion &r2) const
+{
+	gRegion res;
+	res.merge(*this, r2);
+	return res;
+}
+
+inline gRegion &gRegion::operator&=(const gRegion &r2)
+{
+	gRegion res;
+	res.intersect(*this, r2);
+	return *this = res;
+}
+
+inline gRegion &gRegion::operator-=(const gRegion &r2)
+{
+	gRegion res;
+	res.subtract(*this, r2);
+	return *this = res;
+}
+
+inline gRegion &gRegion::operator|=(const gRegion &r2)
+{
+	gRegion res;
+	res.merge(*this, r2);
+	return *this = res;
+}
 
 #endif

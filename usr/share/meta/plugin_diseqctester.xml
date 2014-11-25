@@ -4,7 +4,7 @@
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>DiseqcTester</name>
                     <packagename>enigma2-plugin-systemplugins-diseqctester</packagename>
                     <shortdescription>Test your DiSEqC equipment</shortdescription>

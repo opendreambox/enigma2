@@ -395,7 +395,7 @@ class SelectionEventInfo:
 		self["ServiceEvent"] = ServiceEvent()
 		self.servicelist.connectSelChanged(self.__selectionChanged)
 		self.timer = eTimer()
-		self.timer.callback.append(self.updateEventInfo)
+		self.timer_conn = self.timer.timeout.connect(self.updateEventInfo)
 		self.onShown.append(self.__selectionChanged)
 
 	def __selectionChanged(self):
@@ -1254,7 +1254,7 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 			})
 
 		self.lastChannelRootTimer = eTimer()
-		self.lastChannelRootTimer.callback.append(self.__onCreate)
+		self.lastChannelRootTimer_conn = self.lastChannelRootTimer.timeout.connect(self.__onCreate)
 		self.lastChannelRootTimer.start(100,True)
 
 		self.history_tv = [ ]

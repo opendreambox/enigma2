@@ -175,9 +175,9 @@ class Task(object):
 		self.callback = callback
 		from enigma import eConsoleAppContainer
 		self.container = eConsoleAppContainer()
-		self.container.appClosed.append(self.processFinished)
-		self.container.stdoutAvail.append(self.processStdout)
-		self.container.stderrAvail.append(self.processStderr)
+		self.appClosed_conn = self.container.appClosed.connect(self.processFinished)
+		self.stdoutAvail_conn = self.container.stdoutAvail.connect(self.processStdout)
+		self.stderrAvail_conn = self.container.stderrAvail.connect(self.processStderr)
 
 		if self.cwd is not None:
 			self.container.setCWD(self.cwd)

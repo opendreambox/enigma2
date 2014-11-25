@@ -6,7 +6,10 @@
 #include <lib/base/object.h>
 #include <string>
 #include <lib/base/connection.h>
+#include <lib/base/macros.h>
 #include <list>
+
+#include <boost/any.hpp>
 
 class eServiceEvent;
 
@@ -57,27 +60,27 @@ public:
 
 	unsigned int getUnsignedData(unsigned int num) const
 	{
-		if ( num < sizeof(data)/sizeof(int) )
+		if (num < ARRAY_SIZE(data))
 			return data[num];
 		return 0;
 	}
 
 	int getData(unsigned int num) const
 	{
-		if ( num < sizeof(data)/sizeof(int) )
+		if (num < ARRAY_SIZE(data))
 			return data[num];
 		return 0;
 	}
 
 	void setUnsignedData(unsigned int num, unsigned int val)
 	{
-		if ( num < sizeof(data)/sizeof(int) )
+		if (num < ARRAY_SIZE(data))
 			data[num] = val;
 	}
 
 	void setData(unsigned int num, int val)
 	{
-		if ( num < sizeof(data)/sizeof(int) )
+		if (num < ARRAY_SIZE(data))
 			data[num] = val;
 	}
 
@@ -250,7 +253,7 @@ public:
 
 	virtual int getInfo(const eServiceReference &ref, int w);
 	virtual std::string getInfoString(const eServiceReference &ref,int w);
-	virtual PyObject *getInfoObject(const eServiceReference &ref, int w);
+	virtual boost::any getInfoObject(const eServiceReference &ref, int w);
 
 	virtual int setInfo(const eServiceReference &ref, int w, int v);
 	virtual int setInfoString(const eServiceReference &ref, int w, const char *v);
@@ -290,6 +293,7 @@ public:
 		sProvider,
 
 		sDescription,
+		sDatabaseFileId,
 		sServiceref,
 		sTimeCreate, 		/* unix time or string */
 		sFileSize,
@@ -364,7 +368,6 @@ public:
 		sTagChannelMode,
 
 		sTransferBPS,
-
 		sUser = 0x100
 	};
 	enum {
@@ -398,7 +401,7 @@ public:
 
 	virtual int getInfo(int w);
 	virtual std::string getInfoString(int w);
-	virtual PyObject *getInfoObject(int w);
+	virtual boost::any getInfoObject(int w);
 
 	virtual int setInfo(int w, int v);
 	virtual int setInfoString(int w, const char *v);
@@ -423,6 +426,8 @@ public:
 	};
 };
 
+typedef std::map<std::string, int> FrontendDataMap;
+
 SWIG_IGNORE_ENUMS(iFrontendInformation);
 class iFrontendInformation: public iFrontendInformation_ENUMS, public iObject
 {
@@ -432,10 +437,10 @@ class iFrontendInformation: public iFrontendInformation_ENUMS, public iObject
 #endif
 public:
 	virtual int getFrontendInfo(int w)=0;
-	virtual PyObject *getFrontendData()=0;
-	virtual PyObject *getFrontendStatus()=0;
-	virtual PyObject *getTransponderData(bool original)=0;
-	virtual PyObject *getAll(bool original)=0; // a sum of getFrontendData/Status/TransponderData
+	virtual SWIG_VOID(RESULT) getFrontendData(FrontendDataMap &OUTPUT)=0;
+	virtual SWIG_VOID(RESULT) getFrontendStatus(FrontendDataMap &OUTPUT)=0;
+	virtual SWIG_VOID(RESULT) getTransponderData(bool original, FrontendDataMap &OUTPUT)=0;
+	virtual SWIG_VOID(RESULT) getAll(bool original, FrontendDataMap &OUTPUT)=0; // a sum of getFrontendData/Status/TransponderData
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iFrontendInformation>, iFrontendInformationPtr);
 
@@ -576,7 +581,7 @@ public:
 	virtual std::string getText(int x=RadioText)=0;
 	virtual void showRassSlidePicture()=0;
 	virtual void showRassInteractivePic(int page, int subpage)=0;
-	virtual SWIG_PYOBJECT(ePyObject) getRassInteractiveMask()=0;
+	virtual const unsigned char *getRassInteractiveMask() const=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iRdsDecoder>, iRdsDecoderPtr);
 
@@ -632,8 +637,8 @@ class iCueSheet: public iCueSheet_ENUMS, public iObject
 #endif
 public:
 	/* returns a list of (pts, what)-tuples */
-	virtual PyObject *getCutList() = 0;
-	virtual void setCutList(SWIG_PYOBJECT(ePyObject) list) = 0;
+	virtual std::list<std::pair<pts_t, unsigned int> > getCutList() = 0;
+	virtual void setCutList(std::list<std::pair<pts_t, unsigned int> > list) = 0;
 	virtual void setCutListEnable(int enable) = 0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iCueSheet>, iCueSheetPtr);
@@ -752,7 +757,7 @@ public:
 			}
 			with type being "video", "audio", "pmt", "pat"...
 		*/
-	virtual PyObject *getStreamingData()=0;
+	virtual std::map<std::string, boost::any> getStreamingData()=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamableService>, iStreamableServicePtr);
 
@@ -764,7 +769,7 @@ class iStreamedService: public iObject
 	~iStreamedService();
 #endif
 public:
-	virtual PyObject *getBufferCharge()=0;
+	virtual std::list<int> getBufferCharge() const=0;
 	virtual int setBufferSize(int size)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamedService>, iStreamedServicePtr);

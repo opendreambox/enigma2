@@ -19,7 +19,7 @@
 #include <cxxabi.h>
 typedef struct
 {
-	unsigned int address;
+	unsigned long address;
 	unsigned int size;
 	const char *file;
 	void *backtrace[BACKTRACE_DEPTH];
@@ -28,12 +28,12 @@ typedef struct
 	unsigned char type;
 } ALLOC_INFO;
 
-typedef std::map<unsigned int, ALLOC_INFO> AllocList;
+typedef std::map<unsigned long, ALLOC_INFO> AllocList;
 
 extern AllocList *allocList;
 extern pthread_mutex_t memLock;
 
-static inline void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsigned int lnum, unsigned int type)
+static inline void AddTrack(unsigned long addr,  unsigned int asize,  const char *fname, unsigned int lnum, unsigned int type)
 {
 	ALLOC_INFO info;
 
@@ -50,7 +50,7 @@ static inline void AddTrack(unsigned int addr,  unsigned int asize,  const char 
 	(*allocList)[addr]=info;
 };
 
-static inline void RemoveTrack(unsigned int addr, unsigned int type)
+static inline void RemoveTrack(unsigned long addr, unsigned int type)
 {
 	if(!allocList)
 		return;
@@ -69,26 +69,26 @@ static inline void RemoveTrack(unsigned int addr, unsigned int type)
 inline void * operator new(size_t size, const char *file, int line)
 {
 	void *ptr = (void *)malloc(size);
-	AddTrack((unsigned int)ptr, size, file, line, 1);
+	AddTrack((unsigned long)ptr, size, file, line, 1);
 	return(ptr);
 };
 
 inline void operator delete(void *p)
 {
-	RemoveTrack((unsigned int)p,1);
+	RemoveTrack((unsigned long)p,1);
 	free(p);
 };
 
 inline void * operator new[](size_t size, const char *file, int line)
 {
 	void *ptr = (void *)malloc(size);
-	AddTrack((unsigned int)ptr, size, file, line, 2);
+	AddTrack((unsigned long)ptr, size, file, line, 2);
 	return(ptr);
 };
 
 inline void operator delete[](void *p)
 {
-	RemoveTrack((unsigned int)p, 2);
+	RemoveTrack((unsigned long)p, 2);
 	free(p);
 };
 

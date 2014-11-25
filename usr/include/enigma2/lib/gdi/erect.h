@@ -4,11 +4,6 @@
 #include <lib/gdi/esize.h>
 #include <lib/gdi/epoint.h>
 
-#if defined(HAVE_QT) && !defined(SWIG)
-class QRect;
-class QRegion;
-#endif
-
 // x2 = x1 + width  (AND NOT, NEVER, NEVER EVER +1 or -1 !!!!)
 
 class eRect // rectangle class
@@ -28,13 +23,23 @@ public:
 		y2 = (y1+size.height());
 	}
 
-	eRect( int left, int top, int width, int height );
+	eRect( const eSize &size )
+	{
+		x1 = 0;
+		y1 = 0;
+		x2 = size.width();
+		y2 = size.height();
+	}
 
-#if defined(HAVE_QT) && !defined(SWIG)
-	eRect(const QRect &);
-	operator QRect() const;
-	operator QRegion() const;
-#endif
+	eRect( int width, int height )
+	{
+		x1 = 0;
+		y1 = 0;
+		x2 = width;
+		y2 = height;
+	}
+
+	eRect( int left, int top, int width, int height );
 
 	bool empty()	const;
 	bool valid()	const;
@@ -110,6 +115,7 @@ public:
 	void setWidth( int w );
 	void setHeight( int h );
 	void setSize( const eSize &s );
+	void setEmpty() { x1 = y1 = x2 = y2 = 0; }
 
 	eRect operator|(const eRect &r) const;
 	eRect operator&(const eRect &r) const;
@@ -152,6 +158,14 @@ inline eRect::eRect( int left, int top, int width, int height )
 	y1 = top;
 	x2 = left+width;
 	y2 = top+height;
+}
+
+inline eRect::eRect( const ePoint &topLeft, const ePoint &bottomRight )
+{
+	x1 = topLeft.x();
+	y1 = topLeft.y();
+	x2 = bottomRight.x();
+	y2 = bottomRight.y();
 }
 
 inline bool eRect::empty() const
@@ -249,4 +263,59 @@ inline bool eRect::contains( int x, int y) const
 	return (x >= x1) && (x < x2) && (y >= y1) && (y < y2);
 }
 
+inline void eRect::setRect( int x, int y, int w, int h )
+{
+	x1 = x;
+	y1 = y;
+	x2 = (x+w);
+	y2 = (y+h);
+}
+
+inline void eRect::setCoords( int xp1, int yp1, int xp2, int yp2 )
+{
+	x1 = xp1;
+	y1 = yp1;
+	x2 = xp2;
+	y2 = yp2;
+}
+
+inline void eRect::setWidth( int w )
+{
+	x2 = x1 + w;
+}
+
+inline void eRect::setHeight( int h )
+{
+	y2 = y1 + h;
+}
+
+inline eRect eRect::intersect( const eRect &r ) const
+{
+	return *this & r;
+}
+
+inline eRect eRect::unite( const eRect &r ) const
+{
+	return *this | r;
+}
+
+inline void eRect::setSize( const eSize &s )
+{
+	x2 = s.width() +x1;
+	y2 = s.height()+y1;
+}
+
+inline eRect& eRect::operator|=(const eRect &r)
+{
+	*this = *this | r;
+	return *this;
+}
+
+inline eRect& eRect::operator&=(const eRect &r)
+{
+	*this = *this & r;
+	return *this;
+}
+
 #endif // eRect_H
+

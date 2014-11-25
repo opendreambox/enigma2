@@ -81,6 +81,13 @@ def _swig_setattr_nondynamic_method(set):
     return set_attr
 
 
+try:
+    import weakref
+    weakref_proxy = weakref.proxy
+except:
+    weakref_proxy = lambda x: x
+
+
 import enigma
 class eWebView(enigma.eWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -168,11 +175,392 @@ eWebView.setRawCookies = new_instancemethod(_webview.eWebView_setRawCookies,None
 eWebView.setBackgroundTransparent = new_instancemethod(_webview.eWebView_setBackgroundTransparent,None,eWebView)
 eWebView.setAcceptLanguage = new_instancemethod(_webview.eWebView_setAcceptLanguage,None,eWebView)
 eWebView.leftClick = new_instancemethod(_webview.eWebView_leftClick,None,eWebView)
+eWebView.show = new_instancemethod(_webview.eWebView_show,None,eWebView)
+eWebView.hide = new_instancemethod(_webview.eWebView_hide,None,eWebView)
 eWebView.getUserAgent = new_instancemethod(_webview.eWebView_getUserAgent,None,eWebView)
 eWebView.setUserAgent = new_instancemethod(_webview.eWebView_setUserAgent,None,eWebView)
 eWebView.resetUserAgent = new_instancemethod(_webview.eWebView_resetUserAgent,None,eWebView)
 eWebView_swigregister = _webview.eWebView_swigregister
 eWebView_swigregister(eWebView)
+
+class StdStringList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _webview.StdStringList_swiginit(self,_webview.new_StdStringList(*args))
+    __swig_destroy__ = _webview.delete_StdStringList
+StdStringList.iterator = new_instancemethod(_webview.StdStringList_iterator,None,StdStringList)
+StdStringList.__nonzero__ = new_instancemethod(_webview.StdStringList___nonzero__,None,StdStringList)
+StdStringList.__bool__ = new_instancemethod(_webview.StdStringList___bool__,None,StdStringList)
+StdStringList.__len__ = new_instancemethod(_webview.StdStringList___len__,None,StdStringList)
+StdStringList.pop = new_instancemethod(_webview.StdStringList_pop,None,StdStringList)
+StdStringList.__getslice__ = new_instancemethod(_webview.StdStringList___getslice__,None,StdStringList)
+StdStringList.__setslice__ = new_instancemethod(_webview.StdStringList___setslice__,None,StdStringList)
+StdStringList.__delslice__ = new_instancemethod(_webview.StdStringList___delslice__,None,StdStringList)
+StdStringList.__delitem__ = new_instancemethod(_webview.StdStringList___delitem__,None,StdStringList)
+StdStringList.__getitem__ = new_instancemethod(_webview.StdStringList___getitem__,None,StdStringList)
+StdStringList.__setitem__ = new_instancemethod(_webview.StdStringList___setitem__,None,StdStringList)
+StdStringList.append = new_instancemethod(_webview.StdStringList_append,None,StdStringList)
+StdStringList.empty = new_instancemethod(_webview.StdStringList_empty,None,StdStringList)
+StdStringList.size = new_instancemethod(_webview.StdStringList_size,None,StdStringList)
+StdStringList.clear = new_instancemethod(_webview.StdStringList_clear,None,StdStringList)
+StdStringList.swap = new_instancemethod(_webview.StdStringList_swap,None,StdStringList)
+StdStringList.get_allocator = new_instancemethod(_webview.StdStringList_get_allocator,None,StdStringList)
+StdStringList.begin = new_instancemethod(_webview.StdStringList_begin,None,StdStringList)
+StdStringList.end = new_instancemethod(_webview.StdStringList_end,None,StdStringList)
+StdStringList.rbegin = new_instancemethod(_webview.StdStringList_rbegin,None,StdStringList)
+StdStringList.rend = new_instancemethod(_webview.StdStringList_rend,None,StdStringList)
+StdStringList.pop_back = new_instancemethod(_webview.StdStringList_pop_back,None,StdStringList)
+StdStringList.erase = new_instancemethod(_webview.StdStringList_erase,None,StdStringList)
+StdStringList.push_back = new_instancemethod(_webview.StdStringList_push_back,None,StdStringList)
+StdStringList.front = new_instancemethod(_webview.StdStringList_front,None,StdStringList)
+StdStringList.back = new_instancemethod(_webview.StdStringList_back,None,StdStringList)
+StdStringList.assign = new_instancemethod(_webview.StdStringList_assign,None,StdStringList)
+StdStringList.resize = new_instancemethod(_webview.StdStringList_resize,None,StdStringList)
+StdStringList.insert = new_instancemethod(_webview.StdStringList_insert,None,StdStringList)
+StdStringList.pop_front = new_instancemethod(_webview.StdStringList_pop_front,None,StdStringList)
+StdStringList.push_front = new_instancemethod(_webview.StdStringList_push_front,None,StdStringList)
+StdStringList.reverse = new_instancemethod(_webview.StdStringList_reverse,None,StdStringList)
+StdStringList_swigregister = _webview.StdStringList_swigregister
+StdStringList_swigregister(StdStringList)
+
+class ByteVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _webview.ByteVector_swiginit(self,_webview.new_ByteVector(*args))
+    __swig_destroy__ = _webview.delete_ByteVector
+ByteVector.iterator = new_instancemethod(_webview.ByteVector_iterator,None,ByteVector)
+ByteVector.__nonzero__ = new_instancemethod(_webview.ByteVector___nonzero__,None,ByteVector)
+ByteVector.__bool__ = new_instancemethod(_webview.ByteVector___bool__,None,ByteVector)
+ByteVector.__len__ = new_instancemethod(_webview.ByteVector___len__,None,ByteVector)
+ByteVector.pop = new_instancemethod(_webview.ByteVector_pop,None,ByteVector)
+ByteVector.__getslice__ = new_instancemethod(_webview.ByteVector___getslice__,None,ByteVector)
+ByteVector.__setslice__ = new_instancemethod(_webview.ByteVector___setslice__,None,ByteVector)
+ByteVector.__delslice__ = new_instancemethod(_webview.ByteVector___delslice__,None,ByteVector)
+ByteVector.__delitem__ = new_instancemethod(_webview.ByteVector___delitem__,None,ByteVector)
+ByteVector.__getitem__ = new_instancemethod(_webview.ByteVector___getitem__,None,ByteVector)
+ByteVector.__setitem__ = new_instancemethod(_webview.ByteVector___setitem__,None,ByteVector)
+ByteVector.append = new_instancemethod(_webview.ByteVector_append,None,ByteVector)
+ByteVector.empty = new_instancemethod(_webview.ByteVector_empty,None,ByteVector)
+ByteVector.size = new_instancemethod(_webview.ByteVector_size,None,ByteVector)
+ByteVector.clear = new_instancemethod(_webview.ByteVector_clear,None,ByteVector)
+ByteVector.swap = new_instancemethod(_webview.ByteVector_swap,None,ByteVector)
+ByteVector.get_allocator = new_instancemethod(_webview.ByteVector_get_allocator,None,ByteVector)
+ByteVector.begin = new_instancemethod(_webview.ByteVector_begin,None,ByteVector)
+ByteVector.end = new_instancemethod(_webview.ByteVector_end,None,ByteVector)
+ByteVector.rbegin = new_instancemethod(_webview.ByteVector_rbegin,None,ByteVector)
+ByteVector.rend = new_instancemethod(_webview.ByteVector_rend,None,ByteVector)
+ByteVector.pop_back = new_instancemethod(_webview.ByteVector_pop_back,None,ByteVector)
+ByteVector.erase = new_instancemethod(_webview.ByteVector_erase,None,ByteVector)
+ByteVector.push_back = new_instancemethod(_webview.ByteVector_push_back,None,ByteVector)
+ByteVector.front = new_instancemethod(_webview.ByteVector_front,None,ByteVector)
+ByteVector.back = new_instancemethod(_webview.ByteVector_back,None,ByteVector)
+ByteVector.assign = new_instancemethod(_webview.ByteVector_assign,None,ByteVector)
+ByteVector.resize = new_instancemethod(_webview.ByteVector_resize,None,ByteVector)
+ByteVector.insert = new_instancemethod(_webview.ByteVector_insert,None,ByteVector)
+ByteVector.reserve = new_instancemethod(_webview.ByteVector_reserve,None,ByteVector)
+ByteVector.capacity = new_instancemethod(_webview.ByteVector_capacity,None,ByteVector)
+ByteVector_swigregister = _webview.ByteVector_swigregister
+ByteVector_swigregister(ByteVector)
+
+class ByteVectorList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _webview.ByteVectorList_swiginit(self,_webview.new_ByteVectorList(*args))
+    __swig_destroy__ = _webview.delete_ByteVectorList
+ByteVectorList.iterator = new_instancemethod(_webview.ByteVectorList_iterator,None,ByteVectorList)
+ByteVectorList.__nonzero__ = new_instancemethod(_webview.ByteVectorList___nonzero__,None,ByteVectorList)
+ByteVectorList.__bool__ = new_instancemethod(_webview.ByteVectorList___bool__,None,ByteVectorList)
+ByteVectorList.__len__ = new_instancemethod(_webview.ByteVectorList___len__,None,ByteVectorList)
+ByteVectorList.pop = new_instancemethod(_webview.ByteVectorList_pop,None,ByteVectorList)
+ByteVectorList.__getslice__ = new_instancemethod(_webview.ByteVectorList___getslice__,None,ByteVectorList)
+ByteVectorList.__setslice__ = new_instancemethod(_webview.ByteVectorList___setslice__,None,ByteVectorList)
+ByteVectorList.__delslice__ = new_instancemethod(_webview.ByteVectorList___delslice__,None,ByteVectorList)
+ByteVectorList.__delitem__ = new_instancemethod(_webview.ByteVectorList___delitem__,None,ByteVectorList)
+ByteVectorList.__getitem__ = new_instancemethod(_webview.ByteVectorList___getitem__,None,ByteVectorList)
+ByteVectorList.__setitem__ = new_instancemethod(_webview.ByteVectorList___setitem__,None,ByteVectorList)
+ByteVectorList.append = new_instancemethod(_webview.ByteVectorList_append,None,ByteVectorList)
+ByteVectorList.empty = new_instancemethod(_webview.ByteVectorList_empty,None,ByteVectorList)
+ByteVectorList.size = new_instancemethod(_webview.ByteVectorList_size,None,ByteVectorList)
+ByteVectorList.clear = new_instancemethod(_webview.ByteVectorList_clear,None,ByteVectorList)
+ByteVectorList.swap = new_instancemethod(_webview.ByteVectorList_swap,None,ByteVectorList)
+ByteVectorList.get_allocator = new_instancemethod(_webview.ByteVectorList_get_allocator,None,ByteVectorList)
+ByteVectorList.begin = new_instancemethod(_webview.ByteVectorList_begin,None,ByteVectorList)
+ByteVectorList.end = new_instancemethod(_webview.ByteVectorList_end,None,ByteVectorList)
+ByteVectorList.rbegin = new_instancemethod(_webview.ByteVectorList_rbegin,None,ByteVectorList)
+ByteVectorList.rend = new_instancemethod(_webview.ByteVectorList_rend,None,ByteVectorList)
+ByteVectorList.pop_back = new_instancemethod(_webview.ByteVectorList_pop_back,None,ByteVectorList)
+ByteVectorList.erase = new_instancemethod(_webview.ByteVectorList_erase,None,ByteVectorList)
+ByteVectorList.push_back = new_instancemethod(_webview.ByteVectorList_push_back,None,ByteVectorList)
+ByteVectorList.front = new_instancemethod(_webview.ByteVectorList_front,None,ByteVectorList)
+ByteVectorList.back = new_instancemethod(_webview.ByteVectorList_back,None,ByteVectorList)
+ByteVectorList.assign = new_instancemethod(_webview.ByteVectorList_assign,None,ByteVectorList)
+ByteVectorList.resize = new_instancemethod(_webview.ByteVectorList_resize,None,ByteVectorList)
+ByteVectorList.insert = new_instancemethod(_webview.ByteVectorList_insert,None,ByteVectorList)
+ByteVectorList.pop_front = new_instancemethod(_webview.ByteVectorList_pop_front,None,ByteVectorList)
+ByteVectorList.push_front = new_instancemethod(_webview.ByteVectorList_push_front,None,ByteVectorList)
+ByteVectorList.reverse = new_instancemethod(_webview.ByteVectorList_reverse,None,ByteVectorList)
+ByteVectorList_swigregister = _webview.ByteVectorList_swigregister
+ByteVectorList_swigregister(ByteVectorList)
+
+from enigma import WeakMethodReference
+
+class eSlot2IntInt(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2IntInt:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot2IntInt_swiginit(self,_webview.new_eSlot2IntInt(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot2IntInt
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot2IntInt(self)
+        return weakref_proxy(self)
+eSlot2IntInt.cb_func = new_instancemethod(_webview.eSlot2IntInt_cb_func,None,eSlot2IntInt)
+eSlot2IntInt_swigregister = _webview.eSlot2IntInt_swigregister
+eSlot2IntInt_swigregister(eSlot2IntInt)
+
+class eSignal2IntInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2IntInt(eSlot2IntInt):
+            def __init__(self, func):
+                eSlot2IntInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2IntInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal2IntInt_swiginit(self,_webview.new_eSignal2IntInt())
+    __swig_destroy__ = _webview.delete_eSignal2IntInt
+eSignal2IntInt.connect2 = new_instancemethod(_webview.eSignal2IntInt_connect2,None,eSignal2IntInt)
+eSignal2IntInt_swigregister = _webview.eSignal2IntInt_swigregister
+eSignal2IntInt_swigregister(eSignal2IntInt)
+
+class eSlot2CStrCstr(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2CStrCstr:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot2CStrCstr_swiginit(self,_webview.new_eSlot2CStrCstr(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot2CStrCstr
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot2CStrCstr(self)
+        return weakref_proxy(self)
+eSlot2CStrCstr.cb_func = new_instancemethod(_webview.eSlot2CStrCstr_cb_func,None,eSlot2CStrCstr)
+eSlot2CStrCstr_swigregister = _webview.eSlot2CStrCstr_swigregister
+eSlot2CStrCstr_swigregister(eSlot2CStrCstr)
+
+class eSignal2CStrCstr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2CStrCstr(eSlot2CStrCstr):
+            def __init__(self, func):
+                eSlot2CStrCstr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2CStrCstr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal2CStrCstr_swiginit(self,_webview.new_eSignal2CStrCstr())
+    __swig_destroy__ = _webview.delete_eSignal2CStrCstr
+eSignal2CStrCstr.connect2 = new_instancemethod(_webview.eSignal2CStrCstr_connect2,None,eSignal2CStrCstr)
+eSignal2CStrCstr_swigregister = _webview.eSignal2CStrCstr_swigregister
+eSignal2CStrCstr_swigregister(eSignal2CStrCstr)
+
+class eSlot3CStrCStrCStr(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot3CStrCStrCStr:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot3CStrCStrCStr_swiginit(self,_webview.new_eSlot3CStrCStrCStr(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot3CStrCStrCStr
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot3CStrCStrCStr(self)
+        return weakref_proxy(self)
+eSlot3CStrCStrCStr.cb_func = new_instancemethod(_webview.eSlot3CStrCStrCStr_cb_func,None,eSlot3CStrCStrCStr)
+eSlot3CStrCStrCStr_swigregister = _webview.eSlot3CStrCStrCStr_swigregister
+eSlot3CStrCStrCStr_swigregister(eSlot3CStrCStrCStr)
+
+class eSignal3CStrCStrCStr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot3CStrCStrCStr(eSlot3CStrCStrCStr):
+            def __init__(self, func):
+                eSlot3CStrCStrCStr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot3CStrCStrCStr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal3CStrCStrCStr_swiginit(self,_webview.new_eSignal3CStrCStrCStr())
+    __swig_destroy__ = _webview.delete_eSignal3CStrCStrCStr
+eSignal3CStrCStrCStr.connect2 = new_instancemethod(_webview.eSignal3CStrCStrCStr_connect2,None,eSignal3CStrCStrCStr)
+eSignal3CStrCStrCStr_swigregister = _webview.eSignal3CStrCStrCStr_swigregister
+eSignal3CStrCStrCStr_swigregister(eSignal3CStrCStrCStr)
+
+class eSlot3LongStrListByteVectorList(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot3LongStrListByteVectorList:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot3LongStrListByteVectorList_swiginit(self,_webview.new_eSlot3LongStrListByteVectorList(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot3LongStrListByteVectorList
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot3LongStrListByteVectorList(self)
+        return weakref_proxy(self)
+eSlot3LongStrListByteVectorList.cb_func = new_instancemethod(_webview.eSlot3LongStrListByteVectorList_cb_func,None,eSlot3LongStrListByteVectorList)
+eSlot3LongStrListByteVectorList_swigregister = _webview.eSlot3LongStrListByteVectorList_swigregister
+eSlot3LongStrListByteVectorList_swigregister(eSlot3LongStrListByteVectorList)
+
+class eSignal3LongStrListByteVectorList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot3LongStrListByteVectorList(eSlot3LongStrListByteVectorList):
+            def __init__(self, func):
+                eSlot3LongStrListByteVectorList.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot3LongStrListByteVectorList(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal3LongStrListByteVectorList_swiginit(self,_webview.new_eSignal3LongStrListByteVectorList())
+    __swig_destroy__ = _webview.delete_eSignal3LongStrListByteVectorList
+eSignal3LongStrListByteVectorList.connect2 = new_instancemethod(_webview.eSignal3LongStrListByteVectorList_connect2,None,eSignal3LongStrListByteVectorList)
+eSignal3LongStrListByteVectorList_swigregister = _webview.eSignal3LongStrListByteVectorList_swigregister
+eSignal3LongStrListByteVectorList_swigregister(eSignal3LongStrListByteVectorList)
+
+class eSlot4IntIntIntInt(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot4IntIntIntInt:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot4IntIntIntInt_swiginit(self,_webview.new_eSlot4IntIntIntInt(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot4IntIntIntInt
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot4IntIntIntInt(self)
+        return weakref_proxy(self)
+eSlot4IntIntIntInt.cb_func = new_instancemethod(_webview.eSlot4IntIntIntInt_cb_func,None,eSlot4IntIntIntInt)
+eSlot4IntIntIntInt_swigregister = _webview.eSlot4IntIntIntInt_swigregister
+eSlot4IntIntIntInt_swigregister(eSlot4IntIntIntInt)
+
+class eSignal4IntIntIntInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot4IntIntIntInt(eSlot4IntIntIntInt):
+            def __init__(self, func):
+                eSlot4IntIntIntInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot4IntIntIntInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal4IntIntIntInt_swiginit(self,_webview.new_eSignal4IntIntIntInt())
+    __swig_destroy__ = _webview.delete_eSignal4IntIntIntInt
+eSignal4IntIntIntInt.connect2 = new_instancemethod(_webview.eSignal4IntIntIntInt_connect2,None,eSignal4IntIntIntInt)
+eSignal4IntIntIntInt_swigregister = _webview.eSignal4IntIntIntInt_swigregister
+eSignal4IntIntIntInt_swigregister(eSignal4IntIntIntInt)
+
+class eSlot4LongCStrCStrCStr(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot4LongCStrCStrCStr:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot4LongCStrCStrCStr_swiginit(self,_webview.new_eSlot4LongCStrCStrCStr(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot4LongCStrCStrCStr
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot4LongCStrCStrCStr(self)
+        return weakref_proxy(self)
+eSlot4LongCStrCStrCStr.cb_func = new_instancemethod(_webview.eSlot4LongCStrCStrCStr_cb_func,None,eSlot4LongCStrCStrCStr)
+eSlot4LongCStrCStrCStr_swigregister = _webview.eSlot4LongCStrCStrCStr_swigregister
+eSlot4LongCStrCStrCStr_swigregister(eSlot4LongCStrCStrCStr)
+
+class eSignal4LongCStrCStrCStr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot4LongCStrCStrCStr(eSlot4LongCStrCStrCStr):
+            def __init__(self, func):
+                eSlot4LongCStrCStrCStr.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot4LongCStrCStrCStr(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal4LongCStrCStrCStr_swiginit(self,_webview.new_eSignal4LongCStrCStrCStr())
+    __swig_destroy__ = _webview.delete_eSignal4LongCStrCStrCStr
+eSignal4LongCStrCStrCStr.connect2 = new_instancemethod(_webview.eSignal4LongCStrCStrCStr_connect2,None,eSignal4LongCStrCStrCStr)
+eSignal4LongCStrCStrCStr_swigregister = _webview.eSignal4LongCStrCStrCStr_swigregister
+eSignal4LongCStrCStrCStr_swigregister(eSignal4LongCStrCStrCStr)
+
+class eSlot5IntIntIntIntBool(enigma.eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot5IntIntIntIntBool:
+            _self = None
+        else:
+            _self = self
+        _webview.eSlot5IntIntIntIntBool_swiginit(self,_webview.new_eSlot5IntIntIntIntBool(_self, ))
+    __swig_destroy__ = _webview.delete_eSlot5IntIntIntIntBool
+    def __disown__(self):
+        self.this.disown()
+        _webview.disown_eSlot5IntIntIntIntBool(self)
+        return weakref_proxy(self)
+eSlot5IntIntIntIntBool.cb_func = new_instancemethod(_webview.eSlot5IntIntIntIntBool_cb_func,None,eSlot5IntIntIntIntBool)
+eSlot5IntIntIntIntBool_swigregister = _webview.eSlot5IntIntIntIntBool_swigregister
+eSlot5IntIntIntIntBool_swigregister(eSlot5IntIntIntIntBool)
+
+class eSignal5IntIntIntIntBool(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot5IntIntIntIntBool(eSlot5IntIntIntIntBool):
+            def __init__(self, func):
+                eSlot5IntIntIntIntBool.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot5IntIntIntIntBool(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _webview.eSignal5IntIntIntIntBool_swiginit(self,_webview.new_eSignal5IntIntIntIntBool())
+    __swig_destroy__ = _webview.delete_eSignal5IntIntIntIntBool
+eSignal5IntIntIntIntBool.connect2 = new_instancemethod(_webview.eSignal5IntIntIntIntBool_connect2,None,eSignal5IntIntIntIntBool)
+eSignal5IntIntIntIntBool_swigregister = _webview.eSignal5IntIntIntIntBool_swigregister
+eSignal5IntIntIntIntBool_swigregister(eSignal5IntIntIntIntBool)
 
 
 

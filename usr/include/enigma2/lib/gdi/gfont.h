@@ -4,8 +4,6 @@
 #include <lib/base/object.h>
 #include <string>
 
-class QFont;
-
 /**
  * \brief A softreference to a font.
  *
@@ -38,10 +36,6 @@ public:
 		:pointSize(0)
 	{
 	}
-
-#if defined(HAVE_QT) && !defined(SWIG)
-	operator QFont();
-#endif
 };
 
 #endif

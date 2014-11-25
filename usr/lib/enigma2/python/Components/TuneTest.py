@@ -1,4 +1,9 @@
-from enigma import eDVBFrontendParametersSatellite, eDVBFrontendParameters, eDVBResourceManager, eTimer
+from enigma import eDVBFrontendParametersSatellite, eDVBFrontendParameters, eDVBResourceManager, eTimer, eSlot1I, iDVBFrontend
+
+stateFailed = iDVBFrontend.stateFailed
+stateTuning = iDVBFrontend.stateTuning
+stateLock = iDVBFrontend.stateLock
+stateLostLock = iDVBFrontend.stateLostLock
 
 class Tuner:
 	def __init__(self, frontend, ignore_rotor=False):
@@ -59,64 +64,71 @@ class TuneTest:
 						self.frontend = None # in normal case this should not happen
 		self.tuner = Tuner(self.frontend)
 		self.timer = eTimer()
-		self.timer.callback.append(self.updateStatus)
-		
-	def gotTsidOnid(self, tsid, onid):
-		print "******** got tsid, onid:", tsid, onid
-		if tsid is not None and onid is not None:
-			self.pidStatus = self.INTERNAL_PID_STATUS_SUCCESSFUL
-			self.tsid = tsid
-			self.onid = onid
-		else:
+		self.timer_conn = self.timer.timeout.connect(self.updateStatus)
+
+	def gotTsidOnid(self, tsidonid):
+		if tsidonid == -1:
+			print "******** got tsidonid failed"
 			self.pidStatus = self.INTERNAL_PID_STATUS_FAILED
 			self.tsid = -1
 			self.onid = -1
+		else:
+			self.pidStatus = self.INTERNAL_PID_STATUS_SUCCESSFUL
+			self.tsid = (tsidonid>>16)&0xFFFF
+			self.onid = tsidonid&0xFFFF
+			print "******** got tsid %04x, onid %04x" %(self.tsid, self.onid)
 		self.timer.start(100, True)
-			
-	def updateStatus(self):
-		dict = {}
-		self.frontend.getFrontendStatus(dict)
-		stop = False
+		self.__requestTsidOnid_conn = None
 		
-		print "status:", dict
-		if dict["tuner_state"] == "TUNING":
+	def updateStatus(self):
+		fe_data = { }
+		self.frontend.getFrontendStatus(fe_data)
+		stop = False
+		state = fe_data["tuner_state"]
+		print "status:", state
+		if state == stateTuning:
 			print "TUNING"
 			self.timer.start(100, True)
 			self.progressCallback((self.getProgressLength(), self.tuningtransponder, self.STATUS_TUNING, self.currTuned))
 		elif self.checkPIDs and self.pidStatus == self.INTERNAL_PID_STATUS_NOOP:
 			print "2nd choice"
-			if dict["tuner_state"] == "LOCKED":
+			if state == stateLock:
 				print "acquiring TSID/ONID"
-				self.raw_channel.requestTsidOnid(self.gotTsidOnid)
+				class ePySlot1I(eSlot1I):
+					def __init__(self, func):
+						eSlot1I.__init__(self)
+						self.cb_func = func
+				self.__requestTsidOnid_conn = ePySlot1I(self.gotTsidOnid)
+				self.raw_channel.requestTsidOnid(self.__requestTsidOnid_conn)
 				self.pidStatus = self.INTERNAL_PID_STATUS_WAITING
 			else:
 				self.pidStatus = self.INTERNAL_PID_STATUS_FAILED
 		elif self.checkPIDs and self.pidStatus == self.INTERNAL_PID_STATUS_WAITING:
 			print "waiting for pids"			
 		else:
-			if dict["tuner_state"] == "LOSTLOCK" or dict["tuner_state"] == "FAILED":
+			if state == stateLostLock or state == stateFailed:
 				self.tuningtransponder = self.nextTransponder()
-				self.failedTune.append([self.currTuned, self.oldTuned, "tune_failed", dict])  # last parameter is the frontend status)
+				self.failedTune.append([self.currTuned, self.oldTuned, "tune_failed", fe_data])  # last parameter is the frontend status)
 				if self.stopOnError != -1 and self.stopOnError <= len(self.failedTune):
 					stop = True
-			elif dict["tuner_state"] == "LOCKED":
+			elif state == stateLock:
 				pidsFailed = False
 				if self.checkPIDs:
 					if self.currTuned is not None:
 						if self.tsid != self.currTuned[10] or self.onid != self.currTuned[11]:
-							self.failedTune.append([self.currTuned, self.oldTuned, "pids_failed", {"real": (self.tsid, self.onid), "expected": (self.currTuned[10], self.currTuned[11])}, dict])  # last parameter is the frontend status
+							self.failedTune.append([self.currTuned, self.oldTuned, "pids_failed", {"real": (self.tsid, self.onid), "expected": (self.currTuned[10], self.currTuned[11])}, fe_data])  # last parameter is the frontend status
 							pidsFailed = True
 						else:
-							self.successfullyTune.append([self.currTuned, self.oldTuned, dict])  # 3rd parameter is the frontend status
+							self.successfullyTune.append([self.currTuned, self.oldTuned, fe_data])  # 3rd parameter is the frontend status
 							if self.stopOnSuccess != -1 and self.stopOnSuccess <= len(self.successfullyTune):
 								stop = True
 				elif not self.checkPIDs or (self.checkPids and not pidsFailed):  
-					self.successfullyTune.append([self.currTuned, self.oldTuned, dict]) # 3rd parameter is the frontend status
+					self.successfullyTune.append([self.currTuned, self.oldTuned, fe_data]) # 3rd parameter is the frontend status
 					if self.stopOnSuccess != -1 and self.stopOnSuccess <= len(self.successfullyTune):
 								stop = True
 				self.tuningtransponder = self.nextTransponder()
 			else:
-				print "************* tuner_state:", dict["tuner_state"]
+				print "************* tuner_state:", state
 				
 			self.progressCallback((self.getProgressLength(), self.tuningtransponder, self.STATUS_NOOP, self.currTuned))
 			

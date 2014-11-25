@@ -8,8 +8,7 @@ from Components.config import config, ConfigBoolean, configfile
 
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from Tools.HardwareInfo import HardwareInfo
-
-config.misc.showtestcard = ConfigBoolean(default = False)
+from Components.SystemInfo import SystemInfo
 
 class VideoWizardSummary(WizardSummary):
 	skin = (
@@ -90,13 +89,17 @@ class VideoWizard(WizardLanguage, Rc):
 		for port in self.hw.getPortList():
 			if self.hw.isPortUsed(port):
 				descr = port
-				if descr == 'DVI' and hw_type in ('dm500hd', 'dm500hdv2', 'dm800se', 'dm800sev2', 'dm7020hd'):
+				if descr == 'DVI' and hw_type not in ('dm800', 'dm8000'):
 					descr = 'HDMI'
 				if port != "DVI-PC":
 					list.append((descr,port))
 		list.sort(key = lambda x: x[0])
 		print "listInputChannels:", list
 		return list
+
+	def selectDVI(self):
+		self.selection = 'DVI'
+		self.inputSelectionMade(self.selection)
 
 	def inputSelectionMade(self, index):
 		print "inputSelectionMade:", index
@@ -108,7 +111,7 @@ class VideoWizard(WizardLanguage, Rc):
 		self.inputSelect(self.selection)
 		if self["portpic"].instance is not None:
 			picname = self.selection
-			if picname == "DVI" and HardwareInfo().get_device_name() in ("dm500hd", "dm500hdv2", "dm800se", "dm800sev2", "dm7020hd"):
+			if picname == "DVI" and HardwareInfo().get_device_name() not in ("dm800", "dm8000"):
 				picname = "HDMI"
 			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/" + picname + ".png"))
 		
@@ -142,7 +145,7 @@ class VideoWizard(WizardLanguage, Rc):
 	def modeSelect(self, mode):
 		ratesList = self.listRates(mode)
 		print "ratesList:", ratesList
-		if self.port == "DVI" and mode in ("720p", "1080i"):
+		if self.port == "DVI" and mode in ("720p", "1080p", "1080i"):
 			self.rate = "multi"
 			self.hw.setMode(port = self.port, mode = mode, rate = "multi")
 		else:
@@ -177,23 +180,16 @@ class VideoWizard(WizardLanguage, Rc):
 	def rateSelect(self, rate):
 		self.hw.setMode(port = self.port, mode = self.mode, rate = rate)
 
-	def showTestCard(self, selection = None):
-		if selection is None:
-			selection = self.selection
-		print "set config.misc.showtestcard to", {'yes': True, 'no': False}[selection]
-		if selection == "yes":
-			config.misc.showtestcard.value = True
-		else:
-			config.misc.showtestcard.value = False
-
 	def keyNumberGlobal(self, number):
-		if number in (1,2,3):
+		if number in (1,2,3,4):
 			if number == 1:
 				self.hw.saveMode("DVI", "720p", "multi")
 			elif number == 2:
 				self.hw.saveMode("DVI", "1080i", "multi")
-			elif number == 3:
+			elif SystemInfo["AnalogOutput"] and number == 3:
 				self.hw.saveMode("Scart", "Multi", "multi")
+			elif number == 4:
+				self.hw.saveMode("DVI", "1080p", "multi")
 			self.hw.setConfiguredMode()
 			self.close()
 

@@ -24,7 +24,7 @@ class PerServiceBase(object):
 		self.poll_timer = eTimer()
 		self.with_event = with_event
 
-		self.poll_timer.callback.append(self.poll)
+		self.poll_timer_conn = self.poll_timer.timeout.connect(self.poll)
 
 		EventMap = PerServiceBase.EventMap
 		if not len(EventMap):

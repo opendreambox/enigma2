@@ -12,6 +12,8 @@ class MessageBox(Screen):
 	TYPE_WARNING = 2
 	TYPE_ERROR = 3
 
+	IS_DIALOG = True
+
 	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, title = None, additionalActionMap=None):
 		self.type = type
 		Screen.__init__(self, session)
@@ -56,8 +58,8 @@ class MessageBox(Screen):
 			if close_on_any_key:
 				if additionalActionMap is not None:
 					self["additionalActions"] = additionalActionMap
-				eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.closeAnyKey)
-				self.onClose.append(lambda: eActionMap.getInstance().unbindAction('', self.closeAnyKey))
+				self.highPrioActionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.closeAnyKey)
+				self.onClose.append(self.disconnectHighPrioAction)
 			else:
 				self["actions"] = ActionMap(["MsgBoxActions", "DirectionActions"], 
 					{
@@ -74,6 +76,9 @@ class MessageBox(Screen):
 						"rightRepeated": self.right
 					}, -1)
 
+	def disconnectHighPrioAction(self):
+		self.highPrioAction = None
+
 	def _onFirstExecBegin(self):
 		if self.title != None:
 			self.setTitle(self.title)
@@ -82,7 +87,7 @@ class MessageBox(Screen):
 		self.timeout = timeout
 		if timeout > 0:
 			self.timer = eTimer()
-			self.timer.callback.append(self.timerTick)
+			self.timer_conn = self.timer.timeout.connect(self.timerTick)
 			self.onExecBegin.append(self.startTimer)
 			self.origTitle = None
 			if self.execing:
@@ -122,6 +127,7 @@ class MessageBox(Screen):
 		self.close(True)
 		if self.get("additionalActions", None):
 			return 0
+		return 1
 
 	def timeoutCallback(self):
 		print "Timeout!"

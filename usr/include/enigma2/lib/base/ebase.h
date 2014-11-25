@@ -10,12 +10,11 @@
 #include <time.h>
 
 #include <lib/base/eptrlist.h>
+#include <lib/base/macros.h>
 #include <lib/base/sigc.h>
 #endif
 
-#include <lib/python/connections.h>
-
-#define E_UNUSED(x)	(void)x;
+#include <lib/base/esignal.h>
 
 class eMainloop;
 class MainloopList;
@@ -131,16 +130,17 @@ static inline timespec operator-=( timespec &t1, const long msek )
 	return t1;
 }
 
+static inline int64_t timeout_msec ( const timespec & orig, const timespec &now )
+{
+	const timespec tv = orig - now;
+	return (int64_t)tv.tv_sec * 1000 + tv.tv_nsec / 1000000;
+}
+
 static inline int64_t timeout_msec ( const timespec & orig )
 {
 	timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	return (int64_t)((orig-now).tv_sec)*1000 + (orig-now).tv_nsec/1000000;
-}
-
-static inline int64_t timeout_msec ( const timespec & orig, const timespec &now )
-{
-	return (int64_t)((orig-now).tv_sec)*1000 + (orig-now).tv_nsec/1000000;
+	return timeout_msec(orig, now);
 }
 
 #endif
@@ -148,7 +148,6 @@ static inline int64_t timeout_msec ( const timespec & orig, const timespec &now 
 class MainloopList;
 class eSocketNotifier;
 class eTimer;
-class PSignal;
 
 class eMainloop
 {
@@ -168,12 +167,17 @@ protected:
 	int m_is_idle;
 	int m_idle_count;
 
+	int m_zero;
+	int &m_argc;
+	char **m_argv;
+
 	virtual void enterIdle() { m_is_idle=1; ++m_idle_count; }
 	virtual void leaveIdle() { m_is_idle=0; }
 
 	virtual ~eMainloop();
 public:
 	eMainloop();
+	eMainloop(int &argc, char **argv);
 #ifndef SWIG
 	virtual void quit(int ret=0) = 0; // leave all pending loops (recursive leave())
 #endif
@@ -184,9 +188,12 @@ public:
 		/* m_is_idle needs to be atomic, but it doesn't really matter much, as it's read-only from outside */
 	int isIdle() { return m_is_idle; }
 	int idleCount() { return m_idle_count; }
+
+	int &argc() { return m_argc; }
+	char **argv() { return m_argv; }
 };
 
-#ifndef SWIG
+
 			// die beiden signalquellen: SocketNotifier...
 /**
  * \brief Gives a callback when data on a file descriptor is ready.
@@ -216,10 +223,12 @@ public:
 	 * \param req The events to watch to, normally either \c Read or \c Write. You can specify any events that \c poll supports.
 	 * \param startnow Specifies if the socketnotifier should start immediately.
 	 */
+#ifndef SWIG
 	static eSocketNotifier* create(eMainloop *context, int fd, int req, bool startnow=true) { return context->createSocketNotifier(fd, req, startnow); }
+#endif
 	virtual ~eSocketNotifier();
 
-	PSignal1<void, int> activated;
+	eSignal1<void, int> activated;
 
 	void start();
 	void stop();
@@ -231,7 +240,9 @@ public:
 	int getState() { return state; }
 	void activate(int what);
 
+#ifndef SWIG
 	eSmartPtrList<iObject> m_clients;
+#endif
 };
 
 				// ... und Timer
@@ -259,10 +270,12 @@ public:
 	 * The timer is not yet active, it has to be started with \c start.
 	 * \param context The thread from which the signal should be emitted.
 	 */
+#ifndef SWIG
 	static eTimer *create(eMainloop *context=eApp) { return context->createTimer(); }
+#endif
 	virtual ~eTimer();
 
-	PSignal0<void> timeout;
+	eSignal0<void> timeout;
 
 	bool isActive() { return bActive; }
 
@@ -274,15 +287,17 @@ public:
 	void stop();
 	void changeInterval(int msek);
 	void startLongTimer(int seconds);
-	bool operator<(const eTimer& t) const { return nextActivation < t.nextActivation; }
 
+#ifndef SWIG
+	bool operator<(const eTimer& t) const { return nextActivation < t.nextActivation; }
 	eSmartPtrList<iObject> m_clients;
+#endif
 };
 
+#ifndef SWIG
 			// werden in einer mainloop verarbeitet
 class eMainloop_native: public eMainloop
 {
-	bool m_timer_sn_thread_checks;
 protected:
 	std::multimap<int, eSocketNotifier*> m_notifiers;
 	std::multimap<int, eSocketNotifier*> m_notifiers_new;
@@ -307,6 +322,7 @@ protected:
 	void removeTimer(eTimer* e);
 public:
 	eMainloop_native();
+	eMainloop_native(int &argc, char **argv);
 	~eMainloop_native();
 
 	void quit(int ret=0); // leave all pending loops (recursive leave())

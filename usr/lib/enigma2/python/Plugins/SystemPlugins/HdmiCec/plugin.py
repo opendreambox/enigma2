@@ -14,8 +14,8 @@ class Cec(object):
 
 	def __init__(self):
 		config.misc.standbyCounter.addNotifier(self._onStandby, initial_call = False)
-		hdmi_cec.instance.receivedStandby.get().append(self.__receivedStandby)
-		hdmi_cec.instance.isNowActive.get().append(self.__receivedNowActive)
+		self.cec_recvStandby_conn = hdmi_cec.instance.receivedStandby.connect(self.__receivedStandby)
+		self.cec_isNowActive_conn = hdmi_cec.instance.isNowActive.connect(self.__receivedNowActive)
 		self.actionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.keypress) #highest prio
 		self.idle_to_standby = False
 
@@ -53,6 +53,7 @@ class Cec(object):
 		if config.cec.volume_forward.value:
 			if flag == 0 or flag == 2:
 				hdmi_cec.sendSystemAudioKey(key)
+		return 0
 
 cec = Cec()
 

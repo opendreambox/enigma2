@@ -4,7 +4,7 @@
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>VideoTune</name>
                     <packagename>enigma2-plugin-systemplugins-videotune</packagename>
                     <shortdescription>VideoTune helps fine-tuning your tv display</shortdescription>

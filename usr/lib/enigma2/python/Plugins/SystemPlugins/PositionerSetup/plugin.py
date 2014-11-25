@@ -137,7 +137,7 @@ class PositionerSetup(Screen):
 		self.updateColors("tune")
 
 		self.statusTimer = eTimer()
-		self.statusTimer.callback.append(self.updateStatus)
+		self.statusTimer_conn = self.statusTimer.timeout.connect(self.updateStatus)
 		self.statusTimer.start(50, True)
 		self.onClose.append(self.__onClose)
 
@@ -348,6 +348,7 @@ class PositionerSetup(Screen):
 
 	def updateStatus(self):
 		if self.frontend:
+			self.frontendStatus.clear()
 			self.frontend.getFrontendStatus(self.frontendStatus)
 		self["snr_db"].update()
 		self["snr_percentage"].update()

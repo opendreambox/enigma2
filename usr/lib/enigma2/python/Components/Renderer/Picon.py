@@ -7,9 +7,7 @@ from Tools.Directories import fileExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, 
 from re import compile
 
 class Picon(Renderer):
-	searchPaths = (eEnv.resolve('${datadir}/enigma2/%s/'),
-				'/media/cf/%s/',
-				'/media/usb/%s/')
+	searchPaths = (eEnv.resolve('${datadir}/enigma2/%s/'),)
 
 	def __init__(self):
 		Renderer.__init__(self)

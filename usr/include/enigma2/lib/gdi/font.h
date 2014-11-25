@@ -14,7 +14,6 @@ typedef FTC_SBitCache FTC_SBit_Cache;
 #include <vector>
 #include <list>
 
-#include <lib/gdi/fb.h>
 #include <lib/gdi/esize.h>
 #include <lib/gdi/epoint.h>
 #include <lib/gdi/erect.h>
@@ -28,7 +27,7 @@ class eFont;
 class gDC;
 class gFont;
 class gRegion;
-class gRGB;
+class gRGBA;
 class gSurface;
 
 #endif
@@ -53,8 +52,6 @@ protected:
 	fontListEntry *findId(FTC_FaceID id);
 
 private:
-	fbClass *fb;
-
 	FT_Library library;
 	FTC_Manager			cacheManager;				/* the cache manager							 */
 	FTC_Image_Cache	imageCache;					/* the glyph image cache					 */
@@ -116,7 +113,7 @@ public:
 #endif
 
 	int x, y, w;
-	unsigned long argb;
+	unsigned int argb;
 	ePtr<eFont> font;
 	FT_ULong glyph_index;
 	int flags;
@@ -169,11 +166,7 @@ public:
 
 	void setFont(const gFont *font);
 	int renderString(const char *string, int flags=0);
-
-
-
-	void blit(gDC &dc, const ePoint &offset, const gRGB &background, const gRGB &foreground);
-	void blit(gSurface *surface, const gRegion &clip, const ePoint &offset, const gRGB &background, const gRGB &foreground);
+	void blit(gSurface *surface, const gRegion &clip, const ePoint &offset, const gRGBA &background, const gRGBA &foreground);
 
 	enum
 	{

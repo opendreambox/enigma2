@@ -59,8 +59,10 @@ public:
 	void kill(bool sendcancel=false);
 
 	static pid_t gettid();
+	pid_t tid() const;
 private:
 	pthread_t the_thread;
+	pid_t m_tid;
 
 	static void *wrapper(void *ptr);
 	int m_alive, m_started;

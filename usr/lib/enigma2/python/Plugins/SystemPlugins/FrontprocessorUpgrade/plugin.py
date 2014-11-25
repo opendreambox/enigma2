@@ -4,10 +4,10 @@ from Components.Label import Label
 from Plugins.Plugin import PluginDescriptor
 
 def getUpgradeVersion():
-	import os
+	from Tools.IO import runPipe
 	try:
-		r = os.popen("fpupgrade --version").read()
-	except IOError:
+		_, r = runPipe(['fpupgrade', '--version'])
+	except:
 		return None
 	if r[:16] != "FP update tool v":
 		return None

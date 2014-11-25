@@ -6,10 +6,11 @@
                     <hardware type="dm800se" />
                     <hardware type="dm800sev2" />
                     <hardware type="dm7020hd" />
+                    <hardware type="dm7080" />
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>TempFanControl</name>
                     <packagename>enigma2-plugin-systemplugins-tempfancontrol</packagename>
                     <shortdescription>Control your system fan</shortdescription>

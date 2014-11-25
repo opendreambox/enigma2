@@ -39,6 +39,7 @@
 		<color name="ListboxMarkedAndSelectedForeground" color="#00ff00"/>
 		<color name="WindowTitleForeground" color="#ffffff"/>
 		<color name="WindowTitleBackground" color="#16244b"/>
+		<color name="WindowDimmer" color="#35000000"/>
 		<!-- screen border png's -->
 		<borderset name="bsWindow">
 			<pixmap pos="bpTopLeft" filename="Default-HD/b_tl.png" />
@@ -1356,31 +1357,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 
 		</applet>
 	</screen>
-	<!-- MiniDLNA -->
-	<screen name="MiniDLNASetup" position="center,120" size="820,520" title="Mediaserver (DLNA) Setup">
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-		<widget name="config" position="10,60" size="800,450" itemHeight="30" scrollbarMode="showOnDemand" />
-	</screen>
-	<screen name="MiniDLNAShareSetup" position="center,120" size="820,520" title="Mediaserver (DLNA) Shares">
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-		<widget name="config" position="10,60" size="800,450" itemHeight="30" scrollbarMode="showOnDemand" />
-	</screen>
 	<!-- Minute input -->
 	<screen name="MinuteInput" position="center,center" size="280,60" title="Seek">
 		<widget name="minutes" position="80,15" size="160,25" halign="right" font="Regular;23" />
@@ -1708,117 +1684,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 		</widget>
 		<eLabel	position="10,480" size="800,1" backgroundColor="grey"/>
 		<widget source="introduction" render="Label" position="10,488" size="800,25" font="Regular;22" halign="center" transparent="1"/>
-	</screen>
-	<!-- Network setup -->
-	<screen name="AdapterSetup" position="center,120" size="820,520" title="Network Setup">
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<!-- <ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
-		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" /> -->
-		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-		<widget name="config" position="10,60" size="800,210" itemHeight="30" scrollbarMode="showOnDemand" />
-		<eLabel position="10,270" size="800,1" backgroundColor="grey" />
-		<widget source="introduction" render="Label" position="10,296" size="800,25" font="Regular;22" halign="center" />
-		<widget source="IPtext" render="Label" position="220,324" size="230,24" font="Regular;20" valign="center" />
-		<widget source="IP" render="Label" position="450,324" size="230,24" font="Regular;20" valign="center" />
-		<widget source="Netmasktext" render="Label" position="220,348" size="230,24" font="Regular;20" valign="center" />
-		<widget source="Mask" render="Label" position="450,348" size="230,24" font="Regular;20" valign="center" />
-		<widget source="Gatewaytext" render="Label" position="220,372" size="230,24" font="Regular;20" valign="center" />
-		<widget source="Gateway" render="Label" position="450,372" size="230,24" font="Regular;20" valign="center" />
-		<widget source="DNS1text" render="Label" position="220,398" size="230,24" font="Regular;20" valign="center" backgroundColor="#20062748" transparent="1" />
-		<widget source="DNS1" render="Label" position="450,398" size="230,24" font="Regular;20" valign="center" backgroundColor="#20062748" transparent="1" />
-		<widget source="DNS2text" render="Label" position="220,424" size="230,24" font="Regular;20" valign="center" backgroundColor="#20062748" transparent="1" />
-		<widget source="DNS2" render="Label" position="450,424" size="230,24" font="Regular;20" valign="center" backgroundColor="#20062748" transparent="1" />
-		<eLabel position="10,450" size="800,1" backgroundColor="grey" />
-		<widget source="Adaptertext" render="Label" position="10,460" size="120,25" font="Regular;22" halign="left" transparent="1" />
-		<widget source="Adapter" render="Label" position="120,460" size="400,25" font="Regular;22" halign="left" transparent="1" />
-		<widget source="introduction2" render="Label" position="10,488" size="800,25" font="Regular;22" halign="center" valign="center" transparent="1" />
-		<widget source="VKeyIcon" render="Pixmap" position="730,485" size="70,30" pixmap="Default-HD/icons/text.png" alphatest="blend">
-			<convert type="ConditionalShowHide" />
-		</widget>
-		<widget name="HelpWindow" position="338,440" zPosition="1" size="1,1" transparent="1" />
-	</screen>
-	<screen name="AdapterSetupConfiguration" position="center,120" size="820,520" title="Network Configuration...">
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
-		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-		<eLabel position="420,50" size="1,400" backgroundColor="grey" />
-		<widget name="menulist" position="10,60" size="400,360" itemHeight="30" scrollbarMode="showOnDemand" />
-		<widget source="description" render="Label" position="430,60" size="380,360" font="Regular;22" halign="center" valign="center" transparent="1" />
-		<eLabel position="10,450" size="800,1" backgroundColor="grey" />
-		<widget source="IFtext" render="Label" position="10,460" size="140,25" font="Regular;22" halign="left" transparent="1" />
-		<widget source="IF" render="Label" position="150,460" size="400,25" font="Regular;22" halign="left" transparent="1" />
-		<widget source="Statustext" render="Label" position="10,488" size="150,25" font="Regular;22" halign="left" transparent="1" />
-		<widget name="statuspic" position="160,491" size="20,20" pixmaps="Default-HD/buttons/button_green.png,Default-HD/buttons/button_green_off.png" alphatest="on" />
-	</screen>
-	<screen name="NetworkAdapterSelection" position="center,120" size="820,520" title="Select Network Adapter">
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
-		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on"/>
-		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on"/>
-		<ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on"/>
-		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
-		<widget source="list" render="Listbox" position="10,60" size="800,350" scrollbarMode="showOnDemand">
-			<convert type="TemplatedMultiContent"> <!--  iface, name, description, interfacepng, defaultpng, activepng, divpng  -->
-				{"template": [
-						MultiContentEntryText(pos = (100, 6), size = (690, 32), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_TOP, text = 1), # index 1 is the interfacename
-						MultiContentEntryText(pos = (100, 43), size = (690, 20), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, text = 2), # index 2 is the description
-						MultiContentEntryPixmapAlphaTest(pos = (10, 8), size = (54, 54), png = 3), # index 3 is the interface pixmap
-						MultiContentEntryPixmapAlphaTest(pos = (71, 46), size = (15, 16), png = 4), # index 4 is the default pixmap
-					],
-				"fonts": [gFont("Regular", 26),gFont("Regular", 18)],
-				"itemHeight": 70
-				}
-			</convert>
-		</widget>
-		<eLabel	position="10,480" size="800,1" backgroundColor="grey"/>
-		<widget source="introduction" render="Label" position="10,488" size="800,25" font="Regular;22" halign="center" transparent="1"/>
-	</screen>
-	<screen name="NetworkAdapterTest" position="center,120" size="820,520" title="Network test..." >
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
-		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on"/>
-		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on"/>
-		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
-		<widget name="Adaptertext" position="20,63" size="500,25" font="Regular;22"/>
-		<widget name="Adapter" position="20,94" size="500,25" font="Regular;21" foregroundColors="#8c8c93,#f23d21,#1cff1c"/>
-		<widget name="AdapterInfo_OK" position="540,74" size="38,31" pixmap="skin_default/icons/lock_on.png" alphatest="on"/>
-		<widget name="AdapterInfo" position="600,70" size="200,40" pixmaps="Default-HD/buttons/netsel.png,Default-HD/buttons/netselpressed.png" alphatest="on"/>
-		<widget name="AdapterInfo_Text" position="600,70" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColors="#200d1940,#cccccc,#ffffff" backgroundColor="background" transparent="1"/>
-		<eLabel	position="10,128" size="800,1" backgroundColor="grey"/>
-		<widget name="Networktext" position="20,141" size="500,25" font="Regular;22"/>
-		<widget name="Network" position="20,172" size="500,25" font="Regular;21" foregroundColors="#8c8c93,#f23d21,#1cff1c"/>
-		<widget name="NetworkInfo_Check" position="540,152" size="38,31" pixmaps="skin_default/icons/lock_on.png,skin_default/icons/lock_error.png" alphatest="on"/>
-		<widget name="NetworkInfo" position="600,148" size="200,40" pixmaps="Default-HD/buttons/netsel.png,Default-HD/buttons/netselpressed.png" alphatest="on"/>
-		<widget name="NetworkInfo_Text" position="600,148" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColors="#200d1940,#cccccc,#ffffff" backgroundColor="background" transparent="1"/>
-		<eLabel	position="10,206" size="800,1" backgroundColor="grey"/>
-		<widget name="Dhcptext" position="20,219" size="500,25" font="Regular;22"/>
-		<widget name="Dhcp" position="20,250" size="500,25" font="Regular;21" foregroundColors="#8c8c93,#f23d21,#1cff1c"/>
-		<widget name="DhcpInfo_Check" position="540,230" size="38,31" pixmaps="skin_default/icons/lock_on.png,skin_default/icons/lock_error.png" alphatest="on"/>
-		<widget name="DhcpInfo" position="600,226" size="200,40" pixmaps="Default-HD/buttons/netsel.png,Default-HD/buttons/netselpressed.png" alphatest="on"/>
-		<widget name="DhcpInfo_Text" position="600,226" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColors="#200d1940,#cccccc,#ffffff" backgroundColor="background" transparent="1"/>
-		<eLabel	position="10,284" size="800,1" backgroundColor="grey"/>
-		<widget name="IPtext" position="20,297" size="500,25" font="Regular;22"/>
-		<widget name="IP" position="20,328" size="500,25" font="Regular;21" foregroundColors="#8c8c93,#f23d21,#1cff1c"/>
-		<widget name="IPInfo_Check" position="540,308" size="38,31" pixmaps="skin_default/icons/lock_on.png,skin_default/icons/lock_error.png" alphatest="on"/>
-		<widget name="IPInfo" position="600,304" size="200,40" pixmaps="Default-HD/buttons/netsel.png,Default-HD/buttons/netselpressed.png" alphatest="on"/>
-		<widget name="IPInfo_Text" position="600,304" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColors="#200d1940,#cccccc,#ffffff" backgroundColor="background" transparent="1"/>
-		<eLabel	position="10,362" size="800,1" backgroundColor="grey"/>
-		<widget name="DNStext" position="20,375" size="500,25" font="Regular;22"/>
-		<widget name="DNS" position="20,406" size="500,25" font="Regular;21" foregroundColors="#8c8c93,#f23d21,#1cff1c"/>
-		<widget name="DNSInfo_Check" position="540,386" size="38,31" pixmaps="skin_default/icons/lock_on.png,skin_default/icons/lock_error.png" alphatest="on"/>
-		<widget name="DNSInfo" position="600,382" size="200,40" pixmaps="Default-HD/buttons/netsel.png,Default-HD/buttons/netselpressed.png" alphatest="on"/>
-		<widget name="DNSInfo_Text" position="600,382" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" foregroundColors="#200d1940,#cccccc,#ffffff" backgroundColor="background" transparent="1"/>
-		<eLabel	position="10,440" size="800,1" backgroundColor="grey"/>
-		<widget name="EditSettingsButton" position="600,455" size="200,50" pixmaps="Default-HD/buttons/netsel.png,Default-HD/buttons/netselpressed.png" alphatest="on"/>
-		<widget name="EditSettings_Text" position="600,455" size="200,50" zPosition="1" font="Regular;18" halign="center" valign="center" foregroundColors="#ffffff,#cccccc,#ffffff" backgroundColor="background" transparent="1"/>
-		<widget name="InfoTextBorder" position="10,50" size="580,391" zPosition="20" pixmap="Default-HD/border_info.png"/>
-		<widget name="InfoText" position="20,60" size="560,371" zPosition="21" font="Regular;21" halign="center" valign="center"/>
 	</screen>
 	<!-- Nim selection -->
 	<screen name="NimSelection" position="center,120" size="620,520" title="Choose Tuner">
@@ -2701,6 +2566,17 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 				}
 			</convert>
 		</widget>
+		<widget source="multicontentlist" render="Listbox" position="280,330" size="880,260" scrollbarMode="showOnDemand">
+			<convert type="TemplatedMultiContent">
+				{"template": [
+						MultiContentEntryText(pos = (90, 11), size = (760, 50), flags = RT_HALIGN_LEFT, text = 1), # index 1 is the language name,
+						MultiContentEntryPixmap(pos = (10, 6), size = (60, 40), png = 2), # index 2 is the pixmap
+					],
+				 "fonts": [gFont("Regular", 20)],
+				 "itemHeight": 52
+				}
+			</convert>
+		</widget>
 		<widget name="config" position="280,330" size="880,270" zPosition="2" itemHeight="30" scrollbarMode="showOnDemand" transparent="1"/>
 	</screen>
 	<screen name="VideoWizard" position="center,70" size="1200,620" title="Welcome...">
@@ -2776,7 +2652,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 		</widget>
 	</screen>
 	<!-- LCD screen (ChoiceBox) -->
-	<screen name="ChoiceBox_summary" position="0,0" size="132,64" id="1">
+	<screen name="ChoiceBox_summary" zPosition="9999" position="0,0" size="132,64" id="1">
 		<widget source="parent.summary_list" render="Label" position="6,0" size="126,64" font="Display;11" />
 	</screen>
 	<!-- LCD screen (MessageBox) -->

@@ -1,26 +1,13 @@
 #ifndef ESIZE_H
 #define ESIZE_H
 
-#ifndef MIN
-#define MIN(a,b) (a < b ? a : b)
-#endif
-
-#ifndef MAX
-#define MAX(a,b) (a > b ? a : b)
-#endif
-
-class QSize;
+#include <algorithm>
 
 class eSize
 {
 public:
 	eSize();
 	eSize( int w, int h );
-
-#if defined(HAVE_QT) && !defined(SWIG)
-	eSize(const QSize &);
-	operator QSize() const;
-#endif
 
 	bool isNull()	const;
 	bool isEmpty()	const;
@@ -32,6 +19,7 @@ public:
 	void setHeight( int h );
 	void transpose();
 
+	eSize scale(const eSize &dst, const eSize &aspect = eSize(1, 1)) const;
 	eSize expandedTo( const eSize & ) const;
 	eSize boundedTo( const eSize & ) const;
 
@@ -157,14 +145,41 @@ inline eSize operator/( const eSize &s, double c )
 	return eSize((int)(s.wd/c), (int)(s.ht/c));
 }
 
+// Uses integer division on 64-bit platforms and float on 32-bit
+// platforms fow now. No measurements were made, though.
+inline eSize eSize::scale(const eSize &bounds, const eSize &aspect) const
+{
+	eSize dst;
+#if __SIZEOF_LONG__ < 8
+	float faspect = (float)aspect.wd / aspect.ht;
+	dst.ht = faspect * ht * bounds.wd / wd;
+#else
+	dst.ht = ((uint64_t)aspect.wd * ht * bounds.wd) /
+		(aspect.ht * wd);
+#endif
+	if (dst.ht <= bounds.ht) {
+		dst.wd = bounds.wd;
+	} else {
+		dst.ht = bounds.ht;
+#if __SIZEOF_LONG__ < 8
+		dst.wd = (wd * bounds.ht) / (faspect * ht);
+#else
+		dst.wd = ((uint64_t)aspect.ht * wd * bounds.ht) /
+			(aspect.wd * ht);
+#endif
+	}
+
+	return dst;
+}
+
 inline eSize eSize::expandedTo( const eSize & otherSize ) const
 {
-	return eSize( MAX(wd,otherSize.wd), MAX(ht,otherSize.ht) );
+	return eSize(std::max(wd, otherSize.wd), std::max(ht, otherSize.ht));
 }
 
 inline eSize eSize::boundedTo( const eSize & otherSize ) const
 {
-	return eSize( MIN(wd,otherSize.wd), MIN(ht,otherSize.ht) );
+	return eSize(std::min(wd, otherSize.wd), std::min(ht, otherSize.ht));
 }
 
 inline void eSize::transpose()

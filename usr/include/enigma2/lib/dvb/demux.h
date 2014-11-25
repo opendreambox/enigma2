@@ -34,7 +34,6 @@ private:
 	int adapter, demux, source;
 	std::string pvr_source;
 
-	int m_dvr_busy;
 	friend class eDVBSectionReader;
 	friend class eDVBPESReader;
 	friend class eDVBAudio;
@@ -58,11 +57,14 @@ class eDVBSectionReader: public iDVBSectionReader, public sigc::trackable
 	int checkcrc;
 	void data(int);
 	ePtr<eSocketNotifier> notifier;
+	Slot0<__u8*> m_buffer_func;
+	bool m_have_external_buffer_func;
 public:
 	eDVBSectionReader(eDVBDemux *demux, eMainloop *context, RESULT &res);
 	virtual ~eDVBSectionReader();
 	RESULT setBufferSize(int size);
 	RESULT start(const eDVBSectionFilterMask &mask);
+	RESULT startWithExternalBufferFunc(const eDVBSectionFilterMask &mask, const Slot0<__u8*> &buffer_func);
 	RESULT stop();
 	RESULT connectRead(const sigc::slot2<void,const __u8*, int> &read, ePtr<eConnection> &conn);
 };

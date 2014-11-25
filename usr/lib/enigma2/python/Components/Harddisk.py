@@ -2,22 +2,12 @@ from os import system, listdir, statvfs, makedirs, stat, major, minor, path, acc
 from re import search
 from time import time
 
-try:
-	from subprocess import Popen, PIPE
-	haveSubprocess = True
-except ImportError:
-	from os import popen
-	haveSubprocess = False
-
 from Tools.Directories import SCOPE_HDD, resolveFilename
 from Tools.CList import CList
-from Tools.IO import saveFile
+from Tools.IO import runPipe, saveFile
 from SystemInfo import SystemInfo
 from Components.Console import Console
 from config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
-
-DEVTYPE_UDEV = 0
-DEVTYPE_DEVFS = 1
 
 class Util:
 	@staticmethod
@@ -123,22 +113,9 @@ class Util:
 		return Util.__findInTab(Util.mtab(), src, dst)
 
 	@staticmethod
-	def run(cmd):
-		if haveSubprocess:
-			p = Popen(cmd, stdout=PIPE, close_fds=True)
-			output = p.stdout.read()
-			p.stdout.close()
-			return p.wait(), output.splitlines()
-		else:
-			p = popen(' '.join(cmd))
-			output = p.read()
-			rc = p.close()
-			return (rc >> 8 if rc is not None else 0), output.splitlines()
-
-	@staticmethod
 	def __mountUmount(cmd, dir_or_device):
 		if dir_or_device:
-			rc, _ = Util.run([cmd, dir_or_device])
+			rc, _ = runPipe([cmd, dir_or_device])
 			return rc
 		else:
 			return -1
@@ -165,14 +142,6 @@ class Harddisk:
 		self.device = device
 		self.isRemovable = removable
 
-		if access("/dev/.udev", 0):
-			self.type = DEVTYPE_UDEV
-		elif access("/dev/.devfsd", 0):
-			self.type = DEVTYPE_DEVFS
-		else:
-			print "Unable to determine structure of /dev fallback to udev"
-			self.type = DEVTYPE_UDEV
-
 		self.is_sleeping = False
 		self.max_idle_time = 0
 		self.idle_running = False
@@ -185,25 +154,8 @@ class Harddisk:
 		self.disk_path = ''
 		self.phys_path = path.realpath(self.sysfsPath('device'))
 
-		if self.type == DEVTYPE_UDEV:
-			self.dev_path = '/dev/' + self.device
-			self.disk_path = self.dev_path
-
-		elif self.type == DEVTYPE_DEVFS:
-			tmp = Util.readFile(self.sysfsPath('dev')).split(':')
-			s_major = int(tmp[0])
-			s_minor = int(tmp[1])
-			for disc in listdir("/dev/discs"):
-				dev_path = path.realpath('/dev/discs/' + disc)
-				disk_path = dev_path + '/disc'
-				try:
-					rdev = stat(disk_path).st_rdev
-				except OSError:
-					continue
-				if s_major == major(rdev) and s_minor == minor(rdev):
-					self.dev_path = dev_path
-					self.disk_path = disk_path
-					break
+		self.dev_path = '/dev/' + self.device
+		self.disk_path = self.dev_path
 
 		print "new Harddisk", self.device, '->', self.dev_path, '->', self.disk_path
 		if not self.isRemovable:
@@ -213,10 +165,7 @@ class Harddisk:
 		return self.device < ob.device
 
 	def partitionPath(self, n):
-		if self.type == DEVTYPE_UDEV:
-			return self.dev_path + n
-		elif self.type == DEVTYPE_DEVFS:
-			return self.dev_path + '/part' + n
+		return self.dev_path + n
 
 	def sysfsPath(self, filename):
 		return path.realpath('/sys/block/' + self.device + '/' + filename)
@@ -224,38 +173,24 @@ class Harddisk:
 	def stop(self):
 		if self.timer:
 			self.timer.stop()
-			self.timer.callback.remove(self.runIdle)
+			self.timer_conn = None
 
 	def bus(self):
-		# CF (7025 specific)
-		if self.type == DEVTYPE_UDEV:
-			ide_cf = False	# FIXME
-		elif self.type == DEVTYPE_DEVFS:
-			ide_cf = self.device[:2] == "hd" and "host0" not in self.dev_path
-
+		# FIXME: USB 3.0 is connected through pci, too
 		internal = "pci" in self.phys_path
 
-		if ide_cf:
-			ret = "External (CF)"
-		elif internal:
+		if internal:
 			ret = "Internal"
 		else:
 			ret = "External"
 		return ret
 
 	def bus_type(self):
-		# CF (7025 specific)
-		if self.type == DEVTYPE_UDEV:
-			ide_cf = False	# FIXME
-		elif self.type == DEVTYPE_DEVFS:
-			ide_cf = self.device[:2] == "hd" and "host0" not in self.dev_path
-
+		# FIXME: USB 3.0 is connected through pci, too
 		sata = "pci" in self.phys_path
 		sata_desc = self.bus_description()
 
-		if ide_cf:
-			ret = "IDE"
-		elif sata:
+		if sata:
 			if sata_desc is not None:
 				ret = sata_desc
 			else:
@@ -282,40 +217,50 @@ class Harddisk:
 			return "USB"
 		return "External Storage"
 
-	def diskSize(self, sectors = False):
+	def __sectors(self):
 		try:
-			line = Util.readFile(self.sysfsPath('size'))
-			cap = int(line)
+			return int(Util.readFile(self.sysfsPath('size')))
 		except:
-			return 0;
-		if sectors:
-			return cap
-		return cap / 1000 * 512 / 1000
+			return 0
+
+	def __diskSize(self):
+		# Assume 512-bytes sectors, even for 4K drives. Return KB.
+		return self.__sectors() * 512 / 1000
+
+	def __capacityString(self, cap, divisor, unit):
+		if cap < divisor:
+			return ""
+		value = cap * 10 / divisor
+		remainder = value % 10
+		value /= 10
+		if remainder == 0:
+			return "%d %s" % (value, unit)
+		return "%d.%d %s" % (value, remainder, unit)
 
 	def capacity(self):
-		cap = self.diskSize()
-		if cap == 0:
-			return ""
-		return "%d.%03d GB" % (cap/1000, cap%1000)
+		# Return at most one decimal place, but no leading zero.
+		cap = self.__diskSize()
+		return (self.__capacityString(cap, 1000000000000, 'PB') or
+			self.__capacityString(cap, 1000000000, 'TB') or
+			self.__capacityString(cap, 1000000, 'GB') or
+			self.__capacityString(cap, 1000, 'MB') or
+			self.__capacityString(cap, 1, 'KB'))
 
 	def model(self, model_only = False, vendor_only = False):
-		if self.device[:2] == "hd":
-			return Util.readFile('/proc/ide/' + self.device + '/model')
-		elif self.device[:2] == "sd":
-			try:
-				vendor = Util.readFile(self.sysfsPath('device/vendor'))
-				model = Util.readFile(self.sysfsPath('device/model'))
-			except:
-				vendor = ""
-				model = ""
+		try:
+			vendor = Util.readFile(self.sysfsPath('device/vendor'))
+		except:
+			vendor = ""
+		try:
+			model = Util.readFile(self.sysfsPath('device/model'))
+		except:
+			model = ""
 
-			if vendor_only:
-				return vendor
-			if model_only:
-				return model
-			return vendor + '-' + model
-		else:
-			assert False, "no hdX or sdX"
+		if vendor_only:
+			return vendor
+		if model_only:
+			return model
+		return vendor + '-' + model
 
 	def free(self):
 		for line in Util.mtab(virt=False):
@@ -333,25 +278,13 @@ class Harddisk:
 
 	def numPartitions(self):
 		numPart = -1
-		if self.type == DEVTYPE_UDEV:
-			try:
-				devdir = listdir('/dev')
-			except OSError:
-				return -1
-			for filename in devdir:
-				if filename.startswith(self.device):
-					numPart += 1
-
-		elif self.type == DEVTYPE_DEVFS:
-			try:
-				idedir = listdir(self.dev_path)
-			except OSError:
-				return -1
-			for filename in idedir:
-				if filename.startswith("disc"):
-					numPart += 1
-				if filename.startswith("part"):
-					numPart += 1
+		try:
+			devdir = listdir('/dev')
+		except OSError:
+			return -1
+		for filename in devdir:
+			if filename.startswith(self.device):
+				numPart += 1
 		return numPart
 
 	def unmount(self, numpart = None):
@@ -379,29 +312,27 @@ class Harddisk:
 		return 0
 
 	def createPartition(self):
-		cmd = 'printf "8,\n;0,0\n;0,0\n;0,0\ny\n" | sfdisk -f -uS -q ' + self.disk_path
-		if harddiskmanager.KernelVersion >= "3.2":
-			maxSectorsMBR = int(4294967295) #2TB
-			swapPartSize = int(2097152) #1GB
-			fstype, sys, size, sizeg, sectors = harddiskmanager.getFdiskInfo(self.device[:3])
-			if sectors is None:
-				sectors = self.diskSize(sectors = True)
-			cmd = 'parted --script --align=min ' + self.disk_path + ' -- mklabel msdos mkpart primary ext3 40s 100%'
-			if sectors and not self.isRemovable:
-				part1end = int(sectors)-swapPartSize #leaving 1GB for swap
-				cmd = 'parted --script --align=min ' + self.disk_path + ' -- mklabel msdos mkpart primary ext3 40s ' + str(part1end) + 's'
-				cmd+=  ' mkpart primary linux-swap ' + str(int(part1end+1)) + 's -1s'
-				if sectors > maxSectorsMBR:
-					cmd = 'parted --script --align=opt -- ' + self.disk_path + ' mklabel gpt mkpart primary ext3 2048s ' + str(part1end) + 's'
-					cmd+=  ' mkpart primary linux-swap ' + str(int(part1end+1)) + 's -1'
+		maxSectorsMBR = int(4294967295) #2TB
+		swapPartSize = int(2097152) #1GB
+		fstype, sys, size, sizeg, sectors = harddiskmanager.getFdiskInfo(self.device[:3])
+		if sectors is None:
+			sectors = self.__sectors()
+		cmd = 'parted --script --align=min ' + self.disk_path + ' -- mklabel msdos mkpart primary ext3 40s 100%'
+		if sectors and not self.isRemovable:
+			part1end = int(sectors)-swapPartSize #leaving 1GB for swap
+			cmd = 'parted --script --align=min ' + self.disk_path + ' -- mklabel msdos mkpart primary ext3 40s ' + str(part1end) + 's'
+			cmd+=  ' mkpart primary linux-swap ' + str(int(part1end+1)) + 's -1s'
+			if sectors > maxSectorsMBR:
+				cmd = 'parted --script --align=opt -- ' + self.disk_path + ' mklabel gpt mkpart primary ext3 2048s ' + str(part1end) + 's'
+				cmd+=  ' mkpart primary linux-swap ' + str(int(part1end+1)) + 's -1'
 
 		res = system(cmd)
 		print  "[createPartition]:",res,cmd
 		return (res >> 8)
 
-	def mkfs(self, fstype = "ext3", partitionNum = "1"):
+	def mkfs(self, fstype = "ext4", partitionNum = "1"):
 		cmd = "mkfs." + fstype + " "
-		if self.diskSize() > 4 * 1024:
+		if self.__diskSize() >= 4000000:	# 4 GB
 			cmd += "-T largefile "
 		cmd += "-m0 -O dir_index " + self.partitionPath(partitionNum)
 		res = system(cmd)
@@ -459,7 +390,7 @@ class Harddisk:
 		return 0
 
 	def fsck(self, numpart):
-		# We autocorrect any failures and check if the fs is actually one we can check (currently ext2/ext3)
+		# We autocorrect any failures and check if the fs is actually one we can check (currently ext2/ext3/ext4)
 		partitionPath = self.partitionPath("1")
 
 		# Lets activate the swap partition if exists
@@ -485,9 +416,7 @@ class Harddisk:
 
 	def killPartition(self):
 		part = self.disk_path
-		cmd = 'dd bs=4k count=3 if=/dev/zero of=' + part
-		if harddiskmanager.KernelVersion >= "3.2":
-			cmd = 'parted --script --align=min -- ' + part + ' mklabel msdos'
+		cmd = 'parted --script --align=min -- ' + part + ' mklabel msdos'
 		if access(part, 0):
 			res = system(cmd)
 		else:
@@ -504,7 +433,7 @@ class Harddisk:
 		# old filesystem on it when fdisk reloads the partition table.
 		# To prevent that, we overwrite the first sectors of the
 		# partitions, if the partition existed before. This should work
-		# for ext2/ext3 and also for GPT/EFI partitions.
+		# for ext2/ext3/ext4 and also for GPT/EFI partitions.
 		self.killPartition()
 
 		if self.createPartition() != 0:
@@ -514,12 +443,11 @@ class Harddisk:
 			return -2
 
 		# init the swap partition
-		if harddiskmanager.KernelVersion >= "3.2":
-			if not self.isRemovable:
-				if self.mkswap() != 0:
-					return -2
-			# Call partprobe to inform the system about the partition table change.
-			Console().ePopen(("partprobe", "partprobe", "-s"))
+		if not self.isRemovable:
+			if self.mkswap() != 0:
+				return -2
+		# Call partprobe to inform the system about the partition table change.
+		Console().ePopen(("partprobe", "partprobe", "-s"))
 
 		if isFstabMounted:
 			if self.mount() != 0:
@@ -582,7 +510,7 @@ class Harddisk:
 		else:
 			Console().ePopen(("hdparm", "hdparm", "-S0", self.disk_path))
 		self.timer = eTimer()
-		self.timer.callback.append(self.runIdle)
+		self.timer_conn = self.timer.timeout.connect(self.runIdle)
 		self.idle_running = True
 		try:
 			self.setIdleTime(int(config.usage.hdd_standby.value))
@@ -636,14 +564,15 @@ class Harddisk:
 		return self.idle_running
 
 class Partition:
-	def __init__(self, mountpoint, device = None, description = "", force_mounted = False):
+	def __init__(self, hddmanager, mountpoint, device = None, description = "", force_mounted = False, uuid = None):
+		self.__hddmanager = hddmanager
 		self.mountpoint = mountpoint
 		self.description = description
 		self.force_mounted = force_mounted
 		self.is_hotplug = force_mounted # so far; this might change.
 		self.device = device
 		self.disc_path = None
-		self.uuid = None
+		self.uuid = uuid
 		self.isMountable = False
 		self.isReadable = False
 		self.isWriteable = False
@@ -662,7 +591,7 @@ class Partition:
 		if self.device is not None:
 			if testpath == "":
 				testpath = "/autofs/" + self.device
-			self.uuid = harddiskmanager.getPartitionUUID(self.device)
+			self.uuid = self.__hddmanager.getPartitionUUID(self.device)
 			try:
 				chdir(testpath)
 				self.isMountable = True
@@ -676,7 +605,7 @@ class Partition:
 					pass
 			if self.uuid is not None:
 				if self.fsType is None:
-					self.fsType = harddiskmanager.getBlkidPartitionType("/dev/" + self.device)
+					self.fsType = self.__hddmanager.getBlkidPartitionType("/dev/" + self.device)
 			if self.isReadable:
 				entry = Util.findInMtab(src='/dev/%s' % self.device)
 				if entry:
@@ -758,6 +687,23 @@ DEVICEDB = \
 		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Back, lower USB"),
 		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.": _("Back, lower USB"),
 	},
+	"dm7080":
+	{
+		"/devices/pci0000:00/0000:00:00.0/usb9/9-1/": _("Back USB 3.0"),
+		"/devices/pci0000:00/0000:00:00.0/usb9/9-2/": _("Front USB 3.0"),
+		"/devices/platform/ehci-brcm.0/": _("Back, lower USB"),
+		"/devices/platform/ehci-brcm.1/": _("Back, upper USB"),
+		"/devices/platform/ehci-brcm.2/": _("Internal USB"),
+		"/devices/platform/ehci-brcm.3/": _("Internal USB"),
+		"/devices/platform/ohci-brcm.0/": _("Back, lower USB"),
+		"/devices/platform/ohci-brcm.1/": _("Back, upper USB"),
+		"/devices/platform/ohci-brcm.2/": _("Internal USB"),
+		"/devices/platform/ohci-brcm.3/": _("Internal USB"),
+		"/devices/platform/sdhci-brcmstb.0/": _("eMMC"),
+		"/devices/platform/sdhci-brcmstb.1/": _("SD"),
+		"/devices/platform/strict-ahci.0/ata1/": _("SATA"),	# front
+		"/devices/platform/strict-ahci.0/ata2/": _("SATA"),	# back
+	},
 	"dm800":
 	{
 		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
@@ -795,7 +741,6 @@ DEVICEDB = \
 	}
 	}
 
-
 class HarddiskManager:
 	EVENT_MOUNT = "mount"
 	EVENT_UNMOUNT = "unmount"
@@ -808,12 +753,10 @@ class HarddiskManager:
 		self.hdd = [ ]
 		self.cd = ""
 		self.partitions = [ ]
-		self.devices_scanned_on_init = [ ]
 		self.delayed_device_Notifier = [ ]
 		self.onUnMount_Notifier = [ ]
 
 		self.on_partition_list_change = CList()
-		self.KernelVersion = self.getKernelVersion()
 
 		# currently, this is just an enumeration of what's possible,
 		# this probably has to be changed to support automount stuff.
@@ -822,82 +765,61 @@ class HarddiskManager:
 		# a second usb stick.)
 		p = [
 					("/media/hdd", _("Hard disk")),
-					("/media/card", _("Card")),
-					("/media/cf", _("Compact Flash")),
-					("/media/mmc1", _("SD/MMC")),
 					("/media/net", _("Network Mount")),
-					("/media/ram", _("Ram Disk")),
-					("/media/usb", _("USB Stick")),
 					("/", _("Internal Flash"))
 				]
-		self.partitions.extend([ Partition(mountpoint = x[0], description = x[1]) for x in p ])
-
-	def getKernelVersion(self):
-		version = "3.2"
-		try:
-			_, output = Util.run(['uname', '-r'])
-			for line in output:
-				if line.startswith("3.2"):
-					version = "3.2"
-				if line.startswith("2.6.18"):
-					version = "2.6.18"
-				if line.startswith("2.6.12"):
-					version = "2.6.12"
-		except:
-			print "error getting kernel version"
-		return version
-
-	def getBlockDevInfo(self, blockdev):
-		devpath = "/sys/block/" + blockdev
-		error = False
-		removable = False
-		blacklisted = False
-		is_cdrom = False
-		partitions = []
-		try:
-			removable = bool(int(Util.readFile(devpath + "/removable")))
-			dev = int(Util.readFile(devpath + "/dev").split(':')[0])
-			if dev in (1, 7, 31): # ram, loop, mtdblock
-				blacklisted = True
-			if blockdev[0:2] == 'sr':
-				is_cdrom = True
-			if blockdev[0:2] == 'hd':
-				try:
-					media = Util.readFile("/proc/ide/%s/media" % blockdev)
-					if "cdrom" in media:
-						is_cdrom = True
-				except IOError:
-					error = True
-			# check for partitions
-			if not is_cdrom:
-				for partition in listdir(devpath):
-					if partition[0:len(blockdev)] != blockdev:
-						continue
-					partitions.append(partition)
-			else:
-				self.cd = blockdev
-		except IOError:
-			error = True
-		# check for medium
-		medium_found = True
-		try:
-			open("/dev/" + blockdev).close()
-		except IOError, err:
-			if err.errno == 159: # no medium present
-				medium_found = False
-		return error, blacklisted, removable, is_cdrom, partitions, medium_found
-
-	def enumerateBlockDevices(self):
+		for x in p:
+			self.__addPartition(mountpoint = x[0], description = x[1], notify = False)
 		self.setupConfigEntries(initial_call = True)
-		print "enumerating block devices..."
-		for blockdev in listdir("/sys/block"):
-			error, blacklisted, removable, is_cdrom, partitions, medium_found = self.addHotplugPartition(blockdev)
-			if not error and not blacklisted:
-				if medium_found:
-					for part in partitions:
-						self.addHotplugPartition(part)
-				self.devices_scanned_on_init.append((blockdev, removable, is_cdrom, medium_found))
-				print "[enumerateBlockDevices] devices_scanned_on_init:",self.devices_scanned_on_init
+
+	class BlockDevice:
+		def __init__(self, name):
+			self._name = name
+			self._blockPath = path.join('/sys/block', self._name)
+			self._classPath = path.realpath(path.join('/sys/class/block', self._name))
+			self._deviceNode = path.join('/dev', self._name)
+
+		def isBlacklisted(self):
+			try:
+				dev = int(Util.readFile(path.join(self._classPath, 'dev')).split(':')[0])
+				return dev in (1, 7, 31, 179) # ram, loop, mtdblock, mmcblk
+			except IOError:
+				return True
+
+		def isOpticalDiscDrive(self):
+			return self._name.startswith('sr')
+
+		def isPartition(self):
+			# /sys/block lists only full block devices
+			return not path.exists(self._blockPath)
+
+		def isRemovable(self):
+			# Partitions don't have a 'removable' property. Ask their parent.
+			try:
+				return bool(int(Util.readFile(self.sysfsPath('removable', physdev=True))))
+			except IOError:
+				return False
+
+		def hasMedium(self):
+			try:
+				open(self._deviceNode, 'rb').close()
+			except IOError, err:
+				if err.errno == 159: # no medium present
+					return False
+			return True
+
+		def partitions(self):
+			partitions = []
+			for partition in listdir(self._classPath):
+				if partition.startswith(self._name):
+					partitions.append(partition)
+			return partitions
+
+		def sysfsPath(self, filename, physdev=False):
+			classPath = self._classPath
+			if physdev and self.isPartition():
+				classPath = path.dirname(classPath)
+			return path.join(classPath, filename)
 
 	def getAutofsMountpoint(self, device):
 		return "/autofs/%s/" % (device)
@@ -944,7 +866,8 @@ class HarddiskManager:
 			print '[Harddisk.py] Refusing to modify empty fstab'
 			return False
 
-		newopt = ('noauto' if mode == 'add_deactivated' else 'auto')
+		newopt = {'noauto' if mode == 'add_deactivated' else 'auto'}
+		newopt.add('nofail')
 		output = []
 		for x in fstab:
 			try:
@@ -956,8 +879,8 @@ class HarddiskManager:
 				if src == partitionPath and dst == mountpoint:
 					if mode == 'remove':
 						continue
-					opts = set(mntops.split(',')) - { 'auto', 'noauto' }
-					opts.add(newopt)
+					opts = set(mntops.split(',')) - { 'auto', 'noauto', 'fail' }
+					opts.update(newopt)
 					mntops = ','.join(opts)
 					output.append('\t'.join([src, dst, vfstype, mntops, freq, passno]))
 					# remove possible duplicate entries
@@ -967,7 +890,8 @@ class HarddiskManager:
 
 		# append new entry
 		if mode != 'remove':
-			output.append('\t'.join([partitionPath, mountpoint, 'auto', newopt, '0', '0']))
+			mntops = ','.join(newopt)
+			output.append('\t'.join([partitionPath, mountpoint, 'auto', mntops, '0', '0']))
 
 		if not output:
 			print '[Harddisk.py] Refusing to write empty fstab'
@@ -975,45 +899,60 @@ class HarddiskManager:
 
 		return saveFile('/etc/fstab', '\n'.join(output) + '\n')
 
-	def addHotplugPartition(self, device, physdev = None):
-		if not physdev:
-			dev, part = self.splitDeviceName(device)
-			try:
-				physdev = path.realpath('/sys/block/' + dev + '/device')[4:]
-			except OSError:
-				physdev = dev
-				print "couldn't determine blockdev physdev for device", device
+	def addHotplugPartition(self, device, data):
+		print "found block device '%s':" % device
+		if not device:
+			return
 
-		error, blacklisted, removable, is_cdrom, partitions, medium_found = self.getBlockDevInfo(device)
-		print "found block device '%s':" % device,
+		blkdev = self.BlockDevice(device)
+		physdev = blkdev.sysfsPath('device', physdev=True)[4:]
 
-		if blacklisted:
+		removable = blkdev.isRemovable()
+		is_cdrom = blkdev.isOpticalDiscDrive()
+		medium_found = blkdev.hasMedium()
+
+		# This sucks with two optical drives
+		if is_cdrom:
+			self.cd = device
+
+		if blkdev.isBlacklisted():
 			print "blacklisted"
 		else:
-			if error:
-				print "error querying properties"
-			elif not medium_found:
+			if not medium_found:
 				print "no medium"
 			else:
-				print "ok, removable=%s, cdrom=%s, partitions=%s" % (removable, is_cdrom, partitions)
+				print "ok, removable=%s, cdrom=%s" % (removable, is_cdrom)
 
-			l = len(device)
-			if l:
-				# see if this is a harddrive or removable drive (usb stick/cf/sd)
-				if not device[l-1].isdigit() and not is_cdrom:
-					if self.getHDD(device) is None and medium_found:
-						if removable:
-							self.hdd.append(Harddisk(device, True))
-						else:
-							self.hdd.append(Harddisk(device, False))
-					self.hdd.sort()
-					SystemInfo["Harddisk"] = len(self.hdd) > 0
-				if (not removable or medium_found):
-					self.addDevicePartition(device, physdev)
+			# see if this is a harddrive or removable drive (usb stick/cf/sd)
+			devtype = data.get('DEVTYPE')	# "disk","partition"
+			if devtype:
+				if not is_cdrom and medium_found:
+					if devtype == "disk":
+						if self.getHDD(device) is None:
+							self.hdd.append(Harddisk(device, removable))
+							self.hdd.sort()
+							SystemInfo["Harddisk"] = len(self.hdd) > 0
+					if devtype == "partition":
+						p = self.getPartitionbyDevice(device)
+						if p is None:
+							self.addDevicePartition(device, physdev)
+				return
 
-		return error, blacklisted, removable, is_cdrom, partitions, medium_found
+			if not blkdev.isPartition() and not is_cdrom and medium_found and self.getHDD(device) is None:
+				self.hdd.append(Harddisk(device, removable))
+				self.hdd.sort()
+				SystemInfo["Harddisk"] = len(self.hdd) > 0
+			if not removable or medium_found:
+				self.addDevicePartition(device, physdev)
 
-	def removeHotplugPartition(self, device):
+		return removable, is_cdrom, medium_found
+
+	def removeHotplugPartition(self, device, data):
+		blkdev = self.BlockDevice(device)
+		if blkdev.isBlacklisted():
+			print "blacklisted"
+			return
+
 		mountpoint = self.getAutofsMountpoint(device)
 		uuid = self.getPartitionUUID(device)
 		print "[removeHotplugPartition] for device:'%s' uuid:'%s' and mountpoint:'%s'" % (device, uuid, mountpoint)
@@ -1035,8 +974,7 @@ class HarddiskManager:
 					config.storage.save()
 					print "[removeHotplugPartition] - remove uuid %s from temporary drive add" % (uuid)
 			if p.mountpoint != "/media/hdd":
-				self.partitions.remove(p)
-				self.on_partition_list_change("remove", p)
+				self.__removePartition(p)
 
 		l = len(device)
 		if l and not device[l-1].isdigit():
@@ -1097,20 +1035,10 @@ class HarddiskManager:
 						device_mountpoint = self.getAutofsMountpoint(device)
 			x = self.getPartitionbyDevice(device)
 			if x is None:
-				p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = forced, device = device)
-				self.partitions.append(p)
-				self.on_partition_list_change("add", p)
+				self.__addPartition(mountpoint = device_mountpoint, description = description, force_mounted = forced, device = device)
 				cfg_uuid = config.storage.get(uuid, None)
 				if cfg_uuid is not None:
 					self.storageDeviceChanged(uuid)
-			else:	# found old partition entry
-				if config.storage.get(x.uuid, None) is not None:
-					del config.storage[x.uuid] #delete old uuid reference entries
-					config.storage.save()
-				x.mountpoint = device_mountpoint
-				x.force_mounted = True
-				x.updatePartitionInfo()
-
 		for callback in self.delayed_device_Notifier:
 			try:
 				callback(device, "add_delayed" )
@@ -1150,7 +1078,7 @@ class HarddiskManager:
 	def getFdiskInfo(self, devname):
 		size = sizeg = fstype = sys = sectors = None
 		try:
-			_, output = Util.run(['fdisk', '-l', '/dev/%s' % devname])
+			_, output = runPipe(['fdisk', '-l', '/dev/%s' % devname])
 			for line in output:
 				if line.startswith("Found valid GPT"):
 					sys = "GPT"
@@ -1176,7 +1104,7 @@ class HarddiskManager:
 	def __getBlkidAttributes(self, options):
 		res = dict()
 		try:
-			rc, output = Util.run(['blkid', '-o', 'export' ] + options)
+			rc, output = runPipe(['blkid', '-o', 'export' ] + options)
 			if rc == 0:
 				for line in output:
 					key, value = line.split('=', 1)
@@ -1587,30 +1515,36 @@ class HarddiskManager:
 			description += " (Partition %d)" % part
 		return description
 
+	def __addPartition(self, mountpoint, device = None, description = "", force_mounted = False, uuid = None, notify = True):
+		p = Partition(self, mountpoint, device, description, force_mounted, uuid)
+		self.partitions.append(p)
+		if notify:
+			self.on_partition_list_change("add", p)
+		return p
+
+	def __removePartition(self, p, notify = True):
+		self.partitions.remove(p)
+		if notify:
+			self.on_partition_list_change("remove", p)
+
 	def addMountedPartition(self, device, desc):
 		already_mounted = False
 		for x in self.partitions[:]:
 			if x.mountpoint == device:
 				already_mounted = True
 		if not already_mounted:
-			self.partitions.append(Partition(mountpoint = device, description = desc))
+			self.__addPartition(mountpoint = device, description = desc, notify = False)
 
 	def removeMountedPartition(self, mountpoint):
 		for x in self.partitions[:]:
 			if x.mountpoint == mountpoint:
-				self.partitions.remove(x)
-				self.on_partition_list_change("remove", x)
+				self.__removePartition(x)
 
 	def removeMountedPartitionbyDevice(self, device):
 		p = self.getPartitionbyDevice(device)
 		if p is not None:
 			#print "[removeMountedPartitionbyDevice] '%s', '%s', '%s', '%s', '%s'" % (p.mountpoint,p.description,p.device,p.force_mounted,p.uuid)
-			self.partitions.remove(p)
-			self.on_partition_list_change("remove", p)
-
-	def trigger_udev(self):
-		# We have to trigger udev to rescan sysfs
-		Console().ePopen(("udevadm", "udevadm", "trigger"))
+			self.__removePartition(p)
 
 	def getPartitionbyUUID(self, uuid):
 		for x in self.partitions[:]:
@@ -1716,11 +1650,16 @@ class HarddiskManager:
 		if path.exists("/dev/disk/by-uuid/" + uuid):
 			cfg_uuid = config.storage.get(uuid, None)
 			partitionPath = "/dev/disk/by-uuid/" + uuid
+			devpath = path.realpath(partitionPath)
 			mountpoint = cfg_uuid['mountpoint'].value
 			dev = self.getDeviceNamebyUUID(uuid)
 			#print "[mountPartitionbyUUID] for UUID:'%s' - '%s'" % (uuid,mountpoint)
 
 			Util.forceAutofsUmount(dev)
+			#remove now obsolete autofs entry
+			for x in self.partitions[:]:
+				if x is not None and x.mountpoint == self.getAutofsMountpoint(dev):
+					self.removeMountedPartitionbyDevice(dev)
 
 			#verify if mountpoint is still mounted from elsewhere (e.g fstab)
 			if path.exists(mountpoint) and path.ismount(mountpoint):
@@ -1731,7 +1670,7 @@ class HarddiskManager:
 						self.unmountPartitionbyMountpoint(mountpoint)
 
 			#verify if our device is still mounted to somewhere else
-			tmpmount = self.get_mountpoint(partitionPath)
+			tmpmount = self.get_mountpoint(partitionPath) or self.get_mountpoint(devpath)
 			if tmpmount is not None and tmpmount != mountpoint and path.exists(tmpmount) and path.ismount(tmpmount):
 				if not self.isUUIDpathFsTabMount(uuid, tmpmount) and not self.isPartitionpathFsTabMount(uuid, tmpmount):
 						self.unmountPartitionbyMountpoint(tmpmount)
@@ -1767,9 +1706,6 @@ class HarddiskManager:
 									pass
 							p = self.getPartitionbyMountpoint(mountpoint)
 							if p is not None:
-								x = self.getPartitionbyDevice(dev)
-								if x is not None and x.mountpoint.startswith('/autofs'):
-									self.removeMountedPartitionbyDevice(dev) #remove now obsolete entry
 								p.mountpoint = mountpoint
 								p.uuid = uuid
 								p.device = dev
@@ -1822,11 +1758,7 @@ class HarddiskManager:
 							device_mountpoint = self.getAutofsMountpoint(dev)
 							if config.storage[uuid]['mountpoint'].value != "":
 								device_mountpoint = config.storage[uuid]['mountpoint'].value
-							p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = False, device = dev)
-							p.uuid = uuid
-							p.updatePartitionInfo()
-							self.partitions.append(p)
-							self.on_partition_list_change("add", p)
+							self.__addPartition(mountpoint = device_mountpoint, description = description, force_mounted = False, device = dev, uuid = uuid)
 					if path.exists("/dev/disk/by-uuid/" + uuid):
 						self.storageDeviceChanged(uuid)
 				else:
@@ -1841,7 +1773,7 @@ class HarddiskManager:
 					if hdd is not None:
 						hdd_description = hdd.model()
 						cap = hdd.capacity()
-						if cap != "":
+						if cap:
 							hdd_description += " (" + cap + ")"
 						device_info =  hdd.bus_description()
 					else:
@@ -1860,17 +1792,21 @@ class HarddiskManager:
 					config.storage[uuid]["device_info"].setValue(device_info)
 					config.storage[uuid]["isRemovable"].setValue(removable)
 					config.storage[uuid].save()
-					self.verifyInstalledStorageDevices()
 					p = self.getPartitionbyDevice(dev)
 					if p is None: # manually add partition entry (e.g. on long spinup times)
 						description = self.getDeviceDescription(dev)
 						device_mountpoint = self.getAutofsMountpoint(dev)
-						p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = True, device = dev)
-						p.uuid = uuid
-						p.updatePartitionInfo()
-						self.partitions.append(p)
-						self.on_partition_list_change("add", p)
-					self.storageDeviceChanged(uuid)
+						self.__addPartition(mountpoint = device_mountpoint, description = description, force_mounted = True, device = dev, uuid = uuid)
+					else:  # manually add partition entry (e.g. on default storage device change/initialize)
+						if uuid != p.uuid:
+							p.uuid = uuid
+							p.updatePartitionInfo()
+					p = self.getPartitionbyDevice(dev)
+					if self.HDDCount() == 1 and not self.HDDEnabledCount(): #only one installed and unconfigured device
+						if p is not None and p.fsType != 'swap':
+							self.verifyInstalledStorageDevices()
+					else:
+						self.storageDeviceChanged(uuid)
 				else:
 					p = self.getPartitionbyDevice(dev)
 					device_mountpoint = self.getAutofsMountpoint(dev)
@@ -1878,11 +1814,7 @@ class HarddiskManager:
 						device_mountpoint = config.storage[uuid]['mountpoint'].value
 					if p is None: # manually add partition entry (e.g. on default storage device change)
 						description = self.getDeviceDescription(dev)
-						p = Partition(mountpoint = device_mountpoint, description = description, force_mounted = True, device = dev)
-						p.uuid = uuid
-						p.updatePartitionInfo()
-						self.partitions.append(p)
-						self.on_partition_list_change("add", p)
+						self.__addPartition(mountpoint = device_mountpoint, description = description, force_mounted = True, device = dev, uuid = uuid)
 						print "[setupConfigEntries] new/changed device add for '%s' with uuid:'%s'" % (dev, uuid)
 						self.storageDeviceChanged(uuid)
 					else:
@@ -1897,7 +1829,8 @@ class HarddiskManager:
 		#verify if our device is manually mounted from fstab to somewhere else
 		isManualFstabMount = False
 		uuidPath = "/dev/disk/by-uuid/" + uuid
-		tmpmount = self.get_mountpoint(uuidPath)
+		devpath = path.realpath(uuidPath)
+		tmpmount = self.get_mountpoint(uuidPath) or self.get_mountpoint(devpath)
 		if tmpmount is not None and tmpmount != "/media/hdd":
 			isManualFstabMount = True
 		if not isManualFstabMount:
@@ -1923,8 +1856,8 @@ class HarddiskManager:
 			if numPart == 1 or numPart == 2:
 				device = hdd.device + "1"
 			p = self.getPartitionbyDevice(device)
-			if p is not None and p.uuid and p.isInitialized: #only one by e2 initialized partition
-				isInitializedByEnigma2 = True
+			if p:
+				isInitializedByEnigma2 = p.isInitialized
 				uuid = p.uuid
 			if numPart == 2:
 				part2Type = self.getBlkidPartitionType(hdd.partitionPath("2"))
@@ -1941,7 +1874,4 @@ class HarddiskManager:
 				if isInitializedByEnigma2:
 					self.configureUuidAsDefault(uuid, device)
 
-
 harddiskmanager = HarddiskManager()
-harddiskmanager.enumerateBlockDevices()
-harddiskmanager.verifyInstalledStorageDevices() #take sure enumerateBlockdev is finished so we don't miss any at startup installed storage devices

@@ -33,8 +33,8 @@ class LanguageSelection(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
-		self.list = []
-		self["languages"] = List(self.list)
+		self.multicontentlist = []
+		self["languages"] = List(self.multicontentlist)
 		self["languages"].onSelectionChanged.append(self.changed)
 
 		self.png_cache = { }
@@ -49,19 +49,22 @@ class LanguageSelection(Screen):
 		}, -1)
 
 	 # called from external Components/SetupDevices.py!!
-	def selectActiveLanguage(self):
+	def selectActiveLanguage(self, listname = "languages"):
 		activeLanguage = language.getActiveLanguage()
 		pos = 0
-		for x in self.list:
+		for x in self.multicontentlist:
 			if x[0] == activeLanguage:
-				self["languages"].index = pos
+				self[listname].index = pos
 				break
 			pos += 1
 
-	def save(self):
-		lang = self["languages"].getCurrent()[0]
+	def setOSDLanguage(self, listname = "languages"):
+		lang = self[listname].getCurrent()[0]
 		config.osd.language.value = lang
 		config.osd.language.save() # see comment above... selectActiveLanguage
+
+	def save(self, listname = "languages"):
+		self.setOSDLanguage(listname)
 		self.close()
 
 	def cancel(self):
@@ -70,32 +73,34 @@ class LanguageSelection(Screen):
 	def run(self):
 		pass
 
-	def updateList(self):
+	def updateList(self, listname = "languages"):
 		print "update list"
-		first_time = not self.list
+		first_time = not self.multicontentlist
 
 		if first_time:
 			lang = config.osd.language.value
 		else:
-			lang = self["languages"].getCurrent()[0]
-
-		self.setTitle(_cached("T2", lang))
+			lang = self[listname].getCurrent()[0]
 
 		languageList = language.getLanguageList()
 		if not languageList: # no language available => display only english
 			list = [ LanguageEntryComponent("en", _cached("en_EN", lang), "en_EN", self.png_cache) ]
 		else:
 			list = [ LanguageEntryComponent(file = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3], lang), index = x[0], png_cache = self.png_cache) for x in languageList]
-		self.list = list
+		self.multicontentlist = list
 
 		if first_time:
-			self["languages"].list = list
+			self[listname].list = list
 		else:
-			self["languages"].updateList(list)
+			self[listname].updateList(list)
 		print "done"
 
+		return lang
+
 	def changed(self):
-		self.updateList()
+		lang = self.updateList()
+
+		self.setTitle(_cached("T2", lang))
 
 class LanguageWizard(LanguageSelection, Rc):
 	def __init__(self, session):

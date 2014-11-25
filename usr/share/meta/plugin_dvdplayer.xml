@@ -3,7 +3,7 @@
                     <tag type="Multimedia" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>DVDPlayer</name>
                     <packagename>enigma2-plugin-extensions-dvdplayer</packagename>
                     <shortdescription>DVDPlayer plays your DVDs on your Dreambox</shortdescription>

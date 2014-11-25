@@ -1,11 +1,38 @@
 from enigma import eDVBFrontendParametersSatellite, eDVBFrontendParametersCable, eDVBFrontendParametersTerrestrial
+from enigma import iDVBFrontend
 from Components.NimManager import nimmanager
 
-def ConvertToHumanReadable(tp, type = None):
+feSatellite = iDVBFrontend.feSatellite
+feCable = iDVBFrontend.feCable
+feTerrestrial = iDVBFrontend.feTerrestrial
+stateIdle = iDVBFrontend.stateIdle
+stateFailed = iDVBFrontend.stateFailed
+stateTuning = iDVBFrontend.stateTuning
+stateLock = iDVBFrontend.stateLock
+stateLostLock = iDVBFrontend.stateLostLock
+
+def ConvertToHumanReadable(tp, ttype = None):
 	ret = { }
-	if type is None:
-		type = tp.get("tuner_type", "None")
-	if type == "DVB-S":
+	if ttype is None:
+		ttype = tp.get("tuner_type", "None")
+	if not isinstance(ttype, str):
+		ttype = { feSatellite : 'DVB-S', feCable : 'DVB-C', feTerrestrial : 'DVB-T' }.get(ttype, "None")
+	state = tp.get("tuner_state", "None")
+	if not isinstance(state, str):
+		if state == stateIdle:
+			sstate = "IDLE"
+		elif state == stateTuning:
+			sstate = "TUNING"
+		elif state == stateFailed:
+			sstate = "FAILED"
+		elif state == stateLock:
+			sstate = "LOCKED"
+		elif state == stateLostLock:
+			sstate = "LOSTLOCK"
+		else:
+			sstate = "UNKNOWN"
+		ret["tuner_state"] = sstate
+	if ttype == "DVB-S":
 		ret["tuner_type"] = _("Satellite")
 		ret["inversion"] = {
 			eDVBFrontendParametersSatellite.Inversion_Unknown : _("Auto"),
@@ -46,7 +73,7 @@ def ConvertToHumanReadable(tp, type = None):
 				eDVBFrontendParametersSatellite.Pilot_Unknown : _("Auto"),
 				eDVBFrontendParametersSatellite.Pilot_On : _("On"),
 				eDVBFrontendParametersSatellite.Pilot_Off : _("Off")}[tp["pilot"]]
-	elif type == "DVB-C":
+	elif ttype == "DVB-C":
 		ret["tuner_type"] = _("Cable")
 		ret["modulation"] = {
 			eDVBFrontendParametersCable.Modulation_Auto: _("Auto"),
@@ -68,7 +95,7 @@ def ConvertToHumanReadable(tp, type = None):
 			eDVBFrontendParametersCable.FEC_5_6 : "5/6",
 			eDVBFrontendParametersCable.FEC_7_8 : "7/8",
 			eDVBFrontendParametersCable.FEC_8_9 : "8/9"}[tp["fec_inner"]]
-	elif type == "DVB-T":
+	elif ttype == "DVB-T":
 		ret["tuner_type"] = _("Terrestrial")
 		ret["bandwidth"] = {
 			eDVBFrontendParametersTerrestrial.Bandwidth_Auto : _("Auto"),

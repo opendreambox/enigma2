@@ -2,6 +2,7 @@
 #define __dvb_sec_h
 
 #include <lib/dvb/idvb.h>
+#include <lib/base/stl_types.h>
 #include <list>
 
 #ifndef SWIG
@@ -332,10 +333,10 @@ private:
 public:
 #ifndef SWIG
 	eDVBSatelliteEquipmentControl(eSmartPtrList<eDVBRegisteredFrontend> &avail_frontends, eSmartPtrList<eDVBRegisteredFrontend> &avail_simulate_frontends);
-	RESULT prepare(iDVBFrontend &frontend, FRONTENDPARAMETERS &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int tunetimeout);
+	RESULT prepare(iDVBFrontend &frontend, dvb_frontend_parameters &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int tunetimeout);
 	void prepareClose(iDVBFrontend &frontend);
 	int canTune(const eDVBFrontendParametersSatellite &feparm, iDVBFrontend *, int frontend_id, int *highest_score_lnb=0);
-	bool currentLNBValid() { return m_lnbidx > -1 && m_lnbidx < (int)(sizeof(m_lnbs) / sizeof(eDVBSatelliteLNBParameters)); }
+	bool currentLNBValid() { return m_lnbidx > -1 && (size_t)m_lnbidx < ARRAY_SIZE(m_lnbs); }
 #endif
 	static eDVBSatelliteEquipmentControl *getInstance() { return instance; }
 	static void setParam(int param, int value);
@@ -383,7 +384,7 @@ public:
 	RESULT setTunerDepends(int from, int to);
 	void setSlotNotLinked(int tuner_no);
 
-	SWIG_PYOBJECT(ePyObject) getFrequencyRangeList(int slot_no, int orb_pos);
+	intPairList getFrequencyRangeList(int slot_no, int orb_pos);
 	void setRotorMoving(int, bool); // called from the frontend's
 	bool isRotorMoving();
 	bool canMeasureInputPower() { return m_canMeasureInputPower; }

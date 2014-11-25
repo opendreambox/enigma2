@@ -84,7 +84,7 @@ public:
 
 	static void setWrapAroundDefault(bool on);
 
-	PSignal0<void> selectionChanged;
+	eSignal0<void> selectionChanged;
 
 	enum {
 		showOnDemand,

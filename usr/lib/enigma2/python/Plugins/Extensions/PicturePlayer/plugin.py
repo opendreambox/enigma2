@@ -1,4 +1,4 @@
-from enigma import ePicLoad, eTimer, getDesktop, eRect, gPixmapPtr
+from enigma import ePicLoad, eRect, eSize, eTimer, getDesktop, gPixmapPtr
 
 from Screens.Screen import Screen
 from Tools.Directories import resolveFilename, pathExists, fileExists, SCOPE_MEDIA
@@ -28,11 +28,12 @@ config.pic.infoline = ConfigEnableDisable(default=True)
 config.pic.loop = ConfigEnableDisable(default=True)
 config.pic.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
 config.pic.textcolor = ConfigSelection(default="#0038FF48", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+config.pic.thumbDelay = ConfigInteger(default=500, limits=(0,999))
 
-def setPixmap(dest, ptr):
-	pic_scale_size = ptr.scaleSize()
+def setPixmap(dest, ptr, scaleSize, aspectRatio):
+	if scaleSize.isValid() and aspectRatio.isValid():
+		pic_scale_size = ptr.size().scale(scaleSize, aspectRatio)
 
-	if pic_scale_size.isValid():
 		pic_size = ptr.size()
 		pic_width = pic_size.width()
 		pic_height = pic_size.height()
@@ -107,17 +108,17 @@ class picshow(Screen):
 		self["filelist"].onSelectionChanged.append(self.selectionChanged)
 
 		self.ThumbTimer = eTimer()
-		self.ThumbTimer.callback.append(self.showThumb)
+		self.ThumbTimer_conn = self.ThumbTimer.timeout.connect(self.showThumb)
 
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.showPic)
+		self.picload_conn = self.picload.PictureData.connect(self.showPic)
 
 		self.onLayoutFinish.append(self.setConf)
 
 	def showPic(self, picInfo=""):
 		ptr = self.picload.getData()
 		if ptr != None:
-			setPixmap(self["thn"], ptr)
+			setPixmap(self["thn"], ptr, self._scaleSize, self._aspectRatio)
 			self["thn"].show()
 
 		text = picInfo.split('\n',1)
@@ -128,11 +129,11 @@ class picshow(Screen):
 		if not self.filelist.canDescent():
 			if self.filelist.getCurrentDirectory() and self.filelist.getFilename():
 				if self.picload.getThumbnail(self.filelist.getCurrentDirectory() + self.filelist.getFilename()) == 1:
-					self.ThumbTimer.start(500, True)
+					self.ThumbTimer.start(config.pic.thumbDelay.value, True)
 
 	def selectionChanged(self):
 		if not self.filelist.canDescent():
-			self.ThumbTimer.start(500, True)
+			self.ThumbTimer.start(config.pic.thumbDelay.value, True)
 		else:
 			self["label"].setText("")
 			self["thn"].hide()
@@ -158,9 +159,10 @@ class picshow(Screen):
 	def setConf(self):
 		self.setTitle(_("PicturePlayer"))
 		sc = getScale()
+		self._aspectRatio = eSize(sc[0], sc[1])
+		self._scaleSize = self["thn"].instance.size()
 		#0=Width 1=Height 2=Aspect 3=use_cache 4=resize_type 5=Background(#AARRGGBB)
-
-		params = (self["thn"].instance.size().width(), self["thn"].instance.size().height(), sc[0], sc[1], config.pic.cache.value, int(config.pic.resize.value), "#00000000")
+		params = (self._scaleSize.width(), self._scaleSize.height(), sc[0], sc[1], config.pic.cache.value, int(config.pic.resize.value), "#00000000")
 		self.picload.setPara(params)
 
 	def callbackView(self, val=0):
@@ -169,6 +171,7 @@ class picshow(Screen):
 
 	def KeyExit(self):
 		self.ThumbTimer.stop()
+		del self.picload_conn
 		del self.picload
 
 		if self.filelist.getCurrentDirectory() is None:
@@ -211,14 +214,14 @@ class Pic_Setup(Screen, ConfigListScreen):
 
 	def createSetup(self):
 		self.list = []
-		self.list.append(getConfigListEntry(_("Slideshow Interval (sec.)"), config.pic.slidetime))
-#		self.list.append(getConfigListEntry(_("Scaling Mode"), config.pic.resize))
-		self.list.append(getConfigListEntry(_("Cache Thumbnails"), config.pic.cache))
-		self.list.append(getConfigListEntry(_("show Infoline"), config.pic.infoline))
-		self.list.append(getConfigListEntry(_("Frame size in full view"), config.pic.framesize))
-		self.list.append(getConfigListEntry(_("slide picture in loop"), config.pic.loop))
-		self.list.append(getConfigListEntry(_("backgroundcolor"), config.pic.bgcolor))
-		self.list.append(getConfigListEntry(_("textcolor"), config.pic.textcolor))
+		self.list.append(getConfigListEntry(_("Slideshow: Interval between pictures (sec)"), config.pic.slidetime))
+		self.list.append(getConfigListEntry(_("Slideshow: Repeat"), config.pic.loop))
+		self.list.append(getConfigListEntry(_("Fullscreen: Show info line"), config.pic.infoline))
+		self.list.append(getConfigListEntry(_("Fullscreen: Text color"), config.pic.textcolor))
+		self.list.append(getConfigListEntry(_("Fullscreen: Background color"), config.pic.bgcolor))
+		self.list.append(getConfigListEntry(_("Fullscreen: Frame size"), config.pic.framesize))
+		self.list.append(getConfigListEntry(_("Thumbnails: Enable cache"), config.pic.cache))
+		self.list.append(getConfigListEntry(_("Thumbnails: Delay before loading (msec)"), config.pic.thumbDelay))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -376,16 +379,18 @@ class Pic_Thumb(Screen):
 			self.index = 0
 
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.showPic)
+		self.picload_conn = self.picload.PictureData.connect(self.showPic)
 
 		self.onLayoutFinish.append(self.setPicloadConf)
 
 		self.ThumbTimer = eTimer()
-		self.ThumbTimer.callback.append(self.showPic)
+		self.ThumbTimer_conn = self.ThumbTimer.timeout.connect(self.showPic)
 
 	def setPicloadConf(self):
 		sc = getScale()
-		self.picload.setPara([self["thumb0"].instance.size().width(), self["thumb0"].instance.size().height(), sc[0], sc[1], config.pic.cache.value, int(config.pic.resize.value), self.color])
+		self._aspectRatio = eSize(sc[0], sc[1])
+		self._scaleSize = self["thumb0"].instance.size()
+		self.picload.setPara([self._scaleSize.width(), self._scaleSize.height(), sc[0], sc[1], config.pic.cache.value, int(config.pic.resize.value), self.color])
 		self.paintFrame()
 
 	def paintFrame(self):
@@ -420,7 +425,7 @@ class Pic_Thumb(Screen):
 		for x in range(len(self.Thumbnaillist)):
 			if self.Thumbnaillist[x][0] == 0:
 				if self.picload.getThumbnail(self.Thumbnaillist[x][2]) == 1: #zu tun probier noch mal
-					self.ThumbTimer.start(500, True)
+					self.ThumbTimer.start(config.pic.thumbDelay.value, True)
 				else:
 					self.Thumbnaillist[x][0] = 1
 				break
@@ -428,7 +433,7 @@ class Pic_Thumb(Screen):
 				self.Thumbnaillist[x][0] = 2
 				ptr = self.picload.getData()
 				if ptr != None:
-					setPixmap(self["thumb" + str(self.Thumbnaillist[x][1])], ptr)
+					setPixmap(self["thumb" + str(self.Thumbnaillist[x][1])], ptr, self._scaleSize, self._aspectRatio)
 					self["thumb" + str(self.Thumbnaillist[x][1])].show()
 
 	def key_left(self):
@@ -471,6 +476,7 @@ class Pic_Thumb(Screen):
 		if self.old_index != self.index:
 			self.paintFrame()
 	def Exit(self):
+		del self.picload_conn
 		del self.picload
 		self.close(self.index + self.dirlistcount)
 
@@ -516,10 +522,10 @@ class Pic_Full_View(Screen):
 		self.setFileList(filelist, index, path)
 
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.finish_decode)
+		self.picload_conn = self.picload.PictureData.connect(self.finish_decode)
 
 		self.slideTimer = eTimer()
-		self.slideTimer.timeout.callback.append(self.slidePic)
+		self.slideTimer_conn = self.slideTimer.timeout.connect(self.slidePic)
 
 		self.onLayoutFinish.append(self._onLayoutFinished)
 
@@ -531,7 +537,6 @@ class Pic_Full_View(Screen):
 		self.shownow = True
 		self.dirlistcount = 0
 		self.direction = 1 #cache next picture
-		self.shownow = True
 
 		for x in filelist:
 			if len(filelist[0]) == 3: #orig. filelist
@@ -561,7 +566,9 @@ class Pic_Full_View(Screen):
 
 	def setPicloadConf(self):
 		sc = getScale()
-		self.picload.setPara((self["pic"].instance.size().width(), self["pic"].instance.size().height(), sc[0], sc[1], 0, int(config.pic.resize.value), self.bgcolor))
+		self._aspectRatio = eSize(sc[0], sc[1])
+		self._scaleSize = self["pic"].instance.size()
+		self.picload.setPara((self._scaleSize.width(), self._scaleSize.height(), sc[0], sc[1], 0, int(config.pic.resize.value), self.bgcolor))
 
 		self["play_icon"].hide()
 		if not config.pic.infoline.value:
@@ -592,7 +599,7 @@ class Pic_Full_View(Screen):
 					self["file"].setText(text)
 				self.lastindex = self.index
 
-				setPixmap(self["pic"], ptr)
+				setPixmap(self["pic"], ptr, self._scaleSize, self._aspectRatio)
 				self.picVisible = True
 			else:
 				print "picture ready but no picture avail!!!!!!!"
@@ -668,6 +675,7 @@ class Pic_Full_View(Screen):
 
 	def Exit(self):
 		self.slideTimer.stop()
+		del self.picload_conn
 		del self.picload
 		self.close(self.lastindex + self.dirlistcount)
 

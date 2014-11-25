@@ -60,17 +60,17 @@ class WebNavigation(Source):
 
 	def __onFirstExecBegin(self):
 		self.__isFirstExec = False
-		self.changed(self.EVENT_URL_CHANGED, self.__onUrlChanged)
-		self.changed(self.EVENT_TITLE_CHANGED, self.__onTitleChanged)
-		self.changed(self.EVENT_LOAD_PROGRESS, self.__onLoadProgress)
-		self.changed(self.EVENT_LOAD_FINISHED, self.__onLoadFinished)
-		self.changed(self.EVENT_DOWNLOAD_REQUESTED, self.__onDownloadRequested)
-		self.changed(self.EVENT_UNSUPPORTED_CONTENT, self.__onUnsupportedContent)
-		self.changed(self.EVENT_MICROFOCUS_CHANGED, self.__onMicroFocusChanged)
-		self.changed(self.EVENT_WINDOW_REQUESTED, self.__onWindowRequested)
-		self.changed(self.EVENT_SSL_ERRORS, self.__onSslErrors)
-		self.changed(self.EVENT_AUTH_REQUIRED, self.__onAuthRequired)
-		self.changed(self.EVENT_PROXY_AUTH_REQUIRED, self.__onProxyAuthRequired)
+		self.changed(self.EVENT_URL_CHANGED, (self, self.__onUrlChanged))
+		self.changed(self.EVENT_TITLE_CHANGED, (self, self.__onTitleChanged))
+		self.changed(self.EVENT_LOAD_PROGRESS, (self, self.__onLoadProgress))
+		self.changed(self.EVENT_LOAD_FINISHED, (self, self.__onLoadFinished))
+		self.changed(self.EVENT_DOWNLOAD_REQUESTED, (self, self.__onDownloadRequested))
+		self.changed(self.EVENT_UNSUPPORTED_CONTENT, (self, self.__onUnsupportedContent))
+		self.changed(self.EVENT_MICROFOCUS_CHANGED, (self, self.__onMicroFocusChanged))
+		self.changed(self.EVENT_WINDOW_REQUESTED, (self, self.__onWindowRequested))
+		self.changed(self.EVENT_SSL_ERRORS, (self, self.__onSslErrors))
+		self.changed(self.EVENT_AUTH_REQUIRED, (self, self.__onAuthRequired))
+		self.changed(self.EVENT_PROXY_AUTH_REQUIRED, (self, self.__onProxyAuthRequired))
 
 	def __setPos(self, pos):
 		self.__pos = pos

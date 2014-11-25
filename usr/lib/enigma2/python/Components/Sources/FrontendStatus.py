@@ -9,7 +9,7 @@ class FrontendStatus(Source):
 		self.frontend_source = frontend_source
 		self.invalidate()
 		self.poll_timer = eTimer()
-		self.poll_timer.callback.append(self.updateFrontendStatus)
+		self.poll_timer_conn = self.poll_timer.timeout.connect(self.updateFrontendStatus)
 
 	def invalidate(self):
 		self.snr = self.agc = self.ber = self.lock = self.snr_db = None
@@ -30,10 +30,10 @@ class FrontendStatus(Source):
 	def getFrontendStatus(self):
 		if self.frontend_source:
 			frontend = self.frontend_source()
-			dict = { }
+			data = { }
 			if frontend:
-				frontend.getFrontendStatus(dict)
-			return dict
+				frontend.getFrontendStatus(data)
+			return data
 		elif self.service_source:
 			service = self.service_source()
 			feinfo = service and service.frontendInfo()
@@ -48,6 +48,6 @@ class FrontendStatus(Source):
 			self.updateFrontendStatus()
 
 	def destroy(self):
-		self.poll_timer.callback.remove(self.updateFrontendStatus)
+		self.poll_timer_conn = None
 		Source.destroy(self)
 

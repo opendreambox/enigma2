@@ -3,7 +3,7 @@
                     <tag type="System" />
 	  </prerequisites>
           <info>
-                    <author>Dream Multimedia</author>
+                    <author>Dream Property GmbH</author>
                     <name>TuxboxPlugins</name>
                     <packagename>TuxboxPlugins</packagename>
                     <shortdescription>Execute TuxboxPlugins</shortdescription>

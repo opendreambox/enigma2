@@ -51,7 +51,7 @@ def readKeymap(filename):
 	p = enigma.eActionMap.getInstance()
 	assert p
 
-	source = open(filename)
+	source = open(filename, 're')
 
 	try:
 		dom = xml.etree.cElementTree.parse(source)

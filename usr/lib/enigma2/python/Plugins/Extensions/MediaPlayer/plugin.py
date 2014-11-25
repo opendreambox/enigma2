@@ -38,7 +38,7 @@ class MediaPixmap(Pixmap):
 		Pixmap.__init__(self)
 		self.coverArtFileName = ""
 		self.picload = ePicLoad()
-		self.picload.PictureData.get().append(self.paintCoverArtPixmapCB)
+		self.picload_conn = self.picload.PictureData.connect(self.paintCoverArtPixmapCB)
 		self.coverFileNames = ["folder.png", "folder.jpg"]
 
 	def applySkin(self, desktop, screen):
@@ -202,11 +202,11 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 
 		self.righttimer = False
 		self.rightKeyTimer = eTimer()
-		self.rightKeyTimer.callback.append(self.rightTimerFire)
+		self.rightKeyTimer_conn = self.rightKeyTimer.timeout.connect(self.rightTimerFire)
 
 		self.lefttimer = False
 		self.leftKeyTimer = eTimer()
-		self.leftKeyTimer.callback.append(self.leftTimerFire)
+		self.leftKeyTimer_conn = self.leftKeyTimer.timeout.connect(self.leftTimerFire)
 
 		self.currList = "filelist"
 		self.isAudioCD = False

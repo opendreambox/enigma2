@@ -89,7 +89,7 @@ self.condition = (self.backuppath is False)
 	<step id="shutdown" nextstep="shutdown">
 		<code>
 from enigma import quitMainloop
-quitMainloop(1)
+quitMainloop(8)
 		</code>
 		<text value="Your dreambox is shutting down. Please stand by..." />
 	</step>

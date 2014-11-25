@@ -2,6 +2,7 @@ from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
 
 from os import path as os_path, walk as os_walk
+from re import compile as re_compile
 from mimetypes import guess_type, add_type
 
 add_type("application/x-debian-package", ".ipk")
@@ -121,9 +122,7 @@ def scanDevice(mountpoint):
 		if p.with_subdirs == True and ScanPath(path=p.path) in paths_to_scan:
 			paths_to_scan.remove(ScanPath(path=p.path))
 
-	from Components.Harddisk import harddiskmanager	
-	blockdev = mountpoint.rstrip("/").rsplit('/',1)[-1]
-	error, blacklisted, removable, is_cdrom, partitions, medium_found = harddiskmanager.getBlockDevInfo(blockdev)
+	cdfsRegex = re_compile('^track-[0-9]{2}.wav$')
 
 	# now scan the paths
 	for p in paths_to_scan:
@@ -131,11 +130,10 @@ def scanDevice(mountpoint):
 
 		for root, dirs, files in os_walk(path):
 			for f in files:
-				path = os_path.join(root, f)
-				if is_cdrom and path.endswith(".wav") and path[-13:-6] == ("/track-"):
-					sfile = ScanFile(path,"audio/x-cda")
-				else:
-					sfile = ScanFile(path)
+				mimeType = None
+				if cdfsRegex.match(f):
+					mimeType = "audio/x-cda"
+				sfile = ScanFile(os_path.join(root, f), mimeType)
 				for s in scanner:
 					s.handleFile(res, sfile)
 

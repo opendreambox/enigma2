@@ -2,6 +2,7 @@
 #define __lib_components_scan_h
 
 #include <lib/base/object.h>
+#include <lib/base/esignal.h>
 #include <lib/dvb/idvb.h>
 
 class eDVBScan;
@@ -21,8 +22,8 @@ public:
 	eComponentScan();
 	~eComponentScan();
 	
-	PSignal0<void> statusChanged;
-	PSignal0<void> newService;
+	eSignal0<void> statusChanged;
+	eSignal0<void> newService;
 	
 		/* progress between 0 and 100 */
 	int getProgress();
@@ -47,6 +48,7 @@ public:
 	enum { scanNetworkSearch=1, scanRemoveServices=4, scanDontRemoveFeeds=8, scanDontRemoveUnscanned=16, clearToScanOnFirstNIT = 32, scanOnlyFree = 64, scanDontSkipEmptyTransponders = 128, scanOtherSDT = 256 };
 
 	int start(int feid, int flags=0 );
+	void setAdditionalTsidOnidCheckFunc( eSlot3<int,int,int,int> &func );
 	SWIG_VOID(RESULT) getFrontend(ePtr<iDVBFrontend> &SWIG_OUTPUT);
 	SWIG_VOID(RESULT) getCurrentTransponder(ePtr<iDVBFrontendParameters> &SWIG_OUTPUT);
 };

@@ -14,22 +14,23 @@ class Screen(dict, GUISkin):
 	False, SUSPEND_STOPS, SUSPEND_PAUSES = range(3)
 	ALLOW_SUSPEND = False
 
-	global_screen = None
-
 	def __init__(self, session, parent = None):
 		dict.__init__(self)
 		self.skinName = self.__class__.__name__
 		self.session = session
 		self.parent = parent
+
 		GUISkin.__init__(self)
 
 		self.onClose = [ ]
 		self.onFirstExecBegin = [ ]
+		self.onFirstExecBegin.append(self._initAnimations)
 		self.onExecBegin = [ ]
 		self.onShown = [ ]
 
 		self.onShow = [ ]
 		self.onHide = [ ]
+		self.onHideFinished = [ ]
 
 		self.execing = False
 		
@@ -50,6 +51,9 @@ class Screen(dict, GUISkin):
 		self.stand_alone = False
 		self.keyboardMode = None
 
+		self._hideAnimFinishedConnInternal = None
+		self._hideAnimFinishedConn = None
+
 	def saveKeyboardMode(self):
 		self.keyboardMode = eRCInput.getInstance().getKeyboardMode()
 
@@ -65,6 +69,7 @@ class Screen(dict, GUISkin):
 
 	def execBegin(self):
 		self.active_components = [ ]
+
 		if self.close_on_next_exec is not None:
 			tmp = self.close_on_next_exec
 			self.close_on_next_exec = None
@@ -103,11 +108,24 @@ class Screen(dict, GUISkin):
 		self.execing = False
 	
 	# never call this directly - it will be called from the session!
-	def doClose(self):
+	def doClose(self, immediate=False):
+		if not self.instance:
+			immediate = True
+
+		def __onHideAnimationFinishedInternal():
+			del self._hideAnimFinishedConnInternal
+			self.doCloseInternal()
+		if not immediate:
+			self._hideAnimFinishedConnInternal = self.instance.hideAnimationFinished.connect(__onHideAnimationFinishedInternal)
+
 		self.hide()
+		if immediate or not self.instance.isFading():
+			self.doCloseInternal()
+
+	def doCloseInternal(self):
 		for x in self.onClose:
 			x()
-		
+		del self._hideAnimFinishedConn
 		# fixup circular references
 		del self.helpList
 		GUISkin.close(self)
@@ -119,6 +137,8 @@ class Screen(dict, GUISkin):
 		for val in self.renderer:
 			val.disconnectAll()  # disconnected converter/sources and probably destroy them. Sources will not be destroyed.
 
+		if self in self.session.fading_dialogs:
+			self.session.fading_dialogs.remove(self)
 		del self.session
 
 		# we can have multiple dict entries with different names but same Element
@@ -136,7 +156,7 @@ class Screen(dict, GUISkin):
 
 		# really delete all elements now
 		self.__dict__.clear()
-	
+
 	def close(self, *retval):
 		if not self.execing:
 			self.close_on_next_exec = retval
@@ -147,11 +167,15 @@ class Screen(dict, GUISkin):
 		self.instance.setFocus(o.instance)
 
 	def show(self):
-		if (self.shown and self.already_shown) or not self.instance:
+		if not self.instance or (self.shown and self.already_shown and self.instance.isVisible()):
 			return
+
 		self.shown = True
 		self.already_shown = True
 		self.instance.show()
+		self.__onShow()
+
+	def __onShow(self):
 		for x in self.onShow:
 			x()
 		for val in self.values() + self.renderer:
@@ -161,13 +185,46 @@ class Screen(dict, GUISkin):
 	def hide(self):
 		if not self.shown or not self.instance:
 			return
+
 		self.shown = False
 		self.instance.hide()
+		if not self.instance.isFading():
+			self.__onHideFinished()
+		if not self.isEnabled(): #already disabled, don't call the callbacks twice
+			return
+		self.__onHide()
+
+	def __onHide(self):
 		for x in self.onHide:
 			x()
 		for val in self.values() + self.renderer:
 			if isinstance(val, GUIComponent) or isinstance(val, Source):
 				val.onHide()
+
+	def __onHideFinished(self):
+		for fnc in self.onHideFinished:
+			fnc()
+
+	def enable(self):
+		if self.isEnabled() or not self.instance:
+			return
+
+		self.instance.enable()
+		if self.instance.isVisible():
+			self.__onShow()
+		else:
+			self.show()
+
+	def disable(self):
+		if not self.isEnabled() or not self.instance:
+			return
+		self.instance.disable()
+		if not self.instance.isVisible():
+			return
+		self.__onHide()
+
+	def isEnabled(self):
+		return self.instance.isEnabled()
 
 	def __repr__(self):
 		return str(type(self))
@@ -178,6 +235,25 @@ class Screen(dict, GUISkin):
 		elif name == "parent":
 			return self.parent
 		elif name == "global":
-			return self.global_screen
+			return self.session.screen
 		else:
 			return None
+
+	def _initAnimations(self):
+		if self.instance: #WebScreens (for example) never have an instance
+			self._hideAnimFinishedConn = self.instance.hideAnimationFinished.connect(self.__onHideFinished)
+
+	def setShowHideAnimation(self, animation_key):
+		if self.instance:
+			return self.instance.setShowHideAnimation(animation_key)
+		return False
+
+	def canAnimate(self):
+		"""
+		True = it can
+		False = it can NOT
+		None = we have no instance, we don't know (call in onFirstExecBegin to avoid this)
+		"""
+		if self.instance:
+			return self.instance.canAnimate()
+		return None #We do not know that without an instance
