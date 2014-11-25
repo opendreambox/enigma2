@@ -145,7 +145,7 @@ class NetworkConfigGeneral(object):
 		enabled = _("on") if tech.powered() else _("off")
 		name = tech.name()
 		if tech.isScanning():
-			name = "%s - scanning..." %name
+			name = _("%s - scanning...") %name
 		return (tech.path(), None, enabled, None, None, None, name, "")
 
 	def _buildServiceListEntry(self, svcpath, service):
@@ -374,7 +374,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				if text:
 					text = "\n\n%s" %(text)
 
-				text = _("%s\n\n") %(service.name())
+				text = "%s\n\n" %(service.name())
 				ni = NetworkInterface(service)
 				ip4 = ni.getIpv4()
 				ip6 = ni.getIpv6()
@@ -535,7 +535,7 @@ class ServiceIPConfiguration(object):
 				ip6 = self._service.ipv6Config()
 			self._config_ip6_method.value = ip6.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
 			self._config_ip6_address.value = ip6.get(eNetworkService.KEY_ADDRESS, "::")
-			self._config_ip6_prefix_length.value = ord(ip6.get(eNetworkService.KEY_PREFIX_LENGTH, 0))
+			self._config_ip6_prefix_length.value = ord( ip6.get(eNetworkService.KEY_PREFIX_LENGTH, chr(1)) )
 			self._config_ip6_gw.value = ip6.get(eNetworkService.KEY_GATEWAY, "::")
 			self._config_ip6_privacy.value = ip6.get(eNetworkService.KEY_PRIVACY, eNetworkService.IPV6_PRIVACY_DISABLED)
 		self._isReloading = False
