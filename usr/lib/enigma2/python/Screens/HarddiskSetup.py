@@ -1,6 +1,7 @@
 from Screen import Screen
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.Harddisk import harddiskmanager  #global harddiskmanager
+from Components.Harddisk import BlockDevice
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.FileList import FileList
@@ -568,17 +569,15 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		isOfflineStorageDevice = isOfflineStorage
 		isMountedPartition = isReadable = False
 		currentMountpoint = partitionType = selectedPart = partitionPath = deviceName = uuidPath =None
-		hdd_description = device_info = capacity_info = ""
+		hdd_description = device_info = ""
 		numPartitions = 0
 		partitionNum = False
-		fstype = sys = size = sizeg = p = None
 		devicedescription = storagedevice_description
 		nomountpoint_msg = _("No mountpoint defined!")
 		initialize_msg = _("Please initialize!")
 		unsupportetpart_msg = _("Unsupported partition type!")
 		multiplepartmsg = _("Multiple partitions found!")
 		needsattention_msg = _("Needs attention!")
-		systemountpoint_msg = _("Mounted by system!")
 		notmounted_msg = _("Not mounted!")
 
 		if isOfflineStorageDevice:
@@ -614,33 +613,14 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 							uuidPath = "/dev/disk/by-uuid/" + uuid
 							partitionPath = hd.partitionPath("1")
 							print "[HarddiskDriveSelection] - RE-buildHDDList for online device:",deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath
-			if partitionNum is False:
-				cap = hd.capacity()
-				if cap != "":
-					capacity_info = " (" + cap + ")"
+			blkdev = BlockDevice(partitionPath)
+			hdd_description += " (" + blkdev.capacityString() + ")"
 			if uuid is not None:
 				p = harddiskmanager.getPartitionbyUUID(uuid)
 				if p is not None:
-					if capacity_info == "":
-						if p.total() is not None:
-							tmp = p.total()/1000/1000
-							cap = "%d.%03d GB" % (tmp/1000, tmp%1000)
-							if cap != "":
-								capacity_info = " (" + cap + ")"
 					selectedPart = p
 					if selectedPart is not None and selectedPart.fsType == None:
 						partitionType = harddiskmanager.getBlkidPartitionType(partitionPath)
-			if capacity_info == "":
-				fstype, sys, size, sizeg, sectors = harddiskmanager.getFdiskInfo(hd.device + str(partitionNum))
-				if sizeg is not None:
-					capacity_info = " (" + sizeg + " GB)"
-				else:
-					if size is not None:
-						tmp = int(size)/1000/1000
-						cap = "%d.%03d GB" % (tmp/1000, tmp%1000)
-						if cap != "":
-							capacity_info = " (" + cap + ")"
-			hdd_description += capacity_info
 
 			devicepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/device_harddisk.png"))
 			onlinepng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/buttons/button_green.png"))
@@ -1449,16 +1429,12 @@ class StorageInformation(Screen):
 	def updateInfo(self):
 		init_msg = _("Please initialize this %(desc)s!") % self.devicedescription
 		unknownpartition_msg = _("Unknown or unsupported partition type.")
-		selectedPart = None
 		partitionType = None
-		capacity_info = ""
 
 		if self.UUID is not None:
 			p = harddiskmanager.getPartitionbyUUID(self.UUID)
 			if p is not None:
-				selectedPart = p
-				if selectedPart is not None:
-					partitionType = selectedPart.fsType
+				partitionType = p.fsType
 		if partitionType is None:
 			partitionType = harddiskmanager.getBlkidPartitionType(self.partitionPath)
 
@@ -1471,25 +1447,5 @@ class StorageInformation(Screen):
 				self["filesystem"].setText(_("Filesystem") + ": " + unknownpartition_msg)
 			else:
 				self["filesystem"].setText(_("Filesystem") + ": " + partitionType)
-			if self.partitionNum is False:
-				cap = self.hdd.capacity()
-				if cap != "":
-					capacity_info = str(cap)
-			else:
-				if selectedPart is not None:
-					if capacity_info == "":
-						if selectedPart.total() is not None:
-							tmp = selectedPart.total()/1000/1000
-							cap = "%d.%03d GB" % (tmp/1000, tmp%1000)
-							if cap != "":
-								capacity_info = str(cap)
-				if capacity_info == "":
-					fstype, sys, size, sizeg, sectors = harddiskmanager.getFdiskInfo(self.hdd.device + str(self.partitionNum))
-					if sizeg is not None:
-						capacity_info = " " + sizeg + " GB"
-					else:
-						if size is not None:
-							tmp = int(size)/1000/1000
-							cap = "%d.%03d GB" % (tmp/1000, tmp%1000)
-							capacity_info = str(cap)
-			self["partition_capacity"].setText(_("Partition capacity") + ": "  + capacity_info)
+			blkdev = BlockDevice(self.partitionPath)
+			self["partition_capacity"].setText(_("Partition capacity") + ": "  + blkdev.capacityString())

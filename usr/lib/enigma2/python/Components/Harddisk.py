@@ -1,5 +1,4 @@
 from os import system, listdir, statvfs, makedirs, stat, path, access, unlink, getcwd, chdir, W_OK
-from re import search
 from time import time
 
 from Tools.Directories import SCOPE_HDD, resolveFilename
@@ -123,6 +122,26 @@ class Util:
 		if Util.findInMtab(dst=autofsPath):
 			Util.umount(autofsPath)
 
+	@staticmethod
+	def __capacityStringDiv(cap, divisor, unit):
+		if cap < divisor:
+			return ""
+		value = cap * 10 / divisor
+		remainder = value % 10
+		value /= 10
+		# Return at most one decimal place, but no leading zero.
+		if remainder == 0:
+			return "%d %s" % (value, unit)
+		return "%d.%d %s" % (value, remainder, unit)
+
+	@staticmethod
+	def capacityString(cap):
+		return (Util.__capacityStringDiv(cap, 1000000000000, 'PB') or
+			Util.__capacityStringDiv(cap, 1000000000, 'TB') or
+			Util.__capacityStringDiv(cap, 1000000, 'GB') or
+			Util.__capacityStringDiv(cap, 1000, 'MB') or
+			Util.__capacityStringDiv(cap, 1, 'KB'))
+
 class Harddisk:
 	def __init__(self, data, blkdev):
 		self.__data = data
@@ -156,9 +175,6 @@ class Harddisk:
 			return self.dev_path + 'p' + n
 		return self.dev_path + n
 
-	def sysfsPath(self, filename):
-		return path.realpath('/sys/block/' + self.device + '/' + filename)
-
 	def stop(self):
 		if self.timer:
 			self.timer.stop()
@@ -184,34 +200,8 @@ class Harddisk:
 			return "SDHC"
 		return "External Storage"
 
-	def __sectors(self):
-		try:
-			return int(Util.readFile(self.sysfsPath('size')))
-		except:
-			return 0
-
-	def __diskSize(self):
-		# Assume 512-bytes sectors, even for 4K drives. Return KB.
-		return self.__sectors() * 512 / 1000
-
-	def __capacityString(self, cap, divisor, unit):
-		if cap < divisor:
-			return ""
-		value = cap * 10 / divisor
-		remainder = value % 10
-		value /= 10
-		if remainder == 0:
-			return "%d %s" % (value, unit)
-		return "%d.%d %s" % (value, remainder, unit)
-
 	def capacity(self):
-		# Return at most one decimal place, but no leading zero.
-		cap = self.__diskSize()
-		return (self.__capacityString(cap, 1000000000000, 'PB') or
-			self.__capacityString(cap, 1000000000, 'TB') or
-			self.__capacityString(cap, 1000000, 'GB') or
-			self.__capacityString(cap, 1000, 'MB') or
-			self.__capacityString(cap, 1, 'KB'))
+		return self.__blkdev.capacityString()
 
 	def model(self, model_only = False, vendor_only = False):
 		vendor = self.__data.get('ID_VENDOR_ENC', '').decode('string_escape').strip()
@@ -278,16 +268,11 @@ class Harddisk:
 		return (res >> 8)
 
 	def __createPartition(self):
-		swapPartSize = int(2097152) #1GB
-		_, _, _, _, sectors = harddiskmanager.getFdiskInfo(self.device)
-		if sectors is None:
-			sectors = self.__sectors()
 		cmd = [ 'parted', '--script', '--align=opt', self.disk_path, '--' ]
 		cmd += [ 'mklabel', 'gpt' ]
-		if sectors and self.__data.get('ID_ATA_SATA'):
-			part1end = int(sectors)-swapPartSize #leaving 1GB for swap
-			cmd += [ 'mkpart', 'dreambox-storage', 'ext3', '2048s', str(part1end) + 's' ]
-			cmd += [ 'mkpart', 'dreambox-swap', 'linux-swap', str(int(part1end+1)) + 's', '-1' ]
+		if self.__data.get('ID_ATA_SATA'):
+			cmd += [ 'mkpart', 'dreambox-storage', 'ext3', '2048s', '-1GiB' ]
+			cmd += [ 'mkpart', 'dreambox-swap', 'linux-swap', '-1GiB', '-1' ]
 		else:
 			cmd += [ 'mkpart', 'dreambox-storage', 'ext3', '2048s', '100%' ]
 
@@ -295,7 +280,7 @@ class Harddisk:
 
 	def __mkfs(self):
 		cmd = [ 'mkfs.ext4', '-L', 'dreambox-storage' ]
-		if self.__diskSize() >= 4000000:	# 4 GB
+		if self.__blkdev.size() >= 4000000:	# 4 GB
 			cmd += [ '-T', 'largefile' ]
 		cmd += [ '-m0', '-O', 'dir_index', self.partitionPath('1') ]
 		return self.__system(cmd)
@@ -701,6 +686,9 @@ class BlockDevice:
 		except IOError:
 			self._isRemovable = False
 
+	def capacityString(self):
+		return Util.capacityString(self.size())
+
 	def name(self):
 		return self._name
 
@@ -718,6 +706,16 @@ class BlockDevice:
 				if err.errno == 159: # no medium present
 					return False
 		return True
+
+	def sectors(self):
+		try:
+			return int(Util.readFile(self.sysfsPath('size')))
+		except:
+			return 0
+
+	def size(self):
+		# Assume 512-bytes sectors, even for 4K drives. Return KB.
+		return self.sectors() * 512 / 1000
 
 	def sysfsPath(self, filename, physdev=False):
 		classPath = self._classPath
@@ -1036,32 +1034,6 @@ class HarddiskManager:
 
 	def getCD(self):
 		return self.cd
-
-	def getFdiskInfo(self, devname):
-		size = sizeg = fstype = sys = sectors = None
-		try:
-			_, output = runPipe(['fdisk', '-l', '/dev/%s' % devname])
-			for line in output:
-				if line.startswith("Found valid GPT"):
-					sys = "GPT"
-				if line.startswith("Disk"):
-					sizeobj = search(r', ((?:[a-zA-Z0-9])*) bytes', line)
-					if sizeobj:
-						size = sizeobj.group(1)
-					sizegobj = search(r': ((?:[0-9.0-9])*) GB', line)
-					if sizegobj:
-						sizeg = sizegobj.group(1)
-					sectorsobj = search(r': ((?:[0-9.0-9])*) sectors', line)
-					if sectorsobj:
-						sectors = sectorsobj.group(1)
-				if not line.startswith('/'):
-					continue
-				if line.startswith("/dev/" + devname):
-					a,b,c,d, fstype, sys = line.split(None,5)
-		except:
-			print "error getting fdisk device info"
-		#print "getFdiskInfo:",devname, fstype, sys, size, sizeg, sectors
-		return fstype, sys, size, sizeg, sectors
 
 	def __getBlkidAttributes(self, options):
 		res = dict()
