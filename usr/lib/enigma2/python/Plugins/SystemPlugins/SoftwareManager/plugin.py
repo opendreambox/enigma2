@@ -284,7 +284,7 @@ class UpdatePluginMenu(Screen):
 			self.session.open(MessageBox, _("Backup failed."), MessageBox.TYPE_INFO, timeout = 10)
 
 	def startRestore(self, ret = False):
-		if (ret == True):
+		if ret:
 			self.exe = True
 			self.session.open(RestoreScreen, runRestore = True)
 

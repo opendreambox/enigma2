@@ -136,9 +136,6 @@ class MessageBox(Screen):
 			return 1
 		return 0
 
-	def close(self, *retval):
-		Screen.close(self, retval)
-
 	def timeoutCallback(self):
 		print "Timeout!"
 		self.ok()

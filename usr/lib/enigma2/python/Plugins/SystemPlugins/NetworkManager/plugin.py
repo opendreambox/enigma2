@@ -49,6 +49,10 @@ class NetworkAgent(object):
 		prev = dialog_values.get("PreviousPassphrase", None)
 		if prev:
 			del dialog_values["PreviousPassphrase"]
+		#filter WPS until it's fixed
+		wps = dialog_values.get("WPS", None)
+		if wps:
+			del dialog_values["WPS"]
 
 		if len(dialog_values) == 1:
 			request_part = dialog_values.values()[0]

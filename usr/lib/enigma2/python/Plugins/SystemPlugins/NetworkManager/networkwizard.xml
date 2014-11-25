@@ -7,6 +7,9 @@
 self.clearSelectedKeys()
 self.selectKey("OK")
 		</code>
+		<condition>
+self.condition = not self.isNetworkConnected()
+		</condition>
 	</step>
 	<step id="alreadyonline">
 		<text value="Your Dreambox is already connected to the Internet.\nThere is no configuration required." />

@@ -72,6 +72,13 @@ class NetworkConfigGeneral(object):
 				Log.i("Triggering rescan for '%s'" %tech.name())
 				tech.scan()
 
+	def _removeService(self):
+		service = self._currentService
+		if isinstance(service, eNetworkServicePtr):
+			Log.i("Removing %s" %service.name())
+			service.setAutoConnect(False)
+			service.remove()
+
 	def getTechnologyConfig(self):
 		l = []
 		techs = self._nm.getTechnologies()
@@ -152,16 +159,12 @@ class NetworkConfigGeneral(object):
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
 		<screen name="NetworkServiceConfig" position="center,center" size="560,600" title="Network Configuration" zPosition="0">
-			<!--
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			-->
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
 
-			<!--
 			<widget name="key_red" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			-->
 			<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget name="key_yellow" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget name="key_blue" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
@@ -188,6 +191,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		Screen.__init__(self, session)
 		NetworkConfigGeneral.__init__(self)
 
+		self["key_red"] = Label(_("Reset"))
 		self["key_green"] = Label(_("Rescan"))
 		self["key_yellow"] = Label(_("IP"))
 		self["key_blue"] = Label(_("DNS"))
@@ -197,6 +201,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			"cancel": self.close,
 			"ok" : self._ok,
 			"green": self._rescan,
+			"red": self._removeService
 		}, -3)
 		self["ServiceActions"] = ActionMap(["ColorActions"],
 		{
@@ -216,6 +221,10 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self.onLayoutFinish.append(self.layoutFinished)
 		self.onLayoutFinish.append(self._checkButtons)
 
+	def _removeService(self):
+		NetworkConfigGeneral._removeService(self)
+		self._createSetup()
+
 	def _selectionChanged(self):
 		self._checkButtons()
 
@@ -225,10 +234,15 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				self["hint"].setText(_("Press OK to disconnect"))
 			else:
 				self["hint"].setText(_("Press OK to connect"))
+			if self._currentService.favorite():
+				self["key_red"].show()
+			else:
+				self["key_red"].hide()
 			self["key_yellow"].show()
 			self["key_blue"].show()
 			self["ServiceActions"].setEnabled(True)
 		else: #a technology
+			self["key_red"].hide()
 			if self._currentService:
 				if self._currentService.powered():
 					self["hint"].setText(_("Press OK to disable"))
@@ -338,10 +352,11 @@ class ServiceIPConfiguration(object):
 		self._ipv4Changed = False
 		self._ipv6Changed = False
 		self._addNotifiers()
-
 		self._service_conn = [
 			self._service.ipv4Changed.connect(self._serviceChanged),
 			self._service.ipv6Changed.connect(self._serviceChanged),
+			self._service.ipv4ConfigChanged.connect(self._serviceChanged),
+			self._service.ipv6ConfigChanged.connect(self._serviceChanged),
 		]
 
 	def _serviceChanged(self, *args):
@@ -388,19 +403,24 @@ class ServiceIPConfiguration(object):
 			self._ipv6Changed = False
 		if not self._ipv6Changed:
 			ip4 = self._service.ipv4()
+			if not dict(ip4):
+				ip6 = self._service.ipv4Config()
 			self._config_ip4_method.value = ip4.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
 			self._config_ip4_address.value = toIP4List( ip4.get("Address", "0.0.0.0") )
 			self._config_ip4_mask.value = toIP4List( ip4.get(eNetworkService.KEY_NETMASK, "0.0.0.0") )
 			self._config_ip4_gw.value = toIP4List( ip4.get(eNetworkService.KEY_GATEWAY, "0.0.0.0") )
 		if not self._ipv6Changed:
 			ip6 = self._service.ipv6()
-			Log.i(dict(ip6))
+			Log.i("%s / %s" %(dict(ip6), dict(self._service.ipv6Config())) )
+			if not dict(ip6):
+				ip6 = self._service.ipv6Config()
 			self._config_ip6_method.value = ip6.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
 			self._config_ip6_address.value = ip6.get(eNetworkService.KEY_ADDRESS, "::")
 			self._config_ip6_mask.value = ip6.get(eNetworkService.KEY_NETMASK, "::")
 			self._config_ip6_gw.value = ip6.get(eNetworkService.KEY_GATEWAY, "::")
 			self._config_ip6_privacy.value = ip6.get(eNetworkService.KEY_PRIVACY, eNetworkService.IPV6_PRIVACY_DISABLED)
 		self._isReloading = False
+		self._changed(None)
 
 	def getList(self):
 		l = [ getConfigListEntry(_("Method (IPv4)"), self._config_ip4_method), ]
@@ -500,6 +520,7 @@ class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 	def __onClose(self):
 		self._ipconfig.onChanged.remove(self._createSetup)
 		self._apply()
+		del self._ipconfig
 
 	def _apply(self):
 		if self._isServiceRemoved:

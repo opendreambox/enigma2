@@ -12,7 +12,7 @@ class Pixmap(GUIComponent):
 
 class PixmapConditional(ConditionalWidget, Pixmap):
 	def __init__(self, withTimer = True):
-		ConditionalWidget.__init__(self)
+		ConditionalWidget.__init__(self, withTimer)
 		Pixmap.__init__(self)
 
 class MovingPixmap(Pixmap):
@@ -28,8 +28,8 @@ class MovingPixmap(Pixmap):
 		self.clearPath()
 		
 		self.moveTimer = eTimer()
-		self.moveTimer_conn = self.moveTimer_conn = self.moveTimer.timeout.connect(self.doMove)
-		
+		self.moveTimer_conn = self.moveTimer.timeout.connect(self.doMove)
+
 	def clearPath(self, repeated = False):
 		if (self.moving):
 			self.moving = False
@@ -38,27 +38,27 @@ class MovingPixmap(Pixmap):
 		self.path = []
 		self.currDest = 0
 		self.repeated = repeated
-		
+
 	def addMovePoint(self, x, y, time = 20):
 		self.path.append((x, y, time))
-	
+
 	def moveTo(self, x, y, time = 20):
 		self.clearPath()
 		self.addMovePoint(x, y, time)
-		
+
 	def startMoving(self):
 		if not self.moving:
 			self.time = self.path[self.currDest][2]
 			self.stepX = (self.path[self.currDest][0] - self.x) / float(self.time)
 			self.stepY = (self.path[self.currDest][1] - self.y) / float(self.time)
-
+			
 			self.moving = True
 			self.moveTimer.start(100)
-			
+
 	def stopMoving(self):
 		self.moving = False
 		self.moveTimer.stop()
-		
+
 	def doMove(self):
 		self.x += self.stepX
 		self.y += self.stepY

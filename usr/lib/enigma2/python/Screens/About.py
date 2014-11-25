@@ -12,7 +12,7 @@ class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
-		self["EnigmaVersion"] = StaticText("Enigma2: " + about.getEnigmaVersionString())
+		self["EnigmaVersion"] = StaticText("Dreambox OS: " + about.getEnigmaVersionString())
 		self["ImageVersion"] = StaticText("Image: " + about.getImageVersionString())
 
 		self["TunerHeader"] = StaticText(_("Detected NIMs:"))

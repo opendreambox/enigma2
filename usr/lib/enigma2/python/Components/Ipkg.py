@@ -19,6 +19,8 @@ class IpkgComponent:
 	def __init__(self, ipkg = 'opkg'):
 		self.ipkg = ipkg
 		self.cmd = eConsoleAppContainer()
+		self.cmd_appClosed_conn = self.cmd.appClosed.connect(self.cmdFinished)
+		self.cmd_dataAvail_conn = self.cmd.dataAvail.connect(self.cmdData)
 		self.cache = None
 		self.callbackList = []
 		self.setCurrentCommand()
@@ -29,8 +31,6 @@ class IpkgComponent:
 
 	def runCmd(self, cmd):
 		print "executing", self.ipkg, cmd
-		self.cmd_appClosed_conn = self.cmd.appClosed.connect(self.cmdFinished)
-		self.cmd_dataAvail_conn = self.cmd.dataAvail.connect(self.cmdData)
 		if self.cmd.execute(self.ipkg + " " + cmd):
 			self.cmdFinished(-1)
 
@@ -61,8 +61,6 @@ class IpkgComponent:
 
 	def cmdFinished(self, retval):
 		self.callCallbacks(self.EVENT_DONE)
-		self.cmd_appClosed_conn = None
-		self.cmd.dataAvail_conn = None
 
 	def cmdData(self, data):
 		print "data:", data
