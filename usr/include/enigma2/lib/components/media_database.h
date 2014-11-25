@@ -85,6 +85,7 @@ public:
 	static const char FIELD_DIR_ID[];
 	static const char FIELD_ALBUM_ID[];
 	static const char FIELD_ARTIST_ID[];
+	static const char FIELD_ALBUM_ARTIST_ID[];
 	static const char FIELD_GENRE_ID[];
 	static const char FIELD_CODEC_ID[];
 	static const char FIELD_PATH[];
@@ -102,6 +103,7 @@ public:
 	static const char FIELD_DATE[];
 	static const char FIELD_COMMENT[];
 	static const char FIELD_ARTIST[];
+	static const char FIELD_ALBUM_ARTIST[];
 	static const char FIELD_ALBUM[];
 	static const char FIELD_GENRE[];
 	static const char FIELD_CODEC[];
@@ -160,10 +162,12 @@ public:
 	ePtr<eMediaDatabaseResult> filterByGenre(const std::string &genre, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByTitle(const std::string &title, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllArtists(int limit = -1, int offset = 0);
+	ePtr<eMediaDatabaseResult> getAllAlbumArtists(int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getArtists(const std::string &artist, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllAlbums(int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAlbums(const std::string &album, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAlbumsByArtist(const std::string &artist, int limit = -1, int offset = 0);
+	ePtr<eMediaDatabaseResult> getAlbumsByAlbumArtist(const std::string &album_artist, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllAudio(int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllVideos(int limit = -1, int offset = 0);
 
@@ -256,10 +260,12 @@ public:
 	QSqlQuery filterByTitle(const std::string &title, int limit = -1, int offset = 0);
 
 	QSqlQuery getAllArtists(int limit = -1, int offset = 0);
+	QSqlQuery getAllAlbumArtists(int limit, int offset);
 	QSqlQuery getArtists(const std::string &artist, int limit = -1, int offset = 0);
 	QSqlQuery getAllAlbums(int limit = -1, int offset = 0);
 	QSqlQuery getAlbums(const std::string &album, int limit = -1, int offset = 0);
 	QSqlQuery getAlbumsByArtist(const std::string &artist, int limit = -1, int offset = 0);
+	QSqlQuery getAlbumsByAlbumArtist(const std::string &artist, int limit = -1, int offset = 0);
 
 	QSqlQuery getAllAudio(int limit = -1, int offset = 0);
 	QSqlQuery getAllVideos(int limit = -1, int offset = 0);

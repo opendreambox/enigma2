@@ -3599,6 +3599,14 @@ class eMediaDatabase(object):
         """
         return _enigma.eMediaDatabase_getAllArtists(self, *args)
 
+    def getAllAlbumArtists(self, *args):
+        """
+        getAllAlbumArtists(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAllAlbumArtists(eMediaDatabase self, int limit=-1) -> eMediaDatabaseResultPtr
+        getAllAlbumArtists(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAllAlbumArtists(self, *args)
+
     def getArtists(self, *args):
         """
         getArtists(eMediaDatabase self, std::string const & artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
@@ -3630,6 +3638,14 @@ class eMediaDatabase(object):
         getAlbumsByArtist(eMediaDatabase self, std::string const & artist) -> eMediaDatabaseResultPtr
         """
         return _enigma.eMediaDatabase_getAlbumsByArtist(self, *args)
+
+    def getAlbumsByAlbumArtist(self, *args):
+        """
+        getAlbumsByAlbumArtist(eMediaDatabase self, std::string const & album_artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAlbumsByAlbumArtist(eMediaDatabase self, std::string const & album_artist, int limit=-1) -> eMediaDatabaseResultPtr
+        getAlbumsByAlbumArtist(eMediaDatabase self, std::string const & album_artist) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAlbumsByAlbumArtist(self, *args)
 
     def getAllAudio(self, *args):
         """
@@ -3789,10 +3805,12 @@ eMediaDatabase.filterByArtist = new_instancemethod(_enigma.eMediaDatabase_filter
 eMediaDatabase.filterByGenre = new_instancemethod(_enigma.eMediaDatabase_filterByGenre,None,eMediaDatabase)
 eMediaDatabase.filterByTitle = new_instancemethod(_enigma.eMediaDatabase_filterByTitle,None,eMediaDatabase)
 eMediaDatabase.getAllArtists = new_instancemethod(_enigma.eMediaDatabase_getAllArtists,None,eMediaDatabase)
+eMediaDatabase.getAllAlbumArtists = new_instancemethod(_enigma.eMediaDatabase_getAllAlbumArtists,None,eMediaDatabase)
 eMediaDatabase.getArtists = new_instancemethod(_enigma.eMediaDatabase_getArtists,None,eMediaDatabase)
 eMediaDatabase.getAllAlbums = new_instancemethod(_enigma.eMediaDatabase_getAllAlbums,None,eMediaDatabase)
 eMediaDatabase.getAlbums = new_instancemethod(_enigma.eMediaDatabase_getAlbums,None,eMediaDatabase)
 eMediaDatabase.getAlbumsByArtist = new_instancemethod(_enigma.eMediaDatabase_getAlbumsByArtist,None,eMediaDatabase)
+eMediaDatabase.getAlbumsByAlbumArtist = new_instancemethod(_enigma.eMediaDatabase_getAlbumsByAlbumArtist,None,eMediaDatabase)
 eMediaDatabase.getAllAudio = new_instancemethod(_enigma.eMediaDatabase_getAllAudio,None,eMediaDatabase)
 eMediaDatabase.getAllVideos = new_instancemethod(_enigma.eMediaDatabase_getAllVideos,None,eMediaDatabase)
 eMediaDatabase.addRecording = new_instancemethod(_enigma.eMediaDatabase_addRecording,None,eMediaDatabase)
@@ -3827,6 +3845,7 @@ eMediaDatabase.FIELD_FILE_ID = _enigma.cvar.eMediaDatabase_FIELD_FILE_ID
 eMediaDatabase.FIELD_DIR_ID = _enigma.cvar.eMediaDatabase_FIELD_DIR_ID
 eMediaDatabase.FIELD_ALBUM_ID = _enigma.cvar.eMediaDatabase_FIELD_ALBUM_ID
 eMediaDatabase.FIELD_ARTIST_ID = _enigma.cvar.eMediaDatabase_FIELD_ARTIST_ID
+eMediaDatabase.FIELD_ALBUM_ARTIST_ID = _enigma.cvar.eMediaDatabase_FIELD_ALBUM_ARTIST_ID
 eMediaDatabase.FIELD_GENRE_ID = _enigma.cvar.eMediaDatabase_FIELD_GENRE_ID
 eMediaDatabase.FIELD_CODEC_ID = _enigma.cvar.eMediaDatabase_FIELD_CODEC_ID
 eMediaDatabase.FIELD_PATH = _enigma.cvar.eMediaDatabase_FIELD_PATH
@@ -3844,6 +3863,7 @@ eMediaDatabase.FIELD_TRACKS_TOTAL = _enigma.cvar.eMediaDatabase_FIELD_TRACKS_TOT
 eMediaDatabase.FIELD_DATE = _enigma.cvar.eMediaDatabase_FIELD_DATE
 eMediaDatabase.FIELD_COMMENT = _enigma.cvar.eMediaDatabase_FIELD_COMMENT
 eMediaDatabase.FIELD_ARTIST = _enigma.cvar.eMediaDatabase_FIELD_ARTIST
+eMediaDatabase.FIELD_ALBUM_ARTIST = _enigma.cvar.eMediaDatabase_FIELD_ALBUM_ARTIST
 eMediaDatabase.FIELD_ALBUM = _enigma.cvar.eMediaDatabase_FIELD_ALBUM
 eMediaDatabase.FIELD_GENRE = _enigma.cvar.eMediaDatabase_FIELD_GENRE
 eMediaDatabase.FIELD_CODEC = _enigma.cvar.eMediaDatabase_FIELD_CODEC

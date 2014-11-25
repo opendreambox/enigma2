@@ -19,16 +19,18 @@ from Components.ResourceManager import resourcemanager
 from urlparse import urlsplit
 
 AUDIO_CONTAINER_ID = 100
-AUDIO_ALL_CONTAINER_ID = 101
-AUDIO_ARTIST_CONTAINER_ID = 102
-AUDIO_ARTIST_ALL_CONTAINER_ID = 103
-AUDIO_ALBUM_CONTAINER_ID = 104
+AUDIO_ALL_CONTAINER_ID = 110
+AUDIO_ARTIST_CONTAINER_ID = 120
+AUDIO_ALBUM_ARTIST_CONTAINER_ID = 130
+AUDIO_ARTIST_ALL_CONTAINER_ID = 140
+AUDIO_ALBUM_CONTAINER_ID = 150
+
 VIDEO_CONTAINER_ID = 200
-VIDEO_ALL_CONTAINER_ID = 201
-VIDEO_RECORDINGS_CONTAINER_ID = 201
-VIDEO_UNSEEN_CONTAINER_ID = 202
-VIDEO_HD_CONTAINER_ID = 203
-VIDEO_SD_CONTAINER_ID = 204
+VIDEO_ALL_CONTAINER_ID = 210
+VIDEO_RECORDINGS_CONTAINER_ID = 220
+VIDEO_UNSEEN_CONTAINER_ID = 230
+VIDEO_HD_CONTAINER_ID = 240
+VIDEO_SD_CONTAINER_ID = 250
 
 LIVE_CONTAINER_ID = 300
 
@@ -101,9 +103,12 @@ class Artist(DBContainer):
 	schemaVersion = 1
 	mimetype = 'directory'
 	
+	def _do_get_children(self, start, end):
+		return self._db.getAlbumsByArtist(self.name)
+
 	def get_children(self, start=0, end=0):
 		if self.children is None:
-			res = self._db.getAlbumsByArtist(self.name)
+			res = self._do_get_children(start, end)
 			items = self._get_data(res)
 			self.children = []
 			if(len(items) > 1):
@@ -119,6 +124,13 @@ class Artist(DBContainer):
 			self.item.childCount = self.get_child_count()
 		return self.item
 
+class AlbumArtist(Artist):
+	schemaVersion = 1
+	mimetype = 'directory'
+
+	def _do_get_children(self, start, end):
+		return self._db.getAlbumsByAlbumArtist(self.name)
+
 class Artists(DBContainer):
 	schemaVersion = 1
 	mimetype = 'directory'
@@ -126,7 +138,7 @@ class Artists(DBContainer):
 	def get_children(self, start=0, end=0):
 		if self.children is None:
 			res = self._db.getAllArtists()
-			Log.w(self.name)
+			Log.i(self.name)
 			items = self._get_data(res)
 			self.children = []
 			for item in items:
@@ -138,6 +150,20 @@ class Artists(DBContainer):
 			self.item = DIDLLite.Music(self.get_id(), self.parent.get_id(), self.name)
 			self.item.childCount = self.get_child_count()
 		return self.item
+
+class AlbumArtists(Artists):
+	schemaVersion = 1
+	mimetype = 'directory'
+
+	def get_children(self, start=0, end=0):
+		if self.children is None:
+			res = self._db.getAllAlbumArtists()
+			Log.i(self.name)
+			items = self._get_data(res)
+			self.children = []
+			for item in items:
+				self.add_child( AlbumArtist(self._db, item[eMediaDatabase.FIELD_ARTIST], self), external_id=int(item[eMediaDatabase.FIELD_ID]) )
+		return self.children
 
 class Album(DBContainer):
 	schemaVersion = 1
@@ -442,6 +468,9 @@ class DreamboxMediaStore(AbstractBackendStore):
 				)
 			audio.add_child(
 					Albums(self._db, _("Albums"), audio), AUDIO_ALBUM_CONTAINER_ID,
+				)
+			audio.add_child(
+					AlbumArtists(self._db, _("Album Artists"), audio), AUDIO_ALBUM_ARTIST_CONTAINER_ID,
 				)
 		#VIDEO
 		if config.plugins.mediaserver.share_video.value:

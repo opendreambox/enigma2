@@ -68,6 +68,11 @@ struct uniqueEPGKey
 		:sid(sid), onid(onid), tsid(tsid), dvbnamespace(dvbnamespace)
 	{
 	}
+	uniqueEPGKey( const eDVBChannelID &chid)
+		:sid(-1), onid(chid.original_network_id.get()), tsid(chid.transport_stream_id.get()), dvbnamespace(chid.dvbnamespace.get())
+	{
+	}
+
 	bool operator<(const uniqueEPGKey &a) const
 	{
 		return dvbnamespace < a.dvbnamespace || (dvbnamespace == a.dvbnamespace
@@ -221,8 +226,8 @@ private:
 		:state(s.state), tsid(s.tsid), onid(s.onid), dvbnamespace(s.dvbnamespace), seconds(s.seconds)
 	{
 	}
-	cachestate(int state, const eDVBChannelID &chid, int seconds=0)
-		:state(state), tsid(chid.transport_stream_id.get()), onid(chid.original_network_id.get()), dvbnamespace(chid.dvbnamespace.get()), seconds(seconds)
+	cachestate(int state, const uniqueEPGKey &chid, int seconds=0)
+		:state(state), tsid(chid.tsid), onid(chid.onid), dvbnamespace(chid.dvbnamespace), seconds(seconds)
 	{
 	}
 };
@@ -318,7 +323,6 @@ public:
 		};
 		int type;
 		iDVBChannel *channel;
-		eDVBChannelID chid;
 		uniqueEPGKey service;
 		union {
 			int err;
