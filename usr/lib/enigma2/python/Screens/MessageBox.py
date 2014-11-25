@@ -20,13 +20,15 @@ class MessageBox(Screen):
 		
 		self.msgBoxID = msgBoxID
 
- 		self["text"] = Label(text)
+		self["text"] = Label(text)
 		self["Text"] = StaticText(text)
 		self["selectedChoice"] = StaticText()
 
 		self.text = text
 		self.close_on_any_key = close_on_any_key
 		self.title = title
+		self.tmr = eTimer()
+		self.tmr_conn = self.tmr.timeout.connect(self.delayedAdditionalActionMapEnd)
 
 		self["ErrorPixmap"] = Pixmap()
 		self["QuestionPixmap"] = Pixmap()
@@ -82,7 +84,10 @@ class MessageBox(Screen):
 			self.additionalActionMap.execBegin()
 
 	def disconnectHighPrioAction(self):
-		self.highPrioAction = None
+		self.highPrioActionSlot = None
+		self.tmr.start(0, True)
+
+	def delayedAdditionalActionMapEnd(self):
 		if self.additionalActionMap:
 			self.additionalActionMap.execEnd()
 
@@ -131,10 +136,8 @@ class MessageBox(Screen):
 				self.timeoutCallback()
 
 	def closeAnyKey(self, key, flag):
-		if not self.additionalActionMap or flag:
-			self.close(True)
-			return 1
-		return 0
+		self.close(True)
+		return 1 if not self.additionalActionMap or flag else 0
 
 	def timeoutCallback(self):
 		print "Timeout!"

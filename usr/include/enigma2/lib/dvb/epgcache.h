@@ -318,6 +318,7 @@ public:
 		};
 		int type;
 		iDVBChannel *channel;
+		eDVBChannelID chid;
 		uniqueEPGKey service;
 		union {
 			int err;
@@ -331,8 +332,9 @@ public:
 			:type(type) {}
 		Message(int type, bool b)
 			:type(type), avail(b) {}
-		Message(int type, iDVBChannel *channel, int err=0)
-			:type(type), channel(channel), err(err) {}
+		Message(int type, iDVBChannel *channel)
+			:type(type), channel(channel) {}
+		Message(int type, iDVBChannel *channel, int err);
 		Message(int type, const eServiceReference& service, int err=0)
 			:type(type), service(service), err(err) {}
 		Message(int type, time_t time)

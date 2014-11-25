@@ -5,7 +5,7 @@ from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.Sources.List import List
 
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from Tools.Directories import resolveFilename, pathExists, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
 from Tools.Log import Log
 
 from AudioPlayer import AudioPlayer
@@ -168,13 +168,20 @@ def filescan_open(type, filelist, session, **kwargs):
 
 	session.open(MainMenu, type, playlist)
 
+def getIcon(key):
+	filename = resolveFilename(SCOPE_CURRENT_SKIN, "menu/mc_%s.png" %key)
+	if pathExists(filename):
+		return filename
+	else:
+		return resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/%s.png" %key)
+
 def addDefaultMenuItems():
 	mediaCore.addToMainMenu((
 		_("Music and Audiobooks"),
 		AudioPlayer,
 		{
 			"key" : "music",
-			"icon": resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/music.png"),
+			"icon": getIcon("music"),
 			"featuresPlaylist" : True
 		}
 	))
@@ -183,7 +190,7 @@ def addDefaultMenuItems():
 		VideoPlayer,
 		{
 			"key" : "movies",
-			"icon" : resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/movies.png"),
+			"icon" : getIcon("movies"),
 			"featuresPlaylist" : True
 		}
 	))
@@ -194,7 +201,7 @@ def addDefaultMenuItems():
 			picshow,
 			{
 				"key" : "pictures",
-				"icon": resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/pictures.png"),
+				"icon": getIcon("pictures"),
 				"featuresPlaylist" : False
 			}
 		))
