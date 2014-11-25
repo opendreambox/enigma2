@@ -3660,7 +3660,7 @@ class eMediaDatabase(object):
     def setRecordMeta(self, *args):
         """
         setRecordMeta(eMediaDatabase self, int file_id, std::string const & ref, std::string const & name, std::string const & description, 
-            std::string const & service_data, int64_t duration) -> eMediaDatabaseResultPtr
+            std::string const & service_data, int64_t duration, int64_t filesize) -> eMediaDatabaseResultPtr
         """
         return _enigma.eMediaDatabase_setRecordMeta(self, *args)
 

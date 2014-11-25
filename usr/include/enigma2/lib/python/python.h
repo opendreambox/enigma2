@@ -449,6 +449,7 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 	if (PyErr_Occurred()) \
 	{ \
 		PyErr_Print(); \
+		ePython::dumpStackTrace(); \
 		ASSERT(0); \
 	} \
 	ret; \
@@ -460,6 +461,7 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 	if (PyErr_Occurred()) \
 	{ \
 		PyErr_Print(); \
+		ePython::dumpStackTrace(); \
 		ASSERT(0); \
 	} \
 	ret; \
@@ -471,6 +473,7 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 	if (PyErr_Occurred()) \
 	{ \
 		PyErr_Print(); \
+		ePython::dumpStackTrace(); \
 		ASSERT(0); \
 	} \
 	ret; \
@@ -482,6 +485,7 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 	if (PyErr_Occurred()) \
 	{ \
 		PyErr_Print(); \
+		ePython::dumpStackTrace(); \
 		ASSERT(0); \
 	} \
 	ret; \
@@ -489,7 +493,11 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 
 #define PyString_AsStringSafe(ob) __extension__ \
 ({ \
-	ASSERT(PyString_Check(ob)); \
+	if (!PyString_Check(ob)) \
+	{ \
+		ePython::dumpStackTrace(); \
+		ASSERT(0); \
+	} \
 	PyString_AS_STRING(ob); \
 } )
 

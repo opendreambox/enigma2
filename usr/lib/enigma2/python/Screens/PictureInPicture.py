@@ -18,6 +18,7 @@ class PictureInPicture(Screen):
 
 	def LayoutFinished(self):
 		self.onLayoutFinish.remove(self.LayoutFinished)
+		self.instance.setTransparent(2)
 		x = config.av.pip.value[0]
 		y = config.av.pip.value[1]
 		w = config.av.pip.value[2]
