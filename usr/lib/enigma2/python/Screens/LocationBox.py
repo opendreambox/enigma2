@@ -215,6 +215,9 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 				self.bookmarks.append(folder)
 				self.bookmarks.sort()
 				self["booklist"].setList(self.bookmarks)
+				if self.bookmarks != self.realBookmarks.value:
+					self.realBookmarks.value = self.bookmarks
+					self.realBookmarks.save()
 		else:
 			# remove bookmark
 			if not self.userMode:
