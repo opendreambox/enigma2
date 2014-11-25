@@ -1220,33 +1220,22 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		self.devicedescription = storagedevice_description
 		if not hdd.isRemovable:
 			self.devicedescription = harddisk_description
-		successfully = False
-		action = "mount_only"
 		deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hdd, "1")
 		#print "[HarddiskDriveSelection]-> deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s'\n- partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
 		#% (deviceName, uuid, numPartitions, partitionNum, partitionPath, uuidPath, hdd.device, hdd.dev_path)
 		if uuid is not None:
-			print "[HarddiskDriveSelection]- verifyInitialize - got new uuid: ",uuid
-			uuid_cfg = config.storage.get(uuid, None)
+			print "[HarddiskDriveSelection]- verifyInitialize - got new uuid:'%s', defaultStorageDevice:'%s', HDDEnabledCount:'%d'" % (uuid,defaultStorageDevice(),harddiskmanager.HDDEnabledCount())
+			if defaultStorageDevice() in ("<undefined>", uuid):
+				action = "mount_default"
+			else:
+				action = "mount_only"
+			uuid_cfg = config.storage.get(uuid)
 			if uuid_cfg is None:
 				harddiskmanager.setupConfigEntries(initial_call = False, dev = deviceName)
-			print "[HarddiskDriveSelection]- verifyInitialize -defaultStorageDevice()",defaultStorageDevice()
-			print "[HarddiskDriveSelection]- verifyInitialize -HDDEnabledCount()",harddiskmanager.HDDEnabledCount()
-			if uuid_cfg is not None:
-				if defaultStorageDevice() == "<undefined>" or not harddiskmanager.HDDEnabledCount(): # no configured default storage device found
-					action = "mount_default"
-				print "[HarddiskDriveSelection]- verifyInitialize -ACTION",action
-				successfully = harddiskmanager.changeStorageDevice(uuid, action, None)
-			else:
-				uuid_cfg = config.storage.get(uuid, None)
-				if uuid_cfg is not None and defaultStorageDevice() == uuid and harddiskmanager.HDDEnabledCount():
-					successfully = True
-			if successfully:
-				uuid_cfg = config.storage.get(uuid, None)
-				if uuid_cfg is not None:
-					if action in ("mount_default", "mount_only"):
-						harddiskmanager.modifyFstabEntry(uuidPath, uuid_cfg['mountpoint'].value, mode = "add_activated")
-					updateVideoDirs(uuid)
+				uuid_cfg = config.storage.get(uuid)
+			if uuid_cfg and harddiskmanager.changeStorageDevice(uuid, action, None):
+				harddiskmanager.modifyFstabEntry(uuidPath, uuid_cfg['mountpoint'].value, mode = "add_activated")
+				updateVideoDirs(uuid)
 			else:
 				self.session.open(MessageBox, _("There was en error while configuring your %(desc)s.") % self.devicedescription, MessageBox.TYPE_ERROR)
 		else:

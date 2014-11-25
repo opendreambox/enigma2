@@ -75,7 +75,6 @@ class ScreenAnimations(object):
 			except Exception as ex:
 				Log.w("FAILED to parse an xml defined animation! %s: %s\n%s" %(animation.tag, animation.attrib, ex))
 
-
 #eLinearInterpolator()
 #eAcclerateInterpolator(float factor)
 #eDecelerateInterpolator(float factor)
@@ -148,13 +147,14 @@ class ScreenAnimations(object):
 		isReverse = item.tag == "size_hide"
 		animateW = "animateW" in attrs
 		animateH = "animateH" in attrs
+		centered = "centered" in attrs
 		if not animateW and not animateH:
 			animateW = animateH = True
 		w, h = attrs["val"].split(",")
 		w, h = int(w), int(h)
 		fromSize = eSize(w,h)
 		toSize = eSize()
-		return eSizeAnimation.create(duration, fromSize, toSize, False, interpolator, isReverse, animateW, animateH)
+		return eSizeAnimation.create(duration, fromSize, toSize, False, interpolator, isReverse, animateW, animateH, centered)
 
 #eMatrixAnimation(int64_t duration, eMatrix4x4 from, eMatrix4x4 to, bool reversed = false, ePtr<eProgressInterpolator> interpolator=0)
 	def _buildMatrixAnimation(self, item, duration, interpolator=0):

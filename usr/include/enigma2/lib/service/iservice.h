@@ -368,6 +368,7 @@ public:
 		sTagChannelMode,
 
 		sTransferBPS,
+		sLastUpdated,
 		sUser = 0x100
 	};
 	enum {

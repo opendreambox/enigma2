@@ -262,7 +262,7 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo):
 		if not self.inited:
 		# ouch. this should redraw our "Please wait..."-text.
 		# this is of course not the right way to do this.
-			self.delayTimer.start(10, 1)
+			self.delayTimer.start(300, 1)
 			self.inited=True
 
 	def saveListsize(self):

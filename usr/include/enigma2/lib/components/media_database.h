@@ -145,7 +145,7 @@ public:
 	std::vector<std::string> *getEnqueuedPaths();
 
 	void addPath(const std::string &path, bool watch=false);
-	void rescanPath(const std::string &path);
+	void rescanPath(const std::string &path, bool isRecording=false);
 	bool requestScanStatistics();
 	ePtr<eMediaDatabaseResult> setParentDirectoryWatched(int dir_id, bool watched);
 	ePtr<eMediaDatabaseResult> deleteParentDirectory(int dir_id);
@@ -208,10 +208,22 @@ public:
 SWIG_TEMPLATE_TYPEDEF(ePtr<eMediaDatabaseResult>, eMediaDatabaseResultPtr);
 
 #ifndef SWIG
-class eMediaDatabaseHandler : public eMainloop_native, public eThread, public sigc::trackable
-{
-	std::string normalizePath(const std::string &path);
 
+class eVersionedDatabase {
+public:
+	virtual ~eVersionedDatabase(){};
+protected:
+	void checkVersion(const QSqlDatabase &db_rw, int requiredVersion);
+	virtual bool upgradeSchema(int from)=0;
+};
+
+class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
+{
+	int SCHEMA_VERSION = 1;
+
+	std::string normalizePath(const std::string &path);
+	bool upgradeSchema(int from);
+	bool upgradeSchema0_to_1();
 public:
 	eMediaDatabaseHandler();
 	~eMediaDatabaseHandler();

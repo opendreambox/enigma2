@@ -273,9 +273,9 @@ class VideoHardware:
 		portlist = self.getPortList()
 		for port in portlist:
 			descr = port
-			if descr == 'DVI' and hw_type not in ('dm800', 'dm8000'):
+			if descr == 'DVI' and hw_type != 'dm8000':
 				descr = 'HDMI'
-			elif descr == 'DVI-PC' and hw_type not in ('dm800', 'dm8000'):
+			elif descr == 'DVI-PC' and hw_type != 'dm8000':
 				descr = 'HDMI-PC'
 			lst.append((port, descr))
 

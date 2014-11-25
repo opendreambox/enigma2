@@ -491,6 +491,7 @@ class iServiceInformation_ENUMS(object):
     sTagCRC = _enigma.iServiceInformation_ENUMS_sTagCRC
     sTagChannelMode = _enigma.iServiceInformation_ENUMS_sTagChannelMode
     sTransferBPS = _enigma.iServiceInformation_ENUMS_sTransferBPS
+    sLastUpdated = _enigma.iServiceInformation_ENUMS_sLastUpdated
     sUser = _enigma.iServiceInformation_ENUMS_sUser
     resNA = _enigma.iServiceInformation_ENUMS_resNA
     resIsString = _enigma.iServiceInformation_ENUMS_resIsString
@@ -1551,7 +1552,9 @@ class eWidgetAnimationFloat(iObject):
 eWidgetAnimationFloat.reset = new_instancemethod(_enigma.eWidgetAnimationFloat_reset,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.getDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_getDuration,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.setDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_setDuration,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.getFromValue = new_instancemethod(_enigma.eWidgetAnimationFloat_getFromValue,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.setFromValue = new_instancemethod(_enigma.eWidgetAnimationFloat_setFromValue,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.getToValue = new_instancemethod(_enigma.eWidgetAnimationFloat_getToValue,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.setToValue = new_instancemethod(_enigma.eWidgetAnimationFloat_setToValue,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.copy = new_instancemethod(_enigma.eWidgetAnimationFloat_copy,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat_swigregister = _enigma.eWidgetAnimationFloat_swigregister
@@ -1581,7 +1584,9 @@ class eWidgetAnimationPoint(iObject):
 eWidgetAnimationPoint.reset = new_instancemethod(_enigma.eWidgetAnimationPoint_reset,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.getDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_getDuration,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.setDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_setDuration,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.getFromValue = new_instancemethod(_enigma.eWidgetAnimationPoint_getFromValue,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.setFromValue = new_instancemethod(_enigma.eWidgetAnimationPoint_setFromValue,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.getToValue = new_instancemethod(_enigma.eWidgetAnimationPoint_getToValue,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.setToValue = new_instancemethod(_enigma.eWidgetAnimationPoint_setToValue,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.copy = new_instancemethod(_enigma.eWidgetAnimationPoint_copy,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint_swigregister = _enigma.eWidgetAnimationPoint_swigregister
@@ -1615,7 +1620,9 @@ class eWidgetAnimationSize(iObject):
 eWidgetAnimationSize.reset = new_instancemethod(_enigma.eWidgetAnimationSize_reset,None,eWidgetAnimationSize)
 eWidgetAnimationSize.getDuration = new_instancemethod(_enigma.eWidgetAnimationSize_getDuration,None,eWidgetAnimationSize)
 eWidgetAnimationSize.setDuration = new_instancemethod(_enigma.eWidgetAnimationSize_setDuration,None,eWidgetAnimationSize)
+eWidgetAnimationSize.getFromValue = new_instancemethod(_enigma.eWidgetAnimationSize_getFromValue,None,eWidgetAnimationSize)
 eWidgetAnimationSize.setFromValue = new_instancemethod(_enigma.eWidgetAnimationSize_setFromValue,None,eWidgetAnimationSize)
+eWidgetAnimationSize.getToValue = new_instancemethod(_enigma.eWidgetAnimationSize_getToValue,None,eWidgetAnimationSize)
 eWidgetAnimationSize.setToValue = new_instancemethod(_enigma.eWidgetAnimationSize_setToValue,None,eWidgetAnimationSize)
 eWidgetAnimationSize.copy = new_instancemethod(_enigma.eWidgetAnimationSize_copy,None,eWidgetAnimationSize)
 eWidgetAnimationSize_swigregister = _enigma.eWidgetAnimationSize_swigregister
@@ -1645,7 +1652,9 @@ class eWidgetAnimationMatrix(iObject):
 eWidgetAnimationMatrix.reset = new_instancemethod(_enigma.eWidgetAnimationMatrix_reset,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.getDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_getDuration,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.setDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_setDuration,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.getFromValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_getFromValue,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.setFromValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_setFromValue,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.getToValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_getToValue,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.setToValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_setToValue,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.copy = new_instancemethod(_enigma.eWidgetAnimationMatrix_copy,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix_swigregister = _enigma.eWidgetAnimationMatrix_swigregister

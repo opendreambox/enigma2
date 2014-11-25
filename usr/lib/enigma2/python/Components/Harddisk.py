@@ -1,4 +1,4 @@
-from os import system, listdir, statvfs, makedirs, stat, major, minor, path, access, readlink, unlink, getcwd, chdir, W_OK
+from os import system, listdir, statvfs, makedirs, stat, path, access, readlink, unlink, getcwd, chdir, W_OK
 from re import search
 from time import time
 
@@ -656,12 +656,6 @@ DEVICEDB_SR = \
 			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("DVD Drive"),
 			"/devices/platform/brcm-ehci-1.1/usb2/2-1/2-1:1.0/host3/target3:0:0/3:0:0:0": _("DVD Drive"),
 		},
-	"dm800":
-	{
-	},
-	"dm7025":
-	{
-	}
 	}
 
 DEVICEDB = \
@@ -706,12 +700,6 @@ DEVICEDB = \
 		"/devices/platform/strict-ahci.0/ata1/": _("SATA"),	# front
 		"/devices/platform/strict-ahci.0/ata2/": _("SATA"),	# back
 	},
-	"dm800":
-	{
-		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
-		"/devices/platform/brcm-ehci.0/usb1/1-2/1-2:1.0": _("Upper USB"),
-		"/devices/platform/brcm-ehci.0/usb1/1-1/1-1:1.0": _("Lower USB"),
-	},
 	"dm800se":
 	{
 		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
@@ -736,11 +724,6 @@ DEVICEDB = \
 		"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("eSATA"),
 		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA"),
 	},
-	"dm7025":
-	{
-		"/devices/pci0000:00/0000:00:14.1/ide1/1.0": "Compact Flash", #hdc
-		"/devices/pci0000:00/0000:00:14.1/ide0/0.0": "Internal Harddisk"
-	}
 	}
 
 class HarddiskManager:
@@ -784,13 +767,6 @@ class HarddiskManager:
 		def name(self):
 			return self._name
 
-		def isBlacklisted(self):
-			try:
-				dev = int(Util.readFile(path.join(self._classPath, 'dev')).split(':')[0])
-				return dev in (1, 7, 31, 179) # ram, loop, mtdblock, mmcblk
-			except IOError:
-				return True
-
 		def isPartition(self):
 			# /sys/block lists only full block devices
 			return not path.exists(self._blockPath)
@@ -815,6 +791,13 @@ class HarddiskManager:
 			if physdev and self.isPartition():
 				classPath = path.dirname(classPath)
 			return path.join(classPath, filename)
+
+	def __isBlacklisted(self, data):
+		major = int(data.get('MAJOR', '0'))
+		minor = int(data.get('MINOR', '0'))
+		if major == 179 and minor < 24: # mmcblk0
+			return True
+		return major in (1, 7, 31) # ram, loop, mtdblock
 
 	def __callDeviceNotifier(self, device, reason):
 		if not device:
@@ -928,14 +911,12 @@ class HarddiskManager:
 			print "no medium"
 			return
 
-		# see if this is a harddrive or removable drive (usb stick/cf/sd)
-		devtype = data.get('DEVTYPE')	# "disk","partition"
-		if devtype == "disk":
-			self.__addDeviceDisk(blkdev, data)
-		elif devtype == "partition":
+		if data.get('ID_FS_TYPE'):
 			p = self.getPartitionbyDevice(device)
 			if not p:
 				self.__addDevicePartition(blkdev, data)
+		elif data.get('DEVTYPE') == "disk":
+			self.__addDeviceDisk(blkdev, data)
 
 	def __changeHotplugPartition(self, blkdev, data):
 		if data.get('DISK_MEDIA_CHANGE'):
@@ -992,7 +973,7 @@ class HarddiskManager:
 
 		dev = path.basename(devpath)
 		blkdev = self.BlockDevice(dev)
-		if blkdev.isBlacklisted():
+		if self.__isBlacklisted(data):
 			print "ignoring event for %s (blacklisted)" % devpath
 			return
 
@@ -1010,6 +991,7 @@ class HarddiskManager:
 			self.hdd.append(Harddisk(device, blkdev.isRemovable()))
 			self.hdd.sort()
 			SystemInfo["Harddisk"] = len(self.hdd) > 0
+			self.__callDeviceNotifier(device, "add_delayed")
 
 	def __addDevicePartition(self, blkdev, data):
 		# device is the device name, without /dev
@@ -1060,8 +1042,9 @@ class HarddiskManager:
 				cfg_uuid = config.storage.get(uuid, None)
 				if cfg_uuid is not None:
 					self.storageDeviceChanged(uuid)
-
-		self.__callDeviceNotifier(device, "add_delayed")
+		#don't trigger the notifier for swap partitions.
+		if data.get('ID_FS_TYPE') != 'swap':
+			self.__callDeviceNotifier(device, "add_delayed")
 
 	def HDDCount(self):
 		return len(self.hdd)
@@ -1718,13 +1701,7 @@ class HarddiskManager:
 								p.force_mounted = False
 								p.updatePartitionInfo()
 							else:
-								p = self.getPartitionbyDevice(dev)
-								if p is not None:
-									p.mountpoint = mountpoint
-									p.uuid = uuid
-									p.device = dev
-									p.force_mounted = False
-									p.updatePartitionInfo()
+								self.__addPartition(mountpoint = mountpoint, device = dev, description = cfg_uuid['device_description'].value, uuid = uuid, notify = False)
 					else:
 						print "[mountPartitionbyUUID] could not mount mountdir:",mountpoint
 		else:

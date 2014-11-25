@@ -28,7 +28,7 @@ def countFrontpanelLEDs():
 SystemInfo["NumFrontpanelLEDs"] = countFrontpanelLEDs()
 SystemInfo["FrontpanelDisplay"] = fileExists("/dev/dbox/oled0") or fileExists("/dev/dbox/lcd0")
 SystemInfo["FrontpanelDisplayGrayscale"] = fileExists("/dev/dbox/oled0")
-SystemInfo["DeepstandbySupport"] = HardwareInfo().get_device_name() != "dm800"
+SystemInfo["DeepstandbySupport"] = True
 try:
 	from Plugins.SystemPlugins.NetworkManager import plugin
 	SystemInfo["NetworkManager"] = True

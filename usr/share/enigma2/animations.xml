@@ -51,6 +51,8 @@ Please note that this also reverses the interpolation effects (which may look od
 * <size>-specific optional attributes
   - animateW="" - only Animate the width (="" makes the parser happy, value is of no matter)
   - animateH="" - only Animate the height (="" makes the parser happy, value is of no matter)
+  - centered="" - center point based size animations
+                  this means the size animations will influence the current top-left position (="" makes the parser happy, value is of no matter)
   -> if neither animateW nor animateH have been set, width and height will be animated
 
 You may combine all 3 types of animations, but only one of each kind for one type of animation (show/hide).
@@ -71,6 +73,11 @@ You may combine all 3 types of animations, but only one of each kind for one typ
 	<animation key="slide_top_to_bottom" title="Slide in top + Slide out bottom" duration="250">
 		<position val="-1.0" animateY="" />
 		<position_hide val="2.0" animateY="" />
+	</animation>
+	<animation key="zoom_and_fade" title="Zoom in + Shrink out with crossfading" duration="250">
+		<alpha val="0.5" />
+		<size val="0,0" centered=""/>
+		<size_hide val="0,0" centered=""/>
 	</animation>
 	<animation key="grow_left_shrink_top" title="Grow from left + Shrink to top" duration="250">
 		<size val="0,0" animateW=""/>
