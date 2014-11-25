@@ -34,6 +34,7 @@ class eMediaDatabaseHandler;
 
 class eMediaDatabaseResult : public iObject
 {
+	SWIG_AUTODOC
 	DECLARE_REF(eMediaDatabaseResult)
 	bool m_error;
 	int m_rowsAffected;
@@ -65,6 +66,7 @@ public:
 
 class eMediaDatabase : public sigc::trackable
 {
+	SWIG_AUTODOC
 	static eMediaDatabase *instance;
 	eMediaScanner *m_scanner;
 	eMediaDatabaseHandler *m_db;

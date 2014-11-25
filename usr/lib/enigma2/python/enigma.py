@@ -1448,6 +1448,10 @@ class iProgressInterpolator(object):
     def __init__(self, *args): 
         _enigma.iProgressInterpolator_swiginit(self,_enigma.new_iProgressInterpolator(*args))
     __swig_destroy__ = _enigma.delete_iProgressInterpolator
+    def at(self, *args):
+        """at(iProgressInterpolator self, float progress) -> float"""
+        return _enigma.iProgressInterpolator_at(self, *args)
+
 iProgressInterpolator.__ref__ = new_instancemethod(_enigma.iProgressInterpolator___ref__,None,iProgressInterpolator)
 iProgressInterpolator.getPtrString = new_instancemethod(_enigma.iProgressInterpolator_getPtrString,None,iProgressInterpolator)
 iProgressInterpolator.__deref__ = new_instancemethod(_enigma.iProgressInterpolator___deref__,None,iProgressInterpolator)
@@ -1462,6 +1466,10 @@ class eLinearInterpolator(object):
         _enigma.eLinearInterpolator_swiginit(self,_enigma.new_eLinearInterpolator(*args))
     __swig_destroy__ = _enigma.delete_eLinearInterpolator
     create = staticmethod(_enigma.eLinearInterpolator_create)
+    def at(self, *args):
+        """at(eLinearInterpolator self, float progress) -> float"""
+        return _enigma.eLinearInterpolator_at(self, *args)
+
 eLinearInterpolator.__ref__ = new_instancemethod(_enigma.eLinearInterpolator___ref__,None,eLinearInterpolator)
 eLinearInterpolator.getPtrString = new_instancemethod(_enigma.eLinearInterpolator_getPtrString,None,eLinearInterpolator)
 eLinearInterpolator.__deref__ = new_instancemethod(_enigma.eLinearInterpolator___deref__,None,eLinearInterpolator)
@@ -1480,6 +1488,10 @@ class eAcclerateInterpolator(object):
         _enigma.eAcclerateInterpolator_swiginit(self,_enigma.new_eAcclerateInterpolator(*args))
     __swig_destroy__ = _enigma.delete_eAcclerateInterpolator
     create = staticmethod(_enigma.eAcclerateInterpolator_create)
+    def at(self, *args):
+        """at(eAcclerateInterpolator self, float progress) -> float"""
+        return _enigma.eAcclerateInterpolator_at(self, *args)
+
 eAcclerateInterpolator.__ref__ = new_instancemethod(_enigma.eAcclerateInterpolator___ref__,None,eAcclerateInterpolator)
 eAcclerateInterpolator.getPtrString = new_instancemethod(_enigma.eAcclerateInterpolator_getPtrString,None,eAcclerateInterpolator)
 eAcclerateInterpolator.__deref__ = new_instancemethod(_enigma.eAcclerateInterpolator___deref__,None,eAcclerateInterpolator)
@@ -1498,6 +1510,10 @@ class eDecelerateInterpolator(object):
         _enigma.eDecelerateInterpolator_swiginit(self,_enigma.new_eDecelerateInterpolator(*args))
     __swig_destroy__ = _enigma.delete_eDecelerateInterpolator
     create = staticmethod(_enigma.eDecelerateInterpolator_create)
+    def at(self, *args):
+        """at(eDecelerateInterpolator self, float progress) -> float"""
+        return _enigma.eDecelerateInterpolator_at(self, *args)
+
 eDecelerateInterpolator.__ref__ = new_instancemethod(_enigma.eDecelerateInterpolator___ref__,None,eDecelerateInterpolator)
 eDecelerateInterpolator.getPtrString = new_instancemethod(_enigma.eDecelerateInterpolator_getPtrString,None,eDecelerateInterpolator)
 eDecelerateInterpolator.__deref__ = new_instancemethod(_enigma.eDecelerateInterpolator___deref__,None,eDecelerateInterpolator)
@@ -1516,6 +1532,10 @@ class eOvershootInterpolator(object):
         _enigma.eOvershootInterpolator_swiginit(self,_enigma.new_eOvershootInterpolator(*args))
     __swig_destroy__ = _enigma.delete_eOvershootInterpolator
     create = staticmethod(_enigma.eOvershootInterpolator_create)
+    def at(self, *args):
+        """at(eOvershootInterpolator self, float progress) -> float"""
+        return _enigma.eOvershootInterpolator_at(self, *args)
+
 eOvershootInterpolator.__ref__ = new_instancemethod(_enigma.eOvershootInterpolator___ref__,None,eOvershootInterpolator)
 eOvershootInterpolator.getPtrString = new_instancemethod(_enigma.eOvershootInterpolator_getPtrString,None,eOvershootInterpolator)
 eOvershootInterpolator.__deref__ = new_instancemethod(_enigma.eOvershootInterpolator___deref__,None,eOvershootInterpolator)
@@ -1534,6 +1554,10 @@ class eBounceInterpolator(object):
         _enigma.eBounceInterpolator_swiginit(self,_enigma.new_eBounceInterpolator(*args))
     __swig_destroy__ = _enigma.delete_eBounceInterpolator
     create = staticmethod(_enigma.eBounceInterpolator_create)
+    def at(self, *args):
+        """at(eBounceInterpolator self, float progress) -> float"""
+        return _enigma.eBounceInterpolator_at(self, *args)
+
 eBounceInterpolator.__ref__ = new_instancemethod(_enigma.eBounceInterpolator___ref__,None,eBounceInterpolator)
 eBounceInterpolator.getPtrString = new_instancemethod(_enigma.eBounceInterpolator_getPtrString,None,eBounceInterpolator)
 eBounceInterpolator.__deref__ = new_instancemethod(_enigma.eBounceInterpolator___deref__,None,eBounceInterpolator)
@@ -1549,6 +1573,41 @@ class eWidgetAnimationFloat(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+    def reset(self, reversed=False):
+        """
+        reset(eWidgetAnimationFloat self, bool reversed=False)
+        reset(eWidgetAnimationFloat self)
+        """
+        return _enigma.eWidgetAnimationFloat_reset(self, reversed)
+
+    def getDuration(self):
+        """getDuration(eWidgetAnimationFloat self) -> int64_t"""
+        return _enigma.eWidgetAnimationFloat_getDuration(self)
+
+    def setDuration(self, *args):
+        """setDuration(eWidgetAnimationFloat self, int64_t ms)"""
+        return _enigma.eWidgetAnimationFloat_setDuration(self, *args)
+
+    def getFromValue(self):
+        """getFromValue(eWidgetAnimationFloat self) -> float"""
+        return _enigma.eWidgetAnimationFloat_getFromValue(self)
+
+    def setFromValue(self, *args):
+        """setFromValue(eWidgetAnimationFloat self, float value)"""
+        return _enigma.eWidgetAnimationFloat_setFromValue(self, *args)
+
+    def getToValue(self):
+        """getToValue(eWidgetAnimationFloat self) -> float"""
+        return _enigma.eWidgetAnimationFloat_getToValue(self)
+
+    def setToValue(self, *args):
+        """setToValue(eWidgetAnimationFloat self, float value)"""
+        return _enigma.eWidgetAnimationFloat_setToValue(self, *args)
+
+    def copy(self):
+        """copy(eWidgetAnimationFloat self) -> eWidgetAnimationFloat"""
+        return _enigma.eWidgetAnimationFloat_copy(self)
+
 eWidgetAnimationFloat.reset = new_instancemethod(_enigma.eWidgetAnimationFloat_reset,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.getDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_getDuration,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.setDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_setDuration,None,eWidgetAnimationFloat)
@@ -1581,6 +1640,41 @@ class eWidgetAnimationPoint(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+    def reset(self, reversed=False):
+        """
+        reset(eWidgetAnimationPoint self, bool reversed=False)
+        reset(eWidgetAnimationPoint self)
+        """
+        return _enigma.eWidgetAnimationPoint_reset(self, reversed)
+
+    def getDuration(self):
+        """getDuration(eWidgetAnimationPoint self) -> int64_t"""
+        return _enigma.eWidgetAnimationPoint_getDuration(self)
+
+    def setDuration(self, *args):
+        """setDuration(eWidgetAnimationPoint self, int64_t ms)"""
+        return _enigma.eWidgetAnimationPoint_setDuration(self, *args)
+
+    def getFromValue(self):
+        """getFromValue(eWidgetAnimationPoint self) -> ePoint"""
+        return _enigma.eWidgetAnimationPoint_getFromValue(self)
+
+    def setFromValue(self, *args):
+        """setFromValue(eWidgetAnimationPoint self, ePoint value)"""
+        return _enigma.eWidgetAnimationPoint_setFromValue(self, *args)
+
+    def getToValue(self):
+        """getToValue(eWidgetAnimationPoint self) -> ePoint"""
+        return _enigma.eWidgetAnimationPoint_getToValue(self)
+
+    def setToValue(self, *args):
+        """setToValue(eWidgetAnimationPoint self, ePoint value)"""
+        return _enigma.eWidgetAnimationPoint_setToValue(self, *args)
+
+    def copy(self):
+        """copy(eWidgetAnimationPoint self) -> eWidgetAnimationPoint"""
+        return _enigma.eWidgetAnimationPoint_copy(self)
+
 eWidgetAnimationPoint.reset = new_instancemethod(_enigma.eWidgetAnimationPoint_reset,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.getDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_getDuration,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.setDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_setDuration,None,eWidgetAnimationPoint)
@@ -1599,6 +1693,22 @@ class ePointAnimation(object):
         _enigma.ePointAnimation_swiginit(self,_enigma.new_ePointAnimation(*args))
     __swig_destroy__ = _enigma.delete_ePointAnimation
     create = staticmethod(_enigma.ePointAnimation_create)
+    def at(self, *args):
+        """at(ePointAnimation self, int64_t ms) -> ePoint"""
+        return _enigma.ePointAnimation_at(self, *args)
+
+    def animateX(self):
+        """animateX(ePointAnimation self)"""
+        return _enigma.ePointAnimation_animateX(self)
+
+    def animateY(self):
+        """animateY(ePointAnimation self)"""
+        return _enigma.ePointAnimation_animateY(self)
+
+    def animateXY(self):
+        """animateXY(ePointAnimation self)"""
+        return _enigma.ePointAnimation_animateXY(self)
+
 ePointAnimation.__ref__ = new_instancemethod(_enigma.ePointAnimation___ref__,None,ePointAnimation)
 ePointAnimation.getPtrString = new_instancemethod(_enigma.ePointAnimation_getPtrString,None,ePointAnimation)
 ePointAnimation.__deref__ = new_instancemethod(_enigma.ePointAnimation___deref__,None,ePointAnimation)
@@ -1617,6 +1727,41 @@ class eWidgetAnimationSize(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+    def reset(self, reversed=False):
+        """
+        reset(eWidgetAnimationSize self, bool reversed=False)
+        reset(eWidgetAnimationSize self)
+        """
+        return _enigma.eWidgetAnimationSize_reset(self, reversed)
+
+    def getDuration(self):
+        """getDuration(eWidgetAnimationSize self) -> int64_t"""
+        return _enigma.eWidgetAnimationSize_getDuration(self)
+
+    def setDuration(self, *args):
+        """setDuration(eWidgetAnimationSize self, int64_t ms)"""
+        return _enigma.eWidgetAnimationSize_setDuration(self, *args)
+
+    def getFromValue(self):
+        """getFromValue(eWidgetAnimationSize self) -> eSize"""
+        return _enigma.eWidgetAnimationSize_getFromValue(self)
+
+    def setFromValue(self, *args):
+        """setFromValue(eWidgetAnimationSize self, eSize value)"""
+        return _enigma.eWidgetAnimationSize_setFromValue(self, *args)
+
+    def getToValue(self):
+        """getToValue(eWidgetAnimationSize self) -> eSize"""
+        return _enigma.eWidgetAnimationSize_getToValue(self)
+
+    def setToValue(self, *args):
+        """setToValue(eWidgetAnimationSize self, eSize value)"""
+        return _enigma.eWidgetAnimationSize_setToValue(self, *args)
+
+    def copy(self):
+        """copy(eWidgetAnimationSize self) -> eWidgetAnimationSize"""
+        return _enigma.eWidgetAnimationSize_copy(self)
+
 eWidgetAnimationSize.reset = new_instancemethod(_enigma.eWidgetAnimationSize_reset,None,eWidgetAnimationSize)
 eWidgetAnimationSize.getDuration = new_instancemethod(_enigma.eWidgetAnimationSize_getDuration,None,eWidgetAnimationSize)
 eWidgetAnimationSize.setDuration = new_instancemethod(_enigma.eWidgetAnimationSize_setDuration,None,eWidgetAnimationSize)
@@ -1649,6 +1794,41 @@ class eWidgetAnimationMatrix(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+    def reset(self, reversed=False):
+        """
+        reset(eWidgetAnimationMatrix self, bool reversed=False)
+        reset(eWidgetAnimationMatrix self)
+        """
+        return _enigma.eWidgetAnimationMatrix_reset(self, reversed)
+
+    def getDuration(self):
+        """getDuration(eWidgetAnimationMatrix self) -> int64_t"""
+        return _enigma.eWidgetAnimationMatrix_getDuration(self)
+
+    def setDuration(self, *args):
+        """setDuration(eWidgetAnimationMatrix self, int64_t ms)"""
+        return _enigma.eWidgetAnimationMatrix_setDuration(self, *args)
+
+    def getFromValue(self):
+        """getFromValue(eWidgetAnimationMatrix self) -> eMatrix4x4"""
+        return _enigma.eWidgetAnimationMatrix_getFromValue(self)
+
+    def setFromValue(self, *args):
+        """setFromValue(eWidgetAnimationMatrix self, eMatrix4x4 value)"""
+        return _enigma.eWidgetAnimationMatrix_setFromValue(self, *args)
+
+    def getToValue(self):
+        """getToValue(eWidgetAnimationMatrix self) -> eMatrix4x4"""
+        return _enigma.eWidgetAnimationMatrix_getToValue(self)
+
+    def setToValue(self, *args):
+        """setToValue(eWidgetAnimationMatrix self, eMatrix4x4 value)"""
+        return _enigma.eWidgetAnimationMatrix_setToValue(self, *args)
+
+    def copy(self):
+        """copy(eWidgetAnimationMatrix self) -> eWidgetAnimationMatrix"""
+        return _enigma.eWidgetAnimationMatrix_copy(self)
+
 eWidgetAnimationMatrix.reset = new_instancemethod(_enigma.eWidgetAnimationMatrix_reset,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.getDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_getDuration,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.setDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_setDuration,None,eWidgetAnimationMatrix)
@@ -1683,6 +1863,42 @@ class eWidgetAnimationSet(object):
     def __init__(self, *args): 
         _enigma.eWidgetAnimationSet_swiginit(self,_enigma.new_eWidgetAnimationSet(*args))
     __swig_destroy__ = _enigma.delete_eWidgetAnimationSet
+    def isValid(self):
+        """isValid(eWidgetAnimationSet self) -> bool"""
+        return _enigma.eWidgetAnimationSet_isValid(self)
+
+    def setAlphaAnimation(self, *args):
+        """setAlphaAnimation(eWidgetAnimationSet self, eFloatAnimation alpha)"""
+        return _enigma.eWidgetAnimationSet_setAlphaAnimation(self, *args)
+
+    def setAlphaReverseAnimation(self, *args):
+        """setAlphaReverseAnimation(eWidgetAnimationSet self, eFloatAnimation alpha)"""
+        return _enigma.eWidgetAnimationSet_setAlphaReverseAnimation(self, *args)
+
+    def setPositionAnimation(self, *args):
+        """setPositionAnimation(eWidgetAnimationSet self, ePointAnimation position)"""
+        return _enigma.eWidgetAnimationSet_setPositionAnimation(self, *args)
+
+    def setPositionReverseAnimation(self, *args):
+        """setPositionReverseAnimation(eWidgetAnimationSet self, ePointAnimation position)"""
+        return _enigma.eWidgetAnimationSet_setPositionReverseAnimation(self, *args)
+
+    def setSizeAnimation(self, *args):
+        """setSizeAnimation(eWidgetAnimationSet self, eSizeAnimation size)"""
+        return _enigma.eWidgetAnimationSet_setSizeAnimation(self, *args)
+
+    def setSizeReverseAnimation(self, *args):
+        """setSizeReverseAnimation(eWidgetAnimationSet self, eSizeAnimation size)"""
+        return _enigma.eWidgetAnimationSet_setSizeReverseAnimation(self, *args)
+
+    def setPerspectiveAnimation(self, *args):
+        """setPerspectiveAnimation(eWidgetAnimationSet self, eMatrixAnimation perspective)"""
+        return _enigma.eWidgetAnimationSet_setPerspectiveAnimation(self, *args)
+
+    def setPerspectiveReverseAnimation(self, *args):
+        """setPerspectiveReverseAnimation(eWidgetAnimationSet self, eMatrixAnimation perspective)"""
+        return _enigma.eWidgetAnimationSet_setPerspectiveReverseAnimation(self, *args)
+
 eWidgetAnimationSet.__ref__ = new_instancemethod(_enigma.eWidgetAnimationSet___ref__,None,eWidgetAnimationSet)
 eWidgetAnimationSet.getPtrString = new_instancemethod(_enigma.eWidgetAnimationSet_getPtrString,None,eWidgetAnimationSet)
 eWidgetAnimationSet.__deref__ = new_instancemethod(_enigma.eWidgetAnimationSet___deref__,None,eWidgetAnimationSet)
@@ -1705,6 +1921,94 @@ class eWindowAnimationSet(object):
         _enigma.eWindowAnimationSet_swiginit(self,_enigma.new_eWindowAnimationSet(*args))
     __swig_destroy__ = _enigma.delete_eWindowAnimationSet
     create = staticmethod(_enigma.eWindowAnimationSet_create)
+    def isInternal(self):
+        """isInternal(eWindowAnimationSet self) -> bool"""
+        return _enigma.eWindowAnimationSet_isInternal(self)
+
+    def getKey(self):
+        """getKey(eWindowAnimationSet self) -> std::string"""
+        return _enigma.eWindowAnimationSet_getKey(self)
+
+    def getName(self):
+        """getName(eWindowAnimationSet self) -> std::string"""
+        return _enigma.eWindowAnimationSet_getName(self)
+
+    def getAlpha(self):
+        """getAlpha(eWindowAnimationSet self) -> eFloatAnimation"""
+        return _enigma.eWindowAnimationSet_getAlpha(self)
+
+    def getAlphaReverse(self):
+        """getAlphaReverse(eWindowAnimationSet self) -> eFloatAnimation"""
+        return _enigma.eWindowAnimationSet_getAlphaReverse(self)
+
+    def getPos(self):
+        """getPos(eWindowAnimationSet self) -> ePointAnimation"""
+        return _enigma.eWindowAnimationSet_getPos(self)
+
+    def getPosReverse(self):
+        """getPosReverse(eWindowAnimationSet self) -> ePointAnimation"""
+        return _enigma.eWindowAnimationSet_getPosReverse(self)
+
+    def getSize(self):
+        """getSize(eWindowAnimationSet self) -> eSizeAnimation"""
+        return _enigma.eWindowAnimationSet_getSize(self)
+
+    def getSizeReverse(self):
+        """getSizeReverse(eWindowAnimationSet self) -> eSizeAnimation"""
+        return _enigma.eWindowAnimationSet_getSizeReverse(self)
+
+    def getMatrix(self):
+        """getMatrix(eWindowAnimationSet self) -> eMatrixAnimation"""
+        return _enigma.eWindowAnimationSet_getMatrix(self)
+
+    def getMatrixReverse(self):
+        """getMatrixReverse(eWindowAnimationSet self) -> eMatrixAnimation"""
+        return _enigma.eWindowAnimationSet_getMatrixReverse(self)
+
+    def setInternal(self, *args):
+        """setInternal(eWindowAnimationSet self, bool internal)"""
+        return _enigma.eWindowAnimationSet_setInternal(self, *args)
+
+    def setKey(self, *args):
+        """setKey(eWindowAnimationSet self, std::string const & key)"""
+        return _enigma.eWindowAnimationSet_setKey(self, *args)
+
+    def setName(self, *args):
+        """setName(eWindowAnimationSet self, std::string const & name)"""
+        return _enigma.eWindowAnimationSet_setName(self, *args)
+
+    def setAlpha(self, *args):
+        """setAlpha(eWindowAnimationSet self, eFloatAnimation alpha)"""
+        return _enigma.eWindowAnimationSet_setAlpha(self, *args)
+
+    def setAlphaReverse(self, *args):
+        """setAlphaReverse(eWindowAnimationSet self, eFloatAnimation alpha)"""
+        return _enigma.eWindowAnimationSet_setAlphaReverse(self, *args)
+
+    def setPos(self, *args):
+        """setPos(eWindowAnimationSet self, ePointAnimation pos)"""
+        return _enigma.eWindowAnimationSet_setPos(self, *args)
+
+    def setPosReverse(self, *args):
+        """setPosReverse(eWindowAnimationSet self, ePointAnimation pos)"""
+        return _enigma.eWindowAnimationSet_setPosReverse(self, *args)
+
+    def setSize(self, *args):
+        """setSize(eWindowAnimationSet self, eSizeAnimation size)"""
+        return _enigma.eWindowAnimationSet_setSize(self, *args)
+
+    def setSizeReverse(self, *args):
+        """setSizeReverse(eWindowAnimationSet self, eSizeAnimation size)"""
+        return _enigma.eWindowAnimationSet_setSizeReverse(self, *args)
+
+    def setMatrix(self, *args):
+        """setMatrix(eWindowAnimationSet self, eMatrixAnimation matrix)"""
+        return _enigma.eWindowAnimationSet_setMatrix(self, *args)
+
+    def setMatrixReverse(self, *args):
+        """setMatrixReverse(eWindowAnimationSet self, eMatrixAnimation matrix)"""
+        return _enigma.eWindowAnimationSet_setMatrixReverse(self, *args)
+
 eWindowAnimationSet.__ref__ = new_instancemethod(_enigma.eWindowAnimationSet___ref__,None,eWindowAnimationSet)
 eWindowAnimationSet.getPtrString = new_instancemethod(_enigma.eWindowAnimationSet_getPtrString,None,eWindowAnimationSet)
 eWindowAnimationSet.__deref__ = new_instancemethod(_enigma.eWindowAnimationSet___deref__,None,eWindowAnimationSet)
@@ -1914,9 +2218,41 @@ class eWindow(eWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
+        """
+        __init__(eWindow self, eWidgetDesktop desktop, int z=0) -> eWindow
+        __init__(eWindow self, eWidgetDesktop desktop) -> eWindow
+        """
         _enigma.eWindow_swiginit(self,_enigma.new_eWindow(*args))
     __swig_destroy__ = _enigma.delete_eWindow
+    def setShowHideAnimation(self, *args):
+        """setShowHideAnimation(eWindow self, std::string const & key) -> bool"""
+        return _enigma.eWindow_setShowHideAnimation(self, *args)
+
+    def neverAnimate(self):
+        """neverAnimate(eWindow self)"""
+        return _enigma.eWindow_neverAnimate(self)
+
+    def setTitle(self, *args):
+        """setTitle(eWindow self, std::string const & string)"""
+        return _enigma.eWindow_setTitle(self, *args)
+
+    def getTitle(self):
+        """getTitle(eWindow self) -> std::string"""
+        return _enigma.eWindow_getTitle(self)
+
     wfNoBorder = _enigma.eWindow_wfNoBorder
+    def setBackgroundColor(self, *args):
+        """setBackgroundColor(eWindow self, gRGB col)"""
+        return _enigma.eWindow_setBackgroundColor(self, *args)
+
+    def setFlag(self, *args):
+        """setFlag(eWindow self, int flags)"""
+        return _enigma.eWindow_setFlag(self, *args)
+
+    def clearFlag(self, *args):
+        """clearFlag(eWindow self, int flags)"""
+        return _enigma.eWindow_clearFlag(self, *args)
+
 eWindow.setShowHideAnimation = new_instancemethod(_enigma.eWindow_setShowHideAnimation,None,eWindow)
 eWindow.neverAnimate = new_instancemethod(_enigma.eWindow_neverAnimate,None,eWindow)
 eWindow.setTitle = new_instancemethod(_enigma.eWindow_setTitle,None,eWindow)
@@ -3108,8 +3444,33 @@ class eMediaDatabaseResult(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self): 
+        """__init__(eMediaDatabaseResult self) -> eMediaDatabaseResult"""
         _enigma.eMediaDatabaseResult_swiginit(self,_enigma.new_eMediaDatabaseResult())
     __swig_destroy__ = _enigma.delete_eMediaDatabaseResult
+    def error(self):
+        """error(eMediaDatabaseResult self) -> bool"""
+        return _enigma.eMediaDatabaseResult_error(self)
+
+    def rowsAffected(self):
+        """rowsAffected(eMediaDatabaseResult self) -> int"""
+        return _enigma.eMediaDatabaseResult_rowsAffected(self)
+
+    def lastInsertId(self):
+        """lastInsertId(eMediaDatabaseResult self) -> int"""
+        return _enigma.eMediaDatabaseResult_lastInsertId(self)
+
+    def errorDriverText(self):
+        """errorDriverText(eMediaDatabaseResult self) -> std::string"""
+        return _enigma.eMediaDatabaseResult_errorDriverText(self)
+
+    def errorDatabaseText(self):
+        """errorDatabaseText(eMediaDatabaseResult self) -> std::string"""
+        return _enigma.eMediaDatabaseResult_errorDatabaseText(self)
+
+    def data(self):
+        """data(eMediaDatabaseResult self) -> StringMapVector"""
+        return _enigma.eMediaDatabaseResult_data(self)
+
 eMediaDatabaseResult.error = new_instancemethod(_enigma.eMediaDatabaseResult_error,None,eMediaDatabaseResult)
 eMediaDatabaseResult.rowsAffected = new_instancemethod(_enigma.eMediaDatabaseResult_rowsAffected,None,eMediaDatabaseResult)
 eMediaDatabaseResult.lastInsertId = new_instancemethod(_enigma.eMediaDatabaseResult_lastInsertId,None,eMediaDatabaseResult)
@@ -3123,7 +3484,276 @@ class eMediaDatabase(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    getInstance = staticmethod(_enigma.eMediaDatabase_getInstance)
+    def getInstance():
+        """getInstance() -> eMediaDatabase"""
+        return _enigma.eMediaDatabase_getInstance()
+
+    getInstance = staticmethod(getInstance)
+    def getCurrentScanPath(self):
+        """getCurrentScanPath(eMediaDatabase self) -> std::string"""
+        return _enigma.eMediaDatabase_getCurrentScanPath(self)
+
+    def getEnqueuedPaths(self):
+        """getEnqueuedPaths(eMediaDatabase self) -> StringVector"""
+        return _enigma.eMediaDatabase_getEnqueuedPaths(self)
+
+    def addPath(self, *args):
+        """
+        addPath(eMediaDatabase self, std::string const & path, bool watch=False)
+        addPath(eMediaDatabase self, std::string const & path)
+        """
+        return _enigma.eMediaDatabase_addPath(self, *args)
+
+    def rescanPath(self, *args):
+        """
+        rescanPath(eMediaDatabase self, std::string const & path, bool isRecording=False)
+        rescanPath(eMediaDatabase self, std::string const & path)
+        """
+        return _enigma.eMediaDatabase_rescanPath(self, *args)
+
+    def requestScanStatistics(self):
+        """requestScanStatistics(eMediaDatabase self) -> bool"""
+        return _enigma.eMediaDatabase_requestScanStatistics(self)
+
+    def setParentDirectoryWatched(self, *args):
+        """setParentDirectoryWatched(eMediaDatabase self, int dir_id, bool watched) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_setParentDirectoryWatched(self, *args)
+
+    def deleteParentDirectory(self, *args):
+        """deleteParentDirectory(eMediaDatabase self, int dir_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_deleteParentDirectory(self, *args)
+
+    def getParentDirectories(self):
+        """getParentDirectories(eMediaDatabase self) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getParentDirectories(self)
+
+    def filterAudio(self, *args):
+        """
+        filterAudio(eMediaDatabase self, std::string const & needle, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterAudio(eMediaDatabase self, std::string const & needle, int limit=-1) -> eMediaDatabaseResultPtr
+        filterAudio(eMediaDatabase self, std::string const & needle) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterAudio(self, *args)
+
+    def filterByAlbum(self, *args):
+        """
+        filterByAlbum(eMediaDatabase self, std::string const & album, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByAlbum(eMediaDatabase self, std::string const & album, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByAlbum(eMediaDatabase self, std::string const & album) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByAlbum(self, *args)
+
+    def filterByArtistAlbum(self, *args):
+        """
+        filterByArtistAlbum(eMediaDatabase self, std::string const & artist, std::string const & album, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByArtistAlbum(eMediaDatabase self, std::string const & artist, std::string const & album, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByArtistAlbum(eMediaDatabase self, std::string const & artist, std::string const & album) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByArtistAlbum(self, *args)
+
+    def filterByArtist(self, *args):
+        """
+        filterByArtist(eMediaDatabase self, std::string const & artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByArtist(eMediaDatabase self, std::string const & artist, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByArtist(eMediaDatabase self, std::string const & artist) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByArtist(self, *args)
+
+    def filterByGenre(self, *args):
+        """
+        filterByGenre(eMediaDatabase self, std::string const & genre, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByGenre(eMediaDatabase self, std::string const & genre, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByGenre(eMediaDatabase self, std::string const & genre) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByGenre(self, *args)
+
+    def filterByTitle(self, *args):
+        """
+        filterByTitle(eMediaDatabase self, std::string const & title, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByTitle(eMediaDatabase self, std::string const & title, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByTitle(eMediaDatabase self, std::string const & title) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByTitle(self, *args)
+
+    def getAllArtists(self, *args):
+        """
+        getAllArtists(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAllArtists(eMediaDatabase self, int limit=-1) -> eMediaDatabaseResultPtr
+        getAllArtists(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAllArtists(self, *args)
+
+    def getArtists(self, *args):
+        """
+        getArtists(eMediaDatabase self, std::string const & artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getArtists(eMediaDatabase self, std::string const & artist, int limit=-1) -> eMediaDatabaseResultPtr
+        getArtists(eMediaDatabase self, std::string const & artist) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getArtists(self, *args)
+
+    def getAllAlbums(self, *args):
+        """
+        getAllAlbums(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAllAlbums(eMediaDatabase self, int limit=-1) -> eMediaDatabaseResultPtr
+        getAllAlbums(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAllAlbums(self, *args)
+
+    def getAlbums(self, *args):
+        """
+        getAlbums(eMediaDatabase self, std::string const & album, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAlbums(eMediaDatabase self, std::string const & album, int limit=-1) -> eMediaDatabaseResultPtr
+        getAlbums(eMediaDatabase self, std::string const & album) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAlbums(self, *args)
+
+    def getAlbumsByArtist(self, *args):
+        """
+        getAlbumsByArtist(eMediaDatabase self, std::string const & artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAlbumsByArtist(eMediaDatabase self, std::string const & artist, int limit=-1) -> eMediaDatabaseResultPtr
+        getAlbumsByArtist(eMediaDatabase self, std::string const & artist) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAlbumsByArtist(self, *args)
+
+    def getAllAudio(self, *args):
+        """
+        getAllAudio(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAllAudio(eMediaDatabase self, int limit=-1) -> eMediaDatabaseResultPtr
+        getAllAudio(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAllAudio(self, *args)
+
+    def getAllVideos(self, *args):
+        """
+        getAllVideos(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAllVideos(eMediaDatabase self, int limit=-1) -> eMediaDatabaseResultPtr
+        getAllVideos(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAllVideos(self, *args)
+
+    def addRecording(self, *args):
+        """addRecording(eMediaDatabase self, std::string const & filepath, std::string const & title, int created) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_addRecording(self, *args)
+
+    def getAllRecordings(self, *args):
+        """
+        getAllRecordings(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        getAllRecordings(eMediaDatabase self, int limit=-1) -> eMediaDatabaseResultPtr
+        getAllRecordings(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getAllRecordings(self, *args)
+
+    def getRecordings(self, *args):
+        """
+        getRecordings(eMediaDatabase self, std::string const & dir, StringList tags=std::list< std::string >(), int limit=-1, 
+            int offset=0) -> eMediaDatabaseResultPtr
+        getRecordings(eMediaDatabase self, std::string const & dir, StringList tags=std::list< std::string >(), int limit=-1) -> eMediaDatabaseResultPtr
+        getRecordings(eMediaDatabase self, std::string const & dir, StringList tags=std::list< std::string >()) -> eMediaDatabaseResultPtr
+        getRecordings(eMediaDatabase self, std::string const & dir) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getRecordings(self, *args)
+
+    def getRecordMeta(self, *args):
+        """getRecordMeta(eMediaDatabase self, int file_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getRecordMeta(self, *args)
+
+    def setRecordMeta(self, *args):
+        """
+        setRecordMeta(eMediaDatabase self, int file_id, std::string const & ref, std::string const & name, std::string const & description, 
+            std::string const & service_data, int64_t duration) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_setRecordMeta(self, *args)
+
+    def getRecordEit(self, *args):
+        """getRecordEit(eMediaDatabase self, int file_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getRecordEit(self, *args)
+
+    def setRecordEit(self, *args):
+        """setRecordEit(eMediaDatabase self, int file_id, uint8_t [] eit_raw) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_setRecordEit(self, *args)
+
+    def getFileByPath(self, *args):
+        """getFileByPath(eMediaDatabase self, std::string const & filepath) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getFileByPath(self, *args)
+
+    def setFileAttribute(self, *args):
+        """setFileAttribute(eMediaDatabase self, int file_id, std::string const & key, std::string const & value) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_setFileAttribute(self, *args)
+
+    def deleteFileAttribute(self, *args):
+        """deleteFileAttribute(eMediaDatabase self, int file_id, std::string const & key) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_deleteFileAttribute(self, *args)
+
+    def getFileAttributes(self, *args):
+        """getFileAttributes(eMediaDatabase self, int file_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getFileAttributes(self, *args)
+
+    def getFileAttribute(self, *args):
+        """getFileAttribute(eMediaDatabase self, int file_id, std::string const & key) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getFileAttribute(self, *args)
+
+    def addPlaylist(self, *args):
+        """addPlaylist(eMediaDatabase self, std::string const & name, int type) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_addPlaylist(self, *args)
+
+    def getPlaylist(self, *args):
+        """getPlaylist(eMediaDatabase self, int id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getPlaylist(self, *args)
+
+    def getPlaylistByName(self, *args):
+        """getPlaylistByName(eMediaDatabase self, std::string const & name, int type) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getPlaylistByName(self, *args)
+
+    def getPlaylistItemsById(self, *args):
+        """getPlaylistItemsById(eMediaDatabase self, int id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getPlaylistItemsById(self, *args)
+
+    def getPlaylistItemsByName(self, *args):
+        """
+        getPlaylistItemsByName(eMediaDatabase self, std::string const & name, int type=-1) -> eMediaDatabaseResultPtr
+        getPlaylistItemsByName(eMediaDatabase self, std::string const & name) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getPlaylistItemsByName(self, *args)
+
+    def getPlaylists(self, *args):
+        """
+        getPlaylists(eMediaDatabase self, int type=-1) -> eMediaDatabaseResultPtr
+        getPlaylists(eMediaDatabase self) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getPlaylists(self, *args)
+
+    def addToPlaylistById(self, *args):
+        """addToPlaylistById(eMediaDatabase self, int playlist_id, int file_id, int pos) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_addToPlaylistById(self, *args)
+
+    def addToPlaylistByUri(self, *args):
+        """addToPlaylistByUri(eMediaDatabase self, int playlist_id, std::string const & uri, int pos, StringMap attributes) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_addToPlaylistByUri(self, *args)
+
+    def updatePlaylistItem(self, *args):
+        """updatePlaylistItem(eMediaDatabase self, int playlist_id, StringMap item) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_updatePlaylistItem(self, *args)
+
+    def clearPlaylist(self, *args):
+        """clearPlaylist(eMediaDatabase self, int playlist_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_clearPlaylist(self, *args)
+
+    def savePlaylist(self, *args):
+        """savePlaylist(eMediaDatabase self, int playlist_id, std::string const & name, int type, StringMapVector items) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_savePlaylist(self, *args)
+
+    def removeFile(self, *args):
+        """removeFile(eMediaDatabase self, int file_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_removeFile(self, *args)
+
+    def query(self, *args):
+        """
+        query(eMediaDatabase self, std::string const & sql, StringList values=stringList(), bool rw=False) -> eMediaDatabaseResultPtr
+        query(eMediaDatabase self, std::string const & sql, StringList values=stringList()) -> eMediaDatabaseResultPtr
+        query(eMediaDatabase self, std::string const & sql) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_query(self, *args)
+
     scanStatistics = _swig_property(_enigma.eMediaDatabase_scanStatistics_get, _enigma.eMediaDatabase_scanStatistics_set)
     scanFinished = _swig_property(_enigma.eMediaDatabase_scanFinished_get, _enigma.eMediaDatabase_scanFinished_set)
     insertFinished = _swig_property(_enigma.eMediaDatabase_insertFinished_get, _enigma.eMediaDatabase_insertFinished_set)
@@ -3217,8 +3847,8 @@ eMediaDatabase.FIELD_TYPE = _enigma.cvar.eMediaDatabase_FIELD_TYPE
 eMediaDatabase.FIELD_NAME = _enigma.cvar.eMediaDatabase_FIELD_NAME
 
 def eMediaDatabase_getInstance():
+  """eMediaDatabase_getInstance() -> eMediaDatabase"""
   return _enigma.eMediaDatabase_getInstance()
-eMediaDatabase_getInstance = _enigma.eMediaDatabase_getInstance
 
 class eMediaDatabaseResultPtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -3226,6 +3856,30 @@ class eMediaDatabaseResultPtr(object):
     def __init__(self, *args): 
         _enigma.eMediaDatabaseResultPtr_swiginit(self,_enigma.new_eMediaDatabaseResultPtr(*args))
     __swig_destroy__ = _enigma.delete_eMediaDatabaseResultPtr
+    def error(self):
+        """error(eMediaDatabaseResultPtr self) -> bool"""
+        return _enigma.eMediaDatabaseResultPtr_error(self)
+
+    def rowsAffected(self):
+        """rowsAffected(eMediaDatabaseResultPtr self) -> int"""
+        return _enigma.eMediaDatabaseResultPtr_rowsAffected(self)
+
+    def lastInsertId(self):
+        """lastInsertId(eMediaDatabaseResultPtr self) -> int"""
+        return _enigma.eMediaDatabaseResultPtr_lastInsertId(self)
+
+    def errorDriverText(self):
+        """errorDriverText(eMediaDatabaseResultPtr self) -> std::string"""
+        return _enigma.eMediaDatabaseResultPtr_errorDriverText(self)
+
+    def errorDatabaseText(self):
+        """errorDatabaseText(eMediaDatabaseResultPtr self) -> std::string"""
+        return _enigma.eMediaDatabaseResultPtr_errorDatabaseText(self)
+
+    def data(self):
+        """data(eMediaDatabaseResultPtr self) -> StringMapVector"""
+        return _enigma.eMediaDatabaseResultPtr_data(self)
+
 eMediaDatabaseResultPtr.__ref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___ref__,None,eMediaDatabaseResultPtr)
 eMediaDatabaseResultPtr.getPtrString = new_instancemethod(_enigma.eMediaDatabaseResultPtr_getPtrString,None,eMediaDatabaseResultPtr)
 eMediaDatabaseResultPtr.__deref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___deref__,None,eMediaDatabaseResultPtr)
@@ -3242,7 +3896,55 @@ class eNetworkManager(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    getInstance = staticmethod(_enigma.eNetworkManager_getInstance)
+    def getInstance():
+        """getInstance() -> eNetworkManager"""
+        return _enigma.eNetworkManager_getInstance()
+
+    getInstance = staticmethod(getInstance)
+    def state(self):
+        """state(eNetworkManager self) -> std::string const"""
+        return _enigma.eNetworkManager_state(self)
+
+    def offlineMode(self):
+        """offlineMode(eNetworkManager self) -> bool"""
+        return _enigma.eNetworkManager_offlineMode(self)
+
+    def defaultRoute(self):
+        """defaultRoute(eNetworkManager self) -> eNetworkServicePtr"""
+        return _enigma.eNetworkManager_defaultRoute(self)
+
+    def setOfflineMode(self, *args):
+        """setOfflineMode(eNetworkManager self, bool enabled)"""
+        return _enigma.eNetworkManager_setOfflineMode(self, *args)
+
+    def getService(self, *args):
+        """getService(eNetworkManager self, std::string const & path) -> eNetworkServicePtr"""
+        return _enigma.eNetworkManager_getService(self, *args)
+
+    def getServices(self):
+        """getServices(eNetworkManager self) -> eNetworkServicePtrVector"""
+        return _enigma.eNetworkManager_getServices(self)
+
+    def getTechnologies(self):
+        """getTechnologies(eNetworkManager self) -> eNetworkTechnologyPtrVector"""
+        return _enigma.eNetworkManager_getTechnologies(self)
+
+    def sendUserReply(self, *args):
+        """sendUserReply(eNetworkManager self, StringMap values)"""
+        return _enigma.eNetworkManager_sendUserReply(self, *args)
+
+    def onServicesChanged(self):
+        """onServicesChanged(eNetworkManager self)"""
+        return _enigma.eNetworkManager_onServicesChanged(self)
+
+    def online(self):
+        """online(eNetworkManager self) -> bool"""
+        return _enigma.eNetworkManager_online(self)
+
+    def getUserInputRequestFields(self):
+        """getUserInputRequestFields(eNetworkManager self) -> PseudoDict"""
+        return _enigma.eNetworkManager_getUserInputRequestFields(self)
+
     availabilityChanged = _swig_property(_enigma.eNetworkManager_availabilityChanged_get, _enigma.eNetworkManager_availabilityChanged_set)
     stateChanged = _swig_property(_enigma.eNetworkManager_stateChanged_get, _enigma.eNetworkManager_stateChanged_set)
     onlineChanged = _swig_property(_enigma.eNetworkManager_onlineChanged_get, _enigma.eNetworkManager_onlineChanged_set)
@@ -3281,13 +3983,149 @@ eNetworkManager.STATE_READY = _enigma.cvar.eNetworkManager_STATE_READY
 eNetworkManager.STATE_FAILURE = _enigma.cvar.eNetworkManager_STATE_FAILURE
 
 def eNetworkManager_getInstance():
+  """eNetworkManager_getInstance() -> eNetworkManager"""
   return _enigma.eNetworkManager_getInstance()
-eNetworkManager_getInstance = _enigma.eNetworkManager_getInstance
 
 class eNetworkService(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
+    def name(self):
+        """name(eNetworkService self) -> std::string const"""
+        return _enigma.eNetworkService_name(self)
+
+    def type(self):
+        """type(eNetworkService self) -> std::string const"""
+        return _enigma.eNetworkService_type(self)
+
+    def state(self):
+        """state(eNetworkService self) -> std::string const"""
+        return _enigma.eNetworkService_state(self)
+
+    def error(self):
+        """error(eNetworkService self) -> std::string const"""
+        return _enigma.eNetworkService_error(self)
+
+    def security(self):
+        """security(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_security(self)
+
+    def autoConnect(self):
+        """autoConnect(eNetworkService self) -> bool"""
+        return _enigma.eNetworkService_autoConnect(self)
+
+    def strength(self):
+        """strength(eNetworkService self) -> unsigned int"""
+        return _enigma.eNetworkService_strength(self)
+
+    def favorite(self):
+        """favorite(eNetworkService self) -> bool"""
+        return _enigma.eNetworkService_favorite(self)
+
+    def path(self):
+        """path(eNetworkService self) -> std::string const"""
+        return _enigma.eNetworkService_path(self)
+
+    def ipv4(self):
+        """ipv4(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_ipv4(self)
+
+    def ipv4Config(self):
+        """ipv4Config(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_ipv4Config(self)
+
+    def ipv6(self):
+        """ipv6(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_ipv6(self)
+
+    def ipv6Config(self):
+        """ipv6Config(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_ipv6Config(self)
+
+    def nameservers(self):
+        """nameservers(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_nameservers(self)
+
+    def nameserversConfig(self):
+        """nameserversConfig(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_nameserversConfig(self)
+
+    def domains(self):
+        """domains(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_domains(self)
+
+    def domainsConfig(self):
+        """domainsConfig(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_domainsConfig(self)
+
+    def proxy(self):
+        """proxy(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_proxy(self)
+
+    def proxyConfig(self):
+        """proxyConfig(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_proxyConfig(self)
+
+    def ethernet(self):
+        """ethernet(eNetworkService self) -> PseudoDict"""
+        return _enigma.eNetworkService_ethernet(self)
+
+    def roaming(self):
+        """roaming(eNetworkService self) -> bool"""
+        return _enigma.eNetworkService_roaming(self)
+
+    def setPath(self, *args):
+        """setPath(eNetworkService self, std::string const & path)"""
+        return _enigma.eNetworkService_setPath(self, *args)
+
+    def updateProperties(self, *args):
+        """updateProperties(eNetworkService self, PseudoDict properties)"""
+        return _enigma.eNetworkService_updateProperties(self, *args)
+
+    def connected(self):
+        """connected(eNetworkService self) -> bool"""
+        return _enigma.eNetworkService_connected(self)
+
+    def requestConnect(self):
+        """requestConnect(eNetworkService self)"""
+        return _enigma.eNetworkService_requestConnect(self)
+
+    def requestDisconnect(self):
+        """requestDisconnect(eNetworkService self)"""
+        return _enigma.eNetworkService_requestDisconnect(self)
+
+    def remove(self):
+        """remove(eNetworkService self)"""
+        return _enigma.eNetworkService_remove(self)
+
+    def setAutoConnect(self, *args):
+        """setAutoConnect(eNetworkService self, bool const autoconnect)"""
+        return _enigma.eNetworkService_setAutoConnect(self, *args)
+
+    def setIpv4Config(self, *args):
+        """setIpv4Config(eNetworkService self, StringMap ipv4)"""
+        return _enigma.eNetworkService_setIpv4Config(self, *args)
+
+    def setIpv6Config(self, *args):
+        """setIpv6Config(eNetworkService self, StringMap ipv6)"""
+        return _enigma.eNetworkService_setIpv6Config(self, *args)
+
+    def setNameserversConfig(self, *args):
+        """setNameserversConfig(eNetworkService self, StringList nameservers)"""
+        return _enigma.eNetworkService_setNameserversConfig(self, *args)
+
+    def setDomainsConfig(self, *args):
+        """setDomainsConfig(eNetworkService self, StringList domains)"""
+        return _enigma.eNetworkService_setDomainsConfig(self, *args)
+
+    def setProxyConfig(self, *args):
+        """setProxyConfig(eNetworkService self, StringMap proxy)"""
+        return _enigma.eNetworkService_setProxyConfig(self, *args)
+
+    def resetCounters(self):
+        """resetCounters(eNetworkService self)"""
+        return _enigma.eNetworkService_resetCounters(self)
+
     nameChanged = _swig_property(_enigma.eNetworkService_nameChanged_get, _enigma.eNetworkService_nameChanged_set)
     stateChanged = _swig_property(_enigma.eNetworkService_stateChanged_get, _enigma.eNetworkService_stateChanged_set)
     errorChanged = _swig_property(_enigma.eNetworkService_errorChanged_get, _enigma.eNetworkService_errorChanged_set)
@@ -3390,6 +4228,142 @@ class eNetworkServicePtr(object):
     IPV6_PRIVACY_DISABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_DISABLED_get)
     IPV6_PRIVACY_PREFERRED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_PREFERRED_get)
     IPV6_PRIVACY_ENABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_ENABLED_get)
+    def name(self):
+        """name(eNetworkServicePtr self) -> std::string const"""
+        return _enigma.eNetworkServicePtr_name(self)
+
+    def type(self):
+        """type(eNetworkServicePtr self) -> std::string const"""
+        return _enigma.eNetworkServicePtr_type(self)
+
+    def state(self):
+        """state(eNetworkServicePtr self) -> std::string const"""
+        return _enigma.eNetworkServicePtr_state(self)
+
+    def error(self):
+        """error(eNetworkServicePtr self) -> std::string const"""
+        return _enigma.eNetworkServicePtr_error(self)
+
+    def security(self):
+        """security(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_security(self)
+
+    def autoConnect(self):
+        """autoConnect(eNetworkServicePtr self) -> bool"""
+        return _enigma.eNetworkServicePtr_autoConnect(self)
+
+    def strength(self):
+        """strength(eNetworkServicePtr self) -> unsigned int"""
+        return _enigma.eNetworkServicePtr_strength(self)
+
+    def favorite(self):
+        """favorite(eNetworkServicePtr self) -> bool"""
+        return _enigma.eNetworkServicePtr_favorite(self)
+
+    def path(self):
+        """path(eNetworkServicePtr self) -> std::string const"""
+        return _enigma.eNetworkServicePtr_path(self)
+
+    def ipv4(self):
+        """ipv4(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_ipv4(self)
+
+    def ipv4Config(self):
+        """ipv4Config(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_ipv4Config(self)
+
+    def ipv6(self):
+        """ipv6(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_ipv6(self)
+
+    def ipv6Config(self):
+        """ipv6Config(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_ipv6Config(self)
+
+    def nameservers(self):
+        """nameservers(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_nameservers(self)
+
+    def nameserversConfig(self):
+        """nameserversConfig(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_nameserversConfig(self)
+
+    def domains(self):
+        """domains(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_domains(self)
+
+    def domainsConfig(self):
+        """domainsConfig(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_domainsConfig(self)
+
+    def proxy(self):
+        """proxy(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_proxy(self)
+
+    def proxyConfig(self):
+        """proxyConfig(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_proxyConfig(self)
+
+    def ethernet(self):
+        """ethernet(eNetworkServicePtr self) -> PseudoDict"""
+        return _enigma.eNetworkServicePtr_ethernet(self)
+
+    def roaming(self):
+        """roaming(eNetworkServicePtr self) -> bool"""
+        return _enigma.eNetworkServicePtr_roaming(self)
+
+    def setPath(self, *args):
+        """setPath(eNetworkServicePtr self, std::string const & path)"""
+        return _enigma.eNetworkServicePtr_setPath(self, *args)
+
+    def updateProperties(self, *args):
+        """updateProperties(eNetworkServicePtr self, PseudoDict properties)"""
+        return _enigma.eNetworkServicePtr_updateProperties(self, *args)
+
+    def connected(self):
+        """connected(eNetworkServicePtr self) -> bool"""
+        return _enigma.eNetworkServicePtr_connected(self)
+
+    def requestConnect(self):
+        """requestConnect(eNetworkServicePtr self)"""
+        return _enigma.eNetworkServicePtr_requestConnect(self)
+
+    def requestDisconnect(self):
+        """requestDisconnect(eNetworkServicePtr self)"""
+        return _enigma.eNetworkServicePtr_requestDisconnect(self)
+
+    def remove(self):
+        """remove(eNetworkServicePtr self)"""
+        return _enigma.eNetworkServicePtr_remove(self)
+
+    def setAutoConnect(self, *args):
+        """setAutoConnect(eNetworkServicePtr self, bool const autoconnect)"""
+        return _enigma.eNetworkServicePtr_setAutoConnect(self, *args)
+
+    def setIpv4Config(self, *args):
+        """setIpv4Config(eNetworkServicePtr self, StringMap ipv4)"""
+        return _enigma.eNetworkServicePtr_setIpv4Config(self, *args)
+
+    def setIpv6Config(self, *args):
+        """setIpv6Config(eNetworkServicePtr self, StringMap ipv6)"""
+        return _enigma.eNetworkServicePtr_setIpv6Config(self, *args)
+
+    def setNameserversConfig(self, *args):
+        """setNameserversConfig(eNetworkServicePtr self, StringList nameservers)"""
+        return _enigma.eNetworkServicePtr_setNameserversConfig(self, *args)
+
+    def setDomainsConfig(self, *args):
+        """setDomainsConfig(eNetworkServicePtr self, StringList domains)"""
+        return _enigma.eNetworkServicePtr_setDomainsConfig(self, *args)
+
+    def setProxyConfig(self, *args):
+        """setProxyConfig(eNetworkServicePtr self, StringMap proxy)"""
+        return _enigma.eNetworkServicePtr_setProxyConfig(self, *args)
+
+    def resetCounters(self):
+        """resetCounters(eNetworkServicePtr self)"""
+        return _enigma.eNetworkServicePtr_resetCounters(self)
+
     nameChanged = _swig_property(_enigma.eNetworkServicePtr_nameChanged_get, _enigma.eNetworkServicePtr_nameChanged_set)
     stateChanged = _swig_property(_enigma.eNetworkServicePtr_stateChanged_get, _enigma.eNetworkServicePtr_stateChanged_set)
     errorChanged = _swig_property(_enigma.eNetworkServicePtr_errorChanged_get, _enigma.eNetworkServicePtr_errorChanged_set)
@@ -3500,6 +4474,70 @@ class eNetworkTechnology(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
+    def name(self):
+        """name(eNetworkTechnology self) -> std::string const"""
+        return _enigma.eNetworkTechnology_name(self)
+
+    def type(self):
+        """type(eNetworkTechnology self) -> std::string const"""
+        return _enigma.eNetworkTechnology_type(self)
+
+    def powered(self):
+        """powered(eNetworkTechnology self) -> bool"""
+        return _enigma.eNetworkTechnology_powered(self)
+
+    def setPowered(self, *args):
+        """setPowered(eNetworkTechnology self, bool powered)"""
+        return _enigma.eNetworkTechnology_setPowered(self, *args)
+
+    def connected(self):
+        """connected(eNetworkTechnology self) -> bool"""
+        return _enigma.eNetworkTechnology_connected(self)
+
+    def objPath(self):
+        """objPath(eNetworkTechnology self) -> std::string const"""
+        return _enigma.eNetworkTechnology_objPath(self)
+
+    def path(self):
+        """path(eNetworkTechnology self) -> std::string"""
+        return _enigma.eNetworkTechnology_path(self)
+
+    def idleTimeout(self):
+        """idleTimeout(eNetworkTechnology self) -> uint32_t"""
+        return _enigma.eNetworkTechnology_idleTimeout(self)
+
+    def setIdleTimeout(self, *args):
+        """setIdleTimeout(eNetworkTechnology self, quint32 timeout)"""
+        return _enigma.eNetworkTechnology_setIdleTimeout(self, *args)
+
+    def tethering(self):
+        """tethering(eNetworkTechnology self) -> bool"""
+        return _enigma.eNetworkTechnology_tethering(self)
+
+    def setTethering(self, *args):
+        """setTethering(eNetworkTechnology self, bool enabled)"""
+        return _enigma.eNetworkTechnology_setTethering(self, *args)
+
+    def tetheringId(self):
+        """tetheringId(eNetworkTechnology self) -> std::string"""
+        return _enigma.eNetworkTechnology_tetheringId(self)
+
+    def setTetheringId(self, *args):
+        """setTetheringId(eNetworkTechnology self, std::string const & id)"""
+        return _enigma.eNetworkTechnology_setTetheringId(self, *args)
+
+    def tetheringPassphrase(self):
+        """tetheringPassphrase(eNetworkTechnology self) -> std::string"""
+        return _enigma.eNetworkTechnology_tetheringPassphrase(self)
+
+    def setTetheringPassphrase(self, *args):
+        """setTetheringPassphrase(eNetworkTechnology self, std::string const & _pass)"""
+        return _enigma.eNetworkTechnology_setTetheringPassphrase(self, *args)
+
+    def scan(self):
+        """scan(eNetworkTechnology self)"""
+        return _enigma.eNetworkTechnology_scan(self)
+
     poweredChanged = _swig_property(_enigma.eNetworkTechnology_poweredChanged_get, _enigma.eNetworkTechnology_poweredChanged_set)
     connectedChanged = _swig_property(_enigma.eNetworkTechnology_connectedChanged_get, _enigma.eNetworkTechnology_connectedChanged_set)
     scanFinished = _swig_property(_enigma.eNetworkTechnology_scanFinished_get, _enigma.eNetworkTechnology_scanFinished_set)
@@ -3532,6 +4570,70 @@ class eNetworkTechnologyPtr(object):
     def __init__(self, *args): 
         _enigma.eNetworkTechnologyPtr_swiginit(self,_enigma.new_eNetworkTechnologyPtr(*args))
     __swig_destroy__ = _enigma.delete_eNetworkTechnologyPtr
+    def name(self):
+        """name(eNetworkTechnologyPtr self) -> std::string const"""
+        return _enigma.eNetworkTechnologyPtr_name(self)
+
+    def type(self):
+        """type(eNetworkTechnologyPtr self) -> std::string const"""
+        return _enigma.eNetworkTechnologyPtr_type(self)
+
+    def powered(self):
+        """powered(eNetworkTechnologyPtr self) -> bool"""
+        return _enigma.eNetworkTechnologyPtr_powered(self)
+
+    def setPowered(self, *args):
+        """setPowered(eNetworkTechnologyPtr self, bool powered)"""
+        return _enigma.eNetworkTechnologyPtr_setPowered(self, *args)
+
+    def connected(self):
+        """connected(eNetworkTechnologyPtr self) -> bool"""
+        return _enigma.eNetworkTechnologyPtr_connected(self)
+
+    def objPath(self):
+        """objPath(eNetworkTechnologyPtr self) -> std::string const"""
+        return _enigma.eNetworkTechnologyPtr_objPath(self)
+
+    def path(self):
+        """path(eNetworkTechnologyPtr self) -> std::string"""
+        return _enigma.eNetworkTechnologyPtr_path(self)
+
+    def idleTimeout(self):
+        """idleTimeout(eNetworkTechnologyPtr self) -> uint32_t"""
+        return _enigma.eNetworkTechnologyPtr_idleTimeout(self)
+
+    def setIdleTimeout(self, *args):
+        """setIdleTimeout(eNetworkTechnologyPtr self, quint32 timeout)"""
+        return _enigma.eNetworkTechnologyPtr_setIdleTimeout(self, *args)
+
+    def tethering(self):
+        """tethering(eNetworkTechnologyPtr self) -> bool"""
+        return _enigma.eNetworkTechnologyPtr_tethering(self)
+
+    def setTethering(self, *args):
+        """setTethering(eNetworkTechnologyPtr self, bool enabled)"""
+        return _enigma.eNetworkTechnologyPtr_setTethering(self, *args)
+
+    def tetheringId(self):
+        """tetheringId(eNetworkTechnologyPtr self) -> std::string"""
+        return _enigma.eNetworkTechnologyPtr_tetheringId(self)
+
+    def setTetheringId(self, *args):
+        """setTetheringId(eNetworkTechnologyPtr self, std::string const & id)"""
+        return _enigma.eNetworkTechnologyPtr_setTetheringId(self, *args)
+
+    def tetheringPassphrase(self):
+        """tetheringPassphrase(eNetworkTechnologyPtr self) -> std::string"""
+        return _enigma.eNetworkTechnologyPtr_tetheringPassphrase(self)
+
+    def setTetheringPassphrase(self, *args):
+        """setTetheringPassphrase(eNetworkTechnologyPtr self, std::string const & _pass)"""
+        return _enigma.eNetworkTechnologyPtr_setTetheringPassphrase(self, *args)
+
+    def scan(self):
+        """scan(eNetworkTechnologyPtr self)"""
+        return _enigma.eNetworkTechnologyPtr_scan(self)
+
     poweredChanged = _swig_property(_enigma.eNetworkTechnologyPtr_poweredChanged_get, _enigma.eNetworkTechnologyPtr_poweredChanged_set)
     connectedChanged = _swig_property(_enigma.eNetworkTechnologyPtr_connectedChanged_get, _enigma.eNetworkTechnologyPtr_connectedChanged_set)
     scanFinished = _swig_property(_enigma.eNetworkTechnologyPtr_scanFinished_get, _enigma.eNetworkTechnologyPtr_scanFinished_set)

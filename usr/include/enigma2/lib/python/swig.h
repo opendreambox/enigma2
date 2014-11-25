@@ -3,6 +3,7 @@
 
 #ifdef SWIG
 #define SWIG_IGNORE(x) %ignore x
+#define SWIG_AUTODOC %feature("autodoc", "1");
 #ifdef SWIGPYTHON_BUILTIN
     #define SWIG_HASH_FUNC(class,func) %feature("python:slot", "tp_hash", functype="hashfunc") class::func
     #define SWIG_IGNORE_ENUMS(x) %ignore x; %pythoncode %{x = _enigma.x##_ENUMS%}
@@ -21,6 +22,7 @@
 #define SWIG_PYOBJECT(...) PyObject*
 #else
 #define SWIG_IGNORE(x)
+#define SWIG_AUTODOC
 #define SWIG_IGNORE_ENUMS(x)
 #define SWIG_HASH_FUNC(class,func)
 #define SWIG_EXTEND(x, code)

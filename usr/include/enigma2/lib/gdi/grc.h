@@ -250,7 +250,6 @@ public:
 class gPainter
 {
 	ePtr<gDC> m_dc;
-	ePtr<gRC> m_rc;
 	ePtr<gFont> m_font;
 	friend class gRC;
 
