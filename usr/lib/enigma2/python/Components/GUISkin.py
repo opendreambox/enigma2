@@ -1,3 +1,4 @@
+from enigma import ePixmap
 from GUIComponent import GUIComponent
 from skin import applyAllAttributes
 from Tools.CList import CList
@@ -39,6 +40,8 @@ class GUISkin:
 		for w in self.additionalWidgets:
 			if not updateonly:
 				w.instance = w.widget(parent)
+				if w.widget == ePixmap:
+					w.instance.setScale(0)
 				# w.instance.thisown = 0
 			applyAllAttributes(w.instance, desktop, w.skinAttributes, self.scale)
 

@@ -72,11 +72,10 @@ class NetworkInfo(object):
 		return self._manager.state()
 
 	def isConnected(self):
-		state = self._manager.state()
-		return state == eNetworkManager.STATE_READY or state == eNetworkManager.STATE_ONLINE
+		return self.isOnline()
 
 	def isOnline(self):
-		return self._manager.state() == eNetworkManager.STATE_ONLINE
+		return self._manager.online()
 
 	def getConfiguredInterfaces(self):
 		services = self._manager.getServices()

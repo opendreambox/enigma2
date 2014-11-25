@@ -4064,6 +4064,14 @@ class eNetworkService(iObject):
         """domainsConfig(eNetworkService self) -> StringList"""
         return _enigma.eNetworkService_domainsConfig(self)
 
+    def timeservers(self):
+        """timeservers(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_timeservers(self)
+
+    def timeserversConfig(self):
+        """timeserversConfig(eNetworkService self) -> StringList"""
+        return _enigma.eNetworkService_timeserversConfig(self)
+
     def proxy(self):
         """proxy(eNetworkService self) -> PseudoDict"""
         return _enigma.eNetworkService_proxy(self)
@@ -4174,6 +4182,8 @@ eNetworkService.nameservers = new_instancemethod(_enigma.eNetworkService_nameser
 eNetworkService.nameserversConfig = new_instancemethod(_enigma.eNetworkService_nameserversConfig,None,eNetworkService)
 eNetworkService.domains = new_instancemethod(_enigma.eNetworkService_domains,None,eNetworkService)
 eNetworkService.domainsConfig = new_instancemethod(_enigma.eNetworkService_domainsConfig,None,eNetworkService)
+eNetworkService.timeservers = new_instancemethod(_enigma.eNetworkService_timeservers,None,eNetworkService)
+eNetworkService.timeserversConfig = new_instancemethod(_enigma.eNetworkService_timeserversConfig,None,eNetworkService)
 eNetworkService.proxy = new_instancemethod(_enigma.eNetworkService_proxy,None,eNetworkService)
 eNetworkService.proxyConfig = new_instancemethod(_enigma.eNetworkService_proxyConfig,None,eNetworkService)
 eNetworkService.ethernet = new_instancemethod(_enigma.eNetworkService_ethernet,None,eNetworkService)
@@ -4302,6 +4312,14 @@ class eNetworkServicePtr(object):
         """domainsConfig(eNetworkServicePtr self) -> StringList"""
         return _enigma.eNetworkServicePtr_domainsConfig(self)
 
+    def timeservers(self):
+        """timeservers(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_timeservers(self)
+
+    def timeserversConfig(self):
+        """timeserversConfig(eNetworkServicePtr self) -> StringList"""
+        return _enigma.eNetworkServicePtr_timeserversConfig(self)
+
     def proxy(self):
         """proxy(eNetworkServicePtr self) -> PseudoDict"""
         return _enigma.eNetworkServicePtr_proxy(self)
@@ -4415,6 +4433,8 @@ eNetworkServicePtr.nameservers = new_instancemethod(_enigma.eNetworkServicePtr_n
 eNetworkServicePtr.nameserversConfig = new_instancemethod(_enigma.eNetworkServicePtr_nameserversConfig,None,eNetworkServicePtr)
 eNetworkServicePtr.domains = new_instancemethod(_enigma.eNetworkServicePtr_domains,None,eNetworkServicePtr)
 eNetworkServicePtr.domainsConfig = new_instancemethod(_enigma.eNetworkServicePtr_domainsConfig,None,eNetworkServicePtr)
+eNetworkServicePtr.timeservers = new_instancemethod(_enigma.eNetworkServicePtr_timeservers,None,eNetworkServicePtr)
+eNetworkServicePtr.timeserversConfig = new_instancemethod(_enigma.eNetworkServicePtr_timeserversConfig,None,eNetworkServicePtr)
 eNetworkServicePtr.proxy = new_instancemethod(_enigma.eNetworkServicePtr_proxy,None,eNetworkServicePtr)
 eNetworkServicePtr.proxyConfig = new_instancemethod(_enigma.eNetworkServicePtr_proxyConfig,None,eNetworkServicePtr)
 eNetworkServicePtr.ethernet = new_instancemethod(_enigma.eNetworkServicePtr_ethernet,None,eNetworkServicePtr)

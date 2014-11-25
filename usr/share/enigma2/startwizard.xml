@@ -100,6 +100,13 @@ self.hideRc()
 				<listentry caption="No, proceed with empty service list" step="setautomaticstandby" />
 			</list>
 		</step>
+		<step id="finisheddefaultsatlists" nextstep="setautomaticstandby">
+			<!-- dummy screen to continue after default sat lists installation -->
+			<condition>
+self.currStep = self.getStepWithID("setautomaticstandby")
+self.condition = False
+			</condition>
+		</step>
 		<step id="scan" nextstep="setautomaticstandby">
 			<condition>
 from Components.config import config
@@ -169,6 +176,9 @@ config.ParentalControl.configured.save()
 from Components.config import config
 from ParentalControlSetup import ParentalControlChangePin
 if self["list"].index == 0:
+	from Components.config import config
+	config.ParentalControl.configured.value = True
+	config.ParentalControl.configured.save()
 	self.openScreen(ParentalControlChangePin, config.ParentalControl.servicepin[0], _("parental control pin"))
 			</code>
 		</step>
@@ -179,7 +189,7 @@ if self["list"].index == 0:
 		<step id="finishparentalsetup">
 			<code>
 from Components.config import config
-if config.ParentalControl.setuppin.value == "aaaa":
+if config.ParentalControl.setuppin.value == -1:
 	config.ParentalControl.setuppinactive.value = False
 else:
 	config.ParentalControl.setuppinactive.value = True

@@ -133,8 +133,8 @@ class NumericalTextInput:
 			self.nextChar()
 
 class NumericalHexInput(NumericalTextInput):
-	def __init__(self, nextFunc=None, handleTimeout = True, search = False):
-		NumericalTextInput.__init__(self, nextFunc, handleTimeout, search)
+	def __init__(self, nextFunc=None, handleTimeout=True):
+		NumericalTextInput.__init__(self, nextFunc=nextFunc, handleTimeout=handleTimeout, search=False)
 		self.mapping = []
 		self.mapping.append (u"0:") # 0
 		self.mapping.append (u"1a") # 1

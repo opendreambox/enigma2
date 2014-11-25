@@ -28,6 +28,9 @@ class Picon(Renderer):
 
 	GUI_WIDGET = ePixmap
 
+	def postWidgetCreate(self, instance):
+		instance.setScale(0)
+
 	def changed(self, what):
 		if self.instance:
 			pngname = ""

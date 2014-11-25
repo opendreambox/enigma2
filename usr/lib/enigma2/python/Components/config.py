@@ -799,8 +799,6 @@ class ConfigInteger(ConfigSequence):
 class ConfigPIN(ConfigInteger):
 	def __init__(self, default, len = 4, censor = ""):
 		assert isinstance(default, int), "ConfigPIN default must be an integer"
-		if default == -1:
-			default = "0000"
 		ConfigSequence.__init__(self, seperator = ":", limits = [(0, (10**len)-1)], censor_char = censor, default = default)
 		self.len = len
 
@@ -986,13 +984,17 @@ class ConfigTextBase(ConfigElement):
 			return ("mtext"[1-selected:], self.text.encode("utf-8")+" ", mark)
 
 	def onSelect(self, session):
+		if not self.enabled:
+			self.allmarked = False
+			self.marked_pos = -1
+			return
 		self.allmarked = (self.value != "")
 		self._keyboardMode = eRCInput.getInstance().getKeyboardMode()
 		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
 		if session is not None:
 			from Screens.NumericalTextInputHelpDialog import NumericalTextInputHelpDialog
 			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self, zPosition=5000)
-			self.help_window.setShowHideAnimation("simple_fade")
+			self.help_window.neverAnimate()
 			self.help_window.show()
 
 	def onDeselect(self, session):
@@ -1017,9 +1019,9 @@ class ConfigText(ConfigTextBase, NumericalTextInput):
 
 #IPv6 Address with validation and autoformatting
 class ConfigIP6(ConfigTextBase, NumericalHexInput):
-	def __init__(self, default = "::", visible_width=False):
-		ConfigTextBase.__init__(self, default=default, fixed_size=False, visible_width=False)
-		NumericalHexInput.__init__(self, nextFunc=self.nextFunc, handleTimeout=False)
+	def __init__(self, default = "::", fixed_size=False, visible_width=False):
+		ConfigTextBase.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
+		NumericalHexInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
 
 	def isValid(self):
 		try:
@@ -1030,29 +1032,29 @@ class ConfigIP6(ConfigTextBase, NumericalHexInput):
 			return False
 
 	def getValue(self):
-		return IPAddress(self.text).format().encode("utf-8")
+		if not self.isValid():
+			self._setDefault(force=True)
+		return self.getText()
 
 	def setValue(self, val):
 		try:
 			val = val.decode("utf-8")
 			self.text = IPAddress(val).format()
-		except UnicodeDecodeError:
-			self._setDefault()
-			Log.w("Broken UTF8!")
-		except ValueError:
+		except:
 			Log.w("No valid IPv6 Address")
-			self._setDefault()
+			self._setDefault(force=True)
 		self.changed()
 
-	def _setDefault(self):
-		if not self.text:
+	def _setDefault(self, force=False):
+		if not self.text or force:
 			self.text = self.default
-
-	value = property(getValue, setValue)
-	_value = property(getValue, setValue)
 
 	def getText(self):
 		return IPAddress(self.text).format().encode("utf-8")
+
+	def onDeselect(self, session):
+		self.setValue(self.text)
+		ConfigTextBase.onDeselect(self, session)
 
 class ConfigPassword(ConfigText):
 	def __init__(self, default = "", fixed_size = False, visible_width = False, censor = "*"):

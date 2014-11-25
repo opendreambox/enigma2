@@ -249,6 +249,12 @@ class Screen(dict, GUISkin):
 			return self.instance.setShowHideAnimation(animation_key)
 		return False
 
+	def neverAnimate(self):
+		if self.instance:
+			self.instance.neverAnimate()
+			return True
+		return False
+
 	def canAnimate(self):
 		"""
 		True = it can

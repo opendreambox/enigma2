@@ -27,9 +27,8 @@ NETWORK_STATE_MAP = {
 			"failure" : _("Failure"),
 			"association" : _("Association"),
 			"configuration" : _("Configuration"),
-			"ready" : _("Connected"),
 			"disconnect" : _("Disconnect"),
-			"online" : _("Online"),
+			"online" : _("Connected"),
 		}
 
 SECURITY_TYPE_MAP = {
@@ -251,7 +250,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def _rescan(self):
-		if isinstance(self._currentService, eNetworkServicePtr):
+		if not self._currentService or isinstance(self._currentService, eNetworkServicePtr):
 			return
 		if self._currentService.type() != eNetworkService.TYPE_WIFI:
 			return
@@ -386,6 +385,7 @@ class ServiceIPConfiguration(object):
 	def __init__(self, service):
 		self._service = service
 		self.onChanged = []
+		self.onMethodChanged = []
 		method_choices_ip4 = {eNetworkService.METHOD_DHCP : "dhcp", eNetworkService.METHOD_MANUAL : _("manual"), eNetworkService.METHOD_OFF : _("off")}
 		#IPv4
 		self._config_ip4_method = ConfigSelection(method_choices_ip4, default=eNetworkService.METHOD_DHCP)
@@ -417,8 +417,8 @@ class ServiceIPConfiguration(object):
 
 	def _addNotifiers(self):
 		#Setup refresh
-		self._config_ip4_method.addNotifier(self._changed, initial_call=False)
-		self._config_ip6_method.addNotifier(self._changed, initial_call=False)
+		self._config_ip4_method.addNotifier(self._methodChanged, initial_call=False)
+		self._config_ip6_method.addNotifier(self._methodChanged, initial_call=False)
 
 		#change tracking
 		#ipv4
@@ -449,6 +449,12 @@ class ServiceIPConfiguration(object):
 			for fnc in self.onChanged:
 				fnc()
 
+	def _methodChanged(self, element):
+		if not self._isReloading:
+			Log.i()
+			for fnc in self.onMethodChanged:
+				fnc()
+
 	def reload(self, force=True):
 		self._isReloading = True
 		if force:
@@ -476,6 +482,23 @@ class ServiceIPConfiguration(object):
 		self._changed(None)
 
 	def getList(self):
+		if self._config_ip4_method.value == eNetworkService.METHOD_MANUAL:
+			self._config_ip4_address.enabled = True
+			self._config_ip4_mask.enabled = True
+			self._config_ip4_gw.enabled = True
+		else:
+			self._config_ip4_address.enabled = False
+			self._config_ip4_mask.enabled = False
+			self._config_ip4_gw.enabled = False
+		if self._config_ip6_method.value == eNetworkService.METHOD_MANUAL:
+			self._config_ip6_address.enabled = True
+			self._config_ip6_mask.enabled = True
+			self._config_ip6_gw.enabled = True
+		else:
+			self._config_ip6_address.enabled = False
+			self._config_ip6_mask.enabled = False
+			self._config_ip6_gw.enabled = False
+
 		l = [ getConfigListEntry(_("Method (IPv4)"), self._config_ip4_method), ]
 		if self._config_ip4_method.value != eNetworkService.METHOD_OFF:
 			l.extend([
@@ -564,14 +587,14 @@ class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 		}, -2)
 
 		self._ipconfig = ServiceIPConfiguration(self._service)
-		self._ipconfig.onChanged.append(self._createSetup)
+		self._ipconfig.onMethodChanged.append(self._createSetup)
 		self._noSave = False
 
 		self._reload()
 		self.onClose.append(self.__onClose)
 
 	def __onClose(self):
-		self._ipconfig.onChanged.remove(self._createSetup)
+		self._ipconfig.onMethodChanged.remove(self._createSetup)
 		self._apply()
 		del self._ipconfig
 
@@ -638,7 +661,8 @@ class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 			 render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
+			<widget name="config" position="5,50" size="550,260" scrollbarMode="showOnDemand" zPosition="1"/>
+			<widget source="activedns" position="5,320" size="550,80" render="Label" font="Regular;20" valign="bottom" backgroundColor="background" transparent="1" zPosition="1" />
 		</screen>"""
 
 	def __init__(self, session, service):
@@ -650,6 +674,7 @@ class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 		self["key_green"] = StaticText(_("New (IPv4)"))
 		self["key_yellow"] = StaticText(_("New (IPv6)"))
 		self["key_blue"] = StaticText(_("Reset"))
+		self["activedns"] = StaticText(self.getActiveDnsText())
 		self["setupActions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"red": self._remove,
@@ -665,6 +690,14 @@ class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 		self._reload()
 		self.onClose.append(self.__onClose)
 		self.onLayoutFinish.append(self._layoutFinished)
+
+	def getActiveDnsText(self):
+		nameservers = list(self._service.nameservers())
+		text = ""
+		if(nameservers):
+			text = _("Active Nameservers:\n%s") %(", ".join(nameservers))
+			Log.i(text)
+		return text
 
 	def _layoutFinished(self):
 		self.setTitle(_("%s Network - Nameservers" %self._service.name()))

@@ -10,6 +10,7 @@ class Pixmap(Renderer):
 	GUI_WIDGET = ePixmap
 
 	def postWidgetCreate(self, instance):
+		instance.setScale(0)
 		self.changed((self.CHANGED_DEFAULT,))
 		if self._pulsate:
 			self._doPulsate(instance)

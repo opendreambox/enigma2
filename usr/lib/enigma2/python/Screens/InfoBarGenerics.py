@@ -53,12 +53,12 @@ from Menu import MainMenu, mdom
 class InfoBarDish:
 	def __init__(self):
 		self.dishDialog = self.session.instantiateDialog(Dish,zPosition=10000)
-		self.dishDialog.instance.neverAnimate()
+		self.dishDialog.neverAnimate()
 
 class InfoBarUnhandledKey:
 	def __init__(self):
 		self.unhandledKeyDialog = self.session.instantiateDialog(UnhandledKey,zPosition=10000)
-		self.unhandledKeyDialog.instance.neverAnimate()
+		self.unhandledKeyDialog.neverAnimate()
 
 		self.hideUnhandledKeySymbolTimer = eTimer()
 		self.hideUnhandledKeySymbolTimer_conn = self.hideUnhandledKeySymbolTimer.timeout.connect(self.unhandledKeyDialog.hide)
@@ -780,7 +780,7 @@ class InfoBarRdsDecoder:
 	"""provides RDS and Rass support/display"""
 	def __init__(self):
 		self.rds_display = self.session.instantiateDialog(RdsInfoDisplay)
-		self.rds_display.instance.neverAnimate()
+		self.rds_display.neverAnimate()
 		self.rass_interactive = None
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
@@ -1210,7 +1210,7 @@ class InfoBarPVRState:
 	def __init__(self, screen=PVRState, force_show = False):
 		self.onPlayStateChanged.append(self.__playStateChanged)
 		self.pvrStateDialog = self.session.instantiateDialog(screen)
-		self.pvrStateDialog.instance.neverAnimate()
+		self.pvrStateDialog.neverAnimate()
 		self.onShow.append(self._mayShow)
 		self.onHide.append(self.pvrStateDialog.hide)
 		self.force_show = force_show
@@ -1581,7 +1581,7 @@ class InfoBarPiP:
 			self.session.pipshown = False
 		else:
 			self.session.pip = self.session.instantiateDialog(PictureInPicture)
-			self.session.pip.instance.neverAnimate()
+			self.session.pip.neverAnimate()
 			self.session.pip.show()
 			newservice = self.session.nav.getCurrentlyPlayingServiceReference()
 			if self.session.pip.playService(newservice):

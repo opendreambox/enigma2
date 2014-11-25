@@ -25,9 +25,9 @@ class VolumeControl:
 		config.audio.volume = ConfigInteger(default = 100, limits = (0, 100))
 
 		self.volumeDialog = session.instantiateDialog(Volume,zPosition=10000)
-		self.volumeDialog.instance.neverAnimate()
+		self.volumeDialog.neverAnimate()
 		self.muteDialog = session.instantiateDialog(Mute,zPosition=10000)
-		self.muteDialog.instance.neverAnimate()
+		self.muteDialog.neverAnimate()
 
 		self.hideVolTimer = eTimer()
 		self.hideVolTimer_conn = self.hideVolTimer.timeout.connect(self.volHide)

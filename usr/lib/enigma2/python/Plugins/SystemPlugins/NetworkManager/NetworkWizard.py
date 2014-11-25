@@ -149,13 +149,10 @@ class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 			self["list"].updateList( self.getServiceList() )
 
 	def ipConfigurationRequired(self):
-		if not self._nm.state() in (eNetworkManager.STATE_ONLINE, eNetworkManager.STATE_READY):
-			return True #TODO check if ips are already set
-		return False
+		return not self.isOnline()
 
 	def isNetworkConnected(self):
-		state = self._nm.state()
-		return state in (eNetworkManager.STATE_ONLINE, eNetworkManager.STATE_READY)
+		return self.isOnline()
 
 	def getAddressConfig(self):
 		self._ipconfig = ServiceIPConfiguration(self._nm.getServices()[0])
@@ -169,7 +166,7 @@ class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 		self._ipconfig.save()
 
 	def isOnline(self):
-		return self._nm.state() == eNetworkManager.STATE_ONLINE
+		return self._nm.online()
 
 	def getNameserverConfig(self):
 		self._nsconfig = ServiceNSConfiguration( self._nm.getServices()[0] )

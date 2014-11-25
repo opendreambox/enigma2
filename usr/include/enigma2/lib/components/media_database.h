@@ -408,7 +408,7 @@ private:
 
 	insert_result getSetDirectory(int parent_id, const std::string &path, bool parent = false, bool watch = false);
 	insert_result getSetFile(int dir_id, const std::string &name, int64_t size, int type, int64_t duration, int64_t lastmodified, int popularity=0, int64_t lastplaypos=0 );
-	int getFileLastModified(int dir_id, const std::string &name, file_data *data);
+	int getFileLastModified(int dir_id, const std::string &name, int64_t *timestamp);
 	insert_result getSetCodec(const std::string &codec, const std::string &codec_long);
 	insert_result setAudioTrack(int file_id, int codec_id, const std::string &lang);
 	insert_result getSetArtist(const std::string &artist);

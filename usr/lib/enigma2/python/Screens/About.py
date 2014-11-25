@@ -59,7 +59,7 @@ class About(Screen):
 
 	def getServiceIP(self, service):
 		ip = "0.0.0.0"
-		if service.state() == eNetworkManager.STATE_READY or service.state() == eNetworkManager.STATE_ONLINE:
+		if service.state() == eNetworkManager.STATE_ONLINE:
 			ipv4 = service.ipv4()
 			ip = ipv4.get("Address", "0.0.0.0")
 		if ip == "0.0.0.0:":
