@@ -128,6 +128,7 @@ public:
 	eRect unite( const eRect &r ) const;
 	eRect intersect( const eRect &r ) const;
 	bool intersects( const eRect &r ) const;
+	void scaleToCenterOf( const eRect &other );
 
 	friend bool operator==( const eRect &, const eRect & );
 	friend bool operator!=( const eRect &, const eRect & );

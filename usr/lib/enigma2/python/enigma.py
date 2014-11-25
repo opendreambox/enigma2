@@ -1279,6 +1279,7 @@ eRect.contains = new_instancemethod(_enigma.eRect_contains,None,eRect)
 eRect.unite = new_instancemethod(_enigma.eRect_unite,None,eRect)
 eRect.intersect = new_instancemethod(_enigma.eRect_intersect,None,eRect)
 eRect.intersects = new_instancemethod(_enigma.eRect_intersects,None,eRect)
+eRect.scaleToCenterOf = new_instancemethod(_enigma.eRect_scaleToCenterOf,None,eRect)
 eRect.scale = new_instancemethod(_enigma.eRect_scale,None,eRect)
 eRect_swigregister = _enigma.eRect_swigregister
 eRect_swigregister(eRect)

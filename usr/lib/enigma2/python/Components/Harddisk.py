@@ -282,7 +282,7 @@ class Harddisk:
 		_, _, _, _, sectors = harddiskmanager.getFdiskInfo(self.device)
 		if sectors is None:
 			sectors = self.__sectors()
-		cmd = [ 'parted', '--script', '--align=opt', self.disk_path ]
+		cmd = [ 'parted', '--script', '--align=opt', self.disk_path, '--' ]
 		cmd += [ 'mklabel', 'gpt' ]
 		if sectors and self.__data.get('ID_ATA_SATA'):
 			part1end = int(sectors)-swapPartSize #leaving 1GB for swap

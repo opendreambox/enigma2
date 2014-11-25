@@ -32,6 +32,14 @@ NETWORK_STATE_MAP = {
 			"online" : _("Online"),
 		}
 
+SECURITY_TYPE_MAP = {
+			"none" : _("None"),
+			"wep"  : "WEP",
+			"psk"  : "WPA",
+			"wps"  : "WPS",
+			"ieee8021x" : "ieee8021x",
+		}
+
 def translateState(state):
 	return NETWORK_STATE_MAP.get(state, state)
 
@@ -138,11 +146,12 @@ class NetworkConfigGeneral(object):
 		name = tech.name()
 		if tech.isScanning():
 			name = "%s - scanning..." %name
-		return (tech.path(), None, enabled, None, None, None, name)
+		return (tech.path(), None, enabled, None, None, None, name, "")
 
 	def _buildServiceListEntry(self, svcpath, service):
 		#Log.i("service: %s/%s/%s" %(service.name(), service.type(), service.strength()))
 		strength = ""
+		security = ""
 		if service.type() == eNetworkService.TYPE_ETHERNET:
 			if service.connected():
 				interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wired-active.png"))
@@ -152,7 +161,12 @@ class NetworkConfigGeneral(object):
 				else:
 					interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wired-inactive.png"))
 		elif service.type() == eNetworkService.TYPE_WIFI:
-			strength = str( service.strength() )
+			strength = "%s%s" %(service.strength(), "%")
+			for sec in service.security():
+				if not security:
+					security = SECURITY_TYPE_MAP.get(sec, sec.upper())
+				else:
+					security = "%s, %s" %(security, SECURITY_TYPE_MAP.get(sec, sec.upper()))
 			if service.connected():
 				interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wireless-active.png"))
 			else:
@@ -161,12 +175,14 @@ class NetworkConfigGeneral(object):
 				else:
 					interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wireless-inactive.png"))
 		ip = ""
+
 		if service.connected():
 			ip = service.ipv4().get(eNetworkService.KEY_ADDRESS, "")
 			if not ip:
 				ip = service.ipv6().get(eNetworkService.KEY_ADDRESS, "")
 
-		return (service.path(), interfacepng, strength, service.name(), ip, translateState(service.state()), None)
+
+		return (service.path(), interfacepng, strength, service.name(), ip, translateState(service.state()), None, security)
 
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
@@ -185,10 +201,11 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				<convert type="TemplatedMultiContent">
 					{"template":[
 							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
-							MultiContentEntryText(pos = (500, 0), size = (50, 50), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), #signal strength
-							MultiContentEntryText(pos = (55, 0), size = (440, 24), font=0, flags = RT_HALIGN_LEFT, text = 3), #service name
+							MultiContentEntryText(pos = (55, 0), size = (400, 24), font=0, flags = RT_HALIGN_LEFT, text = 3), #service name
+							MultiContentEntryText(pos = (450, 0), size = (100, 24), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text = 7), #security
+							MultiContentEntryText(pos = (450, 30), size = (100, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 2), #signal strength
 							MultiContentEntryText(pos = (55, 30), size = (220, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 4), #ip
-							MultiContentEntryText(pos = (275, 30), size = (220, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), #state
+							MultiContentEntryText(pos = (275, 30), size = (150, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), #state
 							MultiContentEntryText(pos = (5, 0), size = (490, 50), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 6), #technology name
 						],
 					"itemHeight": 50,

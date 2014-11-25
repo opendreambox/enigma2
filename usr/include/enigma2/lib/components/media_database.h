@@ -221,11 +221,12 @@ protected:
 
 class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
 {
-	int SCHEMA_VERSION = 1;
+	int SCHEMA_VERSION = 2;
 
 	std::string normalizePath(const std::string &path);
 	bool upgradeSchema(int from);
 	bool upgradeSchema0_to_1();
+	bool upgradeSchema1_to_2();
 public:
 	eMediaDatabaseHandler();
 	~eMediaDatabaseHandler();
