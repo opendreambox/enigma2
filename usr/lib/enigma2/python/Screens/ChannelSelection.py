@@ -253,6 +253,7 @@ class ChannelContextMenu(Screen):
 		if not self.pipAvailable:
 			return
 		if self.session.pipshown:
+			self.session.deleteDialog(self.session.pip)
 			del self.session.pip
 		self.session.pip = self.session.instantiateDialog(PictureInPicture)
 		self.session.pip.show()
@@ -263,6 +264,7 @@ class ChannelContextMenu(Screen):
 			self.close(True)
 		else:
 			self.session.pipshown = False
+			self.session.deleteDialog(self.session.pip)
 			del self.session.pip
 			self.session.openWithCallback(self.close, MessageBox, _("Could not open Picture in Picture"), MessageBox.TYPE_ERROR)
 

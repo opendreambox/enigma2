@@ -41,6 +41,7 @@ class Satfinder(ScanSetup):
 			if not self.openFrontend():
 				if session.pipshown: # try to disable pip
 					session.pipshown = False
+					session.deleteDialog(session.pip)
 					del session.pip
 					if not self.openFrontend():
 						self.frontend = None # in normal case this should not happen

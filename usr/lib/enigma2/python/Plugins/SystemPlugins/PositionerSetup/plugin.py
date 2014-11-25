@@ -71,6 +71,7 @@ class PositionerSetup(Screen):
 					del feInfo
 					del service
 					session.pipshown = False
+					session.deleteDialog(session.pip)
 					del session.pip
 					if not self.openFrontend():
 						self.frontend = None # in normal case this should not happen

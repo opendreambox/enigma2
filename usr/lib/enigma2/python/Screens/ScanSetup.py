@@ -214,6 +214,7 @@ class CableTransponderSearchSupport:
 			if not self.tryGetRawFrontend(nim_idx):
 				if self.session.pipshown: # try to disable pip
 					self.session.pipshown = False
+					self.session.deleteDialog(self.session.pip)
 					del self.session.pip
 				if not self.tryGetRawFrontend(nim_idx):
 					self.TransponderSearchFinished()
@@ -767,6 +768,7 @@ class SatelliteTransponderSearchSupport:
 				if not self.frontend:
 					if self.session.pipshown: # try to disable pip
 						self.session.pipshown = False
+						self.session.deleteDialog(self.session.pip)
 						del self.session.pip
 					(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 					if not self.frontend:

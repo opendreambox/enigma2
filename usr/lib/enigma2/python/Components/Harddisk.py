@@ -469,9 +469,9 @@ class Harddisk:
 		self.timer_conn = self.timer.timeout.connect(self.__runIdle)
 		self.idle_running = True
 		try:
-			self.__setIdleTime(int(config.usage.hdd_standby.value))
+			self.setIdleTime(int(config.usage.hdd_standby.value))
 		except KeyError:
-			self.__setIdleTime(self.max_idle_time) # kick the idle polling loop
+			self.setIdleTime(self.max_idle_time) # kick the idle polling loop
 
 	def __runIdle(self):
 		if not self.max_idle_time:
@@ -506,7 +506,7 @@ class Harddisk:
 			Console().ePopen(("hdparm", "hdparm", "-y", self.disk_path))
 		self.is_sleeping = True
 
-	def __setIdleTime(self, idle):
+	def setIdleTime(self, idle):
 		self.max_idle_time = idle
 		if self.idle_running:
 			if not idle:

@@ -59,6 +59,7 @@ class TuneTest:
 			if not self.openFrontend():
 				if self.session.pipshown: # try to disable pip
 					self.session.pipshown = False
+					self.session.deleteDialog(self.session.pip)
 					del self.session.pip
 					if not self.openFrontend():
 						self.frontend = None # in normal case this should not happen
