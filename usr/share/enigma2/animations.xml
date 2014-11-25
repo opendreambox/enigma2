@@ -11,11 +11,11 @@ optional <animation>-tag attributes are
 - interpolate="linear|accelerate|decelerate|overshoot|bounce" - Defines the Animation Progress interpolator.
   - accelerate: An interpolator where the rate of change starts out slowly and then accelerates
     - optional attribute: factor="1.0" - Degree (as float) to which the animation should be eased. Setting factor to 1.0f produces a y=x^2 parabola.
-                                           Increasing factor above 1.0f exaggerates the ease-in effect (i.e., it starts even slower and ends evens faster)
+                                           Increasing factor above 1.0f increases the ease-in effect (i.e., it starts even slower and ends even faster)
 
   - decelerate: An interpolator where the rate of change starts out quickly and and then decelerates.
     - optional attribute: factor="1.0" - Degree (as float) to which the animation should be eased. Setting factor to 1.0 produces an upside-down y=x^2 parabola.
-                                           Increasing factor above 1.0 makes exaggerates the ease-out effect (i.e., it starts even faster and ends evens slower)
+                                           Increasing factor above 1.0 makes increases the ease-out effect (i.e., it starts even faster and ends even slower)
 
   - overshoot: An interpolator where the change flings forward and overshoots the last value then comes back.
     - optional attribute: tension="2.0" - Amount of overshoot (as float). When tension equals 0.0f, there is no overshoot and the interpolator becomes a simple deceleration interpolator.

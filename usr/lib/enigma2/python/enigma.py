@@ -2667,6 +2667,7 @@ class eEPGCache(iObject):
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
     getInstance = staticmethod(_enigma.eEPGCache_getInstance)
+    getStringHash = staticmethod(_enigma.eEPGCache_getStringHash)
     SIMILAR_BROADCASTINGS_SEARCH = _enigma.eEPGCache_SIMILAR_BROADCASTINGS_SEARCH
     EXAKT_TITLE_SEARCH = _enigma.eEPGCache_EXAKT_TITLE_SEARCH
     PARTIAL_TITLE_SEARCH = _enigma.eEPGCache_PARTIAL_TITLE_SEARCH
@@ -2690,6 +2691,10 @@ eEPGCache_swigregister(eEPGCache)
 def eEPGCache_getInstance():
   return _enigma.eEPGCache_getInstance()
 eEPGCache_getInstance = _enigma.eEPGCache_getInstance
+
+def eEPGCache_getStringHash(*args):
+  return _enigma.eEPGCache_getStringHash(*args)
+eEPGCache_getStringHash = _enigma.eEPGCache_getStringHash
 
 class eDVBFrontendParametersSatellite(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

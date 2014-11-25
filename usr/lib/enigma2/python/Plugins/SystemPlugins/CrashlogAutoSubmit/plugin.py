@@ -1,17 +1,18 @@
 from Plugins.Plugin import PluginDescriptor
-from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigText, ConfigSelection, ConfigYesNo,ConfigText
+from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigYesNo
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.Pixmap import Pixmap
 from Screens.Screen import Screen
-from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from enigma import ePoint, eTPM
 from Tools import Notifications
 
-import os
+from glob import glob
+from os import remove, rename
+from os.path import basename
 from twisted.mail import smtp, relaymanager
 import MimeWriter, mimetools, StringIO
 from __init__ import decrypt_block, validate_cert, read_random
@@ -21,12 +22,7 @@ config.plugins.crashlogautosubmit.sendmail = ConfigSelection(default = "send", c
 	("send", _("Always ask before sending")), ("send_always", _("Don't ask, just send")), ("send_never", _("Disable crashlog reporting"))])
 config.plugins.crashlogautosubmit.sendlog = ConfigSelection(default = "rename", choices = [
 	("delete", _("Delete crashlogs")), ("rename", _("Rename crashlogs"))])
-config.plugins.crashlogautosubmit.attachemail = ConfigYesNo(default = False)
-config.plugins.crashlogautosubmit.email = ConfigText(default = "myemail@home.com", fixed_size = False)
-config.plugins.crashlogautosubmit.name = ConfigText(default = "Dreambox User", fixed_size = False)
 config.plugins.crashlogautosubmit.sendAnonCrashlog = ConfigYesNo(default = True)
-config.plugins.crashlogautosubmit.addNetwork = ConfigYesNo(default = False)
-config.plugins.crashlogautosubmit.addWlan = ConfigYesNo(default = False)
 
 class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 
@@ -54,8 +50,6 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 		self.EmailEntry = None
 		self.NameEntry = None
 		self.AnonCrashlogEntry = None
-		self.NetworkEntry = None
-		self.WlanEntry = None
 		self.msgCrashlogMailer = False
 
 		self["shortcuts"] = ActionMap(["ShortcutActions", "SetupActions" ],
@@ -65,11 +59,6 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 			"red": self.keyCancel,
 			"green": self.keySave,
 		}, -2)
-
-		self["VirtualKB"] = ActionMap(["VirtualKeyboardActions" ],
-		{
-			"showVirtualKeyboard": self.KeyText,
-		}, -1)
 
 		self.list = []
 		ConfigListScreen.__init__(self, self.list,session = self.session)
@@ -82,7 +71,6 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 		self["HelpWindow"] = Pixmap()
 
 		self["VKeyIcon"].hide()
-		self["VirtualKB"].setEnabled(False)
 		self.onShown.append(self.setWindowTitle)
 		self.onClose.append(self.msgCrashlogNotifier)
 
@@ -98,43 +86,16 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 		ConfigListScreen.keyRight(self)
 		self.newConfig()
 
-	def KeyText(self):
-			if self["config"].getCurrent() == self.EmailEntry:
-				self.session.openWithCallback(self.EmailCallback, VirtualKeyBoard, title = (_("Please enter your email address here:")), text = config.plugins.crashlogautosubmit.email.value)
-			if self["config"].getCurrent() == self.NameEntry:
-				self.session.openWithCallback(self.NameCallback, VirtualKeyBoard, title = (_("Please enter your name here (optional):")), text = config.plugins.crashlogautosubmit.name.value)
-
-	def EmailCallback(self, callback = None):
-		if callback is not None and len(callback):
-			config.plugins.crashlogautosubmit.email.setValue(callback)
-			self["config"].invalidate(self.EmailEntry)
-
-	def NameCallback(self, callback = None):
-		if callback is not None and len(callback):
-			config.plugins.crashlogautosubmit.name.setValue(callback)
-			self["config"].invalidate(self.NameEntry)
-
 	def createSetup(self):
 		self.list = []
 		self.MailEntry = getConfigListEntry(_("How to handle found crashlogs?"), config.plugins.crashlogautosubmit.sendmail)
 		self.LogEntry = getConfigListEntry(_("What to do with submitted crashlogs?"), config.plugins.crashlogautosubmit.sendlog)
-		self.addEmailEntry = getConfigListEntry(_("Include your email and name (optional) in the mail?"), config.plugins.crashlogautosubmit.attachemail)
-		self.EmailEntry = getConfigListEntry(_("Your email address:"), config.plugins.crashlogautosubmit.email)
-		self.NameEntry = getConfigListEntry(_("Your name (optional):"), config.plugins.crashlogautosubmit.name)
 		self.AnonCrashlogEntry = getConfigListEntry(_("Anonymize crashlog?"), config.plugins.crashlogautosubmit.sendAnonCrashlog)
-		self.NetworkEntry = getConfigListEntry(_("Add network configuration?"), config.plugins.crashlogautosubmit.addNetwork)
-		self.WlanEntry = getConfigListEntry(_("Add WLAN configuration?"), config.plugins.crashlogautosubmit.addWlan)
 
 		self.list.append( self.MailEntry )
 		if config.plugins.crashlogautosubmit.sendmail.value is not "send_never":
 			self.list.append( self.LogEntry )
-			self.list.append( self.addEmailEntry )
-			if config.plugins.crashlogautosubmit.attachemail.value is True:
-				self.list.append( self.EmailEntry )
-				self.list.append( self.NameEntry )
 			self.list.append( self.AnonCrashlogEntry )
-			self.list.append( self.NetworkEntry )
-			self.list.append( self.WlanEntry )
 
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
@@ -160,34 +121,10 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 		current = self["config"].getCurrent()
 		if current == self.MailEntry:
 			self["status"].setText(_("Decide what should be done when crashlogs are found."))
-			self.disableVKeyIcon()
 		elif current == self.LogEntry:
 			self["status"].setText(_("Decide what should happen to the crashlogs after submission."))
-			self.disableVKeyIcon()
-		elif current == self.addEmailEntry:
-			self["status"].setText(_("Do you want to submit your email address and name so that we can contact you if needed?"))
-			self.disableVKeyIcon()
-		elif current == self.EmailEntry:
-			self["status"].setText(_("Enter your email address so that we can contact you if needed."))
-			self.enableVKeyIcon()
-			self.showKeypad()
-		elif current == self.NameEntry:
-			self["status"].setText(_("Optionally enter your name if you want to."))
-			self.enableVKeyIcon()
-			self.showKeypad()
 		elif current == self.AnonCrashlogEntry:
 			self["status"].setText(_("Adds enigma2 settings and dreambox model informations like SN, rev... if enabled."))
-			self.disableVKeyIcon()
-		elif current == self.NetworkEntry:
-			self["status"].setText(_("Adds network configuration if enabled."))
-			self.disableVKeyIcon()
-		elif current == self.WlanEntry:
-			self["status"].setText(_("Adds wlan configuration if enabled."))
-			self.disableVKeyIcon()
-
-	def enableVKeyIcon(self):
-		self["VKeyIcon"].show()
-		self["VirtualKB"].setEnabled(True)
 
 	def showKeypad(self):
 		current = self["config"].getCurrent()
@@ -196,10 +133,6 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 			if current[1].help_window.instance is not None:
 				current[1].help_window.instance.show()
 				current[1].help_window.instance.move(ePoint(helpwindowpos[0],helpwindowpos[1]))
-
-	def disableVKeyIcon(self):
-		self["VKeyIcon"].hide()
-		self["VirtualKB"].setEnabled(False)
 
 	def hideKeypad(self):
 		current = self["config"].getCurrent()
@@ -249,9 +182,6 @@ def mxServerFound(mxServer,session):
 	writer.addheader('From', "CrashlogAutoSubmitter <enigma2@crashlog.dream-multimedia-tv.de>")
 	writer.addheader('Subject', str(subject))
 	writer.addheader('Date', smtp.rfc822date())
-	if config.plugins.crashlogautosubmit.attachemail.value is True:
-		if  str(config.plugins.crashlogautosubmit.email.value) != "myemail@home.com":
-			writer.addheader('Reply-To', str(str(config.plugins.crashlogautosubmit.email.value)))
 	writer.addheader('MIME-Version', '1.0')
 	writer.startmultipartbody('mixed')
 	# start with a text/plain part
@@ -260,14 +190,6 @@ def mxServerFound(mxServer,session):
 	part.flushheaders()
 	# Define the message body
 	body_text1 = "\nHello\n\nHere are some crashlogs i found for you.\n"
-	if  str(config.plugins.crashlogautosubmit.email.value) == "myemail@home.com":
-		user_email = ""
-	else:
-		user_email = "\nUser supplied email address: " + str(config.plugins.crashlogautosubmit.email.value)
-	if str(config.plugins.crashlogautosubmit.name.value) ==  "Dreambox User":
-		user_name = ""
-	else:
-		user_name = "\n\nOptional supplied name: " + str(config.plugins.crashlogautosubmit.name.value)
 	body_text2 = "\n\nThis is an automatically generated email from the CrashlogAutoSubmit plugin.\n\n\nHave a nice day.\n"
 	body_text = body_text1 + user_email + user_name + body_text2
 	body.write(body_text)
@@ -284,20 +206,15 @@ def mxServerFound(mxServer,session):
 
 	def handleSuccess(result):
 		print "[CrashlogAutoSubmit] - Message sent successfully -->",result
-		if len(crashLogFilelist):
-			for crashlog in crashLogFilelist:
-				if config.plugins.crashlogautosubmit.sendlog.value == "delete":
-					os.remove(crashlog)
-				elif config.plugins.crashlogautosubmit.sendlog.value == "rename":
-					currfilename = str(os.path.basename(crashlog))
-					newfilename = "/media/hdd/" + currfilename + ".sent"
-					os.rename(crashlog,newfilename)
+		for crashlog in crashLogFilelist:
+			if config.plugins.crashlogautosubmit.sendlog.value == "delete":
+				remove(crashlog)
+			elif config.plugins.crashlogautosubmit.sendlog.value == "rename":
+				currfilename = basename(crashlog)
+				newfilename = "/media/hdd/" + currfilename + ".sent"
+				rename(crashlog, newfilename)
 
 	def send_mail():
-		try:
-			device = open("/proc/stb/info/model", "r").readline().strip()
-		except:
-			device = ""	
 		rootkey = ['\x9f', '|', '\xe4', 'G', '\xc9', '\xb4', '\xf4', '#', '&', '\xce', '\xb3', '\xfe', '\xda', '\xc9', 'U', '`', '\xd8', '\x8c', 's', 'o', '\x90', '\x9b', '\\', 'b', '\xc0', '\x89', '\xd1', '\x8c', '\x9e', 'J', 'T', '\xc5', 'X', '\xa1', '\xb8', '\x13', '5', 'E', '\x02', '\xc9', '\xb2', '\xe6', 't', '\x89', '\xde', '\xcd', '\x9d', '\x11', '\xdd', '\xc7', '\xf4', '\xe4', '\xe4', '\xbc', '\xdb', '\x9c', '\xea', '}', '\xad', '\xda', 't', 'r', '\x9b', '\xdc', '\xbc', '\x18', '3', '\xe7', '\xaf', '|', '\xae', '\x0c', '\xe3', '\xb5', '\x84', '\x8d', '\r', '\x8d', '\x9d', '2', '\xd0', '\xce', '\xd5', 'q', '\t', '\x84', 'c', '\xa8', ')', '\x99', '\xdc', '<', '"', 'x', '\xe8', '\x87', '\x8f', '\x02', ';', 'S', 'm', '\xd5', '\xf0', '\xa3', '_', '\xb7', 'T', '\t', '\xde', '\xa7', '\xf1', '\xc9', '\xae', '\x8a', '\xd7', '\xd2', '\xcf', '\xb2', '.', '\x13', '\xfb', '\xac', 'j', '\xdf', '\xb1', '\x1d', ':', '?']
 		etpm = eTPM()
 		l2cert = etpm.getData(eTPM.DT_LEVEL2_CERT)
@@ -319,15 +236,14 @@ def mxServerFound(mxServer,session):
 		result = decrypt_block(val, l3key)
 		if result[80:88] == rnd:
 			print "[CrashlogAutoSubmit] - send_mail"
-			if len(crashLogFilelist):
-				for crashlog in crashLogFilelist:
-					filename = str(os.path.basename(crashlog))
-					subpart = writer.nextpart()
-					subpart.addheader("Content-Transfer-Encoding", 'base64')
-					subpart.addheader("Content-Disposition",'attachment; filename="%s"' % filename)
-					subpart.addheader('Content-Description', 'Enigma2 crashlog')
-					body = subpart.startbody("%s; name=%s" % ('application/octet-stream', filename))
-					mimetools.encode(open(crashlog, 'rb'), body, 'base64')
+			for crashlog in crashLogFilelist:
+				filename = basename(crashlog)
+				subpart = writer.nextpart()
+				subpart.addheader("Content-Transfer-Encoding", 'base64')
+				subpart.addheader("Content-Disposition",'attachment; filename="%s"' % filename)
+				subpart.addheader('Content-Description', 'Enigma2 crashlog')
+				body = subpart.startbody("%s; name=%s" % ('application/octet-stream', filename))
+				mimetools.encode(open(crashlog, 'rb'), body, 'base64')
 			writer.lastpart()
 			sending = smtp.sendmail(str(mxServer), mailFrom, mailTo, message.getvalue())
 			sending.addCallback(handleSuccess).addErrback(handleError)
@@ -351,10 +267,9 @@ def mxServerFound(mxServer,session):
 		elif answer == "send_not":
 			print "[CrashlogAutoSubmit] - not sending crashlogs for this time."
 
-	for crashlog in os.listdir('/media/hdd'):
-		if crashlog.startswith("enigma2_crash_") and crashlog.endswith(".log"):
-			print "[CrashlogAutoSubmit] - found crashlog: ",os.path.basename(crashlog)
-			crashLogFilelist.append('/media/hdd/' + crashlog)
+	for crashlog in glob('/media/hdd/enigma2_crash_*.log'):
+		print "[CrashlogAutoSubmit] - found crashlog: ", basename(crashlog)
+		crashLogFilelist.append(crashlog)
 
 	if len(crashLogFilelist):
 		if config.plugins.crashlogautosubmit.sendmail.value == "send":
@@ -365,28 +280,20 @@ def mxServerFound(mxServer,session):
 		print "[CrashlogAutoSubmit] - no crashlogs found."
 
 
-def getMailExchange(host):
-	print "[CrashlogAutoSubmit] - getMailExchange"
-	return relaymanager.MXCalculator().getMX(host).addCallback(_gotMXRecord)
-
-def _gotMXRecord(mxRecord):
-	return str(mxRecord.name)
-
-
 def startMailer(session):
 	if config.plugins.crashlogautosubmit.sendmail.value == "send_never":
 		print "[CrashlogAutoSubmit] - not starting CrashlogAutoSubmit"
 		return False
 
-	def gotMXServer(mxServer):
-		print "[CrashlogAutoSubmit] gotMXServer: ",mxServer
-		mxServerFound(mxServer,session)
+	def gotMXServer(mx):
+		print "[CrashlogAutoSubmit] gotMXServer: ", mx.name
+		mxServerFound(mx.name, session)
 
 	def handleMXError(error):
 		print "[CrashlogAutoSubmit] - MX resolve ERROR:", error.getErrorMessage()
 
 	if not config.misc.firstrun.value:
-		getMailExchange('crashlog.dream-multimedia-tv.de').addCallback(gotMXServer).addErrback(handleMXError)
+		relaymanager.MXCalculator().getMX('crashlog.dream-multimedia-tv.de').addCallback(gotMXServer).addErrback(handleMXError)
 
 
 def callCrashMailer(result,session):

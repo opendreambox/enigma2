@@ -825,6 +825,16 @@ class HarddiskManager:
 				classPath = path.dirname(classPath)
 			return path.join(classPath, filename)
 
+	def __callDeviceNotifier(self, device, reason):
+		if not device:
+			return
+		print "calling Notifier for device '%s', reason '%s'" % (device, reason)
+		for callback in self.delayed_device_Notifier:
+			try:
+				callback(device, reason)
+			except AttributeError:
+				self.delayed_device_Notifier.remove(callback)
+
 	def getAutofsMountpoint(self, device):
 		return "/autofs/%s/" % (device)
 
@@ -974,11 +984,7 @@ class HarddiskManager:
 			SystemInfo["Harddisk"] = len(self.hdd) > 0
 
 			#call the notifier only after we have fully removed the disconnected drive
-			for callback in self.delayed_device_Notifier:
-				try:
-					callback(device, "remove_delayed" )
-				except AttributeError:
-					self.delayed_device_Notifier.remove(callback)
+			self.__callDeviceNotifier(device, "remove_delayed")
 
 	def blockDeviceEvent(self, data):
 		action = data.get('ACTION')
@@ -1047,11 +1053,8 @@ class HarddiskManager:
 				cfg_uuid = config.storage.get(uuid, None)
 				if cfg_uuid is not None:
 					self.storageDeviceChanged(uuid)
-		for callback in self.delayed_device_Notifier:
-			try:
-				callback(device, "add_delayed" )
-			except AttributeError:
-				self.delayed_device_Notifier.remove(callback)
+
+		self.__callDeviceNotifier(device, "add_delayed")
 
 	def HDDCount(self):
 		return len(self.hdd)
@@ -1535,10 +1538,9 @@ class HarddiskManager:
 			self.on_partition_list_change("add", p)
 		return p
 
-	def __removePartition(self, p, notify = True):
+	def __removePartition(self, p):
 		self.partitions.remove(p)
-		if notify:
-			self.on_partition_list_change("remove", p)
+		self.on_partition_list_change("remove", p)
 
 	def addMountedPartition(self, device, desc):
 		already_mounted = False
@@ -1630,11 +1632,7 @@ class HarddiskManager:
 			if part is not None:
 				if part.uuid is not None and part.uuid == config.storage_options.default_device.value: #unmounting Default Mountpoint /media/hdd
 					#call the notifier also here if we unmounted the default partition
-					for callback in self.delayed_device_Notifier:
-						try:
-							callback(part.device, "remove_default" )
-						except AttributeError:
-							self.delayed_device_Notifier.remove(callback)
+					self.__callDeviceNotifier(part.device, "remove_default")
 					part.device = None
 					part.updatePartitionInfo()
 			if device is not None and not path.ismount(mountpoint):

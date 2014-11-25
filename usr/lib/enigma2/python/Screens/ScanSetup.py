@@ -757,7 +757,7 @@ class SatelliteTransponderSearchSupport:
 		tuner_no = -1
 
 		print "tunername", tunername
-		if tunername in ("BCM4505", "BCM4506 (internal)", "Alps BSBE1 C01A/D01A."):
+		if tunername in ("BCM4505", "BCM4506 (internal)", "BCM4506", "Alps BSBE1 C01A/D01A."):
 			(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 			if not self.frontend:
 				self.session.nav.stopService()

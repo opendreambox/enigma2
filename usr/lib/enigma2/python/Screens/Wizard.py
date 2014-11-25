@@ -97,7 +97,7 @@ class Wizard(Screen):
 				else:
 					self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif name == "displaytext" or name =="short_title":
-				self.wizard[self.lastStep]["short_title"] = str(attrs.get('value')).replace("\\n", "\n")
+				self.wizard[self.lastStep]["short_title"] = _(str(attrs.get('value')).replace("\\n", "\n"))
 			elif (name == "list"):
 				if (attrs.has_key('type')):
 					if attrs["type"] == "dynamic":
@@ -530,7 +530,7 @@ class Wizard(Screen):
 		
 		if (self.showConfig and self.wizard[self.currStep]["config"]["screen"] != None):
 			self["config"].instance.moveSelection(self["config"].instance.moveUp)
-		elif (self.showList and len(self.wizard[self.currStep]["evaluatedlist"]) > 0):
+		elif (self.showList and len(self.wizard[self.currStep].get("evaluatedlist", [])) > 0):
 			if self.wizard[self.currStep].has_key("onselect"):
 				self.selection = self["list"].current[-1]
 				print "self.selection:", self.selection

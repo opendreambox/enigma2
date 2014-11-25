@@ -54,12 +54,12 @@ class MessageBox(Screen):
 
 		self.onFirstExecBegin.append(self._onFirstExecBegin)
 
+		self.additionalActionMap = None
 		if enable_input:
 			if close_on_any_key:
-				if additionalActionMap is not None:
-					self["additionalActions"] = additionalActionMap
-				self.highPrioActionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.closeAnyKey)
-				self.onClose.append(self.disconnectHighPrioAction)
+				self.additionalActionMap = additionalActionMap
+				self.onShow.append(self.connectHighPrioAction)
+				self.onHide.append(self.disconnectHighPrioAction)
 			else:
 				self["actions"] = ActionMap(["MsgBoxActions", "DirectionActions"], 
 					{
@@ -76,8 +76,15 @@ class MessageBox(Screen):
 						"rightRepeated": self.right
 					}, -1)
 
+	def connectHighPrioAction(self):
+		self.highPrioActionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self.closeAnyKey)
+		if self.additionalActionMap:
+			self.additionalActionMap.execBegin()
+
 	def disconnectHighPrioAction(self):
 		self.highPrioAction = None
+		if self.additionalActionMap:
+			self.additionalActionMap.execEnd()
 
 	def _onFirstExecBegin(self):
 		if self.title != None:
@@ -124,10 +131,13 @@ class MessageBox(Screen):
 				self.timeoutCallback()
 
 	def closeAnyKey(self, key, flag):
-		self.close(True)
-		if self.get("additionalActions", None):
-			return 0
-		return 1
+		if not self.additionalActionMap or flag:
+			self.close(True)
+			return 1
+		return 0
+
+	def close(self, *retval):
+		Screen.close(self, retval)
 
 	def timeoutCallback(self):
 		print "Timeout!"

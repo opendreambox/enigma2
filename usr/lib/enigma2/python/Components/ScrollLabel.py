@@ -14,19 +14,19 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		self.total = None
 
 	def applySkin(self, desktop, parent):
-		ret = False
-		if self.skinAttributes is not None:
-			skin.applyAllAttributes(self.long_text, desktop, self.skinAttributes, parent.scale)
-			widget_attribs = [ ]
-			scrollbar_attribs = [ ]
-			for (attrib, value) in self.skinAttributes:
-				if attrib.find("borderColor") != -1 or attrib.find("borderWidth") != -1:
-					scrollbar_attribs.append((attrib,value))
-				if attrib.find("transparent") != -1 or attrib.find("backgroundColor") != -1:
-					widget_attribs.append((attrib,value))
-			skin.applyAllAttributes(self.instance, desktop, widget_attribs, parent.scale)
-			skin.applyAllAttributes(self.scrollbar, desktop, scrollbar_attribs+widget_attribs, parent.scale)
-			ret = True
+		if self.skinAttributes is None:
+			return False
+		skin.applyAllAttributes(self.long_text, desktop, self.skinAttributes, parent.scale)
+		widget_attribs = [ ]
+		scrollbar_attribs = [ ]
+		for (attrib, value) in self.skinAttributes:
+			if attrib.find("borderColor") != -1 or attrib.find("borderWidth") != -1:
+				scrollbar_attribs.append((attrib,value))
+			if attrib.find("transparent") != -1 or attrib.find("backgroundColor") != -1:
+				widget_attribs.append((attrib,value))
+		skin.applyAllAttributes(self.instance, desktop, widget_attribs, parent.scale)
+		skin.applyAllAttributes(self.scrollbar, desktop, scrollbar_attribs+widget_attribs, parent.scale)
+
 		s = self.long_text.size()
 		self.instance.move(self.long_text.position())
 		lineheight=fontRenderClass.getInstance().getLineHeight( self.long_text.getFont() )
@@ -46,7 +46,8 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 		self.long_text.move(ePoint(0,0))
 		self.long_text.resize(eSize(s.width()-scrollbarwidth-10, self.pageHeight*16))
 		self.setText(self.message)
-		return ret
+
+		return True
 
 	def setText(self, text):
 		self.message = text
