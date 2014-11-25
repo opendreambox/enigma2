@@ -1,6 +1,6 @@
 <wizard nextstepanimation="wizard_next" previousstepanimation="wizard_previous">
-		<step id="start" nextstep="welcome">
-			<short_title value="Language" />
+		<step id="start" nextstep="introduction">
+			<short_title value="Language selection" />
 			<text value="Please use the UP and DOWN keys to select your language. Afterwards press the OK button." />
 			<multicontentlist type="dynamic" setfunction="setLanguageList" onselect="onLanguageSelect" evaluation="languageSave" />
 			<code>
@@ -9,17 +9,9 @@ self.selectKey("UP")
 self.selectKey("DOWN")
 			</code>
 		</step>
-		<step id="welcome" nextstep="introduction">
-			<short_title value="Startwizard" />
-			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your Dreambox.\nPress the OK button on your remote control to move to the next step." />
-			<code>
-self.clearSelectedKeys()
-self.selectKey("OK")
-			</code>
-		</step>
 		<step id="introduction" >
 			<short_title value="Startwizard" />
-			<text value="Use the up/down keys on your remote control to select an option. After that, press OK." />
+			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your Dreambox.\n\nUse the up/down keys on your remote control to select an option. After that, press OK." />
 			<list>
 				<listentry caption="Use wizard to set up basic features" step="nima" />
 				<listentry caption="Exit wizard" step="end" />
@@ -102,10 +94,10 @@ self.condition = config.misc.startwizard.doservicescan.value and nimmanager.some
 self.hideRc()
 			</code>
 			<list>
-				<listentry caption="Yes" step="startdefaultlists" />
+				<listentry caption="Yes, install default servicelists" step="startdefaultlists" />
 				<listentry caption="No, but do an automatic scan now" step="scan" />
 				<listentry caption="No, but do a manual scan now" step="manualscan" />
-				<listentry caption="No, scan later manually" step="setautomaticstandby" />
+				<listentry caption="No, proceed with empty service list" step="setautomaticstandby" />
 			</list>
 		</step>
 		<step id="scan" nextstep="setautomaticstandby">
@@ -154,8 +146,8 @@ config.usage.inactivity_shutdown_initialized.save()
 			<text value="Do you want to enable the parental control feature on your dreambox?" />
 			<short_title value="ParentControl" />
 			<list>
-				<listentry caption="Yes" step="parentalsetup" />
-				<listentry caption="No" step="expert" />
+				<listentry caption="Disable Parental Control" step="expert" />
+				<listentry caption="Enable Parental Control" step="parentalsetup" />
 			</list>
 			<code pos="after">
 from Components.config import config
@@ -203,7 +195,7 @@ config.ParentalControl.setuppin.save()
 		</step>
 		<step id="expert">
 			<text value="Your Dreambox offers three levels of configuration options:\n\nSimple - We suggest this level if this is your first contact with a Dreambox.\nIntermediate - This level enables you to change some more options, mainly the graphical user interface and the behaviour of your Dreambox.\nExpert - This gives you full control over all available settings of your Dreambox.\n\nWarning: Higher levels may lead to increased usage complexity." />
-			<short_title value="Userlevel" />
+			<short_title value="User level" />
 			<list type="config" configelement="config.usage.setup_level" />
 		</step>
 		<step id="multibouquets">
@@ -211,8 +203,8 @@ config.ParentalControl.setuppin.save()
 from Components.config import config
 self.condition = config.usage.setup_level.value != "simple" 
 			</condition>
-			<text value="Multiple Bouquets Feature\n\nYour Dreambox offers a multiple bouquets feature. If this feature is active, you can manage multiple favorite lists of TV and radio services. If deactivated, only one favorite list is available which makes navigation a bit easier.\n\nWould you like to activate the multiple bouquets feature now?" />
-			<short_title value="MultiBouquet" />
+			<text value="Multiple Favourites\n\nYour Dreambox offers a multiple favourites feature. If this feature is active, you can manage multiple favourite lists of TV and radio services. If deactivated, only one favourite list is available which makes navigation a bit easier.\n\nWould you like to activate the multiple favourites feature now?" />
+			<short_title value="Favourites" />
 			<list type="config" configelement="config.usage.multibouquet" />
 		</step>
 		<step id="end" laststep="true">

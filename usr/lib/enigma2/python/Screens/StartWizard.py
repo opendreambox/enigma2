@@ -8,7 +8,6 @@ from Screens.LanguageSelection import LanguageSelection, _cached
 from Components.Pixmap import Pixmap
 from Components.config import config, ConfigBoolean, configfile, ConfigSubsection
 
-from LanguageSelection import LanguageWizard
 from Components.NimManager import nimmanager
 
 config.misc.firstrun = ConfigBoolean(default = True)
@@ -40,7 +39,7 @@ class StartWizard(DefaultSatLists, LanguageSelection, Rc):
 
 	def onLanguageSelect(self):
 		LanguageSelection.updateList(self, listname = "multicontentlist")
-
+		self.setTitle(_cached("T2", self["multicontentlist"].getCurrent()[0]))
 		self["text"].setText(_cached("T1", self["multicontentlist"].getCurrent()[0]))
 
 	def languageSave(self, lang):

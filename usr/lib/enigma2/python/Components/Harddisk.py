@@ -138,7 +138,7 @@ class Util:
 			Util.umount(autofsPath)
 
 class Harddisk:
-	def __init__(self, device, removable = False):
+	def __init__(self, device, removable):
 		self.device = device
 		self.isRemovable = removable
 
@@ -446,8 +446,6 @@ class Harddisk:
 		if not self.isRemovable:
 			if self.mkswap() != 0:
 				return -2
-		# Call partprobe to inform the system about the partition table change.
-		Console().ePopen(("partprobe", "partprobe", "-s"))
 
 		if isFstabMounted:
 			if self.mount() != 0:
@@ -564,7 +562,7 @@ class Harddisk:
 		return self.idle_running
 
 class Partition:
-	def __init__(self, hddmanager, mountpoint, device = None, description = "", force_mounted = False, uuid = None):
+	def __init__(self, hddmanager, mountpoint, device, description, force_mounted, uuid):
 		self.__hddmanager = hddmanager
 		self.mountpoint = mountpoint
 		self.description = description
@@ -812,13 +810,6 @@ class HarddiskManager:
 					return False
 			return True
 
-		def partitions(self):
-			partitions = []
-			for partition in listdir(self._classPath):
-				if partition.startswith(self._name):
-					partitions.append(partition)
-			return partitions
-
 		def sysfsPath(self, filename, physdev=False):
 			classPath = self._classPath
 			if physdev and self.isPartition():
@@ -834,6 +825,16 @@ class HarddiskManager:
 				callback(device, reason)
 			except AttributeError:
 				self.delayed_device_Notifier.remove(callback)
+
+	def __callMountNotifier(self, event, mountpoint):
+		if not mountpoint:
+			return
+		print "calling MountNotifier for mountpoint '%s', event '%s'" % (event, mountpoint)
+		for callback in self.onUnMount_Notifier:
+			try:
+				callback(event, mountpoint)
+			except AttributeError:
+				self.onUnMount_Notifier.remove(callback)
 
 	def getAutofsMountpoint(self, device):
 		return "/autofs/%s/" % (device)
@@ -913,7 +914,7 @@ class HarddiskManager:
 
 		return saveFile('/etc/fstab', '\n'.join(output) + '\n')
 
-	def __addHotplugPartition(self, blkdev, data):
+	def __addHotplugDevice(self, blkdev, data):
 		device = blkdev.name()
 
 		print "found block device '%s':" % device
@@ -930,24 +931,20 @@ class HarddiskManager:
 		# see if this is a harddrive or removable drive (usb stick/cf/sd)
 		devtype = data.get('DEVTYPE')	# "disk","partition"
 		if devtype == "disk":
-			if not self.getHDD(device):
-				self.hdd.append(Harddisk(device, blkdev.isRemovable()))
-				self.hdd.sort()
-				SystemInfo["Harddisk"] = len(self.hdd) > 0
+			self.__addDeviceDisk(blkdev, data)
 		elif devtype == "partition":
 			p = self.getPartitionbyDevice(device)
 			if not p:
-				physdev = blkdev.sysfsPath('device', physdev=True)[4:]
-				self.addDevicePartition(device, physdev)
+				self.__addDevicePartition(blkdev, data)
 
 	def __changeHotplugPartition(self, blkdev, data):
 		if data.get('DISK_MEDIA_CHANGE'):
 			if blkdev.hasMedium():
-				self.__addHotplugPartition(blkdev, data)
+				self.__addHotplugDevice(blkdev, data)
 			else:
 				self.__removeHotplugPartition(blkdev, data)
 		else:
-			self.__addHotplugPartition(blkdev, data)
+			self.__addHotplugDevice(blkdev, data)
 
 	def __removeHotplugPartition(self, blkdev, data):
 		device = blkdev.name()
@@ -1000,15 +997,25 @@ class HarddiskManager:
 			return
 
 		if action == "add":
-			self.__addHotplugPartition(blkdev, data)
+			self.__addHotplugDevice(blkdev, data)
 		elif action == "change":
 			self.__changeHotplugPartition(blkdev, data)
 		elif action == "remove":
 			self.__removeHotplugPartition(blkdev, data)
 
-	def addDevicePartition(self, device, physdev):
+	def __addDeviceDisk(self, blkdev, data):
+		# device is the device name, without /dev
+		device = blkdev.name()
+		if not self.getHDD(device):
+			self.hdd.append(Harddisk(device, blkdev.isRemovable()))
+			self.hdd.sort()
+			SystemInfo["Harddisk"] = len(self.hdd) > 0
+
+	def __addDevicePartition(self, blkdev, data):
 		# device is the device name, without /dev
 		# physdev is the physical device path, which we (might) use to determine the userfriendly name
+		device = blkdev.name()
+		physdev = blkdev.sysfsPath('device', physdev=True)[4:]
 		description = self.getUserfriendlyDeviceName(device, physdev)
 		device_mountpoint = self.getAutofsMountpoint(device)
 		uuid = self.getPartitionUUID(device)
@@ -1619,11 +1626,7 @@ class HarddiskManager:
 	def unmountPartitionbyMountpoint(self, mountpoint, device = None):
 		if (path.exists(mountpoint) and path.ismount(mountpoint)) or (not path.exists(mountpoint) and self.get_mountdevice(mountpoint) is not None):
 			#call the mount/unmount event notifier to inform about an unmount
-			for callback in self.onUnMount_Notifier:
-				try:
-					callback(self.EVENT_UNMOUNT, mountpoint)
-				except AttributeError:
-					self.onUnMount_Notifier.remove(callback)
+			self.__callMountNotifier(self.EVENT_UNMOUNT, mountpoint)
 			cmd = "umount" + " " + mountpoint
 			print "[unmountPartitionbyMountpoint] %s:" % (cmd)
 			system(cmd)
@@ -1647,11 +1650,7 @@ class HarddiskManager:
 		if mountpoint != "":
 			if path.exists(mountpoint) and path.ismount(mountpoint):
 				#call the mount/unmount event notifier to inform about an unmount
-				for callback in self.onUnMount_Notifier:
-					try:
-						callback(self.EVENT_UNMOUNT, mountpoint)
-					except AttributeError:
-						self.onUnMount_Notifier.remove(callback)
+				self.__callMountNotifier(self.EVENT_UNMOUNT, mountpoint)
 				cmd = "umount" + " " + mountpoint
 				print "[unmountPartitionbyUUID] %s:" % (mountpoint)
 				system(cmd)
@@ -1699,11 +1698,7 @@ class HarddiskManager:
 						system(cmd)
 						print "[mountPartitionbyUUID]:",cmd
 						#call the mount/unmount event notifier to inform about an mount
-						for callback in self.onUnMount_Notifier:
-							try:
-								callback(self.EVENT_MOUNT, mountpoint)
-							except AttributeError:
-								self.onUnMount_Notifier.remove(callback)
+						self.__callMountNotifier(self.EVENT_MOUNT, mountpoint)
 
 					if path.ismount(mountpoint):
 						dev = self.getDeviceNamebyUUID(uuid)

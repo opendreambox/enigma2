@@ -26,6 +26,7 @@ class ScreenAnimations(object):
 				attrib = animation.attrib
 				key = attrib["key"]
 				name = _(attrib.get("title", key))
+				internal = "internal" in attrib
 				duration = int(attrib.get("duration", 0))
 				alpha = pos = size = matrix = 0
 				alpha_hide = pos_hide = size_hide = rotate_hide = 0
@@ -52,6 +53,7 @@ class ScreenAnimations(object):
 					animset = eWindowAnimationSet.create()
 					animset.setKey(key)
 					animset.setName(name)
+					animset.setInternal(internal)
 					if alpha:
 						animset.setAlpha(alpha)
 					if pos:

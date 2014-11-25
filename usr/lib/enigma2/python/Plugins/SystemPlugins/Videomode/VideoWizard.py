@@ -4,7 +4,7 @@ from Screens.Rc import Rc
 from VideoHardware import video_hw
 
 from Components.Pixmap import Pixmap
-from Components.config import config, ConfigBoolean, configfile
+from Components.config import config, configfile
 
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from Tools.HardwareInfo import HardwareInfo
@@ -13,14 +13,14 @@ from Components.SystemInfo import SystemInfo
 class VideoWizardSummary(WizardSummary):
 	skin = (
 	"""<screen name="VideoWizardSummary" position="0,0" size="132,64" id="1">
-		<widget name="text" position="6,4" size="120,40" font="Regular;12" transparent="1" />
+		<widget source="text" render="Label" position="6,0" size="120,16" font="Regular;16" transparent="1" />
 		<widget source="parent.list" render="Label" position="6,40" size="120,21" font="Regular;14">
 			<convert type="StringListSelection" />
 		</widget>
 		<!--widget name="pic" pixmap="%s" position="6,22" zPosition="10" size="64,64" transparent="1" alphatest="on"/-->
 	</screen>""",
 	"""<screen name="VideoWizardSummary" position="0,0" size="96,64" id="2">
-		<widget name="text" position="0,4" size="96,40" font="Regular;12" transparent="1" />
+		<widget source="text" render="Label" position="6,0" size="120,16" font="Regular;16" transparent="1" />
 		<widget source="parent.list" render="Label" position="0,40" size="96,21" font="Regular;14">
 			<convert type="StringListSelection" />
 		</widget>
@@ -37,6 +37,7 @@ class VideoWizardSummary(WizardSummary):
 		
 	def setLCDPic(self, file):
 		self["pic"].instance.setPixmapFromFile(file)
+
 
 class VideoWizard(WizardLanguage, Rc):
 	skin = """
@@ -74,7 +75,6 @@ class VideoWizard(WizardLanguage, Rc):
 		
 	def createSummary(self):
 		print "++++++++++++***++**** VideoWizard-createSummary"
-		from Screens.Wizard import WizardSummary
 		return VideoWizardSummary
 		
 	def markDone(self):

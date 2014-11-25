@@ -28,6 +28,7 @@ class WizardLanguage(Wizard):
 		
 	def updateTexts(self):
 		print "updateTexts"
+		self.setTitle(_(self.getTitle()))
 		self.updateText(firstset = True)
 		self.updateValues()
 		self.updateLanguageDescription()

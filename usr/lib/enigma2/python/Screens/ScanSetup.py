@@ -534,6 +534,7 @@ class SatBlindscanState(Screen):
 			for pos in range(0,30,2):
 				try:
 					val = int(bitmap[pos:pos+2], 16)
+					val = 128 + (val - 256 if val > 127 else val)
 				except ValueError:
 					print "I constellation data broken at pos", pos
 					val = 0
@@ -541,6 +542,7 @@ class SatBlindscanState(Screen):
 			for pos in range(30,60,2):
 				try:
 					val = int(bitmap[pos:pos+2], 16)
+					val = 128 + (val - 256 if val > 127 else val)
 				except ValueError:
 					print "Q constellation data broken at pos", pos
 					val = 0
@@ -912,11 +914,11 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec))
 				elif self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
+					self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
 					if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_8PSK:
 						self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_8psk))
 					else:
 						self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_qpsk))
-					self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
 					self.list.append(self.modulationEntry)
 					self.list.append(getConfigListEntry(_('Roll-off'), self.scan_sat.rolloff))
 					self.list.append(getConfigListEntry(_('Pilot'), self.scan_sat.pilot))

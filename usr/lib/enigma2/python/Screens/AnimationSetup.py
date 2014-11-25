@@ -14,16 +14,14 @@ class AnimationSetup(Screen):
 
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			
-<!--			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" /> -->
 			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
 
 			<widget name="key_red" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
 			<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-<!--			<widget name="key_yellow" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" /> -->
 			<widget name="key_blue" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			
-			<widget name="list" position="10,50" size="560,435" scrollbarMode="showOnDemand"/>
+			<widget name="list" position="10,50" size="560,405" scrollbarMode="showOnDemand"/>
+			<widget name="selected_info" position="10,460" zPosition="1" size="560,40" font="Regular;20" valign="center" transparent="1" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -33,6 +31,7 @@ class AnimationSetup(Screen):
 		self["key_red"] = Label(_("Cancel"))
 		self["key_green"] = Label(_("Save"))
 		self["key_blue"] = Label(_("Preview"))
+		self["selected_info"] = Label(_("* current animation"))
 
 		self["SetupActions"] = ActionMap(["SetupActions", "ColorActions"],
 		{
@@ -47,6 +46,8 @@ class AnimationSetup(Screen):
 		animations = eWindowAnimationManager.getAnimations()
 		l = []
 		for key, name in animations.iteritems():
+			if key == config.osd.window_animation_default.value:
+				name = "* %s" %(name)
 			l.append( (name, key) )
 		self["list"].setList(l)
 

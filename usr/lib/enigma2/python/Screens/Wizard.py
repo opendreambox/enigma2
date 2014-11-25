@@ -42,7 +42,10 @@ class WizardSummary(Screen):
 		self.onShow.append(self.setCallback)
 		
 	def setCallback(self):
-		self.parent.setLCDTextCallback(self.setTitle)
+		self.parent.setLCDTextCallback(self.setText)
+
+	def setText(self, text):
+		pass
 
 	def setTitle(self, title):
 		Log.i(title)
@@ -97,7 +100,7 @@ class Wizard(Screen):
 				else:
 					self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif name == "displaytext" or name =="short_title":
-				self.wizard[self.lastStep]["short_title"] = _(str(attrs.get('value')).replace("\\n", "\n"))
+				self.wizard[self.lastStep]["short_title"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif (name == "list"):
 				if (attrs.has_key('type')):
 					if attrs["type"] == "dynamic":
@@ -241,6 +244,7 @@ class Wizard(Screen):
 			#self["list"] = MenuList(self.list, enableWrapAround = True)
 
 		self.onShown.append(self.updateValues)
+		self.onShow.append(self._setTitle)
 
 		self.configInstance = None
 		self.currentConfigIndex = None
@@ -277,6 +281,8 @@ class Wizard(Screen):
 			"0": self.keyNumberGlobal
 		}, -1)
 
+		self.__title = None
+
 		self["VirtualKB"] = NumberActionMap(["VirtualKeyboardActions"],
 		{
 			"showVirtualKeyboard": self.KeyText,
@@ -286,6 +292,10 @@ class Wizard(Screen):
 		
 		self.onHideFinished.append(self.__hideFinished)
 		self.onFirstExecBegin.append(self._initAnimation)
+
+	def _setTitle(self):
+		if self.__title:
+			self.setTitle(self.__title)
 
 	NEXT_STEP_ANIMATION = 0
 	PREVIOUS_STEP_ANIMATION = 1
@@ -561,7 +571,7 @@ class Wizard(Screen):
 		else:
 			if firstset:
 				self["text"].setText(text)
-		
+
 	def updateValues(self):
 		print "Updating values in step " + str(self.currStep)
 		# calling a step which doesn't exist can only happen if the condition in the last step is not fulfilled
@@ -592,11 +602,6 @@ class Wizard(Screen):
 				self.currStep += 1
 				self.updateValues()
 		else:
-			if self.wizard[self.currStep].has_key("short_title"):
-				short_title = self.wizard[self.currStep]["short_title"]
-				print "set LCD text"
-				for x in self.lcdCallbacks:
-					x(short_title)
 			if len(self.stepHistory) == 0 or self.stepHistory[-1] != self.currStep:
 				self.stepHistory.append(self.currStep)
 			print "wizard step:", self.wizard[self.currStep]
@@ -613,11 +618,10 @@ class Wizard(Screen):
 			print "wizard text", self.getTranslation(self.wizard[self.currStep]["text"])
 			self.updateText(firstset = True)
 			if self.wizard[self.currStep].has_key("short_title"):
-				short_title = self.wizard[self.currStep]["short_title"]
-				print "set LCD text"
-				for x in self.lcdCallbacks:
-					x(short_title)
-				
+				short_title = _(self.wizard[self.currStep]["short_title"])
+				print "set Title"
+				self.__title = short_title
+
 			self.codeafter=False
 			self.runCode(self.wizard[self.currStep]["code"])
 			if self.runCode(self.wizard[self.currStep]["code_async"]):
@@ -793,7 +797,6 @@ class Wizard(Screen):
 			self["config"].setCurrentIndex(self.currentConfigIndex)
 			self["config"].getCurrent()[1].setValue(callback)
 			self["config"].invalidate(self["config"].getCurrent())
-
 
 class WizardManager:
 	def __init__(self):

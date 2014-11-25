@@ -26,6 +26,7 @@ public:
 	eSize parentCsize() const;
 
 	void invalidate(const gRegion &region = gRegion::invalidRegion());
+	virtual void invalidateForAnimation();
 
 		/* the window were to attach childs to. Normally, this
 		   is "this", but it can be overridden in case a widget
@@ -58,6 +59,9 @@ public:
 	void onAnimationFinshed();
 	void signalHideAnimationFinished();
 	virtual bool canAnimate(){ return false; };
+	virtual bool isFinishedAnimating() const;
+
+	void setPulsate(bool enabled, int64_t duration=1000, float from=0.3, float to=1.0);
 
 	int isTransparent() { return m_vis & wVisTransparent; }
 
@@ -71,7 +75,6 @@ private:
 
 	int m_vis;
 
-	ePtrList<eWidget> m_childs;
 	ePoint m_position;
 	eSize m_size, m_client_size;
 		/* will be accounted when there's a client offset */
@@ -101,6 +104,7 @@ protected:
 		wVisFade = 4,
 	};
 
+	ePtrList<eWidget> m_childs;
 	bool m_enabled;
 
 	int m_z_position;
@@ -108,6 +112,8 @@ protected:
 	struct eWidgetDesktopCompBuffer *m_comp_buffer;
 	ePtr<eWidgetAnimationSet> m_animations;
 	bool m_animations_enabled;
+	bool m_can_animate;
+	ePtr<eTimer> m_invalidationTimer;
 
 	const eWidgetDesktop *desktop() const;
 	gPixelFormat pixelFormat() const;

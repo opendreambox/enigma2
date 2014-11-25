@@ -8,7 +8,7 @@ self.clearSelectedKeys()
 self.selectKey("OK")
 		</code>
 		<condition>
-self.condition = not self.isNetworkConnected()
+self.condition = not self.isOnline()
 		</condition>
 	</step>
 	<step id="alreadyonline">
@@ -19,7 +19,7 @@ self.condition = not self.isNetworkConnected()
 			<listentry caption="Run the Network wizard anyways" step="technologies" />
 		</list>
 		<condition>
-self.condition = self.isNetworkConnected()
+self.condition = self.isOnline()
 		</condition>
 	</step>
 	<step id="technologies" nextstep="services">
