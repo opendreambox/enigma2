@@ -9,23 +9,27 @@ class NetworkData(object):
 	data = property(getData)
 
 class IpData(NetworkData):
-	def __init__(self, data):
+	def __init__(self, data, default="0.0.0.0"):
 		NetworkData.__init__(self, data)
+		self.default = default
 
 	def getMethod(self):
-		return self._data.get(eNetworkService.KEY_METHOD, _("N/A"))
+		return self._data.get(eNetworkService.KEY_METHOD, "off")
 	method = property(getMethod)
 
 	def getAddress(self):
-		return self._data.get(eNetworkService.KEY_ADDRESS, _("N/A"))
+		return self._data.get(eNetworkService.KEY_ADDRESS, self.default)
 	address = property(getAddress)
 
 	def getNetmask(self):
-		return self._data.get(eNetworkService.KEY_NETMASK, _("N/A"))
+		if self._data.has_key(eNetworkService.KEY_NETMASK):
+			return self._data.get(eNetworkService.KEY_NETMASK, self.default)
+		else:
+			return ord(self._data.get(eNetworkService.KEY_PREFIX_LENGTH, 0))
 	netmask = property(getNetmask)
 
 	def getGateway(self):
-		return self._data.get(eNetworkService.KEY_GATEWAY, _("N/A"))
+		return self._data.get(eNetworkService.KEY_GATEWAY, self.default)
 	gateway = property(getGateway)
 
 class EthernetData(NetworkData):
@@ -33,18 +37,18 @@ class EthernetData(NetworkData):
 		NetworkData.__init__(self, data)
 
 	def getInterface(self):
-		return self._data.get(eNetworkService.KEY_INTERFACE, _("N/A"))
+		return self._data.get(eNetworkService.KEY_INTERFACE, _("n/a"))
 	interface = property(getInterface)
 
 	def getMacAddress(self):
-		return self._data.get(eNetworkService.KEY_ADDRESS, _("N/A"))
+		return self._data.get(eNetworkService.KEY_ADDRESS, "00:00:00:00:00:00")
 	mac = property(getMacAddress)
 
 class NetworkInterface(object):
 	def __init__(self, service):
 		self._ethernet = EthernetData(service.ethernet())
 		self._ipv4 = IpData(service.ipv4())
-		self._ipv6 = IpData(service.ipv6())
+		self._ipv6 = IpData(service.ipv6(), default="::")
 
 	def getEthernet(self):
 		return self._ethernet

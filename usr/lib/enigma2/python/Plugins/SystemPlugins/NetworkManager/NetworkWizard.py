@@ -36,7 +36,7 @@ class NetworkWizardNew(WizardLanguage, Rc, NetworkConfigGeneral):
 			<widget source="list" render="Listbox" position="280,320" size="880,250" scrollbarMode="showOnDemand" zPosition="1">
 				<convert type="TemplatedMultiContent">
 					{"templates":
-						{	"default" : ( 20, [ MultiContentEntryText(pos = (5, 0), size = (870, 20), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1)]),
+						{	"default" : ( 25, [ MultiContentEntryText(pos = (5, 2), size = (870, 20), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1)]),
 							"service" : (50, [
 								MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
 								MultiContentEntryText(pos = (830, 0), size = (50, 50), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), #signal strength

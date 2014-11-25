@@ -3,10 +3,11 @@ from enigma import eNetworkManager, eNetworkService, eNetworkServicePtr, StringL
 
 from Components.Label import Label
 from Components.ActionMap import ActionMap
-from Components.config import getConfigListEntry, ConfigIP, ConfigOnOff, ConfigIP6, ConfigSelection
+from Components.config import getConfigListEntry, ConfigIP, ConfigOnOff, ConfigIP6, ConfigSelection, ConfigInteger
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
+from Components.Network import NetworkInterface
 from Screens.Screen import Screen
 
 from Tools.BoundFunction import boundFunction
@@ -185,7 +186,7 @@ class NetworkConfigGeneral(object):
 
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
-		<screen name="NetworkServiceConfig" position="center,center" size="560,500" title="Network Configuration" zPosition="0">
+		<screen name="NetworkServiceConfig" position="center,center" size="1020,500" title="Network Configuration" zPosition="0">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
@@ -196,7 +197,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			<widget name="key_yellow" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 			<widget name="key_blue" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 
-			<widget source="list" render="Listbox" position="5,50" size="550,420" scrollbarMode="showOnDemand" zPosition="1">
+			<widget source="list" render="Listbox" position="5,50" size="550,400" scrollbarMode="showOnDemand" zPosition="1">
 				<convert type="TemplatedMultiContent">
 					{"template":[
 							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
@@ -212,7 +213,12 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 					}
 				</convert>
 			</widget>
-			<widget name="hint" position="5,480" zPosition="1" size="560,20" font="Regular;16" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+
+			<widget name="hint" position="5,470" zPosition="1" size="555,25" font="Regular;20" halign="center" valign="center" transparent="1" />
+
+			<eLabel position="570,10" size="440,480" zPosition="0" backgroundColor="#0E3B62" />
+			<widget name="details_label" position="580,20" zPosition="1" size="420,25" font="Regular;22" backgroundColor="#0E3B62" transparent="1" />
+			<widget name="details" position="580,55" zPosition="1" size="420,430" font="Regular;16" backgroundColor="#0E3B62" transparent="1" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -224,6 +230,8 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self["key_yellow"] = Label(_("IP"))
 		self["key_blue"] = Label(_("DNS"))
 		self["hint"] = Label(_("Press OK to connect"))
+		self["details_label"] = Label(_("Active Connection"))
+		self["details"] = Label("")
 		self["OkCancelActions"] = ActionMap(["OkCancelActions", "ColorActions"],
 		{
 			"cancel": self.close,
@@ -357,6 +365,58 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				self._hasWireless = True
 		self._services.updateList(self.getServiceList(unified=True))
 		self._checkButtons()
+		self._setDetailText()
+
+	def _setDetailText(self):
+		text = ""
+		for service in self._nm.getServices():
+			if service.connected():
+				if text:
+					text = "\n\n%s" %(text)
+
+				text = _("%s\n\n") %(service.name())
+				ni = NetworkInterface(service)
+				ip4 = ni.getIpv4()
+				ip6 = ni.getIpv6()
+				iptext = _("%s IPv%s\n  Address: %s\n  %s: %s\n  Gateway: %s\n\n")
+				#IPv4
+				if ip4.method != eNetworkService.METHOD_OFF:
+					addr = ip4.address
+					mask = ip4.netmask
+					gw = ip4.gateway
+					text = iptext %(
+							text,
+							4,
+							addr,
+							_("Netmask"),
+							mask,
+							gw,
+						)
+				#IPv6
+				if ip6.method != eNetworkService.METHOD_OFF:
+					addr = ip6.address
+					mask = ip6.netmask
+					gw = ip6.gateway
+					text = iptext %(
+							text,
+							6,
+							addr,
+							_("Prefix length"),
+							mask,
+							gw,
+						)
+				ns = self._textFormatIpList( service.nameservers() )
+				text = _("%sNameserver\n%s\n") %(text, ns) or _("n/a")
+				ts = self._textFormatIpList( service.timeservers() )
+				text = _("%s\nTimeserver\n%s\n") %(text, ts)
+				break
+		self["details"].setText(text)
+
+	def _textFormatIpList(self, iplist):
+		if not iplist:
+			return "  %s" %(_("n/a"))
+		iplist = "  %s" %("\n  ".join(iplist))
+		return iplist
 
 	def _techPoweredChanged(self, powered):
 		if powered:
@@ -397,7 +457,7 @@ class ServiceIPConfiguration(object):
 		choices_privacy_ip6 = {eNetworkService.IPV6_PRIVACY_DISABLED : _("Disabled"), eNetworkService.IPV6_PRIVACY_ENABLED : _("Enabled"), eNetworkService.IPV6_PRIVACY_PREFERRED : _("Preferred")}
 		self._config_ip6_method = ConfigSelection(method_choices_ip6, default=eNetworkService.METHOD_DHCP)
 		self._config_ip6_address = ConfigIP6()
-		self._config_ip6_mask = ConfigIP6()
+		self._config_ip6_prefix_length = ConfigInteger(0, limits=(1, 128))
 		self._config_ip6_gw = ConfigIP6()
 		self._config_ip6_privacy = ConfigSelection(choices_privacy_ip6, default="disabled")
 
@@ -429,7 +489,7 @@ class ServiceIPConfiguration(object):
 		#ipv6
 		self._config_ip6_method.addNotifier(self._changedIP6, initial_call=False)
 		self._config_ip6_address.addNotifier(self._changedIP6, initial_call=False)
-		self._config_ip6_mask.addNotifier(self._changedIP6, initial_call=False)
+		self._config_ip6_prefix_length.addNotifier(self._changedIP6, initial_call=False)
 		self._config_ip6_gw.addNotifier(self._changedIP6, initial_call=False)
 		self._config_ip6_privacy.addNotifier(self._changedIP6, initial_call=False)
 
@@ -475,7 +535,7 @@ class ServiceIPConfiguration(object):
 				ip6 = self._service.ipv6Config()
 			self._config_ip6_method.value = ip6.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
 			self._config_ip6_address.value = ip6.get(eNetworkService.KEY_ADDRESS, "::")
-			self._config_ip6_mask.value = ip6.get(eNetworkService.KEY_NETMASK, "::")
+			self._config_ip6_prefix_length.value = ord(ip6.get(eNetworkService.KEY_PREFIX_LENGTH, 0))
 			self._config_ip6_gw.value = ip6.get(eNetworkService.KEY_GATEWAY, "::")
 			self._config_ip6_privacy.value = ip6.get(eNetworkService.KEY_PRIVACY, eNetworkService.IPV6_PRIVACY_DISABLED)
 		self._isReloading = False
@@ -492,11 +552,11 @@ class ServiceIPConfiguration(object):
 			self._config_ip4_gw.enabled = False
 		if self._config_ip6_method.value == eNetworkService.METHOD_MANUAL:
 			self._config_ip6_address.enabled = True
-			self._config_ip6_mask.enabled = True
+			self._config_ip6_prefix_length.enabled = True
 			self._config_ip6_gw.enabled = True
 		else:
 			self._config_ip6_address.enabled = False
-			self._config_ip6_mask.enabled = False
+			self._config_ip6_prefix_length.enabled = False
 			self._config_ip6_gw.enabled = False
 
 		l = [ getConfigListEntry(_("Method (IPv4)"), self._config_ip4_method), ]
@@ -510,7 +570,7 @@ class ServiceIPConfiguration(object):
 		if self._config_ip6_method.value != eNetworkService.METHOD_OFF:
 			l.extend([
 				getConfigListEntry(_("Address (IPv6)"), self._config_ip6_address),
-				getConfigListEntry(_("Mask (IPv6)"), self._config_ip6_mask),
+				getConfigListEntry(_("Prefix length (IPv6)"), self._config_ip6_prefix_length),
 				getConfigListEntry(_("Gateway (IPv6)"), self._config_ip6_gw),
 			])
 		if self._config_ip6_method.value in (eNetworkService.METHOD_AUTO, eNetworkService.METHOD_6TO4):
@@ -538,7 +598,7 @@ class ServiceIPConfiguration(object):
 				ip6_config = {
 						eNetworkService.KEY_METHOD : self._config_ip6_method.value,
 						eNetworkService.KEY_ADDRESS : self._config_ip6_address.value,
-						eNetworkService.KEY_NETMASK : self._config_ip6_mask.value,
+						eNetworkService.KEY_PREFIX_LENGTH : self._config_ip6_prefix_length.value,
 						eNetworkService.KEY_GATEWAY : self._config_ip6_gw.value,
 						eNetworkService.KEY_PRIVACY : self._config_ip6_privacy.value,
 					}
@@ -694,7 +754,7 @@ class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 	def getActiveDnsText(self):
 		nameservers = list(self._service.nameservers())
 		text = ""
-		if(nameservers):
+		if nameservers:
 			text = _("Active Nameservers:\n%s") %(", ".join(nameservers))
 			Log.i(text)
 		return text

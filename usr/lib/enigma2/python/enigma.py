@@ -4207,6 +4207,7 @@ eNetworkService.KEY_METHOD = _enigma.cvar.eNetworkService_KEY_METHOD
 eNetworkService.KEY_ADDRESS = _enigma.cvar.eNetworkService_KEY_ADDRESS
 eNetworkService.KEY_NETMASK = _enigma.cvar.eNetworkService_KEY_NETMASK
 eNetworkService.KEY_GATEWAY = _enigma.cvar.eNetworkService_KEY_GATEWAY
+eNetworkService.KEY_PREFIX_LENGTH = _enigma.cvar.eNetworkService_KEY_PREFIX_LENGTH
 eNetworkService.KEY_PRIVACY = _enigma.cvar.eNetworkService_KEY_PRIVACY
 eNetworkService.KEY_INTERFACE = _enigma.cvar.eNetworkService_KEY_INTERFACE
 eNetworkService.METHOD_DHCP = _enigma.cvar.eNetworkService_METHOD_DHCP
@@ -4231,6 +4232,7 @@ class eNetworkServicePtr(object):
     KEY_ADDRESS = _swig_property(_enigma.eNetworkServicePtr_KEY_ADDRESS_get)
     KEY_NETMASK = _swig_property(_enigma.eNetworkServicePtr_KEY_NETMASK_get)
     KEY_GATEWAY = _swig_property(_enigma.eNetworkServicePtr_KEY_GATEWAY_get)
+    KEY_PREFIX_LENGTH = _swig_property(_enigma.eNetworkServicePtr_KEY_PREFIX_LENGTH_get)
     KEY_PRIVACY = _swig_property(_enigma.eNetworkServicePtr_KEY_PRIVACY_get)
     KEY_INTERFACE = _swig_property(_enigma.eNetworkServicePtr_KEY_INTERFACE_get)
     METHOD_DHCP = _swig_property(_enigma.eNetworkServicePtr_METHOD_DHCP_get)

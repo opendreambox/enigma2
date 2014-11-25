@@ -35,7 +35,7 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 	skin = """
 		<screen position="center,center" size="1280,720" title="Audio Player">
-			<eLabel position="120,295" size="310,310" zPosition="0" backgroundColor="#214C9C" />
+			<eLabel position="120,295" size="310,310" zPosition="0" backgroundColor="#0E3B62" />
 
 			<widget name="coverArt" position="155,40" size="250,250" pixmap="skin_default/no_coverArt.png" zPosition="1" transparent="1" alphatest="blend" scale="1" />
 			<widget name="title" position="130,300" size="300, 70" zPosition="1" font="Regular;27" valign="top" backgroundColor="background" transparent="1" />

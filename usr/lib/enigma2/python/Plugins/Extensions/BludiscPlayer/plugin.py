@@ -10,7 +10,7 @@ from Components.Pixmap import Pixmap
 
 import bludiscmenu
 
-BD_PATHS = ["/autofs/sr0/"]
+BD_PATHS = ["/media/bludisc/", "/media/net/bludisc", "/autofs/sr0/"]
 BD_AACS_ERRORS = {-1: _("corrupted disc"), -2: _("AACS configuration file missing"), -3: _("no matching processing key"), -4: _("no valid AACS certificate"), -5: _("AACS certificate revoked"), -6: _("MMC authentication failed")}
 
 class BludiscMenu(Screen):
