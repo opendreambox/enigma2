@@ -1961,6 +1961,7 @@ ePositionGauge.setSeekPosition = new_instancemethod(_enigma.ePositionGauge_setSe
 ePositionGauge_swigregister = _enigma.ePositionGauge_swigregister
 ePositionGauge_swigregister(ePositionGauge)
 
+TIME_PER_FRAME = _enigma.TIME_PER_FRAME
 class eWidgetDesktop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -4294,6 +4295,9 @@ class WeakMethodReference( object ):
         a function or class method.
         """
         object.__init__(self)
+
+        if not callable(function):
+            raise AssertionError("ERROR!!! try to create not callable WeakMethodReference", function)
 
         try:
             if function.im_self is not None:

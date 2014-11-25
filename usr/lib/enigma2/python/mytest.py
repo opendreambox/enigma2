@@ -166,7 +166,7 @@ config.misc.useTransponderTime.addNotifier(useTransponderTimeChanged)
 profile("Twisted")
 try:
 	import twisted.python.runtime
-	twisted.python.runtime.platform.supportsThreads = lambda: False
+	twisted.python.runtime.platform.supportsThreads = lambda: True
 
 	import e2reactor
 	e2reactor.install()
@@ -175,6 +175,9 @@ try:
 
 	def runReactor():
 		reactor.run(installSignalHandlers=False)
+		reactor.stop()
+		reactor.doShutdown()
+
 except ImportError:
 	print "twisted not available"
 	def runReactor():

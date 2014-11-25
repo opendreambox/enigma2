@@ -204,7 +204,7 @@ def addDefaultMenuItems():
 addDefaultMenuItems()
 def menu(menuid, **kwargs):
 	if menuid == "mainmenu":
-		return [(_("MediaCenter"), main, "evaap", 45)]
+		return [(_("MediaCenter"), main, "mediacenter", 45)]
 	return []
 
 def main(session, **kwargs):
