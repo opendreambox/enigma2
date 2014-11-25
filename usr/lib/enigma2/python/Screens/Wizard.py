@@ -460,11 +460,21 @@ class Wizard(Screen):
 				if callable(getattr(self.configInstance, "runAsync", None)):
 					if self.updateValues in self.onShown:
 						self.onShown.remove(self.updateValues)
-					self.configInstance.runAsync(self.finished)
-					return
+
+					# we need to remove the callback so it doesn't show the wizard screen after hiding it. the onHideFinished is
+					# fired glpbally, not just for our own Screen
+					self.onHideFinished.remove(self.__hideFinished)
+					self.configInstance.runAsync(self.__configInstanceFinished)
 				else:
 					self.configInstance.run()
 		self.finished()
+
+	def __configInstanceFinished(self):
+		# re-register the callback for the next wizard steps
+		self.onHideFinished.append(self.__hideFinished)
+
+		# we need to show the wizard Screen again. we don't call show() to prevent future features in __hideFinished()
+		self.__hideFinished()
 
 	def keyNumberGlobal(self, number):
 		if (self.wizard[self.currStep]["config"]["screen"] != None):

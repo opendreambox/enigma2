@@ -139,8 +139,8 @@ class HbbTV(object):
 		return var
 
 	def setVideoWindow(self, x, y, w, h):
-		w = self._adjustLimits(w, 0, 1280)
-		h = self._adjustLimits(h, 0, 720)
+		w = self._adjustLimits(w, 128, 1280)
+		h = self._adjustLimits(h, 72, 720)
 		x = self._adjustLimits(x, 0, 1280)
 		y = self._adjustLimits(y, 0, 720)
 

@@ -2617,7 +2617,7 @@ eWindowStyleScrollbar.setScrollbarBorderWidth = new_instancemethod(_enigma.eWind
 eWindowStyleScrollbar_swigregister = _enigma.eWindowStyleScrollbar_swigregister
 eWindowStyleScrollbar_swigregister(eWindowStyleScrollbar)
 
-class eVideoWidget(eLabel):
+class eVideoWidget(eWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 

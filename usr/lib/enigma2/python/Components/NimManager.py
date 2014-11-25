@@ -14,7 +14,6 @@ from enigma import eDVBSatelliteEquipmentControl as secClass, \
 
 from time import localtime, mktime
 from datetime import datetime
-from Tools.BoundFunction import boundFunction
 
 import xml.etree.cElementTree
 
@@ -178,7 +177,6 @@ class SecConfigure:
 		for slot in nim_slots:
 			x = slot.slot
 			nim = slot.config
-			hw = HardwareInfo()
 			if slot.isCompatible("DVB-S"):
 				print "slot: " + str(x) + " configmode: " + str(nim.configMode.value)
 				if nim.configMode.value in ( "loopthrough", "satposdepends", "nothing" ):
@@ -404,8 +402,6 @@ class SecConfigure:
 
 						sec.setRepeats({"none": 0, "one": 1, "two": 2, "three": 3}[currLnb.diseqcRepeats.value])
 
-					setCommandOrder = False
-
 					# 0 "committed, toneburst",
 					# 1 "toneburst, committed",
 					# 2 "committed, uncommitted, toneburst",
@@ -623,7 +619,10 @@ class NimManager:
 		return (mode, NimManager.config_mode_str[mode])
 
 	def getConfiguredSats(self):
-		return self.sec.getConfiguredSats()
+		if self.sec:
+			return self.sec.getConfiguredSats()
+		else:
+			return set()
 
 	def getTransponders(self, pos):
 		if self.transponders.has_key(pos):
@@ -826,6 +825,7 @@ class NimManager:
 		self.satList = [ ]
 		self.cablesList = []
 		self.terrestrialsList = []
+		self.sec = None
 		self.enumerateNIMs()
 		self.readTransponders()
 		InitNimManager(self)	#init config stuff
@@ -1185,7 +1185,7 @@ def InitNimManager(nimmgr, slot_no = None):
 
 	unicable_choices = {
 		"unicable_lnb": _("Unicable LNB"),
-		"unicable_matrix": _("Unicable Martix"),
+		"unicable_matrix": _("Unicable Matrix"),
 		"unicable_user": "Unicable "+_("User defined")}
 	unicable_choices_default = "unicable_lnb"
 
@@ -1242,7 +1242,7 @@ def InitNimManager(nimmgr, slot_no = None):
 				if lnb == 1:
 					section.unicable = ConfigSelection(unicable_choices, unicable_choices_default)
 				elif lnb == 2:
-					section.unicable = ConfigSelection(choices = {"unicable_matrix": _("Unicable Martix"),"unicable_user": "Unicable "+_("User defined")}, default = "unicable_matrix")
+					section.unicable = ConfigSelection(choices = {"unicable_matrix": _("Unicable Matrix"),"unicable_user": "Unicable "+_("User defined")}, default = "unicable_matrix")
 				else:
 					section.unicable = ConfigSelection(choices = {"unicable_user": _("User defined")}, default = "unicable_user")
 
