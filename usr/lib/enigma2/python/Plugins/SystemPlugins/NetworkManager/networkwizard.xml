@@ -10,8 +10,8 @@ self.selectKey("OK")
 	<step id="alreadyonline">
 		<text value="Your Dreambox is already connected to the Internet.\nThere is no configuration required." />
 		<list>
-			<listentry caption="Run the Network wizard anyways" step="technologies" />
 			<listentry caption="Exit wizard" step="end" />
+			<listentry caption="Run the Network wizard anyways" step="technologies" />
 		</list>
 		<condition>
 self.condition = self.isNetworkConnected()
@@ -54,3 +54,4 @@ self.condition = not self.isOnline()
 		<text value="Your Network connection is now set up!" />
 	</step>
 </wizard>
+

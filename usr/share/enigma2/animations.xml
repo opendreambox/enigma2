@@ -76,13 +76,12 @@ You may combine all 3 types of animations, but only one of each kind for one typ
 		<size val="0,0" animateW=""/>
 		<size_hide val="0,0" animateH=""/>
 	</animation>
-
-	<animation key="wizard_previous" title="Slide in left + Slide out right (Bouncing)" duration="1000" interpolate="bounce">
-		<position val="-1.0" animateX="" />
-		<position_hide val="2.0" animateX="" />
+	<animation key="wizard_previous" title="Slide in left + Slide out right (Bouncing)" duration="1000">
+		<position val="-1.0" animateX="" interpolate="bounce"/>
+		<position_hide val="2.0" animateX="" interpolate="accelerate" factor="1.5"/>
 	</animation>
-	<animation key="wizard_next" title="Slide in right + Slide out left (Bouncing)" duration="1000" interpolate="bounce">
-		<position val="2.0" animateX="" />
-		<position_hide val="-1.0" animateX="" />
+	<animation key="wizard_next" title="Slide in right + Slide out left (Bouncing)" duration="1000">
+		<position val="2.0" animateX="" interpolate="bounce"/>
+		<position_hide val="-1.0" animateX="" interpolate="accelerate" factor="1.5"/>
 	</animation>
 </animations>

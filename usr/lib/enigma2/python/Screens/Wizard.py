@@ -283,7 +283,8 @@ class Wizard(Screen):
 		self["VirtualKB"].setEnabled(False)
 		
 		self.onHideFinished.append(self.__hideFinished)
-	
+		self.onFirstExecBegin.append(self._initAnimation)
+
 	NEXT_STEP_ANIMATION = 0
 	PREVIOUS_STEP_ANIMATION = 1
 	def setAnimation(self, type, animation):
@@ -291,7 +292,10 @@ class Wizard(Screen):
 			self.__nextStepAnimation = animation
 		elif type == self.PREVIOUS_STEP_ANIMATION:
 			self.__previousStepAnimation = animation
-		
+
+	def _initAnimation(self):
+		self.setShowHideAnimation(self.__nextStepAnimation)
+
 	def red(self):
 		print "red"
 		pass
@@ -307,7 +311,7 @@ class Wizard(Screen):
 	def blue(self):
 		print "blue"
 		pass
-	
+
 	def deleteForward(self):
 		self.resetCounter()
 		if (self.wizard[self.currStep]["config"]["screen"] != None):

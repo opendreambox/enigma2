@@ -183,7 +183,8 @@ class Screen(dict, GUISkin):
 				val.onShow()
 
 	def hide(self):
-		if not self.shown or not self.instance:
+		if not self.instance or not (self.shown and self.instance.isVisible()):
+			self.__onHideFinished()
 			return
 
 		self.shown = False

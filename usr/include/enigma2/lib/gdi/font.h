@@ -123,7 +123,6 @@ public:
 typedef std::vector<pGlyph> glyphString;
 
 class eFont;
-class eLCD;
 
 class eTextPara: public iObject
 {

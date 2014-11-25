@@ -134,8 +134,8 @@ def nw_setup(session, **kwargs):
 	session.open(NetworkServiceConfig)
 
 def nw_menu(menuid, **kwargs):
-	if menuid == "system":
-		return [(_("Network"), nw_setup, "nw_setup", None)]
+	if menuid == "network":
+		return [(_("Network Setup"), nw_setup, "nw_setup", 1)]
 	else:
 		return []
 

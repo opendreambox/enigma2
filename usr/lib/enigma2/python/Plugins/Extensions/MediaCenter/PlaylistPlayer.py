@@ -9,7 +9,7 @@ from Tools.Directories import resolveFilename, SCOPE_CONFIG
 #plugin imports
 from Tools.Log import Log
 from MediaCore import MediaCore, mediaCore
-from Playlist import DatabasePlaylist
+from DatabasePlaylist import DatabasePlaylist
 
 class PlaylistPlayer(Screen, HelpableScreen):
 	def __init__(self, session, playlist_string, type):
@@ -50,6 +50,10 @@ class PlaylistPlayer(Screen, HelpableScreen):
 		if not self._playlist.valid:
 			self.loadIOPlaylist() #import old filesystem playlist
 			self._playlist.save()
+		self._onPlaylistCreated(self._playlist)
+
+	def _onPlaylistCreated(self, playlist):
+		Log.i("not handled in subclass!")
 
 	def __onClose(self):
 		self._playlist.save()

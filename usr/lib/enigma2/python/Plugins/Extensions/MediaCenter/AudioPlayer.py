@@ -11,7 +11,8 @@ from Screens.MessageBox import MessageBox
 from Helpers import EasyPixmap
 from MediaCore import MediaCore, mediaCore
 from MediaPlayerLCDScreen import MediaPlayerLCDScreen
-from Playlist import Playlist, DatabasePlaylist
+from Playlist import Playlist
+from DatabasePlaylist import DatabasePlaylist
 from PlaylistPlayer import PlaylistPlayer
 
 from Tools.Log import Log
@@ -104,7 +105,6 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 		self._playlist = None
 		self._initPlaylist(config.plugins.mediacenter.audio.last_playlist_id.value)
-
 
 		self.seekState = self.SEEK_STATE_IDLE
 		self._repeat = Playlist.REPEAT_NONE

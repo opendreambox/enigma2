@@ -902,7 +902,7 @@ class HarddiskManager:
 	def addHotplugPartition(self, device, data):
 		print "found block device '%s':" % device
 		if not device:
-			return
+			return False, False, False
 
 		blkdev = self.BlockDevice(device)
 		physdev = blkdev.sysfsPath('device', physdev=True)[4:]
@@ -936,7 +936,7 @@ class HarddiskManager:
 						p = self.getPartitionbyDevice(device)
 						if p is None:
 							self.addDevicePartition(device, physdev)
-				return
+				return removable, is_cdrom, medium_found
 
 			if not blkdev.isPartition() and not is_cdrom and medium_found and self.getHDD(device) is None:
 				self.hdd.append(Harddisk(device, removable))
@@ -1516,6 +1516,11 @@ class HarddiskManager:
 		return description
 
 	def __addPartition(self, mountpoint, device = None, description = "", force_mounted = False, uuid = None, notify = True):
+		if device is not None:
+			fsType = self.getBlkidPartitionType("/dev/" + device)
+			if fsType is not None and fsType == 'swap':
+				force_mounted = False
+				notify = False
 		p = Partition(self, mountpoint, device, description, force_mounted, uuid)
 		self.partitions.append(p)
 		if notify:

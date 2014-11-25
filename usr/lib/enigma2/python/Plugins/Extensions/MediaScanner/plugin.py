@@ -24,12 +24,17 @@ def mountpoint_chosen(option):
 
 	if not list:
 		from Components.Harddisk import harddiskmanager
+		from Components.UsageConfig import defaultStorageDevice
 		p = harddiskmanager.getPartitionbyMountpoint(mountpoint)
 
 		if mountpoint != "/":
 			if p is not None and p.uuid is None: #ignore partitions with unknown or no filesystem uuid
 				print "ignore", mountpoint, "because we have no uuid"
 				return
+			if defaultStorageDevice() == "<undefined>" or not harddiskmanager.HDDEnabledCount(): # no configured default storage device found
+				if p is not None and p.isInitialized:
+					print "ignore", mountpoint, "as its usable as default storage device"
+					return
 
 		description = None
 		if p:
