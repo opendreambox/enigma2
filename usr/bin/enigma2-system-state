@@ -3,10 +3,10 @@ if [ -f /run/enigma2/system-state ]; then
 	state=`cat /run/enigma2/system-state`
 	case "$state" in
 		"system-restart")
-			/sbin/reboot
+			systemctl --no-block reboot
 			;;
 		"system-standby")
-			/sbin/poweroff
+			systemctl --no-block poweroff
 			;;
 		"ui-restart")
 			;;

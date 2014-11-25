@@ -581,48 +581,52 @@ class Partition:
 		if self.device is not None:
 			self.updatePartitionInfo()
 
-	def updatePartitionInfo(self, dstpath = "", dev = None ):
-		curdir = getcwd()
-		testpath = ""
-		if dstpath != "" and dev is not None:
-			self.device = dev
-			testpath = dstpath + self.device
-
-		if self.device is not None:
-			if testpath == "":
-				testpath = "/autofs/" + self.device
-			self.uuid = self.__hddmanager.getPartitionUUID(self.device)
-			try:
-				chdir(testpath)
-				self.isMountable = True
-			except OSError:
-				pass
-			if self.isMountable:
-				try:
-					listdir(testpath)
-					self.isReadable = True
-				except OSError:
-					pass
-			if self.uuid is not None:
-				if self.fsType is None:
-					self.fsType = self.__hddmanager.getBlkidPartitionType("/dev/" + self.device)
-			if self.isReadable:
-				entry = Util.findInMtab(src='/dev/%s' % self.device)
-				if entry:
-					if self.fsType is None:
-						self.fsType = entry['vfstype']
-					self.isWriteable = 'rw' in entry['options'] and access(testpath, W_OK)
-			if self.isWriteable:
-				if access(testpath + "/movie", W_OK):
-					self.isInitialized = True
-		else:
+	def updatePartitionInfo(self):
+		if not self.device:
 			self.uuid = None
 			self.isMountable = False
 			self.isReadable = False
 			self.isWriteable = False
 			self.isInitialized = False
 			self.fsType = None
+			return
+
+		curdir = getcwd()
+
+		self.uuid = self.__hddmanager.getPartitionUUID(self.device)
+		if self.uuid and not self.fsType:
+			self.fsType = self.__hddmanager.getBlkidPartitionType("/dev/" + self.device)
+
+		testpath = "/autofs/" + self.device
+		entry = Util.findInMtab(dst=testpath)
+		wasMounted = bool(entry)
+
+		try:
+			chdir(testpath)
+		except OSError:
+			self.isMountable = False
+		else:
+			self.isMountable = True
+
+		try:
+			listdir(testpath)
+		except OSError:
+			self.isReadable = False
+		else:
+			self.isReadable = True
+
+		if not entry:
+			entry = Util.findInMtab(dst=testpath)
+
+		if entry and not self.fsType:
+			self.fsType = entry.get('vfstype')
+
+		self.isWriteable = self.isReadable and access(testpath, W_OK)
+		self.isInitialized = self.isWriteable and access(testpath + "/movie", W_OK)
 		chdir(curdir)
+
+		if not wasMounted:
+			Util.umount(testpath)
 
 	def stat(self):
 		return statvfs(self.mountpoint)
@@ -779,15 +783,15 @@ class HarddiskManager:
 			self._classPath = path.realpath(path.join('/sys/class/block', self._name))
 			self._deviceNode = path.join('/dev', self._name)
 
+		def name(self):
+			return self._name
+
 		def isBlacklisted(self):
 			try:
 				dev = int(Util.readFile(path.join(self._classPath, 'dev')).split(':')[0])
 				return dev in (1, 7, 31, 179) # ram, loop, mtdblock, mmcblk
 			except IOError:
 				return True
-
-		def isOpticalDiscDrive(self):
-			return self._name.startswith('sr')
 
 		def isPartition(self):
 			# /sys/block lists only full block devices
@@ -899,60 +903,44 @@ class HarddiskManager:
 
 		return saveFile('/etc/fstab', '\n'.join(output) + '\n')
 
-	def addHotplugPartition(self, device, data):
+	def __addHotplugPartition(self, blkdev, data):
+		device = blkdev.name()
+
 		print "found block device '%s':" % device
-		if not device:
-			return False, False, False
-
-		blkdev = self.BlockDevice(device)
-		physdev = blkdev.sysfsPath('device', physdev=True)[4:]
-
-		removable = blkdev.isRemovable()
-		is_cdrom = blkdev.isOpticalDiscDrive()
-		medium_found = blkdev.hasMedium()
 
 		# This sucks with two optical drives
-		if is_cdrom:
+		if data.get('ID_CDROM'):
 			self.cd = device
-
-		if blkdev.isBlacklisted():
-			print "blacklisted"
-		else:
-			if not medium_found:
-				print "no medium"
-			else:
-				print "ok, removable=%s, cdrom=%s" % (removable, is_cdrom)
-
-			# see if this is a harddrive or removable drive (usb stick/cf/sd)
-			devtype = data.get('DEVTYPE')	# "disk","partition"
-			if devtype:
-				if not is_cdrom and medium_found:
-					if devtype == "disk":
-						if self.getHDD(device) is None:
-							self.hdd.append(Harddisk(device, removable))
-							self.hdd.sort()
-							SystemInfo["Harddisk"] = len(self.hdd) > 0
-					if devtype == "partition":
-						p = self.getPartitionbyDevice(device)
-						if p is None:
-							self.addDevicePartition(device, physdev)
-				return removable, is_cdrom, medium_found
-
-			if not blkdev.isPartition() and not is_cdrom and medium_found and self.getHDD(device) is None:
-				self.hdd.append(Harddisk(device, removable))
-				self.hdd.sort()
-				SystemInfo["Harddisk"] = len(self.hdd) > 0
-			if not removable or medium_found:
-				self.addDevicePartition(device, physdev)
-
-		return removable, is_cdrom, medium_found
-
-	def removeHotplugPartition(self, device, data):
-		blkdev = self.BlockDevice(device)
-		if blkdev.isBlacklisted():
-			print "blacklisted"
 			return
 
+		if not blkdev.hasMedium():
+			print "no medium"
+			return
+
+		# see if this is a harddrive or removable drive (usb stick/cf/sd)
+		devtype = data.get('DEVTYPE')	# "disk","partition"
+		if devtype == "disk":
+			if not self.getHDD(device):
+				self.hdd.append(Harddisk(device, blkdev.isRemovable()))
+				self.hdd.sort()
+				SystemInfo["Harddisk"] = len(self.hdd) > 0
+		elif devtype == "partition":
+			p = self.getPartitionbyDevice(device)
+			if not p:
+				physdev = blkdev.sysfsPath('device', physdev=True)[4:]
+				self.addDevicePartition(device, physdev)
+
+	def __changeHotplugPartition(self, blkdev, data):
+		if data.get('DISK_MEDIA_CHANGE'):
+			if blkdev.hasMedium():
+				self.__addHotplugPartition(blkdev, data)
+			else:
+				self.__removeHotplugPartition(blkdev, data)
+		else:
+			self.__addHotplugPartition(blkdev, data)
+
+	def __removeHotplugPartition(self, blkdev, data):
+		device = blkdev.name()
 		mountpoint = self.getAutofsMountpoint(device)
 		uuid = self.getPartitionUUID(device)
 		print "[removeHotplugPartition] for device:'%s' uuid:'%s' and mountpoint:'%s'" % (device, uuid, mountpoint)
@@ -991,6 +979,26 @@ class HarddiskManager:
 					callback(device, "remove_delayed" )
 				except AttributeError:
 					self.delayed_device_Notifier.remove(callback)
+
+	def blockDeviceEvent(self, data):
+		action = data.get('ACTION')
+		devpath = data.get('DEVPATH')
+		devtype = data.get('DEVTYPE')
+		if not (action and devpath and devtype):
+			return
+
+		dev = path.basename(devpath)
+		blkdev = self.BlockDevice(dev)
+		if blkdev.isBlacklisted():
+			print "ignoring event for %s (blacklisted)" % devpath
+			return
+
+		if action == "add":
+			self.__addHotplugPartition(blkdev, data)
+		elif action == "change":
+			self.__changeHotplugPartition(blkdev, data)
+		elif action == "remove":
+			self.__removeHotplugPartition(blkdev, data)
 
 	def addDevicePartition(self, device, physdev):
 		# device is the device name, without /dev
@@ -1831,26 +1839,19 @@ class HarddiskManager:
 				print "[setupConfigEntries] device add for '%s' without uuid !!!" % (dev)
 
 	def configureUuidAsDefault(self, uuid, device):
-		#verify if our device is manually mounted from fstab to somewhere else
-		isManualFstabMount = False
-		uuidPath = "/dev/disk/by-uuid/" + uuid
-		devpath = path.realpath(uuidPath)
-		tmpmount = self.get_mountpoint(uuidPath) or self.get_mountpoint(devpath)
-		if tmpmount is not None and tmpmount != "/media/hdd":
-			isManualFstabMount = True
-		if not isManualFstabMount:
-			if not path.islink("/media/hdd") and not self.isPartitionpathFsTabMount(uuid, "/media/hdd"):
-				print "configureUuidAsDefault: using found %s as default storage device" % device
-				config.storage_options.default_device.value = uuid
-				config.storage_options.save()
-				cfg_uuid = config.storage.get(uuid, None)
-				if cfg_uuid is not None and not cfg_uuid["enabled"].value:
-					cfg_uuid["enabled"].value = True
-					cfg_uuid["mountpoint"].value = "/media/hdd"
-					config.storage.save()
-					self.modifyFstabEntry("/dev/disk/by-uuid/" + uuid, "/media/hdd", mode = "add_activated")
-					self.storageDeviceChanged(uuid)
-				configfile.save()
+		if path.islink("/media/hdd") or self.isPartitionpathFsTabMount(uuid, "/media/hdd"):
+			return
+		print "configureUuidAsDefault: using found %s as default storage device" % device
+		config.storage_options.default_device.value = uuid
+		config.storage_options.save()
+		cfg_uuid = config.storage.get(uuid, None)
+		if cfg_uuid is not None and not cfg_uuid["enabled"].value:
+			cfg_uuid["enabled"].value = True
+			cfg_uuid["mountpoint"].value = "/media/hdd"
+			config.storage.save()
+			self.modifyFstabEntry("/dev/disk/by-uuid/" + uuid, "/media/hdd", mode = "add_activated")
+			self.storageDeviceChanged(uuid)
+		configfile.save()
 
 	def isInitializedByEnigma2(self, hdd):
 		isInitializedByEnigma2 = False
