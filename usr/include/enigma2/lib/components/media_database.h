@@ -173,7 +173,7 @@ public:
 	ePtr<eMediaDatabaseResult> getRecordEit(int file_id);
 	ePtr<eMediaDatabaseResult> setRecordEit(int file_id, uint8_t eit_raw[]);
 
-	ePtr<eMediaDatabaseResult> getFileByPath(const std::string &dir, const std::string &filename);
+	ePtr<eMediaDatabaseResult> getFileByPath(const std::string &filepath);
 
 	ePtr<eMediaDatabaseResult> setFileAttribute(int file_id, const std::string &key, const std::string &value);
 	ePtr<eMediaDatabaseResult> deleteFileAttribute(int file_id, const std::string &key);
@@ -210,6 +210,8 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<eMediaDatabaseResult>, eMediaDatabaseResultPtr);
 #ifndef SWIG
 class eMediaDatabaseHandler : public eMainloop_native, public eThread, public sigc::trackable
 {
+	std::string normalizePath(const std::string &path);
+
 public:
 	eMediaDatabaseHandler();
 	~eMediaDatabaseHandler();
@@ -256,9 +258,9 @@ public:
 	QSqlQuery getRecordEit(int file_id);
 	QSqlQuery setRecordEit(int file_id, const uint8_t eit_raw[]);
 
-	QSqlQuery getByFile(const std::string &path, const std::string &file);
-	QSqlQuery getAudioByFile(const std::string &path, const std::string &file);
-	QSqlQuery getVideoByFile(const std::string &path, const std::string &file);
+	QSqlQuery getByFile(const std::string &filepath);
+	QSqlQuery getAudioByFile(const std::string &filepath);
+	QSqlQuery getVideoByFile(const std::string &filepath);
 
 	QSqlQuery getById(int id);
 	QSqlQuery getAudioById(int id);

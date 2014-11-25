@@ -38,7 +38,7 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 
 		self["actions"] = ActionMap(["MediaCenterActions"],
 		{
-				#"cancel": self.leavePlayer,
+				"cancel": self.leavePlayer,
 				"stop": self.leavePlayer,
 				"playpauseService": self.playpauseService,
 				"previous":  self.playPrev,

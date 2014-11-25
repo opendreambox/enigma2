@@ -117,14 +117,12 @@ class DatabasePlaylist(Playlist):
 		Playlist.add(self, ref, data, isBatch)
 
 	def getDetailsByRef(self, ref):
-		path, filename = os_path.split(ref.getPath())
+		path = ref.getPath()
 		#if we get only a reference or an entry with "extra data" but no file id yet we ask the database to enrich the data
 		if path.startswith("/"):
 			Log.i("Asking database for details!")
-			if path.endswith("/"):
-				path = path[0:len(path)-1]
 			db = eMediaDatabase.getInstance()
-			res = db.getFileByPath(path, filename)
+			res = db.getFileByPath(path)
 			if res and res.data() and not res.error() :
 				return dict(res.data()[0])
 			else:

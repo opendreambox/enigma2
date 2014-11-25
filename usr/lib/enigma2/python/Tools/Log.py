@@ -1,9 +1,10 @@
 from sys import _getframe
-from LogConfig import LogConfig, LOG_TYPE_INFO, LOG_TYPE_WARNING, LOG_TYPE_ERROR, LOG_LEVEL_ERROR, LOG_LEVEL_WARNING, LOG_LEVEL_INFO
+from LogConfig import LogConfig, LOG_TYPE_DEBUG, LOG_TYPE_INFO, LOG_TYPE_WARNING, LOG_TYPE_ERROR, LOG_LEVEL_ERROR, LOG_LEVEL_WARNING, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG
 
 class Log(object):
 	@staticmethod
 	def e(text=""):
+		#ERROR
 		LogConfig.init()
 		if LogConfig.level() >= LOG_LEVEL_ERROR:
 			callframe = _getframe(1)
@@ -11,6 +12,7 @@ class Log(object):
 
 	@staticmethod
 	def w(text=""):
+		#WARNING
 		LogConfig.init()
 		if LogConfig.level() >= LOG_LEVEL_WARNING:
 			callframe = _getframe(1)
@@ -18,10 +20,19 @@ class Log(object):
 
 	@staticmethod
 	def i(text=""):
+		#INFO
 		LogConfig.init()
 		if LogConfig.level() >= LOG_LEVEL_INFO:
 			callframe = _getframe(1)
 			Log._log(LOG_TYPE_INFO, text, callframe)
+
+	@staticmethod
+	def d(text=""):
+		#DEBUG
+		LogConfig.init()
+		if LogConfig.level >= LOG_LEVEL_DEBUG:
+			callframe = _getframe(1)
+			Log._log(LOG_TYPE_DEBUG, text, callframe)
 
 	@staticmethod
 	def _log(type, text, callframe=None):
@@ -50,7 +61,7 @@ class Log(object):
 				msg = "\033[0;31m%s\033[1;m" % msg
 			elif type == LOG_TYPE_WARNING:
 				msg = "\033[1;33m%s\033[1;m" % msg
-			elif type == LOG_TYPE_INFO:
+			elif type == LOG_TYPE_DEBUG:
 				msg = "\033[0;37m%s\033[1;m" % msg
 
 		print msg
