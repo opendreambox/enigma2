@@ -411,10 +411,10 @@ private:
 
 // called from epgcache thread
 	void loadInternal();
-	void saveInternal();
+	void saveInternal(bool do_cleanup=false);
 
 	void thread();  // thread function
-	bool copyDatabase(QSqlDatabase *memorydb, char* filename, bool save);
+	bool copyDatabase(QSqlDatabase *memorydb, char* filename, bool save, bool do_cleanup=false);
 #ifdef ENABLE_PRIVATE_EPG
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif

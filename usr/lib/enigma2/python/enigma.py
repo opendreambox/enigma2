@@ -281,10 +281,6 @@ eEnv_resolve = _enigma.eEnv_resolve
 
 NULL = _enigma.NULL
 
-def ePythonOutput(*args):
-  return _enigma.ePythonOutput(*args)
-ePythonOutput = _enigma.ePythonOutput
-
 def ptrAssert(*args):
   return _enigma.ptrAssert(*args)
 ptrAssert = _enigma.ptrAssert
@@ -2138,6 +2134,7 @@ eWidget.onAnimationFinished = new_instancemethod(_enigma.eWidget_onAnimationFini
 eWidget.signalHideAnimationFinished = new_instancemethod(_enigma.eWidget_signalHideAnimationFinished,None,eWidget)
 eWidget.canAnimate = new_instancemethod(_enigma.eWidget_canAnimate,None,eWidget)
 eWidget.isFinishedAnimating = new_instancemethod(_enigma.eWidget_isFinishedAnimating,None,eWidget)
+eWidget.setParentTitle = new_instancemethod(_enigma.eWidget_setParentTitle,None,eWidget)
 eWidget.setPulsate = new_instancemethod(_enigma.eWidget_setPulsate,None,eWidget)
 eWidget.isTransparent = new_instancemethod(_enigma.eWidget_isTransparent,None,eWidget)
 eWidget.getAbsolutePosition = new_instancemethod(_enigma.eWidget_getAbsolutePosition,None,eWidget)
@@ -4971,140 +4968,245 @@ ePicLoad_swigregister(ePicLoad)
 def loadPic(*args):
   return _enigma.loadPic(*args)
 loadPic = _enigma.loadPic
-class hdmi_cec(object):
+class eCec(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    MSG_ACTIVE_SOURCE = _enigma.hdmi_cec_MSG_ACTIVE_SOURCE
-    MSG_IMAGE_VIEW_ON = _enigma.hdmi_cec_MSG_IMAGE_VIEW_ON
-    MSG_TEXT_VIEW_ON = _enigma.hdmi_cec_MSG_TEXT_VIEW_ON
-    MSG_INACTIVE_SOURCE = _enigma.hdmi_cec_MSG_INACTIVE_SOURCE
-    MSG_REQUEST_ACTIVE_SOURCE = _enigma.hdmi_cec_MSG_REQUEST_ACTIVE_SOURCE
-    MSG_ROUTING_CHANGE = _enigma.hdmi_cec_MSG_ROUTING_CHANGE
-    MSG_ROUTING_INFORMATION = _enigma.hdmi_cec_MSG_ROUTING_INFORMATION
-    MSG_SET_STREAMPATH = _enigma.hdmi_cec_MSG_SET_STREAMPATH
-    MSG_STANDBY = _enigma.hdmi_cec_MSG_STANDBY
-    MSG_VERSION = _enigma.hdmi_cec_MSG_VERSION
-    MSG_GET_CEC_VERSION = _enigma.hdmi_cec_MSG_GET_CEC_VERSION
-    MSG_GIVE_PHYS_ADDR = _enigma.hdmi_cec_MSG_GIVE_PHYS_ADDR
-    MSG_GET_MENU_LANG = _enigma.hdmi_cec_MSG_GET_MENU_LANG
-    MSG_REPORT_PHYS_ADDR = _enigma.hdmi_cec_MSG_REPORT_PHYS_ADDR
-    MSG_SET_MENU_LANG = _enigma.hdmi_cec_MSG_SET_MENU_LANG
-    MSG_DEVICE_VENDOR_ID = _enigma.hdmi_cec_MSG_DEVICE_VENDOR_ID
-    MSG_GIVE_DEVICE_VENDOR_ID = _enigma.hdmi_cec_MSG_GIVE_DEVICE_VENDOR_ID
-    MSG_VENDOR_COMMAND = _enigma.hdmi_cec_MSG_VENDOR_COMMAND
-    MSG_VENDOR_COMMAND_WITH_ID = _enigma.hdmi_cec_MSG_VENDOR_COMMAND_WITH_ID
-    MSG_VENDOR_REMOTE_BUTTON_DOWN = _enigma.hdmi_cec_MSG_VENDOR_REMOTE_BUTTON_DOWN
-    MSG_VENDOR_REMOTE_BUTTON_UP = _enigma.hdmi_cec_MSG_VENDOR_REMOTE_BUTTON_UP
-    MSG_SET_OSD_STRING = _enigma.hdmi_cec_MSG_SET_OSD_STRING
-    MSG_GIVE_OSD_NAME = _enigma.hdmi_cec_MSG_GIVE_OSD_NAME
-    MSG_SET_OSD_NAME = _enigma.hdmi_cec_MSG_SET_OSD_NAME
-    MSG_MENU_REQUEST = _enigma.hdmi_cec_MSG_MENU_REQUEST
-    MSG_MENU_STATUS = _enigma.hdmi_cec_MSG_MENU_STATUS
-    MSG_USER_CONTROL_PRESSED = _enigma.hdmi_cec_MSG_USER_CONTROL_PRESSED
-    MSG_USER_CONTROL_RELEASED = _enigma.hdmi_cec_MSG_USER_CONTROL_RELEASED
-    MSG_GIVE_DEVICE_POWER_STATUS = _enigma.hdmi_cec_MSG_GIVE_DEVICE_POWER_STATUS
-    MSG_REPORT_POWER_STATUS = _enigma.hdmi_cec_MSG_REPORT_POWER_STATUS
-    MSG_FEATURE_ABORT = _enigma.hdmi_cec_MSG_FEATURE_ABORT
-    MSG_ABORT_MESSAGE = _enigma.hdmi_cec_MSG_ABORT_MESSAGE
-    MSG_GIVE_AUDIO_STATUS = _enigma.hdmi_cec_MSG_GIVE_AUDIO_STATUS
-    MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS = _enigma.hdmi_cec_MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS
-    MSG_REPORT_AUDIO_STATUS = _enigma.hdmi_cec_MSG_REPORT_AUDIO_STATUS
-    MSG_SET_SYSTEM_AUDIO_MODE = _enigma.hdmi_cec_MSG_SET_SYSTEM_AUDIO_MODE
-    MSG_SYSTEM_AUDIO_MODE_REQUEST = _enigma.hdmi_cec_MSG_SYSTEM_AUDIO_MODE_REQUEST
-    MSG_SYSTEM_AUDIO_MODE_STATUS = _enigma.hdmi_cec_MSG_SYSTEM_AUDIO_MODE_STATUS
-    MSG_SET_AUDIO_RATE = _enigma.hdmi_cec_MSG_SET_AUDIO_RATE
-    ADDR_TV = _enigma.hdmi_cec_ADDR_TV
-    ADDR_RECORDING_DEVICE_1 = _enigma.hdmi_cec_ADDR_RECORDING_DEVICE_1
-    ADDR_ADDR_RECORDING_DEVICE_2 = _enigma.hdmi_cec_ADDR_ADDR_RECORDING_DEVICE_2
-    ADDR_TUNER_1 = _enigma.hdmi_cec_ADDR_TUNER_1
-    ADDR_PLAYBACK_DEVICE_1 = _enigma.hdmi_cec_ADDR_PLAYBACK_DEVICE_1
-    ADDR_AUDIO_SYSTEM = _enigma.hdmi_cec_ADDR_AUDIO_SYSTEM
-    ADDR_TUNER_2 = _enigma.hdmi_cec_ADDR_TUNER_2
-    ADDR_TUNER_3 = _enigma.hdmi_cec_ADDR_TUNER_3
-    ADDR_PLAYBACK_DEVICE_2 = _enigma.hdmi_cec_ADDR_PLAYBACK_DEVICE_2
-    ADDR_RECORDING_DEVICE_2 = _enigma.hdmi_cec_ADDR_RECORDING_DEVICE_2
-    ADDR_TUNER_4 = _enigma.hdmi_cec_ADDR_TUNER_4
-    ADDR_PLAYBACK_DEVICE_3 = _enigma.hdmi_cec_ADDR_PLAYBACK_DEVICE_3
-    ADDR_RESERVED_1 = _enigma.hdmi_cec_ADDR_RESERVED_1
-    ADDR_RESERVED_2 = _enigma.hdmi_cec_ADDR_RESERVED_2
-    ADDR_FREE_USE = _enigma.hdmi_cec_ADDR_FREE_USE
-    ADDR_UNREGISTERED_BROADCAST = _enigma.hdmi_cec_ADDR_UNREGISTERED_BROADCAST
-    POWER_STATE_ON = _enigma.hdmi_cec_POWER_STATE_ON
-    POWER_STATE_STANDBY = _enigma.hdmi_cec_POWER_STATE_STANDBY
-    POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.hdmi_cec_POWER_STATE_TRANSITION_STANDBY_TO_ON
-    POWER_STATE_TRANSITION_ON_TO_STANDBY = _enigma.hdmi_cec_POWER_STATE_TRANSITION_ON_TO_STANDBY
+    MSG_ACTIVE_SOURCE = _enigma.eCec_MSG_ACTIVE_SOURCE
+    MSG_IMAGE_VIEW_ON = _enigma.eCec_MSG_IMAGE_VIEW_ON
+    MSG_TEXT_VIEW_ON = _enigma.eCec_MSG_TEXT_VIEW_ON
+    MSG_INACTIVE_SOURCE = _enigma.eCec_MSG_INACTIVE_SOURCE
+    MSG_REQUEST_ACTIVE_SOURCE = _enigma.eCec_MSG_REQUEST_ACTIVE_SOURCE
+    MSG_ROUTING_CHANGE = _enigma.eCec_MSG_ROUTING_CHANGE
+    MSG_ROUTING_INFORMATION = _enigma.eCec_MSG_ROUTING_INFORMATION
+    MSG_SET_STREAMPATH = _enigma.eCec_MSG_SET_STREAMPATH
+    MSG_STANDBY = _enigma.eCec_MSG_STANDBY
+    MSG_VERSION = _enigma.eCec_MSG_VERSION
+    MSG_GET_CEC_VERSION = _enigma.eCec_MSG_GET_CEC_VERSION
+    MSG_GIVE_PHYS_ADDR = _enigma.eCec_MSG_GIVE_PHYS_ADDR
+    MSG_GET_MENU_LANG = _enigma.eCec_MSG_GET_MENU_LANG
+    MSG_REPORT_PHYS_ADDR = _enigma.eCec_MSG_REPORT_PHYS_ADDR
+    MSG_SET_MENU_LANG = _enigma.eCec_MSG_SET_MENU_LANG
+    MSG_DEVICE_VENDOR_ID = _enigma.eCec_MSG_DEVICE_VENDOR_ID
+    MSG_GIVE_DEVICE_VENDOR_ID = _enigma.eCec_MSG_GIVE_DEVICE_VENDOR_ID
+    MSG_VENDOR_COMMAND = _enigma.eCec_MSG_VENDOR_COMMAND
+    MSG_VENDOR_COMMAND_WITH_ID = _enigma.eCec_MSG_VENDOR_COMMAND_WITH_ID
+    MSG_VENDOR_REMOTE_BUTTON_DOWN = _enigma.eCec_MSG_VENDOR_REMOTE_BUTTON_DOWN
+    MSG_VENDOR_REMOTE_BUTTON_UP = _enigma.eCec_MSG_VENDOR_REMOTE_BUTTON_UP
+    MSG_SET_OSD_STRING = _enigma.eCec_MSG_SET_OSD_STRING
+    MSG_GIVE_OSD_NAME = _enigma.eCec_MSG_GIVE_OSD_NAME
+    MSG_SET_OSD_NAME = _enigma.eCec_MSG_SET_OSD_NAME
+    MSG_MENU_REQUEST = _enigma.eCec_MSG_MENU_REQUEST
+    MSG_MENU_STATUS = _enigma.eCec_MSG_MENU_STATUS
+    MSG_USER_CONTROL_PRESSED = _enigma.eCec_MSG_USER_CONTROL_PRESSED
+    MSG_USER_CONTROL_RELEASED = _enigma.eCec_MSG_USER_CONTROL_RELEASED
+    MSG_GIVE_DEVICE_POWER_STATUS = _enigma.eCec_MSG_GIVE_DEVICE_POWER_STATUS
+    MSG_REPORT_POWER_STATUS = _enigma.eCec_MSG_REPORT_POWER_STATUS
+    MSG_FEATURE_ABORT = _enigma.eCec_MSG_FEATURE_ABORT
+    MSG_ABORT_MESSAGE = _enigma.eCec_MSG_ABORT_MESSAGE
+    MSG_GIVE_AUDIO_STATUS = _enigma.eCec_MSG_GIVE_AUDIO_STATUS
+    MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS
+    MSG_REPORT_AUDIO_STATUS = _enigma.eCec_MSG_REPORT_AUDIO_STATUS
+    MSG_SET_SYSTEM_AUDIO_MODE = _enigma.eCec_MSG_SET_SYSTEM_AUDIO_MODE
+    MSG_SYSTEM_AUDIO_MODE_REQUEST = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_REQUEST
+    MSG_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_STATUS
+    MSG_SET_AUDIO_RATE = _enigma.eCec_MSG_SET_AUDIO_RATE
+    ADDR_TV = _enigma.eCec_ADDR_TV
+    ADDR_RECORDING_DEVICE_1 = _enigma.eCec_ADDR_RECORDING_DEVICE_1
+    ADDR_ADDR_RECORDING_DEVICE_2 = _enigma.eCec_ADDR_ADDR_RECORDING_DEVICE_2
+    ADDR_TUNER_1 = _enigma.eCec_ADDR_TUNER_1
+    ADDR_PLAYBACK_DEVICE_1 = _enigma.eCec_ADDR_PLAYBACK_DEVICE_1
+    ADDR_AUDIO_SYSTEM = _enigma.eCec_ADDR_AUDIO_SYSTEM
+    ADDR_TUNER_2 = _enigma.eCec_ADDR_TUNER_2
+    ADDR_TUNER_3 = _enigma.eCec_ADDR_TUNER_3
+    ADDR_PLAYBACK_DEVICE_2 = _enigma.eCec_ADDR_PLAYBACK_DEVICE_2
+    ADDR_RECORDING_DEVICE_2 = _enigma.eCec_ADDR_RECORDING_DEVICE_2
+    ADDR_TUNER_4 = _enigma.eCec_ADDR_TUNER_4
+    ADDR_PLAYBACK_DEVICE_3 = _enigma.eCec_ADDR_PLAYBACK_DEVICE_3
+    ADDR_RESERVED_1 = _enigma.eCec_ADDR_RESERVED_1
+    ADDR_RESERVED_2 = _enigma.eCec_ADDR_RESERVED_2
+    ADDR_FREE_USE = _enigma.eCec_ADDR_FREE_USE
+    ADDR_UNREGISTERED_BROADCAST = _enigma.eCec_ADDR_UNREGISTERED_BROADCAST
+    VENDOR_DREAM = _enigma.eCec_VENDOR_DREAM
+    VENDOR_AKAI = _enigma.eCec_VENDOR_AKAI
+    VENDOR_AOC = _enigma.eCec_VENDOR_AOC
+    VENDOR_BENQ = _enigma.eCec_VENDOR_BENQ
+    VENDOR_BROADCOM = _enigma.eCec_VENDOR_BROADCOM
+    VENDOR_DAEWOO = _enigma.eCec_VENDOR_DAEWOO
+    VENDOR_DENON = _enigma.eCec_VENDOR_DENON
+    VENDOR_GRUNDIG = _enigma.eCec_VENDOR_GRUNDIG
+    VENDOR_HARMAN_KARDON = _enigma.eCec_VENDOR_HARMAN_KARDON
+    VENDOR_HARMAN_KARDON2 = _enigma.eCec_VENDOR_HARMAN_KARDON2
+    VENDOR_LG = _enigma.eCec_VENDOR_LG
+    VENDOR_LOEWE = _enigma.eCec_VENDOR_LOEWE
+    VENDOR_MARANTZ = _enigma.eCec_VENDOR_MARANTZ
+    VENDOR_MEDION = _enigma.eCec_VENDOR_MEDION
+    VENDOR_ONKYO = _enigma.eCec_VENDOR_ONKYO
+    VENDOR_PANASONIC = _enigma.eCec_VENDOR_PANASONIC
+    VENDOR_PHILIPS = _enigma.eCec_VENDOR_PHILIPS
+    VENDOR_PIONEER = _enigma.eCec_VENDOR_PIONEER
+    VENDOR_PULSE_EIGHT = _enigma.eCec_VENDOR_PULSE_EIGHT
+    VENDOR_SAMSUNG = _enigma.eCec_VENDOR_SAMSUNG
+    VENDOR_SHARP = _enigma.eCec_VENDOR_SHARP
+    VENDOR_SONY = _enigma.eCec_VENDOR_SONY
+    VENDOR_TOSHIBA = _enigma.eCec_VENDOR_TOSHIBA
+    VENDOR_TOSHIBA2 = _enigma.eCec_VENDOR_TOSHIBA2
+    VENDOR_VIZIO = _enigma.eCec_VENDOR_VIZIO
+    VENDOR_YAMAHA = _enigma.eCec_VENDOR_YAMAHA
+    VENDOR_UNKNOWN = _enigma.eCec_VENDOR_UNKNOWN
+    def vendor(*args):
+        """vendor(uint32_t id) -> std::string const"""
+        return _enigma.eCec_vendor(*args)
+
+    vendor = staticmethod(vendor)
+    POWER_STATE_ON = _enigma.eCec_POWER_STATE_ON
+    POWER_STATE_STANDBY = _enigma.eCec_POWER_STATE_STANDBY
+    POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.eCec_POWER_STATE_TRANSITION_STANDBY_TO_ON
+    POWER_STATE_TRANSITION_ON_TO_STANDBY = _enigma.eCec_POWER_STATE_TRANSITION_ON_TO_STANDBY
+    POWER_STATE_UNKNOWN = _enigma.eCec_POWER_STATE_UNKNOWN
     def __init__(self): 
-        """__init__(hdmi_cec self) -> hdmi_cec"""
-        _enigma.hdmi_cec_swiginit(self,_enigma.new_hdmi_cec())
-    __swig_destroy__ = _enigma.delete_hdmi_cec
+        """__init__(eCec self) -> eCec"""
+        _enigma.eCec_swiginit(self,_enigma.new_eCec())
+    __swig_destroy__ = _enigma.delete_eCec
     def getInstance():
-        """getInstance() -> hdmi_cec"""
-        return _enigma.hdmi_cec_getInstance()
+        """getInstance() -> eCec"""
+        return _enigma.eCec_getInstance()
 
     getInstance = staticmethod(getInstance)
     def set_powerstate(self, *args):
-        """set_powerstate(hdmi_cec self, uint8_t newstate)"""
-        return _enigma.hdmi_cec_set_powerstate(self, *args)
+        """set_powerstate(eCec self, uint8_t newstate)"""
+        return _enigma.eCec_set_powerstate(self, *args)
 
     def cec_otp_source_enable(self):
-        """cec_otp_source_enable(hdmi_cec self)"""
-        return _enigma.hdmi_cec_cec_otp_source_enable(self)
+        """cec_otp_source_enable(eCec self)"""
+        return _enigma.eCec_cec_otp_source_enable(self)
 
     def cec_otp_source_disable(self):
-        """cec_otp_source_disable(hdmi_cec self)"""
-        return _enigma.hdmi_cec_cec_otp_source_disable(self)
+        """cec_otp_source_disable(eCec self)"""
+        return _enigma.eCec_cec_otp_source_disable(self)
 
     def cec_ss_standby(self, *args):
-        """cec_ss_standby(hdmi_cec self, int dest)"""
-        return _enigma.hdmi_cec_cec_ss_standby(self, *args)
+        """cec_ss_standby(eCec self, int dest)"""
+        return _enigma.eCec_cec_ss_standby(self, *args)
 
-    def cec_give_sytem_audio_mode_status(self):
-        """cec_give_sytem_audio_mode_status(hdmi_cec self)"""
-        return _enigma.hdmi_cec_cec_give_sytem_audio_mode_status(self)
+    def cec_give_system_audio_mode_status(self):
+        """cec_give_system_audio_mode_status(eCec self)"""
+        return _enigma.eCec_cec_give_system_audio_mode_status(self)
 
     def cec_system_audio_mode_request(self):
-        """cec_system_audio_mode_request(hdmi_cec self)"""
-        return _enigma.hdmi_cec_cec_system_audio_mode_request(self)
+        """cec_system_audio_mode_request(eCec self)"""
+        return _enigma.eCec_cec_system_audio_mode_request(self)
 
     def cec_sendkey(self, *args):
         """
-        cec_sendkey(hdmi_cec self, int dest, int code, bool release=False)
-        cec_sendkey(hdmi_cec self, int dest, int code)
+        cec_sendkey(eCec self, int dest, int code, bool release=False)
+        cec_sendkey(eCec self, int dest, int code)
         """
-        return _enigma.hdmi_cec_cec_sendkey(self, *args)
+        return _enigma.eCec_cec_sendkey(self, *args)
 
     def cec_register_raw_command(self, *args):
-        """cec_register_raw_command(hdmi_cec self, unsigned char cmd)"""
-        return _enigma.hdmi_cec_cec_register_raw_command(self, *args)
+        """cec_register_raw_command(eCec self, unsigned char cmd)"""
+        return _enigma.eCec_cec_register_raw_command(self, *args)
 
     def cec_unregister_raw_command(self, *args):
-        """cec_unregister_raw_command(hdmi_cec self, unsigned char cmd)"""
-        return _enigma.hdmi_cec_cec_unregister_raw_command(self, *args)
+        """cec_unregister_raw_command(eCec self, unsigned char cmd)"""
+        return _enigma.eCec_cec_unregister_raw_command(self, *args)
 
     def get_volume_control_dest(self):
-        """get_volume_control_dest(hdmi_cec self) -> int"""
-        return _enigma.hdmi_cec_get_volume_control_dest(self)
+        """get_volume_control_dest(eCec self) -> int"""
+        return _enigma.eCec_get_volume_control_dest(self)
 
-    receivedStandby = _swig_property(_enigma.hdmi_cec_receivedStandby_get, _enigma.hdmi_cec_receivedStandby_set)
-    isNowActive = _swig_property(_enigma.hdmi_cec_isNowActive_get, _enigma.hdmi_cec_isNowActive_set)
-    receivedRaw = _swig_property(_enigma.hdmi_cec_receivedRaw_get, _enigma.hdmi_cec_receivedRaw_set)
-    receivedMessage = _swig_property(_enigma.hdmi_cec_receivedMessage_get, _enigma.hdmi_cec_receivedMessage_set)
-hdmi_cec.set_powerstate = new_instancemethod(_enigma.hdmi_cec_set_powerstate,None,hdmi_cec)
-hdmi_cec.cec_otp_source_enable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_enable,None,hdmi_cec)
-hdmi_cec.cec_otp_source_disable = new_instancemethod(_enigma.hdmi_cec_cec_otp_source_disable,None,hdmi_cec)
-hdmi_cec.cec_ss_standby = new_instancemethod(_enigma.hdmi_cec_cec_ss_standby,None,hdmi_cec)
-hdmi_cec.cec_give_sytem_audio_mode_status = new_instancemethod(_enigma.hdmi_cec_cec_give_sytem_audio_mode_status,None,hdmi_cec)
-hdmi_cec.cec_system_audio_mode_request = new_instancemethod(_enigma.hdmi_cec_cec_system_audio_mode_request,None,hdmi_cec)
-hdmi_cec.cec_sendkey = new_instancemethod(_enigma.hdmi_cec_cec_sendkey,None,hdmi_cec)
-hdmi_cec.cec_register_raw_command = new_instancemethod(_enigma.hdmi_cec_cec_register_raw_command,None,hdmi_cec)
-hdmi_cec.cec_unregister_raw_command = new_instancemethod(_enigma.hdmi_cec_cec_unregister_raw_command,None,hdmi_cec)
-hdmi_cec.get_volume_control_dest = new_instancemethod(_enigma.hdmi_cec_get_volume_control_dest,None,hdmi_cec)
-hdmi_cec_swigregister = _enigma.hdmi_cec_swigregister
-hdmi_cec_swigregister(hdmi_cec)
+    def setPowerstate(self, *args):
+        """setPowerstate(eCec self, uint8_t newstate)"""
+        return _enigma.eCec_setPowerstate(self, *args)
 
-def hdmi_cec_getInstance():
-  """hdmi_cec_getInstance() -> hdmi_cec"""
-  return _enigma.hdmi_cec_getInstance()
+    def otpEnable(self):
+        """otpEnable(eCec self)"""
+        return _enigma.eCec_otpEnable(self)
+
+    def otpDisable(self):
+        """otpDisable(eCec self)"""
+        return _enigma.eCec_otpDisable(self)
+
+    def systemStandby(self, *args):
+        """systemStandby(eCec self, int dest)"""
+        return _enigma.eCec_systemStandby(self, *args)
+
+    def giveSystemAudioStatus(self):
+        """giveSystemAudioStatus(eCec self)"""
+        return _enigma.eCec_giveSystemAudioStatus(self)
+
+    def systemAudioRequest(self):
+        """systemAudioRequest(eCec self)"""
+        return _enigma.eCec_systemAudioRequest(self)
+
+    def sendKey(self, *args):
+        """
+        sendKey(eCec self, int dest, int code, bool release=False)
+        sendKey(eCec self, int dest, int code)
+        """
+        return _enigma.eCec_sendKey(self, *args)
+
+    def registerRaw(self, *args):
+        """registerRaw(eCec self, unsigned char cmd)"""
+        return _enigma.eCec_registerRaw(self, *args)
+
+    def unregisterRaw(self, *args):
+        """unregisterRaw(eCec self, unsigned char cmd)"""
+        return _enigma.eCec_unregisterRaw(self, *args)
+
+    def getVolumeTarget(self):
+        """getVolumeTarget(eCec self) -> int"""
+        return _enigma.eCec_getVolumeTarget(self)
+
+    receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
+    isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
+    receivedRaw = _swig_property(_enigma.eCec_receivedRaw_get, _enigma.eCec_receivedRaw_set)
+    receivedMessage = _swig_property(_enigma.eCec_receivedMessage_get, _enigma.eCec_receivedMessage_set)
+eCec.set_powerstate = new_instancemethod(_enigma.eCec_set_powerstate,None,eCec)
+eCec.cec_otp_source_enable = new_instancemethod(_enigma.eCec_cec_otp_source_enable,None,eCec)
+eCec.cec_otp_source_disable = new_instancemethod(_enigma.eCec_cec_otp_source_disable,None,eCec)
+eCec.cec_ss_standby = new_instancemethod(_enigma.eCec_cec_ss_standby,None,eCec)
+eCec.cec_give_system_audio_mode_status = new_instancemethod(_enigma.eCec_cec_give_system_audio_mode_status,None,eCec)
+eCec.cec_system_audio_mode_request = new_instancemethod(_enigma.eCec_cec_system_audio_mode_request,None,eCec)
+eCec.cec_sendkey = new_instancemethod(_enigma.eCec_cec_sendkey,None,eCec)
+eCec.cec_register_raw_command = new_instancemethod(_enigma.eCec_cec_register_raw_command,None,eCec)
+eCec.cec_unregister_raw_command = new_instancemethod(_enigma.eCec_cec_unregister_raw_command,None,eCec)
+eCec.get_volume_control_dest = new_instancemethod(_enigma.eCec_get_volume_control_dest,None,eCec)
+eCec.setPowerstate = new_instancemethod(_enigma.eCec_setPowerstate,None,eCec)
+eCec.otpEnable = new_instancemethod(_enigma.eCec_otpEnable,None,eCec)
+eCec.otpDisable = new_instancemethod(_enigma.eCec_otpDisable,None,eCec)
+eCec.systemStandby = new_instancemethod(_enigma.eCec_systemStandby,None,eCec)
+eCec.giveSystemAudioStatus = new_instancemethod(_enigma.eCec_giveSystemAudioStatus,None,eCec)
+eCec.systemAudioRequest = new_instancemethod(_enigma.eCec_systemAudioRequest,None,eCec)
+eCec.sendKey = new_instancemethod(_enigma.eCec_sendKey,None,eCec)
+eCec.registerRaw = new_instancemethod(_enigma.eCec_registerRaw,None,eCec)
+eCec.unregisterRaw = new_instancemethod(_enigma.eCec_unregisterRaw,None,eCec)
+eCec.getVolumeTarget = new_instancemethod(_enigma.eCec_getVolumeTarget,None,eCec)
+eCec_swigregister = _enigma.eCec_swigregister
+eCec_swigregister(eCec)
+
+def eCec_vendor(*args):
+  """eCec_vendor(uint32_t id) -> std::string const"""
+  return _enigma.eCec_vendor(*args)
+
+def eCec_getInstance():
+  """eCec_getInstance() -> eCec"""
+  return _enigma.eCec_getInstance()
+
+class eCecDevice(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eCecDevice_swiginit(self,_enigma.new_eCecDevice(*args))
+    __swig_destroy__ = _enigma.delete_eCecDevice
+    available = _swig_property(_enigma.eCecDevice_available_get, _enigma.eCecDevice_available_set)
+    logical = _swig_property(_enigma.eCecDevice_logical_get, _enigma.eCecDevice_logical_set)
+    physical = _swig_property(_enigma.eCecDevice_physical_get, _enigma.eCecDevice_physical_set)
+    vendor = _swig_property(_enigma.eCecDevice_vendor_get, _enigma.eCecDevice_vendor_set)
+    name = _swig_property(_enigma.eCecDevice_name_get, _enigma.eCecDevice_name_set)
+    powersate = _swig_property(_enigma.eCecDevice_powersate_get, _enigma.eCecDevice_powersate_set)
+eCecDevice_swigregister = _enigma.eCecDevice_swigregister
+eCecDevice_swigregister(eCecDevice)
 
 HBBTV_USER_AGENT = _enigma.HBBTV_USER_AGENT
 class eHbbtv(object):

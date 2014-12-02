@@ -117,7 +117,8 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 		self.l.setBuildFunc(self._buildListEntry)
 
 		self._browser = UPnPBrowser()
-		self._browser.onMediaServerDetected.append(self._onMediaServerDetected)
+		self._browser.onMediaServerDetected.append(self._onMediaServerListChanged)
+		self._browser.onMediaServerRemoved.append(self._onMediaServerListChanged)
 		self._browser.onListReady.append(self._onListReady)
 		self._browser.onBrowseError.append(self._onBrowseError)
 
@@ -137,7 +138,8 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 				fnc()
 
 	def _onClose(self):
-		self._browser.onMediaServerDetected.remove(self._onMediaServerDetected)
+		self._browser.onMediaServerDetected.remove(self._onMediaServerListChanged)
+		self._browser.onMediaServerRemoved.remove(self._onMediaServerListChanged)
 		self._browser.onListReady.remove(self._onListReady)
 		self._browser.onBrowseError.remove(self._onBrowseError)
 
@@ -177,11 +179,11 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 			return False
 		return True
 
-	def _onMediaServerDetected(self, udn, client):
+	def _onMediaServerListChanged(self, udn, client=None):
 		#If we cannot ascend anymore we are showing the server list
 		#that's the only point where we want to react immediately on server list updates
 		if not self._browser.canAscend():
-			self._onListReady(self._browser.getList())
+			self._browser.refresh()
 
 	def _buildListEntry(self, item, *args):
 		if item == MediaBrowser.ITEM_TYPE_UP:

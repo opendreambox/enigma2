@@ -119,9 +119,9 @@ void CHECKFORMAT eFatal(const char*, ...) __attribute__((noreturn));
 enum { lvlDebug=1, lvlWarning=2, lvlFatal=4 };
 
 #ifdef DEBUG
-    void CHECKFORMAT eDebug(const char*, ...);
-    void CHECKFORMAT eDebugNoNewLine(const char*, ...);
-    void CHECKFORMAT eWarning(const char*, ...);
+    #define eDebug(...) do { printf(__VA_ARGS__); printf("\n"); } while(0)
+    #define eDebugNoNewLine(...) printf(__VA_ARGS__)
+    #define eWarning(...) eDebug(__VA_ARGS__)
     #define ASSERT(x) { if (!(x)) eFatal("%s:%d ASSERTION %s FAILED!", __FILE__, __LINE__, #x); }
 #else  // DEBUG
     inline void eDebug(const char* fmt, ...)
@@ -139,7 +139,5 @@ enum { lvlDebug=1, lvlWarning=2, lvlFatal=4 };
 #endif //DEBUG
 
 #endif // SWIG
-
-void ePythonOutput(const char *);
 
 #endif // __E_ERROR__

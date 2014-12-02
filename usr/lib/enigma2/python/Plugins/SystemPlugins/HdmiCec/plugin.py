@@ -46,7 +46,7 @@ class Cec(object):
 		hdmi_cec.setPowerState(hdmi_cec.POWER_STATE_ON)
 		if config.cec.sendpower.value or forceOtp:
 			print "[Cec] power on"
-			hdmi_cec.otp_source_enable()
+			hdmi_cec.otpEnable()
 
 	def powerOff(self):
 		if self._idle_to_standby:
@@ -57,7 +57,7 @@ class Cec(object):
 			if self._skip_next_poweroff_message:
 				self._skip_next_poweroff_message = False
 			else:
-				hdmi_cec.ss_standby()
+				hdmi_cec.systemStandby()
 
 	def _onStandby(self, element):
 		from Screens.Standby import inStandby

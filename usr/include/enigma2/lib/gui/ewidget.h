@@ -61,6 +61,9 @@ public:
 	virtual bool canAnimate(){ return false; };
 	virtual bool isFinishedAnimating() const;
 
+	//merely for debugging purposes
+	void setParentTitle(const std::string &title){ m_parent_title = title; }
+
 	void setPulsate(bool enabled, int64_t duration=1000, float from=0.3, float to=1.0);
 
 	int isTransparent() { return m_vis & wVisTransparent; }
@@ -114,6 +117,7 @@ protected:
 	bool m_animations_enabled;
 	bool m_can_animate;
 	ePtr<eTimer> m_invalidationTimer;
+	std::string m_parent_title;
 
 	const eWidgetDesktop *desktop() const;
 	gPixelFormat pixelFormat() const;

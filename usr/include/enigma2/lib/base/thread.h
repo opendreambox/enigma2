@@ -62,7 +62,7 @@ public:
 	pid_t tid() const;
 private:
 	pthread_t the_thread;
-	pid_t m_tid;
+	pid_t m_thread_id;
 
 	static void *wrapper(void *ptr);
 	int m_alive, m_started;
