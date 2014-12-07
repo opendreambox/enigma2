@@ -161,13 +161,6 @@
 	</package>
 	<package details="plugin_tempfancontrol.xml" name="TempFanControl" packagename="enigma2-plugin-systemplugins-tempfancontrol" shortdescription="Control your system fan">
 		<prerequisites>
-			<hardware type="dm8000" />
-			<hardware type="dm500hd" />
-			<hardware type="dm500hdv2" />
-			<hardware type="dm800se" />
-			<hardware type="dm800sev2" />
-			<hardware type="dm7020hd" />
-			<hardware type="dm7080" />
 			<tag type="System" />
 		</prerequisites>
 	</package>
@@ -178,14 +171,6 @@
 	</package>
 	<package details="plugin_videoenhancement.xml" name="VideoEnhancement" packagename="enigma2-plugin-systemplugins-videoenhancement" shortdescription="VideoEnhancement provides advanced video enhancement settings">
 		<prerequisites>
-			<hardware type="dm8000" />
-			<hardware type="dm800" />
-			<hardware type="dm500hd" />
-			<hardware type="dm500hdv2" />
-			<hardware type="dm800se" />
-			<hardware type="dm800sev2" />
-			<hardware type="dm7020hd" />
-			<hardware type="dm7080" />
 			<tag type="Display" />
 			<tag type="System" />
 		</prerequisites>

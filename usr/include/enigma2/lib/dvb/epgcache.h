@@ -250,6 +250,7 @@ class eEPGCache: public iObject, public eMainloop_native, private eThread, publi
 		ePtr<iDVBSectionReader> m_NowNextReader, m_ScheduleReader, m_ScheduleOtherReader, m_ViasatReader;
 		tidMap seenSections[4], calcedSections[4];
 		std::set<uniqueEPGKey> m_seen_services;
+		std::set<uniqueEPGKey> m_skipped_services;
 #ifdef ENABLE_PRIVATE_EPG
 		ePtr<eTimer> startPrivateTimer;
 		int m_PrevVersion;
@@ -405,6 +406,8 @@ private:
 
 	QSqlQuery m_stmt_lookup_all;
 	QSqlQuery m_stmt_lookup_end_time;
+	QSqlQuery m_stmt_service_id_q_ro;
+	QSqlQuery m_stmt_has_external_source;
 
 	EPGDBThread m_db_thread;
 	__u8 *m_next_section_buffer;
@@ -419,6 +422,7 @@ private:
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif
 	void sectionRead(const __u8 *data, int source, channel_data *channel);
+	bool hasExternalData(const uniqueEPGKey &service);
 	void gotMessage(const Message &message);
 	void flushEPG(const uniqueEPGKey & s=uniqueEPGKey());
 

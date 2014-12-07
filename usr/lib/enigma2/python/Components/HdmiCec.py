@@ -7,6 +7,11 @@ config.cec = ConfigSubsection()
 config.cec.sendpower = ConfigOnOff(default=True)
 config.cec.receivepower = ConfigOnOff(default=False)
 config.cec.volume_forward = ConfigOnOff(default=False)
+config.cec.activate_on_routing_info = ConfigOnOff(default=True)
+config.cec.activate_on_routing_change = ConfigOnOff(default=True)
+config.cec.activate_on_active_source = ConfigOnOff(default=True)
+config.cec.activate_on_stream = ConfigOnOff(default=True)
+config.cec.activate_on_tvpower = ConfigOnOff(default=True)
 
 class HdmiCec:
 	KEY_ID_MUTE = 113

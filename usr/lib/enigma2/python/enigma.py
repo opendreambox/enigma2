@@ -5204,7 +5204,7 @@ class eCecDevice(iObject):
     physical = _swig_property(_enigma.eCecDevice_physical_get, _enigma.eCecDevice_physical_set)
     vendor = _swig_property(_enigma.eCecDevice_vendor_get, _enigma.eCecDevice_vendor_set)
     name = _swig_property(_enigma.eCecDevice_name_get, _enigma.eCecDevice_name_set)
-    powersate = _swig_property(_enigma.eCecDevice_powersate_get, _enigma.eCecDevice_powersate_set)
+    powerstate = _swig_property(_enigma.eCecDevice_powerstate_get, _enigma.eCecDevice_powerstate_set)
 eCecDevice_swigregister = _enigma.eCecDevice_swigregister
 eCecDevice_swigregister(eCecDevice)
 

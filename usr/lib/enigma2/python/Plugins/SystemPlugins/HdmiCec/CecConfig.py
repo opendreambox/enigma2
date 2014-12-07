@@ -45,13 +45,18 @@ class CecConfig(ConfigListScreen, Screen):
 		self._createSetup()
 
 	def _createSetup(self):
-		list = [
+		lst = [
 			getConfigListEntry(_("Send HDMI CEC Power Events"), config.cec.sendpower),
 			getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
 			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
+			getConfigListEntry(_("Handle 'Routing Info' as power up/down"), config.cec.activate_on_routing_info),
+			getConfigListEntry(_("Handle 'Routing Change' as power up/down"), config.cec.activate_on_routing_change),
+			getConfigListEntry(_("Handle 'Active Source' as power up/down"), config.cec.activate_on_active_source),
+			getConfigListEntry(_("Handle 'Set Stream' as power up"), config.cec.activate_on_stream),
+			getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
 		]
-		self["config"].list = list
-		self["config"].l.setList(list)
+
+		self["config"].list = lst
 
 	def layoutFinished(self):
 		self.setTitle(_("HDMI CEC: Setup"))

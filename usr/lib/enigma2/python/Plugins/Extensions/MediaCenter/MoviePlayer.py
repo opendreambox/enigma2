@@ -81,8 +81,7 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 
 	def playAgain(self):
 		print "playAgain"
-		if self.state != self.STATE_IDLE:
-			self.stopCurrent()
+		self.stopCurrent()
 		self.play()
 
 	def playService(self, newservice):
