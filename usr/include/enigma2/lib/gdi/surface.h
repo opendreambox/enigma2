@@ -42,6 +42,7 @@ public:
 	bool valid() { return m_valid; }
 	unsigned int alignment() const;
 	bool glTexture(unsigned int *glHandle, unsigned int *glTarget) const;
+	void flushCache(const eRect &rect);
 };
 
 #endif /* !SWIG */

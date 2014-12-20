@@ -126,6 +126,13 @@ class eFont;
 
 class eTextPara: public iObject
 {
+public:
+	enum AppendResult
+	{
+		appendOk=0,
+		appendNotFound,
+		appendNoSpace,
+	};
 	DECLARE_REF(eTextPara);
 	ePtr<eFont> current_font, replacement_font;
 	FT_Face current_face, replacement_face;
@@ -144,7 +151,7 @@ class eTextPara: public iObject
 	int charCount;
 	bool doTopBottomReordering;
 
-	int appendGlyph(eFont *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags, unsigned long &argb);
+	AppendResult appendGlyph(eFont *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags, unsigned long &argb);
 	void newLine(int flags);
 	void setFont(eFont *font, eFont *replacement_font);
 	eRect boundBox;

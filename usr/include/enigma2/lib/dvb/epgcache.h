@@ -455,7 +455,7 @@ private:
 #endif // SWIG
 public:
 	static eEPGCache *getInstance() { return instance; }
-	static __u32 getStringHash(std::string text);
+	static uint32_t getStringHash(std::string text);
 #ifndef SWIG
 	eEPGCache();
 	~eEPGCache();

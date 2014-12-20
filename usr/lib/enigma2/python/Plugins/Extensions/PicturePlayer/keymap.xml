@@ -1,0 +1,38 @@
+<keymap>
+	<map context="PicturePlayerActions">
+		<device name="compatible: pcKeyboard">
+			<key id="KEY_F1" mapto="previous" flags="m" />
+			<key id="KEY_F2" mapto="playpause" flags="m" />
+			<key id="KEY_F3" mapto="playpause" flags="m" />
+			<key id="KEY_F4" mapto="next" flags="m" />
+			<key id="KEY_F9" mapto="previous" flags="m" />
+			<key id="KEY_F10" mapto="playpause" flags="m" />
+			<key id="KEY_F11" mapto="cancel" flags="m" />
+			<key id="KEY_F12" mapto="next" flags="m" />
+		</device>
+		
+		<key id="KEY_PLAYPAUSE" mapto="playpause" flags="m" />
+		<key id="KEY_PLAY" mapto="playpause" flags="m" />
+
+		<key id="KEY_PREVIOUS" mapto="previous" flags="m" />
+		<key id="KEY_NEXT" mapto="next" flags="m" />
+		<key id="KEY_PREVIOUSSONG" mapto="previous" flags="m" />
+		<key id="KEY_NEXTSONG" mapto="next" flags="m" />
+		<key id="KEY_LEFT" mapto="previous" flags="m" />
+		<key id="KEY_RIGHT" mapto="next" flags="m" />
+		
+		<key id="KEY_RED" mapto="previous" flags="m" />
+		<key id="KEY_GREEN" mapto="playpause" flags="m" />
+		<key id="KEY_YELLOW" mapto="playpause" flags="m" />
+		<key id="KEY_BLUE" mapto="next" flags="m" />
+		
+		<key id="KEY_INFO" mapto="info" flags="m" />
+				
+		<key id="\x1b" mapto="cancel" flags="m" />
+		<key id="KEY_STOP" mapto="cancel" flags="m" />
+		<key id="KEY_EXIT" mapto="cancel" flags="m" />
+		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_KPENTER" mapto="ok" flags="m" />
+		<key id="KEY_ESC" mapto="cancel" flags="m" />
+	</map>
+</keymap>

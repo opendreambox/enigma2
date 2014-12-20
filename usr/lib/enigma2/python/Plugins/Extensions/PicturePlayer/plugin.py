@@ -5,7 +5,7 @@ from Tools.Directories import resolveFilename, pathExists, fileExists, SCOPE_MED
 from Plugins.Plugin import PluginDescriptor
 
 from Components.Pixmap import Pixmap, MovingPixmap
-from Components.ActionMap import ActionMap
+from Components.ActionMap import HelpableActionMap, ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.FileList import FileList
 from Components.AVSwitch import AVSwitch
@@ -500,17 +500,14 @@ class Pic_Full_View(Screen):
 
 		Screen.__init__(self, session)
 
-		self["actions"] = ActionMap(["OkCancelActions", "ColorActions", "DirectionActions", "MovieSelectionActions"],
+		self["PicturePlayerActions"] = HelpableActionMap(self, "PicturePlayerActions",
 		{
-			"cancel": self.Exit,
-			"green": self.PlayPause,
-			"yellow": self.PlayPause,
-			"blue": self.nextPic,
-			"red": self.prevPic,
-			"left": self.prevPic,
-			"right": self.nextPic,
-			"showEventInfo": self.StartExif,
-		}, -1)
+			"cancel":	(self.Exit, _("Exit")),
+			"playpause":	(self.PlayPause, _("Play/Pause")),
+			"next": 	(self.nextPic, _("Next")),
+			"previous":	(self.prevPic, _("Prev")),
+			"info": 	(self.StartExif, _("Info"))
+		}, -2);
 
 		self["point"] = Pixmap()
 		self["pic"] = Pixmap()
