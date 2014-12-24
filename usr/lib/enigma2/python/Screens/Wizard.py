@@ -293,9 +293,9 @@ class Wizard(Screen):
 		self.onHideFinished.append(self.__hideFinished)
 		self.onFirstExecBegin.append(self._initAnimation)
 
-	def close(self):
+	def close(self, *retval):
 		self.onHideFinished.remove(self.__hideFinished)
-		Screen.close(self)
+		Screen.close(self, *retval)
 
 	def _setTitle(self):
 		if self.__title:

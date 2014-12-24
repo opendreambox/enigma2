@@ -119,7 +119,7 @@ void CHECKFORMAT eFatal(const char*, ...) __attribute__((noreturn));
 enum { lvlDebug=1, lvlWarning=2, lvlFatal=4 };
 
 #ifdef DEBUG
-    #define eDebug(...) do { printf(__VA_ARGS__); printf("\n"); } while(0)
+    #define eDebug(...) do { printf(__VA_ARGS__); putchar('\n'); } while(0)
     #define eDebugNoNewLine(...) printf(__VA_ARGS__)
     #define eWarning(...) eDebug(__VA_ARGS__)
     #define ASSERT(x) { if (!(x)) eFatal("%s:%d ASSERTION %s FAILED!", __FILE__, __LINE__, #x); }
