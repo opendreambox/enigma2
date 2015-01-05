@@ -208,6 +208,7 @@ class CableTransponderSearchSupport:
 			if not self.tryGetRawFrontend(nim_idx):
 				if self.session.pipshown: # try to disable pip
 					self.session.pipshown = False
+					self.session.deleteDialog(self.session.pip)
 					del self.session.pip
 				if not self.tryGetRawFrontend(nim_idx):
 					self.TransponderSearchFinished()
@@ -528,6 +529,7 @@ class SatBlindscanState(Screen):
 			for pos in range(0,30,2):
 				try:
 					val = int(bitmap[pos:pos+2], 16)
+					val = 128 + (val - 256 if val > 127 else val)
 				except ValueError:
 					print "I constellation data broken at pos", pos
 					val = 0
@@ -535,6 +537,7 @@ class SatBlindscanState(Screen):
 			for pos in range(30,60,2):
 				try:
 					val = int(bitmap[pos:pos+2], 16)
+					val = 128 + (val - 256 if val > 127 else val)
 				except ValueError:
 					print "Q constellation data broken at pos", pos
 					val = 0
@@ -758,6 +761,7 @@ class SatelliteTransponderSearchSupport:
 				if not self.frontend:
 					if self.session.pipshown: # try to disable pip
 						self.session.pipshown = False
+						self.session.deleteDialog(self.session.pip)
 						del self.session.pip
 					(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 					if not self.frontend:

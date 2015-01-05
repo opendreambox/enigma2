@@ -25,6 +25,7 @@ class ServiceStopScreen:
 		if self.pipAvailable():
 			if self.session.pipshown: # try to disable pip
 				self.session.pipshown = False
+				self.session.deleteDialog(self.session.pip)
 				del self.session.pip
 		
 	def __onClose(self):

@@ -579,6 +579,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		instance.setContent(None)
 		instance.selectionChanged.get().remove(self.selectionChanged)
 		config.usage.configselection_showrecordings.removeNotifier(self.getRecordingList)
+		config.usage.configselection_bigpicons.removeNotifier(self.setItemHeight)
 
 	def getRoot(self):
 		return self.root
