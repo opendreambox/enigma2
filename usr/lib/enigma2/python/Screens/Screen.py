@@ -96,7 +96,7 @@ class Screen(dict, GUISkin):
 	
 			for x in self.onShown:
 				x()
-	
+
 	def execEnd(self):
 		active_components = self.active_components
 #		for (name, val) in self.items():
@@ -106,9 +106,15 @@ class Screen(dict, GUISkin):
 #		assert self.session != None, "execEnd on non-execing screen!"
 #		self.session = None
 		self.execing = False
-	
+
+	def doClose(self, immediate=True):
+		print "WARNING: NEVER call Screen.doClose directly!!! You have to use Session.deleteDialog(screen)\nThis function is deprecated and will be removed in the future\nPlease report!"
+		import traceback
+		traceback.print_stack(limit = 2)
+		self.session.deleteDialog(self)
+
 	# never call this directly - it will be called from the session!
-	def doClose(self, immediate=False):
+	def __doClose(self, immediate=False):
 		if not self.instance:
 			immediate = True
 

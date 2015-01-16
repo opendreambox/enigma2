@@ -509,6 +509,7 @@ class NimSelection(Screen):
 
 	def updateList(self):
 		self.list = [ ]
+		slot_names = [ x.slot_input_name for x in nimmanager.nim_slots ]
 		for x in nimmanager.nim_slots:
 			slotid = x.slot
 			nimConfig = nimmanager.getNimConfig(x.slot)
@@ -517,8 +518,11 @@ class NimSelection(Screen):
 				configMode = nimConfig.configMode.value
 				if x.isCompatible("DVB-S"):
 					if configMode in ("loopthrough", "equal", "satposdepends"):
-						text = nimmanager.config_mode_str[configMode]
-						text += " " + _("Tuner") + " " + ["A", "B", "C", "D"][int(nimConfig.connectedTo.value)]
+						if configMode == "loopthrough":
+							text = _(nimConfig.configMode.getText())
+						else:
+							text = _(nimmanager.config_mode_str[configMode])
+						text += " " + _("Tuner") + " " + slot_names[int(nimConfig.connectedTo.value)]
 					elif configMode == "nothing":
 						text = _("not configured")
 					elif configMode == "simple":

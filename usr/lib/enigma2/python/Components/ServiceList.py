@@ -124,6 +124,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 			self.session.nav.RecordTimer.on_state_change.append(self.onTimerEntryStateChange)
 		config.usage.configselection_showrecordings.addNotifier(self.getRecordingList, initial_call = True)
 		config.usage.configselection_bigpicons.addNotifier(self.setItemHeight, initial_call = True)
+		config.usage.configselection_secondlineinfo.addNotifier(self.setItemHeight, initial_call = False)
 
 	def getRecordingList(self,configElement = None):
 		self.recordingList = {}
@@ -142,7 +143,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 					del self.recordingList[str(timer.service_ref)]
 
 	def setItemHeight(self, configElement = None):
-		if config.usage.configselection_bigpicons.value and self.mode == self.MODE_FAVOURITES:
+		if (config.usage.configselection_bigpicons.value or config.usage.configselection_secondlineinfo.value != "0") and self.mode == self.MODE_FAVOURITES:
 			self.l.setItemHeight(60)
 			if self.instance is not None and self.selectionPixmapBig:
 				self.instance.setSelectionPicture(self.selectionPixmapBig)
@@ -378,7 +379,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 					xoffset += addoffset
 					rwidth -= addoffset
 				# service description
-				if bigPicons and secondlineinfo != "0":
+				if secondlineinfo != "0" and self.mode == self.MODE_FAVOURITES:
 					res.append((eListboxPythonMultiContent.TYPE_TEXT, xoffset, 0, rwidth, self.serviceInfoFontHeight+6, 3, RT_HALIGN_LEFT|RT_VALIGN_CENTER, event.getEventName(), serviceDescriptionColor, serviceDescriptionColorSelected, backgroundColor, backgroundColorSel))
 					if secondlineinfo == "1": # shortdescription
 						text = event.getShortDescription()

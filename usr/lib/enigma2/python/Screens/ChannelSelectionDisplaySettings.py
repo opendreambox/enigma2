@@ -42,12 +42,14 @@ class ChannelSelectionDisplaySettings(Screen, ConfigListScreen):
 
 	def keyCancel(self):
 		config.usage.configselection_bigpicons.cancel()
+		config.usage.configselection_secondlineinfo.cancel()
 		ConfigListScreen.cancelConfirm(self, True)
 
 	def keySave(self):
 		for x in self["config"].list:
 			x[1].save()
 		config.usage.configselection_bigpicons.save()
+		config.usage.configselection_secondlineinfo.save()
 		self.close()
 
 	def newConfig(self):
@@ -56,7 +58,7 @@ class ChannelSelectionDisplaySettings(Screen, ConfigListScreen):
 			self.createSetup("config")
 		if cur and (cur == self.piconPathEntry or cur == self.showPiconsEntry):
 			if self.showpicons.value:
-				if self.piconpath.getIndex() > 2:
+				if self.piconpath.getIndex() > 0:
 					config.usage.configselection_bigpicons.value = True
 				else:
 					config.usage.configselection_bigpicons.value = False
@@ -96,12 +98,12 @@ class ChannelSelectionDisplaySettings(Screen, ConfigListScreen):
 			config.usage.configselection_bigpicons.value = False
 			self.piconPathEntry = None
 		if self.columnStyle.value:
-			if self.showbigpicons.value:
-				self.list.append(getConfigListEntry(_("2nd line info"), config.usage.configselection_secondlineinfo))
+			self.list.append(getConfigListEntry(_("2nd line info"), config.usage.configselection_secondlineinfo))
 			self.showServiceNameEntry = getConfigListEntry(_("Show service name"), self.showservicename)
 			self.list.append(self.showServiceNameEntry)
 		else:
 			self.showServiceNameEntry = None
+			config.usage.configselection_secondlineinfo.value = "0"
 		self.showEventProgressEntry = getConfigListEntry(_("Show event-progress"), self.showeventprogress)
 		self.list.append(self.showEventProgressEntry)
 		if self.columnStyle.value and self.showservicename.value:

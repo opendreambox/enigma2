@@ -25,7 +25,7 @@ struct eventData
 		return iso_639_language_code < e.iso_639_language_code;
 	}
 	time_t begin_time;
-	uint16_t duration;
+	uint32_t duration;
 	uint16_t event_id;
 	std::string iso_639_language_code;
 	std::string title;

@@ -605,7 +605,7 @@ class Wizard(Screen):
 			# remove callbacks
 			self.configInstance["config"].onSelectionChanged = []
 			del self.configInstance["config"]
-			self.configInstance.doClose()
+			self.session.deleteDialog(self.configInstance)
 			self.configInstance = None
 
 		self.condition = True

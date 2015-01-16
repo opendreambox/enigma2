@@ -6,7 +6,7 @@ from Tools.BoundFunction import boundFunction
 from ServiceReference import ServiceReference
 from Tools import Notifications
 from Tools.Directories import resolveFilename, SCOPE_CONFIG
-from enigma import eTimer
+from enigma import eTimer, eServiceCenter, iServiceInformation, eServiceReference
 import time
 from os import fsync
 
@@ -98,6 +98,14 @@ class ParentalControl:
 		if self.configInitialized == False or self.storeServicePin != config.ParentalControl.storeservicepin.value or self.storeServicePinCancel != config.ParentalControl.storeservicepincancel.value:
 			self.getConfigValues()
 		service = ref.toCompareString()
+		splitted = service.split(':')
+		if splitted[0] == '1' and len(splitted[-1]) and splitted[-1][0] == '/': # check if this is a dvb playback
+			serviceHandler = eServiceCenter.getInstance()
+			info = serviceHandler.info(ref)
+			recrefstr = info and info.getInfoString(ref, iServiceInformation.sServiceref) # get original servicereference of recording...
+			if recrefstr:
+				recref = eServiceReference(recrefstr)
+				service = recref.toCompareString()
 		if (config.ParentalControl.type.value == LIST_WHITELIST and not self.whitelist.has_key(service)) or (config.ParentalControl.type.value == LIST_BLACKLIST and self.blacklist.has_key(service)):
 			#Check if the session pin is cached and return the cached value, if it is.
 			if self.sessionPinCached == True:

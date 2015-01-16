@@ -104,6 +104,7 @@ eSocket_UI.answerEnq = new_instancemethod(_socketmmi.eSocket_UI_answerEnq,None,e
 eSocket_UI.cancelEnq = new_instancemethod(_socketmmi.eSocket_UI_cancelEnq,None,eSocket_UI)
 eSocket_UI.getState = new_instancemethod(_socketmmi.eSocket_UI_getState,None,eSocket_UI)
 eSocket_UI.getMMIState = new_instancemethod(_socketmmi.eSocket_UI_getMMIState,None,eSocket_UI)
+eSocket_UI.numConnections = new_instancemethod(_socketmmi.eSocket_UI_numConnections,None,eSocket_UI)
 eSocket_UI.getName = new_instancemethod(_socketmmi.eSocket_UI_getName,None,eSocket_UI)
 eSocket_UI_swigregister = _socketmmi.eSocket_UI_swigregister
 eSocket_UI_swigregister(eSocket_UI)

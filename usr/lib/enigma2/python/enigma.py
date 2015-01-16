@@ -3020,8 +3020,9 @@ class cachestate(object):
     stopped = _enigma.cachestate_stopped
     aborted = _enigma.cachestate_aborted
     deferred = _enigma.cachestate_deferred
+    load_finished = _enigma.cachestate_load_finished
+    save_finished = _enigma.cachestate_save_finished
     __swig_destroy__ = _enigma.delete_cachestate
-cachestate.getTsid = new_instancemethod(_enigma.cachestate_getTsid,None,cachestate)
 cachestate_swigregister = _enigma.cachestate_swigregister
 cachestate_swigregister(cachestate)
 
@@ -5041,6 +5042,7 @@ class eCec(object):
     VENDOR_MARANTZ = _enigma.eCec_VENDOR_MARANTZ
     VENDOR_MEDION = _enigma.eCec_VENDOR_MEDION
     VENDOR_ONKYO = _enigma.eCec_VENDOR_ONKYO
+    VENDOR_OPPO = _enigma.eCec_VENDOR_OPPO
     VENDOR_PANASONIC = _enigma.eCec_VENDOR_PANASONIC
     VENDOR_PHILIPS = _enigma.eCec_VENDOR_PHILIPS
     VENDOR_PIONEER = _enigma.eCec_VENDOR_PIONEER

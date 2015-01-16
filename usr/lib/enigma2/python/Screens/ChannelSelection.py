@@ -1529,6 +1529,8 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 		self.onClose.append(self.__onClose)
 
 	def __onClose(self):
+		del self.info["RdsDecoder"]
+		self.session.deleteDialog(self.info)
 		self.infobar.rds_display.onRassInteractivePossibilityChanged.remove(self.RassInteractivePossibilityChanged)
 		lastservice=eServiceReference(config.tv.lastservice.value)
 		self.session.nav.playService(lastservice)

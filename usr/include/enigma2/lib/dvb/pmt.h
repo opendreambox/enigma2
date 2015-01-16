@@ -67,8 +67,8 @@ class eDVBCAService: public sigc::trackable
 public:
 	static void registerChannelCallback(eDVBResourceManager *res_mgr);
 	static RESULT register_service( const eServiceReferenceDVB &ref, int demux_nums[2], eDVBCAService *&caservice );
-	static RESULT unregister_service( const eServiceReferenceDVB &ref, int demux_nums[2], eTable<ProgramMapSection> *ptr );
-	void buildCAPMT(eTable<ProgramMapSection> *ptr, bool haveCaIds);
+	static RESULT unregister_service( const eServiceReferenceDVB &ref, int demux_nums[2], eTable<ProgramMapSection> *ptr, int tuner_no );
+	void buildCAPMT(eTable<ProgramMapSection> *ptr, bool haveCaIds, int tuner_no);
 };
 
 #endif

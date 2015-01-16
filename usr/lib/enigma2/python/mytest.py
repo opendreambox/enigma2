@@ -284,7 +284,7 @@ class Session:
 
 		self.fading_dialogs.append(self.current_dialog)
 		if self.current_dialog.isTmp:
-			self.current_dialog.doClose()
+			self.current_dialog._Screen__doClose()
 		else:
 			del self.current_dialog.callback
 
@@ -351,7 +351,7 @@ class Session:
 		return self.doInstantiateDialog(screen, arguments, kwargs, self.desktop)
 
 	def deleteDialog(self, screen):
-		screen.doClose(immediate=True)
+		screen._Screen__doClose(immediate=True)
 
 	def instantiateSummaryDialog(self, screen, *arguments, **kwargs):
 		if not self.summary_desktop:
@@ -474,7 +474,7 @@ class Session:
 
 	def popSummary(self):
 		if self.summary is not None:
-			self.summary.doClose(immediate=True)
+			self.summary._Screen__doClose(immediate=True)
 		self.summary = self.summary_stack.pop()
 		if self.summary is not None:
 			self.summary.show()

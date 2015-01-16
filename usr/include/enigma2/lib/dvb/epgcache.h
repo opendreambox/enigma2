@@ -214,8 +214,7 @@ public:
 	uint16_t onid;
 	uint32_t dvbnamespace;
 	int seconds; /* deferred seconds */
-	enum { started, stopped, aborted, deferred };
-	uint16_t getTsid() const { return tsid; }
+	enum { started, stopped, aborted, deferred, load_finished, save_finished };
 	~cachestate()
 	{
 	}
@@ -321,6 +320,8 @@ public:
 			got_mhw2_channel_pid,
 			got_mhw2_title_pid,
 			got_mhw2_summary_pid,
+			loadFinished,
+			saveFinished
 		};
 		int type;
 		iDVBChannel *channel;
