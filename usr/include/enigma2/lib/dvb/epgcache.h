@@ -225,6 +225,10 @@ private:
 		:state(s.state), tsid(s.tsid), onid(s.onid), dvbnamespace(s.dvbnamespace), seconds(s.seconds)
 	{
 	}
+	cachestate(int state)
+		:state(state)
+	{
+	}
 	cachestate(int state, const uniqueEPGKey &chid, int seconds=0)
 		:state(state), tsid(chid.tsid), onid(chid.onid), dvbnamespace(chid.dvbnamespace), seconds(seconds)
 	{
