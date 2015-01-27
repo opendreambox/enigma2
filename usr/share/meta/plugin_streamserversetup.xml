@@ -1,0 +1,14 @@
+<default>
+	  <prerequisites>
+                    <tag type="Multimedia" />
+	  </prerequisites>
+          <info>
+                    <author>Dream Property GmbH</author>
+                    <name>StreamServerSetup</name>
+                    <packagename>enigma2-plugin-extensions-streamserversetup</packagename>
+                    <shortdescription>Control the Streaming Server</shortdescription>
+          </info>
+	  <files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-extensions-streamserversetup" />
+	  </files>
+</default>

@@ -159,6 +159,11 @@
 			<tag type="System" />
 		</prerequisites>
 	</package>
+	<package details="plugin_streamserversetup.xml" name="StreamServerSetup" packagename="enigma2-plugin-extensions-streamserversetup" shortdescription="Control the Streaming Server">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
 	<package details="plugin_tempfancontrol.xml" name="TempFanControl" packagename="enigma2-plugin-systemplugins-tempfancontrol" shortdescription="Control your system fan">
 		<prerequisites>
 			<tag type="System" />

@@ -772,11 +772,15 @@ class RecordTimer(timer.Timer):
 		print "state: ", entry.state
 		print "in processed: ", entry in self.processed_timers
 		print "in running: ", entry in self.timer_list
+
+# the following looks wrong... why autoincrease endtime of all timers when one single timer has ended
+# disabled for testing (ghost 20.01.2015)
 		# autoincrease instanttimer if possible
-		if not entry.dontSave:
-			for x in self.timer_list:
-				if x.setAutoincreaseEnd():
-					self.timeChanged(x)
+#		if not entry.dontSave:
+#			for x in self.timer_list:
+#				if x.setAutoincreaseEnd():
+#					self.timeChanged(x)
+
 		# now the timer should be in the processed_timers list. remove it from there.
 		self.processed_timers.remove(entry)
 		self.saveTimer()

@@ -473,6 +473,7 @@ class Wizard(Screen):
 					# fired glpbally, not just for our own Screen
 					self.onHideFinished.remove(self.__hideFinished)
 					self.configInstance.runAsync(self.__foreignScreenInstanceFinished)
+					return
 				else:
 					self.configInstance.run()
 		self.finished()
@@ -483,6 +484,7 @@ class Wizard(Screen):
 
 		# we need to show the wizard Screen again. we don't call show() to prevent future features in __hideFinished()
 		self.__hideFinished()
+		self.finished()
 
 	def keyNumberGlobal(self, number):
 		if (self.wizard[self.currStep]["config"]["screen"] != None):

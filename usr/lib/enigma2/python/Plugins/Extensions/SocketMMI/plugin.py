@@ -15,7 +15,7 @@ def menu(menuid, **kwargs):
 		valid = 0;
 		while valid < connections and slot < 256:
 			if socketHandler.getState(slot):
-				ret.append((socketHandler.getName(slot), boundFunction(menuCallback, slot), "socket_mmi", 0))
+				ret.append((socketHandler.getName(slot), boundFunction(menuCallback, slot), "socket_mmi_%d" %valid, 0))
 				valid += 1
 			slot += 1
 	return ret

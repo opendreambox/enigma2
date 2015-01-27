@@ -1,5 +1,6 @@
 import gettext
 import os
+import locale
 
 from Tools.Directories import SCOPE_LANGUAGE, resolveFilename, fileExists
 
@@ -14,7 +15,7 @@ class Language:
 		# FIXME make list dynamically
 		# name, iso-639 language, iso-3166 country. Please don't mix language&country!
 		# also, see "precalcLanguageList" below on how to re-create the language cache after you added a language
-		self.addLanguage(_("English"), "en", "EN")
+		self.addLanguage(_("English"), "en", "GB")
 		self.addLanguage(_("German"), "de", "DE")
 		self.addLanguage(_("Arabic"), "ar", "AE")
 		self.addLanguage(_("Brazilian Portuguese"), "pt_BR", "BR")
@@ -45,7 +46,7 @@ class Language:
 		self.addLanguage(_("Swedish"), "sv", "SE")
 		self.addLanguage(_("Turkish"), "tr", "TR")
 		self.addLanguage(_("Ukrainian"), "uk", "UA")
-		self.addLanguage(_("Frisian"), "fy", "x-FY") # there is no separate country for frisian
+		self.addLanguage(_("Frisian"), "fy", "NL") # there is no separate country for frisian
 
 		self.callbacks = []
 
@@ -64,6 +65,8 @@ class Language:
 			self.currLangObj = gettext.translation('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), languages=[lang[1]], fallback=True)
 			self.currLangObj.install(names="ngettext")
 			os.environ["LANGUAGE"] = lang[1]
+			lc = lang[1] if "_" in lang[1] else "%s_%s" %(lang[1], lang[2]) #HACK for pt_BR
+			locale.setlocale(locale.LC_TIME, lc)
 			self.activeLanguage = index
 			self.activateLanguageFallback(index, 'enigma2-plugins' )
 		except:

@@ -29,7 +29,7 @@ class NetworkConfigGeneral(object):
 		security_map = {
 			"none" : _("None"),
 			"wep"  : "WEP",
-			"psk"  : "WPA",
+			"psk"  : "WPA/WPA2",
 			"wps"  : "WPS",
 			"ieee8021x" : "ieee8021x",
 		}
@@ -204,11 +204,11 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				<convert type="TemplatedMultiContent">
 					{"template":[
 							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
-							MultiContentEntryText(pos = (55, 0), size = (400, 24), font=0, flags = RT_HALIGN_LEFT, text = 3), #service name
-							MultiContentEntryText(pos = (450, 0), size = (100, 24), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text = 7), #security
-							MultiContentEntryText(pos = (450, 30), size = (100, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 2), #signal strength
+							MultiContentEntryText(pos = (55, 0), size = (300, 24), font=0, flags = RT_HALIGN_LEFT, text = 3), #service name
+							MultiContentEntryText(pos = (360, 0), size = (180, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text = 7), #security
+							MultiContentEntryText(pos = (430, 30), size = (110, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 2), #signal strength
 							MultiContentEntryText(pos = (55, 30), size = (220, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 4), #ip
-							MultiContentEntryText(pos = (275, 30), size = (150, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), #state
+							MultiContentEntryText(pos = (280, 30), size = (145, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), #state
 							MultiContentEntryText(pos = (5, 0), size = (490, 50), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 6), #technology name
 						],
 					"itemHeight": 50,

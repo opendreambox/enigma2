@@ -1,6 +1,7 @@
 from Converter import Converter
 from time import localtime, strftime
 from Components.Element import cached
+import locale
 
 class ClockToText(Converter, object):
 	DEFAULT = 0
@@ -53,7 +54,7 @@ class ClockToText(Converter, object):
 		elif self.type == self.DEFAULT:
 			return "%02d:%02d" % (t.tm_hour, t.tm_min)
 		elif self.type == self.DATE:
-			return strftime("%A %B %d, %Y", t)
+			return strftime("%a, %x", t)
 		elif self.type == self.FORMAT:
 			spos = self.fmt_string.find('%')
 			if spos > -1:
