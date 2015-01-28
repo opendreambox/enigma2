@@ -15,10 +15,10 @@ class Language:
 		# FIXME make list dynamically
 		# name, iso-639 language, iso-3166 country. Please don't mix language&country!
 		# also, see "precalcLanguageList" below on how to re-create the language cache after you added a language
-		self.addLanguage(_("English"), "en", "GB")
+		self.addLanguage(_("English"), "en", "EN", "en_GB")
 		self.addLanguage(_("German"), "de", "DE")
 		self.addLanguage(_("Arabic"), "ar", "AE")
-		self.addLanguage(_("Brazilian Portuguese"), "pt_BR", "BR")
+		self.addLanguage(_("Brazilian Portuguese"), "pt_BR", "BR", "pt_BR")
 		self.addLanguage(_("Catalan"), "ca", "AD")
 		self.addLanguage(_("Croatian"), "hr", "HR")
 		self.addLanguage(_("Czech"), "cs", "CZ")
@@ -46,13 +46,15 @@ class Language:
 		self.addLanguage(_("Swedish"), "sv", "SE")
 		self.addLanguage(_("Turkish"), "tr", "TR")
 		self.addLanguage(_("Ukrainian"), "uk", "UA")
-		self.addLanguage(_("Frisian"), "fy", "NL") # there is no separate country for frisian
+		self.addLanguage(_("Frisian"), "fy", "x-FY", "fy_NL") # there is no separate country for frisian
 
 		self.callbacks = []
 
-	def addLanguage(self, name, lang, country):
+	def addLanguage(self, name, lang, country, code=None):
 		try:
-			self.lang[str(lang + "_" + country)] = ((_(name), lang, country))
+			if code is None:
+				code = "%s_%s" %(lang, country)
+			self.lang[str(lang + "_" + country)] = ((_(name), lang, country, code))
 			self.langlist.append(str(lang + "_" + country))
 		except:
 			print "Language " + str(name) + " not found"
@@ -64,9 +66,10 @@ class Language:
 			gettext._translations = {}
 			self.currLangObj = gettext.translation('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), languages=[lang[1]], fallback=True)
 			self.currLangObj.install(names="ngettext")
-			os.environ["LANGUAGE"] = lang[1]
-			lc = lang[1] if "_" in lang[1] else "%s_%s" %(lang[1], lang[2]) #HACK for pt_BR
-			locale.setlocale(locale.LC_TIME, lc)
+			try:
+				locale.setlocale(locale.LC_TIME, lang[3])
+			except Exception, e:
+				print "Error settings system language, date/time will not be translated %s" %(e)
 			self.activeLanguage = index
 			self.activateLanguageFallback(index, 'enigma2-plugins' )
 		except:

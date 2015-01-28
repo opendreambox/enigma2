@@ -159,9 +159,10 @@
 			<tag type="System" />
 		</prerequisites>
 	</package>
-	<package details="plugin_streamserversetup.xml" name="StreamServerSetup" packagename="enigma2-plugin-extensions-streamserversetup" shortdescription="Control the Streaming Server">
+	<package details="plugin_streamserver.xml" name="Streaming Server" packagename="enigma2-plugin-systemplugins-streamserver" shortdescription="Configuration Utility for the Dreambox Streaming Server">
 		<prerequisites>
 			<tag type="Multimedia" />
+			<tag type="Network" />
 		</prerequisites>
 	</package>
 	<package details="plugin_tempfancontrol.xml" name="TempFanControl" packagename="enigma2-plugin-systemplugins-tempfancontrol" shortdescription="Control your system fan">
