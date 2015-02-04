@@ -5,7 +5,9 @@ from Tools.Log import Log
 
 config.cec = ConfigSubsection()
 config.cec.sendpower = ConfigOnOff(default=True)
+config.cec.avr_power_explicit = ConfigOnOff(default = False)
 config.cec.receivepower = ConfigOnOff(default=False)
+config.cec.receive_remotekeys = ConfigOnOff(default=True)
 config.cec.volume_forward = ConfigOnOff(default=False)
 config.cec.activate_on_routing_info = ConfigOnOff(default=True)
 config.cec.activate_on_routing_change = ConfigOnOff(default=True)
@@ -14,16 +16,6 @@ config.cec.activate_on_stream = ConfigOnOff(default=True)
 config.cec.activate_on_tvpower = ConfigOnOff(default=True)
 
 class HdmiCec:
-	KEY_ID_MUTE = 113
-	KEY_ID_VOLUME_DOWN = 114
-	KEY_ID_VOLUME_UP = 115
-
-	CEC_KEY_MAP = {
-		KEY_ID_MUTE: 0x43,
-		KEY_ID_VOLUME_DOWN: 0x42,
-		KEY_ID_VOLUME_UP: 0x41,
-	}
-
 	POWER_STATE_ON = eCec.POWER_STATE_ON
 	POWER_STATE_STANDBY = eCec.POWER_STATE_STANDBY
 	POWER_STATE_TRANSITION_STANDBY_TO_ON = eCec.POWER_STATE_TRANSITION_STANDBY_TO_ON
@@ -45,12 +37,16 @@ class HdmiCec:
 		self.sendKey(self.instance.getVolumeTarget(), keyid)
 
 	def sendKey(self, dest, keyid):
-		if keyid in self.CEC_KEY_MAP.keys():
-			code = self.CEC_KEY_MAP[keyid]
-			self.instance.sendKey(dest, int(code))
+		self.instance.sendKey(dest, keyid)
 
 	def setPowerState(self, newstate):
 		self.instance.setPowerstate(newstate)
+
+	def giveSystemAudioStatus(self):
+		self.instance.giveSystemAudioStatus()
+
+	def systemAudioRequest(self):
+		self.instance.systemAudioRequest()
 
 #Deprecated compat API
 	def otp_source_enable(self):

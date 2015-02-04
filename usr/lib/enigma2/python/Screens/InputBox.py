@@ -43,10 +43,25 @@ class InputBox(Screen):
 			"0": self.keyNumberGlobal
 		}, -1)
 
+		self._help_window = None
+
 		if self["input"].type == Input.TEXT:
 			self.onExecBegin.append(self.setKeyboardModeAscii)
 		else:
 			self.onExecBegin.append(self.setKeyboardModeNone)
+
+		self.onClose.append(self.__onClose)
+		self.onShow.append(self.__onShow)
+		self.onHide.append(self.__onHide)
+
+	def __onShow(self):
+		self._showHelpWindow()
+
+	def __onHide(self):
+		self._closeHelpWindow()
+
+	def __onClose(self):
+		self._closeHelpWindow()
 
 	def gotAsciiCode(self):
 		self["input"].handleAscii(getPrevAsciiCode())
@@ -83,6 +98,19 @@ class InputBox(Screen):
 
 	def keyInsert(self):
 		self["input"].toggleOverwrite()
+
+	def _showHelpWindow(self):
+		from Screens.NumericalTextInputHelpDialog import NumericalTextInputHelpDialog
+		if self._help_window is None:
+			self._help_window = self.session.instantiateDialog(NumericalTextInputHelpDialog, self["input"], zPosition=5000)
+			self._help_window.neverAnimate()
+		self._help_window.show()
+
+	def _closeHelpWindow(self):
+		if self._help_window is not None:
+			self.session.deleteDialog(self._help_window)
+			self._help_window = None
+
 
 class PinInput(InputBox):
 	def __init__(self, session, service = "", triesEntry = None, pinList = [], *args, **kwargs):

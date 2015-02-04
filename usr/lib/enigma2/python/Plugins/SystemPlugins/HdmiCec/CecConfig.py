@@ -18,6 +18,9 @@ class CecConfig(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 
 		ConfigListScreen.__init__(self, [])
+		config.cec.sendpower.addNotifier(self._recreateSetup, initial_call=False)
+		config.cec.receivepower.addNotifier(self._recreateSetup, initial_call=False)
+
 		self._createSetup()
 
 		self["key_red"] = StaticText(_("Cancel"))
@@ -34,7 +37,13 @@ class CecConfig(ConfigListScreen, Screen):
 			"ok": self.save,
 		}, -2)
 
+		self.onClose.append(self.__onClose)
+
 		self.onLayoutFinish.append(self.layoutFinished)
+
+	def __onClose(self):
+		config.cec.sendpower.removeNotifier(self._recreateSetup)
+		config.cec.receivepower.removeNotifier(self._recreateSetup)
 
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)
@@ -44,18 +53,31 @@ class CecConfig(ConfigListScreen, Screen):
 		ConfigListScreen.keyRight(self)
 		self._createSetup()
 
+	def _recreateSetup(self, element):
+		self._createSetup()
+
 	def _createSetup(self):
+		isExpert = config.usage.setup_level.index >= 2
 		lst = [
 			getConfigListEntry(_("Send HDMI CEC Power Events"), config.cec.sendpower),
-			getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
-			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
-			getConfigListEntry(_("Handle 'Routing Info' as power up/down"), config.cec.activate_on_routing_info),
-			getConfigListEntry(_("Handle 'Routing Change' as power up/down"), config.cec.activate_on_routing_change),
-			getConfigListEntry(_("Handle 'Active Source' as power up/down"), config.cec.activate_on_active_source),
-			getConfigListEntry(_("Handle 'Set Stream' as power up"), config.cec.activate_on_stream),
-			getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
-		]
+			]
+		if config.cec.sendpower.value and isExpert:
+			lst.append(getConfigListEntry(_("Send explicit on/off to Audio System"), config.cec.avr_power_explicit))
 
+		lst.append(getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower))
+		if config.cec.receivepower.value and isExpert:
+			lst.extend([
+				getConfigListEntry(_("Handle 'Routing Info' as power up/down"), config.cec.activate_on_routing_info),
+				getConfigListEntry(_("Handle 'Routing Change' as power up/down"), config.cec.activate_on_routing_change),
+				getConfigListEntry(_("Handle 'Active Source' as power up/down"), config.cec.activate_on_active_source),
+				getConfigListEntry(_("Handle 'Set Stream' as power up"), config.cec.activate_on_stream),
+				getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
+			])
+
+		lst.extend([
+			getConfigListEntry(_("Allow remote control via CEC"), config.cec.receive_remotekeys),
+			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
+		])
 		self["config"].list = lst
 
 	def layoutFinished(self):

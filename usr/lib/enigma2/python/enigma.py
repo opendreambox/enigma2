@@ -2506,6 +2506,11 @@ RT_VALIGN_TOP = _enigma.RT_VALIGN_TOP
 RT_VALIGN_CENTER = _enigma.RT_VALIGN_CENTER
 RT_VALIGN_BOTTOM = _enigma.RT_VALIGN_BOTTOM
 RT_WRAP = _enigma.RT_WRAP
+SCALE_NONE = _enigma.SCALE_NONE
+SCALE_CENTER = _enigma.SCALE_CENTER
+SCALE_ASPECT = _enigma.SCALE_ASPECT
+SCALE_WIDTH = _enigma.SCALE_WIDTH
+SCALE_HEIGHT = _enigma.SCALE_HEIGHT
 class eWindowStyle_ENUMS(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
@@ -5055,6 +5060,54 @@ class eCec(object):
     VENDOR_VIZIO = _enigma.eCec_VENDOR_VIZIO
     VENDOR_YAMAHA = _enigma.eCec_VENDOR_YAMAHA
     VENDOR_UNKNOWN = _enigma.eCec_VENDOR_UNKNOWN
+    RC_SELECT = _enigma.eCec_RC_SELECT
+    RC_UP = _enigma.eCec_RC_UP
+    RC_DOWN = _enigma.eCec_RC_DOWN
+    RC_LEFT = _enigma.eCec_RC_LEFT
+    RC_RIGHT = _enigma.eCec_RC_RIGHT
+    RC_RIGHT_UP = _enigma.eCec_RC_RIGHT_UP
+    RC_RIGHT_DOWN = _enigma.eCec_RC_RIGHT_DOWN
+    RC_LEFT_UP = _enigma.eCec_RC_LEFT_UP
+    RC_LEFT_DOWN = _enigma.eCec_RC_LEFT_DOWN
+    RC_ROOT_MENU = _enigma.eCec_RC_ROOT_MENU
+    RC_SETUP_MENU = _enigma.eCec_RC_SETUP_MENU
+    RC_CONTENTS_MENU = _enigma.eCec_RC_CONTENTS_MENU
+    RC_FAVORITE_MENU = _enigma.eCec_RC_FAVORITE_MENU
+    RC_EXIT = _enigma.eCec_RC_EXIT
+    RC_0 = _enigma.eCec_RC_0
+    RC_1 = _enigma.eCec_RC_1
+    RC_2 = _enigma.eCec_RC_2
+    RC_3 = _enigma.eCec_RC_3
+    RC_4 = _enigma.eCec_RC_4
+    RC_5 = _enigma.eCec_RC_5
+    RC_6 = _enigma.eCec_RC_6
+    RC_7 = _enigma.eCec_RC_7
+    RC_8 = _enigma.eCec_RC_8
+    RC_9 = _enigma.eCec_RC_9
+    RC_POWER = _enigma.eCec_RC_POWER
+    RC_VOLUME_UP = _enigma.eCec_RC_VOLUME_UP
+    RC_VOLUME_DOWN = _enigma.eCec_RC_VOLUME_DOWN
+    RC_MUTE = _enigma.eCec_RC_MUTE
+    RC_PLAY = _enigma.eCec_RC_PLAY
+    RC_STOP = _enigma.eCec_RC_STOP
+    RC_PAUSE = _enigma.eCec_RC_PAUSE
+    RC_RECORD = _enigma.eCec_RC_RECORD
+    RC_RWD = _enigma.eCec_RC_RWD
+    RC_FWD = _enigma.eCec_RC_FWD
+    RC_EPG = _enigma.eCec_RC_EPG
+    RC_TIMER = _enigma.eCec_RC_TIMER
+    RC_PLAY_F = _enigma.eCec_RC_PLAY_F
+    RC_PAUSEPLAY_F = _enigma.eCec_RC_PAUSEPLAY_F
+    RC_REC_F = _enigma.eCec_RC_REC_F
+    RC_STOP_F = _enigma.eCec_RC_STOP_F
+    RC_MUTE_F = _enigma.eCec_RC_MUTE_F
+    RC_POWER_F = _enigma.eCec_RC_POWER_F
+    RC_POWER_OFF = _enigma.eCec_RC_POWER_OFF
+    RC_POWER_ON = _enigma.eCec_RC_POWER_ON
+    RC_BLUE = _enigma.eCec_RC_BLUE
+    RC_RED = _enigma.eCec_RC_RED
+    RC_GREEN = _enigma.eCec_RC_GREEN
+    RC_YELLOW = _enigma.eCec_RC_YELLOW
     def vendor(*args):
         """vendor(uint32_t id) -> std::string const"""
         return _enigma.eCec_vendor(*args)
@@ -5162,6 +5215,8 @@ class eCec(object):
 
     receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
+    onKeyPress = _swig_property(_enigma.eCec_onKeyPress_get, _enigma.eCec_onKeyPress_set)
+    onKeyRelease = _swig_property(_enigma.eCec_onKeyRelease_get, _enigma.eCec_onKeyRelease_set)
     receivedRaw = _swig_property(_enigma.eCec_receivedRaw_get, _enigma.eCec_receivedRaw_set)
     receivedMessage = _swig_property(_enigma.eCec_receivedMessage_get, _enigma.eCec_receivedMessage_set)
 eCec.set_powerstate = new_instancemethod(_enigma.eCec_set_powerstate,None,eCec)

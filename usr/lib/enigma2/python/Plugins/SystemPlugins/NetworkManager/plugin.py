@@ -2,9 +2,7 @@
 
 from enigma import eNetworkManager, StringMap
 from Components.config import config, ConfigBoolean
-from Components.Input import Input
 from Plugins.Plugin import PluginDescriptor
-from Screens.InputBox import InputBox
 from Screens.MessageBox import MessageBox
 from Tools.Log import Log
 
@@ -54,28 +52,21 @@ class NetworkAgent(object):
 		if wps:
 			del dialog_values["WPS"]
 
-		if len(dialog_values) == 1:
-			request_part = dialog_values.values()[0]
-			title = self._userInputField = dialog_values.keys()[0]
-			if request_part["Requirement"] == "mandatory":
-				title = "%s" %title
-			title = "%s (%s)" %(title, request_part["Type"])
-			self._userInputScreen = self.session.openWithCallback(self._onUserInput, InputBox, title=title, windowTitle=windowTitle)
-		elif len(dialog_values) == 2:
-			first, second = dialog_values.keys()
-			input_config = {
-				"first" : self._createInputConfig(first, dialog_values[first], prev),
-				"second" : self._createInputConfig(second, dialog_values[second], prev),
-			}
+		input_config = []
+		if len(dialog_values) > 0:
+			for key, value in dialog_values.iteritems():
+				input_config.append( self._createInputConfig(key, value, prev) ),
 			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=windowTitle, config=input_config)
 		else:
 			self._nm.sendUserReply(StringMap()) #Cancel
 
 	def _createInputConfig(self, key, request_part, previousPassphrase):
 			requirement = request_part["Requirement"] == "mandatory"
-			val_type = Input.TEXT
+			val_type = MultiInputBox.TYPE_TEXT
 			if request_part["Type"] == "wpspin":
-				val_type = Input.PIN
+				val_type = MultiInputBox.TYPE_PIN
+			if request_part["Type"] in ('psk', 'wep', 'passphrase'):
+				val_type = MultiInputBox.TYPE_PASSWORD
 
 			value = ""
 			if previousPassphrase and request_part["Type"] == previousPassphrase["Type"]:
@@ -98,21 +89,11 @@ class NetworkAgent(object):
 		self.session.open(MessageBox, _("There was no input for too long!"), type=MessageBox.TYPE_ERROR, title=_("Timeout!"))
 
 	def _onUserMultiInput(self, values):
-		Log.i(values)
 		self._userInputScreen = None
 		if values:
 			self._nm.sendUserReply(StringMap(values))
 		else:
 			self._nm.sendUserReply(StringMap())
-
-	def _onUserInput(self, value):
-		Log.i(self._userInputField)
-		self._userInputScreen = None
-		if value and self._userInputField != None:
-			answer = StringMap({self._userInputField : value})
-			self._nm.sendUserReply(answer)
-		else:
-			self._nm.sendUserReply(StringMap()) #cancel
 
 	def shutdown(self):
 		Log.i("cancelling any pending request")
