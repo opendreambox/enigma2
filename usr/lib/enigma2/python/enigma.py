@@ -4597,7 +4597,7 @@ class eNetworkTechnology(iObject):
         return _enigma.eNetworkTechnology_tetheringPassphrase(self)
 
     def setTetheringPassphrase(self, *args):
-        """setTetheringPassphrase(eNetworkTechnology self, std::string const & _pass)"""
+        """setTetheringPassphrase(eNetworkTechnology self, std::string const & passphrase)"""
         return _enigma.eNetworkTechnology_setTetheringPassphrase(self, *args)
 
     def scan(self):
@@ -4698,7 +4698,7 @@ class eNetworkTechnologyPtr(object):
         return _enigma.eNetworkTechnologyPtr_tetheringPassphrase(self)
 
     def setTetheringPassphrase(self, *args):
-        """setTetheringPassphrase(eNetworkTechnologyPtr self, std::string const & _pass)"""
+        """setTetheringPassphrase(eNetworkTechnologyPtr self, std::string const & passphrase)"""
         return _enigma.eNetworkTechnologyPtr_setTetheringPassphrase(self, *args)
 
     def scan(self):
@@ -6176,6 +6176,42 @@ class eSignal2IRecordableServicePtrInt(object):
 eSignal2IRecordableServicePtrInt.connect2 = new_instancemethod(_enigma.eSignal2IRecordableServicePtrInt_connect2,None,eSignal2IRecordableServicePtrInt)
 eSignal2IRecordableServicePtrInt_swigregister = _enigma.eSignal2IRecordableServicePtrInt_swigregister
 eSignal2IRecordableServicePtrInt_swigregister(eSignal2IRecordableServicePtrInt)
+
+class eSlot2IntInt(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2IntInt:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2IntInt_swiginit(self,_enigma.new_eSlot2IntInt(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2IntInt
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2IntInt(self)
+        return weakref_proxy(self)
+eSlot2IntInt.cb_func = new_instancemethod(_enigma.eSlot2IntInt_cb_func,None,eSlot2IntInt)
+eSlot2IntInt_swigregister = _enigma.eSlot2IntInt_swigregister
+eSlot2IntInt_swigregister(eSlot2IntInt)
+
+class eSignal2IntInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2IntInt(eSlot2IntInt):
+            def __init__(self, func):
+                eSlot2IntInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2IntInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2IntInt_swiginit(self,_enigma.new_eSignal2IntInt())
+    __swig_destroy__ = _enigma.delete_eSignal2IntInt
+eSignal2IntInt.connect2 = new_instancemethod(_enigma.eSignal2IntInt_connect2,None,eSignal2IntInt)
+eSignal2IntInt_swigregister = _enigma.eSignal2IntInt_swigregister
+eSignal2IntInt_swigregister(eSignal2IntInt)
 
 class eSlot1StrMap(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

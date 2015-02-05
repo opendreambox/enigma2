@@ -310,42 +310,6 @@ ByteVectorList_swigregister(ByteVectorList)
 
 from enigma import WeakMethodReference
 
-class eSlot2IntInt(enigma.eSlot):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def __init__(self): 
-        if self.__class__ == eSlot2IntInt:
-            _self = None
-        else:
-            _self = self
-        _webview.eSlot2IntInt_swiginit(self,_webview.new_eSlot2IntInt(_self, ))
-    __swig_destroy__ = _webview.delete_eSlot2IntInt
-    def __disown__(self):
-        self.this.disown()
-        _webview.disown_eSlot2IntInt(self)
-        return weakref_proxy(self)
-eSlot2IntInt.cb_func = new_instancemethod(_webview.eSlot2IntInt_cb_func,None,eSlot2IntInt)
-eSlot2IntInt_swigregister = _webview.eSlot2IntInt_swigregister
-eSlot2IntInt_swigregister(eSlot2IntInt)
-
-class eSignal2IntInt(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    def connect(self, func):
-        class ePythonSlot2IntInt(eSlot2IntInt):
-            def __init__(self, func):
-                eSlot2IntInt.__init__(self)
-                self.cb_func=func
-        slot = ePythonSlot2IntInt(WeakMethodReference(func))
-        self.connect2(slot)
-        return slot
-    def __init__(self): 
-        _webview.eSignal2IntInt_swiginit(self,_webview.new_eSignal2IntInt())
-    __swig_destroy__ = _webview.delete_eSignal2IntInt
-eSignal2IntInt.connect2 = new_instancemethod(_webview.eSignal2IntInt_connect2,None,eSignal2IntInt)
-eSignal2IntInt_swigregister = _webview.eSignal2IntInt_swigregister
-eSignal2IntInt_swigregister(eSignal2IntInt)
-
 class eSlot2CStrCstr(enigma.eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr

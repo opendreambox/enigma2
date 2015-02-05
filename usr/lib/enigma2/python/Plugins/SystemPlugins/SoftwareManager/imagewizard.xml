@@ -5,6 +5,8 @@ from Components.config import config
 from Plugins.SystemPlugins.SoftwareManager.ImageWizard import checkConfigBackup
 self.backuppath = checkConfigBackup()
 self.condition = (self.backuppath is not None and config.misc.firstrun.value)
+if config.misc.firstrun.value and not self.condition:
+		self.currStep = self.getStepWithID('end')
 		</condition>
 		<text value="Do you want to restore your settings?" />
 		<short_title value="Restore"/>

@@ -56,11 +56,6 @@ def checkBackupFile():
 		else:
 			return False
 
-if checkConfigBackup() is None:
-	backupAvailable = 0
-else:
-	backupAvailable = 1
-
 class ImageWizard(WizardLanguage, Rc):
 	skin = """
 		<screen name="ImageWizard" position="0,0" size="720,576" title="Welcome..." flags="wfNoBorder" >
@@ -112,7 +107,5 @@ class ImageWizard(WizardLanguage, Rc):
 		config.plugins.configurationbackup.backuplocation.save()
 		config.plugins.configurationbackup.save()
 
-	
-if config.misc.firstrun.value:
-	wizardManager.registerWizard(ImageWizard, backupAvailable, priority = 10)
+wizardManager.registerWizard(ImageWizard, config.misc.firstrun.value, priority = 10)
 

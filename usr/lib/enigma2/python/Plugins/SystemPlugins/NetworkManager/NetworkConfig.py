@@ -81,7 +81,7 @@ class NetworkConfigGeneral(object):
 		pass
 
 	def _rescan(self, tech=None):
-		if tech is not None and  tech.type() == eNetworkService.TYPE_WIFI and tech.powered():
+		if tech is not None and tech.type() == eNetworkService.TYPE_WIFI and tech.powered():
 			Log.i("Triggering rescan for '%s'" %tech.name())
 			tech.scan()
 			return True

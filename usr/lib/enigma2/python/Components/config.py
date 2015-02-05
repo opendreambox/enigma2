@@ -816,9 +816,10 @@ class ConfigFloat(ConfigSequence):
 
 # an editable text...
 class ConfigTextBase(ConfigElement):
-	def __init__(self, default = "", fixed_size = True, visible_width = False):
+	def __init__(self, default = "", fixed_size = True, visible_width = False, censor_char = ''):
 		ConfigElement.__init__(self)
-
+		self.selected = False
+		self.censor_char = censor_char
 		self.marked_pos = 0
 		self.allmarked = (default != "")
 		self.fixed_size = fixed_size
@@ -966,28 +967,44 @@ class ConfigTextBase(ConfigElement):
 	value = property(getValue, setValue)
 	_value = property(getValue, setValue)
 
+	def genText(self):
+		tlen = len(self.text)
+		if self.censor_char != '':
+			tmp = [ self.censor_char for c in range(tlen) ]
+			if self.selected:
+				mpos = self.marked_pos
+				if mpos >= tlen:
+					mpos -= 1
+				tmp[mpos] = self.text[mpos]
+			text = u''.join(tmp)
+		else:
+			text = self.text
+		return text
+
 	def getText(self):
-		return self.text.encode("utf-8")
+		return self.genText()
 
 	def getMulti(self, selected):
+		text = self.genText()
 		if self.visible_width:
 			if self.allmarked:
-				mark = range(0, min(self.visible_width, len(self.text)))
+				mark = range(0, min(self.visible_width, len(text)))
 			else:
 				mark = [self.marked_pos-self.offset]
-			return ("mtext"[1-selected:], self.text[self.offset:self.offset+self.visible_width].encode("utf-8")+" ", mark)
+			return ("mtext"[1-selected:], text[self.offset:self.offset+self.visible_width].encode("utf-8")+" ", mark)
 		else:
 			if self.allmarked:
-				mark = range(0, len(self.text))
+				mark = range(0, len(text))
 			else:
 				mark = [self.marked_pos]
-			return ("mtext"[1-selected:], self.text.encode("utf-8")+" ", mark)
+			return ("mtext"[1-selected:], text.encode("utf-8")+" ", mark)
 
 	def onSelect(self, session):
 		if not self.enabled:
 			self.allmarked = False
 			self.marked_pos = -1
 			return
+		self.selected = True
 		self.allmarked = (self.value != "")
 		self._keyboardMode = eRCInput.getInstance().getKeyboardMode()
 		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
@@ -998,6 +1015,7 @@ class ConfigTextBase(ConfigElement):
 			self.help_window.show()
 
 	def onDeselect(self, session):
+		self.selected = False
 		eRCInput.getInstance().setKeyboardMode(self._keyboardMode)
 		self.marked_pos = 0
 		self.offset = 0
@@ -1013,8 +1031,8 @@ class ConfigTextBase(ConfigElement):
 		self.value = str(value)
 
 class ConfigText(ConfigTextBase, NumericalTextInput):
-	def __init__(self, default = "", fixed_size = True, visible_width = False):
-		ConfigTextBase.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
+	def __init__(self, default = "", fixed_size = True, visible_width = False, censor_char = ''):
+		ConfigTextBase.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width, censor_char = censor_char)
 		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
 
 #IPv6 Address with validation and autoformatting
@@ -1058,23 +1076,7 @@ class ConfigIP6(ConfigTextBase, NumericalHexInput):
 
 class ConfigPassword(ConfigText):
 	def __init__(self, default = "", fixed_size = False, visible_width = False, censor = "*"):
-		ConfigText.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
-		self.censor_char = censor
-		self.hidden = True
-
-	def getMulti(self, selected):
-		mtext, text, mark = ConfigText.getMulti(self, selected)
-		if self.hidden:
-			text = len(text) * self.censor_char
-		return (mtext, text, mark)
-
-	def onSelect(self, session):
-		ConfigText.onSelect(self, session)
-		self.hidden = False
-
-	def onDeselect(self, session):
-		ConfigText.onDeselect(self, session)
-		self.hidden = True
+		ConfigText.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width, censor_char = censor)
 
 # lets the user select between [min, min+stepwidth, min+(stepwidth*2)..., maxval] with maxval <= max depending
 # on the stepwidth
