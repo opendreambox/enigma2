@@ -1525,7 +1525,7 @@ def InitNimManager(nimmgr, slot_no = None):
 			tmp.addNotifier(configModeChanged, initial_call = False)
 			nim.configMode = tmp
 			nim.configMode.connectedToChanged = boundFunction(connectedToChanged, x, nimmgr)
-			nim.connectedTo.addNotifier(boundFunction(connectedToChanged, x, nimmgr), initial_call = False)
+			nim.connectedTo.addNotifier(boundFunction(connectedToChanged, x, nimmgr), initial_call = True)
 		elif slot.isCompatible("DVB-C"):
 			nim.configMode = ConfigSelection(
 				choices = {

@@ -25,6 +25,11 @@
 			<tag type="Multimedia" />
 		</prerequisites>
 	</package>
+	<package details="plugin_encoder.xml" name="Encoder" packagename="enigma2-plugin-extensions-encoder" shortdescription="Control the Encoder Device">
+		<prerequisites>
+			<tag type="Multimedia" />
+		</prerequisites>
+	</package>
 	<package details="plugin_graphmultiepg.xml" name="GraphMultiEPG" packagename="enigma2-plugin-extensions-graphmultiepg" shortdescription="GraphMultiEPG shows a graphical timeline EPG">
 		<prerequisites>
 			<tag type="EPG" />
