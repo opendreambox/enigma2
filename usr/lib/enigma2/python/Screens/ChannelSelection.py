@@ -339,7 +339,7 @@ class ChannelContextMenu(Screen):
 		info = eServiceCenterInstance.info(cur)
 		name = info and info.getName(cur) or ""
 		#remove short name brakets
-		name.replace('\xc2\x86', '').replace('\xc2\x87', '')
+		name = name.replace('\xc2\x86', '').replace('\xc2\x87', '')
 		if name:
 			self.session.openWithCallback(self.csel.renameEntry, InputBox, title=_("Please enter a new name:"), text=name, maxSize=False, visible_width = 56, type=Input.TEXT)
 		self.close()

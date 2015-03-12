@@ -93,7 +93,8 @@ class Navigation:
 	
 	def recordService(self, ref, simulate=False):
 		service = None
-		print "recording service: %s" % (str(ref))
+		if not simulate:
+			print "recording service: %s" % (str(ref))
 		if isinstance(ref, ServiceReference.ServiceReference):
 			ref = ref.ref
 		if ref:
@@ -101,6 +102,8 @@ class Navigation:
 				ref = getBestPlayableServiceReference(ref, eServiceReference(), simulate)
 			service = ref and self.pnav and self.pnav.recordService(ref, simulate)
 			if service is None:
+				if simulate:
+					print "simulate recording service: %s failed" % (str(ref))
 				print "record returned non-zero"
 		return service
 

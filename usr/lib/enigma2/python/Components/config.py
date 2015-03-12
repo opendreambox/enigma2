@@ -969,7 +969,7 @@ class ConfigTextBase(ConfigElement):
 
 	def genText(self):
 		tlen = len(self.text)
-		if self.censor_char != '':
+		if tlen and self.censor_char != '':
 			tmp = [ self.censor_char for c in range(tlen) ]
 			if self.selected:
 				mpos = self.marked_pos

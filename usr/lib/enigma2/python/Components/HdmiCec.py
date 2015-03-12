@@ -5,7 +5,7 @@ from Tools.Log import Log
 
 config.cec = ConfigSubsection()
 config.cec.sendpower = ConfigOnOff(default=True)
-config.cec.avr_power_explicit = ConfigOnOff(default = False)
+config.cec.avr_power_explicit = ConfigOnOff(default=False)
 config.cec.receivepower = ConfigOnOff(default=False)
 config.cec.receive_remotekeys = ConfigOnOff(default=True)
 config.cec.volume_forward = ConfigOnOff(default=False)
@@ -35,6 +35,9 @@ class HdmiCec:
 
 	def sendSystemAudioKey(self, keyid):
 		self.sendKey(self.instance.getVolumeTarget(), keyid)
+
+	def getVolumeTarget(self):
+		return self.instance.getVolumeTarget()
 
 	def sendKey(self, dest, keyid):
 		self.instance.sendKey(dest, keyid)
