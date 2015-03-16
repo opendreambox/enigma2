@@ -509,7 +509,7 @@ class NimSelection(Screen):
 
 	def updateList(self):
 		self.list = [ ]
-		slot_names = [ x.slot_input_name for x in nimmanager.nim_slots ]
+		slot_names = [ chr(ord('A') + x.slot) for x in nimmanager.nim_slots ]
 		for x in nimmanager.nim_slots:
 			slotid = x.slot
 			nimConfig = nimmanager.getNimConfig(x.slot)
