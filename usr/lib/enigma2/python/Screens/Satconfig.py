@@ -37,7 +37,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		list.append(getConfigListEntry(" ", nim.longitudeOrientation))
 		list.append(getConfigListEntry(_("Latitude"), nim.latitude))
 		list.append(getConfigListEntry(" ", nim.latitudeOrientation))
-		if SystemInfo["CanMeasureFrontendInputPower"]:
+		if SystemInfo["CanMeasureFrontendInputPower"] & (1 << self.slotid):
 			self.advancedPowerMeasurement = getConfigListEntry(_("Use Power Measurement"), nim.powerMeasurement)
 			list.append(self.advancedPowerMeasurement)
 			if nim.powerMeasurement.value:
@@ -353,7 +353,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.list.append(getConfigListEntry(" ", currLnb.longitudeOrientation))
 					self.list.append(getConfigListEntry(_("Latitude"), currLnb.latitude))
 					self.list.append(getConfigListEntry(" ", currLnb.latitudeOrientation))
-					if SystemInfo["CanMeasureFrontendInputPower"]:
+					if SystemInfo["CanMeasureFrontendInputPower"] & (1 << self.slotid):
 						self.advancedPowerMeasurement = getConfigListEntry(_("Use Power Measurement"), currLnb.powerMeasurement)
 						self.list.append(self.advancedPowerMeasurement)
 						if currLnb.powerMeasurement.value:

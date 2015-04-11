@@ -38,7 +38,6 @@ def BaseInitUsageConfig():
 		updateChoices(config.seek.enter_backward, configElement.value)
 	config.seek.speeds_backward.addNotifier(updateEnterBackward, immediate_feedback = False)
 
-
 def FinalInitUsageConfig():
 	try:
 		usage_old = config.usage.dict().copy()
@@ -191,6 +190,10 @@ def FinalInitUsageConfig():
 			elif configElement.value == "off":
 				Misc_Options.getInstance().set_12V_output(0)
 		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
+
+	config.usage.record_mode = ConfigSelection(default = "direct_io", choices = [
+		("direct_io", _("Direct IO (default)")),
+		("cached_io", _("Cached IO")) ] )
 
 def updateChoices(sel, choices):
 	if choices:

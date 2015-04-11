@@ -22,7 +22,7 @@ public:
 	RESULT createSectionReader(eMainloop *context, ePtr<iDVBSectionReader> &reader);
 	RESULT createPESReader(eMainloop *context, ePtr<iDVBPESReader> &reader);
 	RESULT createTSRecorder(ePtr<iDVBTSRecorder> &recorder);
-	RESULT getMPEGDecoder(ePtr<iTSMPEGDecoder> &reader, int primary);
+	RESULT getMPEGDecoder(ePtr<iTSMPEGDecoder> &reader, int decoder_id);
 	RESULT getSTC(pts_t &pts, int num);
 	RESULT getCADemuxID(uint8_t &id) { id = demux; return 0; }
 	RESULT flush();

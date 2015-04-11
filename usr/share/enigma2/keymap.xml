@@ -86,6 +86,12 @@
 	<map context="InfobarEPGActions">
 		<key id="KEY_INFO" mapto="showEventInfo" flags="b" />
 		<key id="KEY_INFO" mapto="showEventInfoPlugin" flags="l" />
+		<device name="dreambox advanced remote control (native)">
+			<key id="KEY_YELLOW" mapto="showEventList" flags="b" />
+		</device>
+		<device name="dreambox ir keyboard">
+			<key id="KEY_YELLOW" mapto="showEventList" flags="b" />
+		</device>
 	</map>
 	
 	<map context="InfobarInstantRecord">
@@ -239,7 +245,6 @@
 			<key id="KEY_AUDIO" mapto="audioSelection" flags="m" />
 		</device>
 		<device name="dreambox advanced remote control (native)">
-			<key id="KEY_YELLOW" mapto="audioSelection" flags="b" />
 			<key id="KEY_AUDIO" mapto="audioSelection" flags="m" />
 		</device>
 	</map>

@@ -2029,7 +2029,7 @@ def UpgradeMain(session, **kwargs):
 def startSetup(menuid):
 	if menuid != "setup": 
 		return [ ]
-	return [(_("Software management"), UpgradeMain, "software_manager", 40)]
+	return [(_("Software management"), UpgradeMain, "software_manager", 5)]
 
 
 def Plugins(path, **kwargs):

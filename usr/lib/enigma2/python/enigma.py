@@ -96,7 +96,7 @@ ENABLE_EWEBVIEW = _enigma.ENABLE_EWEBVIEW
 ENABLE_LCD = _enigma.ENABLE_LCD
 HAVE_DLFCN_H = _enigma.HAVE_DLFCN_H
 HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
-HAVE_LIBSYSTEMD_DAEMON = _enigma.HAVE_LIBSYSTEMD_DAEMON
+HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
 HAVE_PTHREAD = _enigma.HAVE_PTHREAD
 HAVE_PYTHON = _enigma.HAVE_PYTHON
@@ -1329,6 +1329,8 @@ eMatrix.__iadd__ = new_instancemethod(_enigma.eMatrix___iadd__,None,eMatrix)
 eMatrix.__add__ = new_instancemethod(_enigma.eMatrix___add__,None,eMatrix)
 eMatrix.__isub__ = new_instancemethod(_enigma.eMatrix___isub__,None,eMatrix)
 eMatrix.__sub__ = new_instancemethod(_enigma.eMatrix___sub__,None,eMatrix)
+eMatrix.rows = new_instancemethod(_enigma.eMatrix_rows,None,eMatrix)
+eMatrix.columns = new_instancemethod(_enigma.eMatrix_columns,None,eMatrix)
 eMatrix_swigregister = _enigma.eMatrix_swigregister
 eMatrix_swigregister(eMatrix)
 
@@ -2539,6 +2541,8 @@ eWindowStylePtr.__ref__ = new_instancemethod(_enigma.eWindowStylePtr___ref__,Non
 eWindowStylePtr.getPtrString = new_instancemethod(_enigma.eWindowStylePtr_getPtrString,None,eWindowStylePtr)
 eWindowStylePtr.__deref__ = new_instancemethod(_enigma.eWindowStylePtr___deref__,None,eWindowStylePtr)
 eWindowStylePtr.getColor = new_instancemethod(_enigma.eWindowStylePtr_getColor,None,eWindowStylePtr)
+eWindowStylePtr.getListFontSize = new_instancemethod(_enigma.eWindowStylePtr_getListFontSize,None,eWindowStylePtr)
+eWindowStylePtr.getListFontFace = new_instancemethod(_enigma.eWindowStylePtr_getListFontFace,None,eWindowStylePtr)
 eWindowStylePtr_swigregister = _enigma.eWindowStylePtr_swigregister
 eWindowStylePtr_swigregister(eWindowStylePtr)
 
@@ -2603,6 +2607,10 @@ class eWindowStyleSkinned(object):
     colWindowTitleBackground = _enigma.eWindowStyleSkinned_colWindowTitleBackground
     colWindowDimmer = _enigma.eWindowStyleSkinned_colWindowDimmer
     colMax = _enigma.eWindowStyleSkinned_colMax
+    listFontBig = _enigma.eWindowStyleSkinned_listFontBig
+    listFontMedium = _enigma.eWindowStyleSkinned_listFontMedium
+    listFontSmall = _enigma.eWindowStyleSkinned_listFontSmall
+    listFontMax = _enigma.eWindowStyleSkinned_listFontMax
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setPixmap = new_instancemethod(_enigma.eWindowStyleSkinned_setPixmap,None,eWindowStyleSkinned)
@@ -2610,6 +2618,9 @@ eWindowStyleSkinned.setColor = new_instancemethod(_enigma.eWindowStyleSkinned_se
 eWindowStyleSkinned.getColor = new_instancemethod(_enigma.eWindowStyleSkinned_getColor,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setTitleOffset = new_instancemethod(_enigma.eWindowStyleSkinned_setTitleOffset,None,eWindowStyleSkinned)
 eWindowStyleSkinned.setTitleFont = new_instancemethod(_enigma.eWindowStyleSkinned_setTitleFont,None,eWindowStyleSkinned)
+eWindowStyleSkinned.setListFont = new_instancemethod(_enigma.eWindowStyleSkinned_setListFont,None,eWindowStyleSkinned)
+eWindowStyleSkinned.getListFontSize = new_instancemethod(_enigma.eWindowStyleSkinned_getListFontSize,None,eWindowStyleSkinned)
+eWindowStyleSkinned.getListFontFace = new_instancemethod(_enigma.eWindowStyleSkinned_getListFontFace,None,eWindowStyleSkinned)
 eWindowStyleSkinned_swigregister = _enigma.eWindowStyleSkinned_swigregister
 eWindowStyleSkinned_swigregister(eWindowStyleSkinned)
 
@@ -2620,6 +2631,8 @@ class eWindowStyleScrollbar(object):
         _enigma.eWindowStyleScrollbar_swiginit(self,_enigma.new_eWindowStyleScrollbar())
     __swig_destroy__ = _enigma.delete_eWindowStyleScrollbar
 eWindowStyleScrollbar.getColor = new_instancemethod(_enigma.eWindowStyleScrollbar_getColor,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.getListFontSize = new_instancemethod(_enigma.eWindowStyleScrollbar_getListFontSize,None,eWindowStyleScrollbar)
+eWindowStyleScrollbar.getListFontFace = new_instancemethod(_enigma.eWindowStyleScrollbar_getListFontFace,None,eWindowStyleScrollbar)
 eWindowStyleScrollbar.setBackgroundPixmap = new_instancemethod(_enigma.eWindowStyleScrollbar_setBackgroundPixmap,None,eWindowStyleScrollbar)
 eWindowStyleScrollbar.setValuePixmap = new_instancemethod(_enigma.eWindowStyleScrollbar_setValuePixmap,None,eWindowStyleScrollbar)
 eWindowStyleScrollbar.setBackgroundPixmapTopHeight = new_instancemethod(_enigma.eWindowStyleScrollbar_setBackgroundPixmapTopHeight,None,eWindowStyleScrollbar)
@@ -3000,7 +3013,6 @@ eDVBSatelliteEquipmentControl.setSlotNotLinked = new_instancemethod(_enigma.eDVB
 eDVBSatelliteEquipmentControl.getFrequencyRangeList = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getFrequencyRangeList,None,eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setRotorMoving = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setRotorMoving,None,eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.isRotorMoving = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_isRotorMoving,None,eDVBSatelliteEquipmentControl)
-eDVBSatelliteEquipmentControl.canMeasureInputPower = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_canMeasureInputPower,None,eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl_swigregister = _enigma.eDVBSatelliteEquipmentControl_swigregister
 eDVBSatelliteEquipmentControl_swigregister(eDVBSatelliteEquipmentControl)
 
@@ -5084,6 +5096,8 @@ class eCec(object):
     RC_7 = _enigma.eCec_RC_7
     RC_8 = _enigma.eCec_RC_8
     RC_9 = _enigma.eCec_RC_9
+    RC_CHANNEL_UP = _enigma.eCec_RC_CHANNEL_UP
+    RC_CHANNEL_DOWN = _enigma.eCec_RC_CHANNEL_DOWN
     RC_POWER = _enigma.eCec_RC_POWER
     RC_VOLUME_UP = _enigma.eCec_RC_VOLUME_UP
     RC_VOLUME_DOWN = _enigma.eCec_RC_VOLUME_DOWN
@@ -5250,6 +5264,15 @@ def eCec_getInstance():
   """eCec_getInstance() -> eCec"""
   return _enigma.eCec_getInstance()
 
+class eCecVendorHandler(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _enigma.delete_eCecVendorHandler
+eCecVendorHandler.handleMsg = new_instancemethod(_enigma.eCecVendorHandler_handleMsg,None,eCecVendorHandler)
+eCecVendorHandler_swigregister = _enigma.eCecVendorHandler_swigregister
+eCecVendorHandler_swigregister(eCecVendorHandler)
+
 class eCecDevice(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -5259,9 +5282,11 @@ class eCecDevice(iObject):
     available = _swig_property(_enigma.eCecDevice_available_get, _enigma.eCecDevice_available_set)
     logical = _swig_property(_enigma.eCecDevice_logical_get, _enigma.eCecDevice_logical_set)
     physical = _swig_property(_enigma.eCecDevice_physical_get, _enigma.eCecDevice_physical_set)
-    vendor = _swig_property(_enigma.eCecDevice_vendor_get, _enigma.eCecDevice_vendor_set)
     name = _swig_property(_enigma.eCecDevice_name_get, _enigma.eCecDevice_name_set)
     powerstate = _swig_property(_enigma.eCecDevice_powerstate_get, _enigma.eCecDevice_powerstate_set)
+eCecDevice.handleMsg = new_instancemethod(_enigma.eCecDevice_handleMsg,None,eCecDevice)
+eCecDevice.vendor = new_instancemethod(_enigma.eCecDevice_vendor,None,eCecDevice)
+eCecDevice.setVendor = new_instancemethod(_enigma.eCecDevice_setVendor,None,eCecDevice)
 eCecDevice_swigregister = _enigma.eCecDevice_swigregister
 eCecDevice_swigregister(eCecDevice)
 

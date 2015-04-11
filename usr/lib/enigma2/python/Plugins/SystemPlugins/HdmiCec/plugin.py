@@ -107,8 +107,8 @@ def conf(session, **kwargs):
 	session.open(CecConfig)
 
 def menu(menuid, **kwargs):
-	if menuid == "system":
-		return [(_("HDMI CEC"), conf, "hdmi_cec", None)]
+	if menuid == "devices":
+		return [(_("HDMI CEC"), conf, "hdmi_cec", 40)]
 	else:
 		return []
 

@@ -17,16 +17,17 @@ class Streaming(Converter):
 
 		streaming = service.stream()
 		s = streaming and streaming.getStreamingData()
+		pids = s and s.get("pids", [] )
+		demux = s and s.get("demux", None)
 
-		if not s:
+		if not s or not pids or demux is None:
 			err = service.getError()
 			if err:
 				return "-SERVICE ERROR:%d\n" % err
 			else:
 				return "=NO STREAM\n"
 
-		demux = s["demux"]
-		pids = ','.join(["%x:%s" % (x[0], x[1]) for x in s["pids"]])
+		pids = ','.join(["%x:%s" % (x[0], x[1]) for x in pids])
 
 		return "+%d:%s\n" % (demux, pids)
 

@@ -16,8 +16,8 @@ def hbbtv_setup(session, **kwargs):
 	session.open(HbbTVSetup)
 
 def menu_setup(menuid, **kwargs):
-	if menuid == "system":
-		return [(_("HbbTV"), hbbtv_setup, "hbbtv_setup", None)]
+	if menuid == "services_recordings":
+		return [(_("HbbTV"), hbbtv_setup, "hbbtv_setup", 40)]
 	return []
 
 

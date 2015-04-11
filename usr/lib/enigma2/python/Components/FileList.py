@@ -1,13 +1,14 @@
+from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, eServiceReference, eServiceCenter, gFont
+from skin import componentSizes, TemplatedListFonts
+from Components.Harddisk import harddiskmanager
+from MenuList import MenuList
+from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename, fileExists
+from Tools.LoadPixmap import LoadPixmap
+
 from re import compile as re_compile
 from os import path as os_path, listdir
-from MenuList import MenuList
-from Components.Harddisk import harddiskmanager
 
-from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename, fileExists
-
-from enigma import RT_HALIGN_LEFT, eListboxPythonMultiContent, \
-	eServiceReference, eServiceCenter, gFont
-from Tools.LoadPixmap import LoadPixmap
+from Tools.Log import Log
 
 EXTENSIONS = {
 		"m4a": "music",
@@ -36,8 +37,16 @@ EXTENSIONS = {
 	}
 
 def FileEntryComponent(name, absolute = None, isDir = False):
+	sizes = componentSizes[componentSizes.FILE_LIST]
+	tx = sizes.get("textX", 35)
+	ty = sizes.get("textY", 0)
+	tw = sizes.get("textWidth", 1000)
+	th = sizes.get("textHeight", 25)
+	pxw = sizes.get("pixmapWidth", 20)
+	pxh = sizes.get("pixmapHeight", 20)
+
 	res = [ (absolute, isDir) ]
-	res.append((eListboxPythonMultiContent.TYPE_TEXT, 35, 1, 1000, 20, 0, RT_HALIGN_LEFT, name))
+	res.append((eListboxPythonMultiContent.TYPE_TEXT, tx, ty, tw, th, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, name))
 	if isDir:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "extensions/directory.png"))
 	else:
@@ -48,8 +57,7 @@ def FileEntryComponent(name, absolute = None, isDir = False):
 		else:
 			png = None
 	if png is not None:
-		# alphablending is really a performance killer, we should use it only with small graphics
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 10, 2, 20, 20, png))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 10, (th-pxh)/2, pxw, pxh, png))
 
 	return res
 
@@ -72,8 +80,11 @@ class FileList(MenuList):
 
 		self.refreshMountpoints()
 		self.changeDir(directory)
-		self.l.setFont(0, gFont("Regular", 18))
-		self.l.setItemHeight(23)
+
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
+		itemHeight = componentSizes.itemHeight(componentSizes.FILE_LIST, 25)
+		self.l.setItemHeight(itemHeight)
 		self.serviceHandler = eServiceCenter.getInstance()
 
 	def refreshMountpoints(self):
@@ -264,8 +275,19 @@ class FileList(MenuList):
 
 
 def MultiFileSelectEntryComponent(name, absolute = None, isDir = False, selected = False):
+	sizes = componentSizes[componentSizes.MULTI_FILE_SELECT_LIST]
+	tx = sizes.get("textX", 55)
+	ty = sizes.get("textY", 0)
+	tw = sizes.get("textWidth", 1000)
+	th = sizes.get("textHeight", 25)
+	pxw = sizes.get("pixmapWidth", 20)
+	pxh = sizes.get("pixmapHeight", 20)
+	px2w = sizes.get("pixmap2Width", 25)
+	px2h = sizes.get("pixmap2Height", 25)
+
+
 	res = [ (absolute, isDir, selected, name) ]
-	res.append((eListboxPythonMultiContent.TYPE_TEXT, 55, 1, 1000, 20, 0, RT_HALIGN_LEFT, name))
+	res.append((eListboxPythonMultiContent.TYPE_TEXT, tx, ty, tw, th, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, name))
 	if isDir:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "extensions/directory.png"))
 	else:
@@ -276,18 +298,17 @@ def MultiFileSelectEntryComponent(name, absolute = None, isDir = False, selected
 		else:
 			png = None
 	if png is not None:
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 30, 2, 20, 20, png))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 30, 2, pxw, pxh, png))
 
 	if not name.startswith('<'):
 		if selected is False:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_off.png"))
-			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 0, 25, 25, icon))
+			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 0, px2w, px2h, icon))
 		else:
 			icon = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/lock_on.png"))
-			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 0, 25, 25, icon))
+			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 0, px2w, px2h, icon))
 
 	return res
-
 
 class MultiFileSelectList(FileList):
 	def __init__(self, preselectedFiles, directory, showMountpoints = False, matchingPattern = None, showDirectories = True, showFiles = True,  useServiceRef = False, inhibitDirs = False, inhibitMounts = False, isTop = False, enableWrapAround = False, additionalExtensions = None):
@@ -296,8 +317,11 @@ class MultiFileSelectList(FileList):
 			self.selectedFiles = []
 		FileList.__init__(self, directory, showMountpoints = showMountpoints, matchingPattern = matchingPattern, showDirectories = showDirectories, showFiles = showFiles,  useServiceRef = useServiceRef, inhibitDirs = inhibitDirs, inhibitMounts = inhibitMounts, isTop = isTop, enableWrapAround = enableWrapAround, additionalExtensions = additionalExtensions)
 		self.changeDir(directory)
-		self.l.setItemHeight(25)
-		self.l.setFont(0, gFont("Regular", 20))
+
+		itemHeight = componentSizes.itemHeight(componentSizes.MULTI_FILE_SELECT_LIST, 25)
+		self.l.setItemHeight(itemHeight)
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
 		self.onSelectionChanged = [ ]
 
 	def selectionChanged(self):

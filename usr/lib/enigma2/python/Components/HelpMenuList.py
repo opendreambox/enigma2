@@ -1,7 +1,9 @@
 from GUIComponent import GUIComponent
 
-from enigma import eListboxPythonMultiContent, eListbox, gFont
+from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop,\
+	RT_VALIGN_CENTER
 from Tools.KeyBindings import queryKeyBinding, getKeyDescription
+from skin import componentSizes, TemplatedListFonts
 #getKeyPositions
 
 # [ ( actionmap, context, [(action, help), (action, help), ...] ), (actionmap, ... ), ... ]
@@ -15,6 +17,10 @@ class HelpMenuList(GUIComponent):
 		self.extendedHelp = False
 
 		l = [ ]
+		sizes = componentSizes[componentSizes.HELP_MENU_LIST]
+		textY = sizes.get("textY", 35)
+		textWidth = sizes.get("textWidth", 1000)
+		textHeight = sizes.get("textHeight", 35)
 		for (actionmap, context, actions) in helplist:
 			if not actionmap.enabled:
 				continue
@@ -42,22 +48,20 @@ class HelpMenuList(GUIComponent):
 					self.extendedHelp = True
 					print "extendedHelpEntry found"
 					entry.extend((
-						(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 1000, 26, 0, 0, help[0]),
-						(eListboxPythonMultiContent.TYPE_TEXT, 0, 28, 1000, 20, 1, 0, help[1])
+						(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, textWidth, textHeight, 0, RT_VALIGN_CENTER, help[0]),
+						(eListboxPythonMultiContent.TYPE_TEXT, 0, textY, textWidth, textHeight, 1, RT_VALIGN_CENTER, help[1])
 					))
 				else:
-					entry.append( (eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 1000, 28, 0, 0, help) )
+					entry.append( (eListboxPythonMultiContent.TYPE_TEXT, 0, 0, textWidth, textHeight, 0, RT_VALIGN_CENTER, help) )
 					
 				l.append(entry)
 
 		self.l.setList(l)
-		if self.extendedHelp is True:
-			self.l.setFont(0, gFont("Regular", 24))
-			self.l.setFont(1, gFont("Regular", 18))
-			self.l.setItemHeight(50)
-		else:
-			self.l.setFont(0, gFont("Regular", 24))
-			self.l.setItemHeight(38)
+
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG)))
+		self.l.setFont(1, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
+		self.l.setItemHeight(sizes.get(componentSizes.ITEM_HEIGHT, 30))
 
 	def ok(self):
 		# a list entry has a "private" tuple as first entry...

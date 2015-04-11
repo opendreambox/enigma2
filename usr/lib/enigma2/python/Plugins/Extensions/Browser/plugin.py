@@ -14,7 +14,7 @@ def main_widget_callback(session = None, restart = False, url = None):
 
 def menu(menuid, **kwargs):
 	if menuid == "mainmenu":
-		return [(_("Web Browser"), main_widget, "web_browser", 45)]
+		return [(_("Web Browser"), main_widget, "web_browser", 30)]
 	return []
 
 def downloads(session, **kwargs):

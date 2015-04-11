@@ -16,7 +16,7 @@ from UPnPCore import DLNA, removeUPnPDevice
 
 from Components.ResourceManager import resourcemanager
 
-from urlparse import urlsplit
+#from urlparse import urlsplit
 
 AUDIO_CONTAINER_ID = 100
 AUDIO_ALL_CONTAINER_ID = 110
@@ -62,7 +62,7 @@ class DBContainer(Container):
 
 	def get_item(self):
 		if self.item is None:
-			item = DIDLLite.Item(self.get_id(), self.parent.get_id(), self.name)
+			item = DIDLLite.Item(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 			item.childCount = self.get_child_count()
 			self.item = item
 			self.update_id += 1
@@ -72,37 +72,41 @@ class DBContainer(Container):
 		if res and not res.error():
 			return res.data()
 		elif res:
-			self.warning("%s\n%s" %(res.errorDriverText(), res.errorDatabaseText()))
+			self.warning("%s\n%s" % (res.errorDriverText(), res.errorDatabaseText()))
 		else:
 			self.warning("res is %s", res)
 		return []
 
-	def _set_item_resources(self, codec, size=0):
+	def _set_item_resources(self, codec, size=0, duration=0, resolution=None):
 			if size < 0:
 				size = 0
 			mimetype = DLNA.getMimeType(codec, self._default_mime)
 			dlna_params = "*"
 
-			_,host_port,_,_,_ = urlsplit(self.store.urlbase)
-			if host_port.find(':') != -1:
-				host,port = tuple(host_port.split(':'))
-			else:
-				host = host_port
+#			_,host_port,_,_,_ = urlsplit(self.store.urlbase)
+#			if host_port.find(':') != -1:
+#				host,port = tuple(host_port.split(':'))
+#			else:
+#				host = host_port
+#			res = DIDLLite.Resource('file://'+self.location, protocolInfo='internal:%s:%s:%s' % (host, mimetype, dlna_params))
+#			res.size = size
+#			self.item.res.append(res)
 
-			res = DIDLLite.Resource('file://'+self.location, protocolInfo='internal:%s:%s:%s' % (host, mimetype, dlna_params))
+			ext = self.location.split('.')[-1]
+			url = "%s%s.%s" % (self.store.urlbase, self.get_id(), ext)
+			res = DIDLLite.Resource(data=url, protocolInfo='http-get:*:%s:%s' % (mimetype, dlna_params))
 			res.size = size
-			self.item.res.append(res)
 
-			ext =  self.location.split('.')[-1]
-			url = "%s%s.%s" %(self.store.urlbase, self.get_id(), ext)
-			res = DIDLLite.Resource(data=url, protocolInfo='http-get:*:%s:%s' %(mimetype, dlna_params))
-			res.size = size
+			m, s = divmod(duration, 60)
+			h, m = divmod(m, 60)
+			res.duration = "%02d:%02d:%02d" % (h, m, s)
+			res.resolution = resolution
 			self.item.res.append(res)
 
 class Artist(DBContainer):
 	schemaVersion = 1
 	mimetype = 'directory'
-	
+
 	def _do_get_children(self, start, end):
 		return self._db.getAlbumsByArtist(self.name)
 
@@ -112,15 +116,15 @@ class Artist(DBContainer):
 			items = self._get_data(res)
 			self.children = []
 			if(len(items) > 1):
-				self.add_child( ArtistAll(self._db, self.name, _("-- All --"), self), external_id=AUDIO_ARTIST_ALL_CONTAINER_ID )
+				self.add_child(ArtistAll(self._db, self.name, _("-- All --"), self), external_id=AUDIO_ARTIST_ALL_CONTAINER_ID)
 			for item in items:
-				self.add_child( Album(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_ID]) )
+				self.add_child(Album(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_ID]))
 		return self.children
 
 	def get_item(self):
 #		self.warning(self.name)
 		if self.item is None:
-			self.item = DIDLLite.MusicArtist(self.get_id(), self.parent.get_id(), self.name)
+			self.item = DIDLLite.MusicArtist(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 			self.item.childCount = self.get_child_count()
 		return self.item
 
@@ -142,12 +146,12 @@ class Artists(DBContainer):
 			items = self._get_data(res)
 			self.children = []
 			for item in items:
-				self.add_child( Artist(self._db, item[eMediaDatabase.FIELD_ARTIST], self), external_id=int(item[eMediaDatabase.FIELD_ID]) )
+				self.add_child(Artist(self._db, item[eMediaDatabase.FIELD_ARTIST], self), external_id=int(item[eMediaDatabase.FIELD_ID]))
 		return self.children
 
 	def get_item(self):
 		if self.item is None:
-			self.item = DIDLLite.Music(self.get_id(), self.parent.get_id(), self.name)
+			self.item = DIDLLite.Music(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 			self.item.childCount = self.get_child_count()
 		return self.item
 
@@ -162,7 +166,7 @@ class AlbumArtists(Artists):
 			items = self._get_data(res)
 			self.children = []
 			for item in items:
-				self.add_child( AlbumArtist(self._db, item[eMediaDatabase.FIELD_ARTIST], self), external_id=int(item[eMediaDatabase.FIELD_ID]) )
+				self.add_child(AlbumArtist(self._db, item[eMediaDatabase.FIELD_ARTIST], self), external_id=int(item[eMediaDatabase.FIELD_ID]))
 		return self.children
 
 class Album(DBContainer):
@@ -181,12 +185,12 @@ class Album(DBContainer):
 			res = self._db.filterByArtistAlbum(self.artist, self.name)
 			items = self._get_data(res)
 			for item in items:
-				self.add_child( Track(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_FILE_ID]) )
+				self.add_child(Track(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_FILE_ID]))
 		return self.children
 
 	def get_item(self):
 		if self.item is None:
-			self.item = DIDLLite.MusicAlbum(id=self.get_id(), parentID=self.parent.get_id(), title=self.name)
+			self.item = DIDLLite.MusicAlbum(id=self.get_id(), parentID=self.parent.get_id(), title=self.name, restricted=True)
 			self.item.childCount = self.get_child_count()
 			self.item.artist = self.artist
 		return self.item
@@ -207,7 +211,7 @@ class ArtistAll(Album):
 			res = self._db.filterByArtist(self.parent.name)
 			items = self._get_data(res)
 			for item in items:
-				self.add_child( Track(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_FILE_ID]) )
+				self.add_child(Track(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_FILE_ID]))
 		return self.children
 
 class Albums(DBContainer):
@@ -220,19 +224,19 @@ class Albums(DBContainer):
 			res = self._db.getAllAlbums()
 			items = self._get_data(res)
 			for item in items:
-				self.add_child( Album(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_ID]) )
+				self.add_child(Album(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_ID]))
 		return self.children
 
 	def get_item(self):
 		if self.item is None:
-			self.item = DIDLLite.Music(id=self.get_id(), parentID=self.parent.get_id(), title=self.name)
+			self.item = DIDLLite.Music(id=self.get_id(), parentID=self.parent.get_id(), title=self.name, restricted=True)
 			self.item.childCount = self.get_child_count()
 		return self.item
 
 class AllTracks(DBContainer):
 	schemaVersion = 1
 	mimetype = 'directory'
-	
+
 	def get_children(self, start=0, end=0):
 		if self.children is None:
 			self.children = []
@@ -240,7 +244,7 @@ class AllTracks(DBContainer):
 			res = self._db.getAllAudio(limit, start)
 			items = self._get_data(res)
 			for item in items:
-				self.add_child( Track(self._db, item, self), int(item[eMediaDatabase.FIELD_FILE_ID]) )
+				self.add_child(Track(self._db, item, self), int(item[eMediaDatabase.FIELD_FILE_ID]))
 		return self.children
 
 class Track(DBContainer):
@@ -248,28 +252,29 @@ class Track(DBContainer):
 
 	def __init__(self, db, item, parent):
 		self._db_item = item
-		artist, album, title, size, date = item[eMediaDatabase.FIELD_ARTIST], item[eMediaDatabase.FIELD_ALBUM], item[eMediaDatabase.FIELD_TITLE], item[eMediaDatabase.FIELD_SIZE], item[eMediaDatabase.FIELD_DATE]
+		artist, album, title, size, date, duration = item[eMediaDatabase.FIELD_ARTIST], item[eMediaDatabase.FIELD_ALBUM], item[eMediaDatabase.FIELD_TITLE], item[eMediaDatabase.FIELD_SIZE], item[eMediaDatabase.FIELD_DATE], item[eMediaDatabase.FIELD_DURATION]
 		DBContainer.__init__(self, db, title, parent)
-		self.location = "%s/%s" %(item[eMediaDatabase.FIELD_PATH], item[eMediaDatabase.FIELD_FILENAME])
+		self.location = "%s/%s" % (item[eMediaDatabase.FIELD_PATH], item[eMediaDatabase.FIELD_FILENAME])
 		self.artist = convertString(artist)
 		self.title = convertString(title)
 		self.album = convertString(album)
 		self.size = size
 		self.date = date
+		self.duration = int(duration)
 
-	def get_children(self,start=0,request_count=0):
+	def get_children(self, start=0, request_count=0):
 		return []
 
 	def get_item(self):
 		if self.item is None:
-			self.item = DIDLLite.MusicTrack(self.get_id(), self.parent.get_id(), self.name)
+			self.item = DIDLLite.MusicTrack(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 			self.item.childCount = 0
 			self.item.artist = self.artist
 			self.item.title = self.title
 			self.item.album = self.album
 			self.item.date = self.date
 			codec = self._db_item['codec']
-			self._set_item_resources(codec, self.size)
+			self._set_item_resources(codec, self.size, self.duration)
 		return self.item
 
 class VideoContainer(DBContainer):
@@ -282,7 +287,7 @@ class VideoContainer(DBContainer):
 			res = self._get_res()
 			items = self._get_data(res)
 			for item in items:
-				self.add_child( Video(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_FILE_ID]) )
+				self.add_child(Video(self._db, item, self), external_id=int(item[eMediaDatabase.FIELD_FILE_ID]))
 		return self.children
 
 	def _get_res(self):
@@ -290,7 +295,7 @@ class VideoContainer(DBContainer):
 
 	def get_item(self):
 		if self.item is None:
-			self.item = DIDLLite.Container(id=self.get_id(), parentID=self.parent.get_id(), title=self.name)
+			self.item = DIDLLite.Container(id=self.get_id(), parentID=self.parent.get_id(), title=self.name, restricted=True)
 			self.item.childCount = self.get_child_count()
 		return self.item
 
@@ -319,22 +324,23 @@ class Video(DBContainer):
 
 	def __init__(self, db, item, parent):
 		self._db_item = item
-		name, size = item[eMediaDatabase.FIELD_TITLE], item[eMediaDatabase.FIELD_SIZE]
+		name, size, duration = item[eMediaDatabase.FIELD_TITLE], item[eMediaDatabase.FIELD_SIZE], item[eMediaDatabase.FIELD_DURATION]
 		DBContainer.__init__(self, db, name, parent)
-		self.location = "%s/%s" %(item[eMediaDatabase.FIELD_PATH], item[eMediaDatabase.FIELD_FILENAME])
+		self.location = "%s/%s" % (item[eMediaDatabase.FIELD_PATH], item[eMediaDatabase.FIELD_FILENAME])
 		self.size = size
+		self.duration = int(duration)
 
-	def get_children(self,start=0,request_count=0):
+	def get_children(self, start=0, request_count=0):
 		return []
 
 	def get_item(self):
 		if self.item is None:
-			self.item = DIDLLite.VideoItem(self.get_id(), self.parent.get_id(), self.name)
+			self.item = DIDLLite.Movie(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 			self.item.childCount = 0
 			self.item.title = self.name
-			self._default_mime = "video/*"
+			self._default_mime = "video/mpeg"
 			codec = self._db_item['codec']
-			self._set_item_resources(codec, self.size)
+			self._set_item_resources(codec, self.size, self.duration, resolution="720x576") #FIXME resolution is hardcoded
 		return self.item
 
 class DVBServiceList(Container):
@@ -350,7 +356,7 @@ class DVBServiceList(Container):
 
 	def get_item(self):
 		if self.item == None:
-			self.item = DIDLLite.Container(self.get_id(), self.parent.get_id(), self.name)
+			self.item = DIDLLite.Container(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 		return self.item
 
 	def get_children(self, start=0, end=0):
@@ -374,7 +380,7 @@ class DVBServiceList(Container):
 		if ref:
 			ref = eServiceReference(ref)
 			if not ref.valid():
-				self.warning("Invalid ref %s" %ref)
+				self.warning("Invalid ref %s" % ref)
 				return []
 		else:
 			self.warning("Missing ref!")
@@ -405,7 +411,7 @@ class DVBService(DVBServiceList):
 
 	def get_item(self):
 		if self.item == None:
-			self.item = DIDLLite.VideoBroadcast(self.get_id(), self.parent.get_id(), self.name)
+			self.item = DIDLLite.VideoBroadcast(self.get_id(), self.parent.get_id(), self.name, restricted=True)
 			res = DIDLLite.Resource(self.get_path(), 'http-get:*:video/mpegts:*')
 			res.size = None
 			self.item.res.append(res)
@@ -439,7 +445,7 @@ class DreamboxMediaStore(AbstractBackendStore):
 		self._db = eMediaDatabase.getInstance()
 
 		self.next_id = 1000
-		self.name = kwargs.get('name','Dreambox Mediaserver')
+		self.name = kwargs.get('name', 'Dreambox Mediaserver')
 		# streaminghost is the ip address of the dreambox machine, defaults to localhost
 		self.streaminghost = kwargs.get('streaminghost', self.server.coherence.hostname)
 
@@ -448,23 +454,23 @@ class DreamboxMediaStore(AbstractBackendStore):
 		self.init_completed()
 
 		#Samsung TVs are special...
-		self._X_FeatureList = """&lt;Features xmlns=\"urn:schemas-upnp-org:av:avs\""
-		" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-		" xsi:schemaLocation=\"urn:schemas-upnp-org:av:avs http://www.upnp.org/schemas/av/avs.xsd\"&gt;"
-		" &lt;Feature name=\"samsung.com_BASICVIEW\" version=\"1\"&gt;"
-		 "&lt;container id=\"1\" type=\"object.item.audioItem\"/&gt;"
-		 "&lt;container id=\"2\" type=\"object.item.videoItem\"/&gt;"
-		 "&lt;container id=\"3\" type=\"object.item.imageItem\"/&gt;&lt;/Features&gt;"""
+#		self._X_FeatureList = """&lt;Features xmlns=\"urn:schemas-upnp-org:av:avs\""
+#		" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+#		" xsi:schemaLocation=\"urn:schemas-upnp-org:av:avs http://www.upnp.org/schemas/av/avs.xsd\"&gt;"
+#		" &lt;Feature name=\"samsung.com_BASICVIEW\" version=\"1\"&gt;"
+#		 "&lt;container id=\"1\" type=\"object.item.audioItem\"/&gt;"
+#		 "&lt;container id=\"2\" type=\"object.item.videoItem\"/&gt;"
+#		 "&lt;container id=\"3\" type=\"object.item.imageItem\"/&gt;&lt;/Features&gt;"""
 
 	def init_root(self):
 		root = Container(None, ROOT_CONTAINER_ID)
-		self.set_root_item( root )
+		self.set_root_item(root)
 		#AUDIO
 		if config.plugins.mediaserver.share_audio.value:
 			audio = Container(root, "Audio")
 			root.add_child(audio, AUDIO_CONTAINER_ID)
 			audio.add_child(
-					Artists(self._db, _("Artists"), audio), AUDIO_ARTIST_CONTAINER_ID, 
+					Artists(self._db, _("Artists"), audio), AUDIO_ARTIST_CONTAINER_ID,
 				)
 			audio.add_child(
 					Albums(self._db, _("Albums"), audio), AUDIO_ALBUM_CONTAINER_ID,
@@ -515,8 +521,8 @@ class DreamboxMediaStore(AbstractBackendStore):
 				)
 
 		root.sorted = True
-		def childs_sort(x,y):
-			return cmp(x.name,y.name)
+		def childs_sort(x, y):
+			return cmp(x.name, y.name)
 		root.sorting_method = childs_sort
 
 	def upnp_init(self):
@@ -615,16 +621,16 @@ class DreamboxMediaStore(AbstractBackendStore):
 				])
 
 			#Samsung TVs are special...
-			self.server.content_directory_server.register_vendor_variable(
-				'X_FeatureList',
-				evented='no',
-				data_type='string',
-				default_value=self._X_FeatureList)
+#			self.server.content_directory_server.register_vendor_variable(
+#				'X_FeatureList',
+#				evented='no',
+#				data_type='string',
+#				default_value=self._X_FeatureList)
 
-			self.server.content_directory_server.register_vendor_action(
-				'X_GetFeatureList', 'optional',
-				(('FeatureList', 'out', 'X_FeatureList'),),
-				needs_callback=False)
+#			self.server.content_directory_server.register_vendor_action(
+#				'X_GetFeatureList', 'optional',
+#				(('FeatureList', 'out', 'X_FeatureList'),),
+#				needs_callback=False)
 
 def restartMediaServer(name, uuid):
 	cp = resourcemanager.getResource("UPnPControlPoint")

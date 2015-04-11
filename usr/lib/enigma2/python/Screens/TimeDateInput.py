@@ -8,6 +8,7 @@ import time
 import datetime
 
 class TimeDateInput(Screen, ConfigListScreen):
+	IS_DIALOG = True
 	def __init__(self, session, config_time=None, config_date=None):
 		Screen.__init__(self, session)
 		self["oktext"] = Label(_("OK"))

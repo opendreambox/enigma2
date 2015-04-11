@@ -64,7 +64,11 @@ class CecConfig(ConfigListScreen, Screen):
 		if config.cec.sendpower.value and isExpert:
 			lst.append(getConfigListEntry(_("Send explicit on/off to Audio System"), config.cec.avr_power_explicit))
 
-		lst.append(getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower))
+		lst.extend([
+				getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
+				getConfigListEntry(_("Enable vendor specific handling"), config.cec.enable_vendor_quirks),
+			])
+
 		if config.cec.receivepower.value and isExpert:
 			lst.extend([
 				getConfigListEntry(_("Handle 'Routing Info' as power up/down"), config.cec.activate_on_routing_info),
@@ -73,7 +77,6 @@ class CecConfig(ConfigListScreen, Screen):
 				getConfigListEntry(_("Handle 'Set Stream' as power up"), config.cec.activate_on_stream),
 				getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
 			])
-
 		lst.extend([
 			getConfigListEntry(_("Allow remote control via CEC"), config.cec.receive_remotekeys),
 			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),

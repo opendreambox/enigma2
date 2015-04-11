@@ -58,7 +58,7 @@ class About(Screen):
 			})
 
 	def getServiceIP(self, service):
-		ip = "0.0.0.0"
+		ip = None
 		if service.state() == eNetworkManager.STATE_ONLINE:
 			ipv4 = service.ipv4()
 			ip = ipv4.get("Address", "0.0.0.0")

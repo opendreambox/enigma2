@@ -21,7 +21,7 @@ def upnp_setup(session, **kwargs):
 	session.open(UPnPConfig)
 
 def upnp_menu(menuid, **kwargs):
-	if menuid == "system":
+	if menuid == "network":
 		return [(_("UPnP/DLNA"), upnp_setup, "upnp_setup", None)]
 	else:
 		return []

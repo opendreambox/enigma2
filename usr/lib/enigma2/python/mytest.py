@@ -431,6 +431,9 @@ class Session:
 			if "is_dialog" in kwargs:
 				is_dialog = kwargs["is_dialog"]
 				del kwargs["is_dialog"]
+		else:
+			if "is_dialog" in kwargs:
+				del kwargs["is_dialog"]
 
 		custom_animation = None
 		if "custom_animation" in kwargs:

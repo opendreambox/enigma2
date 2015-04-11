@@ -13,74 +13,54 @@
 	<code> .. code .. </code>
 		"exec"s code
 -->
-		<!--<item text="Standby debug">quitMainloop(0)</item>
-		<item text="Network setup" entryID="network_setup">self.openSetup("network")</item>-->
-		<!--<item text="CI"><screen module="Ci" screen="CiSelection" /></item>-->
-		<!--<item text="Radio"><code>print "radio mode"</code></item>-->
-		<item level="0" text="Timer" entryID="timer_edit" description="Manage and edit timers."><screen module="TimerEdit" screen="TimerEditList" /></item>
-		<item level="1" text="VCR scart" entryID="scart_switch" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 
-		<menu level="0" text="Information" entryID="info_screen" description="Technical details about channel and Dreambox.">
-			<id val="information" />
-			<item level="1" text="Service" entryID="service_info_screen" description="Details about the current service."><screen module="ServiceInfo" screen="ServiceInfo"/></item>
-			<item level="0" text="About" entryID="about_screen" description="Details about your Dreambox system."><screen module="About" /></item>
-		</menu>
+		<item weight="10" level="0" text="Timer" entryID="timer_edit" description="Manage and edit timers."><screen module="TimerEdit" screen="TimerEditList" /></item>
+		<item weight="20" level="1" text="VCR scart" entryID="scart_switch" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 
-		<item level="1" text="Plugins" entryID="plugin_selection" description="Browse and manage your plugins."><screen module="PluginBrowser" screen="PluginBrowser" /></item>
-		<menu level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" description="Configure and set up your Dreambox.">
+		<item weight="70" level="1" text="Plugins" entryID="plugin_selection" description="Browse and manage your plugins."><screen module="PluginBrowser" screen="PluginBrowser" /></item>
+		<menu weight="80" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" description="Configure and set up your Dreambox.">
 			<id val="setup" />
-			<!--<menu text="Service Organising">
-				<item text="New Bouquets"></item>
-				<item text="Add to Bouquets"></item>
-				<item text="Edit Bouquets"></item>
-			</menu>-->
-			<menu weight="0" level="0" text="Service Searching" entryID="service_searching_selection" description="Search for services and configure your tuners.">
-				<id val="scan" />
-				<item text="Tuner configuration" entryID="tuner_setup" description="Configure your tuners."><screen module="Satconfig" screen="NimSelection" /></item>
-				<item text="Default services lists" entryID="default_lists" description="Install default service lists."><screen module="ScanSetup" screen="DefaultSatLists" /></item>
-				<item text="Automatic Scan" entryID="auto_scan" description="Automatically scan for new services."><screen module="ScanSetup" screen="ScanSimple" /></item>
-				<!--<item text="Automatic Scan"><screen module="ServiceScan" /></item>-->
-				<item text="Manual Scan" entryID="manual_scan" description="Manually scan for new services."><screen module="ScanSetup" /></item>
-				<!--<item text="Rotor Control"></item>
-				<item text="Edit Transponder"></item>
-				<item text="Satfinder"></item>-->
-			</menu>
-			<menu weight="5" level="0" text="System" entryID="system_selection" description="Configure and set up your Dreambox.">
-				<id val="system" />
-				<item level="0" text="Language" entryID="language_setup" description="Set up your Dreambox language."><screen module="LanguageSelection" /></item>
-				<item level="0" entryID="usage_setup" description="Configure Enigma2 interface and usage settings."><setup id="usage" /></item>
-				<item level="0" entryID="timezone_setup" description="Set up your system timezone."><setup id="timezone"/></item>
-				<item level="0" entryID="av_setup" description="Fine tuning for your Audio and Video settings."><setup id="avsetup"/></item>
-				<item level="0" text= "Animations" entryID="animation_setup" description="Setup UI animations"><screen module="AnimationSetup" screen="AnimationSetup" /></item>
-				<!--<item level="0" text="Video Setup" entryID="video_setup"><screen module="VideoSetup" /></item>-->
-				<item level="1" entryID="rfmod_setup" requires="RfModulator" description="Set up the the antenna output which you can hook up to old TV sets."><setup id="RFmod"/></item>
-				<item level="0" text="Storage devices" entryID="hardisk_selection" description="Set up your storage devices like harddisks and flash memory cards."><screen module="HarddiskSetup" screen="HarddiskDriveSelection" /></item>
-				<!-- <menu level="0" text="Harddisk" entryID="hardisk_selection" requires="Harddisk">
-					<id val="harddisk" />
-					<item level="1" entryID="harddisk_setup"><setup id="harddisk"/></item>
-					<item level="0" text="Initialization" entryID="harddisk_init"><screen module="HarddiskSetup" screen="HarddiskSelection"/></item>
-					<item level="0" text="Filesystem Check" entryID="harddisk_check"><screen module="HarddiskSetup" screen="HarddiskFsckSelection"/></item>
-				</menu> -->
-				<!--<item text="Remote Control"><setup id="rc" /></item>-->
-				<!--<item text="OSD"><setup id="osd" /></item>-->
-				<item level="1" text="Input devices" entryID="input_device_setup" description="Configure your input devices."><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
-				<item requires="Display" entryID="display_setup" description="Configure your frontpanel OLED or LCD display."><setup level="1" id="lcd" /></item>
-				<item text="Keyboard" entryID="keyboard_setup" description="Set up your keyboard."><setup id="keyboard" /></item>
-				<!--<menu level="1" text="Network..." entryID="network_setup">
-					<id val="network" />
-					<item level="1" text="Device Setup..." entryID="device_setup"><screen module="NetworkSetup" screen="NetworkAdapterSelection"/></item>
-					<item level="1" text="Nameserver Setup..." entryID="dns_setup"><screen module="NetworkSetup" screen="NameserverSetup"/></item>
-				</menu>-->
-				<item level="0" text="Recording paths" entryID="record_paths" description="Configure your recording paths."><screen module="RecordPaths" screen="RecordPathsSettings" /></item>
-			</menu>
-			<item weight="10" level="1" text="Common Interface" entryID="ci_setup" requires="CommonInterface" description="Configure your common interface."><screen module="Ci" screen="CiSelection" /></item>
-			<!--item level="0" text="Startwizard" entryID="startwizzard"><screen module="StartWizard" screen="StartWizard" /></item-->
-			<menu text="Network" requires="NetworkManager" weight="15" level="0"  entryId="network_tools" description="Network Setup and Tools.">
+
+			<menu weight="10" level="0" text="Network" requires="NetworkManager" entryId="network_tools" description="Network Setup and Tools.">
 				<id val="network"/>
 			</menu>
-			<item weight="45" level="0" text="Parental control" entryID="parental_setup" description="Set up parental control."><screen module="ParentalControlSetup" screen="ParentalControlSetup" /></item>
-			<item weight="50" level="0" text="Factory reset" entryID="factory_reset" description="Reset your Dreambox to factory defaults.">
-				<code>
+
+			<menu weight="20" level="0" text="Services and Recordings" entryID="services_recordings_selection" description="Service Searching, Parental Control, ...">
+				<id val="services_recordings" />
+				<menu weight="10" level="0" text="Service Searching" entryID="service_searching_selection" description="Search for services and configure your tuners.">
+					<id val="scan" />
+					<item text="Tuner configuration" entryID="tuner_setup" description="Configure your tuners."><screen module="Satconfig" screen="NimSelection" /></item>
+					<item text="Default services lists" entryID="default_lists" description="Install default service lists."><screen module="ScanSetup" screen="DefaultSatLists" /></item>
+					<item text="Automatic Scan" entryID="auto_scan" description="Automatically scan for new services."><screen module="ScanSetup" screen="ScanSimple" /></item>
+					<item text="Manual Scan" entryID="manual_scan" description="Manually scan for new services."><screen module="ScanSetup" /></item>
+				</menu>
+				<item weight="20" level="0" text="Parental control" entryID="parental_setup" description="Set up parental control."><screen module="ParentalControlSetup" screen="ParentalControlSetup" /></item>
+				<item weight="30" level="0" text="Recording paths" entryID="record_paths" description="Configure your recording paths."><screen module="RecordPaths" screen="RecordPathsSettings" /></item>
+			</menu>
+
+			<menu weight="30" level="0" text="Picture and Sound" entryID="osd_video_audio_selection" description="OSD, Video and Audio Settings">
+				<id val="osd_video_audio" />
+				<item weight="10" level="0" text= "Animations" entryID="animation_setup" description="Setup UI animations"><screen module="AnimationSetup" screen="AnimationSetup" /></item>
+				<item weight="20" level="0" entryID="av_setup" description="Fine tuning for your Audio and Video settings."><setup id="avsetup"/></item>
+				<item weight="30" requires="Display" entryID="display_setup" description="Configure your frontpanel OLED or LCD display."><setup level="1" id="lcd" /></item>
+			</menu>
+
+			<menu weight="40" level="0" text="Devices" entryID="devices_selection" description="Storage, Common Interface, Input, ...">
+				<id val="devices" />
+				<item weight="10" level="0" text="Storage devices" entryID="hardisk_selection" description="Set up your storage devices like harddisks and flash memory cards."><screen module="HarddiskSetup" screen="HarddiskDriveSelection" /></item>
+				<item weight="20" level="1" text="Common Interface" entryID="ci_setup" requires="CommonInterface" description="Configure your common interface."><screen module="Ci" screen="CiSelection" /></item>
+				<item weight="30" level="1" text="Input devices" entryID="input_device_setup" description="Configure your input devices."><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
+				<item weight="31" text="Keyboard" entryID="keyboard_setup" description="Set up your keyboard."><setup id="keyboard" /></item>
+			</menu>
+
+			<menu weight="50" level="0" text="System" entryID="system_selection" description="Advanced setup options">
+				<id val="system" />
+				<item weight="20" level="0" entryID="usage_setup" description="Configure Enigma2 interface and usage settings."><setup id="usage" /></item>
+				<item weight="30" level="0" text="Language" entryID="language_setup" description="Set up your Dreambox language."><screen module="LanguageSelection" /></item>
+				<item weight="40" level="0" entryID="timezone_setup" description="Set up your system timezone."><setup id="timezone"/></item>
+				<item weight="70" level="1" entryID="rfmod_setup" requires="RfModulator" description="Set up the the antenna output which you can hook up to old TV sets."><setup id="RFmod"/></item>
+				<item weight="80" level="0" text="Factory reset" entryID="factory_reset" description="Reset your Dreambox to factory defaults.">
+					<code>
 from Screens.FactoryReset import FactoryReset
 def msgClosed(ret):
 	if ret:
@@ -89,15 +69,19 @@ def msgClosed(ret):
 		system("cp -R /usr/share/enigma2/defaults /etc/enigma2")
 		_exit(3)
 self.session.openWithCallback(msgClosed, FactoryReset)
-</code>
-			</item>
-			<!--<item text="Parental Control"><setup id="parental" /></item>-->
-			<!--<item text="Expert -disabled-"><setup id="expert" /></item>-->
+					</code>
+				</item>
+			</menu>
 		</menu>
-		<!--<item text="Unser Setup">self.openSetup("Blaselfasel")</item>-->
-		<menu text="Standby / Restart" entryID="standby_restart_list" description="Put your Dreambox into standby, restart or shut it down.">
+
+		<menu weight="90" level="0" text="Information" entryID="info_screen" description="Technical details about channel and Dreambox.">
+			<id val="information" />
+			<item level="1" text="Service" entryID="service_info_screen" description="Details about the current service."><screen module="ServiceInfo" screen="ServiceInfo"/></item>
+			<item level="0" text="About" entryID="about_screen" description="Details about your Dreambox system."><screen module="About" /></item>
+		</menu>
+
+		<menu weight="100" text="Standby / Restart" entryID="standby_restart_list" description="Put your Dreambox into standby, restart or shut it down.">
 			<id val="shutdown" />
-			<!--<item text="Standby"><code>quitMainloop(0)</code></item>-->
 			<item text="Sleep Timer" entryID="sleep" description="Set up a timer after which your Dreambox will turn off."><screen module="SleepTimerEdit" screen="SleepTimerEdit" /></item>
 			<item text="Idle Mode" entryID="standby" description="Put your Dreambox into idle mode."><screen module="Standby" screen="Standby"/></item>
 			<item text="Restart" entryID="restart" description="Reboot your Dreambox."><screen module="Standby" screen="TryQuitMainloop">2</screen></item>

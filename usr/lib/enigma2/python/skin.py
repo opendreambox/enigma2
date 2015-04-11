@@ -12,6 +12,7 @@ from Components.Sources.Source import Source, ObsoleteSource
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
+from Tools.Log import Log
 
 colorNames = dict()
 
@@ -490,9 +491,17 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 				style.setColor(eWindowStyleSkinned.__dict__["col" + colorType], color)
 			except:
 				raise SkinError("Unknown color %s" % (colorType))
-				#pass
 
-			#print "  color:", type, color
+		for listfont in windowstyle.findall("listfont"):
+			get_attr = listfont.attrib.get
+			fontType = get_attr("type")
+			fontSize = int(get_attr("size"))
+			fontFace = get_attr("font")
+			try:
+				Log.i("########### ADDING %s: %s" %(fontType, fontSize))
+				style.setListFont(eWindowStyleSkinned.__dict__["listFont" + fontType], fontSize, fontFace)
+			except:
+				raise SkinError("Unknown listFont %s" % (fontType))
 
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(id, style)
@@ -533,6 +542,12 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					style.setValuePixmap(png)
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(id, style)
+
+	for components in skin.findall("components"):
+		for component in components.findall("component"):
+			componentSizes.apply(component.attrib)
+			for template in component.findall("template"):
+				componentSizes.addTemplate(component.attrib, template.text)
 
 def loadSkinData(desktop):
 	skins = dom_skins[:]
@@ -592,6 +607,49 @@ class WidgetGroup():
 
 class additionalWidget:
 	pass
+
+class ComponentSizes():
+	CHOICELIST = "ChoiceList"
+	FILE_LIST = "FileList"
+	MULTI_FILE_SELECT_LIST = "MultiFileSelectList"
+	HELP_MENU_LIST = "HelpMenuList"
+	PARENTAL_CONTROL_LIST = "ParentalControlList"
+	SELECTION_LIST = "SelectionList"
+	SERVICE_INFO_LIST = "ServiceInfoList"
+	TIMER_LIST = "TimerList"
+	MOVIE_LIST = "MovieList"
+	ITEM_HEIGHT = "itemHeight"
+	TEMPLATE = "template"
+
+	def __init__(self, style_id = 0):
+		self.components = {}
+
+	def apply(self, attribs):
+		values = {}
+		key = None
+		for a in attribs.items():
+			if a[0] == "type":
+				key = a[1]
+			else:
+				values[a[0]] = int(a[1])
+		if key:
+			self.components[key] = values
+
+	def addTemplate(self, attribs, template):
+		key = attribs.get("type", None)
+		if key:
+			self.components[key][self.TEMPLATE] = template.strip()
+
+	def __getitem__(self, component_id):
+		return component_id in self.components and self.components[component_id] or {}
+
+	def itemHeight(self, component_id, default=30):
+		return component_id in self.components and self.components[component_id].get(self.ITEM_HEIGHT, default) or default
+
+	def template(self, component_id):
+		return component_id in self.components and self.components[component_id].get(self.TEMPLATE, None) or None
+
+componentSizes = ComponentSizes()
 
 def readSkin(screen, skin, names, desktop):
 	if not isinstance(names, list):
@@ -821,7 +879,6 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 
 class TemplatedColors():
 	def __init__(self, style_id = 0):
-		from enigma import eWindowStyleManager, eWindowStyleSkinned, gRGB
 		x = eWindowStyleManager.getInstance()
 		style = x.getStyle(style_id)
 		self.colors = {}
@@ -833,3 +890,25 @@ class TemplatedColors():
 	def __getitem__(self, color_name):
 		return color_name in self.colors and self.colors[color_name] or gRGB(0)
 
+class TemplatedListFonts():
+	BIG = "Big"
+	MEDIUM = "Medium"
+	SMALL = "Small"
+
+	def __init__(self, style_id = 0):
+		x = eWindowStyleManager.getInstance()
+		style = x.getStyle(style_id)
+		self.sizes = {}
+		self.faces = {}
+		for font_id in (self.BIG, self.MEDIUM, self.SMALL):
+			size = int(style.getListFontSize(eWindowStyleSkinned.__dict__["listFont" + font_id]))
+			face = style.getListFontFace(eWindowStyleSkinned.__dict__["listFont" + font_id])
+			Log.i("%s: %s, %s" %(font_id, size, face))
+			self.sizes[font_id] = size
+			self.faces[font_id] = face
+
+	def size(self, font_id):
+		return font_id in self.sizes and self.sizes[font_id] or 20
+
+	def face(self, font_id):
+		return font_id in self.faces and self.faces[font_id] or "Regular"

@@ -387,9 +387,9 @@ def videoEnhancementSetupMain(session, **kwargs):
 	session.open(VideoEnhancementSetup)
 
 def startSetup(menuid):
-	if menuid != "system":
+	if menuid != "osd_video_audio":
 		return [ ]
-	return [(_("Video enhancement settings") , videoEnhancementSetupMain, "videoenhancement_setup", 41)]
+	return [(_("Video enhancement settings") , videoEnhancementSetupMain, "videoenhancement_setup", 22)]
 
 def Plugins(**kwargs):
 	list = []

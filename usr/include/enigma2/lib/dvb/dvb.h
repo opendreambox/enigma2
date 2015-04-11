@@ -232,7 +232,7 @@ public:
 public:
 #endif
 	int canAllocateFrontend(ePtr<iDVBFrontendParameters> &feparm, bool simulate=false);
-	bool canMeasureFrontendInputPower();
+	unsigned int canMeasureFrontendInputPower();
 	eSignal1<void, int> frontendUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
 	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, bool, int, std::string> >);

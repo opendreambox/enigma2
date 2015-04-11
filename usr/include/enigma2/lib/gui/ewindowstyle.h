@@ -51,6 +51,8 @@ public:
 	virtual	void getScrollbarValues(ePtr<gPixmap> &backgroundpixmap, ePtr<gPixmap> &valuepixmap, int &top_backgroundpixmap_height, int &bottom_backgroundpixmap_height, int &top_valuepixmap_height, int &bottom_valuepixmap_height, int &scrollbar_width, int &scrollbar_border_width)=0;
 #endif
 	virtual RESULT getColor(int what, gRGBA &color) = 0;
+	virtual int getListFontSize(int what) = 0;
+	virtual const std::string getListFontFace(int what) = 0;
 	virtual ~eWindowStyle() = 0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eWindowStyle>, eWindowStylePtr);

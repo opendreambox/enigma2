@@ -1,5 +1,6 @@
 from skin import parseColor
-from Components.config import config, ConfigClock, ConfigInteger
+from Components.config import config, ConfigClock, ConfigInteger, getConfigListEntry, configfile
+from Components.ConfigList import ConfigListScreen
 from Components.Pixmap import Pixmap
 from Components.Button import Button
 from Components.ActionMap import ActionMap
@@ -8,6 +9,7 @@ from Components.GUIComponent import GUIComponent
 from Components.EpgList import Rect
 from Components.Sources.Event import Event
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.Label import Label
 from Screens.Screen import Screen
 from Screens.EventView import EventViewSimple
 from Screens.TimeDateInput import TimeDateInput
@@ -19,12 +21,14 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from ServiceReference import ServiceReference
 from Tools.LoadPixmap import LoadPixmap
-from enigma import eEPGCache, eListbox, gFont, eListboxPythonMultiContent, \
+from enigma import eEPGCache, eListbox, gFont, eListboxPythonMultiContent, getDesktop, \
 	RT_HALIGN_LEFT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_WRAP, eRect, eTimer
 
-from time import localtime, time, strftime
+from time import localtime, time, mktime, strftime
 
 class EPGList(HTMLComponent, GUIComponent):
+	GUI_WIDGET = eListbox
+
 	def __init__(self, selChangedCB=None, timer = None, time_epoch = 120, overjump_empty=True):
 		self.cur_event = None
 		self.cur_service = None
@@ -55,6 +59,8 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.borderColor = None
 		self.backColor = 0x586d88
 		self.backColorSelected = 0x808080
+		self.backColorActive = 0x33aa33
+		self.backColorActiveSelected = 0x33ee33
 		self.foreColorService = None
 		self.backColorService = None
 
@@ -66,6 +72,10 @@ class EPGList(HTMLComponent, GUIComponent):
 					self.foreColor = parseColor(value)
 				elif attrib == "EntryForegroundColorSelected":
 					self.foreColorSelected = parseColor(value)
+				elif attrib == "EntryActiveBackgroundColor":
+					self.backColorActive = parseColor(value)
+				elif attrib == "EntryActiveBackgroundColorSelected":
+					self.backColorActiveSelected = parseColor(value)
 				elif attrib == "EntryBorderColor":
 					self.borderColor = parseColor(value)
 				elif attrib == "EntryBackgroundColor":
@@ -76,6 +86,10 @@ class EPGList(HTMLComponent, GUIComponent):
 					self.foreColorService = parseColor(value)
 				elif attrib == "ServiceNameBackgroundColor":
 					self.backColorService = parseColor(value)
+				elif attrib == "EntryFont":
+					self.l.setFont(1, gFont(value.split(";")[0], int(value.split(";")[1])))
+				elif attrib == "ServiceFont":
+					self.l.setFont(0, gFont(value.split(";")[0], int(value.split(";")[1])))
 				else:
 					attribs.append((attrib,value))
 			self.skinAttributes = attribs
@@ -127,11 +141,11 @@ class EPGList(HTMLComponent, GUIComponent):
 		event = self.getEventFromId(service, eventid)
 		return ( event, service )
 
-	def connectSelectionChanged(func):
+	def connectSelectionChanged(self, func):
 		if not self.onSelChanged.count(func):
 			self.onSelChanged.append(func)
 
-	def disconnectSelectionChanged(func):
+	def disconnectSelectionChanged(self, func):
 		self.onSelChanged.remove(func)
 
 	def serviceChanged(self):
@@ -177,20 +191,13 @@ class EPGList(HTMLComponent, GUIComponent):
 		for x in self.onSelChanged:
 			if x is not None:
 				x()
-#				try:
-#					x()
-#				except: # FIXME!!!
-#					print "FIXME in EPGList.selectionChanged"
-#					pass
-
-	GUI_WIDGET = eListbox
 
 	def postWidgetCreate(self, instance):
 		instance.setWrapAround(True)
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.serviceChanged)
 		instance.setContent(self.l)
 		self.l.setFont(0, gFont("Regular", 20))
-		self.l.setFont(1, gFont("Regular", 14))
+		self.l.setFont(1, gFont("Regular", 16))
 		self.l.setSelectionClip(eRect(0,0,0,0), False)
 
 	def preWidgetRemove(self, instance):
@@ -243,13 +250,19 @@ class EPGList(HTMLComponent, GUIComponent):
 			height = r2.height()
 			foreColor = self.foreColor
 			foreColorSelected = self.foreColorSelected
-			backColor = self.backColor
-			backColorSelected = self.backColorSelected
 			borderColor = self.borderColor
+
+			now = time()
 
 			for ev in events:  #(event_id, event_title, begin_time, duration)
 				rec=ev[2] and self.timer.isInTimer(ev[0], ev[2], ev[3], service)
 				xpos, ewidth = self.calcEntryPosAndWidthHelper(ev[2], ev[3], start, end, width)
+				if ev[2] < now and now < (ev[2]+ev[3]):
+					backColor = self.backColorActive
+					backColorSelected = self.backColorActiveSelected
+				else:
+					backColor = self.backColor
+					backColorSelected = self.backColorSelected
 				res.append(MultiContentEntryText(
 					pos = (left+xpos, top), size = (ewidth, height),
 					font = 1, flags = RT_HALIGN_CENTER | RT_VALIGN_CENTER | RT_WRAP,
@@ -386,6 +399,17 @@ class TimelineText(HTMLComponent, GUIComponent):
 
 	GUI_WIDGET = eListbox
 
+	def applySkin(self, desktop, screen):
+		if self.skinAttributes is not None:
+			attribs = [ ]
+			for (attrib, value) in self.skinAttributes:
+				if attrib == "TimelineFont":
+					self.l.setFont(0, gFont(value.split(";")[0], int(value.split(";")[1])))
+				else:
+					attribs.append((attrib,value))
+			self.skinAttributes = attribs
+		return GUIComponent.applySkin(self, desktop, screen)
+
 	def postWidgetCreate(self, instance):
 		instance.setContent(self.l)
 
@@ -401,12 +425,21 @@ class TimelineText(HTMLComponent, GUIComponent):
 config.misc.graph_mepg_prev_time=ConfigClock(default = time())
 config.misc.graph_mepg_prev_time_period=ConfigInteger(default=120, limits=(60,300))
 
+now = [x for x in localtime()]
+now[3] = 20
+now[4] = 15
+def_time = mktime(now)
+config.misc.graph_mepg_prime_time=ConfigClock(default=def_time)
+
 class GraphMultiEPG(Screen):
 	EMPTY = 0
 	ADD_TIMER = 1
 	REMOVE_TIMER = 2
 	
 	ZAP = 1
+
+	TIME_NOW = 0
+	TIME_PRIME = 1
 
 	def __init__(self, session, services, zapFunc=None, bouquetChangeCB=None):
 		Screen.__init__(self, session)
@@ -417,6 +450,8 @@ class GraphMultiEPG(Screen):
 		self.closeRecursive = False
 		self["key_red"] = Button("")
 		self["key_green"] = Button("")
+		self["key_yellow"] = Button(_("Prime time"))
+		self["key_blue"] = Button(_("Date"))
 		self.key_green_choice = self.EMPTY
 		self.key_red_choice = self.EMPTY
 		self["timeline_text"] = TimelineText()
@@ -429,6 +464,7 @@ class GraphMultiEPG(Screen):
 		self["timeline_now"] = Pixmap()
 		self.services = services
 		self.zapFunc = zapFunc
+		self.prime_mode = self.TIME_NOW
 
 		self["list"] = EPGList(selChangedCB = self.onSelectionChanged, timer = self.session.nav.RecordTimer, time_epoch = config.misc.graph_mepg_prev_time_period.value )
 
@@ -439,7 +475,9 @@ class GraphMultiEPG(Screen):
 				"timerAdd": self.timerAdd,
 				"info": self.infoKeyPressed,
 				"red": self.zapTo,
-				"input_date_time": self.enterDateTime,
+				"yellow": self.primeTime,
+				"blue" : self.enterDateTime,
+				"input_date_time": self.configMenu,
 				"nextBouquet": self.nextBouquet,
 				"prevBouquet": self.prevBouquet,
 			})
@@ -510,6 +548,9 @@ class GraphMultiEPG(Screen):
 		if self.bouquetChangeCB:
 			self.bouquetChangeCB(-1, self)
 
+	def configMenu(self):
+		self.session.open(GraphMultiEPGMenu)
+
 	def enterDateTime(self):
 		self.session.openWithCallback(self.onDateTimeInputClosed, TimeDateInput, config.misc.graph_mepg_prev_time )
 
@@ -521,6 +562,28 @@ class GraphMultiEPG(Screen):
 				l.resetOffset()
 				l.fillMultiEPG(self.services, ret[1])
 				self.moveTimeLines(True)
+
+	def primeTime(self):
+		date = time()
+		if self.prime_mode == self.TIME_NOW:
+			now = [x for x in localtime()]
+			prime =  [y for y in config.misc.graph_mepg_prime_time.value]
+			date = mktime([now[0], now[1], now[2], prime[0], prime[1], 0, 0, 0, 0])
+			if now[3] > prime[0] or (now[3] == prime[0] and now[4] > prime[1]):
+				date = date + 60*60*24;
+			self["key_yellow"].setText(_("Now"))
+			self.prime_mode = self.TIME_PRIME
+		else:
+			tmp = date % 900
+			date = date - tmp
+			self["key_yellow"].setText(_("Prime time"))
+			self.prime_mode = self.TIME_NOW
+
+		self.ask_time = date
+		l = self["list"]
+		l.resetOffset()
+		l.fillMultiEPG(self.services, date)
+		self.moveTimeLines(True)
 
 	def closeScreen(self):
 		self.close(self.closeRecursive)
@@ -708,4 +771,153 @@ class GraphMultiEPG(Screen):
 			timeline_now.visible = False
 		# here no l.l.invalidate() is needed when the zPosition in the skin is correct!
 
+# ----------------------------------------
 
+HELP_TEXT_PRIME_TIME = _("Time to jump to by pressing the yellow key.")
+
+class GraphMultiEPGMenu(ConfigListScreen, Screen):
+	IS_DIALOG = True
+	onChangedEntry = [ ]
+
+	def __init__(self, session):
+		width = 492
+		height = 230
+		dsk_size   = getDesktop(0).size()
+		left = (dsk_size.width() - width)>>1
+		top = (dsk_size.height() - height)>>1
+		GraphMultiEPGMenu.skin = """<screen position="%d,%d" size="%d,%d" title="%s">
+				<widget name="config" position="0,0"   size="492,105" scrollbarMode="showOnDemand" zPosition="1"/>
+				<ePixmap pixmap="skin_default/div-h.png" position="0,108" zPosition="1" size="492,2" />
+				<widget name="label"  position="0,110" size="492,70" font="Regular;16" zPosition="1" halign="left" valign="top"/>
+				<ePixmap pixmap="skin_default/div-h.png" position="0,185" zPosition="1" size="492,2" />
+				<ePixmap pixmap="skin_default/buttons/red.png"    position="0,190"   zPosition="0" size="140,40" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/green.png"  position="176,190" zPosition="0" size="140,40" transparent="1" alphatest="on" />
+				<ePixmap pixmap="skin_default/buttons/yellow.png" position="352,190" zPosition="0" size="140,40" transparent="1" alphatest="on" />
+				<widget name="key_r" position="0,190"   size="140,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
+				<widget name="key_g" position="176,190" size="140,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
+				<widget name="key_y" position="352,190" size="140,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
+			</screen>""" % (left, top, width, height, _("GraphMultiEPG settings"))
+
+		Screen.__init__(self, session)
+
+		# create config list
+		self.list = []
+		ConfigListScreen.__init__(self, self.list)
+		self.createConfigList()
+
+		self["actions"] = ActionMap(["OkCancelActions", "ColorActions"],
+		{
+			"ok"     : self.okPressed,
+			"cancel" : self.cancelPressed,
+			"red"    : self.cancelPressed,
+			"green"  : self.okPressed,
+			"yellow" : self.resetPressed,
+			"menu"   : self.cancelPressed,
+		}, -2)
+		self["actions"].setEnabled(True)
+
+		self["label"] = Label("Info")
+		self["key_r"] = Label(_("Cancel"))
+		self["key_y"] = Label(_("Default"))
+		self["key_g"] = Label(_("OK"))
+		self.onLayoutFinish.append(self.__layoutFinished)
+
+	def __layoutFinished(self):
+		if not self.selectionChanged in self["config"].onSelectionChanged:
+			self["config"].onSelectionChanged.append(self.selectionChanged)
+		self.selectionChanged()
+
+	def selectionChanged(self):
+		elem = self["config"].getCurrent()[1]
+		if elem == config.misc.graph_mepg_prime_time:
+			self["label"].setText(HELP_TEXT_PRIME_TIME)
+
+	def createConfigList(self):
+		# remove notifiers
+		for x in self["config"].list:
+			x[1].clearNotifiers()
+
+		self.list = [
+			getConfigListEntry(_("Prime time"), config.misc.graph_mepg_prime_time)
+		]
+		self["config"].list = self.list
+
+		# add notifiers (lcd, info)
+		for x in self["config"].list:
+			x[1].addNotifier(self.changedEntry)
+
+	def resetPressed(self):
+		config.misc.graph_mepg_prime_time.value = def_time
+		self["config"].selectionChanged()
+
+	def okPressed(self):
+		for x in self["config"].list:
+			x[1].save()
+		configfile.save()
+		self.close(None)
+
+	def cancelPressed(self):
+		confirm = False
+		for x in self["config"].list:
+			confirm = confirm or x[1].isChanged()
+		if confirm:
+			self.session.openWithCallback(self._discardConfirm, MessageBox, _("Discard changes?"))
+		else:
+			self.close(None)
+
+	def _discardConfirm(self, result):
+		if result:
+			for x in self["config"].list:
+				if x[1].isChanged():
+					x[1].cancel()
+			self.close(None)
+
+	# ---- for summary (lcd) ----
+	def changedEntry(self, element=None):
+		for x in self.onChangedEntry:
+			x()
+
+	def getCurrentEntry(self):
+		return self["config"].getCurrent()[0]
+
+	def getCurrentValue(self):
+		return "..."
+
+	def createSummary(self):
+		return GraphMultiEPGMenuSummary
+
+# ----------------------------------------
+
+class GraphMultiEPGMenuSummary(Screen):
+
+	skin = ("""<screen name="GraphMultiEPGMenuSummary" position="0,0" size="132,64" id="1">
+			<widget name="SetupTitle" position="6,4"  size="120,20" font="Regular;20" halign="center"/>
+			<widget name="SetupEntry" position="6,30" size="120,12" font="Regular;12" halign="left"/>
+			<widget name="SetupValue" position="6,48" size="120,12" font="Regular;12" halign="right"/>
+		</screen>""",
+		"""<screen name="GraphMultiEPGMenuSummary" position="0,0" size="96,64" id="2">
+			<widget name="SetupTitle" position="3,4"  size="90,20" font="Regular;20" halign="center"/>
+			<widget name="SetupEntry" position="3,30" size="90,12" font="Regular;12" halign="left"/>
+			<widget name="SetupValue" position="3,48" size="90,12" font="Regular;12" halign="right"/>
+		</screen>""")
+
+	def __init__(self, session, parent):
+		Screen.__init__(self, session, parent = parent)
+		self["SetupTitle"] = Label(_("GraphMultiEPG settings"))
+		self["SetupEntry"] = Label("")
+		self["SetupValue"] = Label("")
+		self.onShow.append(self.addWatcher)
+		self.onHide.append(self.removeWatcher)
+
+	def addWatcher(self):
+		self.parent.onChangedEntry.append(self.selectionChanged)
+		self.parent["config"].onSelectionChanged.append(self.selectionChanged)
+		self.selectionChanged()
+
+	def removeWatcher(self):
+		self.parent.onChangedEntry.remove(self.selectionChanged)
+		self.parent["config"].onSelectionChanged.remove(self.selectionChanged)
+
+	def selectionChanged(self):
+		self["SetupEntry"].text = self.parent.getCurrentEntry()
+		self["SetupValue"].text = self.parent.getCurrentValue()

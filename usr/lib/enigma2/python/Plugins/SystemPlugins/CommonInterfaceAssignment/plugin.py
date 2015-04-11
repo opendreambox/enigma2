@@ -634,8 +634,8 @@ def main(session, **kwargs):
 	session.open(CIselectMainMenu)
 
 def menu(menuid, **kwargs):
-	if menuid == "setup" and eDVBCIInterfaces.getInstance().getNumOfSlots():
-		return [(_("Common Interface Assignment"), main, "ci_assign", 11)]
+	if menuid == "devices" and eDVBCIInterfaces.getInstance().getNumOfSlots():
+		return [(_("Common Interface Assignment"), main, "ci_assign", 21)]
 	return [ ]
 
 def Plugins(**kwargs):

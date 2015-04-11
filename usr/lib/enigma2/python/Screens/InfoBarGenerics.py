@@ -562,11 +562,16 @@ class InfoBarEPG:
 		self.dlg_stack = [ ]
 		self.bouquetSel = None
 		self.eventView = None
+
+		yellow = (self.openSingleServiceEPG, _("show single service EPG..."))
+		if config.misc.rcused.value == 0:
+			yellow = (self.audioSelection, _("Audio Options..."))
 		self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
 			{
 				"showEventInfo": (self.openEventView, _("show EPG...")),
 				"showEventInfoPlugin": (self.showEventInfoPlugins, _("list of EPG views...")),
 				"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+				"showEventList": yellow
 			})
 
 	def showEventInfoWhenNotVisible(self):
@@ -1992,6 +1997,7 @@ class InfoBarAdditionalInfo:
 		self["ShowTimeshiftOnYellow"] = Boolean(fixed=(not config.misc.rcused.value in (0, 2)))
 		self["ShowAudioOnYellow"] = Boolean(fixed=config.misc.rcused.value == 0)
 		self["ShowRecordOnRed"] = Boolean(fixed=config.misc.rcused.value == 1)
+		self["ShowEventListOnYellow"] = Boolean(fixed=config.misc.rcused.value != 0)
 		self["ExtensionsAvailable"] = Boolean(fixed=1)
 		self["PendingNotification"] = Boolean(fixed=0)
 

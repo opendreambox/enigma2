@@ -1,59 +1,15 @@
-from Components.HTMLComponent import HTMLComponent
-from Components.GUIComponent import GUIComponent
 from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label
+from Components.ServiceInfoList import ServiceInfoList, ServiceInfoListEntry, TYPE_TEXT, TYPE_VALUE_HEX, TYPE_VALUE_DEC, TYPE_VALUE_HEX_DEC, TYPE_SLIDER
 from ServiceReference import ServiceReference
-from enigma import eListboxPythonMultiContent, eListbox, gFont, iServiceInformation, eServiceCenter, iDVBFrontend
+from enigma import iServiceInformation, eServiceCenter, iDVBFrontend
 from Tools.Transponder import ConvertToHumanReadable
 
 feSatellite = iDVBFrontend.feSatellite
 feCable = iDVBFrontend.feCable
 feTerrestrial = iDVBFrontend.feTerrestrial
 
-RT_HALIGN_LEFT = 0
-
-TYPE_TEXT = 0
-TYPE_VALUE_HEX = 1
-TYPE_VALUE_DEC = 2
-TYPE_VALUE_HEX_DEC = 3
-TYPE_SLIDER = 4
-
-def to_unsigned(x):
-	return x & 0xFFFFFFFF
-
-def ServiceInfoListEntry(a, b, valueType=TYPE_TEXT, param=4):
-	print "b:", b
-	if not isinstance(b, str):
-		if valueType == TYPE_VALUE_HEX:
-			b = ("0x%0" + str(param) + "x") % to_unsigned(b)
-		elif valueType == TYPE_VALUE_DEC:
-			b = str(b)
-		elif valueType == TYPE_VALUE_HEX_DEC:
-			b = ("0x%0" + str(param) + "x (%dd)") % (to_unsigned(b), b)
-		else:
-			b = str(b)
-
-	return [
-		#PyObject *type, *px, *py, *pwidth, *pheight, *pfnt, *pstring, *pflags;
-		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 200, 30, 0, RT_HALIGN_LEFT, ""),
-		(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, 200, 25, 0, RT_HALIGN_LEFT, a),
-		(eListboxPythonMultiContent.TYPE_TEXT, 220, 0, 350, 25, 0, RT_HALIGN_LEFT, b)
-	]
-
-class ServiceInfoList(HTMLComponent, GUIComponent):
-	def __init__(self, source):
-		GUIComponent.__init__(self)
-		self.l = eListboxPythonMultiContent()
-		self.list = source
-		self.l.setList(self.list)
-		self.l.setFont(0, gFont("Regular", 23))
-		self.l.setItemHeight(25)
-
-	GUI_WIDGET = eListbox
-
-	def postWidgetCreate(self, instance):
-		self.instance.setContent(self.l)
 
 TYPE_SERVICE_INFO = 1
 TYPE_TRANSPONDER_INFO = 2

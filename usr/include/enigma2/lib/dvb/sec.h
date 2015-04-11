@@ -323,7 +323,6 @@ private:
 	eSmartPtrList<eDVBRegisteredFrontend> &m_avail_frontends, &m_avail_simulate_frontends;
 	int m_rotorMoving;
 	int m_not_linked_slot_mask;
-	bool m_canMeasureInputPower;
 #endif
 #ifdef SWIG
 	eDVBSatelliteEquipmentControl();
@@ -387,7 +386,6 @@ public:
 	intPairList getFrequencyRangeList(int slot_no, int orb_pos);
 	void setRotorMoving(int, bool); // called from the frontend's
 	bool isRotorMoving();
-	bool canMeasureInputPower() { return m_canMeasureInputPower; }
 };
 
 #endif

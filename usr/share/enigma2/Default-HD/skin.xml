@@ -51,6 +51,9 @@
 			<pixmap pos="bpBottom" filename="Default-HD/b_b.png"  />
 			<pixmap pos="bpBottomRight" filename="Default-HD/b_br.png" />
 		</borderset>
+		<listfont type="Big" font="Regular" size="22" />
+		<listfont type="Medium" font="Regular" size="20" />
+		<listfont type="Small" font="Regular" size="18" />
 	</windowstyle>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">
@@ -89,6 +92,67 @@
 		<font filename="ae_AlMateen.ttf" name="Replacement" scale="100" replacement="1"/>
 		<font filename="tuxtxt.ttf" name="Console" scale="100"/>
 	</fonts>
+	<!-- Components -->
+	<components>
+		<component type="ChoiceList" itemHeight="30" textX="45" textY="0" textWidth="800" textHeight="30" pixmapWidth="35" pixmapHeight="30" fillerCount="200" />
+		<component type="FileList" itemHeight="25" textX="35" textY="0" textWidth="1000" textHeight="25" pixmapWidth="20" pixmapHeight="20" />
+		<component type="MultiFileSelectList" itemHeight="25" textX="55" textY="0" textWidth="1000" textHeight="25" pixmapWidth="20" pixmapHeight="20" pixmap2Width="25" pixmap2Height="25" />
+		<component type="HelpMenuList" itemHeight="30" textY="35" textWidth="1000" textHeight="35" />
+		<component type="ParentalControlList" itemHeight="32" textX="50" textY="0" textWidth="300" textHeight="32" pixmapWidth="32" pixmapHeight="32" />
+		<component type="SelectionList" itemHeight="30" textX="30" textY="0" textWidth="1000" textHeight="30" pixmapWidth="30" pixmapHeight="30" />
+		<component type="ServiceInfoList" itemHeight="30" textX="0" textY="0" textWidth="200" textHeight="30" text2X="220" text2Y="0" text2Width="350" text2Height="30" />
+		<component type="TimerList">
+			<template>
+				{
+					"template": [
+						MultiContentEntryText(pos = (0, 0), size = (width, 30), font = 0, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text=1),
+						MultiContentEntryPixmapAlphaBlend(pos = (45, 5), size = (40, 40), png=2),
+						MultiContentEntryText(pos = (0, 32), size = (width, 20), font = 1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text=3),
+						MultiContentEntryText(pos = (0, 52), size = (width-150, 20), font = 1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text=4),
+						MultiContentEntryText(pos = (width-150, 52), size = (150, 20), font = 1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text=5),
+						MultiContentEntryPixmapAlphaBlend(pos=(490, 5), size=(40, 40), png=6),
+					],
+					"itemHeight" : 70,
+					"fonts" : [gFont("Regular", 24), gFont("Regular", 18)]
+				}
+			</template>
+		</component>
+		<component type="MovieList">
+			<template>
+				{"templates":
+					{
+						"default" : (75, [
+							MultiContentEntryText(pos=(0, 0), size=(width-182, 30), font=0, flags=RT_HALIGN_LEFT, text=1),
+							MultiContentEntryText(pos=(width-180, 0), size=(180, 30), font=3, flags=RT_HALIGN_RIGHT, text=2),
+							MultiContentEntryText(pos=(200, 50), size=(200, 20), font=2, flags=RT_HALIGN_LEFT, text=3),
+							MultiContentEntryText(pos=(0, 30), size=(width, 20), font=2, flags=RT_HALIGN_LEFT, text=4),
+							MultiContentEntryText(pos=(0, 50), size=(200, 20), font=2, flags=RT_HALIGN_LEFT, text=5),
+							MultiContentEntryText(pos=(width-200, 50), size=(198, 20), font=2, flags=RT_HALIGN_RIGHT, text=6),
+						]),
+						"compact_description" : (37, [
+							MultiContentEntryText(pos=(0, 0), size=(width-120, 20), font=1, flags=RT_HALIGN_LEFT, text=1),
+							MultiContentEntryText(pos=(0, 20), size=(width-212, 17), font=4, flags=RT_HALIGN_LEFT, text=2),
+							MultiContentEntryText(pos=(width-120, 6), size=(120, 20), font=4, flags=RT_HALIGN_RIGHT, text=3),
+							MultiContentEntryText(pos=(width-212, 20), size=(154, 17), font=4, flags=RT_HALIGN_RIGHT, text=4),
+							MultiContentEntryText(pos=(width-58, 20), size=(58, 20), font=4, flags=RT_HALIGN_RIGHT, text=5),
+						]),
+						"compact" : (37, [
+							MultiContentEntryText(pos=(0, 0), size=(width-77, 20), font=1, flags=RT_HALIGN_LEFT, text=1),
+							MultiContentEntryText(pos=(width-200, 20), size=(200, 17), font=4, flags=RT_HALIGN_RIGHT, text=2),
+							MultiContentEntryText(pos=(200, 20), size=(200, 17), font=4, flags=RT_HALIGN_LEFT, text=3),
+							MultiContentEntryText(pos=(0, 20), size=(200, 17), font=4, flags=RT_HALIGN_LEFT, text=4),
+							MultiContentEntryText(pos=(width-75, 0), size=(75, 20), font=1, flags=RT_HALIGN_RIGHT, text=5),
+						]),
+						"minimal" : (25, [
+							MultiContentEntryText(pos=(0, 0), size=(width-146, 20), font=1, flags=RT_HALIGN_LEFT, text=1),
+							MultiContentEntryText(pos=(width-145, 4), size=(145, 20), font=3, flags=RT_HALIGN_RIGHT, text=2),
+						])
+					},
+					"fonts" : [gFont("Regular", 22), gFont("Regular", 20), gFont("Regular", 18), gFont("Regular", 16), gFont("Regular", 14)]
+				}
+			</template>
+		</component>
+	</components>
 	<!-- DVD Player -->
 	<screen name="DVDPlayer" position="0,561" size="1280,133" title="InfoBar" flags="wfNoBorder">
 		<ePixmap position="0,0" pixmap="Default-HD/mp-infobar-bg.png" size="1280,133" zPosition="-1" />
@@ -297,11 +361,18 @@
 		<widget source="TimeshiftPossible" render="FixedLabel" text="Timeshift" position="850,135" size="160,22" zPosition="1" font="Regular;18" backgroundColor="#182946" transparent="1">
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<!-- Yellow button (used for audio on boxes with new rc?) -->
+		<!-- Yellow button (Event List for current service) -->
 		<widget source="ShowAudioOnYellow" render="Pixmap" pixmap="Default-HD/buttons/button_yellow.png" position="820,135" size="20,20" zPosition="1" alphatest="on">
 			<convert type="ConditionalShowHide" />
 		</widget>
 		<widget source="ShowAudioOnYellow" render="FixedLabel" text="Audio" position="850,135" size="85,22" zPosition="1" font="Regular;18" backgroundColor="#182946" transparent="1">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<!-- Yellow button (Event List for current service) -->
+		<widget source="ShowEventListOnYellow" render="Pixmap" pixmap="Default-HD/buttons/button_yellow.png" position="820,135" size="20,20" zPosition="1" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="ShowEventListOnYellow" render="FixedLabel" text="EPG" position="850,135" size="85,22" zPosition="1" font="Regular;18" backgroundColor="#182946" transparent="1">
 			<convert type="ConditionalShowHide" />
 		</widget>
 		<!-- Blue button (is extensions available?) -->
@@ -1048,6 +1119,8 @@ self.instance.move(ePoint((1280-wsizex)/2, (720-wsizey)/2))
 		<ePixmap pixmap="Default-HD/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
 		<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+		<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+		<widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="global.CurrentTime" render="Label" position="1090,12" size="80,24" font="Regular;24" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
 			<convert type="ClockToText"></convert>
 		</widget>
