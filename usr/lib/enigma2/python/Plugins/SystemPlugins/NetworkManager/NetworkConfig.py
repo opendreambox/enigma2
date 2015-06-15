@@ -187,6 +187,52 @@ class NetworkConfigGeneral(object):
 
 		return (service.path(), interfacepng, strength, service.name(), ip, NetworkConfigGeneral.translateState(service.state()), None, security)
 
+class NetworkConfigGlobal(Screen, ConfigListScreen):
+	skin = """
+	<screen name="NetworkConfigGlobal" position="center,center" size="560,400" title="Network: General configuration">
+		<!--
+		<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
+		<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+		<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+		<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+		<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+		-->
+		<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
+	</screen>"""
+
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		ConfigListScreen.__init__(self, [], session=session)
+
+		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
+		{
+			"save": self.close,
+			"cancel": self.close,
+			"ok" : self.close,
+		}, -2)
+
+		self._nm = eNetworkManager.getInstance();
+
+		choices_timeupdates = { eNetworkManager.TIME_UPDATES_AUTO : _("auto"), eNetworkManager.TIME_UPDATES_MANUAL : _("manual") }
+		self._config_timeupdates = ConfigSelection(choices_timeupdates, default=self._nm.timeUpdates())
+		self._config_timeupdates.addNotifier(self._config_changed, initial_call=False)
+		self._createSetup()
+		self.onLayoutFinish.append(self._layoutFinished)
+
+	def _layoutFinished(self):
+		self.setTitle(_("Network: General configuration"))
+
+	def _config_changed(self, element):
+		self._nm.setTimeUpdates(self._config_timeupdates.value)
+		self._createSetup()
+
+	def _createSetup(self):
+		lst = [getConfigListEntry(_("NTP Time Updates"), self._config_timeupdates)]
+		self["config"].list = lst
+
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
 		<screen name="NetworkServiceConfig" position="center,center" size="1020,500" title="Network Configuration" zPosition="0">
@@ -235,8 +281,9 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self["hint"] = Label(_("Press OK to connect"))
 		self["details_label"] = Label(_("Active Connection"))
 		self["details"] = Label("")
-		self["OkCancelActions"] = ActionMap(["OkCancelActions", "ColorActions"],
+		self["OkCancelActions"] = ActionMap(["OkCancelActions", "ColorActions", "MenuActions"],
 		{
+			"menu": self._menu,
 			"cancel": self.close,
 			"ok" : self._ok,
 			"green": self._rescan,
@@ -259,6 +306,9 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 
 		self.onClose.append(self._onClose)
 		self.onLayoutFinish.append(self.layoutFinished)
+
+	def _menu(self):
+		self.session.open(NetworkConfigGlobal)
 
 	def _rescan(self):
 		if not self._currentService or isinstance(self._currentService, eNetworkServicePtr):

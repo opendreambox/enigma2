@@ -320,8 +320,14 @@ class Browser(Screen, HelpableScreen):
 		for fnc in self.onExecEnd:
 			fnc()
 
+	def scaleRect(self, rect, callback):
+		self.webnavigation.scale(rect, callback)
+
 	def setBackgroundTransparent(self, enabled):
 		self.webnavigation.setBackgroundTransparent(enabled)
+
+	def setHbbtv(self, enabled):
+		self.webnavigation.setHbbtv(enabled)
 
 	def __setKeyBoardModeAscii(self):
 		eRCInput.getInstance().setKeyboardMode(eRCInput.kmAscii)
@@ -372,7 +378,9 @@ class Browser(Screen, HelpableScreen):
 		self.__setMouseMode(self.__mouseMode)
 
 		#enable/disable transparent background
-		self.setBackgroundTransparent(self.__isTransparent)
+		self.setHbbtv(self.__isHbbtv)
+		if not self.__isHbbtv and self.__isTransparent:
+			self.setBackgroundTransparent(self.__isTransparent)
 		#set Accept-Language header to current language
 		lang = '-'.join(language.getLanguage().split('_'))
 		self.webnavigation.setAcceptLanguage(lang)

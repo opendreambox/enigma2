@@ -135,6 +135,12 @@ class PinInput(InputBox):
 		self["tries"] = Label("")
 		self.onShown.append(self.showTries)
 
+	def _showHelpWindow(self):
+		pass
+
+	def _closeHelpWindow(self):
+		pass
+
 	def gotAsciiCode(self):
 		if self["input"].currPos == len(self["input"]) - 1:
 			InputBox.gotAsciiCode(self)

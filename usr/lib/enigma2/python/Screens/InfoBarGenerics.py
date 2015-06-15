@@ -8,6 +8,8 @@ from Components.Label import Label
 from Components.PluginComponent import plugins
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
+from Components.StreamServerControl import streamServerControl
+
 try:
 	from Components.Sources.HbbtvApplication import HbbtvApplication
 	haveHbbtvApplication = True
@@ -447,6 +449,35 @@ class InfoBarChannelSelection:
 		else:
 			self.servicelist.moveDown()
 		self.servicelist.zap()
+
+	def getNextService(self, currentService):
+		services = self.servicelist.servicelist.getRootServices()
+		isRelevant = False
+		ref = currentService.toString()
+		for service in services:
+			if isRelevant:
+				cur = eServiceReference(service)
+				print "getNextService {0} / {1}".format(service, ref)
+				if not cur or (not (cur.flags & 64)):
+					return cur
+			if service == ref:
+				isRelevant = True
+		return currentService
+
+	def getPrevService(self, currentService):
+		services = self.servicelist.servicelist.getRootServices()
+		previous = []
+		ref = currentService.toString()
+		for service in services:
+			if service == ref:
+				for svc in previous:
+					cur = eServiceReference(svc)
+					print "getPrevService {0} / {1}".format(svc, ref)
+					if not cur or (not (cur.flags & 64)):
+						return cur
+			else:
+				previous.append(service)
+		return currentService
 
 class InfoBarMenu:
 	""" Handles a menu action, to open the (main) menu """
@@ -1491,7 +1522,7 @@ class InfoBarExtensions:
 		list.extend([(x[0](), x) for x in extensionsList])
 
 		keys += [""] * len(extensionsList)
-		self.session.openWithCallback(self.extensionCallback, ChoiceBox, title=_("Please choose an extension..."), list = list, keys = keys, skin_name = "ExtensionsList", is_dialog=False)
+		self.session.openWithCallback(self.extensionCallback, ChoiceBox, title=_("Please choose an extension..."), titlebartext=_("Extensions"), list = list, keys = keys, skin_name = "ExtensionsList", is_dialog=False)
 
 	def extensionCallback(self, answer):
 		if answer is not None:

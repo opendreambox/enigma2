@@ -1,18 +1,17 @@
-from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, gFont, eServiceReference, eMediaDatabase
+from enigma import eListboxPythonMultiContent, gFont, eServiceReference, eMediaDatabase
 
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
-from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
-from Tools.LoadPixmap import LoadPixmap
 from Tools.Log import Log
+
+from skin import TemplatedListFonts, componentSizes
 
 from Plugins.SystemPlugins.UPnP.UPnPBrowser import UPnPBrowser
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 
 from MediaCore import MediaCore, mediaCore
-from MediaBrowser import MediaBrowser, MediaBrowserList
+from MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
 
-def getPixmapForType(itemtype):
+def getItemTypeFromUPnP(itemtype):
 	itemtype = {
 		Statics.ITEM_TYPE_SERVER : MediaBrowser.ITEM_TYPE_FOLDER,
 		Statics.ITEM_TYPE_CONTAINER : MediaBrowser.ITEM_TYPE_FOLDER,
@@ -20,28 +19,7 @@ def getPixmapForType(itemtype):
 		Statics.ITEM_TYPE_VIDEO : MediaBrowser.ITEM_TYPE_VIDEO,
 		Statics.ITEM_TYPE_PICTURE : MediaBrowser.ITEM_TYPE_PICTURE,}.get(itemtype, None)
 
-	return MediaBrowser.ITEM_PIXMAPS.get(itemtype, None)
-
-
-def UPnPEntryComponent(title, item = None, type = Statics.ITEM_TYPE_SERVER):
-	res = [ (item, True) ]
-	res.append(MultiContentEntryText(pos=(35, 1), size=(570, 30), flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER, text=title))
-
-	pixmap = getPixmapForType(type)
-	png = None
-	if pixmap:
-		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, pixmap), cached=False)
-	if png:
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(20, 20), png=png))
-
-
-	png = None
-	if type == Statics.ITEM_TYPE_CONTAINER:
-		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "extensions/directory.png"), cached=False)
-	if png:
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(20, 20), png=png))
-
-	return res
+	return itemtype
 
 """ Field Statics
 eMediaDatabase.FIELD_PATH
@@ -112,8 +90,10 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 		MenuList.__init__(self, [], True, eListboxPythonMultiContent)
 		MediaBrowserList.__init__(self, type)
 
-		self.l.setFont(0, gFont("Regular", 18))
-		self.l.setItemHeight(30)
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
+		itemHeight = componentSizes.itemHeight(componentSizes.FILE_LIST, 25)
+		self.l.setItemHeight(itemHeight)
 		self.l.setBuildFunc(self._buildListEntry)
 
 		self._browser = UPnPBrowser()
@@ -187,8 +167,8 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 
 	def _buildListEntry(self, item, *args):
 		if item == MediaBrowser.ITEM_TYPE_UP:
-			return UPnPEntryComponent( MediaBrowser.ITEM_TEXT_UP, MediaBrowser.ITEM_TYPE_UP)
-		return UPnPEntryComponent( self._browser.getItemTitle(item), item, self._browser.getItemType(item) )
+			return MediaBrowserEntryComponent( None, MediaBrowser.ITEM_TEXT_UP, MediaBrowser.ITEM_TYPE_UP)
+		return MediaBrowserEntryComponent( item, self._browser.getItemTitle(item), getItemTypeFromUPnP(self._browser.getItemType(item)) )
 
 	def _onListReady(self, items):
 		self.__onListReady()

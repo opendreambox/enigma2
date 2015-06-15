@@ -1,4 +1,4 @@
-from enigma import eHbbtv, eServiceReference, ePoint, eSize, getDesktop, eTimer, eDVBVolumecontrol
+from enigma import eHbbtv, eServiceReference, ePoint, eSize, eRect, getDesktop, eTimer, eDVBVolumecontrol
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
@@ -134,8 +134,8 @@ class HbbTV(object):
 
 	def _adjustLimits(self, var, lower, upper):
 		var = int(var)
-		var = lower if var < lower else var
-		var = upper if var > upper else var
+		var = max(var, lower)
+		var = min(var, upper)
 		return var
 
 	def setVideoWindow(self, x, y, w, h):
@@ -145,12 +145,14 @@ class HbbTV(object):
 		y = self._adjustLimits(y, 0, 720)
 
 		print "[Hbbtv].setVideoWindow x=%s, y=%s, w=%s, h=%s" % (x, y, w, h)
+		if self.__browser:
+			self.__browser.scaleRect(eRect(x, y, w, h), self._doSetVideoWindow)
 
-		p = ePoint(x, y)
-		s = eSize(w, h)
+	def _doSetVideoWindow(self, rect):
+		print "[Hbbtv]._doSetVideoWindow x=%s, y=%s, w=%s, h=%s" % (rect.x(), rect.y(), rect.width(), rect.height())
 		if self.__videoWindow == None:
-			self.__videoWindow = self.session.instantiateDialog(HbbTVVideoWindow, point=p, size=s)
-		self.__videoWindow.setRect(p, s)
+			self.__videoWindow = self.session.instantiateDialog(HbbTVVideoWindow, point=rect.topLeft(), size=rect.size())
+		self.__videoWindow.setRect(rect.topLeft(), rect.size())
 		self.__videoWindow.show()
 
 	def _unsetVideoWindow(self):

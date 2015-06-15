@@ -27,7 +27,6 @@
 
 #include <errno.h>
 
-#include <lib/dvb/eit.h>
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/demux.h>
 #include <lib/dvb/dvbtime.h>

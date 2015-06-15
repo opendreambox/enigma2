@@ -1,6 +1,8 @@
 #ifndef __gpixelformat_h
 #define __gpixelformat_h
 
+#include <string>
+
 //
 // Bit layout of gPixelFormat:
 //
@@ -193,6 +195,7 @@ public:
 	};
 
 	static unsigned long bitsPerPixel(Format fmt);
+	static unsigned long bytesPerPixel(Format fmt);
 	static unsigned long size(Format fmt, Channel c);
 
 	static unsigned long byteOffset(Format fmt, Channel c);
@@ -201,6 +204,7 @@ public:
 	static unsigned int fromRGBA(Format fmt, unsigned long r, unsigned long g, unsigned long b, unsigned long a, unsigned long bitsPerChannel = 8);
 	static void toRGBA(Format fmt, unsigned int pixel, unsigned long *r, unsigned long *g, unsigned long *b, unsigned long *a, unsigned long bitsPerChannel = 8);
 	static bool isGray(Format fmt);
+	static bool isAlphaFirst(Format fmt);
 	static bool isBgr(Format fmt);
 	static bool hasAlpha(Format fmt);
 	static bool isIndexed(Format fmt);

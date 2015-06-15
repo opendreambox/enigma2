@@ -6,6 +6,7 @@ from Components.ServiceList import ServiceList
 from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
 from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.StreamServerControl import streamServerControl
 profile("ChannelSelection.py 1")
 from EpgSelection import EPGSelection
 from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv
@@ -1222,6 +1223,19 @@ class ChannelSelectionBase(Screen):
 	def prevMarker(self):
 		self.servicelist.moveToPrevMarker()
 
+class ChannelSelectionEncoderService(object):
+	def __init__(self):
+		self["EncoderActions"] = ActionMap(["WizardActions"],
+			{
+				"video" : self._setEncoderService
+			})
+
+	def _setEncoderService(self):
+		ref = self.getCurrentSelection()
+		if ref:
+			print "---- Setting Encoder Service to %s" %(ref.toString())
+			streamServerControl.setEncoderService(ref)
+
 HISTORYSIZE = 20
 
 #config for lastservice
@@ -1234,12 +1248,13 @@ config.radio.lastroot = ConfigText()
 config.servicelist = ConfigSubsection()
 config.servicelist.lastmode = ConfigText(default = "tv")
 
-class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, SelectionEventInfo):
+class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, SelectionEventInfo, ChannelSelectionEncoderService):
 	def __init__(self, session):
 		ChannelSelectionBase.__init__(self,session)
 		ChannelSelectionEdit.__init__(self)
 		ChannelSelectionEPG.__init__(self)
 		SelectionEventInfo.__init__(self)
+		ChannelSelectionEncoderService.__init__(self)
 
 		self["actions"] = ActionMap(["OkCancelActions", "TvRadioActions"],
 			{

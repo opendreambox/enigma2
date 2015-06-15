@@ -5,6 +5,7 @@
 
 #define __SURFACE_H_INSIDE__ 1
 
+#include <lib/gdi/esize.h>
 #include <lib/gdi/palette.h>
 #include <lib/gdi/surface_flags.h>
 

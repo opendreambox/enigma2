@@ -1,31 +1,18 @@
-from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, gFont, eServiceReference, eMediaDatabase, StringList
+from enigma import eListboxPythonMultiContent, gFont, eServiceReference, eMediaDatabase, StringList
 
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
-from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
-from Tools.LoadPixmap import LoadPixmap
 
 from MediaCore import MediaCore, mediaCore
 from Tools.Log import Log
-from MediaBrowser import MediaBrowser, MediaBrowserList
+from MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
+
+from skin import TemplatedListFonts, componentSizes
 
 ITEM_KEY_HANDLE = "handle"
 ITEM_KEY_TITLE = "__item_title"
 ITEM_KEY_TYPE = "type"
 
 ITEM_TITLE_ALL = "-- %s --" %_("All")
-
-def DBEntryComponent(item, type=MediaBrowser.ITEM_TYPE_FOLDER):
-	res = [ (item, True, type) ]
-	res.append(MultiContentEntryText(pos=(35, 1), size=(570, 30), flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER, text=item[ITEM_KEY_TITLE]))
-	pixmap = MediaBrowser.ITEM_PIXMAPS.get(type, None)
-	png = None
-	if pixmap:
-		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, pixmap))
-	if png:
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, 5), size=(20, 20), png=png))
-
-	return res
 
 #defines the required interface for navigation menu handles (see NavigationHandle and RootNavigationHandle for specific implementations
 class MediaBrowserNavigationHandle(object):
@@ -156,8 +143,10 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 		MenuList.__init__(self, [], True, eListboxPythonMultiContent)
 		MediaBrowserList.__init__(self, type)
 
-		self.l.setFont(0, gFont("Regular", 18))
-		self.l.setItemHeight(30)
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
+		itemHeight = componentSizes.itemHeight(componentSizes.FILE_LIST, 25)
+		self.l.setItemHeight(itemHeight)
 		self.l.setBuildFunc(self._buildListEntry)
 
 		self._db = eMediaDatabase.getInstance()
@@ -299,7 +288,7 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 		self.moveToIndex(restoreindex)
 
 	def _buildListEntry(self, item, item_type):
-		return DBEntryComponent(item, item_type)
+		return MediaBrowserEntryComponent(item, item[ITEM_KEY_TITLE], item_type)
 
 	def _processResult(self, res):
 		if res and not res.error():

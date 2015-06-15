@@ -24,6 +24,8 @@ from Tools.LoadPixmap import LoadPixmap
 from enigma import eEPGCache, eListbox, gFont, eListboxPythonMultiContent, getDesktop, \
 	RT_HALIGN_LEFT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, RT_WRAP, eRect, eTimer
 
+from skin import TemplatedListFonts
+
 from time import localtime, time, mktime, strftime
 
 class EPGList(HTMLComponent, GUIComponent):
@@ -196,8 +198,9 @@ class EPGList(HTMLComponent, GUIComponent):
 		instance.setWrapAround(True)
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.serviceChanged)
 		instance.setContent(self.l)
-		self.l.setFont(0, gFont("Regular", 20))
-		self.l.setFont(1, gFont("Regular", 16))
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
+		self.l.setFont(1, gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL)))
 		self.l.setSelectionClip(eRect(0,0,0,0), False)
 
 	def preWidgetRemove(self, instance):
@@ -395,7 +398,8 @@ class TimelineText(HTMLComponent, GUIComponent):
 		self.l = eListboxPythonMultiContent()
 		self.l.setSelectionClip(eRect(0,0,0,0))
 		self.l.setItemHeight(25);
-		self.l.setFont(0, gFont("Regular", 20))
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
 
 	GUI_WIDGET = eListbox
 

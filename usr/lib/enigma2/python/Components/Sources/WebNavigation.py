@@ -19,6 +19,8 @@ class WebNavigation(Source):
 	COMMAND_GET_SIZE = 0x015
 	COMMAND_GET_UA = 0x016
 	COMMAND_SET_UA = 0x017
+	COMMAND_SET_HBBTV = 0x018
+	COMMAND_SCALE = 0x019
 	
 	EVENT_URL_CHANGED = 0x100
 	EVENT_TITLE_CHANGED = 0x101
@@ -135,6 +137,9 @@ class WebNavigation(Source):
 	
 	cookies = property(__getCookies, __setCookies)
 
+	def scale(self, rect, callback):
+		self.changed(self.COMMAND_SCALE, (rect, callback))
+
 	def scroll(self, dx, dy):
 		dx = int(dx)
 		dy = int(dy)
@@ -150,6 +155,9 @@ class WebNavigation(Source):
 
 	def setBackgroundTransparent(self, enabled):
 		self.changed(self.COMMAND_SET_TRANSPARENT, enabled)
+
+	def setHbbtv(self, enabled):
+		self.changed(self.COMMAND_SET_HBBTV, enabled)
 
 	def setAcceptLanguage(self, language):
 		self.changed(self.COMMAND_SET_ACCEPT_LANGUAGE, language)

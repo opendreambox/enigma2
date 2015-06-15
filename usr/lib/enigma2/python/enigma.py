@@ -714,6 +714,7 @@ iTimeshiftServicePtr.__deref__ = new_instancemethod(_enigma.iTimeshiftServicePtr
 iTimeshiftServicePtr.startTimeshift = new_instancemethod(_enigma.iTimeshiftServicePtr_startTimeshift,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.stopTimeshift = new_instancemethod(_enigma.iTimeshiftServicePtr_stopTimeshift,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.setNextPlaybackFile = new_instancemethod(_enigma.iTimeshiftServicePtr_setNextPlaybackFile,None,iTimeshiftServicePtr)
+iTimeshiftServicePtr.setPrevPlaybackFile = new_instancemethod(_enigma.iTimeshiftServicePtr_setPrevPlaybackFile,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.isTimeshiftActive = new_instancemethod(_enigma.iTimeshiftServicePtr_isTimeshiftActive,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.activateTimeshift = new_instancemethod(_enigma.iTimeshiftServicePtr_activateTimeshift,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr_swigregister = _enigma.iTimeshiftServicePtr_swigregister
@@ -2729,6 +2730,7 @@ Teletext.hide = new_instancemethod(_enigma.Teletext_hide,None,Teletext)
 Teletext.update = new_instancemethod(_enigma.Teletext_update,None,Teletext)
 Teletext.getRenderBufferOffset = new_instancemethod(_enigma.Teletext_getRenderBufferOffset,None,Teletext)
 Teletext.getRenderBufferStride = new_instancemethod(_enigma.Teletext_getRenderBufferStride,None,Teletext)
+Teletext.getRenderBufferFD = new_instancemethod(_enigma.Teletext_getRenderBufferFD,None,Teletext)
 Teletext.getTextPidsAndName = new_instancemethod(_enigma.Teletext_getTextPidsAndName,None,Teletext)
 Teletext_swigregister = _enigma.Teletext_swigregister
 Teletext_swigregister(Teletext)
@@ -3707,7 +3709,8 @@ class eMediaDatabase(object):
     def setRecordMeta(self, *args):
         """
         setRecordMeta(eMediaDatabase self, int file_id, std::string const & ref, std::string const & name, std::string const & description, 
-            std::string const & service_data, int64_t duration, int64_t filesize) -> eMediaDatabaseResultPtr
+            std::string const & service_data, int64_t duration, int64_t filesize, 
+            int lastmodified) -> eMediaDatabaseResultPtr
         """
         return _enigma.eMediaDatabase_setRecordMeta(self, *args)
 
@@ -4000,6 +4003,14 @@ class eNetworkManager(object):
         """getUserInputRequestFields(eNetworkManager self) -> PseudoDict"""
         return _enigma.eNetworkManager_getUserInputRequestFields(self)
 
+    def timeUpdates(self):
+        """timeUpdates(eNetworkManager self) -> std::string const"""
+        return _enigma.eNetworkManager_timeUpdates(self)
+
+    def setTimeUpdates(self, *args):
+        """setTimeUpdates(eNetworkManager self, std::string const & type)"""
+        return _enigma.eNetworkManager_setTimeUpdates(self, *args)
+
     availabilityChanged = _swig_property(_enigma.eNetworkManager_availabilityChanged_get, _enigma.eNetworkManager_availabilityChanged_set)
     stateChanged = _swig_property(_enigma.eNetworkManager_stateChanged_get, _enigma.eNetworkManager_stateChanged_set)
     onlineChanged = _swig_property(_enigma.eNetworkManager_onlineChanged_get, _enigma.eNetworkManager_onlineChanged_set)
@@ -4030,6 +4041,8 @@ eNetworkManager.onServicesChanged = new_instancemethod(_enigma.eNetworkManager_o
 eNetworkManager.onTechnologiesChanged = new_instancemethod(_enigma.eNetworkManager_onTechnologiesChanged,None,eNetworkManager)
 eNetworkManager.online = new_instancemethod(_enigma.eNetworkManager_online,None,eNetworkManager)
 eNetworkManager.getUserInputRequestFields = new_instancemethod(_enigma.eNetworkManager_getUserInputRequestFields,None,eNetworkManager)
+eNetworkManager.timeUpdates = new_instancemethod(_enigma.eNetworkManager_timeUpdates,None,eNetworkManager)
+eNetworkManager.setTimeUpdates = new_instancemethod(_enigma.eNetworkManager_setTimeUpdates,None,eNetworkManager)
 eNetworkManager_swigregister = _enigma.eNetworkManager_swigregister
 eNetworkManager_swigregister(eNetworkManager)
 eNetworkManager.STATE_IDLE = _enigma.cvar.eNetworkManager_STATE_IDLE
@@ -4037,6 +4050,8 @@ eNetworkManager.STATE_OFFLINE = _enigma.cvar.eNetworkManager_STATE_OFFLINE
 eNetworkManager.STATE_ONLINE = _enigma.cvar.eNetworkManager_STATE_ONLINE
 eNetworkManager.STATE_READY = _enigma.cvar.eNetworkManager_STATE_READY
 eNetworkManager.STATE_FAILURE = _enigma.cvar.eNetworkManager_STATE_FAILURE
+eNetworkManager.TIME_UPDATES_AUTO = _enigma.cvar.eNetworkManager_TIME_UPDATES_AUTO
+eNetworkManager.TIME_UPDATES_MANUAL = _enigma.cvar.eNetworkManager_TIME_UPDATES_MANUAL
 
 def eNetworkManager_getInstance():
   """eNetworkManager_getInstance() -> eNetworkManager"""
@@ -4792,6 +4807,137 @@ eNetworkTechnologyPtrVector.capacity = new_instancemethod(_enigma.eNetworkTechno
 eNetworkTechnologyPtrVector_swigregister = _enigma.eNetworkTechnologyPtrVector_swigregister
 eNetworkTechnologyPtrVector_swigregister(eNetworkTechnologyPtrVector)
 
+class eStreamServer(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    def getInstance():
+        """getInstance() -> eStreamServer"""
+        return _enigma.eStreamServer_getInstance()
+
+    getInstance = staticmethod(getInstance)
+    UPSTREAM_STATE_DISABLED = _enigma.eStreamServer_UPSTREAM_STATE_DISABLED
+    UPSTREAM_STATE_CONNECTING = _enigma.eStreamServer_UPSTREAM_STATE_CONNECTING
+    UPSTREAM_STATE_WAITING = _enigma.eStreamServer_UPSTREAM_STATE_WAITING
+    UPSTREAM_STATE_TRANSMITTING = _enigma.eStreamServer_UPSTREAM_STATE_TRANSMITTING
+    UPSTREAM_STATE_OVERLOAD = _enigma.eStreamServer_UPSTREAM_STATE_OVERLOAD
+    def isAvailable(self):
+        """isAvailable(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_isAvailable(self)
+
+    def isRTSPEnabled(self):
+        """isRTSPEnabled(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_isRTSPEnabled(self)
+
+    def isUpstreamEnabled(self):
+        """isUpstreamEnabled(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_isUpstreamEnabled(self)
+
+    def upstreamState(self):
+        """upstreamState(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_upstreamState(self)
+
+    def width(self):
+        """width(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_width(self)
+
+    def height(self):
+        """height(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_height(self)
+
+    def path(self):
+        """path(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_path(self)
+
+    def inputMode(self):
+        """inputMode(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_inputMode(self)
+
+    def setInputMode(self, *args):
+        """setInputMode(eStreamServer self, int value)"""
+        return _enigma.eStreamServer_setInputMode(self, *args)
+
+    def audioBitrate(self):
+        """audioBitrate(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_audioBitrate(self)
+
+    def setAudioBitrate(self, *args):
+        """setAudioBitrate(eStreamServer self, int value)"""
+        return _enigma.eStreamServer_setAudioBitrate(self, *args)
+
+    def videoBitrate(self):
+        """videoBitrate(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_videoBitrate(self)
+
+    def setVideoBitrate(self, *args):
+        """setVideoBitrate(eStreamServer self, int value)"""
+        return _enigma.eStreamServer_setVideoBitrate(self, *args)
+
+    def autoBitrate(self):
+        """autoBitrate(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_autoBitrate(self)
+
+    def setAutoBitrate(self, *args):
+        """setAutoBitrate(eStreamServer self, bool value)"""
+        return _enigma.eStreamServer_setAutoBitrate(self, *args)
+
+    def framerate(self):
+        """framerate(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_framerate(self)
+
+    def setFramerate(self, *args):
+        """setFramerate(eStreamServer self, int value)"""
+        return _enigma.eStreamServer_setFramerate(self, *args)
+
+    def enableRTSP(self, *args):
+        """
+        enableRTSP(eStreamServer self, bool state, std::string const & path="/stream", uint32_t port=554, std::string const & user="", 
+            std::string const & _pass="") -> bool
+        enableRTSP(eStreamServer self, bool state, std::string const & path="/stream", uint32_t port=554, std::string const & user="") -> bool
+        enableRTSP(eStreamServer self, bool state, std::string const & path="/stream", uint32_t port=554) -> bool
+        enableRTSP(eStreamServer self, bool state, std::string const & path="/stream") -> bool
+        enableRTSP(eStreamServer self, bool state) -> bool
+        """
+        return _enigma.eStreamServer_enableRTSP(self, *args)
+
+    def enableUpstream(self, *args):
+        """enableUpstream(eStreamServer self, bool state, std::string const & host, uint32_t port, std::string const & token) -> bool"""
+        return _enigma.eStreamServer_enableUpstream(self, *args)
+
+    def setResolution(self, *args):
+        """setResolution(eStreamServer self, int width, int height)"""
+        return _enigma.eStreamServer_setResolution(self, *args)
+
+    availabilityChanged = _swig_property(_enigma.eStreamServer_availabilityChanged_get, _enigma.eStreamServer_availabilityChanged_set)
+    upstreamStateChanged = _swig_property(_enigma.eStreamServer_upstreamStateChanged_get, _enigma.eStreamServer_upstreamStateChanged_set)
+    upstreamBitrateChanged = _swig_property(_enigma.eStreamServer_upstreamBitrateChanged_get, _enigma.eStreamServer_upstreamBitrateChanged_set)
+eStreamServer.isAvailable = new_instancemethod(_enigma.eStreamServer_isAvailable,None,eStreamServer)
+eStreamServer.isRTSPEnabled = new_instancemethod(_enigma.eStreamServer_isRTSPEnabled,None,eStreamServer)
+eStreamServer.isUpstreamEnabled = new_instancemethod(_enigma.eStreamServer_isUpstreamEnabled,None,eStreamServer)
+eStreamServer.upstreamState = new_instancemethod(_enigma.eStreamServer_upstreamState,None,eStreamServer)
+eStreamServer.width = new_instancemethod(_enigma.eStreamServer_width,None,eStreamServer)
+eStreamServer.height = new_instancemethod(_enigma.eStreamServer_height,None,eStreamServer)
+eStreamServer.path = new_instancemethod(_enigma.eStreamServer_path,None,eStreamServer)
+eStreamServer.inputMode = new_instancemethod(_enigma.eStreamServer_inputMode,None,eStreamServer)
+eStreamServer.setInputMode = new_instancemethod(_enigma.eStreamServer_setInputMode,None,eStreamServer)
+eStreamServer.audioBitrate = new_instancemethod(_enigma.eStreamServer_audioBitrate,None,eStreamServer)
+eStreamServer.setAudioBitrate = new_instancemethod(_enigma.eStreamServer_setAudioBitrate,None,eStreamServer)
+eStreamServer.videoBitrate = new_instancemethod(_enigma.eStreamServer_videoBitrate,None,eStreamServer)
+eStreamServer.setVideoBitrate = new_instancemethod(_enigma.eStreamServer_setVideoBitrate,None,eStreamServer)
+eStreamServer.autoBitrate = new_instancemethod(_enigma.eStreamServer_autoBitrate,None,eStreamServer)
+eStreamServer.setAutoBitrate = new_instancemethod(_enigma.eStreamServer_setAutoBitrate,None,eStreamServer)
+eStreamServer.framerate = new_instancemethod(_enigma.eStreamServer_framerate,None,eStreamServer)
+eStreamServer.setFramerate = new_instancemethod(_enigma.eStreamServer_setFramerate,None,eStreamServer)
+eStreamServer.enableRTSP = new_instancemethod(_enigma.eStreamServer_enableRTSP,None,eStreamServer)
+eStreamServer.enableUpstream = new_instancemethod(_enigma.eStreamServer_enableUpstream,None,eStreamServer)
+eStreamServer.setResolution = new_instancemethod(_enigma.eStreamServer_setResolution,None,eStreamServer)
+eStreamServer_swigregister = _enigma.eStreamServer_swigregister
+eStreamServer_swigregister(eStreamServer)
+
+def eStreamServer_getInstance():
+  """eStreamServer_getInstance() -> eStreamServer"""
+  return _enigma.eStreamServer_getInstance()
+
 class eAVSwitch(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
@@ -5028,6 +5174,11 @@ class eCec(object):
     MSG_SYSTEM_AUDIO_MODE_REQUEST = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_REQUEST
     MSG_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_STATUS
     MSG_SET_AUDIO_RATE = _enigma.eCec_MSG_SET_AUDIO_RATE
+    ABORT_REASON_UNRECOGNIZED_OPCODE = _enigma.eCec_ABORT_REASON_UNRECOGNIZED_OPCODE
+    ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND = _enigma.eCec_ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND
+    ABORT_REASON_CANNOT_PROVIDE_SOURCE = _enigma.eCec_ABORT_REASON_CANNOT_PROVIDE_SOURCE
+    ABORT_REASON_INVALID_OPERAND = _enigma.eCec_ABORT_REASON_INVALID_OPERAND
+    ABORT_REASON_REFUSED = _enigma.eCec_ABORT_REASON_REFUSED
     ADDR_TV = _enigma.eCec_ADDR_TV
     ADDR_RECORDING_DEVICE_1 = _enigma.eCec_ADDR_RECORDING_DEVICE_1
     ADDR_ADDR_RECORDING_DEVICE_2 = _enigma.eCec_ADDR_ADDR_RECORDING_DEVICE_2
@@ -5122,6 +5273,8 @@ class eCec(object):
     RC_RED = _enigma.eCec_RC_RED
     RC_GREEN = _enigma.eCec_RC_GREEN
     RC_YELLOW = _enigma.eCec_RC_YELLOW
+    DEVICE_TYPE_TUNER = _enigma.eCec_DEVICE_TYPE_TUNER
+    DEVICE_TYPE_PLAYBACK = _enigma.eCec_DEVICE_TYPE_PLAYBACK
     def vendor(*args):
         """vendor(uint32_t id) -> std::string const"""
         return _enigma.eCec_vendor(*args)
@@ -5141,6 +5294,11 @@ class eCec(object):
         return _enigma.eCec_getInstance()
 
     getInstance = staticmethod(getInstance)
+    def convert(*args):
+        """convert(int value, int len, uint8_t * data)"""
+        return _enigma.eCec_convert(*args)
+
+    convert = staticmethod(convert)
     def set_powerstate(self, *args):
         """set_powerstate(eCec self, uint8_t newstate)"""
         return _enigma.eCec_set_powerstate(self, *args)
@@ -5227,6 +5385,14 @@ class eCec(object):
         """getVolumeTarget(eCec self) -> int"""
         return _enigma.eCec_getVolumeTarget(self)
 
+    def getDeviceType(self):
+        """getDeviceType(eCec self) -> int"""
+        return _enigma.eCec_getDeviceType(self)
+
+    def setDeviceType(self, *args):
+        """setDeviceType(eCec self, int newType) -> bool"""
+        return _enigma.eCec_setDeviceType(self, *args)
+
     receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
     onKeyPress = _swig_property(_enigma.eCec_onKeyPress_get, _enigma.eCec_onKeyPress_set)
@@ -5253,6 +5419,8 @@ eCec.sendKey = new_instancemethod(_enigma.eCec_sendKey,None,eCec)
 eCec.registerRaw = new_instancemethod(_enigma.eCec_registerRaw,None,eCec)
 eCec.unregisterRaw = new_instancemethod(_enigma.eCec_unregisterRaw,None,eCec)
 eCec.getVolumeTarget = new_instancemethod(_enigma.eCec_getVolumeTarget,None,eCec)
+eCec.getDeviceType = new_instancemethod(_enigma.eCec_getDeviceType,None,eCec)
+eCec.setDeviceType = new_instancemethod(_enigma.eCec_setDeviceType,None,eCec)
 eCec_swigregister = _enigma.eCec_swigregister
 eCec_swigregister(eCec)
 
@@ -5263,6 +5431,10 @@ def eCec_vendor(*args):
 def eCec_getInstance():
   """eCec_getInstance() -> eCec"""
   return _enigma.eCec_getInstance()
+
+def eCec_convert(*args):
+  """eCec_convert(int value, int len, uint8_t * data)"""
+  return _enigma.eCec_convert(*args)
 
 class eCecVendorHandler(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

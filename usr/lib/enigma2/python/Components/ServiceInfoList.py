@@ -37,6 +37,7 @@ def ServiceInfoListEntry(a, b, valueType=TYPE_TEXT, param=4):
 			b = str(b)
 
 	return [
+		None, # No private data needed...
 		#PyObject *type, *px, *py, *pwidth, *pheight, *pfnt, *pstring, *pflags;
 		(eListboxPythonMultiContent.TYPE_TEXT, tx, ty, tw, th, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, a),
 		(eListboxPythonMultiContent.TYPE_TEXT, t2x, t2y, t2w, t2h, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, b)

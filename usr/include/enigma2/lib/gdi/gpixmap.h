@@ -10,6 +10,7 @@
 #include <lib/gdi/rgba.h>
 #include <lib/gdi/scalefilter.h>
 #include <lib/gdi/surface_flags.h>
+#include <set>
 #include <vector>
 
 #undef __GPIXMAP_H_INSIDE__
@@ -29,6 +30,7 @@ class gPixmap: public iObject
 	gRGBA m_invalidColor;
 	gSurface *m_surface;
 	bool m_glsl;
+	std::set<void *> m_mappings;
 
 	void drawPixel8(const ePoint &pos, unsigned int pixel);
 	void drawPixel16(const ePoint &pos, unsigned int pixel);
@@ -40,13 +42,6 @@ class gPixmap: public iObject
 	void fillRect16(const eRect &area, unsigned int pixel);
 	void fillRect32(const eRect &area, unsigned int pixel);
 	void fillRegion(const gRegion &region, unsigned int pixel, int flags, const eMatrix4x4 &matrix);
-
-    #if defined(D_ENABLE_ASSERTIONS)
-	static void testBlit(ePtr<gPixmap> dst, ePtr<gPixmap> src, const char *name);
-	static void testBlitConstantAlpha(ePtr<gPixmap> dst, ePtr<gPixmap> src, float c_alpha, const char *name);
-	static void testBlitClip(ePtr<gPixmap> dst, ePtr<gPixmap> src, const char *name);
-	static void testFill(ePtr<gPixmap> pixmap, const gRGBA &color, const char *name);
-    #endif /* D_ENABLE_ASSERTIONS */
 
 public:
 #ifndef SWIG
@@ -73,7 +68,8 @@ public:
 	bool glTexture(unsigned int *glHandle, unsigned int *glTarget) const;
 
     #if defined(D_ENABLE_ASSERTIONS)
-	static void selftest();
+	friend class gPixmapTest;
+	static int selftest();
     #endif /* D_ENABLE_ASSERTIONS */
 #endif
 	virtual ~gPixmap();
@@ -93,6 +89,13 @@ public:
 	};
 	ePtr<gPixmap> scale(const eSize &size, enum ScaleMode mode = ColorScale) const;
 	ePtr<gPixmap> read() const;
+
+#ifndef SWIG
+	const void *map() const;
+	void *map();
+	void unmap(const void *ptr) const;
+	void unmap(void *ptr);
+#endif
 
 private:
 	E_DECLARE_PRIVATE(gPixmap)

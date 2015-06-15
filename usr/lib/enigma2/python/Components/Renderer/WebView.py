@@ -43,6 +43,8 @@ class WebView(Renderer):
 				self.instance.setRawCookies(param)
 			elif cmd == WebNavigation.COMMAND_SET_TRANSPARENT:
 				self.instance.setBackgroundTransparent(param)
+			elif cmd == WebNavigation.COMMAND_SET_HBBTV:
+				self.instance.setHbbtv(param)
 			elif cmd == WebNavigation.COMMAND_SET_ACCEPT_LANGUAGE:
 				self.instance.setAcceptLanguage(param)
 			elif cmd == WebNavigation.COMMAND_LEFT_CLICK:
@@ -77,3 +79,5 @@ class WebView(Renderer):
 				param(self.instance.getUserAgent())
 			elif cmd == WebNavigation.COMMAND_SET_UA:
 				self.instance.setUserAgent(param)
+			elif cmd == WebNavigation.COMMAND_SCALE:
+				param[1](self.instance.scale(param[0]))

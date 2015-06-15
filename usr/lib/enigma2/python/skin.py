@@ -609,6 +609,7 @@ class additionalWidget:
 	pass
 
 class ComponentSizes():
+	CONFIG_LIST = "ConfigList"
 	CHOICELIST = "ChoiceList"
 	FILE_LIST = "FileList"
 	MULTI_FILE_SELECT_LIST = "MultiFileSelectList"

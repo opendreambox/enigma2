@@ -1,10 +1,14 @@
 # -*- coding: UTF-8 -*-
-
+from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label, MultiColorLabel
+from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from Components.Sources.Boolean import Boolean
+from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
+from Tools.LoadPixmap import LoadPixmap
+from skin import componentSizes
 
 from MediaPlayerLCDScreen import MediaPlayerLCDScreen
 from MediaCore import MediaCore
@@ -267,3 +271,24 @@ class MediaBrowserList(object):
 
 	def getServiceRef(self, item=None):
 		raise NotImplementedError("[MediaBrowserList] Subclasses have to implement getServiceRef(self, item=None)")
+
+def MediaBrowserEntryComponent(item, title, type=MediaBrowser.ITEM_TYPE_FOLDER):
+	res = [ (item, True, type) ]
+
+	sizes = componentSizes[componentSizes.FILE_LIST]
+	tx = sizes.get("textX", 35)
+	ty = sizes.get("textY", 0)
+	tw = sizes.get("textWidth", 1000)
+	th = sizes.get("textHeight", 25)
+	pxw = sizes.get("pixmapWidth", 20)
+	pxh = sizes.get("pixmapHeight", 20)
+
+	res.append(MultiContentEntryText(pos=(tx, ty), size=(tw, th), flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER, text=title))
+	pixmap = MediaBrowser.ITEM_PIXMAPS.get(type, None)
+	png = None
+	if pixmap:
+		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, pixmap))
+	if png:
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, (th-pxh)/2), size=(pxw, pxh), png=png))
+
+	return res
