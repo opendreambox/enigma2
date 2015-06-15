@@ -152,7 +152,7 @@ public:
 	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm);
 	int getDVBID() { return m_dvbid; }
 	int getSlotID() { return m_slotid; }
-	bool setSlotInfo(ePyObject obj); // get a tuple (slotid, slotdescr)
+	bool setSlotInfo(ePyObject obj); // get a tuple (slotid, slotdescr, enabled, dvbid, input_name)
 	static void setTypePriorityOrder(int val) { PriorityOrder = val; }
 	static int getTypePriorityOrder() { return PriorityOrder; }
 

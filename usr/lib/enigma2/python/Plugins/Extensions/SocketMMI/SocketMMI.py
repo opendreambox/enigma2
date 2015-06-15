@@ -10,14 +10,16 @@ class SocketMMIMessageHandler:
 	def setSession(self, session):
 		self.session = session
 
-	def connected(self):
-		return socketmmi.getState(0)
+	def numConnections(self):
+		return socketmmi.numConnections()
 
-	def getName(self):
-		return socketmmi.getName(0)
+	def getState(self, slot):
+		return socketmmi.getState(slot)
 
-	def startMMI(self):
-		slot = 0
+	def getName(self, slot):
+		return socketmmi.getName(slot)
+
+	def startMMI(self, slot):
 		self.dlgs[slot] = self.session.openWithCallback(self.dlgClosed, MMIDialog, slot, 2, socketmmi, _("wait for mmi..."))
 
 	def socketStateChanged(self, slot):

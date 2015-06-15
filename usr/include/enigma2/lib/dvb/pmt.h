@@ -5,6 +5,7 @@
 #include <map>
 #include <set>
 #include <lib/base/buffer.h>
+#include <lib/components/file_monitor.h>
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/idemux.h>
@@ -23,34 +24,33 @@ class eDVBCAService;
 class eDVBScan;
 
 struct channel_data: public sigc::trackable
-{
+ {
 	ePtr<eDVBChannel> m_channel;
 	ePtr<eConnection> m_stateChangedConn;
 	int m_prevChannelState;
 	int m_dataDemux;
 };
 
-// TODO .. put all static stuff into a 'eDVBCAServiceHandler class'
-
 typedef std::map<eServiceReferenceDVB, eDVBCAService*> CAServiceMap;
 typedef std::map<iDVBChannel*, channel_data*> ChannelMap;
 
+class eDVBCAServiceConn;
+typedef std::list<eFileWatch *> FileWatchList;
+typedef std::map<std::string, eDVBCAServiceConn*> CAServiceConnMap;
+typedef std::set<std::string> CASocketSet;
+
 class eDVBCAService: public sigc::trackable
 {
-	eIOBuffer m_buffer;
-	ePtr<eSocketNotifier> m_sn;
+	friend class eDVBCAServiceConn;
+
 	eServiceReferenceDVB m_service;
 	uint8_t m_used_demux[32];
-	unsigned int m_prev_build_hash;
 
-	int m_sock, m_clilen; 
-	struct sockaddr_un m_servaddr;
-	unsigned int m_sendstate;
+	bool m_first;
 	unsigned char m_capmt[2048];
-	ePtr<eTimer> m_retryTimer;
+
+	void recheckConnections();
 	void sendCAPMT();
-	void Connect();
-	void socketCB(int what);
 
 	static void DVBChannelAdded(eDVBChannel*);
 	static void DVBChannelStateChanged(iDVBChannel*);
@@ -58,14 +58,19 @@ class eDVBCAService: public sigc::trackable
 	static ChannelMap exist_channels;
 	static ePtr<eConnection> m_chanAddedConn;
 	static channel_data *getChannelData(eDVBChannelID &chid);
+	static FileWatchList active_watches;
+	static CASocketSet available_sockets;
+
+	CAServiceConnMap active_connections;
 
 	eDVBCAService();
 	~eDVBCAService();
 public:
+	static void fileWatchEventCB(eFileWatch *, eFileEvent);
 	static void registerChannelCallback(eDVBResourceManager *res_mgr);
 	static RESULT register_service( const eServiceReferenceDVB &ref, int demux_nums[2], eDVBCAService *&caservice );
-	static RESULT unregister_service( const eServiceReferenceDVB &ref, int demux_nums[2], eTable<ProgramMapSection> *ptr );
-	void buildCAPMT(eTable<ProgramMapSection> *ptr);
+	static RESULT unregister_service( const eServiceReferenceDVB &ref, int demux_nums[2], eTable<ProgramMapSection> *ptr, int tuner_no );
+	void buildCAPMT(eTable<ProgramMapSection> *ptr, int tuner_no);
 };
 
 #endif

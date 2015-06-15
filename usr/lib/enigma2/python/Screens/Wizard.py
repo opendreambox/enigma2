@@ -87,7 +87,10 @@ class Wizard(Screen):
 				if attrs.has_key('laststep'):
 					self.wizard[self.lastStep]["laststep"] = str(attrs.get('laststep'))
 			elif (name == "text"):
-				self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
+				if attrs.has_key("dynamictext"):
+					self.wizard[self.lastStep]["dynamictext"] = str(attrs.get('dynamictext'))
+				else:
+					self.wizard[self.lastStep]["text"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif (name == "displaytext"):
 				self.wizard[self.lastStep]["displaytext"] = str(attrs.get('value')).replace("\\n", "\n")
 			elif (name == "list"):
@@ -473,7 +476,11 @@ class Wizard(Screen):
 		return _(text)
 			
 	def updateText(self, firstset = False):
-		text = self.getTranslation(self.wizard[self.currStep]["text"])
+		if self.wizard[self.currStep].has_key("dynamictext"):
+			text = eval("self." + self.wizard[self.currStep]["dynamictext"] + "(\"" + self.wizard[self.currStep]["id"] + "\")")
+		else:
+			text = self.wizard[self.currStep]["text"]
+		text = self.getTranslation(text)
 		if text.find("[timeout]") != -1:
 			text = text.replace("[timeout]", str(self.timeoutCounter))
 			self["text"].setText(text)

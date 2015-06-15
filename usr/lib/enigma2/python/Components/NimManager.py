@@ -148,8 +148,7 @@ class SecConfigure:
 		used_nim_slots = [ ]
 
 		for slot in nim_slots:
-			if slot.type is not None:
-				used_nim_slots.append((slot.slot, slot.description, slot.config.configMode.value != "nothing" and True or False, slot.isCompatible("DVB-S2"), slot.frontend_id is None and -1 or slot.frontend_id))
+			used_nim_slots.append((slot.slot, slot.description, slot.config.configMode.value != "nothing" and True or False, slot.isCompatible("DVB-S2"), slot.frontend_id is None and -1 or slot.frontend_id, slot.input_name or ""))
 		eDVBResourceManager.getInstance().setFrontendSlotInformations(used_nim_slots)
 
 		for slot in nim_slots:
@@ -486,7 +485,7 @@ class SecConfigure:
 		self.update()
 
 class NIM(object):
-	def __init__(self, slot, type, description, has_outputs = True, internally_connectable = None, multi_type = {}, frontend_id = None, i2c = None, is_empty = False):
+	def __init__(self, slot, type, description, has_outputs = True, internally_connectable = None, multi_type = {}, frontend_id = None, i2c = None, is_empty = False, input_name = None):
 		self.slot = slot
 
 		if type not in ("DVB-S", "DVB-C", "DVB-T", "DVB-S2", None):
@@ -501,6 +500,7 @@ class NIM(object):
 		self.i2c = i2c
 		self.frontend_id = frontend_id
 		self.__is_empty = is_empty
+		self.input_name = input_name
 
 	def isCompatible(self, what):
 		if not self.isSupported():
@@ -525,12 +525,21 @@ class NIM(object):
 				"DVB-S2": ("DVB-S", "DVB-S2")
 			}
 		return connectable[self.type]
+	
+	def getSlotInputName(self):
+		name = self.input_name
+		if name is None:
+			name = chr(ord('A') + self.slot)
+		return name
+	
+	slot_input_name = property(getSlotInputName)
 
 	def getSlotName(self):
 		# get a friendly description for a slot name.
 		# we name them "Tuner A/B/C/...", because that's what's usually written on the back
 		# of the device.
-		return _("Tuner ") + chr(ord('A') + self.slot)
+		descr = _("Tuner ")
+		return descr + self.getSlotInputName()
 
 	slot_name = property(getSlotName)
 
@@ -722,6 +731,8 @@ class NimManager:
 			elif line.strip().startswith("Type:"):
 				entries[current_slot]["type"] = str(line.strip()[6:])
 				entries[current_slot]["isempty"] = False
+			elif line.strip().startswith("Input_Name:"):
+				entries[current_slot]["input_name"] = str(line.strip()[12:])
 			elif line.strip().startswith("Name:"):
 				entries[current_slot]["name"] = str(line.strip()[6:])
 				entries[current_slot]["isempty"] = False
@@ -768,7 +779,7 @@ class NimManager:
 				entry["frontend_device"] = entry["internally_connectable"] = None
 			if not (entry.has_key("multi_type")):
 				entry["multi_type"] = {}
-			nim = NIM(slot = id, description = entry["name"], type = entry["type"], internally_connectable = entry["internally_connectable"], multi_type = entry["multi_type"], frontend_id = entry["frontend_device"], i2c = entry["i2c"], is_empty = entry["isempty"])
+			nim = NIM(slot = id, description = entry["name"], type = entry["type"], internally_connectable = entry["internally_connectable"], multi_type = entry["multi_type"], frontend_id = entry["frontend_device"], i2c = entry["i2c"], is_empty = entry["isempty"], input_name = entry.get("input_name", None))
 			self.nim_slots.append(nim)
 
 	def hasNimType(self, chktype):
@@ -788,6 +799,14 @@ class NimManager:
 	
 	def getNimName(self, slotid):
 		return self.nim_slots[slotid].description
+	
+	def getNimSlotInputName(self, slotid):
+		# returns just "A", "B", ...
+		return self.nim_slots[slotid].slot_input_name
+	
+	def getNimSlotName(self, slotid):
+		# returns a friendly description string ("Tuner A", "Tuner B" etc.)
+		return self.nim_slots[slotid].slot_name
 	
 	def getNim(self, slotid):
 		return self.nim_slots[slotid]
@@ -1440,9 +1459,8 @@ def InitNimManager(nimmgr, slot_no = None):
 		multitype = 0
 		used_nim_slots = [ ]
 		for slot in nimmgr.nim_slots:
-			if slot.type is not None:
-				used_nim_slots.append((slot.slot, slot.description, False, False, slot.frontend_id is None and -1 or slot.frontend_id))
-			if slot.isMultiType():
+			used_nim_slots.append((slot.slot, slot.description, False, False, slot.frontend_id is None and -1 or slot.frontend_id, slot.input_name or ""))
+			if slot.type is not None and slot.isMultiType():
 				multitype += 1
 		if multitype:
 			eDVBResourceManager.getInstance().setFrontendSlotInformations(used_nim_slots)

@@ -8,6 +8,7 @@ from Components.Pixmap import Pixmap
 from Components.config import config, ConfigBoolean, configfile, ConfigSubsection
 
 from LanguageSelection import LanguageWizard
+from Components.NimManager import nimmanager
 
 config.misc.firstrun = ConfigBoolean(default = True)
 config.misc.startwizard = ConfigSubsection()
@@ -27,6 +28,15 @@ class StartWizard(DefaultSatLists, Rc):
 		config.misc.firstrun.value = 0
 		config.misc.firstrun.save()
 		configfile.save()
+
+	def setTunerText(self, step):
+		index = {"nima": 0, "nimb": 1, "nimc": 2, "nimd": 3}.get(step, None)
+		text = ""
+		if index == 0:
+			text += _("Use the left and right buttons to change an option.") + "\n\n"
+		text += _("Please set up tuner %s") % nimmanager.getNimSlotName(index)
+		
+		return text
 		
 wizardManager.registerWizard(LanguageWizard, config.misc.languageselected.value, priority = 5)
 wizardManager.registerWizard(StartWizard, config.misc.firstrun.value, priority = 20)

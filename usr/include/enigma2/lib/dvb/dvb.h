@@ -236,7 +236,7 @@ public:
 public:
 #endif
 	int canAllocateFrontend(ePtr<iDVBFrontendParameters> &feparm, bool simulate=false);
-	bool canMeasureFrontendInputPower();
+	unsigned int canMeasureFrontendInputPower();
 	PSignal1<void,int> frontendUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
 	PyObject *setFrontendSlotInformations(SWIG_PYOBJECT(ePyObject) list);

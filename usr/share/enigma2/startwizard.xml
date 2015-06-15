@@ -24,7 +24,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 0 and not nimmanager.nim_slots[0].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Use the left and right buttons to change an option.\n\nPlease set up tuner A" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="0" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -38,7 +38,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 1 and not nimmanager.nim_slots[1].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Please set up tuner B" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="1" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -52,7 +52,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 2 and not nimmanager.nim_slots[2].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Please set up tuner C" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="2" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -66,7 +66,7 @@ from Components.config import config
 from Components.NimManager import nimmanager
 self.condition = len(nimmanager.nim_slots) > 3 and not nimmanager.nim_slots[3].empty and config.misc.startwizard.shownimconfig.value
 			</condition>
-			<text value="Please set up tuner D" />
+			<text dynamictext="setTunerText" />
 			<config screen="NimSetup" module="Satconfig" args="3" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
