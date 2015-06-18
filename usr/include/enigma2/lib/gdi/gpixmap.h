@@ -10,7 +10,6 @@
 #include <lib/gdi/rgba.h>
 #include <lib/gdi/scalefilter.h>
 #include <lib/gdi/surface_flags.h>
-#include <set>
 #include <vector>
 
 #undef __GPIXMAP_H_INSIDE__
@@ -30,7 +29,6 @@ class gPixmap: public iObject
 	gRGBA m_invalidColor;
 	gSurface *m_surface;
 	bool m_glsl;
-	std::set<void *> m_mappings;
 
 	void drawPixel8(const ePoint &pos, unsigned int pixel);
 	void drawPixel16(const ePoint &pos, unsigned int pixel);

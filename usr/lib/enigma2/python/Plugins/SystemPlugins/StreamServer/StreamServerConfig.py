@@ -11,7 +11,7 @@ from Screens.Screen import Screen
 
 config.streamserver = ConfigSubsection()
 config.streamserver.enabled = ConfigOnOff(default=False)
-config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(StreamServerControl.INPUT_MODE_BACKGROUND))
+config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(StreamServerControl.INPUT_MODE_LIVE))
 config.streamserver.audioBitrate = ConfigInteger(128, StreamServerControl.AUDIO_BITRATE_LIMITS)
 config.streamserver.videoBitrate = ConfigInteger(2048, StreamServerControl.VIDEO_BITRATE_LIMITS)
 config.streamserver.autoBitrate = ConfigOnOff(default=False)

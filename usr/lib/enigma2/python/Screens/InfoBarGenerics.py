@@ -597,6 +597,9 @@ class InfoBarEPG:
 		yellow = (self.openSingleServiceEPG, _("show single service EPG..."))
 		if config.misc.rcused.value == 0:
 			yellow = (self.audioSelection, _("Audio Options..."))
+		elif config.misc.rcused.value == 1:
+			yellow = (self.startTimeshift, _("start timeshift"))
+
 		self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
 			{
 				"showEventInfo": (self.openEventView, _("show EPG...")),
@@ -2025,10 +2028,10 @@ class InfoBarAdditionalInfo:
 	def __init__(self):
 		self["RecordingPossible"] = Boolean(fixed=harddiskmanager.HDDCount() > 0 and config.misc.rcused.value == 1)
 		self["TimeshiftPossible"] = self["RecordingPossible"]
-		self["ShowTimeshiftOnYellow"] = Boolean(fixed=(not config.misc.rcused.value in (0, 2)))
 		self["ShowAudioOnYellow"] = Boolean(fixed=config.misc.rcused.value == 0)
+		self["ShowTimeshiftOnYellow"] = Boolean(fixed=config.misc.rcused.value == 1)
+		self["ShowEventListOnYellow"] = Boolean(fixed=config.misc.rcused.value == 2)
 		self["ShowRecordOnRed"] = Boolean(fixed=config.misc.rcused.value == 1)
-		self["ShowEventListOnYellow"] = Boolean(fixed=config.misc.rcused.value != 0)
 		self["ExtensionsAvailable"] = Boolean(fixed=1)
 		self["PendingNotification"] = Boolean(fixed=0)
 
