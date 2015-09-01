@@ -301,6 +301,7 @@ public:
 		sCAIDs,
 		sCAIDPIDs,
 		sVideoType, 		/* MPEG2 MPEG4 */
+		sAudioType,
 
 		sTags,  			/* space seperated list of tags */
 

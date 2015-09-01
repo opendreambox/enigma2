@@ -206,7 +206,13 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 			return eServiceReference()
 
 		meta = self._browser.getItemMetadata(item)
-		ref = eServiceReference(4097,0, meta[Statics.META_URI])
+		filename = meta[Statics.META_URI]
+		if filename.endswith('.ts'):
+			ref = eServiceReference(1,0,filename)
+		elif filename.endswith('.m2ts'):
+			ref = eServiceReference(3,0,filename)
+		else:
+			ref = eServiceReference(4097,0,filename)
 		ref.setName(meta[Statics.META_TITLE])
 		return ref
 

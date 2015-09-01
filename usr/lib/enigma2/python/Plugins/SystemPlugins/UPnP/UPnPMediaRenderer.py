@@ -757,9 +757,9 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		self.set_volume(DesiredVolume)
 		return {}
 
-def restartMediaRenderer(session, player, name, uuid):
+def restartMediaRenderer(session, player, name, uuid, **kwargs):
 	cp = resourcemanager.getResource("UPnPControlPoint")
 	if cp:
 		removeUPnPDevice(uuid, cp)
-		return cp.registerRenderer(UPnPMediaRenderer, session=session, player=player, name=name, uuid=uuid)
+		return cp.registerRenderer(UPnPMediaRenderer, session=session, player=player, name=name, uuid=uuid, **kwargs)
 	return None

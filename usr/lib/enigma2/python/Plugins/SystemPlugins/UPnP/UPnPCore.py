@@ -2,6 +2,7 @@
 from Components.ResourceManager import resourcemanager
 
 from coherence.base import Coherence
+from coherence.upnp.core import DIDLLite
 from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.devices.media_renderer import MediaRenderer
 from coherence.upnp.devices.media_server import MediaServer
@@ -76,13 +77,21 @@ class DLNA(object):
 			"flac" : "audio/ogg",
 			"mkv"  : "video/x-matroska",
 			"mp4"  : "video/mp4",
-			"ts"   : "video/mpegts",
+			"ts"   : "video/mpeg",
 			"mpg"  : "video/mpeg",
 		}
 
+	LUT_PARAMS = {
+			"video/mpeg" : ";".join(["DLNA.ORG_PN=MPEG_TS_SD_EU"] + DIDLLite.simple_dlna_tags),
+		}
+
 	@staticmethod
-	def getMimeType(codec, default="audio/*"):
+	def getMimeType(codec, default="audio/mpeg"):
 		return DLNA.LUT_MIME.get(codec, default)
+
+	@staticmethod
+	def getParams(mimetype, default="*"):
+		return DLNA.LUT_PARAMS.get(mimetype, default)
 
 '''
 This is a "managed" UPnP A/V Controlpoint which eases the use of UPnP, for Browsing media or adding a Renderer

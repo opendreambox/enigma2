@@ -1,3 +1,5 @@
+from enigma import eStreamServer, eServiceReference
+from Components.config import config
 from Components.StreamServerControl import streamServerControl
 from Plugins.Plugin import PluginDescriptor
 from Screens.MoviePlayer import MoviePlayer
@@ -10,9 +12,8 @@ def main(session, **kwargs):
 
 def menu(menuid, **kwargs):
 	if menuid == "network":
-		return [(_("Streaming Server Setup"), main, "streamserversetup", 47)]
+		return [(_("Streaming Server"), main, "streamserversetup", 47)]
 	return []
-
 
 def availabilityChanged(available):
 	Log.w("available=%s" %available)

@@ -90,7 +90,14 @@ class MediaDatabaseManager(Screen):
 				if path in enqued:
 					count = _("enqueued for future scan...")
 				else:
-					count = self._db.query("SELECT COUNT(t_files.id) as count FROM t_files INNER JOIN t_directories on t_directories.id = t_files.dir_id AND parent_id=?", StringList(str(dir["id"])))
+					dir_id = str(dir["id"])
+					params = StringList((dir_id,dir_id))
+					count = self._db.query(
+								"""SELECT COUNT(t_files.id) as count
+									 FROM t_files
+									  INNER JOIN t_directories
+									   ON ( t_directories.id = t_files.dir_id AND parent_id = ? )
+									   OR ( t_directories.id =  t_files.dir_id and t_directories.id = ? );""", params)
 					try:
 						count = count.data()[0]["count"]
 					except:

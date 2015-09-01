@@ -222,14 +222,14 @@ class Screen(dict, GUISkin):
 		for fnc in self.onHideFinished:
 			fnc()
 
-	def enable(self):
+	def enable(self, do_show=True):
 		if self.isEnabled() or not self.instance:
 			return
 
 		self.instance.enable()
 		if self.instance.isVisible():
 			self.__onShow()
-		else:
+		elif do_show:
 			self.show()
 
 	def disable(self):

@@ -223,10 +223,8 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 				InfoBarPlugins, InfoBarPiP:
 			x.__init__(self)
 
-		self.lastservice = session.nav.getCurrentlyPlayingServiceReference()
 		session.nav.playService(service)
 		self.returning = False
-		self.onClose.append(self.__onClose)
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
@@ -267,9 +265,6 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
 		print "[__evStreamingSrcError]", message
 		self.session.open(MessageBox, _("Streaming error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 20 )
-
-	def __onClose(self):
-		self.session.nav.playService(self.lastservice)
 
 	def handleLeave(self, how):
 		self.is_closing = True

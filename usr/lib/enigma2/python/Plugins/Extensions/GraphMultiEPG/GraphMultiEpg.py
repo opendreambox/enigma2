@@ -1,4 +1,4 @@
-from skin import parseColor
+from skin import parseColor, componentSizes
 from Components.config import config, ConfigClock, ConfigInteger, getConfigListEntry, configfile
 from Components.ConfigList import ConfigListScreen
 from Components.Pixmap import Pixmap
@@ -395,9 +395,11 @@ class EPGList(HTMLComponent, GUIComponent):
 class TimelineText(HTMLComponent, GUIComponent):
 	def __init__(self):
 		GUIComponent.__init__(self)
+		sizes = componentSizes[componentSizes.TIMELINE_TEXT]
+		height = sizes.get(componentSizes.ITEM_HEIGHT, 25)
 		self.l = eListboxPythonMultiContent()
-		self.l.setSelectionClip(eRect(0,0,0,0))
-		self.l.setItemHeight(25);
+		self.l.setSelectionClip(eRect(0, 0, 0, 0))
+		self.l.setItemHeight(height);
 		tlf = TemplatedListFonts()
 		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
 
@@ -418,12 +420,15 @@ class TimelineText(HTMLComponent, GUIComponent):
 		instance.setContent(self.l)
 
 	def setEntries(self, entries):
+		sizes = componentSizes[componentSizes.TIMELINE_TEXT]
+		width = sizes.get(componentSizes.ITEM_WIDTH, 60)
+		height = sizes.get(componentSizes.ITEM_HEIGHT, 25)
 		res = [ None ] # no private data needed
 		for x in entries:
 			tm = x[0]
 			xpos = x[1]
-			str = strftime("%H:%M", localtime(tm))
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, xpos-30, 0, 60, 25, 0, RT_HALIGN_CENTER|RT_VALIGN_CENTER, str))
+			txt = strftime("%H:%M", localtime(tm))
+			res.append((eListboxPythonMultiContent.TYPE_TEXT, xpos-30, 0, width, height, 0, RT_HALIGN_CENTER|RT_VALIGN_CENTER, txt))
 		self.l.setList([res])
 
 config.misc.graph_mepg_prev_time=ConfigClock(default = time())

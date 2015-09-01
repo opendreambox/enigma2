@@ -276,7 +276,18 @@ class RecordTimerEntry(timer.TimerEntry, object):
 					else:
 						print "ignore zaptimer in idle mode"
 				else:
+					from API import session
 					self.log(11, "zapping")
+					if session and session.current_player:
+						current_player = session.current_player
+						while current_player and current_player.prev_player:
+							current_player.lastservice = None
+							current_player = current_player.prev_player
+						if current_player:
+							current_player.lastservice = self.service_ref.ref
+							session.current_player.onClose.append(self.__playerClosed)
+							session.current_player.close()
+							return True
 					NavigationInstance.instance.playService(self.service_ref.ref)
 				return True
 			else:
@@ -326,6 +337,12 @@ class RecordTimerEntry(timer.TimerEntry, object):
 									Notifications.AddNotification(fnc, pval, pdata, self, domain="RecordTimer")
 
 			return True
+
+	def __playerClosed(self):
+		from API import session
+		if session.current_player:
+			session.current_player.onClose.append(self.__playerClosed)
+			session.current_player.close()
 
 	def setAutoincreaseEnd(self, entry = None):
 		if not self.autoincrease:

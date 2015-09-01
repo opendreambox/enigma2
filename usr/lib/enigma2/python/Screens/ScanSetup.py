@@ -599,15 +599,15 @@ class SatelliteTransponderSearchSupport:
 				parm = eDVBFrontendParametersSatellite()
 				parm.frequency = int(round(float(freq*2) / 1000)) * 1000
 				parm.frequency /= 2
-				fstr = str(parm.frequency)
+				fstr = str(parm.frequency / 1000)
 				if self.parm.polarisation == eDVBFrontendParametersSatellite.Polarisation_Horizontal:
-					fstr += "H KHz SR"
+					fstr += "H "
 				elif self.parm.polarisation == eDVBFrontendParametersSatellite.Polarisation_Vertical:
-					fstr += "V KHz SR"
+					fstr += "V "
 				elif self.parm.polarisation == eDVBFrontendParametersSatellite.Polarisation_CircularLeft:
-					fstr += "L KHz SR"
+					fstr += "L "
 				elif self.parm.polarisation == eDVBFrontendParametersSatellite.Polarisation_CircularRight:
-					fstr += "R KHz SR"
+					fstr += "R "
 				sr = d["symbol_rate"]
 #				print "SR before round", sr
 				if sr < 0:
@@ -666,7 +666,7 @@ class SatelliteTransponderSearchSupport:
 					tparm.setDVBS(self.parm, False)
 					self.frontend.tune(tparm)
 				else:
-					tmpstr = _("%dMhz scanned") %mhz_complete
+					tmpstr = _("%dMHz scanned") %mhz_complete
 					tmpstr += ', '
 					tmpstr += _("%d transponders found at %d:%02dmin") %(len(self.tp_found),seconds_done / 60, seconds_done % 60)
 					state["progress"].setText(tmpstr)
@@ -687,7 +687,7 @@ class SatelliteTransponderSearchSupport:
 				tmpstr += "R"
 
 			tmpstr += ', '
-			tmpstr += "%d/%dMhz" %(mhz_done, mhz_complete)
+			tmpstr += "%d/%dMHz" %(mhz_done, mhz_complete)
 
 			tmpstr += ", "
 			tmpstr += _("%d transponder(s) found") %len(self.tp_found)

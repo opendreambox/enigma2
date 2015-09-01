@@ -17,7 +17,14 @@ from PlaylistPlayer import PlaylistPlayer
 
 from Tools.Log import Log
 
+from os import path as os_path
+
 class MediaPixmap(EasyPixmap):
+	def folderCoverArtPath(self, path):
+		if path.startswith("/"):
+			path = "%s/" %(os_path.dirname(path))
+			self.setPicturePath(path)
+
 	def embeddedCoverArt(self):
 		Log.i("found")
 		self.pictureFileName = "/tmp/.id3coverart"
@@ -35,25 +42,23 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 	skin = """
 		<screen position="center,center" size="1280,720" title="Audio Player">
-			<eLabel position="120,295" size="310,310" zPosition="0" backgroundColor="#0E3B62" />
+			<widget name="coverArt" position="110,40" size="300,300" pixmap="skin_default/no_coverArt.png" zPosition="1" transparent="1" alphatest="blend" scale="1" />
+			<widget name="album" position="110,355" size="300, 25" zPosition="1" font="Regular;20" valign="center" foregroundColor="foreground" backgroundColor="background" transparent="1" />
+			<widget name="genre" position="110,385" size="300, 25" zPosition="1" font="Regular;20" valign="center" foregroundColor="foreground" backgroundColor="background" transparent="1" />
+			<widget name="year" position="110,415" size="300, 25" zPosition="1" font="Regular;20" valign="center" foregroundColor="foreground" backgroundColor="background" transparent="1" />
 
-			<widget name="coverArt" position="155,40" size="250,250" pixmap="skin_default/no_coverArt.png" zPosition="1" transparent="1" alphatest="blend" scale="1" />
-			<widget name="title" position="130,300" size="300, 70" zPosition="1" font="Regular;27" valign="top" backgroundColor="background" transparent="1" />
-			<widget name="artist" position="130,380" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="album" position="130,415" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="year" position="130,450" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="genre" position="130,485" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
+			<ePixmap pixmap="skin_default/buttons/button_red.png" position="110,555" size="15,16" alphatest="on" />
+			<widget name="red" position="130, 552" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
 
-			<widget source="session.CurrentService" render="Progress" zPosition="-1" position="130,520" size="210,7" pixmap="skin_default/progress_small.png" transparent="1">
-				<convert type="ServicePosition">Position</convert>
-			</widget>
-			<widget source="session.CurrentService" render="Label" zPosition="1" position="130,535" size="95,25" font="Regular;22" halign="right" backgroundColor="black" transparent="1">
-				<convert type="ServicePosition">Position</convert>
-			</widget>
-			<eLabel text="/" zPosition="1" position="225,535" size="12,25" font="Regular;22" halign="center" backgroundColor="black" transparent="1"/>
-			<widget source="session.CurrentService" render="Label" zPosition="1" position="235,535" size="90,25" font="Regular;22" halign="left" backgroundColor="black" transparent="1">
-				<convert type="ServicePosition">Length</convert>
-			</widget>
+			<ePixmap pixmap="skin_default/buttons/button_green.png" position="110,585" size="15,16" alphatest="on" />
+			<widget name="green" position="130, 582" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+
+			<ePixmap pixmap="skin_default/buttons/button_yellow.png" position="110,615" size="15,16" alphatest="on" />
+			<widget name="yellow" position="130, 612" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+
+			<ePixmap pixmap="skin_default/buttons/button_blue.png" position="110,645" size="15,16" alphatest="on" />
+			<widget name="blue" position="130, 642" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+
 			<!--
 			<widget name="repeat" pixmaps="skin_default/repeat_off.png,skin_default/repeat_on.png" position="1160,343" size="50,30" transparent="1" alphatest="blend"/>
 			-->
@@ -64,13 +69,26 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 			<widget name="genretext" position="0,0" size="0,0"/>
 			<widget name="titletext" position="0,0" size="0,0"/>
 
-			<eLabel text="P L A Y L I S T" position="430,40" size="750,30" font="Regular;24" foregroundColor="yellow" backgroundColor="background" transparent="1"/>
-			<eLabel position="430,90" size="750,2" backgroundColor="foreground" />
-			<widget source="playlist" render="Listbox" position="430,95" size="750,550" scrollbarMode="showOnDemand">
+			<widget name="title" position="430,45" size="550, 25" zPosition="1" font="Regular;22" valign="top" backgroundColor="background" transparent="1" />
+			<widget name="artist" position="830,45" size="200, 25" zPosition="1" font="Regular;22" halign="right" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
+
+			<widget source="session.CurrentService" render="Label" zPosition="1" position="430,70" size="150,20" font="Regular;18" halign="left" backgroundColor="black" transparent="1">
+				<convert type="ServicePosition">Position</convert>
+			</widget>
+			<widget source="session.CurrentService" render="Label" zPosition="1" position="1030,70" size="150,20" font="Regular;18" halign="right" backgroundColor="black" transparent="1">
+				<convert type="ServicePosition">Length</convert>
+			</widget>
+
+			<eLabel position="430,93" size="750,7" backgroundColor="foreground" />
+			<widget source="session.CurrentService" render="Progress" zPosition="1" position="430,93" size="750,7" pixmap="skin_default/progress_small.png" transparent="1" backgroundColor="foreground">
+				<convert type="ServicePosition">Position</convert>
+			</widget>
+
+			<widget source="playlist" render="Listbox" position="430,110" size="750,550" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
 					{"templates":{
 						"default": (55, [
-							MultiContentEntryPixmapAlphaTest(pos = (5, 5), size = (45, 45), png = 6),
+							MultiContentEntryPixmapAlphaTest(pos = (1, 1), size = (53, 53), png = 6),
 							MultiContentEntryPixmapAlphaTest(pos = (19, 19), size = (16, 16), png = 1),
 							MultiContentEntryText(pos = (60, 3), size = (565, 25), font = 0, flags = RT_VALIGN_CENTER, text = 2),
 							MultiContentEntryText(pos = (60, 30), size = (280, 25), font = 1, flags = RT_VALIGN_CENTER, text = 3),
@@ -82,21 +100,10 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 							MultiContentEntryText(pos = (25, 1), size = (730, 55), font = 0, flags = RT_VALIGN_CENTER, text = 2),
 						]),
 						},
-					"fonts": [gFont("Regular", 26), gFont("Regular", 18), gFont("Regular", 13)]
+					"fonts": [gFont("Regular", 24), gFont("Regular", 18)]
 					}
 				</convert>
 			</widget>
-			<ePixmap pixmap="skin_default/buttons/button_red.png" position="470,654" size="15,16" alphatest="on" />
-			<widget name="red" position="490, 644" size="120, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_green.png" position="620,654" size="15,16" alphatest="on" />
-			<widget name="green" position="640, 644" size="120, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_yellow.png" position="770,654" size="15,16" alphatest="on" />
-			<widget name="yellow" position="790, 644" size="120, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_blue.png" position="920,654" size="15,16" alphatest="on" />
-			<widget name="blue" position="940, 644" size="180, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
 		</screen>"""
 
 	def __init__(self, session, playlist):
@@ -254,8 +261,7 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 		self.updateLabel("year", year, clear)
 		self.updateLabel("genre", genre, clear)
 
-		if(clear):
-			print "CLEARING"
+		if clear:
 			self["coverArt"].setDefaultPicture()
 
 	def updateLabel(self, name, info, clear):
@@ -281,6 +287,9 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 				return
 
 		if self.service:
+			path = self.service.getPath()
+			if path.startswith("/"):
+				self["coverArt"].folderCoverArtPath(path)
 			self.seekState = self.SEEK_STATE_PLAY
 			mediaCore.play(self.service)
 
@@ -309,7 +318,7 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 		self.seekState = self.SEEK_STATE_IDLE
 		self.service = None
 		self._playlist.stop()
-		self._updateMusicInformation(clear=True)
+		self._updateMusicInformation()
 		mediaCore.stop()
 
 	def _toggleShuffle(self):

@@ -63,7 +63,7 @@ class Cec(object):
 			hdmi_cec.otpEnable()
 			if config.cec.avr_power_explicit.value:
 				self._remoteHandler.sendKey(5, eCec.RC_POWER_ON)
-				hdmi_cec.systemAudioRequest()
+			hdmi_cec.systemAudioRequest()
 
 	def powerOff(self):
 		if self._idle_to_standby:

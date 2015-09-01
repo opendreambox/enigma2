@@ -100,8 +100,6 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 		InfoBarSubtitleSupport.__init__(self)
 		HelpableScreen.__init__(self)
 		self.summary = None
-		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
-		self.session.nav.stopService()
 
 		self.playlistparsers = {}
 		self.addPlaylistParser(PlaylistIOM3U, "m3u")
@@ -198,7 +196,6 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 		InfoBarSeek.__init__(self, actionmap = "MediaPlayerSeekActions")
 
 		self.onClose.append(self.delMPTimer)
-		self.onClose.append(self.__onClose)
 
 		self.righttimer = False
 		self.rightKeyTimer = eTimer()
@@ -263,9 +260,6 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 			self.nextEntry()
 		else:
 			self.show()
-
-	def __onClose(self):
-		self.session.nav.playService(self.oldService)
 
 	def __evUpdatedBitrate(self):
 		currPlay = self.session.nav.getCurrentService()

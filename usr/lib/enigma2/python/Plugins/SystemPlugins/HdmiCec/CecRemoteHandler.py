@@ -96,7 +96,8 @@ class CecRemoteHandler(object):
 
 	def sendSystemAudioKey(self, keyid):
 		if keyid in self.SYSTEM_AUDIO_KEYS:
-			self.sendKey(hdmi_cec.getVolumeTarget(), keyid, translate=True)
+			keyid = self.KEY_MAP_SEND[keyid]
+			hdmi_cec.sendSystemAudioKey(keyid)
 
 	def sendKey(self, dest, keyid, translate=False):
 		if translate:

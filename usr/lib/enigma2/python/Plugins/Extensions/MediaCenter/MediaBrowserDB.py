@@ -398,7 +398,12 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 			return eServiceReference()
 
 		file = "%s/%s" %(item[eMediaDatabase.FIELD_PATH], item[eMediaDatabase.FIELD_FILENAME])
-		ref = eServiceReference(4097, 0, file)
+		if file.endswith('.ts'):
+			ref = eServiceReference(1, 0, file)
+		elif file.endswith('.m2ts'):
+			ref = eServiceReference(3, 0, file)
+		else:
+			ref = eServiceReference(4097, 0, file)
 		ref.setName(item[eMediaDatabase.FIELD_TITLE])
 		return ref
 
@@ -447,7 +452,12 @@ class MediaBrowserDB(MediaBrowser):
 		items = []
 		for item in res.data():
 			filename = "%s/%s" %(item[eMediaDatabase.FIELD_PATH], item[eMediaDatabase.FIELD_FILENAME])
-			ref = eServiceReference(4097, 0, filename)
+			if filename.endswith('.ts'):
+				ref = eServiceReference(1, 0, filename)
+			elif filename.endswith('.m2ts'):
+				ref = eServiceReference(3, 0, filename)
+			else:
+				ref = eServiceReference(4097, 0, filename)
 			ref.setName("%s - %s" %(item[eMediaDatabase.FIELD_ARTIST], item[eMediaDatabase.FIELD_TITLE]))
 			items.append( (ref.getName(), (ref, dict(item))) )
 		return items

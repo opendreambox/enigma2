@@ -22,6 +22,7 @@ public:
 	ePoint position() const { return m_position; }
 	eSize size() const { return m_size; }
 	eSize csize() const { return m_client_size; }
+	eWidget *parent() const;
 	eSize parentSize() const;
 	eSize parentCsize() const;
 
@@ -64,6 +65,7 @@ public:
 	//merely for debugging purposes
 	void setParentTitle(const std::string &title){ m_parent_title = title; }
 
+	bool setShowHideAnimation(const std::string &key);
 	void setPulsate(bool enabled, int64_t duration=1000, float from=0.3, float to=1.0);
 
 	int isTransparent() { return m_vis & wVisTransparent; }

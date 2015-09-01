@@ -8,7 +8,16 @@ from UPnPConfig import UPnPConfig, getUUID
 def session_start(reason, **kwargs):
 	session = kwargs.get('session', None)
 	if session and reason == 0 and config.plugins.mediaserver.enabled.value:
-		restartMediaServer(config.plugins.mediaserver.name.value, getUUID(config.plugins.mediaserver.uuid))
+		restartMediaServer(
+				config.plugins.mediaserver.name.value,
+				getUUID(config.plugins.mediaserver.uuid),
+				manufacturer='dreambox',
+				manufacturer_url='http://www.dreambox.de',
+				model_description='Dreambox MediaServer',
+				model_name=config.plugins.mediaserver.name.value,
+				model_number=config.plugins.mediaserver.name.value,
+				model_url='http://www.dreambox.de'
+			)
 
 #shut down the controlpoint with all devices we registered until now so they disappear from all clients
 def autostart(reason, **kwargs):

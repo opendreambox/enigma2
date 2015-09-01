@@ -20,6 +20,7 @@ class CecConfig(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, [])
 		config.cec.sendpower.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.receivepower.addNotifier(self._recreateSetup, initial_call=False)
+		config.cec.volume_forward.addNotifier(self._recreateSetup, initial_call=False)
 
 		self._createSetup()
 
@@ -81,6 +82,11 @@ class CecConfig(ConfigListScreen, Screen):
 			getConfigListEntry(_("Allow remote control via CEC"), config.cec.receive_remotekeys),
 			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
 		])
+		if config.cec.volume_forward.value:
+			lst.append(
+				getConfigListEntry(_("Target for forwarded Volume keys"), config.cec.volume_target)
+			)
+
 		self["config"].list = lst
 
 	def layoutFinished(self):

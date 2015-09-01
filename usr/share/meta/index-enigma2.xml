@@ -135,6 +135,11 @@
 			<tag type="System" />
 		</prerequisites>
 	</package>
+	<package details="plugin_remotecontrolselection.xml" name="Remote Control Selection" packagename="enigma2-plugin-systemplugins-remotecontrolselection" shortdescription="Remote Control Selection let's you select which Remote Control you're using">
+		<prerequisites>
+			<tag type="System" />
+		</prerequisites>
+	</package>
 	<package details="plugin_satelliteequipmentcontrol.xml" name="SatelliteEquipmentControl" packagename="enigma2-plugin-systemplugins-satelliteequipmentcontrol" shortdescription="SatelliteEquipmentControl allows you to fine-tune DiSEqC-settings">
 		<prerequisites>
 			<tag type="SAT" />

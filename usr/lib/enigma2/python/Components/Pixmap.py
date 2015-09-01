@@ -10,6 +10,15 @@ from skin import loadPixmap
 class Pixmap(GUIComponent):
 	GUI_WIDGET = ePixmap
 
+	def setPixmap(self, pixmap):
+		self.instance.setPixmap(pixmap)
+
+	def setShowHideAnimation(self, key):
+		self.instance.setShowHideAnimation(key)
+
+	def resetShowHideAnimation(self):
+		self.instance.setShowHideAnimation("")
+
 class PixmapConditional(ConditionalWidget, Pixmap):
 	def __init__(self, withTimer = True):
 		ConditionalWidget.__init__(self, withTimer)

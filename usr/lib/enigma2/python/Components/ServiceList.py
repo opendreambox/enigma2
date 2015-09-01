@@ -156,7 +156,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		percent = 0
 		progressW = 52
 		progressH = 8
-		if event:
+		if event and event.getDuration():
 			now = int(time())
 			percent = 100 * (now - event.getBeginTime()) / event.getDuration()
 		top = int((height - progressH) / 2)

@@ -127,17 +127,17 @@ class ScreenAnimations(object):
 		if not animateX and not animateY:
 			animateX = animateY = True
 
-		value = float(attrs["val"])
-		x = int( self._desktopSize.width() * value )
-		y = int( self._desktopSize.height() * value )
+		factor = float(attrs["val"])
+		x = int( self._desktopSize.width() * factor )
+		y = int( self._desktopSize.height() * factor )
 
-		if(isReverse):
+		if isReverse:
 			fromPos = ePoint()
 			toPos = ePoint(x,y)
 		else:
 			fromPos = ePoint(x,y)
 			toPos = ePoint()
-		return ePointAnimation.create(duration, fromPos, toPos, False, interpolator, isReverse, animateX, animateY)
+		return ePointAnimation.create(duration, fromPos, toPos, factor, False, interpolator, isReverse, animateX, animateY)
 
 #eSizeAnimation(int64_t duration, eSize from, eSize to, bool reversed = false, ePtr<eProgressInterpolator> interpolator=0)
 	def _buildSizeAnimation(self, item, duration, interpolator=0):

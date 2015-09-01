@@ -260,6 +260,7 @@ class Session:
 		self.delay_timer = eTimer()
 		self.delay_timer_conn = self.delay_timer.timeout.connect(self.processDelay)
 
+		self.current_player = None
 		self.current_dialog = None
 		self.next_dialog = None
 
@@ -315,7 +316,7 @@ class Session:
 				c.addSummary(self.summary)
 
 		c.saveKeyboardMode()
-		c.enable()
+		c.enable(do_show) # we must pass the "do_show" boolean to enable because "show" also can be called from within the enable function
 		c.execBegin()
 
 		# when execBegin opened a new dialog, don't bother showing the old one.

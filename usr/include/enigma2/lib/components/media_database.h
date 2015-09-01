@@ -6,6 +6,7 @@
 #include <lib/base/thread.h>
 #include <lib/components/file_monitor.h>
 #include <lib/components/media_scanner.h>
+#include <lib/gdi/gpixmap.h>
 
 #include <QSqlQuery>
 #include <QSqlDatabase>
@@ -121,6 +122,7 @@ public:
 	static const char FIELD_SERVICEREFRENCE[];
 	static const char FIELD_TYPE[];
 	static const char FIELD_NAME[];
+	static const char FIELD_COVER_ART_ID[];
 
 	static eMediaDatabase *getInstance();
 
@@ -158,7 +160,9 @@ public:
 	ePtr<eMediaDatabaseResult> filterAudio(const std::string &needle, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByAlbum(const std::string &album, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByArtistAlbum(const std::string &artist, const std::string &album, int limit = -1, int offset = 0);
+	ePtr<eMediaDatabaseResult> filterByAlbumArtistAlbum(const std::string &artist, const std::string &album, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByArtist(const std::string &artist, int limit = -1, int offset = 0);
+	ePtr<eMediaDatabaseResult> filterByAlbumArtist(const std::string &artist, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByGenre(const std::string &genre, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByTitle(const std::string &title, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllArtists(int limit = -1, int offset = 0);
@@ -168,6 +172,7 @@ public:
 	ePtr<eMediaDatabaseResult> getAlbums(const std::string &album, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAlbumsByArtist(const std::string &artist, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAlbumsByAlbumArtist(const std::string &album_artist, int limit = -1, int offset = 0);
+	ePtr<eMediaDatabaseResult> getTracksByAlbumId(int album_id);
 	ePtr<eMediaDatabaseResult> getAllAudio(int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllVideos(int limit = -1, int offset = 0);
 
@@ -177,7 +182,7 @@ public:
 	ePtr<eMediaDatabaseResult> getRecordMeta(int file_id);
 	ePtr<eMediaDatabaseResult> setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
 	ePtr<eMediaDatabaseResult> getRecordEit(int file_id);
-	ePtr<eMediaDatabaseResult> setRecordEit(int file_id, uint8_t eit_raw[]);
+	ePtr<eMediaDatabaseResult> setRecordEit(int file_id, uint8_t eit_raw[], bool update=false);
 
 	ePtr<eMediaDatabaseResult> getFileByPath(const std::string &filepath);
 
@@ -185,6 +190,14 @@ public:
 	ePtr<eMediaDatabaseResult> deleteFileAttribute(int file_id, const std::string &key);
 	ePtr<eMediaDatabaseResult> getFileAttributes(int file_id);
 	ePtr<eMediaDatabaseResult> getFileAttribute(int file_id, const std::string &key);
+
+	SWIG_VOID(int) getCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT);
+	ePtr<eMediaDatabaseResult> getCoverArtData(int cover_art_id);
+	ePtr<eMediaDatabaseResult> getCoverArtData(const std::string &cover_art_key);
+
+	SWIG_VOID(int) getAlbumCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT);
+	ePtr<eMediaDatabaseResult> getAlbumCoverArtData(int album_id);
+	ePtr<eMediaDatabaseResult> getAlbumCoverArtId(int album_id);
 
 	ePtr<eMediaDatabaseResult> addPlaylist(const std::string &name, int type);
 	ePtr<eMediaDatabaseResult> getPlaylist(int id);
@@ -225,20 +238,24 @@ protected:
 
 class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
 {
-	int SCHEMA_VERSION = 3;
+	int SCHEMA_VERSION = 6;
 
 	std::string normalizePath(const std::string &path);
 	bool upgradeSchema(int from);
 	bool upgradeSchema0_to_1();
 	bool upgradeSchema1_to_2();
 	bool upgradeSchema2_to_3();
+	bool upgradeSchema3_to_4();
+	bool upgradeSchema4_to_5();
+	bool upgradeSchema5_to_6();
+
 public:
 	eMediaDatabaseHandler();
 	~eMediaDatabaseHandler();
 
 	static pthread_mutex_t priority_files_lock, files_lock;
 
-	void insertList(const std::string &dir, std::list<file_metadata> files);
+	void insertList(const std::string &dir, std::list<file_metadata> files, std::map< uint32_t, ePtr<cover_art> > covers);
 	void priorityInsert(const file_metadata &file);
 	void thread();
 
@@ -256,7 +273,9 @@ public:
 	QSqlQuery filterAudio(const std::string &needle, int limit = -1, int offset = 0);
 	QSqlQuery filterByAlbum(const std::string &album, int limit = -1, int offset = 0);
 	QSqlQuery filterByArtistAlbum(const std::string &artist, const std::string &album, int limit = -1, int offset = 0);
+	QSqlQuery filterByAlbumArtistAlbum(const std::string &artist, const std::string &album, int limit = -1, int offset = 0);
 	QSqlQuery filterByArtist(const std::string &artist, int limit = -1, int offset = 0);
+	QSqlQuery filterByAlbumArtist(const std::string &artist, int limit = -1, int offset = 0);
 	QSqlQuery filterByGenre(const std::string &genre, int limit = -1, int offset = 0);
 	QSqlQuery filterByTitle(const std::string &title, int limit = -1, int offset = 0);
 
@@ -267,6 +286,7 @@ public:
 	QSqlQuery getAlbums(const std::string &album, int limit = -1, int offset = 0);
 	QSqlQuery getAlbumsByArtist(const std::string &artist, int limit = -1, int offset = 0);
 	QSqlQuery getAlbumsByAlbumArtist(const std::string &artist, int limit = -1, int offset = 0);
+	QSqlQuery getTracksByAlbumId(int id);
 
 	QSqlQuery getAllAudio(int limit = -1, int offset = 0);
 	QSqlQuery getAllVideos(int limit = -1, int offset = 0);
@@ -278,7 +298,7 @@ public:
 	QSqlQuery getRecordMeta(int file_id);
 	QSqlQuery setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
 	QSqlQuery getRecordEit(int file_id);
-	QSqlQuery setRecordEit(int file_id, const uint8_t eit_raw[]);
+	QSqlQuery setRecordEit(int file_id, const uint8_t eit_raw[], bool update=false);
 
 	QSqlQuery getByFile(const std::string &filepath);
 	QSqlQuery getAudioByFile(const std::string &filepath);
@@ -292,6 +312,11 @@ public:
 	QSqlQuery deleteFileAttribute(int file_id, const std::string &key);
 	QSqlQuery getFileAttributes(int file_id);
 	QSqlQuery getFileAttribute(int file_id, const std::string &key);
+
+	QSqlQuery getCoverArt(const std::string &key);
+	QSqlQuery getCoverArt(int cover_art_id);
+	QSqlQuery getAlbumCoverArt(int album_id);
+	QSqlQuery getAlbumCoverArtId(int album_id);
 
 	QSqlQuery addPlaylist(const std::string &name, int type);
 	QSqlQuery getPlaylistById(int id);
@@ -353,6 +378,7 @@ private:
 	std::list<file_metadata> m_files;
 	std::list<int> m_inserted_ids;
 	std::list<std::string> m_directories;
+	std::map<uint32_t, ePtr<cover_art> > m_covers;
 	std::string m_parent_dir;
 	int m_parent_dir_id;
 
@@ -366,12 +392,15 @@ private:
 	QSqlQuery m_qry_insert_artist;
 	QSqlQuery m_qry_insert_album;
 	QSqlQuery m_qry_insert_genre;
+	QSqlQuery m_qry_insert_cover;
 	QSqlQuery m_qry_insert_video;
 	QSqlQuery m_qry_insert_location;
 	QSqlQuery m_qry_insert_tag;
 
 	QSqlQuery m_qry_delete_file;
 	QSqlQuery m_qry_update_file;
+	QSqlQuery m_qry_update_audio_meta;
+	QSqlQuery m_qry_update_album;
 
 	QSqlQuery m_qry_get_file_by_id;
 	QSqlQuery m_qry_get_file_lastmodified;
@@ -396,9 +425,11 @@ private:
 	QSqlQuery m_qry_check_directory;
 	QSqlQuery m_qry_check_codec;
 	QSqlQuery m_qry_check_audio_track;
+	QSqlQuery m_qry_check_audio_meta;
 	QSqlQuery m_qry_check_artist;
 	QSqlQuery m_qry_check_album;
 	QSqlQuery m_qry_check_genre;
+	QSqlQuery m_qry_check_cover;
 	QSqlQuery m_qry_check_tag;
 
 	void processFileLists();
@@ -409,18 +440,20 @@ private:
 	QString genSelectAllBySingleField(const QString &table, const QString &field);
 	QString genSelectGetIdSimple(const QString &table, const QString &field);
 
-	const long long getIdSimple(QSqlQuery *statement, bool clear = true);
+	const long long getIdSimple(QSqlQuery *qry, bool clear = true);
 	insert_result insertError(int id=INSERT_ERROR);
-	insert_result insertAndCleanup(QSqlQuery *statement);
+	insert_result insertAndCleanup(QSqlQuery *qry);
+	bool updateAndCleanup(QSqlQuery *qry);
 
 	insert_result getSetDirectory(int parent_id, const std::string &path, bool parent = false, bool watch = false);
-	insert_result getSetFile(int dir_id, const std::string &name, int64_t size, int type, int64_t duration, int64_t lastmodified, int popularity=0, int64_t lastplaypos=0 );
+	insert_result getSetFile(int dir_id, const std::string &name, int64_t size, int type, int64_t duration, int64_t lastmodified, int popularity=0, int64_t lastplaypos=0, int cover_art_id=0);
 	int getFileLastModified(int dir_id, const std::string &name, int64_t *timestamp);
 	insert_result getSetCodec(const std::string &codec, const std::string &codec_long);
-	insert_result setAudioTrack(int file_id, int codec_id, const std::string &lang);
+	insert_result setAudioTrack(int file_id, int codec_id, const std::string &lang, bool deleteOld=false);
 	insert_result getSetArtist(const std::string &artist);
-	insert_result getSetAlbum(int artist_id, const std::string &album);
+	insert_result getSetAlbum(int artist_id, int album_artist_id, const std::string &album);
 	insert_result getSetGenre(const std::string &genre);
+	insert_result getSetCover(uint32_t key, ePtr<cover_art> cover);
 	insert_result setAudioMeta(int file_id, int artist_id, int album_artist_id, int album_id, int genre_id, const audio_metadata &amd);
 	insert_result setVideoTrack(int file_id, int codec_id, const video_data &vd);
 };

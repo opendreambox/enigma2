@@ -619,7 +619,9 @@ class ComponentSizes():
 	SERVICE_INFO_LIST = "ServiceInfoList"
 	TIMER_LIST = "TimerList"
 	MOVIE_LIST = "MovieList"
+	TIMELINE_TEXT = "TimelineText"
 	ITEM_HEIGHT = "itemHeight"
+	ITEM_WIDTH = "itemWidth"
 	TEMPLATE = "template"
 
 	def __init__(self, style_id = 0):

@@ -1,7 +1,8 @@
-from enigma import eStreamServer, eServiceReference, eServiceCenter, getBestPlayableServiceReference
-from Components.config import config
+from enigma import eStreamServer, eServiceReference, eServiceCenter, getBestPlayableServiceReference, iServiceInformation
+from Components.config import config, ConfigInteger, ConfigOnOff, ConfigPassword, ConfigSelection, ConfigSubsection, ConfigText
 
 from Tools.Log import Log
+from urlparse import parse_qs
 
 class StreamServerControl(object):
 	FRAME_RATE_25 = 25
@@ -47,12 +48,12 @@ class StreamServerControl(object):
 	RTSP_STATE_IDLE = 1
 	RTSP_STATE_RUNNING = 2
 
-	UPSTREAM_STATE_DISABLED = 0
-	UPSTREAM_STATE_CONNECTING = 1
-	UPSTREAM_STATE_WAITING = 2
-	UPSTREAM_STATE_TRANSMITTING = 3
-	UPSTREAM_STATE_OVERLOAD = 4
-	UPSTREAM_STATE_ADJUSTING = 5
+	UPSTREAM_STATE_DISABLED = eStreamServer.UPSTREAM_STATE_DISABLED
+	UPSTREAM_STATE_CONNECTING = eStreamServer.UPSTREAM_STATE_CONNECTING
+	UPSTREAM_STATE_WAITING = eStreamServer.UPSTREAM_STATE_WAITING
+	UPSTREAM_STATE_TRANSMITTING = eStreamServer.UPSTREAM_STATE_TRANSMITTING
+	UPSTREAM_STATE_OVERLOAD = eStreamServer.UPSTREAM_STATE_OVERLOAD
+	UPSTREAM_STATE_ADJUSTING = eStreamServer.UPSTREAM_STATE_ADJUSTING
 
 	READABLE_UPSTREAM_STATE = {
 		UPSTREAM_STATE_DISABLED : _("Disabled"),
@@ -63,33 +64,85 @@ class StreamServerControl(object):
 		UPSTREAM_STATE_ADJUSTING : _("Adjusting Bitrate")
 	}
 
+	URI_PARAM_REF = "ref"
+	URI_PARAM_VIDEO_BITRATE = "video_bitrate"
+	URI_PARAM_AUDIO_BITRATE = "audio_bitrate"
+
 	def __init__(self):
 		self._streamServer = eStreamServer.getInstance()
 		self._encoderService = None
 		self._currentService = None
 		self._availabilityChanged_conn = self._streamServer.availabilityChanged.connect(self._onAvailabilityChanged)
+		self._sourceStateChanged_conn = self._streamServer.sourceStateChanged.connect(self._onSourceStateChanged)
 		self._upstreamStateChanged_conn = self._streamServer.upstreamStateChanged.connect(self._onUpstreamStateChanged)
 		self._upstreamBitrateChanged_conn = self._streamServer.upstreamBitrateChanged.connect(self._onUpstreamBitrateChanged)
+		self._rtspClientCountChanged_conn = self._streamServer.rtspClientCountChanged.connect(self._onRtspClientCountChanged)
+		self._onUriParametersChanged_conn = self._streamServer.uriParametersChanged.connect(self._onUriParametersChanged)
 		self.onAvailabilityChanged = []
+		self.onSourceStateChanged = []
 		self.onUpstreamStateChanged = []
 		self.onUpstreamBitrateChanged = []
+		self.onRtspClientCountChanged = []
+		self.onUriParametersChanged = []
 
 	def _onAvailabilityChanged(self, available):
 		for fnc in self.onAvailabilityChanged:
 			fnc(available)
 
+	def _onSourceStateChanged(self, state):
+		Log.i("state=%s" %state)
+		if state > eStreamServer.SOURCE_STATE_READY and streamServerControl.inputMode == streamServerControl.INPUT_MODE_BACKGROUND:
+			self.setEncoderService(eServiceReference(config.streamserver.lastservice.value))
+		else:
+			self.stopEncoderService()
+		for fnc in self.onSourceStateChanged:
+			fnc(state)
+
 	def _onUpstreamStateChanged(self, state):
 		if state > self._streamServer.UPSTREAM_STATE_WAITING and self._currentService and not self._encoderService:
-			Log.w("Upstream required. Aquiring service")
-			self._startEncoderService(self._currentService)
+			Log.i("Upstream required. Aquiring service")
+			self.setEncoderService(self._currentService)
 		if state <= self._streamServer.UPSTREAM_STATE_WAITING and self._encoderService:
-			Log.w("Upstream superflous. Freeing service")
+			Log.i("Upstream superflous. Freeing service")
 		for fnc in self.onUpstreamStateChanged:
 			fnc(state)
 
 	def _onUpstreamBitrateChanged(self, bitrate):
 		for fnc in self.onUpstreamBitrateChanged:
 			fnc(bitrate)
+
+	def _onRtspClientCountChanged(self, count, client):
+		Log.i("%s / %s" %(count, client))
+		for fnc in self.onRtspClientCountChanged:
+			fnc(count, client)
+
+	def _onUriParametersChanged(self, parameters):
+		Log.i("%s" %(parameters))
+		params = parse_qs(parameters)
+		self._applyUriParameters(params)
+		for fnc in self.onUriParametersChanged:
+			fnc(params)
+
+	def _applyUriParameters(self, params):
+		ref = str(params.get(self.URI_PARAM_REF, [""])[0])
+		ref = eServiceReference(ref)
+		if ref.valid():
+			Log.i("setting encoder service to %s" %ref.toString())
+			self.setEncoderService(ref)
+		vb = params.get(self.URI_PARAM_VIDEO_BITRATE, [-1])[0]
+		if vb > 0:
+			try:
+				Log.i("setting video bitrate to %s" %vb)
+				self.videoBitrate = int(vb)
+			except:
+				pass
+		ab = params.get(self.URI_PARAM_AUDIO_BITRATE, [-1])[0]
+		if ab > 0:
+			try:
+				Log.i("setting audio bitrate to %s" %ab)
+				self.audioBitrate = int(ab)
+			except:
+				pass
 
 	def setEncoderService(self, service):
 		self._currentService = service
@@ -98,8 +151,6 @@ class StreamServerControl(object):
 			refstr = ref.toString()
 			config.streamserver.lastservice.value = refstr
 			config.streamserver.save()
-			Log.i("upstreamState=%s" % (self._streamServer.upstreamState()))
-			#if self._streamServer.upstreamState() != self._streamServer.UPSTREAM_STATE_DISABLED:
 			self._startEncoderService(service)
 
 	def getEncoderService(self):
@@ -110,13 +161,25 @@ class StreamServerControl(object):
 	encoderService = property(getEncoderService, setEncoderService)
 
 	def _startEncoderService(self, service):
+		if not config.streamserver.enabled.value \
+			or int(config.streamserver.source.value) != self.INPUT_MODE_BACKGROUND \
+			or self.sourceState <= eStreamServer.SOURCE_STATE_READY:
+			self.stopEncoderService()
+			Log.i("Streamserver disabled, not in TV Service mode or no client connected, will not allocate service (%s, %s, %s)" % (config.streamserver.enabled.value, config.streamserver.source.value, self._streamServer.sourceState()))
+			return
 		ref = self._getRef(service)
 		if ref:
-			self.stopEncoderService()
-			self._encoderService = eServiceCenter.getInstance().play(ref)
-			if self._encoderService and not self._encoderService.setTarget(self.ENCODER_TARGET):
-				Log.i("Starting encoder service [%s]!" % (service.toCompareString()))
-				self._encoderService.start()
+			cur_ref = self._encoderService
+			cur_ref = cur_ref and cur_ref.info()
+			cur_ref = cur_ref and cur_ref.getInfoString(iServiceInformation.sServiceref)
+			if cur_ref == ref.toString():
+				Log.i("ignore request to play already running background streaming service (%s)" %cur_ref)
+			else:
+				self.stopEncoderService()
+				self._encoderService = eServiceCenter.getInstance().play(ref)
+				if self._encoderService and not self._encoderService.setTarget(self.ENCODER_TARGET):
+					Log.i("Starting encoder service [%s]!" % (service.toCompareString()))
+					self._encoderService.start()
 
 	def _getRef(self, service):
 		if service and (service.flags & eServiceReference.isGroup):
@@ -153,7 +216,11 @@ class StreamServerControl(object):
 		return self._streamServer.audioBitrate()
 
 	def setAudioBitrate(self, bitrate):
-		self._streamServer.setAudioBitrate(bitrate)
+		if bitrate > self.AUDIO_BITRATE_LIMITS[0] and bitrate < self.AUDIO_BITRATE_LIMITS[1]:
+			self._streamServer.setAudioBitrate(bitrate)
+			config.streamserver.audioBitrate.value = bitrate
+		else:
+			Log.w("Desired audio bitrate is out of range! %s %s" %(bitrate, self.VIDEO_BITRATE_LIMITS))
 
 	audioBitrate = property(getAudioBitrate, setAudioBitrate)
 
@@ -161,7 +228,11 @@ class StreamServerControl(object):
 		return self._streamServer.videoBitrate()
 
 	def setVideoBitrate(self, bitrate):
-		self._streamServer.setVideoBitrate(bitrate)
+		if bitrate > self.VIDEO_BITRATE_LIMITS[0] and bitrate < self.VIDEO_BITRATE_LIMITS[1]:
+			self._streamServer.setVideoBitrate(bitrate)
+			config.streamserver.videoBitrate.value = bitrate
+		else:
+			Log.w("Desired video bitrate is out of range! %s %s" %(bitrate, self.VIDEO_BITRATE_LIMITS))
 
 	videoBitrate = property(getVideoBitrate, setVideoBitrate)
 
@@ -170,6 +241,7 @@ class StreamServerControl(object):
 
 	def setAutoBitrate(self, auto):
 		self._streamServer.setAutoBitrate(auto)
+		config.streamserver.autoBitrate.value = auto
 
 	autoBitrate = property(getAutoBitrate, setAutoBitrate)
 
@@ -197,6 +269,15 @@ class StreamServerControl(object):
 	def getUpstreamState(self):
 		return self._streamServer.upstreamState()
 	upstreamState = property(getUpstreamState)
+
+	def getSourceState(self):
+		return self._streamServer.sourceState()
+
+	sourceState = property(getSourceState)
+
+	def getRtspClientcount(self):
+		return self._streamServer.rtspClientCount()
+	rtspClientCount = property(getRtspClientcount)
 
 	def zapNext(self):
 		Log.i()
@@ -241,5 +322,20 @@ class StreamServerControl(object):
 			return True
 		Log.i("nothing done")
 		return False
+
+#Streamserver base config
+config.streamserver = ConfigSubsection()
+config.streamserver.enabled = ConfigOnOff(default=False)
+config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(StreamServerControl.INPUT_MODE_LIVE))
+config.streamserver.audioBitrate = ConfigInteger(128, StreamServerControl.AUDIO_BITRATE_LIMITS)
+config.streamserver.videoBitrate = ConfigInteger(2048, StreamServerControl.VIDEO_BITRATE_LIMITS)
+config.streamserver.autoBitrate = ConfigOnOff(default=False)
+config.streamserver.resolution = ConfigSelection(StreamServerControl.RESOLUTIONS.keys(), default="720p")
+config.streamserver.framerate = ConfigSelection(StreamServerControl.FRAME_RATES, default=StreamServerControl.FRAME_RATE_25)
+config.streamserver.rtspport = ConfigInteger(554, StreamServerControl.PORT_LIMITS)
+config.streamserver.rtsppath = ConfigText(default="stream", fixed_size=False)
+config.streamserver.user = ConfigText(default="", fixed_size=False)
+config.streamserver.password = ConfigPassword(default="")
+config.streamserver.lastservice = ConfigText(default=config.tv.lastservice.value)
 
 streamServerControl = StreamServerControl()

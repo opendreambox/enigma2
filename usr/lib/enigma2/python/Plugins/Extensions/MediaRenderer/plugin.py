@@ -13,7 +13,14 @@ def start(reason, **kwargs):
 				session,
 				PlayerImpl(session),
 				config.plugins.mediarenderer.name.value,
-				getUUID(config.plugins.mediarenderer.uuid))
+				getUUID(config.plugins.mediarenderer.uuid),
+				manufacturer='dreambox',
+				manufacturer_url='http://www.dreambox.de',
+				model_description='Dreambox MediaRenderer',
+				model_name=config.plugins.mediarenderer.name.value,
+				model_number=config.plugins.mediarenderer.name.value,
+				model_url='http://www.dreambox.de'
+			)
 
 def Plugins(**kwargs):
 	return [ PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=start) ]

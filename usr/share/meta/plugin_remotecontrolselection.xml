@@ -1,0 +1,15 @@
+<default>
+	<prerequisites>
+		<tag type="System" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>Remote Control Selection</name>
+		<packagename>enigma2-plugin-systemplugins-remotecontrolselection</packagename>
+		<shortdescription>Remote Control Selection let's you select which Remote Control you're using</shortdescription>
+		<description>With the Remote Control Selection you can select which Remote Control you're using</description>
+	</info>
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-remotecontrolselection" />
+	</files>
+</default>

@@ -45,12 +45,12 @@ class VolumeControl:
 		config.audio.volume.save()
 
 	def volUp(self):
-		if config.cec.volume_forward.value:
+		if hdmi_cec.isVolumeForwarded():
 			return
 		self.setVolume(+1)
 
 	def volDown(self):
-		if config.cec.volume_forward.value:
+		if hdmi_cec.isVolumeForwarded():
 			return
 		self.setVolume(-1)
 
@@ -78,7 +78,7 @@ class VolumeControl:
 		self.volumeDialog.hide()
 
 	def volMute(self, showMuteSymbol=True, force=False):
-		if config.cec.volume_forward.value:
+		if hdmi_cec.isVolumeForwarded():
 			return
 		vol = self.volctrl.getVolume()
 		if vol or force:

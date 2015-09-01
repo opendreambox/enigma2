@@ -22,9 +22,6 @@ class PlaylistPlayer(Screen, HelpableScreen):
 
 		self._type = type
 
-		self._previouslyPlayingService = self.session.nav.getCurrentlyPlayingServiceReference()
-		self.session.nav.stopService()
-
 		self.onClose.append(self.__onClose)
 
 	def _initPlaylist(self, playlist_id):
@@ -57,7 +54,6 @@ class PlaylistPlayer(Screen, HelpableScreen):
 
 	def __onClose(self):
 		self._playlist.save()
-		self.session.nav.playService(self._previouslyPlayingService)
 
 	def loadIOPlaylist(self):
 		playlistFile = "playlist_%s.e2pls" % (self._playlist_string)

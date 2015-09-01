@@ -832,7 +832,7 @@ class HarddiskManager:
 			return entry['dst']
 		return None
 
-	def modifyFstabEntry(self, partitionPath, mountpoint, mode = "add_deactivated"):
+	def modifyFstabEntry(self, partitionPath, mountpoint, mode = "add_deactivated", extopts = [], fstype = "auto"):
 		fstab = Util.fstab()
 		if not fstab:
 			print '[Harddisk.py] Refusing to modify empty fstab'
@@ -840,6 +840,8 @@ class HarddiskManager:
 
 		newopt = {'noauto' if mode == 'add_deactivated' else 'auto'}
 		newopt.add('nofail')
+		for option in extopts:
+			newopt.add(option)
 		output = []
 		for x in fstab:
 			try:
@@ -863,7 +865,7 @@ class HarddiskManager:
 		# append new entry
 		if mode != 'remove':
 			mntops = ','.join(newopt)
-			output.append('\t'.join([partitionPath, mountpoint, 'auto', mntops, '0', '0']))
+			output.append('\t'.join([partitionPath, mountpoint, fstype, mntops, '0', '0']))
 
 		if not output:
 			print '[Harddisk.py] Refusing to write empty fstab'

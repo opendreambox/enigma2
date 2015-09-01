@@ -2,14 +2,16 @@ from Screen import Screen
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.ActionMap import NumberActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, ConfigSubsection, getConfigListEntry, ConfigNothing, ConfigSelection, ConfigOnOff
+from Components.config import config, ConfigSubsection, getConfigListEntry, ConfigNothing, ConfigSelection, ConfigOnOff, ConfigBoolean
+from Components.Label import Label
 from Components.Sources.List import List
 from Components.Sources.Boolean import Boolean
 from Components.SystemInfo import SystemInfo
 
-from enigma import iPlayableService
+from enigma import iPlayableService, eServiceMP3
 
 from Tools.ISO639 import LanguageCodes
+from Tools.BoundFunction import boundFunction
 FOCUS_CONFIG, FOCUS_STREAMS = range(2)
 [PAGE_AUDIO, PAGE_SUBTITLES] = ["audio", "subtitles"]
 
@@ -22,7 +24,8 @@ class AudioSelection(Screen, ConfigListScreen):
 		self["key_green"] = Boolean(False)
 		self["key_yellow"] = Boolean(True)
 		self["key_blue"] = Boolean(False)
-		
+		self["help_label"] = Label()
+
 		ConfigListScreen.__init__(self, [])
 		self.infobar = infobar or self.session.infobar
 
@@ -31,8 +34,7 @@ class AudioSelection(Screen, ConfigListScreen):
 				iPlayableService.evUpdatedInfo: self.__updatedInfo
 			})
 		self.cached_subtitle_checked = False
-		self.__selected_subtitle = None
-        
+		self.__last_selected_subtitle_idx = None
 		self["actions"] = NumberActionMap(["ColorActions", "SetupActions", "DirectionActions"],
 		{
 			"red": self.keyRed,
@@ -62,12 +64,18 @@ class AudioSelection(Screen, ConfigListScreen):
 	def __layoutFinished(self):
 		self["config"].instance.setSelectionEnable(False)
 		self.focus = FOCUS_STREAMS
-		self.settings.menupage.addNotifier(self.fillList)
+		self.settings.menupage.addNotifier(self.menupageChanged)
 
-	def fillList(self, arg=None):
+	def menupageChanged(self, arg):
+		self.fillList()
+		if self.settings.menupage.getValue() == PAGE_SUBTITLES:
+			self.setToggleSubsKey()
+		self.setHelpLabel()
+
+	def fillList(self):
 		streams = []
 		conflist = []
-		selectedidx = 0
+		selectedidx = None
 
 		if self.settings.menupage.getValue() == PAGE_AUDIO:
 			self.setTitle(_("Select audio track"))
@@ -132,6 +140,7 @@ class AudioSelection(Screen, ConfigListScreen):
 
 			if self.subtitlesEnabled():
 				sel = self.infobar.selected_subtitle
+				self.__last_selected_subtitle_idx = sel[1]
 			else:
 				sel = None
 
@@ -140,21 +149,36 @@ class AudioSelection(Screen, ConfigListScreen):
 			subtitlelist = self.getSubtitleList()
 
 			if len(subtitlelist):
-				for x in subtitlelist:
+				for streamtup in subtitlelist:
+					x = list(streamtup)
 					number = str(x[1])
 					description = "?"
 					language = _("<unknown>")
 					selected = ""
 
-					if sel and x[:4] == sel[:4]:
+					if sel and x[1] == sel[1]:
 						selected = _("Running")
+						if x[0] == 2 and x[3] & eServiceMP3.SUB_FILTER_SHOW_FORCED_ONLY:
+							selected = _("forced only")
+						if x[0] == 2 and x[3] & eServiceMP3.SUB_FILTER_SHOW_ALL:
+							selected = _("show all")
 						selectedidx = idx
-					
+
 					if x[4] != "und":
 						if LanguageCodes.has_key(x[4]):
 							language = LanguageCodes[x[4]][0]
 						else:
 							language = x[4]
+
+					if x[5] > eServiceMP3.GST_MATROSKA_TRACK_ENABLED:
+						language += " ("
+						if x[5] & eServiceMP3.GST_MATROSKA_TRACK_DEFAULT:
+							language += _("default")
+						if x[5] & eServiceMP3.GST_MATROSKA_TRACK_FORCED:
+							if x[5] & eServiceMP3.GST_MATROSKA_TRACK_DEFAULT:
+								language += ', '
+							language += "forced"
+						language += ")"
 
 					if x[0] == 0:
 						description = "DVB"
@@ -165,10 +189,10 @@ class AudioSelection(Screen, ConfigListScreen):
 						number = "%x%02x" % (x[3],x[2])
 
 					elif x[0] == 2:
-						types = (_("<unknown>"), "UTF-8 text", "SSA", "AAS", ".SRT file", "VOB", "PGS (unsupported)")
+						types = (_("<unknown>"), "UTF-8 text", "SSA", "AAS", ".SRT file", "VOB", "PGS")
 						description = types[x[2]]
 
-					streams.append((x, "", number, description, language, selected))
+					streams.append((tuple(x), "", number, description, language, selected))
 					idx += 1
 			
 			else:
@@ -200,7 +224,8 @@ class AudioSelection(Screen, ConfigListScreen):
 		self["config"].l.setList(conflist)
 
 		self["streams"].list = streams
-		self["streams"].setIndex(selectedidx)
+		if isinstance(selectedidx, int):
+			self["streams"].setIndex(selectedidx)
 
 	def __updatedInfo(self):
 		self.fillList()
@@ -259,6 +284,7 @@ class AudioSelection(Screen, ConfigListScreen):
 	def keyGreen(self):
 		if self["key_green"].getBoolean():
 			self.colorkey(1)
+		self.setHelpLabel()
 
 	def keyYellow(self):
 		if self["key_yellow"].getBoolean():
@@ -282,7 +308,8 @@ class AudioSelection(Screen, ConfigListScreen):
 				self["config"].setCurrentIndex(len(self["config"].getList())-1)
 				self.focus = FOCUS_CONFIG
 			else:
-				self["streams"].selectPrevious()
+				self.selectPrevious()
+		self.setHelpLabel()
 
 	def keyDown(self):
 		if self.focus == FOCUS_CONFIG:
@@ -293,7 +320,8 @@ class AudioSelection(Screen, ConfigListScreen):
 				self["streams"].style = "default"
 				self.focus = FOCUS_STREAMS
 		elif self.focus == FOCUS_STREAMS:
-			self["streams"].selectNext()
+			self.selectNext()
+		self.setHelpLabel()
 
 	def keyNumberGlobal(self, number):
 		if number <= len(self["streams"].list):
@@ -307,20 +335,79 @@ class AudioSelection(Screen, ConfigListScreen):
 				self.changeAudio(cur[0])
 				self.__updatedInfo()
 			if self.settings.menupage.getValue() == PAGE_SUBTITLES and cur[0] is not None:
-				sel = self.infobar.selected_subtitle or ()
-				l = min(len(sel), len(cur[0]))
-				l = min(l, 4) # dont compare language code
-				if l and sel[:l] == cur[0][:l]:
-					self.enableSubtitle(None)
-					selectedidx = self["streams"].getIndex()
-					self.__updatedInfo()
-					self["streams"].setIndex(selectedidx)
-				else:
-					self.enableSubtitle(cur[0])
-					self.__updatedInfo()
+				self.toggleSubs()
 			self.close(0)
 		elif self.focus == FOCUS_CONFIG:
 			self.keyRight()
+
+	def selectPrevious(self):
+		self["streams"].selectPrevious()
+		if self.settings.menupage.getValue() == PAGE_SUBTITLES:
+			self.setToggleSubsKey()
+
+	def selectNext(self):
+		self["streams"].selectNext()
+		if self.settings.menupage.getValue() == PAGE_SUBTITLES:
+			self.setToggleSubsKey()
+
+	def setHelpLabel(self):
+		text = ""
+		if self.focus == FOCUS_CONFIG:
+			cur = self["config"].getCurrent()
+			if cur and cur[0]:
+				text = _("Press OK to toggle %s") % (cur[0])
+		else:
+			cur = self["streams"].getCurrent()
+			if cur:
+				text = _("Press OK to switch to audio track %s and close") % str(cur[0])
+				if self.settings.menupage.getValue() == PAGE_SUBTITLES:
+					status = ("enable") #_()
+					if self.subtitlesEnabled():
+						sel = self.infobar.selected_subtitle
+						if sel and sel[1] == cur[0][1] and (self.settings.togglesubs and int(self.settings.togglesubs.getValue()) == cur[0][3]):
+							status = ("disable")  #_()
+					text = _("Press OK to %s the subtitle track %s and close") % (status, str(cur[2]))
+		self["help_label"].setText(text)
+
+	def setToggleSubsKey(self, arg=None):
+		if self.settings.menupage.getValue() == PAGE_SUBTITLES:
+			cur = self["streams"].getCurrent()
+			conflist = self["config"].list
+			if cur and cur[0] and cur[0][5] > 0:
+				default = False
+				choicelist = []
+				forcefilter = ""
+				if cur[0][3] & eServiceMP3.SUB_FILTER_SHOW_FORCED_ONLY:
+					forcefilter = "1"
+				if cur[0][3] & eServiceMP3.SUB_FILTER_SHOW_ALL:
+					forcefilter = "2"
+				choicelist = [("1", "forced only"), ("2", "show all")]
+				self.settings.togglesubs = ConfigSelection(choices = choicelist, default = forcefilter)
+				self["key_green"].setBoolean(True)
+				conflist[1] = getConfigListEntry(_("Toggle Subtitle Filter"), self.settings.togglesubs)
+			else:
+				self["key_green"].setBoolean(False)
+				self.settings.togglesubs = None
+				conflist[1] = (('',))
+			self["config"].l.setList(conflist)
+
+	def toggleSubs(self):
+		cur = self["streams"].getCurrent()
+		val = True
+		if self.settings.togglesubs:
+			val = int(self.settings.togglesubs.getValue())
+		if self.subtitlesEnabled():
+			sel = self.infobar.selected_subtitle
+			if sel and sel[1] == cur[0][1] and sel[3] == val:
+				val = False
+		if val and cur and isinstance(cur[0], tuple):
+			x = list(cur[0])
+			if isinstance(val, int):
+				x[3] = val
+			self.enableSubtitle(tuple(x))
+		else:
+			self.enableSubtitle (None)
+		self.__updatedInfo()
 
 	def cancel(self):
 		self.close(0)

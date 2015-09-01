@@ -427,6 +427,7 @@ class iServiceInformation_ENUMS(object):
     sCAIDs = _enigma.iServiceInformation_ENUMS_sCAIDs
     sCAIDPIDs = _enigma.iServiceInformation_ENUMS_sCAIDPIDs
     sVideoType = _enigma.iServiceInformation_ENUMS_sVideoType
+    sAudioType = _enigma.iServiceInformation_ENUMS_sAudioType
     sTags = _enigma.iServiceInformation_ENUMS_sTags
     sDVBState = _enigma.iServiceInformation_ENUMS_sDVBState
     sVideoHeight = _enigma.iServiceInformation_ENUMS_sVideoHeight
@@ -1051,6 +1052,14 @@ class eServiceMP3_ENUMS(object):
     evEmbeddedCoverArt = _enigma.eServiceMP3_ENUMS_evEmbeddedCoverArt
     evUpdatedBitrate = _enigma.eServiceMP3_ENUMS_evUpdatedBitrate
     evStreamingSrcError = _enigma.eServiceMP3_ENUMS_evStreamingSrcError
+    SUB_FILTER_NONE = _enigma.eServiceMP3_ENUMS_SUB_FILTER_NONE
+    SUB_FILTER_SHOW_FORCED_ONLY = _enigma.eServiceMP3_ENUMS_SUB_FILTER_SHOW_FORCED_ONLY
+    SUB_FILTER_SHOW_ALL = _enigma.eServiceMP3_ENUMS_SUB_FILTER_SHOW_ALL
+    GST_MATROSKA_TRACK_ENABLED = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_ENABLED
+    GST_MATROSKA_TRACK_DEFAULT = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_DEFAULT
+    GST_MATROSKA_TRACK_LACING = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_LACING
+    GST_MATROSKA_TRACK_FORCED = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_FORCED
+    GST_MATROSKA_TRACK_SHIFT = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_SHIFT
 eServiceMP3_ENUMS_swigregister = _enigma.eServiceMP3_ENUMS_swigregister
 eServiceMP3_ENUMS_swigregister(eServiceMP3_ENUMS)
 
@@ -1580,6 +1589,10 @@ class eWidgetAnimationFloat(iObject):
         """
         return _enigma.eWidgetAnimationFloat_reset(self, reversed)
 
+    def setReversed(self, *args):
+        """setReversed(eWidgetAnimationFloat self, bool reversed)"""
+        return _enigma.eWidgetAnimationFloat_setReversed(self, *args)
+
     def getDuration(self):
         """getDuration(eWidgetAnimationFloat self) -> int64_t"""
         return _enigma.eWidgetAnimationFloat_getDuration(self)
@@ -1609,6 +1622,7 @@ class eWidgetAnimationFloat(iObject):
         return _enigma.eWidgetAnimationFloat_copy(self)
 
 eWidgetAnimationFloat.reset = new_instancemethod(_enigma.eWidgetAnimationFloat_reset,None,eWidgetAnimationFloat)
+eWidgetAnimationFloat.setReversed = new_instancemethod(_enigma.eWidgetAnimationFloat_setReversed,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.getDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_getDuration,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.setDuration = new_instancemethod(_enigma.eWidgetAnimationFloat_setDuration,None,eWidgetAnimationFloat)
 eWidgetAnimationFloat.getFromValue = new_instancemethod(_enigma.eWidgetAnimationFloat_getFromValue,None,eWidgetAnimationFloat)
@@ -1647,6 +1661,10 @@ class eWidgetAnimationPoint(iObject):
         """
         return _enigma.eWidgetAnimationPoint_reset(self, reversed)
 
+    def setReversed(self, *args):
+        """setReversed(eWidgetAnimationPoint self, bool reversed)"""
+        return _enigma.eWidgetAnimationPoint_setReversed(self, *args)
+
     def getDuration(self):
         """getDuration(eWidgetAnimationPoint self) -> int64_t"""
         return _enigma.eWidgetAnimationPoint_getDuration(self)
@@ -1676,6 +1694,7 @@ class eWidgetAnimationPoint(iObject):
         return _enigma.eWidgetAnimationPoint_copy(self)
 
 eWidgetAnimationPoint.reset = new_instancemethod(_enigma.eWidgetAnimationPoint_reset,None,eWidgetAnimationPoint)
+eWidgetAnimationPoint.setReversed = new_instancemethod(_enigma.eWidgetAnimationPoint_setReversed,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.getDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_getDuration,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.setDuration = new_instancemethod(_enigma.eWidgetAnimationPoint_setDuration,None,eWidgetAnimationPoint)
 eWidgetAnimationPoint.getFromValue = new_instancemethod(_enigma.eWidgetAnimationPoint_getFromValue,None,eWidgetAnimationPoint)
@@ -1694,7 +1713,10 @@ class ePointAnimation(object):
     __swig_destroy__ = _enigma.delete_ePointAnimation
     create = staticmethod(_enigma.ePointAnimation_create)
     def at(self, *args):
-        """at(ePointAnimation self, int64_t ms) -> ePoint"""
+        """
+        at(ePointAnimation self, int64_t ms, bool reverse=False) -> ePoint
+        at(ePointAnimation self, int64_t ms) -> ePoint
+        """
         return _enigma.ePointAnimation_at(self, *args)
 
     def animateX(self):
@@ -1709,6 +1731,10 @@ class ePointAnimation(object):
         """animateXY(ePointAnimation self)"""
         return _enigma.ePointAnimation_animateXY(self)
 
+    def getFactor(self):
+        """getFactor(ePointAnimation self) -> float"""
+        return _enigma.ePointAnimation_getFactor(self)
+
 ePointAnimation.__ref__ = new_instancemethod(_enigma.ePointAnimation___ref__,None,ePointAnimation)
 ePointAnimation.getPtrString = new_instancemethod(_enigma.ePointAnimation_getPtrString,None,ePointAnimation)
 ePointAnimation.__deref__ = new_instancemethod(_enigma.ePointAnimation___deref__,None,ePointAnimation)
@@ -1716,6 +1742,7 @@ ePointAnimation.at = new_instancemethod(_enigma.ePointAnimation_at,None,ePointAn
 ePointAnimation.animateX = new_instancemethod(_enigma.ePointAnimation_animateX,None,ePointAnimation)
 ePointAnimation.animateY = new_instancemethod(_enigma.ePointAnimation_animateY,None,ePointAnimation)
 ePointAnimation.animateXY = new_instancemethod(_enigma.ePointAnimation_animateXY,None,ePointAnimation)
+ePointAnimation.getFactor = new_instancemethod(_enigma.ePointAnimation_getFactor,None,ePointAnimation)
 ePointAnimation_swigregister = _enigma.ePointAnimation_swigregister
 ePointAnimation_swigregister(ePointAnimation)
 
@@ -1733,6 +1760,10 @@ class eWidgetAnimationSize(iObject):
         reset(eWidgetAnimationSize self)
         """
         return _enigma.eWidgetAnimationSize_reset(self, reversed)
+
+    def setReversed(self, *args):
+        """setReversed(eWidgetAnimationSize self, bool reversed)"""
+        return _enigma.eWidgetAnimationSize_setReversed(self, *args)
 
     def getDuration(self):
         """getDuration(eWidgetAnimationSize self) -> int64_t"""
@@ -1763,6 +1794,7 @@ class eWidgetAnimationSize(iObject):
         return _enigma.eWidgetAnimationSize_copy(self)
 
 eWidgetAnimationSize.reset = new_instancemethod(_enigma.eWidgetAnimationSize_reset,None,eWidgetAnimationSize)
+eWidgetAnimationSize.setReversed = new_instancemethod(_enigma.eWidgetAnimationSize_setReversed,None,eWidgetAnimationSize)
 eWidgetAnimationSize.getDuration = new_instancemethod(_enigma.eWidgetAnimationSize_getDuration,None,eWidgetAnimationSize)
 eWidgetAnimationSize.setDuration = new_instancemethod(_enigma.eWidgetAnimationSize_setDuration,None,eWidgetAnimationSize)
 eWidgetAnimationSize.getFromValue = new_instancemethod(_enigma.eWidgetAnimationSize_getFromValue,None,eWidgetAnimationSize)
@@ -1801,6 +1833,10 @@ class eWidgetAnimationMatrix(iObject):
         """
         return _enigma.eWidgetAnimationMatrix_reset(self, reversed)
 
+    def setReversed(self, *args):
+        """setReversed(eWidgetAnimationMatrix self, bool reversed)"""
+        return _enigma.eWidgetAnimationMatrix_setReversed(self, *args)
+
     def getDuration(self):
         """getDuration(eWidgetAnimationMatrix self) -> int64_t"""
         return _enigma.eWidgetAnimationMatrix_getDuration(self)
@@ -1830,6 +1866,7 @@ class eWidgetAnimationMatrix(iObject):
         return _enigma.eWidgetAnimationMatrix_copy(self)
 
 eWidgetAnimationMatrix.reset = new_instancemethod(_enigma.eWidgetAnimationMatrix_reset,None,eWidgetAnimationMatrix)
+eWidgetAnimationMatrix.setReversed = new_instancemethod(_enigma.eWidgetAnimationMatrix_setReversed,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.getDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_getDuration,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.setDuration = new_instancemethod(_enigma.eWidgetAnimationMatrix_setDuration,None,eWidgetAnimationMatrix)
 eWidgetAnimationMatrix.getFromValue = new_instancemethod(_enigma.eWidgetAnimationMatrix_getFromValue,None,eWidgetAnimationMatrix)
@@ -1899,6 +1936,10 @@ class eWidgetAnimationSet(object):
         """setPerspectiveReverseAnimation(eWidgetAnimationSet self, eMatrixAnimation perspective)"""
         return _enigma.eWidgetAnimationSet_setPerspectiveReverseAnimation(self, *args)
 
+    def recalcPosition(self, *args):
+        """recalcPosition(eWidgetAnimationSet self, eSize parentSize)"""
+        return _enigma.eWidgetAnimationSet_recalcPosition(self, *args)
+
 eWidgetAnimationSet.__ref__ = new_instancemethod(_enigma.eWidgetAnimationSet___ref__,None,eWidgetAnimationSet)
 eWidgetAnimationSet.getPtrString = new_instancemethod(_enigma.eWidgetAnimationSet_getPtrString,None,eWidgetAnimationSet)
 eWidgetAnimationSet.__deref__ = new_instancemethod(_enigma.eWidgetAnimationSet___deref__,None,eWidgetAnimationSet)
@@ -1911,6 +1952,7 @@ eWidgetAnimationSet.setSizeAnimation = new_instancemethod(_enigma.eWidgetAnimati
 eWidgetAnimationSet.setSizeReverseAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setSizeReverseAnimation,None,eWidgetAnimationSet)
 eWidgetAnimationSet.setPerspectiveAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setPerspectiveAnimation,None,eWidgetAnimationSet)
 eWidgetAnimationSet.setPerspectiveReverseAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setPerspectiveReverseAnimation,None,eWidgetAnimationSet)
+eWidgetAnimationSet.recalcPosition = new_instancemethod(_enigma.eWidgetAnimationSet_recalcPosition,None,eWidgetAnimationSet)
 eWidgetAnimationSet_swigregister = _enigma.eWidgetAnimationSet_swigregister
 eWidgetAnimationSet_swigregister(eWidgetAnimationSet)
 
@@ -2113,6 +2155,7 @@ eWidget.resize = new_instancemethod(_enigma.eWidget_resize,None,eWidget)
 eWidget.position = new_instancemethod(_enigma.eWidget_position,None,eWidget)
 eWidget.size = new_instancemethod(_enigma.eWidget_size,None,eWidget)
 eWidget.csize = new_instancemethod(_enigma.eWidget_csize,None,eWidget)
+eWidget.parent = new_instancemethod(_enigma.eWidget_parent,None,eWidget)
 eWidget.parentSize = new_instancemethod(_enigma.eWidget_parentSize,None,eWidget)
 eWidget.parentCsize = new_instancemethod(_enigma.eWidget_parentCsize,None,eWidget)
 eWidget.invalidate = new_instancemethod(_enigma.eWidget_invalidate,None,eWidget)
@@ -2138,6 +2181,7 @@ eWidget.signalHideAnimationFinished = new_instancemethod(_enigma.eWidget_signalH
 eWidget.canAnimate = new_instancemethod(_enigma.eWidget_canAnimate,None,eWidget)
 eWidget.isFinishedAnimating = new_instancemethod(_enigma.eWidget_isFinishedAnimating,None,eWidget)
 eWidget.setParentTitle = new_instancemethod(_enigma.eWidget_setParentTitle,None,eWidget)
+eWidget.setShowHideAnimation = new_instancemethod(_enigma.eWidget_setShowHideAnimation,None,eWidget)
 eWidget.setPulsate = new_instancemethod(_enigma.eWidget_setPulsate,None,eWidget)
 eWidget.isTransparent = new_instancemethod(_enigma.eWidget_isTransparent,None,eWidget)
 eWidget.getAbsolutePosition = new_instancemethod(_enigma.eWidget_getAbsolutePosition,None,eWidget)
@@ -2236,10 +2280,6 @@ class eWindow(eWidget):
         """
         _enigma.eWindow_swiginit(self,_enigma.new_eWindow(*args))
     __swig_destroy__ = _enigma.delete_eWindow
-    def setShowHideAnimation(self, *args):
-        """setShowHideAnimation(eWindow self, std::string const & key) -> bool"""
-        return _enigma.eWindow_setShowHideAnimation(self, *args)
-
     def neverAnimate(self):
         """neverAnimate(eWindow self)"""
         return _enigma.eWindow_neverAnimate(self)
@@ -2265,7 +2305,6 @@ class eWindow(eWidget):
         """clearFlag(eWindow self, int flags)"""
         return _enigma.eWindow_clearFlag(self, *args)
 
-eWindow.setShowHideAnimation = new_instancemethod(_enigma.eWindow_setShowHideAnimation,None,eWindow)
 eWindow.neverAnimate = new_instancemethod(_enigma.eWindow_neverAnimate,None,eWindow)
 eWindow.setTitle = new_instancemethod(_enigma.eWindow_setTitle,None,eWindow)
 eWindow.getTitle = new_instancemethod(_enigma.eWindow_getTitle,None,eWindow)
@@ -2347,6 +2386,7 @@ eWidgetDesktop.resize = new_instancemethod(_enigma.eWidgetDesktop_resize,None,eW
 eWidgetDesktop.size = new_instancemethod(_enigma.eWidgetDesktop_size,None,eWidgetDesktop)
 eWidgetDesktop.isDimmable = new_instancemethod(_enigma.eWidgetDesktop_isDimmable,None,eWidgetDesktop)
 eWidgetDesktop.createScreenshot = new_instancemethod(_enigma.eWidgetDesktop_createScreenshot,None,eWidgetDesktop)
+eWidgetDesktop.setFrameTime = new_instancemethod(_enigma.eWidgetDesktop_setFrameTime,None,eWidgetDesktop)
 eWidgetDesktop_swigregister = _enigma.eWidgetDesktop_swigregister
 eWidgetDesktop_swigregister(eWidgetDesktop)
 
@@ -3584,6 +3624,14 @@ class eMediaDatabase(object):
         """
         return _enigma.eMediaDatabase_filterByArtistAlbum(self, *args)
 
+    def filterByAlbumArtistAlbum(self, *args):
+        """
+        filterByAlbumArtistAlbum(eMediaDatabase self, std::string const & artist, std::string const & album, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByAlbumArtistAlbum(eMediaDatabase self, std::string const & artist, std::string const & album, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByAlbumArtistAlbum(eMediaDatabase self, std::string const & artist, std::string const & album) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByAlbumArtistAlbum(self, *args)
+
     def filterByArtist(self, *args):
         """
         filterByArtist(eMediaDatabase self, std::string const & artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
@@ -3591,6 +3639,14 @@ class eMediaDatabase(object):
         filterByArtist(eMediaDatabase self, std::string const & artist) -> eMediaDatabaseResultPtr
         """
         return _enigma.eMediaDatabase_filterByArtist(self, *args)
+
+    def filterByAlbumArtist(self, *args):
+        """
+        filterByAlbumArtist(eMediaDatabase self, std::string const & artist, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
+        filterByAlbumArtist(eMediaDatabase self, std::string const & artist, int limit=-1) -> eMediaDatabaseResultPtr
+        filterByAlbumArtist(eMediaDatabase self, std::string const & artist) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_filterByAlbumArtist(self, *args)
 
     def filterByGenre(self, *args):
         """
@@ -3664,6 +3720,10 @@ class eMediaDatabase(object):
         """
         return _enigma.eMediaDatabase_getAlbumsByAlbumArtist(self, *args)
 
+    def getTracksByAlbumId(self, *args):
+        """getTracksByAlbumId(eMediaDatabase self, int album_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getTracksByAlbumId(self, *args)
+
     def getAllAudio(self, *args):
         """
         getAllAudio(eMediaDatabase self, int limit=-1, int offset=0) -> eMediaDatabaseResultPtr
@@ -3719,7 +3779,10 @@ class eMediaDatabase(object):
         return _enigma.eMediaDatabase_getRecordEit(self, *args)
 
     def setRecordEit(self, *args):
-        """setRecordEit(eMediaDatabase self, int file_id, uint8_t [] eit_raw) -> eMediaDatabaseResultPtr"""
+        """
+        setRecordEit(eMediaDatabase self, int file_id, uint8_t [] eit_raw, bool update=False) -> eMediaDatabaseResultPtr
+        setRecordEit(eMediaDatabase self, int file_id, uint8_t [] eit_raw) -> eMediaDatabaseResultPtr
+        """
         return _enigma.eMediaDatabase_setRecordEit(self, *args)
 
     def getFileByPath(self, *args):
@@ -3741,6 +3804,29 @@ class eMediaDatabase(object):
     def getFileAttribute(self, *args):
         """getFileAttribute(eMediaDatabase self, int file_id, std::string const & key) -> eMediaDatabaseResultPtr"""
         return _enigma.eMediaDatabase_getFileAttribute(self, *args)
+
+    def getCoverArt(self, *args):
+        """getCoverArt(eMediaDatabase self, int cover_art_id)"""
+        return _enigma.eMediaDatabase_getCoverArt(self, *args)
+
+    def getCoverArtData(self, *args):
+        """
+        getCoverArtData(eMediaDatabase self, int cover_art_id) -> eMediaDatabaseResultPtr
+        getCoverArtData(eMediaDatabase self, std::string const & cover_art_key) -> eMediaDatabaseResultPtr
+        """
+        return _enigma.eMediaDatabase_getCoverArtData(self, *args)
+
+    def getAlbumCoverArt(self, *args):
+        """getAlbumCoverArt(eMediaDatabase self, int cover_art_id)"""
+        return _enigma.eMediaDatabase_getAlbumCoverArt(self, *args)
+
+    def getAlbumCoverArtData(self, *args):
+        """getAlbumCoverArtData(eMediaDatabase self, int album_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getAlbumCoverArtData(self, *args)
+
+    def getAlbumCoverArtId(self, *args):
+        """getAlbumCoverArtId(eMediaDatabase self, int album_id) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getAlbumCoverArtId(self, *args)
 
     def addPlaylist(self, *args):
         """addPlaylist(eMediaDatabase self, std::string const & name, int type) -> eMediaDatabaseResultPtr"""
@@ -3819,7 +3905,9 @@ eMediaDatabase.getParentDirectories = new_instancemethod(_enigma.eMediaDatabase_
 eMediaDatabase.filterAudio = new_instancemethod(_enigma.eMediaDatabase_filterAudio,None,eMediaDatabase)
 eMediaDatabase.filterByAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByAlbum,None,eMediaDatabase)
 eMediaDatabase.filterByArtistAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByArtistAlbum,None,eMediaDatabase)
+eMediaDatabase.filterByAlbumArtistAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByAlbumArtistAlbum,None,eMediaDatabase)
 eMediaDatabase.filterByArtist = new_instancemethod(_enigma.eMediaDatabase_filterByArtist,None,eMediaDatabase)
+eMediaDatabase.filterByAlbumArtist = new_instancemethod(_enigma.eMediaDatabase_filterByAlbumArtist,None,eMediaDatabase)
 eMediaDatabase.filterByGenre = new_instancemethod(_enigma.eMediaDatabase_filterByGenre,None,eMediaDatabase)
 eMediaDatabase.filterByTitle = new_instancemethod(_enigma.eMediaDatabase_filterByTitle,None,eMediaDatabase)
 eMediaDatabase.getAllArtists = new_instancemethod(_enigma.eMediaDatabase_getAllArtists,None,eMediaDatabase)
@@ -3829,6 +3917,7 @@ eMediaDatabase.getAllAlbums = new_instancemethod(_enigma.eMediaDatabase_getAllAl
 eMediaDatabase.getAlbums = new_instancemethod(_enigma.eMediaDatabase_getAlbums,None,eMediaDatabase)
 eMediaDatabase.getAlbumsByArtist = new_instancemethod(_enigma.eMediaDatabase_getAlbumsByArtist,None,eMediaDatabase)
 eMediaDatabase.getAlbumsByAlbumArtist = new_instancemethod(_enigma.eMediaDatabase_getAlbumsByAlbumArtist,None,eMediaDatabase)
+eMediaDatabase.getTracksByAlbumId = new_instancemethod(_enigma.eMediaDatabase_getTracksByAlbumId,None,eMediaDatabase)
 eMediaDatabase.getAllAudio = new_instancemethod(_enigma.eMediaDatabase_getAllAudio,None,eMediaDatabase)
 eMediaDatabase.getAllVideos = new_instancemethod(_enigma.eMediaDatabase_getAllVideos,None,eMediaDatabase)
 eMediaDatabase.addRecording = new_instancemethod(_enigma.eMediaDatabase_addRecording,None,eMediaDatabase)
@@ -3843,6 +3932,11 @@ eMediaDatabase.setFileAttribute = new_instancemethod(_enigma.eMediaDatabase_setF
 eMediaDatabase.deleteFileAttribute = new_instancemethod(_enigma.eMediaDatabase_deleteFileAttribute,None,eMediaDatabase)
 eMediaDatabase.getFileAttributes = new_instancemethod(_enigma.eMediaDatabase_getFileAttributes,None,eMediaDatabase)
 eMediaDatabase.getFileAttribute = new_instancemethod(_enigma.eMediaDatabase_getFileAttribute,None,eMediaDatabase)
+eMediaDatabase.getCoverArt = new_instancemethod(_enigma.eMediaDatabase_getCoverArt,None,eMediaDatabase)
+eMediaDatabase.getCoverArtData = new_instancemethod(_enigma.eMediaDatabase_getCoverArtData,None,eMediaDatabase)
+eMediaDatabase.getAlbumCoverArt = new_instancemethod(_enigma.eMediaDatabase_getAlbumCoverArt,None,eMediaDatabase)
+eMediaDatabase.getAlbumCoverArtData = new_instancemethod(_enigma.eMediaDatabase_getAlbumCoverArtData,None,eMediaDatabase)
+eMediaDatabase.getAlbumCoverArtId = new_instancemethod(_enigma.eMediaDatabase_getAlbumCoverArtId,None,eMediaDatabase)
 eMediaDatabase.addPlaylist = new_instancemethod(_enigma.eMediaDatabase_addPlaylist,None,eMediaDatabase)
 eMediaDatabase.getPlaylist = new_instancemethod(_enigma.eMediaDatabase_getPlaylist,None,eMediaDatabase)
 eMediaDatabase.getPlaylistByName = new_instancemethod(_enigma.eMediaDatabase_getPlaylistByName,None,eMediaDatabase)
@@ -3899,6 +3993,7 @@ eMediaDatabase.FIELD_DESCRIPTION = _enigma.cvar.eMediaDatabase_FIELD_DESCRIPTION
 eMediaDatabase.FIELD_SERVICEREFRENCE = _enigma.cvar.eMediaDatabase_FIELD_SERVICEREFRENCE
 eMediaDatabase.FIELD_TYPE = _enigma.cvar.eMediaDatabase_FIELD_TYPE
 eMediaDatabase.FIELD_NAME = _enigma.cvar.eMediaDatabase_FIELD_NAME
+eMediaDatabase.FIELD_COVER_ART_ID = _enigma.cvar.eMediaDatabase_FIELD_COVER_ART_ID
 
 def eMediaDatabase_getInstance():
   """eMediaDatabase_getInstance() -> eMediaDatabase"""
@@ -4821,6 +4916,12 @@ class eStreamServer(object):
     UPSTREAM_STATE_WAITING = _enigma.eStreamServer_UPSTREAM_STATE_WAITING
     UPSTREAM_STATE_TRANSMITTING = _enigma.eStreamServer_UPSTREAM_STATE_TRANSMITTING
     UPSTREAM_STATE_OVERLOAD = _enigma.eStreamServer_UPSTREAM_STATE_OVERLOAD
+    UPSTREAM_STATE_ADJUSTING = _enigma.eStreamServer_UPSTREAM_STATE_ADJUSTING
+    SOURCE_STATE_VOID_PENDING = _enigma.eStreamServer_SOURCE_STATE_VOID_PENDING
+    SOURCE_STATE_NULL = _enigma.eStreamServer_SOURCE_STATE_NULL
+    SOURCE_STATE_READY = _enigma.eStreamServer_SOURCE_STATE_READY
+    SOURCE_STATE_PAUSED = _enigma.eStreamServer_SOURCE_STATE_PAUSED
+    SOURCE_STATE_PLAYING = _enigma.eStreamServer_SOURCE_STATE_PLAYING
     def isAvailable(self):
         """isAvailable(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_isAvailable(self)
@@ -4832,6 +4933,14 @@ class eStreamServer(object):
     def isUpstreamEnabled(self):
         """isUpstreamEnabled(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_isUpstreamEnabled(self)
+
+    def rtspClientCount(self):
+        """rtspClientCount(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_rtspClientCount(self)
+
+    def sourceState(self):
+        """sourceState(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_sourceState(self)
 
     def upstreamState(self):
         """upstreamState(eStreamServer self) -> int"""
@@ -4848,6 +4957,10 @@ class eStreamServer(object):
     def path(self):
         """path(eStreamServer self) -> std::string"""
         return _enigma.eStreamServer_path(self)
+
+    def uriParameters(self):
+        """uriParameters(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_uriParameters(self)
 
     def inputMode(self):
         """inputMode(eStreamServer self) -> int"""
@@ -4909,15 +5022,21 @@ class eStreamServer(object):
         return _enigma.eStreamServer_setResolution(self, *args)
 
     availabilityChanged = _swig_property(_enigma.eStreamServer_availabilityChanged_get, _enigma.eStreamServer_availabilityChanged_set)
+    sourceStateChanged = _swig_property(_enigma.eStreamServer_sourceStateChanged_get, _enigma.eStreamServer_sourceStateChanged_set)
     upstreamStateChanged = _swig_property(_enigma.eStreamServer_upstreamStateChanged_get, _enigma.eStreamServer_upstreamStateChanged_set)
     upstreamBitrateChanged = _swig_property(_enigma.eStreamServer_upstreamBitrateChanged_get, _enigma.eStreamServer_upstreamBitrateChanged_set)
+    rtspClientCountChanged = _swig_property(_enigma.eStreamServer_rtspClientCountChanged_get, _enigma.eStreamServer_rtspClientCountChanged_set)
+    uriParametersChanged = _swig_property(_enigma.eStreamServer_uriParametersChanged_get, _enigma.eStreamServer_uriParametersChanged_set)
 eStreamServer.isAvailable = new_instancemethod(_enigma.eStreamServer_isAvailable,None,eStreamServer)
 eStreamServer.isRTSPEnabled = new_instancemethod(_enigma.eStreamServer_isRTSPEnabled,None,eStreamServer)
 eStreamServer.isUpstreamEnabled = new_instancemethod(_enigma.eStreamServer_isUpstreamEnabled,None,eStreamServer)
+eStreamServer.rtspClientCount = new_instancemethod(_enigma.eStreamServer_rtspClientCount,None,eStreamServer)
+eStreamServer.sourceState = new_instancemethod(_enigma.eStreamServer_sourceState,None,eStreamServer)
 eStreamServer.upstreamState = new_instancemethod(_enigma.eStreamServer_upstreamState,None,eStreamServer)
 eStreamServer.width = new_instancemethod(_enigma.eStreamServer_width,None,eStreamServer)
 eStreamServer.height = new_instancemethod(_enigma.eStreamServer_height,None,eStreamServer)
 eStreamServer.path = new_instancemethod(_enigma.eStreamServer_path,None,eStreamServer)
+eStreamServer.uriParameters = new_instancemethod(_enigma.eStreamServer_uriParameters,None,eStreamServer)
 eStreamServer.inputMode = new_instancemethod(_enigma.eStreamServer_inputMode,None,eStreamServer)
 eStreamServer.setInputMode = new_instancemethod(_enigma.eStreamServer_setInputMode,None,eStreamServer)
 eStreamServer.audioBitrate = new_instancemethod(_enigma.eStreamServer_audioBitrate,None,eStreamServer)
@@ -5135,45 +5254,44 @@ loadPic = _enigma.loadPic
 class eCec(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    MSG_ACTIVE_SOURCE = _enigma.eCec_MSG_ACTIVE_SOURCE
+    MSG_FEATURE_ABORT = _enigma.eCec_MSG_FEATURE_ABORT
     MSG_IMAGE_VIEW_ON = _enigma.eCec_MSG_IMAGE_VIEW_ON
     MSG_TEXT_VIEW_ON = _enigma.eCec_MSG_TEXT_VIEW_ON
-    MSG_INACTIVE_SOURCE = _enigma.eCec_MSG_INACTIVE_SOURCE
-    MSG_REQUEST_ACTIVE_SOURCE = _enigma.eCec_MSG_REQUEST_ACTIVE_SOURCE
-    MSG_ROUTING_CHANGE = _enigma.eCec_MSG_ROUTING_CHANGE
-    MSG_ROUTING_INFORMATION = _enigma.eCec_MSG_ROUTING_INFORMATION
-    MSG_SET_STREAMPATH = _enigma.eCec_MSG_SET_STREAMPATH
-    MSG_STANDBY = _enigma.eCec_MSG_STANDBY
-    MSG_VERSION = _enigma.eCec_MSG_VERSION
-    MSG_GET_CEC_VERSION = _enigma.eCec_MSG_GET_CEC_VERSION
-    MSG_GIVE_PHYS_ADDR = _enigma.eCec_MSG_GIVE_PHYS_ADDR
-    MSG_GET_MENU_LANG = _enigma.eCec_MSG_GET_MENU_LANG
-    MSG_REPORT_PHYS_ADDR = _enigma.eCec_MSG_REPORT_PHYS_ADDR
     MSG_SET_MENU_LANG = _enigma.eCec_MSG_SET_MENU_LANG
-    MSG_DEVICE_VENDOR_ID = _enigma.eCec_MSG_DEVICE_VENDOR_ID
-    MSG_GIVE_DEVICE_VENDOR_ID = _enigma.eCec_MSG_GIVE_DEVICE_VENDOR_ID
-    MSG_VENDOR_COMMAND = _enigma.eCec_MSG_VENDOR_COMMAND
-    MSG_VENDOR_COMMAND_WITH_ID = _enigma.eCec_MSG_VENDOR_COMMAND_WITH_ID
-    MSG_VENDOR_REMOTE_BUTTON_DOWN = _enigma.eCec_MSG_VENDOR_REMOTE_BUTTON_DOWN
-    MSG_VENDOR_REMOTE_BUTTON_UP = _enigma.eCec_MSG_VENDOR_REMOTE_BUTTON_UP
-    MSG_SET_OSD_STRING = _enigma.eCec_MSG_SET_OSD_STRING
-    MSG_GIVE_OSD_NAME = _enigma.eCec_MSG_GIVE_OSD_NAME
-    MSG_SET_OSD_NAME = _enigma.eCec_MSG_SET_OSD_NAME
-    MSG_MENU_REQUEST = _enigma.eCec_MSG_MENU_REQUEST
-    MSG_MENU_STATUS = _enigma.eCec_MSG_MENU_STATUS
+    MSG_STANDBY = _enigma.eCec_MSG_STANDBY
     MSG_USER_CONTROL_PRESSED = _enigma.eCec_MSG_USER_CONTROL_PRESSED
     MSG_USER_CONTROL_RELEASED = _enigma.eCec_MSG_USER_CONTROL_RELEASED
+    MSG_GIVE_OSD_NAME = _enigma.eCec_MSG_GIVE_OSD_NAME
+    MSG_SET_OSD_NAME = _enigma.eCec_MSG_SET_OSD_NAME
+    MSG_SET_OSD_STRING = _enigma.eCec_MSG_SET_OSD_STRING
+    MSG_SYSTEM_AUDIO_MODE_REQUEST = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_REQUEST
+    MSG_GIVE_AUDIO_STATUS = _enigma.eCec_MSG_GIVE_AUDIO_STATUS
+    MSG_SET_SYSTEM_AUDIO_MODE = _enigma.eCec_MSG_SET_SYSTEM_AUDIO_MODE
+    MSG_REPORT_AUDIO_STATUS = _enigma.eCec_MSG_REPORT_AUDIO_STATUS
+    MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS
+    MSG_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_STATUS
+    MSG_ROUTING_CHANGE = _enigma.eCec_MSG_ROUTING_CHANGE
+    MSG_ROUTING_INFORMATION = _enigma.eCec_MSG_ROUTING_INFORMATION
+    MSG_ACTIVE_SOURCE = _enigma.eCec_MSG_ACTIVE_SOURCE
+    MSG_GIVE_PHYS_ADDR = _enigma.eCec_MSG_GIVE_PHYS_ADDR
+    MSG_REPORT_PHYS_ADDR = _enigma.eCec_MSG_REPORT_PHYS_ADDR
+    MSG_REQUEST_ACTIVE_SOURCE = _enigma.eCec_MSG_REQUEST_ACTIVE_SOURCE
+    MSG_SET_STREAMPATH = _enigma.eCec_MSG_SET_STREAMPATH
+    MSG_DEVICE_VENDOR_ID = _enigma.eCec_MSG_DEVICE_VENDOR_ID
+    MSG_VENDOR_COMMAND = _enigma.eCec_MSG_VENDOR_COMMAND
+    MSG_VENDOR_REMOTE_BUTTON_DOWN = _enigma.eCec_MSG_VENDOR_REMOTE_BUTTON_DOWN
+    MSG_VENDOR_REMOTE_BUTTON_UP = _enigma.eCec_MSG_VENDOR_REMOTE_BUTTON_UP
+    MSG_GIVE_DEVICE_VENDOR_ID = _enigma.eCec_MSG_GIVE_DEVICE_VENDOR_ID
+    MSG_MENU_REQUEST = _enigma.eCec_MSG_MENU_REQUEST
+    MSG_MENU_STATUS = _enigma.eCec_MSG_MENU_STATUS
     MSG_GIVE_DEVICE_POWER_STATUS = _enigma.eCec_MSG_GIVE_DEVICE_POWER_STATUS
     MSG_REPORT_POWER_STATUS = _enigma.eCec_MSG_REPORT_POWER_STATUS
-    MSG_FEATURE_ABORT = _enigma.eCec_MSG_FEATURE_ABORT
-    MSG_ABORT_MESSAGE = _enigma.eCec_MSG_ABORT_MESSAGE
-    MSG_GIVE_AUDIO_STATUS = _enigma.eCec_MSG_GIVE_AUDIO_STATUS
-    MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_GIVE_SYSTEM_AUDIO_MODE_STATUS
-    MSG_REPORT_AUDIO_STATUS = _enigma.eCec_MSG_REPORT_AUDIO_STATUS
-    MSG_SET_SYSTEM_AUDIO_MODE = _enigma.eCec_MSG_SET_SYSTEM_AUDIO_MODE
-    MSG_SYSTEM_AUDIO_MODE_REQUEST = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_REQUEST
-    MSG_SYSTEM_AUDIO_MODE_STATUS = _enigma.eCec_MSG_SYSTEM_AUDIO_MODE_STATUS
+    MSG_GET_MENU_LANG = _enigma.eCec_MSG_GET_MENU_LANG
     MSG_SET_AUDIO_RATE = _enigma.eCec_MSG_SET_AUDIO_RATE
+    MSG_INACTIVE_SOURCE = _enigma.eCec_MSG_INACTIVE_SOURCE
+    MSG_VERSION = _enigma.eCec_MSG_VERSION
+    MSG_GET_CEC_VERSION = _enigma.eCec_MSG_GET_CEC_VERSION
+    MSG_VENDOR_COMMAND_WITH_ID = _enigma.eCec_MSG_VENDOR_COMMAND_WITH_ID
     ABORT_REASON_UNRECOGNIZED_OPCODE = _enigma.eCec_ABORT_REASON_UNRECOGNIZED_OPCODE
     ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND = _enigma.eCec_ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND
     ABORT_REASON_CANNOT_PROVIDE_SOURCE = _enigma.eCec_ABORT_REASON_CANNOT_PROVIDE_SOURCE
@@ -5273,8 +5391,8 @@ class eCec(object):
     RC_RED = _enigma.eCec_RC_RED
     RC_GREEN = _enigma.eCec_RC_GREEN
     RC_YELLOW = _enigma.eCec_RC_YELLOW
-    DEVICE_TYPE_TUNER = _enigma.eCec_DEVICE_TYPE_TUNER
-    DEVICE_TYPE_PLAYBACK = _enigma.eCec_DEVICE_TYPE_PLAYBACK
+    IOCTL_DEVICE_TYPE_TUNER = _enigma.eCec_IOCTL_DEVICE_TYPE_TUNER
+    IOCTL_DEVICE_TYPE_PLAYBACK = _enigma.eCec_IOCTL_DEVICE_TYPE_PLAYBACK
     def vendor(*args):
         """vendor(uint32_t id) -> std::string const"""
         return _enigma.eCec_vendor(*args)
@@ -5393,6 +5511,14 @@ class eCec(object):
         """setDeviceType(eCec self, int newType) -> bool"""
         return _enigma.eCec_setDeviceType(self, *args)
 
+    def getVendor(self):
+        """getVendor(eCec self) -> int"""
+        return _enigma.eCec_getVendor(self)
+
+    def setVendor(self, *args):
+        """setVendor(eCec self, int vendor)"""
+        return _enigma.eCec_setVendor(self, *args)
+
     receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
     onKeyPress = _swig_property(_enigma.eCec_onKeyPress_get, _enigma.eCec_onKeyPress_set)
@@ -5421,6 +5547,8 @@ eCec.unregisterRaw = new_instancemethod(_enigma.eCec_unregisterRaw,None,eCec)
 eCec.getVolumeTarget = new_instancemethod(_enigma.eCec_getVolumeTarget,None,eCec)
 eCec.getDeviceType = new_instancemethod(_enigma.eCec_getDeviceType,None,eCec)
 eCec.setDeviceType = new_instancemethod(_enigma.eCec_setDeviceType,None,eCec)
+eCec.getVendor = new_instancemethod(_enigma.eCec_getVendor,None,eCec)
+eCec.setVendor = new_instancemethod(_enigma.eCec_setVendor,None,eCec)
 eCec_swigregister = _enigma.eCec_swigregister
 eCec_swigregister(eCec)
 
@@ -7093,6 +7221,42 @@ class eSignal1UInt32(object):
 eSignal1UInt32.connect2 = new_instancemethod(_enigma.eSignal1UInt32_connect2,None,eSignal1UInt32)
 eSignal1UInt32_swigregister = _enigma.eSignal1UInt32_swigregister
 eSignal1UInt32_swigregister(eSignal1UInt32)
+
+class eSlot2IntString(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2IntString:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2IntString_swiginit(self,_enigma.new_eSlot2IntString(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2IntString
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2IntString(self)
+        return weakref_proxy(self)
+eSlot2IntString.cb_func = new_instancemethod(_enigma.eSlot2IntString_cb_func,None,eSlot2IntString)
+eSlot2IntString_swigregister = _enigma.eSlot2IntString_swigregister
+eSlot2IntString_swigregister(eSlot2IntString)
+
+class eSignal2IntString(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2IntString(eSlot2IntString):
+            def __init__(self, func):
+                eSlot2IntString.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2IntString(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2IntString_swiginit(self,_enigma.new_eSignal2IntString())
+    __swig_destroy__ = _enigma.delete_eSignal2IntString
+eSignal2IntString.connect2 = new_instancemethod(_enigma.eSignal2IntString_connect2,None,eSignal2IntString)
+eSignal2IntString_swigregister = _enigma.eSignal2IntString_swigregister
+eSignal2IntString_swigregister(eSignal2IntString)
 
 class eSlot4UIntUIntUIntUInt(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

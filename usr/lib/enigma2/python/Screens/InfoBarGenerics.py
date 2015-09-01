@@ -8,7 +8,6 @@ from Components.Label import Label
 from Components.PluginComponent import plugins
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
-from Components.StreamServerControl import streamServerControl
 
 try:
 	from Components.Sources.HbbtvApplication import HbbtvApplication
@@ -41,7 +40,7 @@ from Tools import Notifications
 from Tools.Directories import fileExists
 
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, \
-	iPlayableService, eServiceReference, eEPGCache, eActionMap
+	iPlayableService, eServiceReference, eEPGCache, eActionMap, eServiceMP3
 
 from time import time, localtime, strftime
 from bisect import insort
@@ -934,6 +933,20 @@ class InfoBarSeek:
 
 		self.__seekableStatusChanged()
 
+		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
+
+		if not isinstance(self, InfoBarChannelSelection):
+			self.onFirstExecBegin.append(self.__registerPlayer)
+
+	def __registerPlayer(self):
+		self.prev_player = self.session.current_player
+		self.session.current_player = self
+		self.onClose.append(self.__unRegisterPlayer)
+
+	def __unRegisterPlayer(self):
+		self.session.current_player = self.prev_player
+		self.session.nav.playService(self.lastservice)
+
 	def makeStateForward(self, n):
 		return (0, n, 0, ">> %dx" % n)
 
@@ -1252,7 +1265,12 @@ class InfoBarPVRState:
 		self.pvrStateDialog.neverAnimate()
 		self.onShow.append(self._mayShow)
 		self.onHide.append(self.pvrStateDialog.hide)
+		self.onClose.append(self.__delPvrState)
 		self.force_show = force_show
+
+	def __delPvrState(self):
+		self.session.deleteDialog(self.pvrStateDialog)
+		self.pvrStateDialog = None
 
 	def _mayShow(self):
 		if self.execing and self.seekstate != self.SEEK_STATE_PLAY:
@@ -2400,9 +2418,11 @@ class InfoBarSubtitleSupport(object):
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evEnd: self.__serviceStopped,
-				iPlayableService.evUpdatedInfo: self.__updatedInfo
+				iPlayableService.evUpdatedInfo: self.__updatedInfo,
+				iPlayableService.evUpdatedEventInfo: self.__updatedEventInfo
 			})
 		self.cached_subtitle_checked = False
+		self.__initially_forced_subtitles = False
 		self.__selected_subtitle = None
 
 	def __serviceStopped(self):
@@ -2419,6 +2439,19 @@ class InfoBarSubtitleSupport(object):
 			self.setSelectedSubtitle(subtitle and subtitle.getCachedSubtitle())
 			if self.__selected_subtitle:
 				self.setSubtitlesEnable(True)
+
+	def __updatedEventInfo(self):
+		s = self.getCurrentServiceSubtitle()
+		subs = s and s.getSubtitleList() or [ ]
+		if not self.__initially_forced_subtitles:
+			for streamtup in subs:
+				streaml = list(streamtup)
+				if streaml[5] & eServiceMP3.GST_MATROSKA_TRACK_FORCED:
+					streaml[3] = eServiceMP3.SUB_FILTER_SHOW_FORCED_ONLY
+					self.setSelectedSubtitle(tuple(streaml))
+					self.setSubtitlesEnable(True)
+					self.__initially_forced_subtitles = True
+					return
 
 	def getCurrentServiceSubtitle(self):
 		service = self.session.nav.getCurrentService()

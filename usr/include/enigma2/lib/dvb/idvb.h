@@ -355,14 +355,17 @@ public:
 	bool isHidden() const { return m_flags & dxDontshow; }
 
 	virtual ~eDVBService();
-	
+
 	eDVBService &operator=(const eDVBService &);
-	
+
 	// iStaticServiceInformation
 	RESULT getName(const eServiceReference &ref, std::string &name);
 	RESULT getEvent(const eServiceReference &ref, ePtr<eServiceEvent> &ptr, time_t start_time);
 	int isPlayable(const eServiceReference &ref, const eServiceReference &ignore, bool simulate=false);
-	boost::any getInfoObject(const eServiceReference &ref, int);  // implemented in lib/service/servicedvb.h
+
+	int getInfo(const eServiceReference &ref, int);  // implemented in lib/service/servicedvb.cpp
+	std::string getInfoString(const eServiceReference &ref, int);  // implemented in lib/service/servicedvb.cpp
+	boost::any getInfoObject(const eServiceReference &ref, int);  // implemented in lib/service/servicedvb.cpp
 
 		/* for filtering: */
 	int checkFilter(const eServiceReferenceDVB &ref, const eDVBChannelQuery &query);

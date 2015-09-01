@@ -6,7 +6,6 @@ from Components.ServiceList import ServiceList
 from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
 from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from Components.StreamServerControl import streamServerControl
 profile("ChannelSelection.py 1")
 from EpgSelection import EPGSelection
 from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv
@@ -812,6 +811,7 @@ class ChannelSelectionBase(Screen):
 		self.servicePathRadio = [ ]
 		self.servicePath = [ ]
 		self.rootChanged = False
+		self.bouquet_root = None
 
 		self.mode = MODE_TV
 
@@ -872,6 +872,7 @@ class ChannelSelectionBase(Screen):
 		return self.bouquetNumOffsetCache.get(str, offsetCount)
 
 	def recallBouquetMode(self):
+		fixServicePath = self.servicePath and self.servicePath[0] == self.bouquet_root
 		if self.mode == MODE_TV:
 			self.service_types = service_types_tv
 			if config.usage.multibouquet.value:
@@ -884,7 +885,11 @@ class ChannelSelectionBase(Screen):
 				self.bouquet_rootstr = '1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "bouquets.radio" ORDER BY bouquet'
 			else:
 				self.bouquet_rootstr = '%s FROM BOUQUET "userbouquet.favourites.radio" ORDER BY bouquet'%(self.service_types)
+
 		self.bouquet_root = eServiceReference(self.bouquet_rootstr)
+		if fixServicePath:
+			self.servicePath = []
+			self.servicePath.append(self.bouquet_root)
 
 	def setTvMode(self):
 		self.mode = MODE_TV
@@ -1223,6 +1228,17 @@ class ChannelSelectionBase(Screen):
 	def prevMarker(self):
 		self.servicelist.moveToPrevMarker()
 
+#config for lastservice
+config.tv = ConfigSubsection()
+config.tv.lastservice = ConfigText()
+config.tv.lastroot = ConfigText()
+config.radio = ConfigSubsection()
+config.radio.lastservice = ConfigText()
+config.radio.lastroot = ConfigText()
+config.servicelist = ConfigSubsection()
+config.servicelist.lastmode = ConfigText(default = "tv")
+
+from Components.StreamServerControl import streamServerControl
 class ChannelSelectionEncoderService(object):
 	def __init__(self):
 		self["EncoderActions"] = ActionMap(["WizardActions"],
@@ -1233,20 +1249,9 @@ class ChannelSelectionEncoderService(object):
 	def _setEncoderService(self):
 		ref = self.getCurrentSelection()
 		if ref:
-			print "---- Setting Encoder Service to %s" %(ref.toString())
 			streamServerControl.setEncoderService(ref)
 
 HISTORYSIZE = 20
-
-#config for lastservice
-config.tv = ConfigSubsection()
-config.tv.lastservice = ConfigText()
-config.tv.lastroot = ConfigText()
-config.radio = ConfigSubsection()
-config.radio.lastservice = ConfigText()
-config.radio.lastroot = ConfigText()
-config.servicelist = ConfigSubsection()
-config.servicelist.lastmode = ConfigText(default = "tv")
 
 class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, SelectionEventInfo, ChannelSelectionEncoderService):
 	def __init__(self, session):

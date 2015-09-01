@@ -15,6 +15,13 @@ class DatabasePlaylistEntry(PlayListEntry):
 		title = data.get(eMediaDatabase.FIELD_TITLE, "")
 		album = data.get(eMediaDatabase.FIELD_ALBUM, "")
 		seconds = int(data.get(eMediaDatabase.FIELD_DURATION, 0))
+		cover_art_id = int(data.get(eMediaDatabase.FIELD_COVER_ART_ID, 0))
+		cover_art = DefaultCoverArt
+		cover = None
+		if cover_art_id:
+			cover = eMediaDatabase.getInstance().getCoverArt(cover_art_id)
+		if cover:
+			cover_art = cover
 
 		if seconds > 0:
 			minutes, seconds = divmod(seconds, 60)
@@ -22,7 +29,7 @@ class DatabasePlaylistEntry(PlayListEntry):
 		else:
 			duration = "--:--"
 
-		entry = (data, "", title, artist, album, duration, DefaultCoverArt)
+		entry = (data, "", title, artist, album, duration, cover_art)
 		entry = AudioPlaylistEntry.updateState(entry, state)
 
 		return entry
@@ -156,7 +163,12 @@ class DatabasePlaylist(Playlist):
 				if not file_uri:
 					Log.w("Playlist entry invalid, %s" % data)
 					continue
-				ref = eServiceReference(4097, 0, file_uri)
+				if file_uri.endswith('.ts'):
+					ref = eServiceReference(1, 0, file_uri)
+				elif file_uri.endswith('.m2ts'):
+					ref = eServiceReference(3, 0, file_uri)
+				else:
+					ref = eServiceReference(4097, 0, file_uri)
 				self.add(ref, data, True)
 			self._valid = True
 		else:

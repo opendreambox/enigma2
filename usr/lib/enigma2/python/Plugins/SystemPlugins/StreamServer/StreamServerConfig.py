@@ -1,27 +1,11 @@
-from enigma import eServiceReference
-
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from Components.StreamServerControl import StreamServerControl, streamServerControl
-from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection, ConfigInteger, ConfigText, ConfigPassword, getConfigListEntry
+from Components.config import config, getConfigListEntry
 from Components.Network import iNetworkInfo
 from Screens.Screen import Screen
-
-config.streamserver = ConfigSubsection()
-config.streamserver.enabled = ConfigOnOff(default=False)
-config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(StreamServerControl.INPUT_MODE_LIVE))
-config.streamserver.audioBitrate = ConfigInteger(128, StreamServerControl.AUDIO_BITRATE_LIMITS)
-config.streamserver.videoBitrate = ConfigInteger(2048, StreamServerControl.VIDEO_BITRATE_LIMITS)
-config.streamserver.autoBitrate = ConfigOnOff(default=False)
-config.streamserver.resolution = ConfigSelection(StreamServerControl.RESOLUTIONS.keys(), default="720p")
-config.streamserver.framerate = ConfigSelection(StreamServerControl.FRAME_RATES, default=StreamServerControl.FRAME_RATE_25)
-config.streamserver.rtspport = ConfigInteger(554, StreamServerControl.PORT_LIMITS)
-config.streamserver.rtsppath = ConfigText(default="stream", fixed_size=False)
-config.streamserver.user = ConfigText(default="", fixed_size=False)
-config.streamserver.password = ConfigPassword(default="")
-config.streamserver.lastservice = ConfigText(default=config.tv.lastservice.value)
 
 def applyConfig(streamServerControl, initial=False):
 		if not streamServerControl.isConnected():
@@ -34,10 +18,10 @@ def applyConfig(streamServerControl, initial=False):
 		password = config.streamserver.password.value
 
 		inputMode = int(config.streamserver.source.value)
-		if inputMode == StreamServerControl.INPUT_MODE_BACKGROUND and enabled:
-			streamServerControl.setEncoderService(eServiceReference(config.streamserver.lastservice.value))
-		else:
-			streamServerControl.stopEncoderService()
+#		if inputMode == StreamServerControl.INPUT_MODE_BACKGROUND and enabled:
+#			streamServerControl.setEncoderService(eServiceReference(config.streamserver.lastservice.value))
+#		else:
+#			streamServerControl.stopEncoderService()
 
 		streamServerControl.setInputMode(inputMode)
 
@@ -89,12 +73,13 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		ConfigListScreen.__init__(self, [], session=session)
 		self._streamServerControl = streamServerControl
 		self._upstreamBitrate = 0
+		self._clientCount = streamServerControl.rtspClientCount
 
 		self["key_blue"] = StaticText(_("Apply"))
 		self._info = Label("")
 		self["info"] = self._info
 
-		self._detailsHint = Label("Press PVR in channel selection to change the service in background mode")
+		self._detailsHint = Label(_("Press PVR in channel selection to change the service in background mode"))
 		self["details_hint"] = self._detailsHint
 
 		if not self._setInfoText in self["config"].onSelectionChanged:
@@ -108,8 +93,14 @@ class StreamServerConfig(Screen, ConfigListScreen):
 			"ok" : self.close,
 		}, -2)
 
+		self.setTitle(_("Streaming Server"))
 		config.streamserver.enabled.addNotifier(self._onEnabled, initial_call=False)
+		streamServerControl.onRtspClientCountChanged.append(self._onRtspClientCountChanged)
 		self._createSetup()
+
+	def _onRtspClientCountChanged(self, count, client):
+		self._clientCount = count
+		self._setInfoText()
 
 	def _onLoginCreated(self, *args):
 		self._createSetup()
@@ -122,6 +113,7 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		config.streamserver.save()
 
 		self.apply()
+		streamServerControl.onRtspClientCountChanged.remove(self._onRtspClientCountChanged)
 		Screen.close(self)
 
 	def _onEnabled(self, element):
@@ -145,7 +137,6 @@ class StreamServerConfig(Screen, ConfigListScreen):
 					getConfigListEntry(_("Data Source"), config.streamserver.source),
 					getConfigListEntry(_("Audio Bitrate"), config.streamserver.audioBitrate),
 					getConfigListEntry(_("Video Bitrate"), config.streamserver.videoBitrate),
-					getConfigListEntry(_("Adaptive Bitrate"), config.streamserver.autoBitrate),
 					getConfigListEntry(_("Resolution"), config.streamserver.resolution),
 					getConfigListEntry(_("Framerate"), config.streamserver.framerate),
 					getConfigListEntry(_("RTSP Port"), config.streamserver.rtspport),
@@ -170,4 +161,5 @@ class StreamServerConfig(Screen, ConfigListScreen):
 				if ip:
 					infotext = "rtsp://%s:%s/%s" %(ip.getAddress(), config.streamserver.rtspport.value, config.streamserver.rtsppath.value)
 					break
+			infotext = _("%s\n%s local client(s) connected") %(infotext, self._clientCount)
 		self._info.setText(infotext)
