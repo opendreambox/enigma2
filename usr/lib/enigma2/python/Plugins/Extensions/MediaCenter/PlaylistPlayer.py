@@ -4,6 +4,7 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.HelpMenu import HelpableScreen
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from Screens.InfoBarGenerics import PlayerBase
 from ServiceReference import ServiceReference
 from Tools.Directories import resolveFilename, SCOPE_CONFIG
 #plugin imports
@@ -11,7 +12,10 @@ from Tools.Log import Log
 from MediaCore import MediaCore, mediaCore
 from DatabasePlaylist import DatabasePlaylist
 
-class PlaylistPlayer(Screen, HelpableScreen):
+# when playing audio content no dedicated player class is used
+# so here we must inherit from PlayerBase to not break the 
+# previous service handling
+class PlaylistPlayer(Screen, HelpableScreen, PlayerBase):
 	def __init__(self, session, playlist_string, type):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
@@ -23,6 +27,9 @@ class PlaylistPlayer(Screen, HelpableScreen):
 		self._type = type
 
 		self.onClose.append(self.__onClose)
+
+		if type == MediaCore.TYPE_AUDIO:
+			PlayerBase.__init__(self)
 
 	def _initPlaylist(self, playlist_id):
 		if playlist_id > 0:

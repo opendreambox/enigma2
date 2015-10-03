@@ -869,7 +869,25 @@ class InfoBarRdsDecoder:
 			self.RassSlidePicChanged()
 		self.rds_display.show()
 
-class InfoBarSeek:
+class PlayerBase:
+	def __init__(self):
+		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
+
+		if not isinstance(self, InfoBarChannelSelection):
+			self.onFirstExecBegin.append(self.__registerPlayer)
+
+	def __registerPlayer(self):
+		self.prev_player = self.session.current_player
+		self.session.current_player = self
+		self.onClose.append(self.__unRegisterPlayer)
+
+	def __unRegisterPlayer(self):
+		self.session.current_player = self.prev_player
+		self.session.nav.playService(self.lastservice)
+
+# Since we dont want to change any existing player class, here we assume that each player inherits from InfoBarSeek.
+# If this is not the case the player explicitely have to inherit from PlayerBase and must call the init function!
+class InfoBarSeek(PlayerBase):
 	"""handles actions like seeking, pause"""
 
 	SEEK_STATE_PLAY = (0, 0, 0, ">")
@@ -933,19 +951,7 @@ class InfoBarSeek:
 
 		self.__seekableStatusChanged()
 
-		self.lastservice = self.session.nav.getCurrentlyPlayingServiceReference()
-
-		if not isinstance(self, InfoBarChannelSelection):
-			self.onFirstExecBegin.append(self.__registerPlayer)
-
-	def __registerPlayer(self):
-		self.prev_player = self.session.current_player
-		self.session.current_player = self
-		self.onClose.append(self.__unRegisterPlayer)
-
-	def __unRegisterPlayer(self):
-		self.session.current_player = self.prev_player
-		self.session.nav.playService(self.lastservice)
+		PlayerBase.__init__(self)
 
 	def makeStateForward(self, n):
 		return (0, n, 0, ">> %dx" % n)

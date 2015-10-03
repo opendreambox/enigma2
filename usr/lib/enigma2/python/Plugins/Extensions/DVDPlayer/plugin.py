@@ -405,6 +405,9 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		return None
 
 	def __serviceStopped(self):
+		if self.in_menu:
+			self.in_menu = False
+			self["NumberActions"].setEnabled(True)
 		self.dvdScreen.hide()
 		subs = self.getServiceInterface("subtitle")
 		if subs:

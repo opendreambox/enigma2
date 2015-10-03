@@ -121,7 +121,7 @@ protected:
 	ePtr<eTimer> m_invalidationTimer;
 	std::string m_parent_title;
 
-	const eWidgetDesktop *desktop() const;
+	eWidgetDesktop *desktop() const;
 	gPixelFormat pixelFormat() const;
 
 public:

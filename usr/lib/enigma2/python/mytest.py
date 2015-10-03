@@ -60,6 +60,20 @@ def ePositionGauge_setPointer(self, which, pixmap, center):
 		ePositionGauge_setPointer_org(self, which, pixmap, center)
 enigma.ePositionGauge.setPointer = ePositionGauge_setPointer
 
+from enigma import stPGS, stVOB
+
+iSubtitleOutputPtr_getSubtitleList_org = enigma.iSubtitleOutputPtr.getSubtitleList
+def iSubtitleOutputPtr_getSubtitleList(self):
+	lst_filtered = [ ]
+	for x in iSubtitleOutputPtr_getSubtitleList_org(self) or []:
+		if x[0] == 2 and x[2] in (stPGS, stVOB):
+			print "PGS/VOB subtitles broken... ignore", x
+		else:
+			lst_filtered.append(x)
+	return lst_filtered
+
+enigma.iSubtitleOutputPtr.getSubtitleList = iSubtitleOutputPtr_getSubtitleList
+
 from Tools.Profile import profile, profile_final
 
 profile("PYTHON_START")

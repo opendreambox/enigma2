@@ -562,9 +562,10 @@ class RecordTimer(timer.Timer):
 
 		# put out a message when at least one timer overlaps
 		checkit = True
-		for timer in root.findall("timer"):
+		timeriter = root.iter("timer")
+		for timer in timeriter:
 			newTimer = createTimer(timer)
-			if (self.record(newTimer, True, dosave=False) is not None) and (checkit == True):
+			if (self.record(newTimer, ignoreTSC=True, dosave=False) is not None) and (checkit == True):
 				from Tools.Notifications import AddPopup
 				from Screens.MessageBox import MessageBox
 				AddPopup(_("Timer overlap in timers.xml detected!\nPlease recheck it!"), type = MessageBox.TYPE_ERROR, timeout = 0, id = "TimerLoadFailed", domain="RecordTimer")
@@ -690,18 +691,16 @@ class RecordTimer(timer.Timer):
 					return True
 		return False
 
-	def record(self, entry, ignoreTSC=False, dosave=True):		#wird von loadTimer mit dosave=False aufgerufen
-		timersanitycheck = TimerSanityCheck(self.timer_list,entry)
-		if not timersanitycheck.check():
-			if ignoreTSC != True:
+	def record(self, entry, ignoreTSC=False, dosave=True): #wird von loadTimer mit dosave=False aufgerufen
+		if not ignoreTSC:
+			timersanitycheck = TimerSanityCheck(self.timer_list,entry)
+			if not timersanitycheck.check():
 				print "timer conflict detected!"
 				print timersanitycheck.getSimulTimerList()
 				return timersanitycheck.getSimulTimerList()
-			else:
-				print "ignore timer conflict"
-		elif timersanitycheck.doubleCheck():
-			print "ignore double timer"
-			return None
+			elif timersanitycheck.doubleCheck():
+				print "ignore double timer"
+				return None
 		entry.timeChanged()
 		print "[Timer] Record " + str(entry)
 		entry.Timer = self

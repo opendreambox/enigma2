@@ -98,7 +98,7 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 		print number, "pressed"
 		self.updateSubservices()
 		if number == 0:
-			self.playSubservice(self.lastservice)
+			self.playSubservice(self.__lastservice)
 		elif self.n is not None and number <= self.n:
 			self.playSubservice(number-1)
 	
@@ -136,7 +136,7 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 		if newservice.valid():
 			del self.subservices
 			del self.service
-			self.lastservice = self.currentlyPlayingSubservice
+			self.__lastservice = self.currentlyPlayingSubservice
 			self.session.nav.stopService()
 			self.session.nav.playService(newservice, False)
 			self.currentlyPlayingSubservice = number
