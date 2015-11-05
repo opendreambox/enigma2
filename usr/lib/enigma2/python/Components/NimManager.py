@@ -1410,8 +1410,7 @@ def InitNimManager(nimmgr, slot_no = None):
 		fe_id = configElement.fe_id
 		slot_id = configElement.slot_id
 		name = nimmgr.nim_slots[slot_id].description
-		if name == 'Alps BSBE2' or name.find('BCM450') != -1:
-			open("/proc/stb/frontend/%d/use_scpc_optimized_search_range" %(fe_id), "w").write(configElement.value)
+		open("/proc/stb/frontend/%d/use_scpc_optimized_search_range" %(fe_id), "w").write(configElement.value)
 
 	def toneAmplitudeChanged(configElement):
 		fe_id = configElement.fe_id
@@ -1505,9 +1504,14 @@ def InitNimManager(nimmgr, slot_no = None):
 			nim.toneAmplitude.slot_id = x
 			nim.toneAmplitude.addNotifier(toneAmplitudeChanged)
 			nim.scpcSearchRange = ConfigSelection([("0", _("no")), ("1", _("yes"))], "0")
-			nim.scpcSearchRange.fe_id = x - empty_slots
 			nim.scpcSearchRange.slot_id = x
-			nim.scpcSearchRange.addNotifier(scpcSearchRangeChanged)
+			try:
+				fe_id =  x - empty_slots
+				open("/proc/stb/frontend/%d/use_scpc_optimized_search_range" %fe_id, "w")
+				nim.scpcSearchRange.fe_id = fe_id
+				nim.scpcSearchRange.addNotifier(scpcSearchRangeChanged)
+			except:
+				nim.scpcSearchRange.fe_id = None
 			nim.diseqc13V = ConfigYesNo(False)
 			nim.diseqcMode = ConfigSelection(diseqc_mode_choices, "diseqc_a_b")
 			nim.connectedTo = ConfigSelection([(str(id), nimmgr.getNimDescription(id)) for id in nimmgr.getNimListOfType("DVB-S") if id != x])

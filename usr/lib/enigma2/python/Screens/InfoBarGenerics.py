@@ -505,11 +505,19 @@ class InfoBarMenu:
 class InfoBarSimpleEventView:
 	""" Opens the Eventview for now/next """
 	def __init__(self):
-		self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
-			{
-				"showEventInfo": (self.openEventView, _("show event details")),
-				"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
-			})
+		if config.misc.rcused.value == 0:
+			self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+				{
+					"showEventInfo": (self.openEventView, _("show event details")),
+					"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+					"showEventList": (self.audioSelection, _("Audio Options...")),
+				})
+		else:
+			self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+				{
+					"showEventInfo": (self.openEventView, _("show event details")),
+					"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+				})
 
 	def showEventInfoWhenNotVisible(self):
 		if self.shown:

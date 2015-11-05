@@ -111,6 +111,10 @@ class Wizard(Screen):
 					self.wizard[self.lastStep]["listevaluation"] = attrs.get("evaluation")
 				if (attrs.has_key("onselect")):
 					self.wizard[self.lastStep]["onselect"] = attrs.get("onselect")
+				if (attrs.has_key('style')):
+					self.wizard[self.lastStep]["liststyle"] = str(attrs.get('style'))
+				if (attrs.has_key('buildfunction')):
+					self.wizard[self.lastStep]["listbuildfunction"] = str(attrs.get('buildfunction'))
 			elif (name == "multicontentlist"):
 				if (attrs.has_key('type')):
 					if attrs["type"] == "dynamic":
@@ -299,7 +303,8 @@ class Wizard(Screen):
 
 	def _setTitle(self):
 		if self.__title:
-			self.setTitle(self.__title)
+			self.setTitle(self.__title.replace("\n", " - "))
+			self.summaries.setTitle(self.__title)
 
 	NEXT_STEP_ANIMATION = 0
 	PREVIOUS_STEP_ANIMATION = 1
@@ -397,6 +402,9 @@ class Wizard(Screen):
 			count += 1
 		print "result: nothing"
 		return 0
+
+	def isCurrentStepID(self, id):
+		return self.currStep == self.getStepWithID(id) + 1
 
 	def finished(self, gotoStep = None, *args, **kwargs):
 		self.hide()
@@ -664,6 +672,9 @@ class Wizard(Screen):
 
 				renderer = renderer.source
 
+	def defaultBuildFunction(self, *args, **kwargs):
+		return args
+
 	def afterAsyncCode(self):
 		if not self.updateValues in self.onShown:
 			self.onShown.append(self.updateValues)
@@ -681,18 +692,23 @@ class Wizard(Screen):
 				print "showing list,", self.currStep
 				index = 0
 				self.showHideList("list", show = True)
+				liststyle = "default"
+				listbuildfunc = None
 
-				#self["list"].instance.setZPosition(1)
 				self.list = []
 				if (self.wizard[self.currStep].has_key("dynamiclist")):
 					dynamiclist = self.wizard[self.currStep]["dynamiclist"]
 					print "dynamic list, calling", dynamiclist
 					newlist = eval("self." + self.wizard[self.currStep]["dynamiclist"] + "()")
-					#self.wizard[self.currStep]["evaluatedlist"] = []
+					if (self.wizard[self.currStep].has_key("liststyle")):
+						liststyle = self.wizard[self.currStep]["liststyle"]
+
+					if (self.wizard[self.currStep].has_key("listbuildfunction")):
+						listbuildfunc = eval("self." + self.wizard[self.currStep]["listbuildfunction"])
+
 					for entry in newlist:
-						#self.wizard[self.currStep]["evaluatedlist"].append(entry)
 						self.list.append(entry)
-					#del self.wizard[self.currStep]["dynamiclist"]
+
 				if (self.wizard[self.currStep].has_key("configelement")):
 					configelement = self.wizard[self.currStep]["configelement"]
 					print "configelement:", configelement
@@ -710,29 +726,26 @@ class Wizard(Screen):
 						if element.value:
 							index = 0
 				if (len(self.wizard[self.currStep]["list"]) > 0):
-					#self["list"].instance.setZPosition(2)
 					for x in self.wizard[self.currStep]["list"]:
 						self.list.append((self.getTranslation(x[0]), x[1]))
 				self.wizard[self.currStep]["evaluatedlist"] = self.list
+				self["list"].setStyle(liststyle)
+				self["list"].buildfunc = listbuildfunc
 				self["list"].list = self.list
 				self["list"].index = index
 				if not self.list:
 					self.showHideList("list", show = False)
-# 			else:
-# 				self.showHideList("list", show = False)
 				
 			if self.showMulticontentList:
 				print "showing multi content list"
-				self.showHideList("multicontentlist", show = True)
 				self.multicontentlist = []
 				if (self.wizard[self.currStep].has_key("dynamicmulticontentlist")):
+					self.showHideList("multicontentlist", show = True)
 					dynamiclist = self.wizard[self.currStep]["dynamicmulticontentlist"]
 					exec("self." + self.wizard[self.currStep]["dynamicmulticontentlist"] + "()")
 				else:
 					self.showHideList("multicontentlist", show = False)
 				self.wizard[self.currStep]["evaluatedmulticontentlist"] = self.multicontentlist
-# 			else:
-#  				self.showHideList("multicontentlist", show = False)
 
 			if self.showConfig:
 				print "showing config"

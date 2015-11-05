@@ -46,6 +46,10 @@
 		<key id="KEY_RIGHT" mapto="right" flags="mr" />
 		<key id="KEY_RED" mapto="cancel" flags="m" />
 		<key id="KEY_GREEN" mapto="save" flags="m" />
+		<key id="KEY_PAGEUP" mapto="previousSection" flags="mr" />
+		<key id="KEY_PAGEDOWN" mapto="nextSection" flags="mr" />
+		<key id="KEY_CHANNELUP" mapto="previousSection" flags="mr" />
+		<key id="KEY_CHANNELDOWN" mapto="nextSection" flags="mr" />
 		<device name="dreambox remote control (native)">
 			<key id="KEY_MUTE" mapto="deleteForward" flags="mr" />
 			<key id="KEY_NEXT" mapto="deleteForward" flags="mr" />

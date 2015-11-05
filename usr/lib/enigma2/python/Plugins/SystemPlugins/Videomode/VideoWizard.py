@@ -1,7 +1,7 @@
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
-from VideoHardware import video_hw
+from VideoHardware import VideoHardware
 
 from Components.Pixmap import Pixmap
 from Components.config import config, configfile
@@ -26,62 +26,32 @@ class VideoWizardSummary(WizardSummary):
 		</widget>
 		<!--widget name="pic" pixmap="%s" position="0,22" zPosition="10" size="64,64" transparent="1" alphatest="on"/-->
 	</screen>""")
-	#% (resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/lcd_Scart.png"))
 	
 	def __init__(self, session, parent):
 		WizardSummary.__init__(self, session, parent)
-		#self["pic"] = Pixmap()
-		
+
 	def setLCDPicCallback(self):
 		self.parent.setLCDTextCallback(self.setText)
-		
+
 	def setLCDPic(self, file):
 		self["pic"].instance.setPixmapFromFile(file)
 
+class VideoWizard():
+	def __init__(self):
+		self.hw = VideoHardware()
 
-class VideoWizard(WizardLanguage, Rc):
-	skin = """
-		<screen position="0,0" size="720,576" title="Welcome..." flags="wfNoBorder" >
-			<widget name="text" position="153,50" size="340,270" font="Regular;23" />
-			<widget source="list" render="Listbox" position="200,300" size="290,200" scrollbarMode="showOnDemand" >
-				<convert type="StringList" />
-			</widget>
-			<widget name="config" position="50,300" zPosition="1" size="440,200" transparent="1" scrollbarMode="showOnDemand" />
-			<widget name="wizard" pixmap="skin_default/wizard.png" position="40,50" zPosition="10" size="110,174" transparent="1" alphatest="on"/>
-			<ePixmap pixmap="skin_default/buttons/button_red.png" position="40,225" zPosition="0" size="15,16" transparent="1" alphatest="on" />
-			<widget name="languagetext" position="55,225" size="95,30" font="Regular;18" />
-			<widget name="portpic" pixmap="%s" position="50,300" zPosition="10" size="150,150" transparent="1" alphatest="on"/>
-			<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png" position="500,50" zPosition="10" size="154,500" transparent="1" alphatest="on"/>
-			<widget name="arrowdown" pixmap="skin_default/arrowdown.png" position="0,0" zPosition="11" size="37,70" transparent="1" alphatest="on"/>
-			<widget name="arrowdown2" pixmap="skin_default/arrowdown.png" position="0,0" zPosition="11" size="37,70" transparent="1" alphatest="on"/>
-			<widget name="arrowup" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70" transparent="1" alphatest="on"/>
-			<widget name="arrowup2" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70" transparent="1" alphatest="on"/>
-		</screen>""" % (resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/Scart.png"))
-	
-	def __init__(self, session):
-		# FIXME anyone knows how to use relative paths from the plugin's directory?
-		self.xmlfile = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/videowizard.xml")
-		self.hw = video_hw
-		
-		WizardLanguage.__init__(self, session, showSteps = False, showStepSlider = False)
-		Rc.__init__(self)
-		self["wizard"] = Pixmap()
-		self["portpic"] = Pixmap()
-		
 		self.port = None
 		self.mode = None
 		self.rate = None
-		
-		
+
 	def createSummary(self):
-		print "++++++++++++***++**** VideoWizard-createSummary"
 		return VideoWizardSummary
-		
+
 	def markDone(self):
 		config.misc.videowizardenabled.value = 0
 		config.misc.videowizardenabled.save()
 		configfile.save()
-	
+
 	def listInputChannels(self):
 		hw_type = HardwareInfo().get_device_name()
 		list = []

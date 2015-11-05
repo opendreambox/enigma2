@@ -1341,6 +1341,7 @@ eMatrix.__isub__ = new_instancemethod(_enigma.eMatrix___isub__,None,eMatrix)
 eMatrix.__sub__ = new_instancemethod(_enigma.eMatrix___sub__,None,eMatrix)
 eMatrix.rows = new_instancemethod(_enigma.eMatrix_rows,None,eMatrix)
 eMatrix.columns = new_instancemethod(_enigma.eMatrix_columns,None,eMatrix)
+eMatrix.initialize = new_instancemethod(_enigma.eMatrix_initialize,None,eMatrix)
 eMatrix_swigregister = _enigma.eMatrix_swigregister
 eMatrix_swigregister(eMatrix)
 
@@ -1368,6 +1369,9 @@ class eMatrix4x4(eSquareMatrix):
     rotateZ = staticmethod(_enigma.eMatrix4x4_rotateZ)
     scale = staticmethod(_enigma.eMatrix4x4_scale)
     __swig_destroy__ = _enigma.delete_eMatrix4x4
+eMatrix4x4.__call__ = new_instancemethod(_enigma.eMatrix4x4___call__,None,eMatrix4x4)
+eMatrix4x4.__imul__ = new_instancemethod(_enigma.eMatrix4x4___imul__,None,eMatrix4x4)
+eMatrix4x4.__mul__ = new_instancemethod(_enigma.eMatrix4x4___mul__,None,eMatrix4x4)
 eMatrix4x4.translate = new_instancemethod(_enigma.eMatrix4x4_translate,None,eMatrix4x4)
 eMatrix4x4_swigregister = _enigma.eMatrix4x4_swigregister
 eMatrix4x4_swigregister(eMatrix4x4)
@@ -1399,6 +1403,28 @@ eMatrix4x4_rotateZ = _enigma.eMatrix4x4_rotateZ
 def eMatrix4x4_scale(*args):
   return _enigma.eMatrix4x4_scale(*args)
 eMatrix4x4_scale = _enigma.eMatrix4x4_scale
+
+class eMatrix3d(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eMatrix3d_swiginit(self,_enigma.new_eMatrix3d(*args))
+    __swig_destroy__ = _enigma.delete_eMatrix3d
+eMatrix3d.__call__ = new_instancemethod(_enigma.eMatrix3d___call__,None,eMatrix3d)
+eMatrix3d.at = new_instancemethod(_enigma.eMatrix3d_at,None,eMatrix3d)
+eMatrix3d_swigregister = _enigma.eMatrix3d_swigregister
+eMatrix3d_swigregister(eMatrix3d)
+
+class eMatrix3d4x4(eMatrix3d):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eMatrix3d4x4_swiginit(self,_enigma.new_eMatrix3d4x4(*args))
+    __swig_destroy__ = _enigma.delete_eMatrix3d4x4
+eMatrix3d4x4.__call__ = new_instancemethod(_enigma.eMatrix3d4x4___call__,None,eMatrix3d4x4)
+eMatrix3d4x4.at = new_instancemethod(_enigma.eMatrix3d4x4_at,None,eMatrix3d4x4)
+eMatrix3d4x4_swigregister = _enigma.eMatrix3d4x4_swigregister
+eMatrix3d4x4_swigregister(eMatrix3d4x4)
 
 class gRGBA(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2497,6 +2523,7 @@ class eListboxPythonConfigContent(eListboxPythonStringContent):
     __swig_destroy__ = _enigma.delete_eListboxPythonConfigContent
 eListboxPythonConfigContent.paint = new_instancemethod(_enigma.eListboxPythonConfigContent_paint,None,eListboxPythonConfigContent)
 eListboxPythonConfigContent.setSeperation = new_instancemethod(_enigma.eListboxPythonConfigContent_setSeperation,None,eListboxPythonConfigContent)
+eListboxPythonConfigContent.setDividerHeight = new_instancemethod(_enigma.eListboxPythonConfigContent_setDividerHeight,None,eListboxPythonConfigContent)
 eListboxPythonConfigContent.currentCursorSelectable = new_instancemethod(_enigma.eListboxPythonConfigContent_currentCursorSelectable,None,eListboxPythonConfigContent)
 eListboxPythonConfigContent_swigregister = _enigma.eListboxPythonConfigContent_swigregister
 eListboxPythonConfigContent_swigregister(eListboxPythonConfigContent)
@@ -3320,6 +3347,7 @@ class iDVBFrontend_ENUMS(object):
     stateLock = _enigma.iDVBFrontend_ENUMS_stateLock
     stateLostLock = _enigma.iDVBFrontend_ENUMS_stateLostLock
     statePreClose = _enigma.iDVBFrontend_ENUMS_statePreClose
+    statePendingClose = _enigma.iDVBFrontend_ENUMS_statePendingClose
     stateClosed = _enigma.iDVBFrontend_ENUMS_stateClosed
     toneOff = _enigma.iDVBFrontend_ENUMS_toneOff
     toneOn = _enigma.iDVBFrontend_ENUMS_toneOn

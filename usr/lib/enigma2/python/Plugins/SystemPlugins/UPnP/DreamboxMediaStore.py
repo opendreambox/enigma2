@@ -90,15 +90,6 @@ class DBContainer(BaseContainer):
 			mimetype = DLNA.getMimeType(codec, self._default_mime)
 			dlna_params = DLNA.getParams(mimetype)
 
-#			_,host_port,_,_,_ = urlsplit(self.store.urlbase)
-#			if host_port.find(':') != -1:
-#				host,port = tuple(host_port.split(':'))
-#			else:
-#				host = host_port
-#			res = DIDLLite.Resource('file://'+self.location, protocolInfo='internal:%s:%s:%s' % (host, mimetype, dlna_params))
-#			res.size = size
-#			self.item.res.append(res)
-
 			ext = self.location.split('.')[-1]
 			url = "%s%s.%s" % (self.store.urlbase, self.get_id(), ext)
 

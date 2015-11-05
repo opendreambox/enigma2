@@ -6,13 +6,21 @@ class WizardLanguage(Wizard):
 	def __init__(self, session, showSteps = True, showStepSlider = True, showList = True, showConfig = True, showMulticontentList = False):
 		Wizard.__init__(self, session, showSteps, showStepSlider, showList, showConfig, showMulticontentList)
 		
+		self.__updateCallbacks = []
+
 		self["languagetext"] = Label()
 		self.updateLanguageDescription()
 		
 	def red(self):
 		self.resetCounter()
 		self.languageSelect()
-		
+
+	def addLanguageUpdateCallback(self, callback):
+		self.__updateCallbacks.append(callback)
+
+	def removeLanguageUpdateCallback(self, callback):
+		self.__updateCallbacks.remove(callback)
+
 	def languageSelect(self):
 		print "languageSelect"
 		newlanguage = language.getActiveLanguageIndex() + 1
@@ -32,3 +40,5 @@ class WizardLanguage(Wizard):
 		self.updateText(firstset = True)
 		self.updateValues()
 		self.updateLanguageDescription()
+		for callback in self.__updateCallbacks:
+			callback()

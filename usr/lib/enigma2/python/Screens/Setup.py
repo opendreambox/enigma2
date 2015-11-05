@@ -130,15 +130,17 @@ class Setup(ConfigListScreen, Screen):
 					continue;
 
 				item_text = _(x.get("text", "??").encode("UTF-8"))
-				b = eval(x.text or "");
-				if b == "":
-					continue
+				b = eval(x.text or "str('')");
 				#add to configlist
 				item = b
 				# the first b is the item itself, ignored by the configList.
 				# the second one is converted to string.
 				if not isinstance(item, ConfigNothing):
-					list.append( (item_text, item) )
+					if item:
+						entry = (item_text, item)
+					else:
+						entry = (item_text,)
+					list.append(entry)
 
 def getSetupTitle(id):
 	xmldata = setupdom.getroot()

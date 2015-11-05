@@ -495,7 +495,7 @@ class iDVBFrontend_ENUMS
 #endif
 public:
 	enum { feSatellite, feCable, feTerrestrial, feSatellite2 };
-	enum { stateIdle, stateTuning, stateFailed, stateLock, stateLostLock, statePreClose, stateClosed };
+	enum { stateIdle, stateTuning, stateFailed, stateLock, stateLostLock, statePreClose, statePendingClose, stateClosed };
 	enum { toneOff, toneOn };
 	enum { voltageOff, voltage13, voltage18, voltage13_5, voltage18_5 };
 	enum { bitErrorRate, signalPower, signalQuality, locked, synced, frontendNumber, signalQualitydB };

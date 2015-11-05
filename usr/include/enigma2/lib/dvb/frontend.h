@@ -114,7 +114,7 @@ private:
 	int m_retryCount; // diseqc retry for rotor
 
 	bool m_ml_running;
-	eSingleLock m_sec_mutex;
+	eSingleLock m_sec_mutex, m_sec_lock_mutex;
 	eFixedMessagePump<int> m_pump, m_thread_pump;
 	void thread();
 	void gotMessage(int);

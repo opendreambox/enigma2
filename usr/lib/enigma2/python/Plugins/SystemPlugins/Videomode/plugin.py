@@ -5,7 +5,8 @@ from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigNothing
 from Components.Sources.StaticText import StaticText
 
-from VideoHardware import video_hw
+from VideoHardware import VideoHardware
+from Components.ResourceManager import resourcemanager
 
 config.misc.videowizardenabled = ConfigBoolean(default = True)
 
@@ -53,6 +54,7 @@ class VideoSetup(Screen, ConfigListScreen):
 		level = config.usage.setup_level.index
 
 		self.list = [
+			getConfigListEntry(_("Video")),
 			getConfigListEntry(_("Video Output"), config.av.videoport)
 		]
 
@@ -90,7 +92,14 @@ class VideoSetup(Screen, ConfigListScreen):
 				if SystemInfo["ScartSwitch"]:
 					self.list.append(getConfigListEntry(_("Auto scart switching"), config.av.vcrswitch))
 
+		if SystemInfo["CanChangeOsdAlpha"]:
+			self.list.append(getConfigListEntry(_("OSD visibility"), config.av.osd_alpha))
+
+		if not isinstance(config.av.scaler_sharpness, ConfigNothing):
+			self.list.append(getConfigListEntry(_("Scaler sharpness"), config.av.scaler_sharpness))
+
 		if level >= 1:
+			self.list.append(getConfigListEntry(_("Audio")))
 			self.list.append(getConfigListEntry(_("AC3 default"), config.av.defaultac3))
 			if SystemInfo["CanDownmixAC3"]:
 				self.list.append(getConfigListEntry(_("AC3 downmix"), config.av.downmix_ac3))
@@ -100,12 +109,6 @@ class VideoSetup(Screen, ConfigListScreen):
 			))
 			if SystemInfo["SupportsAC3PlusTranscode"]:
 				self.list.append(getConfigListEntry(_("Convert AC3+ to AC3"), config.av.convert_ac3plus))
-
-		if SystemInfo["CanChangeOsdAlpha"]:
-			self.list.append(getConfigListEntry(_("OSD visibility"), config.av.osd_alpha))
-
-		if not isinstance(config.av.scaler_sharpness, ConfigNothing):
-			self.list.append(getConfigListEntry(_("Scaler sharpness"), config.av.scaler_sharpness))
 
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
@@ -202,8 +205,8 @@ class VideomodeHotplug:
 hotplug = None
 
 def startHotplug():
-	global hotplug, video_hw
-	hotplug = VideomodeHotplug(video_hw)
+	global hotplug
+	hotplug = VideomodeHotplug(VideoHardware())
 	hotplug.start()
 
 def stopHotplug():
@@ -223,7 +226,7 @@ def autostart(reason, session = None, **kwargs):
 		stopHotplug()
 
 def videoSetupMain(session, **kwargs):
-	session.open(VideoSetup, video_hw)
+	session.open(VideoSetup, VideoHardware())
 
 def startSetup(menuid):
 	if menuid != "osd_video_audio":
@@ -237,9 +240,6 @@ def VideoWizard(*args, **kwargs):
 
 def Plugins(**kwargs):
 	list = [
-#		PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
 		PluginDescriptor(name=_("Video Setup"), description=_("Advanced Video Setup"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=startSetup) 
 	]
-	if config.misc.videowizardenabled.value:
-		list.append(PluginDescriptor(name=_("Video Wizard"), where = PluginDescriptor.WHERE_WIZARD, needsRestart = False, fnc=(0, VideoWizard)))
 	return list

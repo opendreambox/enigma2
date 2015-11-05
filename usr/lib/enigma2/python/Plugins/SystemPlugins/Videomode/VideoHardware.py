@@ -9,83 +9,84 @@ from Tools.HardwareInfo import HardwareInfo
 # available and preferred modes, as well as handling the currently
 # selected mode. No other strict checking is done.
 class VideoHardware:
-	rates = { } # high-level, use selectable modes.
+	def __initInternalValues(self):
+		self.rates = { } # high-level, use selectable modes.
 
-	modes = { }  # a list of (high-level) modes for a certain port.
+		self.modes = { }  # a list of (high-level) modes for a certain port.
 
-	if SystemInfo["AnalogOutput"]:
-		rates["PAL"] = {
-			"50Hz":		{ 50: "pal" },
-			"60Hz":		{ 60: "pal60" },
-			"multi":	{ 50: "pal", 60: "pal60" }
+		if SystemInfo["AnalogOutput"]:
+			self.rates["PAL"] = {
+				"50Hz":		{ 50: "pal" },
+				"60Hz":		{ 60: "pal60" },
+				"multi":	{ 50: "pal", 60: "pal60" }
+			}
+
+			self.rates["NTSC"] =	{
+				"60Hz": 	{ 60: "ntsc" }
+			}
+
+			self.rates["Multi"] = {
+				"multi": 	{ 50: "pal", 60: "ntsc" }
+			}
+
+		self.rates["480i"] = {
+			"60Hz": 	{ 60: "480i" }
 		}
 
-		rates["NTSC"] =	{
-			"60Hz": 	{ 60: "ntsc" }
+		self.rates["576i"] = {
+			"50Hz": 	{ 50: "576i" }
 		}
 
-		rates["Multi"] = {
-			"multi": 	{ 50: "pal", 60: "ntsc" }
+		self.rates["480p"] = {
+			"60Hz": 	{ 60: "480p" }
 		}
 
-	rates["480i"] = {
-		"60Hz": 	{ 60: "480i" }
-	}
+		self.rates["576p"] =	{
+			"50Hz": 	{ 50: "576p" }
+		}
 
-	rates["576i"] = {
-		"50Hz": 	{ 50: "576i" }
-	}
+		self.rates["720p"] = {
+			"50Hz": 	{ 50: "720p50" },
+			"60Hz": 	{ 60: "720p" },
+			"multi": 	{ 50: "720p50", 60: "720p" }
+		}
 
-	rates["480p"] = {
-		"60Hz": 	{ 60: "480p" }
-	}
+		self.rates["1080i"] = {
+			"50Hz":		{ 50: "1080i50" },
+			"60Hz":		{ 60: "1080i" },
+			"multi":	{ 50: "1080i50", 60: "1080i" }
+		}
 
-	rates["576p"] =	{
-		"50Hz": 	{ 50: "576p" }
-	}
+		self.rates["1080p"] = {
+			"50Hz":		{ 50: "1080p50" },
+			"60Hz":		{ 60: "1080p" },
+			"multi":	{ 50: "1080p50", 60: "1080p" },
+		}
 
-	rates["720p"] = {
-		"50Hz": 	{ 50: "720p50" },
-		"60Hz": 	{ 60: "720p" },
-		"multi": 	{ 50: "720p50", 60: "720p" }
-	}
+		self.rates["PC"] = {
+			"1024x768": { 60: "1024x768" }, # not possible on DM7025
+			"800x600" : { 60: "800x600" },  # also not possible
+			"720x480" : { 60: "720x480" },
+			"720x576" : { 60: "720x576" },
+			"1280x720": { 60: "1280x720" },
+			"1280x720 multi": { 50: "1280x720_50", 60: "1280x720" },
+			"1920x1080": { 60: "1920x1080"},
+			"1920x1080 multi": { 50: "1920x1080", 60: "1920x1080_50" },
+			"1280x1024" : { 60: "1280x1024"},
+			"1366x768" : { 60: "1366x768"},
+			"1366x768 multi" : { 50: "1366x768", 60: "1366x768_50" },
+			"1280x768": { 60: "1280x768" },
+			"640x480" : { 60: "640x480" }
+		}
 
-	rates["1080i"] = {
-		"50Hz":		{ 50: "1080i50" },
-		"60Hz":		{ 60: "1080i" },
-		"multi":	{ 50: "1080i50", 60: "1080i" }
-	}
+		if SystemInfo["AnalogOutput"]:
+			self.modes["Scart"] = ["PAL", "NTSC", "Multi"]
+			self.modes["YPbPr"] = ["720p", "1080p", "1080i", "576p", "480p", "576i", "480i"]
 
-	rates["1080p"] = {
-		"50Hz":		{ 50: "1080p50" },
-		"60Hz":		{ 60: "1080p" },
-		"multi":	{ 50: "1080p50", 60: "1080p" },
-	}
+		self.modes["DVI"] = ["1080i", "720p", "1080p", "576p", "480p", "576i", "480i"]
+		self.modes["DVI-PC"] = ["PC"]
 
-	rates["PC"] = { 
-		"1024x768": { 60: "1024x768" }, # not possible on DM7025
-		"800x600" : { 60: "800x600" },  # also not possible
-		"720x480" : { 60: "720x480" },
-		"720x576" : { 60: "720x576" },
-		"1280x720": { 60: "1280x720" },
-		"1280x720 multi": { 50: "1280x720_50", 60: "1280x720" },
-		"1920x1080": { 60: "1920x1080"},
-		"1920x1080 multi": { 50: "1920x1080", 60: "1920x1080_50" },
-		"1280x1024" : { 60: "1280x1024"},
-		"1366x768" : { 60: "1366x768"},
-		"1366x768 multi" : { 50: "1366x768", 60: "1366x768_50" },
-		"1280x768": { 60: "1280x768" },
-		"640x480" : { 60: "640x480" }
-	}
-
-	if SystemInfo["AnalogOutput"]:
-		modes["Scart"] = ["PAL", "NTSC", "Multi"]
-		modes["YPbPr"] = ["720p", "1080p", "1080i", "576p", "480p", "576i", "480i"]
-
-	modes["DVI"] = ["1080i", "720p", "1080p", "576p", "480p", "576i", "480i"]
-	modes["DVI-PC"] = ["PC"]
-
-	widescreen_modes = set(["720p", "1080p", "1080i"])
+		self.widescreen_modes = set(["720p", "1080p", "1080i"])
 
 	def getOutputAspect(self):
 		ret = (16,9)
@@ -116,6 +117,8 @@ class VideoHardware:
 		return ret
 
 	def __init__(self):
+		config.av.edid_override = ConfigYesNo(default = False)
+		self.__initInternalValues()
 		self.last_modes_preferred =  [ ]
 		self.on_hotplug = CList()
 		self.current_mode = None
@@ -145,6 +148,8 @@ class VideoHardware:
 			config.av.wss.addNotifier(self.updateAspect)
 		config.av.policy_169.addNotifier(self.updateAspect)
 		config.av.policy_43.addNotifier(self.updateAspect)
+
+		self.setConfiguredMode()
 
 		# until we have the hotplug poll socket
 #		self.timer = eTimer()
@@ -365,7 +370,3 @@ class VideoHardware:
 			open("/proc/stb/video/policy2", "w").write(policy2)
 		except IOError:
 			pass
-
-config.av.edid_override = ConfigYesNo(default = False)
-video_hw = VideoHardware()
-video_hw.setConfiguredMode()

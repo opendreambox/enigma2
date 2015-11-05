@@ -132,5 +132,4 @@ def Plugins(**kwargs):
 	if config.misc.firstrun.value:
 		NetworkWizardNew.firstRun = True
 		NetworkWizardNew.checkNetwork = True
-		lst.append(PluginDescriptor(name=_("Network Wizard"), where = PluginDescriptor.WHERE_WIZARD, needsRestart = False, fnc=(25, runNetworkWizard)))
 	return lst

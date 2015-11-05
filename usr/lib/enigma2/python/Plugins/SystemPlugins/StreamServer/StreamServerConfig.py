@@ -134,15 +134,18 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		config.streamserver.source.enabled = en
 
 		entries = [ getConfigListEntry(_("Enable Streaming Server"), config.streamserver.enabled),
+					getConfigListEntry(_("Basic Encoder Settings")),
 					getConfigListEntry(_("Data Source"), config.streamserver.source),
-					getConfigListEntry(_("Audio Bitrate"), config.streamserver.audioBitrate),
-					getConfigListEntry(_("Video Bitrate"), config.streamserver.videoBitrate),
 					getConfigListEntry(_("Resolution"), config.streamserver.resolution),
 					getConfigListEntry(_("Framerate"), config.streamserver.framerate),
+					getConfigListEntry(_("Network Settings")),
 					getConfigListEntry(_("RTSP Port"), config.streamserver.rtspport),
 					getConfigListEntry(_("RTSP Path"), config.streamserver.rtsppath),
 					getConfigListEntry(_("User"), config.streamserver.user),
 					getConfigListEntry(_("Password"), config.streamserver.password),
+					getConfigListEntry(_("Bitrates")),
+					getConfigListEntry(_("Audio Bitrate"), config.streamserver.audioBitrate),
+					getConfigListEntry(_("Video Bitrate"), config.streamserver.videoBitrate),
 				]
 		self["config"].list = entries
 

@@ -191,7 +191,7 @@ def mxServerFound(mxServer,session):
 	# Define the message body
 	body_text1 = "\nHello\n\nHere are some crashlogs i found for you.\n"
 	body_text2 = "\n\nThis is an automatically generated email from the CrashlogAutoSubmit plugin.\n\n\nHave a nice day.\n"
-	body_text = body_text1 + user_email + user_name + body_text2
+	body_text = body_text1 + body_text2
 	body.write(body_text)
 
 	list = (

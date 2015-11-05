@@ -170,6 +170,17 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 			self._albumHandle.link(desc=self._albumTitleHandle, asc=self._rootHandle)
 			self._albumTitleHandle.link(asc=self._albumHandle)
 
+			#AlbumArtist -> Album -> Titles
+			self._albumArtistHandle = NavigationHandle(self.__getAlbumArtists, [eMediaDatabase.FIELD_ARTIST])
+			self._albumArtistAlbumHandle = NavigationHandle(self.__getAlbumsByAlbumArtist, [eMediaDatabase.FIELD_ALBUM_ARTIST, eMediaDatabase.FIELD_ALBUM])
+			self._albumArtistAllHandle = NavigationHandle(self.__filterByAlbumArtist, [eMediaDatabase.FIELD_ARTIST, eMediaDatabase.FIELD_ALBUM, eMediaDatabase.FIELD_TITLE])
+			self._albumArtistAlbumTitleHandle = NavigationHandle(self.__filterByAlbumArtistAlbum, [eMediaDatabase.FIELD_ARTIST, eMediaDatabase.FIELD_TITLE])
+
+			self._albumArtistHandle.link(desc=self._albumArtistAlbumHandle, asc=self._rootHandle)
+			self._albumArtistAlbumHandle.link(desc=self._albumArtistAlbumTitleHandle, asc=self._albumArtistHandle, all=self._albumArtistAllHandle)
+			self._albumArtistAllHandle.link(asc=self._albumArtistAlbumHandle)
+			self._albumArtistAlbumTitleHandle.link(asc=self._albumArtistAlbumHandle)
+
 			#All
 			self._allHandle = NavigationHandle(self.__getAll, [eMediaDatabase.FIELD_ARTIST, eMediaDatabase.FIELD_ALBUM, eMediaDatabase.FIELD_TITLE])
 			self._allHandle.link(asc=self._rootHandle)
@@ -182,6 +193,10 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 				{
 					ITEM_KEY_TITLE : _("Albums"),
 					ITEM_KEY_HANDLE: self._albumHandle,
+				},
+				{
+					ITEM_KEY_TITLE : _("Album Artists"),
+					ITEM_KEY_HANDLE: self._albumArtistHandle,
 				},
 				{
 					ITEM_KEY_TITLE : _("All"),
@@ -315,6 +330,25 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 		res = self._db.getAlbumsByArtist(artist)
 		self._processResult(res)
 
+	def __getAlbumArtists(self, item):
+		self.__getFolderContent = self.__filterByAlbumArtist
+		res = self._db.getAllAlbumArtists()
+		self._processResult(res)
+
+	def __getAlbumsByAlbumArtist(self, item):
+		self.__getFolderContent = self.__filterByAlbumArtistAlbum
+		artist = item.get(eMediaDatabase.FIELD_ARTIST)
+		res =self._db.getAlbumsByAlbumArtist(artist)
+		self._processResult(res)
+
+	def __filterByArtist(self, item, only_get=False):
+		self.__getFolderContent = None
+		artist = item.get(eMediaDatabase.FIELD_ARTIST)
+		res = self._db.filterByArtist(artist)
+		if only_get:
+			return res.data()
+		self._processResult(res)
+
 	def __filterByArtistAlbum(self, item, only_get=False):
 		self.__getFolderContent = None
 		artist = item.get(eMediaDatabase.FIELD_ARTIST)
@@ -324,10 +358,19 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 			return res.data()
 		self._processResult(res)
 
-	def __filterByArtist(self, item, only_get=False):
+	def __filterByAlbumArtist(self, item, only_get=False):
 		self.__getFolderContent = None
 		artist = item.get(eMediaDatabase.FIELD_ARTIST)
-		res = self._db.filterByArtist(artist)
+		res = self._db.filterByAlbumArtist(artist)
+		if only_get:
+			return res.data()
+		self._processResult(res)
+
+	def __filterByAlbumArtistAlbum(self, item, only_get=False):
+		self.__getFolderContent = None
+		artist = item.get(eMediaDatabase.FIELD_ARTIST)
+		album = item.get(eMediaDatabase.FIELD_ALBUM)
+		res = self._db.filterByAlbumArtistAlbum(artist, album)
 		if only_get:
 			return res.data()
 		self._processResult(res)

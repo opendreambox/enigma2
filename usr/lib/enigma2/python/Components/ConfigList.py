@@ -12,7 +12,9 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		self.l = eListboxPythonConfigContent()
 		sizes = componentSizes[componentSizes.CONFIG_LIST]
 		self.l.setSeperation(sizes.get("seperation", 400))
+		self.l.setDividerHeight(sizes.get("dividerHeight", 1))
 		self.timer = eTimer()
+		self._headers = []
 		self.list = list
 		self.onSelectionChanged = [ ]
 		self.current = None
@@ -83,10 +85,49 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		self.timer.stop()
 		self.__list = l
 		self.l.setList(self.__list)
-
+		self._headers = []
 		if l is not None:
+			index = 0
 			for x in l:
-				assert len(x) < 2 or isinstance(x[1], ConfigElement), "entry in ConfigList " + str(x[1]) + " must be a ConfigElement"
+				if len(x) < 2:
+					self._headers.append(index)
+				else:
+					assert isinstance(x[1], ConfigElement), "entry in ConfigList " + str(x[1]) + " must be a ConfigElement"
+				index += 1
+
+	def pageUp(self):
+		self.instance.moveSelection(eListbox.pageUp)
+
+	def pageDown(self):
+		self.instance.moveSelection(eListbox.pageDown)
+
+	def jumpToNextSection(self):
+		index = self.getCurrentIndex()
+		maxlen = len(self.__list)
+		while index < maxlen - 1:
+			index += 1
+			if index in self._headers:
+				if index + 1 < maxlen:
+					self.setCurrentIndex(index + 1)
+					return
+				else:
+					self.setCurrentIndex(index - 1)
+					return
+		self.pageDown()
+
+	def jumpToPreviousSection(self):
+		index = self.getCurrentIndex() - 1
+		maxlen = len(self.__list)
+		while index >= 0 and maxlen > 0:
+			index -= 1
+			if index in self._headers:
+				if index + 1 < maxlen:
+					self.setCurrentIndex(index + 1)
+					return
+				else:
+					self.setCurrentIndex(index - 1)
+					return
+		self.pageUp()
 
 	def getList(self):
 		return self.__list
@@ -99,7 +140,8 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 	def isChanged(self):
 		is_changed = False
 		for x in self.list:
-			is_changed |= x[1].isChanged()
+			if len(x) > 1:
+				is_changed |= x[1].isChanged()
 
 		return is_changed
 
@@ -116,6 +158,8 @@ class ConfigListScreen:
 			"deleteForward": self.keyDelete,
 			"deleteBackward": self.keyBackspace,
 			"toggleOverwrite": self.keyToggleOW,
+			"previousSection" : self.keyPreviousSection,
+			"nextSection" : self.keyNextSection,
 			"1": self.keyNumberGlobal,
 			"2": self.keyNumberGlobal,
 			"3": self.keyNumberGlobal,
@@ -211,10 +255,17 @@ class ConfigListScreen:
 	def keyNumberGlobal(self, number):
 		self["config"].handleKey(KEY_0 + number)
 		self.__changed()
-		
+
+	def keyPreviousSection(self):
+		self["config"].jumpToPreviousSection()
+
+	def keyNextSection(self):
+		self["config"].jumpToNextSection()
+
 	def saveAll(self):
 		for x in self["config"].list:
-			x[1].save()
+			if len(x) > 1:
+				x[1].save()
 
 	# keySave and keyCancel are just provided in case you need them.
 	# you have to call them by yourself.
@@ -227,7 +278,8 @@ class ConfigListScreen:
 			return
 
 		for x in self["config"].list:
-			x[1].cancel()
+			if len(x) > 1:
+				x[1].cancel()
 		self.close()
 
 	def keyCancel(self):

@@ -8,9 +8,9 @@ class ResourceManager:
 		#print "resources:", self.resourceList
 		
 		
-	def getResource(self, name):
+	def getResource(self, name, default = None):
 		if not self.hasResource(name):
-			return None
+			return default
 		return self.resourceList[name]
 	
 	def hasResource(self, name):

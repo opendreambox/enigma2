@@ -94,7 +94,7 @@
 	</fonts>
 	<!-- Components -->
 	<components>
-		<component type="ConfigList" seperation="400" />
+		<component type="ConfigList" seperation="400" dividerHeight="1"/>
 		<component type="ChoiceList" itemHeight="30" textX="45" textY="0" textWidth="800" textHeight="30" pixmapWidth="35" pixmapHeight="30" fillerCount="200" />
 		<component type="FileList" itemHeight="25" textX="35" textY="0" textWidth="1000" textHeight="25" pixmapWidth="20" pixmapHeight="20" />
 		<component type="MultiFileSelectList" itemHeight="25" textX="55" textY="0" textWidth="1000" textHeight="25" pixmapWidth="20" pixmapHeight="20" pixmap2Width="25" pixmap2Height="25" />
@@ -2626,8 +2626,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 		<widget name="HelpWindow" position="453,250" size="1,1" zPosition="1" transparent="1" />
 	</screen>
 	<screen name="StartWizard" position="center,70" size="1200,620" title="Welcome...">
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="270,15" size="200,40" alphatest="on" />
-		<widget name="languagetext" position="270,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget name="wizard" position="0,0" size="240,620" pixmap="Default-HD/wizard.png" />
 		<widget name="rc" position="40,60" size="160,500" zPosition="1" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png" alphatest="blend" />
 		<widget name="arrowdown" position="-100,-100" size="37,70" pixmap="skin_default/arrowdown.png" zPosition="2" alphatest="on" />
@@ -2637,8 +2635,19 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 		<widget name="text" position="280,70" size="880,240" font="Regular;23" backgroundColor="background" transparent="1" />
 		<widget source="list" render="Listbox" position="280,330" size="880,270" zPosition="1" scrollbarMode="showOnDemand" transparent="1">
 			<convert type="TemplatedMultiContent">
-				{"template": [ MultiContentEntryText(pos = (10, 4), size = (580, 22), flags = RT_HALIGN_LEFT, text = 0) ],
-				"fonts": [gFont("Regular", 20)],
+				{"templates":
+					{	"default" :  (28, [ MultiContentEntryText(pos = (10, 4), size = (580, 22), flags = RT_HALIGN_LEFT, text = 0) ]),
+						"networkservice" : (50, [
+								MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
+								MultiContentEntryText(pos = (55, 0), size = (400, 24), font=0, flags = RT_HALIGN_LEFT, text = 3), #service name
+								MultiContentEntryText(pos = (780, 0), size = (100, 24), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text = 7), #security
+								MultiContentEntryText(pos = (780, 30), size = (100, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 2), #signal strength
+								MultiContentEntryText(pos = (55, 30), size = (220, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 4), #ip
+								MultiContentEntryText(pos = (605, 30), size = (150, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), #state
+								MultiContentEntryText(pos = (5, 0), size = (490, 50), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 6), #technology name
+							])
+				},
+				"fonts": [gFont("Regular", 20), gFont("Regular", 16)],
 				"itemHeight": 30
 				}
 			</convert>
@@ -2655,6 +2664,29 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 			</convert>
 		</widget>
 		<widget name="config" position="280,330" size="880,270" zPosition="2" itemHeight="30" scrollbarMode="showOnDemand" transparent="1"/>
+
+		<widget name="state_label" position="335,585" size="700,30" font="Regular;23" halign="right" backgroundColor="background" transparent="1" />
+		<widget name="state" position="1040,585" size="150,30" font="Regular;23" halign="right" backgroundColor="background" transparent="1" />
+
+		<widget name="portpic" position="280,450" zPosition="10" size="150,150" transparent="1" alphatest="on"/>
+
+		<ePixmap pixmap="Default-HD/buttons/red.png" position="265,15" size="200,40" alphatest="on" />
+		<widget name="languagetext" position="270,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+
+		<widget source="button_green" render="Pixmap" pixmap="Default-HD/buttons/green.png" position="475,15" size="200,40" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget name="button_green_text" position="475,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+
+		<widget source="button_yellow" render="Pixmap" pixmap="Default-HD/buttons/yellow.png" position="685,15" size="200,40" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget name="button_yellow_text" position="685,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+
+		<widget source="button_blue" render="Pixmap" pixmap="Default-HD/buttons/blue.png" position="895,15" size="200,40" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget name="button_blue_text" position="895,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 	</screen>
 	<screen name="VideoWizard" position="center,70" size="1200,620" title="Welcome...">
 		<ePixmap pixmap="Default-HD/buttons/red.png" position="270,15" size="200,40" alphatest="on" />

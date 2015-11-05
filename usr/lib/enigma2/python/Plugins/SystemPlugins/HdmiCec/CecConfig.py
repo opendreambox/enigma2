@@ -60,18 +60,21 @@ class CecConfig(ConfigListScreen, Screen):
 	def _createSetup(self):
 		isExpert = config.usage.setup_level.index >= 2
 		lst = [
+			getConfigListEntry(_("Power Handling")),
 			getConfigListEntry(_("Send HDMI CEC Power Events"), config.cec.sendpower),
 			]
 		if config.cec.sendpower.value and isExpert:
 			lst.append(getConfigListEntry(_("Send explicit on/off to Audio System"), config.cec.avr_power_explicit))
 
+
+
 		lst.extend([
 				getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
-				getConfigListEntry(_("Enable vendor specific handling"), config.cec.enable_vendor_quirks),
 			])
 
 		if config.cec.receivepower.value and isExpert:
 			lst.extend([
+				getConfigListEntry(_("Power-On Events (For Experts Only)")),
 				getConfigListEntry(_("Handle 'Routing Info' as power up/down"), config.cec.activate_on_routing_info),
 				getConfigListEntry(_("Handle 'Routing Change' as power up/down"), config.cec.activate_on_routing_change),
 				getConfigListEntry(_("Handle 'Active Source' as power up/down"), config.cec.activate_on_active_source),
@@ -79,6 +82,7 @@ class CecConfig(ConfigListScreen, Screen):
 				getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
 			])
 		lst.extend([
+			getConfigListEntry(_("Remote control")),
 			getConfigListEntry(_("Allow remote control via CEC"), config.cec.receive_remotekeys),
 			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
 		])
@@ -86,7 +90,10 @@ class CecConfig(ConfigListScreen, Screen):
 			lst.append(
 				getConfigListEntry(_("Target for forwarded Volume keys"), config.cec.volume_target)
 			)
-
+		lst.extend([
+			getConfigListEntry(_("General")),
+			getConfigListEntry(_("Enable vendor specific handling"), config.cec.enable_vendor_quirks),
+		])
 		self["config"].list = lst
 
 	def layoutFinished(self):
@@ -94,11 +101,13 @@ class CecConfig(ConfigListScreen, Screen):
 
 	def save(self):
 		for x in self["config"].list:
-			x[1].save()
+			if len(x) > 1:
+				x[1].save()
 		self.close(True, self.session)
 
 	def cancel(self):
 		for x in self["config"].list:
-			x[1].cancel()
+			if len(x) > 1:
+				x[1].cancel()
 		self.close(False, self.session)
 

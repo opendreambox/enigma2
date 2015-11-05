@@ -18,7 +18,7 @@ def getScale():
 	return AVSwitch().getFramebufferScale()
 
 config.pic = ConfigSubsection()
-config.pic.framesize = ConfigInteger(default=30, limits=(5, 99))
+config.pic.framesize = ConfigInteger(default=30, limits=(0, 99))
 config.pic.slidetime = ConfigInteger(default=10, limits=(5, 60))
 config.pic.resize = ConfigSelection(default="2", choices = [("0", _("simple")), ("1", _("better")), ("2", _("fast JPEG"))])
 config.pic.resize.value = 2 # 2 = fast JPEG (non JPEG fallback to 1)
