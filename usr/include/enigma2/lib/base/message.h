@@ -43,17 +43,31 @@ class eFixedMessagePump: private eMessagePump, public sigc::trackable
 	ePtr<eSocketNotifier> sn;
 	void do_recv(int)
 	{
+		T msg;
+		int ret = recv(&msg,sizeof(msg));
+		if (ret != sizeof(msg))
+			eDebug("eFixedMessagePump<%s>::do_recv %d/%zd bytes (%m)", typeid(msg).name(), ret, sizeof(msg));
+		else
+			/*emit*/ recv_msg(msg);
+	}
+	void do_recv_mt(int)
+	{
 		/*
 		 * before calling (blocking) recv we have to check
 		 * if anything is avail to read
 		 *
 		 */
-		if (!ismt || content.lock_count()) {
+		while (content.lock_count()) {
 			T msg;
-			recv(&msg, sizeof(msg));
+			int ret = recv(&msg,sizeof(msg));
+			if (ret != sizeof(msg)) {
+				eDebug("eFixedMessagePump<%s>::do_recv_mt %d/%zd bytes (%m)", typeid(msg).name(), ret, sizeof(msg));
+				break;
+			}
 			/*emit*/ recv_msg(msg);
 		}
 	}
+
 public:
 	sigc::signal1<void,const T&> recv_msg;
 	void send(const T &msg)
@@ -63,7 +77,10 @@ public:
 	eFixedMessagePump(eMainloop *context, int mt): eMessagePump(mt)
 	{
 		sn=eSocketNotifier::create(context, getOutputFD(), eSocketNotifier::Read);
-		CONNECT(sn->activated, eFixedMessagePump<T>::do_recv);
+		if (ismt)
+			CONNECT(sn->activated, eFixedMessagePump<T>::do_recv_mt);
+		else
+			CONNECT(sn->activated, eFixedMessagePump<T>::do_recv);
 	}
 	void start() { if (sn) sn->start(); }
 	void stop() { if (sn) sn->stop(); }

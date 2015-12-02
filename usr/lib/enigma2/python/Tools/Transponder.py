@@ -71,49 +71,76 @@ def ConvertToHumanReadable(tp, type = None):
 	elif type == "DVB-T":
 		ret["tuner_type"] = _("Terrestrial")
 		ret["bandwidth"] = {
-			eDVBFrontendParametersTerrestrial.Bandwidth_Auto : _("Auto"),
 			eDVBFrontendParametersTerrestrial.Bandwidth_8MHz : "8 MHz",
 			eDVBFrontendParametersTerrestrial.Bandwidth_7MHz : "7 MHz",
-			eDVBFrontendParametersTerrestrial.Bandwidth_6MHz : "6 MHz"}[tp["bandwidth"]]
-		ret["code_rate_lp"] = {
-			eDVBFrontendParametersTerrestrial.FEC_Auto : _("Auto"),
-			eDVBFrontendParametersTerrestrial.FEC_1_2 : "1/2",
-			eDVBFrontendParametersTerrestrial.FEC_2_3 : "2/3",
-			eDVBFrontendParametersTerrestrial.FEC_3_4 : "3/4",
-			eDVBFrontendParametersTerrestrial.FEC_5_6 : "5/6",
-			eDVBFrontendParametersTerrestrial.FEC_7_8 : "7/8"}[tp["code_rate_lp"]]
-		ret["code_rate_hp"] = {
-			eDVBFrontendParametersTerrestrial.FEC_Auto : _("Auto"),
-			eDVBFrontendParametersTerrestrial.FEC_1_2 : "1/2",
-			eDVBFrontendParametersTerrestrial.FEC_2_3 : "2/3",
-			eDVBFrontendParametersTerrestrial.FEC_3_4 : "3/4",
-			eDVBFrontendParametersTerrestrial.FEC_5_6 : "5/6",
-			eDVBFrontendParametersTerrestrial.FEC_7_8 : "7/8"}[tp["code_rate_hp"]]
+			eDVBFrontendParametersTerrestrial.Bandwidth_6MHz : "6 MHz",
+			eDVBFrontendParametersTerrestrial.Bandwidth_Auto : _("Auto"),
+			eDVBFrontendParametersTerrestrial.Bandwidth_1_712MHz : _("1.712 MHz"),
+			eDVBFrontendParametersTerrestrial.Bandwidth_10MHz : _("10 MHz")}[tp["bandwidth"]]
 		ret["constellation"] = {
 			eDVBFrontendParametersTerrestrial.Modulation_Auto : _("Auto"),
 			eDVBFrontendParametersTerrestrial.Modulation_QPSK : "QPSK",
 			eDVBFrontendParametersTerrestrial.Modulation_QAM16 : "QAM16",
-			eDVBFrontendParametersTerrestrial.Modulation_QAM64 : "QAM64"}[tp["constellation"]]
+			eDVBFrontendParametersTerrestrial.Modulation_QAM64 : "QAM64",
+			eDVBFrontendParametersTerrestrial.Modulation_QAM256 : "QAM256"}[tp["constellation"]]
 		ret["transmission_mode"] = {
-			eDVBFrontendParametersTerrestrial.TransmissionMode_Auto : _("Auto"),
 			eDVBFrontendParametersTerrestrial.TransmissionMode_2k : "2k",
-			eDVBFrontendParametersTerrestrial.TransmissionMode_8k : "8k"}[tp["transmission_mode"]]
+			eDVBFrontendParametersTerrestrial.TransmissionMode_2k : "4k",
+			eDVBFrontendParametersTerrestrial.TransmissionMode_8k : "8k",
+			eDVBFrontendParametersTerrestrial.TransmissionMode_Auto : _("Auto"),
+			eDVBFrontendParametersTerrestrial.TransmissionMode_1k : "1k",
+			eDVBFrontendParametersTerrestrial.TransmissionMode_16k : "16k",
+			eDVBFrontendParametersTerrestrial.TransmissionMode_32k : "32k"}[tp["transmission_mode"]]
 		ret["guard_interval"] = {
-			eDVBFrontendParametersTerrestrial.GuardInterval_Auto : _("Auto"),
 			eDVBFrontendParametersTerrestrial.GuardInterval_1_32 : "1/32",
 			eDVBFrontendParametersTerrestrial.GuardInterval_1_16 : "1/16",
 			eDVBFrontendParametersTerrestrial.GuardInterval_1_8 : "1/8",
-			eDVBFrontendParametersTerrestrial.GuardInterval_1_4 : "1/4"}[tp["guard_interval"]]
-		ret["hierarchy_information"] = {
-			eDVBFrontendParametersTerrestrial.Hierarchy_Auto : _("Auto"),
-			eDVBFrontendParametersTerrestrial.Hierarchy_None : _("None"),
-			eDVBFrontendParametersTerrestrial.Hierarchy_1 : "1",
-			eDVBFrontendParametersTerrestrial.Hierarchy_2 : "2",
-			eDVBFrontendParametersTerrestrial.Hierarchy_4 : "4"}[tp["hierarchy_information"]]
+			eDVBFrontendParametersTerrestrial.GuardInterval_1_4 : "1/4",
+			eDVBFrontendParametersTerrestrial.GuardInterval_Auto : _("Auto"),
+			eDVBFrontendParametersTerrestrial.GuardInterval_1_128 : "1/128",
+			eDVBFrontendParametersTerrestrial.GuardInterval_19_128 : "19/128",
+			eDVBFrontendParametersTerrestrial.GuardInterval_19_256 : "19/256"}[tp["guard_interval"]]
 		ret["inversion"] = {
-			eDVBFrontendParametersTerrestrial.Inversion_Unknown : _("Auto"),
+			eDVBFrontendParametersTerrestrial.Inversion_Off : _("Off"),
 			eDVBFrontendParametersTerrestrial.Inversion_On : _("On"),
-			eDVBFrontendParametersTerrestrial.Inversion_Off : _("Off")}[tp["inversion"]]
+			eDVBFrontendParametersTerrestrial.Inversion_Unknown : _("Auto")}[tp["inversion"]]
+		if tp["system"] == eDVBFrontendParametersTerrestrial.System_DVB_T:
+			ret["code_rate_lp"] = {
+				eDVBFrontendParametersTerrestrial.FEC_Auto : _("Auto"),
+				eDVBFrontendParametersTerrestrial.FEC_1_2 : "1/2",
+				eDVBFrontendParametersTerrestrial.FEC_2_3 : "2/3",
+				eDVBFrontendParametersTerrestrial.FEC_3_4 : "3/4",
+				eDVBFrontendParametersTerrestrial.FEC_5_6 : "5/6",
+				eDVBFrontendParametersTerrestrial.FEC_7_8 : "7/8",
+				eDVBFrontendParametersTerrestrial.FEC_6_7 : "6/7",
+				eDVBFrontendParametersTerrestrial.FEC_6_7 : "8/9"}[tp["code_rate_lp"]]
+			ret["code_rate_hp"] = {
+				eDVBFrontendParametersTerrestrial.FEC_Auto : _("Auto"),
+				eDVBFrontendParametersTerrestrial.FEC_1_2 : "1/2",
+				eDVBFrontendParametersTerrestrial.FEC_2_3 : "2/3",
+				eDVBFrontendParametersTerrestrial.FEC_3_4 : "3/4",
+				eDVBFrontendParametersTerrestrial.FEC_5_6 : "5/6",
+				eDVBFrontendParametersTerrestrial.FEC_7_8 : "7/8",
+				eDVBFrontendParametersTerrestrial.FEC_6_7 : "6/7",
+				eDVBFrontendParametersTerrestrial.FEC_6_7 : "8/9"}[tp["code_rate_hp"]]
+			ret["hierarchy_information"] = {
+				eDVBFrontendParametersTerrestrial.Hierarchy_None : _("None"),
+				eDVBFrontendParametersTerrestrial.Hierarchy_1 : "1",
+				eDVBFrontendParametersTerrestrial.Hierarchy_2 : "2",
+				eDVBFrontendParametersTerrestrial.Hierarchy_4 : "4",
+				eDVBFrontendParametersTerrestrial.Hierarchy_Auto : _("Auto")}[tp["hierarchy_information"]]
+			ret["system"] = "DVB-T"
+		else:
+			ret["fec_inner"] = {
+				eDVBFrontendParametersTerrestrial.FEC_Auto : _("Auto"),
+				eDVBFrontendParametersTerrestrial.FEC_1_2 : "1/2",
+				eDVBFrontendParametersTerrestrial.FEC_3_5 : "3/5",
+				eDVBFrontendParametersTerrestrial.FEC_2_3 : "2/3",
+				eDVBFrontendParametersTerrestrial.FEC_3_4 : "3/4",
+				eDVBFrontendParametersTerrestrial.FEC_4_5 : "4/5",
+				eDVBFrontendParametersTerrestrial.FEC_5_6 : "5/6"}[tp["fec_inner"]]
+			ret["plp_id"] = '%d' %tp["plp_id"]
+			ret["system"] = "DVB-T2"
 	else:
 		print "ConvertToHumanReadable: no or unknown type in tpdata dict!"
 	for x in tp.keys():

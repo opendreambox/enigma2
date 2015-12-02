@@ -158,7 +158,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				name = self.nim.description
 				if name == "Alps BSBE2":
 					self.list.append(getConfigListEntry(_("Tone Amplitude"), self.nimConfig.toneAmplitude))
-				if name == "Alps BSBE2" or name.find('BCM450') != -1:
+				if self.nimConfig.scpcSearchRange.fe_id is not None:
 					self.list.append(getConfigListEntry(_("SCPC optimized search range"), self.nimConfig.scpcSearchRange))
 
 		elif self.nim.isCompatible("DVB-C"):

@@ -3,6 +3,7 @@ from Components.GUIComponent import GUIComponent
 from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label
+from Components.NimManager import nimmanager
 from ServiceReference import ServiceReference
 from enigma import eListboxPythonMultiContent, eListbox, gFont, iServiceInformation, eServiceCenter
 from Tools.Transponder import ConvertToHumanReadable
@@ -181,8 +182,10 @@ class ServiceInfo(Screen):
 	def getFEData(self, frontendDataOrg):
 		if frontendDataOrg and len(frontendDataOrg):
 			frontendData = ConvertToHumanReadable(frontendDataOrg)
-			if frontendDataOrg["tuner_type"] == "DVB-S":
-				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
+			tunerType = frontendDataOrg["tuner_type"]
+			inputName = nimmanager.getNimSlotInputName(frontendData["slot_number"])
+			if tunerType == "DVB-S":
+				return ((_("NIM"), inputName, TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("System"), frontendData["system"], TYPE_TEXT),
 						(_("Modulation"), frontendData["modulation"], TYPE_TEXT),
@@ -194,26 +197,29 @@ class ServiceInfo(Screen):
 						(_("FEC"), frontendData["fec_inner"], TYPE_TEXT),
 						(_("Pilot"), frontendData.get("pilot", None), TYPE_TEXT),
 						(_("Roll-off"), frontendData.get("rolloff", None), TYPE_TEXT))
-			elif frontendDataOrg["tuner_type"] == "DVB-C":
-				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
+			elif tunerType == "DVB-C":
+				return ((_("NIM"), inputName, TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("Modulation"), frontendData["modulation"], TYPE_TEXT),
 						(_("Frequency"), frontendData["frequency"], TYPE_VALUE_DEC),
 						(_("Symbol rate"), frontendData["symbol_rate"], TYPE_VALUE_DEC),
 						(_("Inversion"), frontendData["inversion"], TYPE_TEXT),
 						(_("FEC"), frontendData["fec_inner"], TYPE_TEXT))
-			elif frontendDataOrg["tuner_type"] == "DVB-T":
-				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
+			elif tunerType == "DVB-T":
+				return ((_("NIM"), inputName, TYPE_TEXT),
+						(_("System"), frontendData["system"], TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("Frequency"), frontendData["frequency"], TYPE_VALUE_DEC),
 						(_("Inversion"), frontendData["inversion"], TYPE_TEXT),
+						(_("Code rate LP"), frontendData.get("code_rate_lp", None), TYPE_TEXT),
+						(_("Code rate HP"), frontendData.get("code_rate_hp", None), TYPE_TEXT),
+						(_("Hierarchy info"), frontendData.get("hierarchy_information", None), TYPE_TEXT),
+						(_("FEC"), frontendData.get("fec_inner", None), TYPE_TEXT),
+						(_("PLP ID"), frontendData.get("plp_id", None), TYPE_VALUE_DEC),
 						(_("Bandwidth"), frontendData["bandwidth"], TYPE_VALUE_DEC),
-						(_("Code rate LP"), frontendData["code_rate_lp"], TYPE_TEXT),
-						(_("Code rate HP"), frontendData["code_rate_hp"], TYPE_TEXT),
 						(_("Constellation"), frontendData["constellation"], TYPE_TEXT),
 						(_("Transmission mode"), frontendData["transmission_mode"], TYPE_TEXT),
-						(_("Guard interval"), frontendData["guard_interval"], TYPE_TEXT),
-						(_("Hierarchy info"), frontendData["hierarchy_information"], TYPE_TEXT))
+						(_("Guard interval"), frontendData["guard_interval"], TYPE_TEXT))
 		return [ ]
 
 	def fillList(self, Labels):

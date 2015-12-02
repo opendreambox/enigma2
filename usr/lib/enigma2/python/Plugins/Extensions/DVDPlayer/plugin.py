@@ -295,6 +295,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
+				iPlayableService.evEnd: self.__serviceStopped,
 				iPlayableService.evStopped: self.__serviceStopped,
 				iPlayableService.evUser: self.__timeUpdated,
 				iPlayableService.evUser+1: self.__statePlay,
@@ -405,6 +406,9 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		return None
 
 	def __serviceStopped(self):
+		if self.in_menu:
+			self.in_menu = False
+			self["NumberActions"].setEnabled(True)
 		self.dvdScreen.hide()
 		subs = self.getServiceInterface("subtitle")
 		if subs:
@@ -633,6 +637,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			newref = eServiceReference(4369, 0, val)
 			print "play", newref.toString()
 			if curref is None or curref != newref:
+				self.service = None
 				if newref.toString().endswith("/VIDEO_TS") or newref.toString().endswith("/"):
 					names = newref.toString().rsplit("/",3)
 					if names[2].startswith("Disk ") or names[2].startswith("DVD "):
@@ -656,10 +661,6 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 					self.service = None
 				self.close()
 			if answer[1] == "browser":
-				#TODO check here if a paused dvd playback is already running... then re-start it...
-				#else
-				if self.service:
-					self.service = None
 				self.session.openWithCallback(self.FileBrowserClosed, FileBrowser)
 			if answer[1] == "playPhysical":
 				if self.service:

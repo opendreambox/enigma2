@@ -9,7 +9,7 @@ from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 profile("ChannelSelection.py 1")
 from EpgSelection import EPGSelection
 from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv
-from Components.config import config, ConfigSubsection, ConfigText
+from Components.config import config, ConfigSubsection, ConfigText, NoSave, ConfigBoolean
 from Tools.NumericalTextInput import NumericalTextInput
 profile("ChannelSelection.py 2")
 from Components.NimManager import nimmanager
@@ -1233,6 +1233,7 @@ config.radio.lastservice = ConfigText()
 config.radio.lastroot = ConfigText()
 config.servicelist = ConfigSubsection()
 config.servicelist.lastmode = ConfigText(default = "tv")
+config.servicelist.initialized = NoSave(ConfigBoolean(default = False))
 
 class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, SelectionEventInfo):
 	def __init__(self, session):
@@ -1326,6 +1327,7 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 				self.zap()
 			else:
 				Screens.Standby.inStandby.onClose.append(self.zap)
+		config.servicelist.initialized.value = True
 
 	def channelSelected(self):
 		ref = self.getCurrentSelection()

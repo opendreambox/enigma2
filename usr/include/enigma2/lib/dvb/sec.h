@@ -331,7 +331,7 @@ private:
 public:
 #ifndef SWIG
 	eDVBSatelliteEquipmentControl(eSmartPtrList<eDVBRegisteredFrontend> &avail_frontends, eSmartPtrList<eDVBRegisteredFrontend> &avail_simulate_frontends);
-	RESULT prepare(iDVBFrontend &frontend, FRONTENDPARAMETERS &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int tunetimeout);
+	RESULT prepare(iDVBFrontend &frontend, struct dvb_frontend_parameters &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int tunetimeout);
 	void prepareClose(iDVBFrontend &frontend);
 	int canTune(const eDVBFrontendParametersSatellite &feparm, iDVBFrontend *, int frontend_id, int *highest_score_lnb=0);
 	bool currentLNBValid() { return m_lnbidx > -1 && m_lnbidx < (int)(sizeof(m_lnbs) / sizeof(eDVBSatelliteLNBParameters)); }
@@ -383,6 +383,7 @@ public:
 	void setSlotNotLinked(int tuner_no);
 
 	SWIG_PYOBJECT(ePyObject) getFrequencyRangeList(int slot_no, int orb_pos);
+	SWIG_PYOBJECT(ePyObject) getBandCutOffFrequency(int slot_no, int orb_pos);
 	void setRotorMoving(int, bool); // called from the frontend's
 	bool isRotorMoving();
 };

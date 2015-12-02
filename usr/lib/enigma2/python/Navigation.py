@@ -42,6 +42,16 @@ class Navigation:
 					if not Screens.Standby.inTryQuitMainloop: # not a shutdown messagebox is open
 						Notifications.AddNotificationWithID("Standby", Screens.Standby.Standby, domain="RecordTimer")
 		self.SleepTimer = SleepTimer.SleepTimer()
+		self.scheduledServiceReference = None
+		config.servicelist.initialized.addNotifier(self.serviceListInitialized, initial_call = True)
+
+	def serviceListInitialized(self, configElement):
+		self.immediatePlay = configElement.value
+		if self.immediatePlay and self.scheduledServiceReference is not None:
+			print "deferred playService ... ChannelSelection is finally initialized now"
+			ref = self.scheduledServiceReference
+			self.scheduledServiceReference = None
+			self.playService(ref[0], ref[1], ref[2])
 
 	def wasTimerWakeup(self):
 		return self.__wasTimerWakeup
@@ -59,6 +69,10 @@ class Navigation:
 			x(rec_service, event)
 
 	def playService(self, ref, checkParentalControl = True, forceRestart = False):
+		if not self.immediatePlay:
+			print "delaying playService request until the ChannelSelection is finally initialized"
+			self.scheduledServiceReference = (ref, checkParentalControl, forceRestart)
+			return
 		oldref = self.currentlyPlayingServiceReference
 		if ref and oldref and ref == oldref and not forceRestart:
 			print "ignore request to play already running service(1)"
@@ -87,10 +101,10 @@ class Navigation:
 		else:
 			self.stopService()
 		return 1
-	
+
 	def getCurrentlyPlayingServiceReference(self):
 		return self.currentlyPlayingServiceReference
-	
+
 	def recordService(self, ref, simulate=False):
 		service = None
 		print "recording service: %s" % (str(ref))
@@ -105,6 +119,9 @@ class Navigation:
 		return service
 
 	def stopRecordService(self, service):
+		if not self.immediatePlay:
+			self.scheduledServiceReference = None
+			return
 		ret = self.pnav and self.pnav.stopRecordService(service)
 		return ret
 
