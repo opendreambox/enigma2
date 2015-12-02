@@ -1,10 +1,10 @@
-from enigma import eHbbtv, eServiceReference, ePoint, eSize, eRect, getDesktop, eTimer, eDVBVolumecontrol
+from enigma import eHbbtv, eServiceReference, ePoint, eSize, eRect, getDesktop, eTimer, eDVBVolumecontrol, HBBTV_USER_AGENT
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.LocationBox import MovieLocationBox
-from Components.config import config, ConfigSubsection, ConfigEnableDisable, ConfigSelection
+from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection
 from Components.PluginComponent import plugins
 from Components.UsageConfig import preferredPath
 from Components.VideoWindow import VideoWindow
@@ -13,9 +13,9 @@ from Plugins.Extensions.Browser.Browser import Browser
 from Plugins.Extensions.Browser.Downloads import downloadManager, DownloadJob
 
 config.plugins.hbbtv = ConfigSubsection()
-config.plugins.hbbtv.enabled = ConfigEnableDisable(default=True)
+config.plugins.hbbtv.enabled = ConfigOnOff(default=True)
 config.plugins.hbbtv.testsuite = ConfigSelection([("mainmenu", _("Menu")), ("extensions", _("Extensions")), ("plugins", _("Plugin Browser")), ("disabled", _("Disabled"))], default="disabled")
-config.plugins.hbbtv.text = ConfigEnableDisable(default=True)
+config.plugins.hbbtv.text = ConfigOnOff(default=True)
 
 from datetime import datetime
 from urlparse import urlparse
@@ -187,7 +187,7 @@ class HbbTV(object):
 			extension = "mp4"
 			filename = "%s_%s_%s.%s" % (datestring, host, file[0], extension)
 			path = "%s%s" % (path, filename)
-			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename))
+			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename, HBBTV_USER_AGENT))
 			self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
 
 	def _onUrlChanged(self, url):

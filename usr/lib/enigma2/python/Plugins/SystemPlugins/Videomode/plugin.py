@@ -5,7 +5,7 @@ from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigNothing
 from Components.Sources.StaticText import StaticText
 
-from VideoHardware import VideoHardware
+import VideoHardware
 from Components.ResourceManager import resourcemanager
 
 config.misc.videowizardenabled = ConfigBoolean(default = True)
@@ -177,6 +177,8 @@ class VideoSetup(Screen, ConfigListScreen):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
 
+# FYI !! the following hotplug stuff is unused.... autostart is never called...
+
 class VideomodeHotplug:
 	def __init__(self, hw):
 		self.hw = hw
@@ -206,27 +208,29 @@ hotplug = None
 
 def startHotplug():
 	global hotplug
-	hotplug = VideomodeHotplug(VideoHardware())
+	hotplug = VideomodeHotplug(VideoHardware.video_hw)
 	hotplug.start()
 
 def stopHotplug():
 	global hotplug
 	hotplug.stop()
 
-
 def autostart(reason, session = None, **kwargs):
 	if session is not None:
-		global my_global_session
-		my_global_session = session
 		return
-
 	if reason == 0:
 		startHotplug()
 	elif reason == 1:
 		stopHotplug()
 
+#unused END....
+
+def createInstance(reason, session = None, **kwargs):
+	if reason == 0:
+		video_hw = VideoHardware.video_hw
+
 def videoSetupMain(session, **kwargs):
-	session.open(VideoSetup, VideoHardware())
+	session.open(VideoSetup, VideoHardware.video_hw)
 
 def startSetup(menuid):
 	if menuid != "osd_video_audio":
@@ -240,6 +244,7 @@ def VideoWizard(*args, **kwargs):
 
 def Plugins(**kwargs):
 	list = [
+		PluginDescriptor(where = [PluginDescriptor.WHERE_AUTOSTART], fnc = createInstance),
 		PluginDescriptor(name=_("Video Setup"), description=_("Advanced Video Setup"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=startSetup) 
 	]
 	return list

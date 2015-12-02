@@ -1,7 +1,7 @@
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
-from VideoHardware import VideoHardware
+import VideoHardware
 
 from Components.Pixmap import Pixmap
 from Components.config import config, configfile
@@ -38,7 +38,7 @@ class VideoWizardSummary(WizardSummary):
 
 class VideoWizard():
 	def __init__(self):
-		self.hw = VideoHardware()
+		self.hw = VideoHardware.video_hw
 
 		self.port = None
 		self.mode = None

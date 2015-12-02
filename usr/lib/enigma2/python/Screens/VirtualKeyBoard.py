@@ -10,11 +10,19 @@ from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixm
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
 
+from skin import TemplatedListFonts, componentSizes
+
 class VirtualKeyBoardList(MenuList):
+	COMPONENT_VIRTUAL_KEYBOARD_LIST = "VirtualKeyBoardList"
 	def __init__(self, list, enableWrapAround=False):
 		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		self.l.setFont(0, gFont("Regular", 28))
-		self.l.setItemHeight(45)
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG)))
+		self.l.setItemHeight(VirtualKeyBoardList.itemHeight())
+
+	@staticmethod
+	def itemHeight():
+		return componentSizes.itemHeight(VirtualKeyBoardList.COMPONENT_VIRTUAL_KEYBOARD_LIST, 45)
 
 def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 	key_backspace = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/vkey_backspace.png"))
@@ -30,6 +38,7 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 	
 	x = 0
 	count = 0
+	height = VirtualKeyBoardList.itemHeight()
 	if shiftMode:
 		shiftkey_png = key_shift_sel
 	else:
@@ -38,22 +47,22 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 		width = None
 		if key == "EXIT":
 			width = key_esc.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_esc))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_esc))
 		elif key == "BACKSPACE":
 			width = key_backspace.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_backspace))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_backspace))
 		elif key == "CLEAR":
 			width = key_clr.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_clr))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_clr))
 		elif key == "SHIFT":
 			width = shiftkey_png.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=shiftkey_png))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=shiftkey_png))
 		elif key == "SPACE":
 			width = key_space.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_space))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_space))
 		elif key == "OK":
 			width = key_ok.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_ok))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_ok))
 		#elif key == "<-":
 		#	res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(45, 45), png=key_left))
 		#elif key == "->":
@@ -62,18 +71,18 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 		else:
 			width = key_bg.size().width()
 			res.extend((
-				MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_bg),
-				MultiContentEntryText(pos=(x, 0), size=(width, 45), font=0, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER)
+				MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_bg),
+				MultiContentEntryText(pos=(x, 0), size=(width, height), font=0, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER)
 			))
 		
 		if selectedKey == count:
 			width = key_sel.size().width()
-			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, 45), png=key_sel))
+			res.append(MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_sel))
 
 		if width is not None:
 			x += width
 		else:
-			x += 45
+			x += height
 		count += 1
 	
 	return res

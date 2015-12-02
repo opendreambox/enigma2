@@ -484,7 +484,7 @@ class NIM(object):
 	def __init__(self, slot, type, description, has_outputs = True, internally_connectable = None, multi_type = {}, frontend_id = None, i2c = None, is_empty = False, input_name = None):
 		self.slot = slot
 
-		if type not in ("DVB-S", "DVB-C", "DVB-T", "DVB-S2", None):
+		if type not in ("DVB-S", "DVB-C", "DVB-T", "DVB-T2", "DVB-S2", None):
 			print "warning: unknown NIM type %s, not using." % type
 			type = None
 
@@ -506,6 +506,7 @@ class NIM(object):
 				"DVB-S": ("DVB-S", None),
 				"DVB-C": ("DVB-C", None),
 				"DVB-T": ("DVB-T", None),
+				"DVB-T2": ("DVB-T", "DVB-T2", None),
 				"DVB-S2": ("DVB-S", "DVB-S2", None)
 			}
 		return what in compatible[self.type]
@@ -518,6 +519,7 @@ class NIM(object):
 				"DVB-S": ("DVB-S", "DVB-S2"),
 				"DVB-C": ("DVB-C",),
 				"DVB-T": ("DVB-T",),
+				"DVB-T2": ("DVB-T", "DVB-T2"),
 				"DVB-S2": ("DVB-S", "DVB-S2")
 			}
 		return connectable[self.type]
@@ -578,13 +580,7 @@ class NIM(object):
 	slot_id = property(getSlotID)
 
 	def getFriendlyType(self):
-		return {
-			"DVB-S": "DVB-S", 
-			"DVB-T": "DVB-T",
-			"DVB-S2": "DVB-S2",
-			"DVB-C": "DVB-C",
-			None: _("empty")
-			}[self.type]
+		return _("empty") if self.type is None else self.type
 
 	friendly_type = property(getFriendlyType)
 
@@ -707,7 +703,7 @@ class NimManager:
 		#          Name: Alps BSBE1 702A
 		
 		#
-		# Type will be either "DVB-S", "DVB-S2", "DVB-T", "DVB-C" or None.
+		# Type will be either "DVB-S", "DVB-S2", "DVB-T", "DVB-C", "DVB-T2" or None.
 
 		# nim_slots is an array which has exactly one entry for each slot, even for empty ones.
 		self.nim_slots = [ ]
@@ -782,14 +778,19 @@ class NimManager:
 			self.nim_slots.append(nim)
 
 	def hasNimType(self, chktype):
+		ret = False
 		for slot in self.nim_slots:
 			if slot.isCompatible(chktype):
 				return True
+			saved_type = slot.type
 			for type in slot.getMultiTypeList().values():
-				if chktype == type:
-					return True
-		return False
-	
+				slot.type = type
+				if slot.isCompatible(chktype):
+					ret = True
+					break
+			slot.type = saved_type
+		return ret
+
 	def getNimType(self, slotid):
 		return self.nim_slots[slotid].type
 	
@@ -873,6 +874,8 @@ class NimManager:
 		type = self.getNimType(slotid)
 		if type == "DVB-S2":
 			type = "DVB-S"
+		elif type == "DVB-T2":
+			type = "DVB-T"
 		nimList = self.getNimListOfType(type, slotid)
 		for nim in nimList[:]:
 			mode = self.getNimConfig(nim)
@@ -1432,6 +1435,8 @@ def InitNimManager(nimmgr, slot_no = None):
 				ret = frontend.changeType(iDVBFrontend.feCable)
 			elif system == 'DVB-T':
 				ret = frontend.changeType(iDVBFrontend.feTerrestrial)
+			elif system == 'DVB-T2':
+				ret = frontend.changeType(iDVBFrontend.feTerrestrial2)
 			else:
 				ret = False
 			if ret:

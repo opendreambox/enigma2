@@ -836,7 +836,12 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 		if source is None:
 			raise SkinError("source '" + wsource + "' was not found in screen '" + name + "'!")
 
-		wrender = get_attr('render')
+		tmp = get_attr('render').split(',')
+		wrender = tmp[0]
+		if tmp > 1:
+			wrender_args = tmp[1:]
+		else:
+			wrender_args = tuple()
 
 		if not wrender:
 			raise SkinError("you must define a renderer with render= for source '%s'" % (wsource))
@@ -870,7 +875,7 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 
 		renderer_class = my_import('.'.join(("Components", "Renderer", wrender))).__dict__.get(wrender)
 
-		renderer = renderer_class()  # instantiate renderer
+		renderer = renderer_class(*wrender_args)  # instantiate renderer
 
 		renderer.connect(source)  # connect to source
 		attributes = renderer.skinAttributes = [ ]

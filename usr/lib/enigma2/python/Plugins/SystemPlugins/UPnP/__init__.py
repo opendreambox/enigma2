@@ -1,8 +1,8 @@
-from Components.config import config, ConfigYesNo, ConfigEnableDisable, ConfigText, ConfigInteger, ConfigSubsection
+from Components.config import config, ConfigYesNo, ConfigOnOff, ConfigText, ConfigInteger, ConfigSubsection
 from Tools.HardwareInfo import HardwareInfo
 
 config.plugins.mediaserver = ConfigSubsection()
-config.plugins.mediaserver.enabled = ConfigEnableDisable(default=True)
+config.plugins.mediaserver.enabled = ConfigOnOff(default=True)
 config.plugins.mediaserver.share_audio = ConfigYesNo(default=True)
 config.plugins.mediaserver.share_video = ConfigYesNo(default=True)
 config.plugins.mediaserver.share_live = ConfigYesNo(default=True)

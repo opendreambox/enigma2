@@ -76,7 +76,7 @@ class Standby(Screen):
 				ref = eServiceReference(refstr)
 				if ref.valid():
 					self.time_handler_conn = th.m_timeUpdated.connect(self.timeReady)
-					self.session.nav.playService(ref)
+					self.session.nav.playService(ref, False, False)
 
 	def timeReady(self):
 		if self.time_handler_conn:

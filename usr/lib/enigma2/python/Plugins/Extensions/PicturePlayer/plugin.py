@@ -12,7 +12,7 @@ from Components.AVSwitch import AVSwitch
 from Components.Sources.List import List
 from Components.ConfigList import ConfigListScreen
 
-from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigEnableDisable, getConfigListEntry
+from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigOnOff, getConfigListEntry
 
 def getScale():
 	return AVSwitch().getFramebufferScale()
@@ -22,10 +22,10 @@ config.pic.framesize = ConfigInteger(default=30, limits=(0, 99))
 config.pic.slidetime = ConfigInteger(default=10, limits=(5, 60))
 config.pic.resize = ConfigSelection(default="2", choices = [("0", _("simple")), ("1", _("better")), ("2", _("fast JPEG"))])
 config.pic.resize.value = 2 # 2 = fast JPEG (non JPEG fallback to 1)
-config.pic.cache = ConfigEnableDisable(default=True)
+config.pic.cache = ConfigOnOff(default=True)
 config.pic.lastDir = ConfigText(default=resolveFilename(SCOPE_MEDIA))
-config.pic.infoline = ConfigEnableDisable(default=True)
-config.pic.loop = ConfigEnableDisable(default=True)
+config.pic.infoline = ConfigOnOff(default=True)
+config.pic.loop = ConfigOnOff(default=True)
 config.pic.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
 config.pic.textcolor = ConfigSelection(default="#0038FF48", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
 config.pic.thumbDelay = ConfigInteger(default=500, limits=(0,999))

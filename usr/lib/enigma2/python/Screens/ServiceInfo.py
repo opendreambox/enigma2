@@ -1,6 +1,7 @@
 from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label
+from Components.NimManager import nimmanager
 from Components.ServiceInfoList import ServiceInfoList, ServiceInfoListEntry, TYPE_TEXT, TYPE_VALUE_HEX, TYPE_VALUE_DEC, TYPE_VALUE_HEX_DEC, TYPE_SLIDER
 from ServiceReference import ServiceReference
 from enigma import iServiceInformation, eServiceCenter, iDVBFrontend
@@ -142,8 +143,9 @@ class ServiceInfo(Screen):
 		if frontendDataOrg and len(frontendDataOrg):
 			frontendData = ConvertToHumanReadable(frontendDataOrg)
 			tunerType = frontendDataOrg["tuner_type"]
+			inputName = nimmanager.getNimSlotInputName(frontendData["slot_number"])
 			if tunerType == feSatellite:
-				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
+				return ((_("NIM"), inputName, TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("System"), frontendData["system"], TYPE_TEXT),
 						(_("Modulation"), frontendData["modulation"], TYPE_TEXT),
@@ -156,7 +158,7 @@ class ServiceInfo(Screen):
 						(_("Pilot"), frontendData.get("pilot", None), TYPE_TEXT),
 						(_("Roll-off"), frontendData.get("rolloff", None), TYPE_TEXT))
 			elif tunerType == feCable:
-				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
+				return ((_("NIM"), inputName, TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("Modulation"), frontendData["modulation"], TYPE_TEXT),
 						(_("Frequency"), frontendData["frequency"], TYPE_VALUE_DEC),
@@ -164,17 +166,20 @@ class ServiceInfo(Screen):
 						(_("Inversion"), frontendData["inversion"], TYPE_TEXT),
 						(_("FEC"), frontendData["fec_inner"], TYPE_TEXT))
 			elif tunerType == feTerrestrial:
-				return ((_("NIM"), ('A', 'B', 'C', 'D')[frontendData["slot_number"]], TYPE_TEXT),
+				return ((_("NIM"), inputName, TYPE_TEXT),
+						(_("System"), frontendData["system"], TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),
 						(_("Frequency"), frontendData["frequency"], TYPE_VALUE_DEC),
 						(_("Inversion"), frontendData["inversion"], TYPE_TEXT),
+						(_("Code rate LP"), frontendData.get("code_rate_lp", None), TYPE_TEXT),
+						(_("Code rate HP"), frontendData.get("code_rate_hp", None), TYPE_TEXT),
+						(_("Hierarchy info"), frontendData.get("hierarchy_information", None), TYPE_TEXT),
+						(_("FEC"), frontendData.get("fec_inner", None), TYPE_TEXT),
+						(_("PLP ID"), frontendData.get("plp_id", None), TYPE_VALUE_DEC),
 						(_("Bandwidth"), frontendData["bandwidth"], TYPE_VALUE_DEC),
-						(_("Code rate LP"), frontendData["code_rate_lp"], TYPE_TEXT),
-						(_("Code rate HP"), frontendData["code_rate_hp"], TYPE_TEXT),
 						(_("Constellation"), frontendData["constellation"], TYPE_TEXT),
 						(_("Transmission mode"), frontendData["transmission_mode"], TYPE_TEXT),
-						(_("Guard interval"), frontendData["guard_interval"], TYPE_TEXT),
-						(_("Hierarchy info"), frontendData["hierarchy_information"], TYPE_TEXT))
+						(_("Guard interval"), frontendData["guard_interval"], TYPE_TEXT))
 		return [ ]
 
 	def fillList(self, Labels):

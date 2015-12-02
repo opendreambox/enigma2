@@ -384,6 +384,7 @@ public:
 	void setSlotNotLinked(int tuner_no);
 
 	intPairList getFrequencyRangeList(int slot_no, int orb_pos);
+	intList getBandCutOffFrequency(int slot_no, int orb_pos);
 	void setRotorMoving(int, bool); // called from the frontend's
 	bool isRotorMoving();
 };

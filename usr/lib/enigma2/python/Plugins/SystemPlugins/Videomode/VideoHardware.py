@@ -370,3 +370,33 @@ class VideoHardware:
 			open("/proc/stb/video/policy2", "w").write(policy2)
 		except IOError:
 			pass
+
+instance = None
+
+# the following is a little bit vooodoo to make video_hw a property
+# normally only classes can have properties ;)
+# ripped from here: http://www.dr-josiah.com/2013/12/properties-on-python-modules.html
+
+from sys import modules
+
+@property
+def video_hw(module):
+	global instance
+	if instance is None:
+		instance = VideoHardware()
+	return instance
+
+class Module(object):
+	pass
+
+module = Module()
+module.__dict__ = globals()
+
+for k, v in list(module.__dict__.items()):
+	if isinstance(v, property):
+		setattr(Module, k, v)
+		del module.__dict__[k]
+
+module._module = modules[module.__name__]
+module._pmodule = module
+modules[module.__name__] = module

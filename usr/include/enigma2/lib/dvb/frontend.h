@@ -84,8 +84,9 @@ private:
 	bool m_forced_timeout;
 	bool m_rotor_mode;
 	bool m_need_rotor_workaround;
-	bool m_can_handle_dvbs2;
+	bool m_can_handle_2g;
 	bool m_seen_first_event;
+	bool m_dvb_t2_auto_delsys;
 	char m_filename[128];
 	char m_description[128];
 	static int dvb_api_minor;
