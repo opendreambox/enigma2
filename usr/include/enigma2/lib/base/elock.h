@@ -138,6 +138,7 @@ class eLock
 public:
 	void lock(int res=100);
 	void unlock(int res=100);
+	int lock_count();
 	int trylock(int res=100, bool force=false);
 	int counter() const { return m_counter; }
 	int max() const { return m_max; }

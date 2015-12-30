@@ -22,7 +22,7 @@ protected:
 	int ismt;
 public:
 	eMessagePump(int mt=0);
-	~eMessagePump();
+	virtual ~eMessagePump();
 	/* its NOT safe to call flush from other than 'receiver' context !!! */
 	void flush();
 protected:
