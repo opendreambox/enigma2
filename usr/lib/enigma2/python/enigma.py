@@ -185,6 +185,10 @@ NULL = _enigma.NULL
 def ePythonOutput(*args):
   return _enigma.ePythonOutput(*args)
 ePythonOutput = _enigma.ePythonOutput
+
+def get_default_pipe_size():
+  return _enigma.get_default_pipe_size()
+get_default_pipe_size = _enigma.get_default_pipe_size
 class eMainloop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")

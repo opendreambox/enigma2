@@ -67,6 +67,7 @@ public:
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\
 					void Release();		\
+					int RefCount() { return ref; } \
 			private:oRefCount ref; 		\
 					eSingleLock ref_lock;
 		#define DEFINE_REF(c) \
@@ -92,6 +93,7 @@ public:
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\
 					void Release();		\
+					int RefCount() { return ref; } \
 			private: oRefCount ref; 
 		#define DEFINE_REF(c) \
 			void c::AddRef() \
@@ -131,7 +133,8 @@ public:
 	#elif defined(__arm__)
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\
-				void Release();		\
+					void Release();		\
+					int RefCount() { return ref; } \
 			private: oRefCount ref;
 		#define DEFINE_REF(c) \
 			void c::AddRef() \
@@ -168,6 +171,7 @@ public:
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\
 					void Release();		\
+					int RefCount() { return ref; } \
 			private: oRefCount ref;
 		#define DEFINE_REF(c) \
 			void c::AddRef() \
@@ -202,6 +206,7 @@ public:
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\
 					void Release();		\
+					int RefCount() { return ref; } \
 			private: oRefCount ref;
 		#define DEFINE_REF(c) \
 			void c::AddRef() \
@@ -225,6 +230,7 @@ public:
 		#define DECLARE_REF(x) 			\
 			public: void AddRef(); 		\
 					void Release();		\
+					int RefCount() { return ref; } \
 			private:oRefCount ref; 	\
 					eSingleLock ref_lock;
 		#define DEFINE_REF(c) \
@@ -234,7 +240,7 @@ public:
 				++ref; \
 			} \
 			void c::Release() \
-	 		{ \
+			{ \
 				{ \
 					eSingleLocker l(ref_lock); \
 					--ref; \

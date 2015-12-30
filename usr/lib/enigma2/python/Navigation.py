@@ -14,6 +14,7 @@ import ServiceReference
 # TODO: remove pNavgation, eNavigation and rewrite this stuff in python.
 class Navigation:
 	def __init__(self, nextRecordTimerAfterEventActionAuto=False):
+		from Screens.ChannelSelection import ChannelSelection
 		if NavigationInstance.instance is not None:
 			raise NavigationInstance.instance
 		
@@ -43,7 +44,7 @@ class Navigation:
 						Notifications.AddNotificationWithID("Standby", Screens.Standby.Standby, domain="RecordTimer")
 		self.SleepTimer = SleepTimer.SleepTimer()
 		self.scheduledServiceReference = None
-		config.servicelist.initialized.addNotifier(self.serviceListInitialized, initial_call = True)
+		ChannelSelection.initialized.addNotifier(self.serviceListInitialized, initial_call = True)
 
 	def serviceListInitialized(self, configElement):
 		self.immediatePlay = configElement.value

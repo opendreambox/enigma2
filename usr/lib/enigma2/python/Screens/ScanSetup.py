@@ -276,6 +276,7 @@ class CableTransponderSearchSupport:
 	def startCableTransponderSearch(self, nim_idx):
 		tunername = nimmanager.getNimName(nim_idx)
 		self.cable_search_container = None
+		self.updateStateTimer = None
 		if tunername == "Si2169C":
 			(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 			if not self.frontend:

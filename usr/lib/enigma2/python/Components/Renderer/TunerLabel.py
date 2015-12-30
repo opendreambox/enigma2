@@ -10,7 +10,6 @@ class TunerLabel(Renderer):
 	GUI_WIDGET = eLabel
 
 	def postWidgetCreate(self, instance):
-		print self.tuner_no, nimmanager.getSlotCount()
 		if self.tuner_no < nimmanager.getSlotCount():
 			slot_name = nimmanager.getNimSlotInputName(self.tuner_no)
 			self.instance.setText(slot_name)

@@ -17,6 +17,17 @@
 
 #define E_UNUSED(x)	(void)x;
 
+/* hint to the compiler for better optimization */
+#ifndef likely
+    #define likely(x) __builtin_expect(!!(x), 1)
+#endif
+
+#ifndef unlikely
+    #define unlikely(x) __builtin_expect(!!(x), 0)
+#endif
+
+extern int get_default_pipe_size(void);
+
 class eMainloop;
 class MainloopList;
 
