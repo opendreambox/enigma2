@@ -9,6 +9,11 @@
 // to use memleak check change the following in configure.ac
 // * add -DMEMLEAK_CHECK and -rdynamic to CPP_FLAGS
 
+inline void segfault(void)
+{
+	*((char*)0)=0;
+}
+
 #ifdef MEMLEAK_CHECK
 #define BACKTRACE_DEPTH 5
 #include <map>

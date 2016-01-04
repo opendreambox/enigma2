@@ -208,7 +208,7 @@ public:
 			/* detect broken table version handling (seen on some m2ts files) */
 			if (m_table_cnt)
 			{
-				if (abs(timeout_msec(m_prev_table_update)) > 500)
+				if (llabs(timeout_msec(m_prev_table_update)) > 500)
 					m_table_cnt = -1;
 				else if (m_table_cnt > 1) // two pmt update within one second
 				{

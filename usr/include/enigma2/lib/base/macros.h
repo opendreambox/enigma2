@@ -7,4 +7,13 @@
 
 #define E_UNUSED(x)	(void)x;
 
+/* hint to the compiler for better optimization */
+#ifndef likely
+    #define likely(x) __builtin_expect(!!(x), 1)
+#endif
+
+#ifndef unlikely
+    #define unlikely(x) __builtin_expect(!!(x), 0)
+#endif
+
 #endif /* __lib_base_macros_h__ */

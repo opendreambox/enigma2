@@ -84,7 +84,6 @@ private:
 	inline int wantPacket(const unsigned char *hdr) const;
 	int m_pid, m_streamtype;
 	int m_need_next_packet;
-	int m_skip;
 	int m_last_pts_valid;
 	pts_t m_last_pts;
 	unsigned char m_pkt2[188*2];

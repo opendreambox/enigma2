@@ -61,7 +61,6 @@ class eDVBLocalTimeHandler: public iObject, public sigc::trackable
 	std::map<eDVBChannelID,int> m_timeOffsetMap;
 	ePtr<eConnection> m_chanAddedConn;
 	bool m_time_ready;
-	int m_time_difference;
 	int m_last_tp_time_difference;
 	void DVBChannelAdded(eDVBChannel*);
 	void DVBChannelStateChanged(iDVBChannel*);

@@ -24,7 +24,7 @@ class Screen(dict, GUISkin):
 
 		self.onClose = [ ]
 		self.onFirstExecBegin = [ ]
-		self.onFirstExecBegin.append(self._initAnimations)
+		self.onLayoutFinish.append(self._initAnimations)
 		self.onExecBegin = [ ]
 		self.onShown = [ ]
 

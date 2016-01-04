@@ -18,6 +18,7 @@ from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications, \
 	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarAutoSleepTimer
 
+from Screens.InfoBarPrivate import InfoBarPrivateExtensions
 profile("LOAD:InitBar_Components")
 from Components.ActionMap import HelpableActionMap
 from Components.config import config, ConfigBoolean
@@ -41,6 +42,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
 	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications,
 	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarAutoSleepTimer,
+	InfoBarPrivateExtensions,
 	Screen):
 
 	ALLOW_SUSPEND = True
@@ -64,8 +66,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				InfoBarAdditionalInfo, InfoBarDish, InfoBarSubserviceSelection, \
 				InfoBarTimeshift, InfoBarSeek, InfoBarSummarySupport, InfoBarTimeshiftState, \
 				InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
-				InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarAutoSleepTimer \
-				:
+				InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarAutoSleepTimer, InfoBarPrivateExtensions:
 			x.__init__(self)
 
 		self.helpList.append((self["actions"], "InfobarActions", [("showMovies", _("view recordings..."))]))

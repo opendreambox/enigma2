@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from Components.ResourceManager import resourcemanager
+from Components.PluginComponent import plugins
 
 from coherence.base import Coherence
 from coherence.upnp.core import DIDLLite
@@ -8,6 +9,8 @@ from coherence.upnp.devices.media_renderer import MediaRenderer
 from coherence.upnp.devices.media_server import MediaServer
 from coherence.upnp.devices.media_server_client import MediaServerClient
 from HTMLParser import HTMLParser
+from Plugins.Plugin import PluginDescriptor
+from Tools.Log import Log
 
 class Statics:
 	CONTAINER_ID_ROOT = 0
@@ -99,19 +102,11 @@ please see the helper classes (UPnPBrowser and AbstractUPnPRenderer) for more
 '''
 class ManagedControlPoint(object):
 	def __init__(self):
-		self.coherence = Coherence({'logmode':'warning'})
-		self._controlPoint = ControlPoint(self.coherence, auto_client=['MediaServer','MediaRenderer'])
-		self._controlPoint.connect(self._onMediaServerDetected, 'Coherence.UPnP.ControlPoint.MediaServer.detected')
-		self._controlPoint.connect(self._onMediaServerRemoved, 'Coherence.UPnP.ControlPoint.MediaServer.removed')
-		self._controlPoint.connect(self._onMediaRendererDetected, 'Coherence.UPnP.ControlPoint.MediaRenderer.detected')
-		self._controlPoint.connect(self._onMediaRendererRemoved, 'Coherence.UPnP.ControlPoint.MediaRenderer.removed')
-		self._controlPoint.connect(self._onMediaDeviceDectected, 'Coherence.UPnP.Device.detection_completed')
-
+		self.coherence = None
+		self._controlPoint = None
 		self.__mediaServerClients = {}
 		self.__mediaRendererClients = {}
 		self.__mediaDevices = {}
-
-		self.__browser = []
 		self.__devices = []
 
 		self.onMediaServerDetected = []
@@ -119,6 +114,59 @@ class ManagedControlPoint(object):
 		self.onMediaRendererDetected = []
 		self.onMediaRendererRemoved = []
 		self.onMediaDeviceDectected = []
+		self._session = None
+		self.__deferredShutDown = None
+		self._startPending = False
+
+	def _onShutdownFinished(self, *args, **kwargs):
+		self.__deferredShutDown = None
+		if self._startPending:
+			self.start()
+
+	def start(self):
+		def doStart(*args, **kwargs):
+			if self._controlPoint:
+				Log.w("already running!")
+				return
+			Log.w("starting now!")
+			self._startPending = False
+			self.coherence = Coherence({'logmode':'warning'})
+			self._controlPoint = ControlPoint(self.coherence, auto_client=['MediaServer','MediaRenderer'])
+			self.coherence.ctrl = self._controlPoint
+			self.__mediaServerClients = {}
+			self.__mediaRendererClients = {}
+			self.__mediaDevices = {}
+			self.__devices = []
+			self._controlPoint.connect(self._onMediaServerDetected, 'Coherence.UPnP.ControlPoint.MediaServer.detected')
+			self._controlPoint.connect(self._onMediaServerRemoved, 'Coherence.UPnP.ControlPoint.MediaServer.removed')
+			self._controlPoint.connect(self._onMediaRendererDetected, 'Coherence.UPnP.ControlPoint.MediaRenderer.detected')
+			self._controlPoint.connect(self._onMediaRendererRemoved, 'Coherence.UPnP.ControlPoint.MediaRenderer.removed')
+			self._controlPoint.connect(self._onMediaDeviceDectected, 'Coherence.UPnP.Device.detection_completed')
+			self._controlPoint.connect(self._onMediaDeviceRemoved, 'Coherence.UPnP.RootDevice.removed')
+			self.__deferredShutDown = None
+			if self._session:
+				self._callPlugins(reason=0)
+		if self.__deferredShutDown:
+			Log.w("deferring start until shutdown is finished")
+			if not self._startPending:
+				self._startPending = True
+		else:
+			doStart()
+
+	def restart(self):
+		Log.w()
+		if not self.__deferredShutDown:
+			self.shutdown()
+		self.start()
+
+	def setSession(self, session):
+		self._session = session
+		if self.coherence:
+			self._callPlugins(reason=0)
+
+	def _callPlugins(self, reason=0):
+		for plugin in plugins.getPlugins(PluginDescriptor.WHERE_UPNP):
+			plugin(reason, session=self._session)
 
 	def _onMediaServerDetected(self, client, udn):
 		print "[DLNA] MediaServer Detected: %s (%s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type())
@@ -146,8 +194,14 @@ class ManagedControlPoint(object):
 				fnc(udn)
 
 	def _onMediaDeviceDectected(self, device):
-		print "[DLNA] Device found: %s (%s)" % (device.get_friendly_name(), device.get_friendly_device_type())
-		self.__mediaDevices[device.udn] = device
+		if not self.__mediaDevices.has_key(device.get_usn()):
+			print "[DLNA] New device found: %s (%s)" % (device.get_friendly_name(), device.get_friendly_device_type())
+		self.__mediaDevices[device.get_usn()] = device
+
+	def _onMediaDeviceRemoved(self, usn):
+		if usn in self.__mediaDevices:
+			print "[DLNA] Device removed: %s" % (usn)
+			del self.__mediaDevices[usn]
 
 	def registerRenderer(self, classDef, **kwargs):
 		renderer = MediaRenderer(self.coherence, classDef, no_thread_needed=True, **kwargs)
@@ -183,9 +237,26 @@ class ManagedControlPoint(object):
 		return False
 
 	def shutdown(self):
-		for device in self.__devices:
-			device.unregister()
-		self._controlPoint.shutdown()
+		Log.w("%s" %(self.coherence,))
+		if True:
+			Log.w("shutdown is broken... will continue running. please restart enigma2 instead!")
+			return
+		if self.coherence:
+			self._callPlugins(reason=1)
+			self.__mediaServerClients = {}
+			self.__mediaRendererClients = {}
+			self.__mediaDevices = {}
+			self.__devices = []
+			self.__deferredShutDown = self.coherence.shutdown(force=True)
+			self.__deferredShutDown.addCallback(self._onShutdownFinished)
+			self._controlPoint.disconnect(self._onMediaServerDetected, 'Coherence.UPnP.ControlPoint.MediaServer.detected')
+			self._controlPoint.disconnect(self._onMediaServerRemoved, 'Coherence.UPnP.ControlPoint.MediaServer.removed')
+			self._controlPoint.disconnect(self._onMediaRendererDetected, 'Coherence.UPnP.ControlPoint.MediaRenderer.detected')
+			self._controlPoint.disconnect(self._onMediaRendererRemoved, 'Coherence.UPnP.ControlPoint.MediaRenderer.removed')
+			self._controlPoint.disconnect(self._onMediaDeviceDectected, 'Coherence.UPnP.Device.detection_completed')
+			self._controlPoint.disconnect(self._onMediaDeviceRemoved, 'Coherence.UPnP.RootDevice.removed')
+			self.coherence = None
+			self._controlPoint = None
 
 class Item(object):
 	htmlparser = HTMLParser()

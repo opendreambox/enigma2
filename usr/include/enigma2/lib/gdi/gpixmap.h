@@ -16,7 +16,7 @@
 
 class ePoint;
 class eRect;
-class gColor;
+struct gColor;
 class gRegion;
 class gSurface;
 

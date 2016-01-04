@@ -80,11 +80,7 @@ private:
 		/* support for movemode */
 	bool m_current_marked;
 
-	int m_numberoffset;
-
 	eServiceReference m_is_playable_ignore;
-
-	int m_itemheight;
 };
 
 #endif

@@ -616,6 +616,7 @@ class ComponentSizes():
 	HELP_MENU_LIST = "HelpMenuList"
 	PARENTAL_CONTROL_LIST = "ParentalControlList"
 	SELECTION_LIST = "SelectionList"
+	SERVICE_LIST = "ServiceList"
 	SERVICE_INFO_LIST = "ServiceInfoList"
 	TIMER_LIST = "TimerList"
 	MOVIE_LIST = "MovieList"

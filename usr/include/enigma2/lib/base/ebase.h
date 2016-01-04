@@ -16,6 +16,8 @@
 
 #include <lib/base/esignal.h>
 
+extern int get_default_pipe_size(void);
+
 class eMainloop;
 class MainloopList;
 
@@ -188,7 +190,7 @@ public:
 		/* m_is_idle needs to be atomic, but it doesn't really matter much, as it's read-only from outside */
 	int isIdle() { return m_is_idle; }
 	int idleCount() { return m_idle_count; }
-
+	virtual pid_t tid() const = 0;
 	int &argc() { return m_argc; }
 	char **argv() { return m_argv; }
 };
@@ -239,6 +241,7 @@ public:
 	virtual void setRequested(int req) { requested = req; }
 	int getState() { return state; }
 	void activate(int what);
+	eMainloop *getContext() { return context; }
 
 #ifndef SWIG
 	eSmartPtrList<iObject> m_clients;
@@ -329,6 +332,7 @@ public:
 		/* run will iterate endlessly until the app is quit, and return
 		   the exit code */
 	int runLoop();
+	pid_t tid() const;
 
 	void reset() { m_app_quit_now = false; }
 };

@@ -68,7 +68,6 @@ class Cec(object):
 	def powerOff(self):
 		if self._idle_to_standby:
 			return
-		hdmi_cec.setPowerState(hdmi_cec.POWER_STATE_STANDBY)
 		if config.cec.sendpower.value:
 			print "[Cec] power off"
 			if self._skip_next_poweroff_message:
@@ -78,6 +77,7 @@ class Cec(object):
 				if config.cec.avr_power_explicit.value:
 					self._remoteHandler.sendKey(5, eCec.RC_POWER_OFF)
 					hdmi_cec.systemStandby(target=5)
+		hdmi_cec.setPowerState(hdmi_cec.POWER_STATE_STANDBY)
 
 	def _onStandby(self, element):
 		from Screens.Standby import inStandby

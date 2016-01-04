@@ -107,9 +107,9 @@ class ChannelSelectionDisplaySettings(Screen, ConfigListScreen):
 		self.showEventProgressEntry = getConfigListEntry(_("Show event-progress"), self.showeventprogress)
 		self.list.append(self.showEventProgressEntry)
 		if self.columnStyle.value and self.showservicename.value:
-			self.progressbarposition.setChoices([("0",_("After servicenumber")),("1",_("After servicename")), ("2",_("After servicedescription"))])
+			self.progressbarposition.setChoices([("0",_("After service number")),("1",_("After service name")), ("2",_("After event description"))])
 		else:
-			self.progressbarposition.setChoices([("0",_("After servicenumber")), ("2",_("After servicedescription"))])
+			self.progressbarposition.setChoices([("0",_("After service number")), ("2",_("After event description"))])
 		if self.showeventprogress.value:
 			self.list.append(getConfigListEntry(_("Event-progessbar position"), self.progressbarposition))
 		if self.columnStyle.value:

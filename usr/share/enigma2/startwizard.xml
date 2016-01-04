@@ -67,7 +67,7 @@ self.selectKey("DOWN")
 			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your Dreambox.\n\nUse the up/down keys on your remote control to select an option. After that, press OK." />
 			<list>
 				<listentry caption="Use wizard to set up basic features" step="nima" />
-				<listentry caption="Exit wizard" step="networkend" />
+				<listentry caption="Exit wizard" step="final" />
 			</list>
 			<code>
 self.clearSelectedKeys()
@@ -294,7 +294,7 @@ self.condition = self.networkWizardAvailable and not self.isNetworkConnected()
 		<text value="Your Dreambox is already connected to the Internet.\nThere is no network configuration required." />
 		<short_title value="Connected" />
 		<list>
-			<listentry caption="Skip network configuration" step="networkend" />
+			<listentry caption="Skip network configuration" step="final" />
 			<listentry caption="Adjust network settings" step="technologies" />
 		</list>
 		<condition>
@@ -344,7 +344,7 @@ self.showHideButtons()
 		<short_title value="No Connection" />
 		<list>
 			<listentry caption="Start over" step="technologies" />
-			<listentry caption="Exit wizard" step="end" />
+			<listentry caption="Exit wizard" step="networkend" />
 		</list>
 		<condition>
 self.condition = self.networkWizardAvailable and not self.isNetworkConnected()
@@ -373,4 +373,10 @@ self.condition = self.networkWizardAvailable and not self.isNetworkConnected()
 		<text value="Your Network connection is NOT set up!\nPlease go back to reconfigure or press OK to continue anyways." />
 		<short_title value="No network" />
 	</step>
+	<step id="final" laststep="true">
+		<condition>
+self.condition = False
+		</condition>
+	</step>
 </wizard>
+

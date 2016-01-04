@@ -599,6 +599,9 @@ def runScreenTest():
 	from Components.ScreenAnimations import ScreenAnimations
 	ScreenAnimations().loadDefault()
 
+	from Screens.Toast import ToastManager
+	session.toastManager = ToastManager(session)
+
 	CiHandler.setSession(session)
 
 	screensToRun = [ p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD) ]

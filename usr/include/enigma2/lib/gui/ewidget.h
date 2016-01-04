@@ -8,6 +8,7 @@
 
 class eWidgetDesktop;
 class eWidgetAnimationSet;
+class eWidgetDesktopCompBuffer;
 
 class eWidget
 {
@@ -114,14 +115,14 @@ protected:
 
 	int m_z_position;
 	ePtr<eWindowStyle> m_style;
-	struct eWidgetDesktopCompBuffer *m_comp_buffer;
+	eWidgetDesktopCompBuffer *m_comp_buffer;
 	ePtr<eWidgetAnimationSet> m_animations;
 	bool m_animations_enabled;
 	bool m_can_animate;
 	ePtr<eTimer> m_invalidationTimer;
 	std::string m_parent_title;
 
-	eWidgetDesktop *desktop() const;
+	eWidgetDesktop *desktop(eWidget **root=NULL, bool die=false) const;
 	gPixelFormat pixelFormat() const;
 
 public:

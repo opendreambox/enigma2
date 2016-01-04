@@ -51,9 +51,11 @@
 			<pixmap pos="bpBottom" filename="Default-HD/b_b.png"  />
 			<pixmap pos="bpBottomRight" filename="Default-HD/b_br.png" />
 		</borderset>
+		<listfont type="Bigger" font="Regular" size="24" />
 		<listfont type="Big" font="Regular" size="22" />
 		<listfont type="Medium" font="Regular" size="20" />
 		<listfont type="Small" font="Regular" size="18" />
+		<listfont type="Smaller" font="Regular" size="16" />
 	</windowstyle>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">
@@ -101,6 +103,21 @@
 		<component type="HelpMenuList" itemHeight="30" textY="35" textWidth="1000" textHeight="35" />
 		<component type="ParentalControlList" itemHeight="32" textX="50" textY="0" textWidth="300" textHeight="32" pixmapWidth="32" pixmapHeight="32" />
 		<component type="SelectionList" itemHeight="30" textX="30" textY="0" textWidth="1000" textHeight="30" pixmapWidth="30" pixmapHeight="30" />
+		<component
+			type="ServiceList"
+			beginMargin="5"
+			endMargin="5"
+			piconWidth="58"
+			piconWidthBig="108"
+			piconOffset="8"
+			progressBarWidth="52"
+			progressBarMargin="8"
+			progressBarHeight="8"
+			serviceInfoHeightAdd="6"
+			serviceItemHeightLarge="60"
+			serviceItemHeight="28"
+			serviceNumberWidth="50"
+			textOffset="10" />
 		<component type="ServiceInfoList" itemHeight="30" textX="0" textY="0" textWidth="200" textHeight="30" text2X="220" text2Y="0" text2Width="350" text2Height="30" />
 		<!-- Graphical MultiEPG Timeline -->
 		<component type="TimelineText" itemHeight="25" itemWidth="60" />

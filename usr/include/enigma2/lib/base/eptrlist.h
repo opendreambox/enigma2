@@ -21,7 +21,51 @@ public:
 	typedef typename ePtrList<T>::const_reverse_iterator T_const_reverse_iterator;
 
 // Iterator classes
-	class iterator;
+	class iterator : public std::list<T*>::iterator
+	{
+	public:
+		// Constructors
+		iterator(const std_list_T_iterator& Q)		: std_list_T_iterator(Q)	{	}
+
+		// changed operator for pointer
+		T* operator->() const
+		{
+			return *std::list<T*>::iterator::operator->();
+		}
+
+		operator T&() const
+		{
+			return *operator->();
+		}
+
+		operator T*() const
+		{
+			return operator->();
+		}
+
+		iterator& operator++()
+		{
+			std::list<T*>::iterator::operator++();
+			return *this;
+		}
+
+		iterator operator++(int)
+		{
+			return std::list<T*>::iterator::operator++(0);
+		}
+
+		iterator& operator--()
+		{
+			std::list<T*>::iterator::operator--();
+			return *this;
+		}
+
+		iterator operator--(int)
+		{
+			return std::list<T*>::iterator::operator--(0);
+		}
+	};
+
 	class const_iterator;
 	class reverse_iterator;
 	class const_reverse_iterator;
@@ -179,53 +223,6 @@ public:
 		return this->insert( std::lower_bound( std::list<T*>::begin(), std::list<T*>::end(), e, less()), e );
 	}
 
-};
-
-/////////////////// iterator class /////////////////////////////
-template <class T>
-class ePtrList<T>::iterator : public std::list<T*>::iterator
-{
-public:
-	// Constructors
-	iterator(const std_list_T_iterator& Q)		: std_list_T_iterator(Q)	{	}
-
-	// changed operator for pointer
-	T* operator->() const
-	{
-		return *std::list<T*>::iterator::operator->();
-	}
-
-	operator T&() const
-	{
-		return *operator->();
-	}
-	
-	operator T*() const
-	{
-		return operator->();
-	}
-
-	iterator& operator++()
-	{
-		std::list<T*>::iterator::operator++();
-		return *this;
-	}
-
-	iterator operator++(int)
-	{
-		return std::list<T*>::iterator::operator++(0);
-	}
-
-	iterator& operator--()
-	{
-		std::list<T*>::iterator::operator--();
-		return *this;
-	}
-
-	iterator operator--(int)
-	{
-		return std::list<T*>::iterator::operator--(0);
-	}
 };
 
 /////////////////// const_iterator class /////////////////////////////
@@ -652,7 +649,51 @@ public:
 	typedef typename eSmartPtrList<T>::const_reverse_iterator T_const_reverse_iterator;
 
 // Iterator classes
-	class iterator;
+	class iterator : public std::list<ePtr<T> >::iterator
+	{
+	public:
+		// Constructors
+		iterator(const std_list_T_iterator& Q)		: std_list_T_iterator(Q)	{	}
+
+		// changed operator for pointer
+		T* operator->() const
+		{
+			return *std::list<ePtr<T> >::iterator::operator->();
+		}
+
+		operator T&() const
+		{
+			return *operator->();
+		}
+
+		operator T*() const
+		{
+			return operator->();
+		}
+
+		iterator& operator++()
+		{
+			std::list<ePtr<T> >::iterator::operator++();
+			return *this;
+		}
+
+		iterator operator++(int)
+		{
+			return std::list<ePtr<T> >::iterator::operator++(0);
+		}
+
+		iterator& operator--()
+		{
+			std::list<ePtr<T> >::iterator::operator--();
+			return *this;
+		}
+
+		iterator operator--(int)
+		{
+			return std::list<ePtr<T> >::iterator::operator--(0);
+		}
+	};
+
 	class const_iterator;
 	class reverse_iterator;
 	class const_reverse_iterator;
@@ -809,53 +850,6 @@ public:
 		return insert( std::lower_bound( std::list<ePtr<T> >::begin(), e, std::list<ePtr<T> >::end()), e );
 	}
 
-};
-
-/////////////////// iterator class /////////////////////////////
-template <class T>
-class eSmartPtrList<T>::iterator : public std::list<ePtr<T> >::iterator
-{
-public:
-	// Constructors
-	iterator(const std_list_T_iterator& Q)		: std_list_T_iterator(Q)	{	}
-
-	// changed operator for pointer
-	T* operator->() const
-	{
-		return *std::list<ePtr<T> >::iterator::operator->();
-	}
-
-	operator T&() const
-	{
-		return *operator->();
-	}
-	
-	operator T*() const
-	{
-		return operator->();
-	}
-
-	iterator& operator++()
-	{
-		std::list<ePtr<T> >::iterator::operator++();
-		return *this;
-	}
-
-	iterator operator++(int)
-	{
-		return std::list<ePtr<T> >::iterator::operator++(0);
-	}
-
-	iterator& operator--()
-	{
-		std::list<ePtr<T> >::iterator::operator--();
-		return *this;
-	}
-
-	iterator operator--(int)
-	{
-		return std::list<ePtr<T> >::iterator::operator--(0);
-	}
 };
 
 /////////////////// const_iterator class /////////////////////////////

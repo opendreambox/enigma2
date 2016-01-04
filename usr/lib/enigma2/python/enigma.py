@@ -160,6 +160,10 @@ class iObject(object):
 iObject_swigregister = _enigma.iObject_swigregister
 iObject_swigregister(iObject)
 
+
+def get_default_pipe_size():
+  return _enigma.get_default_pipe_size()
+get_default_pipe_size = _enigma.get_default_pipe_size
 class eMainloop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
@@ -167,6 +171,7 @@ class eMainloop(object):
 eMainloop.runLoop = new_instancemethod(_enigma.eMainloop_runLoop,None,eMainloop)
 eMainloop.isIdle = new_instancemethod(_enigma.eMainloop_isIdle,None,eMainloop)
 eMainloop.idleCount = new_instancemethod(_enigma.eMainloop_idleCount,None,eMainloop)
+eMainloop.tid = new_instancemethod(_enigma.eMainloop_tid,None,eMainloop)
 eMainloop.argc = new_instancemethod(_enigma.eMainloop_argc,None,eMainloop)
 eMainloop.argv = new_instancemethod(_enigma.eMainloop_argv,None,eMainloop)
 eMainloop_swigregister = _enigma.eMainloop_swigregister
@@ -193,6 +198,7 @@ eSocketNotifier.getRequested = new_instancemethod(_enigma.eSocketNotifier_getReq
 eSocketNotifier.setRequested = new_instancemethod(_enigma.eSocketNotifier_setRequested,None,eSocketNotifier)
 eSocketNotifier.getState = new_instancemethod(_enigma.eSocketNotifier_getState,None,eSocketNotifier)
 eSocketNotifier.activate = new_instancemethod(_enigma.eSocketNotifier_activate,None,eSocketNotifier)
+eSocketNotifier.getContext = new_instancemethod(_enigma.eSocketNotifier_getContext,None,eSocketNotifier)
 eSocketNotifier_swigregister = _enigma.eSocketNotifier_swigregister
 eSocketNotifier_swigregister(eSocketNotifier)
 
@@ -279,6 +285,10 @@ def eEnv_resolve(*args):
   return _enigma.eEnv_resolve(*args)
 eEnv_resolve = _enigma.eEnv_resolve
 
+
+def segfault():
+  return _enigma.segfault()
+segfault = _enigma.segfault
 NULL = _enigma.NULL
 
 def ptrAssert(*args):
@@ -2678,6 +2688,8 @@ class eWindowStyleSkinned(object):
     listFontBig = _enigma.eWindowStyleSkinned_listFontBig
     listFontMedium = _enigma.eWindowStyleSkinned_listFontMedium
     listFontSmall = _enigma.eWindowStyleSkinned_listFontSmall
+    listFontSmaller = _enigma.eWindowStyleSkinned_listFontSmaller
+    listFontBigger = _enigma.eWindowStyleSkinned_listFontBigger
     listFontMax = _enigma.eWindowStyleSkinned_listFontMax
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle,None,eWindowStyleSkinned)
@@ -5301,6 +5313,18 @@ ePicLoad_swigregister(ePicLoad)
 def loadPic(*args):
   return _enigma.loadPic(*args)
 loadPic = _enigma.loadPic
+class cmd_hdmi_cec_tx(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    dest = _swig_property(_enigma.cmd_hdmi_cec_tx_dest_get, _enigma.cmd_hdmi_cec_tx_dest_set)
+    msg = _swig_property(_enigma.cmd_hdmi_cec_tx_msg_get, _enigma.cmd_hdmi_cec_tx_msg_set)
+    len = _swig_property(_enigma.cmd_hdmi_cec_tx_len_get, _enigma.cmd_hdmi_cec_tx_len_set)
+    def __init__(self): 
+        _enigma.cmd_hdmi_cec_tx_swiginit(self,_enigma.new_cmd_hdmi_cec_tx())
+    __swig_destroy__ = _enigma.delete_cmd_hdmi_cec_tx
+cmd_hdmi_cec_tx_swigregister = _enigma.cmd_hdmi_cec_tx_swigregister
+cmd_hdmi_cec_tx_swigregister(cmd_hdmi_cec_tx)
+
 class eCec(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr

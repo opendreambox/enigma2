@@ -6,8 +6,7 @@ from Plugins.SystemPlugins.UPnP.UPnPConfig import getUUID
 
 from PlayerImpl import PlayerImpl
 
-def start(reason, **kwargs):
-	session = kwargs.get('session', None)
+def start(reason, session=None, **kwargs):
 	if session and reason == 0 and config.plugins.mediarenderer.enabled.value:
 		restartMediaRenderer(
 				session,
@@ -23,4 +22,4 @@ def start(reason, **kwargs):
 			)
 
 def Plugins(**kwargs):
-	return [ PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=start) ]
+	return [ PluginDescriptor(where=[PluginDescriptor.WHERE_UPNP, PluginDescriptor.WHERE_UPNP], fnc=start) ]

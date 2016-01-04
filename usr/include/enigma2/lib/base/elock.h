@@ -131,14 +131,17 @@ public:
 
 class eLock
 {
-	pthread_mutex_t mutex;
-	pthread_cond_t cond;
+	pthread_mutex_t m_mutex;
+	pthread_cond_t m_cond;
 
-	int counter, max;
+	int m_counter, m_max;
 public:
 	void lock(int res);
 	void unlock(int res);
 	int lock_count();
+	int trylock(int res, bool force=false);
+	int counter() const { return m_counter; }
+	int max() const { return m_max; }
 
 	eLock(int max);
 	~eLock();

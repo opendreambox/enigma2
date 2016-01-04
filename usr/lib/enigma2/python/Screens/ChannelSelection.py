@@ -1237,7 +1237,6 @@ config.radio.lastservice = ConfigText()
 config.radio.lastroot = ConfigText()
 config.servicelist = ConfigSubsection()
 config.servicelist.lastmode = ConfigText(default = "tv")
-config.servicelist.initialized = NoSave(ConfigBoolean(default = False))
 
 from Components.StreamServerControl import streamServerControl
 class ChannelSelectionEncoderService(object):
@@ -1255,6 +1254,8 @@ class ChannelSelectionEncoderService(object):
 HISTORYSIZE = 20
 
 class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, SelectionEventInfo, ChannelSelectionEncoderService):
+	initialized = NoSave(ConfigBoolean(default = False))
+
 	def __init__(self, session):
 		ChannelSelectionBase.__init__(self,session)
 		ChannelSelectionEdit.__init__(self)
@@ -1347,7 +1348,7 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 				self.zap()
 			else:
 				Screens.Standby.inStandby.onClose.append(self.zap)
-		config.servicelist.initialized.value = True
+		ChannelSelection.initialized.value = True
 
 	def channelSelected(self):
 		ref = self.getCurrentSelection()

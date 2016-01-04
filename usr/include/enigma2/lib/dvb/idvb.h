@@ -14,13 +14,8 @@
 #include <lib/base/sigc.h>
 #include <lib/base/connection.h>
 
-#if defined(__GNUC__) && ((__GNUC__ == 3 && __GNUC_MINOR__ >= 1) || __GNUC__ == 4 )  // check if gcc version >= 3.1
-#include <ext/slist>
-#define CAID_LIST __gnu_cxx::slist<uint16_t>
-#else
-#include <slist>
-#define CAID_LIST std::slist<uint16_t>
-#endif
+#include <list>
+typedef std::list<uint16_t> CAID_LIST;
 
 #include <boost/any.hpp>
 

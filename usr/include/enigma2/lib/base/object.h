@@ -53,7 +53,7 @@ public:
 		oRefCount(): count(0) { }
 		operator volatile int&() { return count; }
 		~oRefCount()
-		{ 
+		{
 	#ifdef OBJECT_DEBUG
 			if (count)
 				eDebug("OBJECT_DEBUG FATAL: %p has %d references!", this, count);
@@ -74,6 +74,7 @@ public:
 		public:					\
 			void AddRef(); 			\
 			void Release();			\
+			int RefCount() { return ref; } \
 		protected:				\
 			void Delete();			\
 		private:				\
@@ -255,7 +256,7 @@ public:
 				++ref; \
 			} \
 			void c::Release() \
-	 		{ \
+			{ \
 				{ \
 					eSingleLocker l(ref_lock); \
 					--ref; \

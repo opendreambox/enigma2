@@ -372,7 +372,6 @@ private:
 	eFixedMessagePump<DbMessage> m_messages_from_thread;
 
 	bool m_immediate_cancel;
-	int m_dummy; //for sqlite shared cache init;
 
 	std::list<file_metadata> m_priority_files;
 	std::list<file_metadata> m_files;

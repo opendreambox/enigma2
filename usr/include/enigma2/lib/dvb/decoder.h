@@ -11,7 +11,7 @@ class eDVBAudio: public iObject
 	DECLARE_REF(eDVBAudio);
 private:
 	ePtr<eDVBDemux> m_demux;
-	int m_fd, m_fd_demux, m_dev, m_is_freezed;
+	int m_fd, m_fd_demux, m_dev;
 public:
 	enum { aMPEG, aAC3, aDTS, aAAC, aAACHE, aLPCM, aDTSHD, aDDP };
 	eDVBAudio(eDVBDemux *demux, int dev);
@@ -32,7 +32,6 @@ class eDVBVideo: public iObject, public sigc::trackable
 private:
 	ePtr<eDVBDemux> m_demux;
 	int m_fd, m_fd_demux, m_dev;
-	int m_is_slow_motion, m_is_fast_forward, m_is_freezed;
 	ePtr<eSocketNotifier> m_sn;
 	void video_event(int what);
 	sigc::signal1<void, struct iTSMPEGDecoder::videoEvent> m_event;

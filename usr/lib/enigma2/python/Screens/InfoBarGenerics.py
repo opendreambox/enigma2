@@ -1917,7 +1917,7 @@ class InfoBarAudioSelection:
 
 	def audioSelection(self):
 		from Screens.AudioSelection import AudioSelection
-		self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self.session.infobar or self)
+		self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
 
 	def audioSelected(self, ret=None):
 		print "[infobar::audioSelected]", ret

@@ -6,14 +6,6 @@
 
 #ifndef SWIG
 
-/* Test for gcc >= maj.min, as per __GNUC_PREREQ in glibc */
-#if defined (__GNUC__) && defined (__GNUC_MINOR__)
-#define __GNUC_PREREQ(maj, min) \
-	  ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
-#else
-#define __GNUC_PREREQ(maj, min)  0
-#endif
-
 #include <vector>
 #include <list>
 #include <queue>
@@ -26,6 +18,7 @@
 #endif
 
 #include <errno.h>
+#include <features.h>
 
 #include <lib/dvb/idvb.h>
 #include <lib/dvb/demux.h>
@@ -46,7 +39,7 @@
 #define HILO(x) (x##_hi << 8 | x##_lo)
 
 class cacheData;
-class eServiceReferenceDVB;
+struct eServiceReferenceDVB;
 class eDVBServicePMTHandler;
 
 struct uniqueEPGKey
@@ -181,7 +174,6 @@ class EPGDBThread: public eMainloop_native, private eThread, public Object
 		int source;
 	};
 	eEPGCache *m_epg_cache;
-	QSqlDatabase &m_db_rw;
 
 	pthread_mutex_t m_mutex;
 	pthread_cond_t m_cond;
@@ -193,7 +185,7 @@ class EPGDBThread: public eMainloop_native, private eThread, public Object
 	void gotMessage(const Message &message);
 	void thread();
 public:
-	EPGDBThread(eEPGCache *cache, QSqlDatabase &db);
+	EPGDBThread(eEPGCache *cache);
 	/* this functions are called from main thread */
 	void sendData(const uniqueEPGKey &service, const __u8 *data, int source);
 	void lockService(const uniqueEPGKey &service);
@@ -352,7 +344,7 @@ public:
 	eFixedMessagePump<Message> messages;
 	eFixedMessagePump<Message> thread_messages;
 private:
-	friend class channel_data;
+	friend struct channel_data;
 	friend class EPGDBThread;
 	static eEPGCache *instance;
 

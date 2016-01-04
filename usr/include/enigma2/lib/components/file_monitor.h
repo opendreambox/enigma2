@@ -9,67 +9,6 @@
 #include <future>
 #include <sys/inotify.h>
 
-class eFileWatch;
-class eFileEvent;
-
-/**
- * Monitors the Filesystem for changes (based on inotify).
- * Do not use this class directly unless you really know why.
- * Use eFileWatch instances instead, they handle all the tricky stuff properly.
- */
-class eFileMonitor: public eMainloop_native, public eThread, public sigc::trackable
-{
-	int m_fd;
-	uint64_t m_watchcount; //watches total
-	ePtr<eSocketNotifier> m_sn;
-	eSingleLock m_watch_lock, m_queue_lock;
-	std::queue<eFileEvent> m_eventqueue;
-	//lookup-tables
-	std::map<std::string, int> m_dir_wd; //key: directory, value: watch-descriptor-id
-	std::map<int, eFileWatch*> m_wd_watches; //key: watch-descriptor-id, value: related eFileWatch, required for getting all eFileWatches for an event
-	std::map<int, uint64_t> m_wd_watchcount; //key: watch-descriptor-id, value: number of associated watches
-
-	struct Message
-	{
-		int type;
-		int count;
-		enum{
-			process=0,
-			quit,
-		};
-		Message(int type=0, int count=0): type(type), count(count){};
-	};
-
-	static eFileMonitor *instance;
-
-	eFixedMessagePump<Message> messages_from_thread;
-	eFixedMessagePump<Message> messages_to_thread;
-
-	void gotMessage(const Message &msg);
-	void thread();
-	void readEvents(int what);
-	int processInotifyEvents();
-	void onWatchMoved(eFileWatch *watch, const eFileEvent &event);
-
-public:
-	eFileMonitor();
-	~eFileMonitor();
-
-	static eFileMonitor *getInstance();
-
-	int addWatch(eFileWatch *watch);
-	bool removeWatch(eFileWatch *watch);
-	eFileWatch* getWatch(int wd);
-
-	/**
-	 * processEvents(bool finished)
-	 * emitted when processing of events will start (finished=false) and finish (finished=true).
-	 *
-	 * Can be used to encapsulate event-based actions into a single database transaction or do some other kind of batch-processing on the receiver-side
-	 */
-	Signal1<void, bool> processEvents;
-};
-
 class eFileEvent {
 	int m_wd;
 	uint32_t m_mask;
@@ -117,7 +56,6 @@ public:
 	void setMovedTo(const std::string &movedTo){ m_movedTo = movedTo; };
 
 };
-
 
 /**
  * Use an eFileWatch to monitor a file or directory (recursively if required) for access/changes
@@ -191,5 +129,63 @@ public:
 
 	Signal2<void, eFileWatch*, eFileEvent> fileChanged;
 };
-#endif
 
+/**
+ * Monitors the Filesystem for changes (based on inotify).
+ * Do not use this class directly unless you really know why.
+ * Use eFileWatch instances instead, they handle all the tricky stuff properly.
+ */
+class eFileMonitor: public eMainloop_native, public eThread, public sigc::trackable
+{
+	int m_fd;
+	uint64_t m_watchcount; //watches total
+	ePtr<eSocketNotifier> m_sn;
+	eSingleLock m_watch_lock, m_queue_lock;
+	std::queue<eFileEvent> m_eventqueue;
+	//lookup-tables
+	std::map<std::string, int> m_dir_wd; //key: directory, value: watch-descriptor-id
+	std::map<int, eFileWatch*> m_wd_watches; //key: watch-descriptor-id, value: related eFileWatch, required for getting all eFileWatches for an event
+	std::map<int, uint64_t> m_wd_watchcount; //key: watch-descriptor-id, value: number of associated watches
+
+	struct Message
+	{
+		int type;
+		int count;
+		enum{
+			process=0,
+			quit,
+		};
+		Message(int type=0, int count=0): type(type), count(count){};
+	};
+
+	static eFileMonitor *instance;
+
+	eFixedMessagePump<Message> messages_from_thread;
+	eFixedMessagePump<Message> messages_to_thread;
+
+	void gotMessage(const Message &msg);
+	void thread();
+	void readEvents(int what);
+	int processInotifyEvents();
+	void onWatchMoved(eFileWatch *watch, const eFileEvent &event);
+
+public:
+	eFileMonitor();
+	~eFileMonitor();
+
+	static eFileMonitor *getInstance();
+
+	int addWatch(eFileWatch *watch);
+	bool removeWatch(eFileWatch *watch);
+	eFileWatch* getWatch(int wd);
+
+	/**
+	 * processEvents(bool finished)
+	 * emitted when processing of events will start (finished=false) and finish (finished=true).
+	 *
+	 * Can be used to encapsulate event-based actions into a single database transaction or do some other kind of batch-processing on the receiver-side
+	 */
+	Signal1<void, bool> processEvents;
+};
+
+#endif
