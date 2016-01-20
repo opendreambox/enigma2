@@ -44,11 +44,11 @@ class Cec(object):
 
 	def __receivedNowActive(self):
 		if config.cec.receivepower.value:
-			self.powerOn(forceOtp=True)
-			self._skip_next_poweron_message = True
 			from Screens.Standby import inStandby
 			if inStandby != None:
 				inStandby.Power()
+			self.powerOn(forceOtp=True)
+			self._skip_next_poweron_message = True
 
 	def powerOn(self, forceOtp=False):
 		if self._skip_next_poweron_message:

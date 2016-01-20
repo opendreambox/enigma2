@@ -798,7 +798,7 @@ class ChannelSelectionBase(Screen):
 
 		self["key_red"] = Button(_("All"))
 		self["key_green"] = Button(_("Satellites"))
-		self["key_yellow"] = Button(_("Provider"))
+		self["key_yellow"] = Button(_("Providers"))
 		self["key_blue"] = Button(_("Favourites"))
 
 		self["list"] = ServiceList(session)
@@ -842,6 +842,7 @@ class ChannelSelectionBase(Screen):
 				"9": self.keyNumberGlobal,
 				"0": self.keyNumber0
 			})
+		self.setTitle(_("Channel Selection"))
 		self.recallBouquetMode()
 
 	def getBouquetNumOffset(self, bouquet):
@@ -948,7 +949,7 @@ class ChannelSelectionBase(Screen):
 		if not str:
 			pathstr = ref.getPath()
 			if 'FROM PROVIDERS' in pathstr:
-				return _("Provider")
+				return _("Providers")
 			if 'FROM SATELLITES' in pathstr:
 				return _("Satellites")
 			if ') ORDER BY name' in pathstr:

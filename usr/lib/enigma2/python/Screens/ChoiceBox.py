@@ -7,8 +7,10 @@ from Components.Sources.StaticText import StaticText
 class ChoiceBox(Screen):
 	IS_DIALOG = True
 
-	def __init__(self, session, title = "", list = [], keys = None, selection = 0, skin_name = [], titlebartext = None, allow_cancel = True):
-		Screen.__init__(self, session)
+	def __init__(self, session, title = "", list = [], keys = None, selection = 0, skin_name = [], windowTitle = None, allow_cancel = True, titlebartext = _("Input")):
+		if not windowTitle: #for compatibility
+			windowTitle = titlebartext
+		Screen.__init__(self, session, windowTitle=windowTitle)
 
 		self.allow_cancel = allow_cancel
 
@@ -59,13 +61,6 @@ class ChoiceBox(Screen):
 			"up": self.up,
 			"down": self.down
 		}, -1)
-
-		self.titlebartext = titlebartext
-		self.onLayoutFinish.append(self.layoutFinished)
-
-	def layoutFinished(self):
-		if self.titlebartext:
-			self.setTitle(self.titlebartext)
 
 	def keyLeft(self):
 		pass

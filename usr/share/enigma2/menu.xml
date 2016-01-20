@@ -29,10 +29,10 @@
 				<id val="services_recordings" />
 				<menu weight="10" level="0" text="Service Searching" entryID="service_searching_selection" description="Search for services and configure your tuners.">
 					<id val="scan" />
-					<item text="Tuner configuration" entryID="tuner_setup" description="Configure your tuners."><screen module="Satconfig" screen="NimSelection" /></item>
-					<item text="Default services lists" entryID="default_lists" description="Install default service lists."><screen module="ScanSetup" screen="DefaultSatLists" /></item>
-					<item text="Automatic Scan" entryID="auto_scan" description="Automatically scan for new services."><screen module="ScanSetup" screen="ScanSimple" /></item>
-					<item text="Manual Scan" entryID="manual_scan" description="Manually scan for new services."><screen module="ScanSetup" /></item>
+					<item weight="10" text="Tuner configuration" entryID="tuner_setup" description="Configure your tuners."><screen module="Satconfig" screen="NimSelection" /></item>
+					<item weight="20" text="Default services lists" entryID="default_lists" description="Install default service lists."><screen module="ScanSetup" screen="DefaultSatLists" /></item>
+					<item weight="30" text="Automatic Scan" entryID="auto_scan" description="Automatically scan for new services."><screen module="ScanSetup" screen="ScanSimple" /></item>
+					<item weight="40" text="Manual Scan" entryID="manual_scan" description="Manually scan for new services."><screen module="ScanSetup" /></item>
 				</menu>
 				<item weight="20" level="0" text="Parental control" entryID="parental_setup" description="Set up parental control."><screen module="ParentalControlSetup" screen="ParentalControlSetup" /></item>
 				<item weight="30" level="0" text="Recording paths" entryID="record_paths" description="Configure your recording paths."><screen module="RecordPaths" screen="RecordPathsSettings" /></item>

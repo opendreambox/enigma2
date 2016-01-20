@@ -3,14 +3,17 @@ from Components.config import config, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.StaticText import StaticText
 from Screens.Screen import Screen
+from CeCDeviceList import CeCDeviceList
 
 class CecConfig(ConfigListScreen, Screen):
 	skin = """
 		<screen name="CecConfig" position="center,center" size="560,400" title="HDMI CEC: Setup">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
 			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
 			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
 			<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
 		</screen>"""
 
@@ -27,12 +30,13 @@ class CecConfig(ConfigListScreen, Screen):
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
 		# SKIN Compat HACK!
-		self["key_yellow"] = StaticText("")
+		self["key_blue"] = StaticText(_("Devices"))
 		# EO SKIN Compat HACK!
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
 		{
 			"red": self.cancel,
 			"green": self.save,
+			"blue" : self._showDeviceList,
 			"save": self.save,
 			"cancel": self.cancel,
 			"ok": self.save,
@@ -41,6 +45,9 @@ class CecConfig(ConfigListScreen, Screen):
 		self.onClose.append(self.__onClose)
 
 		self.onLayoutFinish.append(self.layoutFinished)
+
+	def _showDeviceList(self):
+		self.session.open(CeCDeviceList)
 
 	def __onClose(self):
 		config.cec.sendpower.removeNotifier(self._recreateSetup)
@@ -80,6 +87,8 @@ class CecConfig(ConfigListScreen, Screen):
 				getConfigListEntry(_("Handle 'Active Source' as power up/down"), config.cec.activate_on_active_source),
 				getConfigListEntry(_("Handle 'Set Stream' as power up"), config.cec.activate_on_stream),
 				getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
+				getConfigListEntry(_("Ignore Device Power States"), config.cec.ignore_powerstates),
+				getConfigListEntry(_("Ignore 'Active Source' when not sent by the TV"), config.cec.ignore_active_source_nontv),
 			])
 		lst.extend([
 			getConfigListEntry(_("Remote control")),

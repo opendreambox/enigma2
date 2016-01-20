@@ -147,7 +147,7 @@ class PlaylistPlayer(Screen, HelpableScreen, PlayerBase):
 			if len(choices) == 1:
 				mediaCore.openBrowser(self._type, choices[0][1], player=self)
 			elif len(choices) > 1:
-				self.session.openWithCallback(self._onBrowserSelected, ChoiceBox, title=_("Please select a media browser"), list = choices)
+				self.session.openWithCallback(self._onBrowserSelected, ChoiceBox, title=_("Please select a media browser"), list = choices, windowTitle = _("Mediabrowser Selection"))
 
 	def _onBrowserSelected(self, choice):
 		if choice != None:

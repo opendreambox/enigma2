@@ -8,13 +8,15 @@ from Sources.StaticText import StaticText
 class GUISkin:
 	__module__ = __name__
 	IS_DIALOG = False
-	def __init__(self):
+	def __init__(self, windowTitle=None):
 		self["Title"] = StaticText()
 		self.onLayoutFinish = [ ]
 		self.summaries = CList()
 		self.instance = None
 		self.desktop = None
 		self._zPosition = None
+		if windowTitle:
+			self.setTitle(windowTitle)
 
 	def createGUIScreen(self, parent, desktop, updateonly = False):
 		for val in self.renderer:
@@ -96,8 +98,8 @@ class GUISkin:
 				if title:
 					self.skinAttributes[skin_title_idx] = ("title", title)
 				else:
-					self["Title"].text = value
-					self.summaries.setTitle(value)
+					self["Title"].text = _(value)
+					self.summaries.setTitle(_(value))
 			elif key == "baseResolution":
 				baseres = tuple([int(x) for x in value.split(',')])
 			idx += 1

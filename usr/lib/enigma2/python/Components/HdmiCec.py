@@ -35,6 +35,8 @@ class HdmiCec:
 	config.cec.activate_on_active_source = ConfigOnOff(default=True)
 	config.cec.activate_on_stream = ConfigOnOff(default=True)
 	config.cec.activate_on_tvpower = ConfigOnOff(default=True)
+	config.cec.ignore_powerstates = ConfigOnOff(default=False)
+	config.cec.ignore_active_source_nontv = ConfigOnOff(default=False)
 
 	def __init__(self):
 		self.instance = eCec.getInstance()

@@ -10,11 +10,10 @@ from time import time
 class InputBox(Screen):
 	IS_DIALOG = True
 	def __init__(self, session, title = "", windowTitle = _("Input"), useableChars = None, **kwargs):
-		Screen.__init__(self, session)
+		Screen.__init__(self, session, windowTitle=windowTitle)
 
 		self["text"] = Label(title)
 		self["input"] = Input(**kwargs)
-		self.onShown.append(boundFunction(self.setTitle, windowTitle))
 		if useableChars is not None:
 			self["input"].setUseableChars(useableChars)
 

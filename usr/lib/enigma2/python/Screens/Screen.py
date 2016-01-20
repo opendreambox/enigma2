@@ -14,13 +14,13 @@ class Screen(dict, GUISkin):
 	False, SUSPEND_STOPS, SUSPEND_PAUSES = range(3)
 	ALLOW_SUSPEND = False
 
-	def __init__(self, session, parent = None):
+	def __init__(self, session, parent = None, windowTitle=None):
 		dict.__init__(self)
 		self.skinName = self.__class__.__name__
 		self.session = session
 		self.parent = parent
 
-		GUISkin.__init__(self)
+		GUISkin.__init__(self, windowTitle=windowTitle)
 
 		self.onClose = [ ]
 		self.onFirstExecBegin = [ ]

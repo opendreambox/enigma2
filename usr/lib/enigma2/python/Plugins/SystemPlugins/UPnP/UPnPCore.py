@@ -12,6 +12,8 @@ from HTMLParser import HTMLParser
 from Plugins.Plugin import PluginDescriptor
 from Tools.Log import Log
 
+from Tools.Log import Log
+
 class Statics:
 	CONTAINER_ID_ROOT = 0
 	CONTAINER_ID_SERVERLIST = -1
@@ -101,6 +103,8 @@ This is a "managed" UPnP A/V Controlpoint which eases the use of UPnP, for Brows
 please see the helper classes (UPnPBrowser and AbstractUPnPRenderer) for more
 '''
 class ManagedControlPoint(object):
+	DEVICE_TYPE_SATIP_SERVER = "SatIPServer"
+
 	def __init__(self):
 		self.coherence = None
 		self._controlPoint = None
@@ -108,12 +112,14 @@ class ManagedControlPoint(object):
 		self.__mediaRendererClients = {}
 		self.__mediaDevices = {}
 		self.__devices = []
-
 		self.onMediaServerDetected = []
 		self.onMediaServerRemoved  = []
 		self.onMediaRendererDetected = []
 		self.onMediaRendererRemoved = []
 		self.onMediaDeviceDectected = []
+		self.onMediaDeviceRemoved = []
+		self.onSatIpServerDetected = []
+		self.onSatIpServerRemoved = []
 		self._session = None
 		self.__deferredShutDown = None
 		self._startPending = False
@@ -128,9 +134,16 @@ class ManagedControlPoint(object):
 			if self._controlPoint:
 				Log.w("already running!")
 				return
-			Log.w("starting now!")
+			Log.i("starting now!")
 			self._startPending = False
-			self.coherence = Coherence({'logmode':'warning'})
+			self.coherence = Coherence({
+				'logging': {
+					'level' : 'warning', 
+					'subsystem' : [
+						{'name' : 'msearch', 'level' : 'warning'},
+						{'name' : 'ssdp', 'level' : 'warning'}
+					]}
+				})
 			self._controlPoint = ControlPoint(self.coherence, auto_client=['MediaServer','MediaRenderer'])
 			self.coherence.ctrl = self._controlPoint
 			self.__mediaServerClients = {}
@@ -154,7 +167,7 @@ class ManagedControlPoint(object):
 			doStart()
 
 	def restart(self):
-		Log.w()
+		Log.i()
 		if not self.__deferredShutDown:
 			self.shutdown()
 		self.start()
@@ -194,13 +207,25 @@ class ManagedControlPoint(object):
 				fnc(udn)
 
 	def _onMediaDeviceDectected(self, device):
-		if not self.__mediaDevices.has_key(device.get_usn()):
-			print "[DLNA] New device found: %s (%s)" % (device.get_friendly_name(), device.get_friendly_device_type())
-		self.__mediaDevices[device.get_usn()] = device
+		if device.udn in self.__mediaDevices:
+			return
+		self.__mediaDevices[device.udn] = device
+		if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
+			Log.i("New Device found: %s (%s - %s)" %(device.get_friendly_name(), device.get_friendly_device_type(), device.get_satipcap()))
+			for fnc in self.onSatIpServerDetected:
+				fnc(device)
+		else:
+			Log.i("New Device found: %s (%s)" % (device.get_friendly_name(), device.get_friendly_device_type()))
 
 	def _onMediaDeviceRemoved(self, usn):
 		if usn in self.__mediaDevices:
 			print "[DLNA] Device removed: %s" % (usn)
+			device = self.__mediaDevices[usn]
+			if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
+				for fnc in self.onSatIpServerRemoved:
+					fnc(device)
+			for fnc in self.onMediaDeviceRemoved:
+				fnc(device)
 			del self.__mediaDevices[usn]
 
 	def registerRenderer(self, classDef, **kwargs):
@@ -222,6 +247,13 @@ class ManagedControlPoint(object):
 	def getDeviceName(self, client):
 		return Item.ue(client.device.get_friendly_name())
 
+	def getSatIPDevices(self):
+		devices = []
+		for device in self.__mediaDevices.itervalues():
+			if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
+				devices.append(device)
+		return devices
+
 	def getDevice(self, uuid):
 		for device in self.__devices:
 			if device.uuid == uuid:
@@ -237,7 +269,7 @@ class ManagedControlPoint(object):
 		return False
 
 	def shutdown(self):
-		Log.w("%s" %(self.coherence,))
+		Log.i("%s" %(self.coherence,))
 		if True:
 			Log.w("shutdown is broken... will continue running. please restart enigma2 instead!")
 			return

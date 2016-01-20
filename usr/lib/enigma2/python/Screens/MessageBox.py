@@ -14,10 +14,12 @@ class MessageBox(Screen):
 
 	IS_DIALOG = True
 
-	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, title = None, additionalActionMap=None):
+	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, windowTitle = None, additionalActionMap=None, title = _("Message")):
+		if not windowTitle:
+			windowTitle = title
+		Screen.__init__(self, session, windowTitle=windowTitle)
+
 		self.type = type
-		Screen.__init__(self, session)
-		
 		self.msgBoxID = msgBoxID
 
 		self["text"] = Label(text)
@@ -26,7 +28,6 @@ class MessageBox(Screen):
 
 		self.text = text
 		self.close_on_any_key = close_on_any_key
-		self.title = title
 		self.tmr = eTimer()
 		self.tmr_conn = self.tmr.timeout.connect(self.delayedAdditionalActionMapEnd)
 
@@ -53,8 +54,6 @@ class MessageBox(Screen):
 		if self.list:
 			self["selectedChoice"].setText(self.list[0][0])
 		self["list"] = MenuList(self.list)
-
-		self.onFirstExecBegin.append(self._onFirstExecBegin)
 
 		self.additionalActionMap = None
 		if enable_input:
@@ -90,10 +89,6 @@ class MessageBox(Screen):
 	def delayedAdditionalActionMapEnd(self):
 		if self.additionalActionMap:
 			self.additionalActionMap.execEnd()
-
-	def _onFirstExecBegin(self):
-		if self.title != None:
-			self.setTitle(self.title)
 
 	def initTimeout(self, timeout):
 		self.timeout = timeout

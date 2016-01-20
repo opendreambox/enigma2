@@ -900,9 +900,11 @@ class TemplatedColors():
 		return color_name in self.colors and self.colors[color_name] or gRGB(0)
 
 class TemplatedListFonts():
+	BIGGER = "Bigger"
 	BIG = "Big"
 	MEDIUM = "Medium"
 	SMALL = "Small"
+	SMALLER = "Smaller"
 
 	def __init__(self, style_id = 0):
 		x = eWindowStyleManager.getInstance()

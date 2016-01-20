@@ -198,9 +198,7 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 				(_("Clear Playlist"), self.ITEM_CLEAR_PLAYLIST),
 				(_("Create New Playlist"), self.ITEM_CREATE_PLAYLIST),
 			)
-
-		msgbox = self.session.openWithCallback(self._onMenuItemSelected, ChoiceBox, list=menu)
-		msgbox.setTitle(_("MediaCenter - Menu"))
+		self.session.openWithCallback(self._onMenuItemSelected, ChoiceBox, list=menu, windowTitle=_("MediaCenter - Menu"))
 
 	def _onMenuItemSelected(self, entry):
 		if entry != None:

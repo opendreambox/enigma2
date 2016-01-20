@@ -5373,14 +5373,14 @@ class eCec(object):
     ABORT_REASON_REFUSED = _enigma.eCec_ABORT_REASON_REFUSED
     ADDR_TV = _enigma.eCec_ADDR_TV
     ADDR_RECORDING_DEVICE_1 = _enigma.eCec_ADDR_RECORDING_DEVICE_1
-    ADDR_ADDR_RECORDING_DEVICE_2 = _enigma.eCec_ADDR_ADDR_RECORDING_DEVICE_2
+    ADDR_RECORDING_DEVICE_2 = _enigma.eCec_ADDR_RECORDING_DEVICE_2
     ADDR_TUNER_1 = _enigma.eCec_ADDR_TUNER_1
     ADDR_PLAYBACK_DEVICE_1 = _enigma.eCec_ADDR_PLAYBACK_DEVICE_1
     ADDR_AUDIO_SYSTEM = _enigma.eCec_ADDR_AUDIO_SYSTEM
     ADDR_TUNER_2 = _enigma.eCec_ADDR_TUNER_2
     ADDR_TUNER_3 = _enigma.eCec_ADDR_TUNER_3
     ADDR_PLAYBACK_DEVICE_2 = _enigma.eCec_ADDR_PLAYBACK_DEVICE_2
-    ADDR_RECORDING_DEVICE_2 = _enigma.eCec_ADDR_RECORDING_DEVICE_2
+    ADDR_RECORDING_DEVICE_3 = _enigma.eCec_ADDR_RECORDING_DEVICE_3
     ADDR_TUNER_4 = _enigma.eCec_ADDR_TUNER_4
     ADDR_PLAYBACK_DEVICE_3 = _enigma.eCec_ADDR_PLAYBACK_DEVICE_3
     ADDR_RESERVED_1 = _enigma.eCec_ADDR_RESERVED_1
@@ -5594,6 +5594,10 @@ class eCec(object):
         """setVendor(eCec self, int vendor)"""
         return _enigma.eCec_setVendor(self, *args)
 
+    def getKnownDevices(self):
+        """getKnownDevices(eCec self) -> eCecDevicePtrVector"""
+        return _enigma.eCec_getKnownDevices(self)
+
     receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
     onKeyPress = _swig_property(_enigma.eCec_onKeyPress_get, _enigma.eCec_onKeyPress_set)
@@ -5624,6 +5628,7 @@ eCec.getDeviceType = new_instancemethod(_enigma.eCec_getDeviceType,None,eCec)
 eCec.setDeviceType = new_instancemethod(_enigma.eCec_setDeviceType,None,eCec)
 eCec.getVendor = new_instancemethod(_enigma.eCec_getVendor,None,eCec)
 eCec.setVendor = new_instancemethod(_enigma.eCec_setVendor,None,eCec)
+eCec.getKnownDevices = new_instancemethod(_enigma.eCec_getKnownDevices,None,eCec)
 eCec_swigregister = _enigma.eCec_swigregister
 eCec_swigregister(eCec)
 
@@ -5639,31 +5644,75 @@ def eCec_convert(*args):
   """eCec_convert(int value, int len, uint8_t * data)"""
   return _enigma.eCec_convert(*args)
 
-class eCecVendorHandler(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
-    __repr__ = _swig_repr
-    __swig_destroy__ = _enigma.delete_eCecVendorHandler
-eCecVendorHandler.handleMsg = new_instancemethod(_enigma.eCecVendorHandler_handleMsg,None,eCecVendorHandler)
-eCecVendorHandler_swigregister = _enigma.eCecVendorHandler_swigregister
-eCecVendorHandler_swigregister(eCecVendorHandler)
-
 class eCecDevice(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
         _enigma.eCecDevice_swiginit(self,_enigma.new_eCecDevice(*args))
     __swig_destroy__ = _enigma.delete_eCecDevice
-    available = _swig_property(_enigma.eCecDevice_available_get, _enigma.eCecDevice_available_set)
-    logical = _swig_property(_enigma.eCecDevice_logical_get, _enigma.eCecDevice_logical_set)
-    physical = _swig_property(_enigma.eCecDevice_physical_get, _enigma.eCecDevice_physical_set)
-    name = _swig_property(_enigma.eCecDevice_name_get, _enigma.eCecDevice_name_set)
-    powerstate = _swig_property(_enigma.eCecDevice_powerstate_get, _enigma.eCecDevice_powerstate_set)
-eCecDevice.handleMsg = new_instancemethod(_enigma.eCecDevice_handleMsg,None,eCecDevice)
+eCecDevice.logicalAddress = new_instancemethod(_enigma.eCecDevice_logicalAddress,None,eCecDevice)
 eCecDevice.vendor = new_instancemethod(_enigma.eCecDevice_vendor,None,eCecDevice)
-eCecDevice.setVendor = new_instancemethod(_enigma.eCecDevice_setVendor,None,eCecDevice)
+eCecDevice.readableVendor = new_instancemethod(_enigma.eCecDevice_readableVendor,None,eCecDevice)
+eCecDevice.deviceName = new_instancemethod(_enigma.eCecDevice_deviceName,None,eCecDevice)
 eCecDevice_swigregister = _enigma.eCecDevice_swigregister
 eCecDevice_swigregister(eCecDevice)
+
+class eCecDevicePtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eCecDevicePtr_swiginit(self,_enigma.new_eCecDevicePtr(*args))
+    __swig_destroy__ = _enigma.delete_eCecDevicePtr
+eCecDevicePtr.__ref__ = new_instancemethod(_enigma.eCecDevicePtr___ref__,None,eCecDevicePtr)
+eCecDevicePtr.getPtrString = new_instancemethod(_enigma.eCecDevicePtr_getPtrString,None,eCecDevicePtr)
+eCecDevicePtr.__deref__ = new_instancemethod(_enigma.eCecDevicePtr___deref__,None,eCecDevicePtr)
+eCecDevicePtr.logicalAddress = new_instancemethod(_enigma.eCecDevicePtr_logicalAddress,None,eCecDevicePtr)
+eCecDevicePtr.vendor = new_instancemethod(_enigma.eCecDevicePtr_vendor,None,eCecDevicePtr)
+eCecDevicePtr.readableVendor = new_instancemethod(_enigma.eCecDevicePtr_readableVendor,None,eCecDevicePtr)
+eCecDevicePtr.deviceName = new_instancemethod(_enigma.eCecDevicePtr_deviceName,None,eCecDevicePtr)
+eCecDevicePtr_swigregister = _enigma.eCecDevicePtr_swigregister
+eCecDevicePtr_swigregister(eCecDevicePtr)
+
+class eCecDevicePtrVector(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self): return self.iterator()
+    def __init__(self, *args): 
+        _enigma.eCecDevicePtrVector_swiginit(self,_enigma.new_eCecDevicePtrVector(*args))
+    __swig_destroy__ = _enigma.delete_eCecDevicePtrVector
+eCecDevicePtrVector.iterator = new_instancemethod(_enigma.eCecDevicePtrVector_iterator,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__nonzero__ = new_instancemethod(_enigma.eCecDevicePtrVector___nonzero__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__bool__ = new_instancemethod(_enigma.eCecDevicePtrVector___bool__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__len__ = new_instancemethod(_enigma.eCecDevicePtrVector___len__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.pop = new_instancemethod(_enigma.eCecDevicePtrVector_pop,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__getslice__ = new_instancemethod(_enigma.eCecDevicePtrVector___getslice__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__setslice__ = new_instancemethod(_enigma.eCecDevicePtrVector___setslice__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__delslice__ = new_instancemethod(_enigma.eCecDevicePtrVector___delslice__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__delitem__ = new_instancemethod(_enigma.eCecDevicePtrVector___delitem__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__getitem__ = new_instancemethod(_enigma.eCecDevicePtrVector___getitem__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.__setitem__ = new_instancemethod(_enigma.eCecDevicePtrVector___setitem__,None,eCecDevicePtrVector)
+eCecDevicePtrVector.append = new_instancemethod(_enigma.eCecDevicePtrVector_append,None,eCecDevicePtrVector)
+eCecDevicePtrVector.empty = new_instancemethod(_enigma.eCecDevicePtrVector_empty,None,eCecDevicePtrVector)
+eCecDevicePtrVector.size = new_instancemethod(_enigma.eCecDevicePtrVector_size,None,eCecDevicePtrVector)
+eCecDevicePtrVector.clear = new_instancemethod(_enigma.eCecDevicePtrVector_clear,None,eCecDevicePtrVector)
+eCecDevicePtrVector.swap = new_instancemethod(_enigma.eCecDevicePtrVector_swap,None,eCecDevicePtrVector)
+eCecDevicePtrVector.get_allocator = new_instancemethod(_enigma.eCecDevicePtrVector_get_allocator,None,eCecDevicePtrVector)
+eCecDevicePtrVector.begin = new_instancemethod(_enigma.eCecDevicePtrVector_begin,None,eCecDevicePtrVector)
+eCecDevicePtrVector.end = new_instancemethod(_enigma.eCecDevicePtrVector_end,None,eCecDevicePtrVector)
+eCecDevicePtrVector.rbegin = new_instancemethod(_enigma.eCecDevicePtrVector_rbegin,None,eCecDevicePtrVector)
+eCecDevicePtrVector.rend = new_instancemethod(_enigma.eCecDevicePtrVector_rend,None,eCecDevicePtrVector)
+eCecDevicePtrVector.pop_back = new_instancemethod(_enigma.eCecDevicePtrVector_pop_back,None,eCecDevicePtrVector)
+eCecDevicePtrVector.erase = new_instancemethod(_enigma.eCecDevicePtrVector_erase,None,eCecDevicePtrVector)
+eCecDevicePtrVector.push_back = new_instancemethod(_enigma.eCecDevicePtrVector_push_back,None,eCecDevicePtrVector)
+eCecDevicePtrVector.front = new_instancemethod(_enigma.eCecDevicePtrVector_front,None,eCecDevicePtrVector)
+eCecDevicePtrVector.back = new_instancemethod(_enigma.eCecDevicePtrVector_back,None,eCecDevicePtrVector)
+eCecDevicePtrVector.assign = new_instancemethod(_enigma.eCecDevicePtrVector_assign,None,eCecDevicePtrVector)
+eCecDevicePtrVector.resize = new_instancemethod(_enigma.eCecDevicePtrVector_resize,None,eCecDevicePtrVector)
+eCecDevicePtrVector.insert = new_instancemethod(_enigma.eCecDevicePtrVector_insert,None,eCecDevicePtrVector)
+eCecDevicePtrVector.reserve = new_instancemethod(_enigma.eCecDevicePtrVector_reserve,None,eCecDevicePtrVector)
+eCecDevicePtrVector.capacity = new_instancemethod(_enigma.eCecDevicePtrVector_capacity,None,eCecDevicePtrVector)
+eCecDevicePtrVector_swigregister = _enigma.eCecDevicePtrVector_swigregister
+eCecDevicePtrVector_swigregister(eCecDevicePtrVector)
 
 HBBTV_USER_AGENT = _enigma.HBBTV_USER_AGENT
 class eHbbtv(object):
