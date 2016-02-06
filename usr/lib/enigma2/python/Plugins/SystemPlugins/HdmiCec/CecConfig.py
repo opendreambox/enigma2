@@ -22,6 +22,7 @@ class CecConfig(ConfigListScreen, Screen):
 
 		ConfigListScreen.__init__(self, [])
 		config.cec.sendpower.addNotifier(self._recreateSetup, initial_call=False)
+		config.cec.enable_avr.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.receivepower.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.volume_forward.addNotifier(self._recreateSetup, initial_call=False)
 
@@ -51,7 +52,9 @@ class CecConfig(ConfigListScreen, Screen):
 
 	def __onClose(self):
 		config.cec.sendpower.removeNotifier(self._recreateSetup)
+		config.cec.enable_avr.removeNotifier(self._recreateSetup)
 		config.cec.receivepower.removeNotifier(self._recreateSetup)
+		config.cec.volume_forward.removeNotifier(self._recreateSetup)
 
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)
@@ -67,13 +70,14 @@ class CecConfig(ConfigListScreen, Screen):
 	def _createSetup(self):
 		isExpert = config.usage.setup_level.index >= 2
 		lst = [
+			getConfigListEntry(_("OSD Name"), config.cec.name),
 			getConfigListEntry(_("Power Handling")),
 			getConfigListEntry(_("Send HDMI CEC Power Events"), config.cec.sendpower),
 			]
-		if config.cec.sendpower.value and isExpert:
-			lst.append(getConfigListEntry(_("Send explicit on/off to Audio System"), config.cec.avr_power_explicit))
-
-
+		if config.cec.sendpower.value:
+			lst.append(getConfigListEntry(_("Power on AV-Receiver"), config.cec.enable_avr))
+			if config.cec.enable_avr.value and isExpert:
+				lst.append(getConfigListEntry(_("Send explicit on/off to Audio System"), config.cec.avr_power_explicit))
 
 		lst.extend([
 				getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
@@ -94,6 +98,7 @@ class CecConfig(ConfigListScreen, Screen):
 			getConfigListEntry(_("Remote control")),
 			getConfigListEntry(_("Allow remote control via CEC"), config.cec.receive_remotekeys),
 			getConfigListEntry(_("Forward Volume keys to TV/AVR"), config.cec.volume_forward),
+			getConfigListEntry(_("Remote control repeat delay (ms)"), config.cec.remote_repeat_delay),
 		])
 		if config.cec.volume_forward.value:
 			lst.append(

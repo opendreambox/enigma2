@@ -155,6 +155,7 @@ class NetworkConfigGeneral(object):
 		#Log.i("service: %s/%s/%s" %(service.name(), service.type(), service.strength()))
 		strength = ""
 		security = ""
+		interfacepng = None
 		if service.type() == eNetworkService.TYPE_ETHERNET:
 			if service.connected():
 				interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wired-active.png"))
@@ -178,11 +179,19 @@ class NetworkConfigGeneral(object):
 				else:
 					interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/network_wireless-inactive.png"))
 		ip = ""
-
 		if service.connected():
 			ip = service.ipv4().get(eNetworkService.KEY_ADDRESS, "")
 			if not ip:
 				ip = service.ipv6().get(eNetworkService.KEY_ADDRESS, "")
+
+		if service.type() == eNetworkService.TYPE_BLUETOOTH:
+			if service.connected():
+				interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/bluetooth-active.png"))
+			else:
+				if service.state() != eNetworkManager.STATE_IDLE:
+					interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/bluetooth.png"))
+				else:
+					interfacepng = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/bluetooth-inactive.png"))
 
 
 		return (service.path(), interfacepng, strength, service.name(), ip, NetworkConfigGeneral.translateState(service.state()), None, security)

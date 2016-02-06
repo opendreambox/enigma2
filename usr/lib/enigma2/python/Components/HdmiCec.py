@@ -1,7 +1,8 @@
 from enigma import eCec
 
-from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection
+from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection, ConfigText, ConfigSelectionNumber
 from Tools.Log import Log
+from Tools.HardwareInfo import HardwareInfo
 
 class HdmiCec:
 	POWER_STATE_ON = eCec.POWER_STATE_ON
@@ -23,13 +24,16 @@ class HdmiCec:
 		}
 
 	config.cec = ConfigSubsection()
+	config.cec.name = ConfigText(default=HardwareInfo().get_device_name(), fixed_size = False)
 	config.cec.sendpower = ConfigOnOff(default=True)
+	config.cec.enable_avr = ConfigOnOff(default=True)
 	config.cec.avr_power_explicit = ConfigOnOff(default=False)
 	config.cec.receivepower = ConfigOnOff(default=False)
 	config.cec.enable_vendor_quirks = ConfigOnOff(default=False)
 	config.cec.receive_remotekeys = ConfigOnOff(default=True)
 	config.cec.volume_forward = ConfigOnOff(default=False)
 	config.cec.volume_target = ConfigSelection(VOLUME_TARGETS, default=VOLUME_TARGET_DYNAMIC)
+	config.cec.remote_repeat_delay = ConfigSelectionNumber(50, 300, 50, default=100, wraparound=True)
 	config.cec.activate_on_routing_info = ConfigOnOff(default=True)
 	config.cec.activate_on_routing_change = ConfigOnOff(default=True)
 	config.cec.activate_on_active_source = ConfigOnOff(default=True)
@@ -40,6 +44,10 @@ class HdmiCec:
 
 	def __init__(self):
 		self.instance = eCec.getInstance()
+		self.instance.setName(config.cec.name.value)
+
+	def isReady(self):
+		return self.instance.isReady()
 
 	def otpEnable(self):
 		self.instance.otpEnable()

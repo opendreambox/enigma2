@@ -4438,6 +4438,7 @@ eNetworkService.METHOD_6TO4 = _enigma.cvar.eNetworkService_METHOD_6TO4
 eNetworkService.METHOD_FIXED = _enigma.cvar.eNetworkService_METHOD_FIXED
 eNetworkService.METHOD_MANUAL = _enigma.cvar.eNetworkService_METHOD_MANUAL
 eNetworkService.METHOD_OFF = _enigma.cvar.eNetworkService_METHOD_OFF
+eNetworkService.TYPE_BLUETOOTH = _enigma.cvar.eNetworkService_TYPE_BLUETOOTH
 eNetworkService.TYPE_ETHERNET = _enigma.cvar.eNetworkService_TYPE_ETHERNET
 eNetworkService.TYPE_WIFI = _enigma.cvar.eNetworkService_TYPE_WIFI
 eNetworkService.IPV6_PRIVACY_DISABLED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_DISABLED
@@ -4463,6 +4464,7 @@ class eNetworkServicePtr(object):
     METHOD_FIXED = _swig_property(_enigma.eNetworkServicePtr_METHOD_FIXED_get)
     METHOD_MANUAL = _swig_property(_enigma.eNetworkServicePtr_METHOD_MANUAL_get)
     METHOD_OFF = _swig_property(_enigma.eNetworkServicePtr_METHOD_OFF_get)
+    TYPE_BLUETOOTH = _swig_property(_enigma.eNetworkServicePtr_TYPE_BLUETOOTH_get)
     TYPE_ETHERNET = _swig_property(_enigma.eNetworkServicePtr_TYPE_ETHERNET_get)
     TYPE_WIFI = _swig_property(_enigma.eNetworkServicePtr_TYPE_WIFI_get)
     IPV6_PRIVACY_DISABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_DISABLED_get)
@@ -5468,16 +5470,21 @@ class eCec(object):
     RC_YELLOW = _enigma.eCec_RC_YELLOW
     IOCTL_DEVICE_TYPE_TUNER = _enigma.eCec_IOCTL_DEVICE_TYPE_TUNER
     IOCTL_DEVICE_TYPE_PLAYBACK = _enigma.eCec_IOCTL_DEVICE_TYPE_PLAYBACK
-    def vendor(*args):
-        """vendor(uint32_t id) -> std::string const"""
-        return _enigma.eCec_vendor(*args)
-
-    vendor = staticmethod(vendor)
     POWER_STATE_ON = _enigma.eCec_POWER_STATE_ON
     POWER_STATE_STANDBY = _enigma.eCec_POWER_STATE_STANDBY
     POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.eCec_POWER_STATE_TRANSITION_STANDBY_TO_ON
     POWER_STATE_TRANSITION_ON_TO_STANDBY = _enigma.eCec_POWER_STATE_TRANSITION_ON_TO_STANDBY
     POWER_STATE_UNKNOWN = _enigma.eCec_POWER_STATE_UNKNOWN
+    def vendor(*args):
+        """vendor(uint32_t id) -> std::string const"""
+        return _enigma.eCec_vendor(*args)
+
+    vendor = staticmethod(vendor)
+    def checkMessageVendor(*args):
+        """checkMessageVendor(uint32_t vendor, uint8_t * message) -> bool"""
+        return _enigma.eCec_checkMessageVendor(*args)
+
+    checkMessageVendor = staticmethod(checkMessageVendor)
     def __init__(self): 
         """__init__(eCec self) -> eCec"""
         _enigma.eCec_swiginit(self,_enigma.new_eCec())
@@ -5534,6 +5541,14 @@ class eCec(object):
     def get_volume_control_dest(self):
         """get_volume_control_dest(eCec self) -> int"""
         return _enigma.eCec_get_volume_control_dest(self)
+
+    def isReady(self):
+        """isReady(eCec self) -> bool"""
+        return _enigma.eCec_isReady(self)
+
+    def setName(self, *args):
+        """setName(eCec self, std::string const & name)"""
+        return _enigma.eCec_setName(self, *args)
 
     def setPowerstate(self, *args):
         """setPowerstate(eCec self, uint8_t newstate)"""
@@ -5598,6 +5613,7 @@ class eCec(object):
         """getKnownDevices(eCec self) -> eCecDevicePtrVector"""
         return _enigma.eCec_getKnownDevices(self)
 
+    ready = _swig_property(_enigma.eCec_ready_get, _enigma.eCec_ready_set)
     receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
     onKeyPress = _swig_property(_enigma.eCec_onKeyPress_get, _enigma.eCec_onKeyPress_set)
@@ -5614,6 +5630,8 @@ eCec.cec_sendkey = new_instancemethod(_enigma.eCec_cec_sendkey,None,eCec)
 eCec.cec_register_raw_command = new_instancemethod(_enigma.eCec_cec_register_raw_command,None,eCec)
 eCec.cec_unregister_raw_command = new_instancemethod(_enigma.eCec_cec_unregister_raw_command,None,eCec)
 eCec.get_volume_control_dest = new_instancemethod(_enigma.eCec_get_volume_control_dest,None,eCec)
+eCec.isReady = new_instancemethod(_enigma.eCec_isReady,None,eCec)
+eCec.setName = new_instancemethod(_enigma.eCec_setName,None,eCec)
 eCec.setPowerstate = new_instancemethod(_enigma.eCec_setPowerstate,None,eCec)
 eCec.otpEnable = new_instancemethod(_enigma.eCec_otpEnable,None,eCec)
 eCec.otpDisable = new_instancemethod(_enigma.eCec_otpDisable,None,eCec)
@@ -5635,6 +5653,10 @@ eCec_swigregister(eCec)
 def eCec_vendor(*args):
   """eCec_vendor(uint32_t id) -> std::string const"""
   return _enigma.eCec_vendor(*args)
+
+def eCec_checkMessageVendor(*args):
+  """eCec_checkMessageVendor(uint32_t vendor, uint8_t * message) -> bool"""
+  return _enigma.eCec_checkMessageVendor(*args)
 
 def eCec_getInstance():
   """eCec_getInstance() -> eCec"""

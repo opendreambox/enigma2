@@ -8,6 +8,7 @@ from Plugins.Plugin import PluginDescriptor
 from CecConfig import CecConfig
 
 from enigma import getExitCode
+from Tools.Log import Log
 from Tools.Notifications import isPendingOrVisibleNotificationID
 
 from CecRemoteHandler import CecRemoteHandler
@@ -29,11 +30,20 @@ class Cec(object):
 			return
 		self.session = session
 		config.misc.standbyCounter.addNotifier(self._onStandby, initial_call = False)
-		self.cec_recvStandby_conn = hdmi_cec.instance.receivedStandby.connect(self.__receivedStandby)
-		self.cec_isNowActive_conn = hdmi_cec.instance.isNowActive.connect(self.__receivedNowActive)
+		self._cec_recvStandby_conn = hdmi_cec.instance.receivedStandby.connect(self.__receivedStandby)
+		self._cec_isNowActive_conn = hdmi_cec.instance.isNowActive.connect(self.__receivedNowActive)
+		self._cec_ready_conn = hdmi_cec.instance.ready.connect(self.ready)
 		self.actionSlot = eActionMap.getInstance().bindAction('', -0x7FFFFFFF, self._onKeyPress) #highest prio
 		self._remoteHandler = CecRemoteHandler() #the handler registeres all cec stuff itself, so no need to do anything else here
 		self._started = True
+		hdmi_cec.setPowerState(eCec.POWER_STATE_ON)
+
+	def ready(self):
+		if hdmi_cec.isReady():
+			Log.i("READY to power on!")
+			if self._cec_ready_conn:
+				self._cec_ready_conn = None
+			self.powerOn()
 
 	def __receivedStandby(self):
 		if config.cec.receivepower.value:
@@ -63,6 +73,7 @@ class Cec(object):
 			hdmi_cec.otpEnable()
 			if config.cec.avr_power_explicit.value:
 				self._remoteHandler.sendKey(5, eCec.RC_POWER_ON)
+		if config.cec.enable_avr.value:
 			hdmi_cec.systemAudioRequest()
 
 	def powerOff(self):
@@ -99,7 +110,7 @@ def autostart(reason, **kwargs):
 	if reason == 0:
 		if session is not None:
 			if not isPendingOrVisibleNotificationID("Standby"):
-				cec.powerOn()
+				cec.ready()
 	elif getExitCode() == 1: # send CEC poweroff only on complete box shutdown
 		cec.powerOff()
 

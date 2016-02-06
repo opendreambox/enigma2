@@ -1,4 +1,5 @@
 from enigma import eCec, eActionMap
+from e2reactor import monotonic_time
 
 from Components.HdmiCec import hdmi_cec
 from Components.config import config
@@ -74,7 +75,8 @@ class CecRemoteHandler(object):
 	def __init__(self):
 		self._press_conn = hdmi_cec.instance.onKeyPress.connect(self._receivedKeyPress)
 		self._release_conn = hdmi_cec.instance.onKeyRelease.connect(self._receivedKeyRelease)
-		self._lastKey = {}
+		self._lastKey = -1
+		self._lastKeyPress = 0
 
 	def _receivedKeyPress(self, sender, code):
 		if not config.cec.receive_remotekeys.value:
@@ -91,17 +93,34 @@ class CecRemoteHandler(object):
 				am.keyPressed(self.REMOTE_TYPE_ADVANCED, mcode, self.FLAG_MAKE)
 				am.keyPressed(self.REMOTE_TYPE_ADVANCED, mcode, self.FLAG_BREAK)
 
+	def _isRepeatAllowed(self):
+		minDelay = int(config.cec.remote_repeat_delay.value)
+		return ( monotonic_time() - self._lastKeyPress ) * 1000 >= minDelay
+
+	def _keyPressed(self, keyid):
+		self._lastKey = keyid
+		self._lastKeyPress = monotonic_time()
+
 	def _receivedKeyRelease(self, sender):
 		pass
 
 	def sendSystemAudioKey(self, keyid):
-		if keyid in self.SYSTEM_AUDIO_KEYS:
-			keyid = self.KEY_MAP_SEND[keyid]
-			hdmi_cec.sendSystemAudioKey(keyid)
+		if keyid not in self.SYSTEM_AUDIO_KEYS:
+			return
+		keyid = self.KEY_MAP_SEND[keyid]
+		if keyid == self._lastKey and not self._isRepeatAllowed():
+			Log.d("skipping keypress for %s to honor minimum delay" %keyid)
+			return
+		self._keyPressed(keyid)
+		hdmi_cec.sendSystemAudioKey(keyid)
 
 	def sendKey(self, dest, keyid, translate=False):
 		if translate:
 			if not keyid in self.KEY_MAP_SEND.keys():
 				return
 			keyid = self.KEY_MAP_SEND[keyid]
+		if keyid == self._lastKey and not self._isRepeatAllowed():
+			Log.d("skipping keypress for %s to honor minimum delay" %keyid)
+			return
+		self._keyPressed(keyid)
 		hdmi_cec.sendKey(dest, keyid)

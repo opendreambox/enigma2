@@ -70,7 +70,7 @@ class NetworkAgent(object):
 
 			value = ""
 			if previousPassphrase and request_part["Type"] == previousPassphrase["Type"]:
-				value = str(previousPassphrase["value"])
+				value = str(previousPassphrase["Value"])
 
 			alternatives = request_part.get("Alternates", [])
 			return {

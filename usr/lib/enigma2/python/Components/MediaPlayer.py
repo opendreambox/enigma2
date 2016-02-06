@@ -6,6 +6,7 @@ from os import path
 from enigma import eListboxPythonMultiContent, RT_VALIGN_CENTER, gFont, eServiceCenter
 
 from Tools.LoadPixmap import LoadPixmap
+from skin import TemplatedListFonts, componentSizes
 
 STATE_PLAY = 0
 STATE_PAUSE = 1
@@ -21,13 +22,19 @@ RewindIcon = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/
 ForwardIcon = LoadPixmap(path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/icons/ico_mp_forward.png"))
 
 def PlaylistEntryComponent(serviceref, state):
+	sizes = componentSizes[PlayList.SKIN_COMPONENT_KEY]
+	iconWidth = sizes.get(PlayList.SKIN_COMPONENT_ICON_WIDTH, 20)
+	iconHeight = sizes.get(PlayList.SKIN_COMPONENT_ICON_HEIGHT, 16)
+	configEntryWidth = sizes.get(componentSizes.ITEM_WIDTH, 1000)
+	configEntryHeight = sizes.get(componentSizes.ITEM_HEIGHT, 22)
+
 	res = [ serviceref ]
 	text = serviceref.getName()
 	if text is "":
 		text = path.split(serviceref.getPath().split('/')[-1])[1]
 		if len(text) == 0:
 			text = serviceref.getPath()
-	res.append((eListboxPythonMultiContent.TYPE_TEXT,25, 1, 1000, 22, 0, RT_VALIGN_CENTER, text))
+	res.append((eListboxPythonMultiContent.TYPE_TEXT,iconWidth, 0, configEntryWidth, configEntryHeight, 0, RT_VALIGN_CENTER, text))
 	png = None
 	if state == STATE_PLAY:
 		png = PlayIcon
@@ -41,15 +48,20 @@ def PlaylistEntryComponent(serviceref, state):
 		png = ForwardIcon
 
 	if png is not None:
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 5, 3, 16, 16, png))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 3, iconWidth,iconHeight, png))
 
 	return res
 
 class PlayList(MenuList):
+	SKIN_COMPONENT_KEY = "MediaplayerPlayList"
+	SKIN_COMPONENT_ICON_HEIGHT = "iconHeight"
+	SKIN_COMPONENT_ICON_WIDTH = "iconWidth"
+
 	def __init__(self, enableWrapAround = False):
 		MenuList.__init__(self, [], enableWrapAround, eListboxPythonMultiContent)
-		self.l.setFont(0, gFont("Regular", 18))
-		self.l.setItemHeight(23)
+		tlf = TemplatedListFonts()
+		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
+		self.l.setItemHeight(componentSizes.itemHeight(self.SKIN_COMPONENT_KEY, 23))
 		self.currPlaying = -1
 		self.oldCurrPlaying = -1
 		self.serviceHandler = eServiceCenter.getInstance()

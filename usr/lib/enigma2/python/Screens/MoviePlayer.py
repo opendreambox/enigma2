@@ -2,24 +2,27 @@
 
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
-from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport
+from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport
 
 from Components.ActionMap import ActionMap
+from Components.ServiceEventTracker import InfoBarBase
 
 from Tools.Log import Log
 
-class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport):
+class MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
 	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None, pauseCallback = None, streamMode = False):
 		Screen.__init__(self, session)
+		InfoBarBase.__init__(self)
 		InfoBarNotifications.__init__(self)
 		InfoBarSeek.__init__(self)
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
 		InfoBarCueSheetSupport.__init__(self)
+		InfoBarServiceErrorPopupSupport.__init__(self)
 		#TODO FIX THIS HACK
 		# currently we just want to be able to resume playback (if supported by e2),
 		# for now we don't care about cutting or jumpmarks or anything like that...
@@ -36,9 +39,12 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 		self.screen_timeout = 5000
 		self.nextservice = None
 		self.is_closing = False
-		self.restoreService = restoreService
+
+		if not restoreService: # lastservice is handled by PlayerBase which is inherited by InfoBarSeek
+			# take care... when a zap timer want to zap to a service the player is closed and lastservice is changed in onClose callback of PlayerBase!
+			self.lastservice = None
+
 		self.streamMode = streamMode
-		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
 
 		self["actions"] = ActionMap(["OkCancelActions", "InfobarSeekActions", "MediaPlayerActions", "MovieSelectionActions"],
 		{
@@ -52,15 +58,12 @@ class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, In
 
 		self.returning = False
 
-		self.onShown.append(self.play)
+		self.onFirstExecBegin.append(self.play)
 		self.onClose.append(self.__onClose)
 
 	def __onClose(self):
 		if self.stopCB != None:
-				self.stopCB()
-		self.session.nav.stopService()
-		if self.restoreService:
-			self.session.nav.playService(self.oldService)
+			self.stopCB()
 
 	def createSummary(self):
 		return SimpleLCDScreen
