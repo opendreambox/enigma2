@@ -30,8 +30,15 @@ from time import localtime, time, mktime, strftime
 
 class EPGList(HTMLComponent, GUIComponent):
 	GUI_WIDGET = eListbox
+	SKIN_COMPONENT_KEY = "MultiEPGList"
+	SKIN_COMPONENT_ICON_HEIGHT = "iconHeight"
+	SKIN_COMPONENT_ICON_WIDTH = "iconWidth"
 
 	def __init__(self, selChangedCB=None, timer = None, time_epoch = 120, overjump_empty=True):
+		sizes = componentSizes[EPGList.SKIN_COMPONENT_KEY]
+		self._iconWidth = sizes.get(EPGList.SKIN_COMPONENT_ICON_WIDTH, 22)
+		self._iconHeight = sizes.get(EPGList.SKIN_COMPONENT_ICON_HEIGHT, 21)
+
 		self.cur_event = None
 		self.cur_service = None
 		self.offs = 0
@@ -273,7 +280,7 @@ class EPGList(HTMLComponent, GUIComponent):
 					backcolor = backColor, backcolor_sel = backColorSelected, border_width = 1, border_color = borderColor))
 				if rec and ewidth > 23:
 					res.append(MultiContentEntryPixmapAlphaTest(
-						pos = (left+xpos+ewidth-22, top+height-22), size = (21, 21),
+						pos = (left+xpos+ewidth-5-self._iconWidth, top+height-5-self._iconHeight), size = (self._iconWidth, self._iconHeight),
 						png = self.getClockPixmap(service, ev[2], ev[3], ev[0]),
 						backcolor = backColor,
 						backcolor_sel = backColorSelected))

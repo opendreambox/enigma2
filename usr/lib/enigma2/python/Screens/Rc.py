@@ -1,11 +1,16 @@
 from Components.Pixmap import MovingPixmap, MultiPixmap
-from Tools.Directories import resolveFilename, SCOPE_SKIN
+from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from xml.etree.ElementTree import ElementTree
 from Components.config import config, ConfigInteger
+from skin import componentSizes
 
 config.misc.rcused = ConfigInteger(default = 1)
 
 class Rc:
+	SKIN_COMPONENT_KEY = "HelpMenuList"
+	SKIN_COMPONENT_RCHEIGHT = "rcheight"
+	SKIN_COMPONENT_RCHEIGHTHALF = "rcheighthalf"
+
 	def __init__(self):
 		self["rc"] = MultiPixmap()
 		self["arrowdown"] = MovingPixmap()
@@ -15,13 +20,17 @@ class Rc:
 		
 		config.misc.rcused = ConfigInteger(default = 1)
 		
-		self.rcheight = 500
-		self.rcheighthalf = 250
-		
+		sizes = componentSizes[Rc.SKIN_COMPONENT_KEY]
+		rcheight = sizes.get(Rc.SKIN_COMPONENT_RCHEIGHT, 500)
+		rcheighthalf = sizes.get(Rc.SKIN_COMPONENT_RCHEIGHTHALF, 250)
+
+		self.rcheight = rcheight
+		self.rcheighthalf = rcheighthalf
+
 		self.selectpics = []
 		self.selectpics.append((self.rcheighthalf, ["arrowdown", "arrowdown2"], (-18,-70)))
 		self.selectpics.append((self.rcheight, ["arrowup", "arrowup2"], (-18,0)))
-		
+
 		self.readPositions()
 		self.clearSelectedKeys()
 		self.onShown.append(self.initRc)
@@ -30,7 +39,7 @@ class Rc:
 		self["rc"].setPixmapNum(config.misc.rcused.value)		
 				
 	def readPositions(self):
-		tree = ElementTree(file = resolveFilename(SCOPE_SKIN, "rcpositions.xml"))
+		tree = ElementTree(file = resolveFilename(SCOPE_CURRENT_SKIN, "rcpositions.xml"))
 		rcs = tree.getroot()
 		self.rcs = {}
 		for rc in rcs:

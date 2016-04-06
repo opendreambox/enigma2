@@ -132,6 +132,12 @@ to generate HTML."""
 
 	selection_enabled = property(lambda self: self.__selection_enabled, setSelectionEnabled)
 
+	def hide(self):
+		self.changed((self.CHANGED_SPECIFIC, "hide"))
+
+	def show(self):
+		self.changed((self.CHANGED_SPECIFIC, "show"))
+
 	def updateList(self, list):
 		"""Changes the list without changing the selection or emitting changed Events"""
 		max_index = len(list) - 1

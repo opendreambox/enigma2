@@ -38,8 +38,10 @@ class Cec(object):
 		self._started = True
 		hdmi_cec.setPowerState(eCec.POWER_STATE_ON)
 
-	def ready(self):
-		if hdmi_cec.isReady():
+	def ready(self, *args):
+		if isPendingOrVisibleNotificationID("Standby"):
+			return
+		if hdmi_cec.isReady() or config.cec.ignore_ready_state.value:
 			Log.i("READY to power on!")
 			if self._cec_ready_conn:
 				self._cec_ready_conn = None
@@ -73,8 +75,8 @@ class Cec(object):
 			hdmi_cec.otpEnable()
 			if config.cec.avr_power_explicit.value:
 				self._remoteHandler.sendKey(5, eCec.RC_POWER_ON)
-		if config.cec.enable_avr.value:
-			hdmi_cec.systemAudioRequest()
+			if config.cec.enable_avr.value:
+				hdmi_cec.systemAudioRequest()
 
 	def powerOff(self):
 		if self._idle_to_standby:
@@ -109,8 +111,7 @@ def autostart(reason, **kwargs):
 		cec.start(session)
 	if reason == 0:
 		if session is not None:
-			if not isPendingOrVisibleNotificationID("Standby"):
-				cec.ready()
+			cec.ready()
 	elif getExitCode() == 1: # send CEC poweroff only on complete box shutdown
 		cec.powerOff()
 

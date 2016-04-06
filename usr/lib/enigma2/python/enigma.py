@@ -2232,7 +2232,18 @@ eWidget_swigregister(eWidget)
 def getDesktop(*args):
   return _enigma.getDesktop(*args)
 getDesktop = _enigma.getDesktop
-class eLabel(eWidget):
+class eAnimatedWidget(eWidget):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.eAnimatedWidget_swiginit(self,_enigma.new_eAnimatedWidget(*args))
+    __swig_destroy__ = _enigma.delete_eAnimatedWidget
+eAnimatedWidget.doBlit = new_instancemethod(_enigma.eAnimatedWidget_doBlit,None,eAnimatedWidget)
+eAnimatedWidget.prepareForChangeAnimation = new_instancemethod(_enigma.eAnimatedWidget_prepareForChangeAnimation,None,eAnimatedWidget)
+eAnimatedWidget_swigregister = _enigma.eAnimatedWidget_swigregister
+eAnimatedWidget_swigregister(eAnimatedWidget)
+
+class eLabel(eAnimatedWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
@@ -2259,7 +2270,7 @@ eLabel.calculateSize = new_instancemethod(_enigma.eLabel_calculateSize,None,eLab
 eLabel_swigregister = _enigma.eLabel_swigregister
 eLabel_swigregister(eLabel)
 
-class ePixmap(eWidget):
+class ePixmap(eAnimatedWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
@@ -2288,6 +2299,7 @@ class eCanvas(ePixmap):
     def __init__(self, *args): 
         _enigma.eCanvas_swiginit(self,_enigma.new_eCanvas(*args))
     __swig_destroy__ = _enigma.delete_eCanvas
+eCanvas.prepareForChangeAnimation = new_instancemethod(_enigma.eCanvas_prepareForChangeAnimation,None,eCanvas)
 eCanvas.setSize = new_instancemethod(_enigma.eCanvas_setSize,None,eCanvas)
 eCanvas.clear = new_instancemethod(_enigma.eCanvas_clear,None,eCanvas)
 eCanvas.fillRect = new_instancemethod(_enigma.eCanvas_fillRect,None,eCanvas)
@@ -3482,6 +3494,7 @@ class eDVBServicePMTHandler(object):
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     setDDPSupport = staticmethod(_enigma.eDVBServicePMTHandler_setDDPSupport)
+    setH265Support = staticmethod(_enigma.eDVBServicePMTHandler_setH265Support)
     eventNoResources = _enigma.eDVBServicePMTHandler_eventNoResources
     eventTuneFailed = _enigma.eDVBServicePMTHandler_eventTuneFailed
     eventNoPAT = _enigma.eDVBServicePMTHandler_eventNoPAT
@@ -3502,6 +3515,10 @@ eDVBServicePMTHandler_swigregister(eDVBServicePMTHandler)
 def eDVBServicePMTHandler_setDDPSupport(*args):
   return _enigma.eDVBServicePMTHandler_setDDPSupport(*args)
 eDVBServicePMTHandler_setDDPSupport = _enigma.eDVBServicePMTHandler_setDDPSupport
+
+def eDVBServicePMTHandler_setH265Support(*args):
+  return _enigma.eDVBServicePMTHandler_setH265Support(*args)
+eDVBServicePMTHandler_setH265Support = _enigma.eDVBServicePMTHandler_setH265Support
 
 class eDeviceEventManager(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -5609,6 +5626,21 @@ class eCec(object):
         """setVendor(eCec self, int vendor)"""
         return _enigma.eCec_setVendor(self, *args)
 
+    def handleExternal(self, isExternal=True):
+        """
+        handleExternal(eCec self, bool isExternal=True)
+        handleExternal(eCec self)
+        """
+        return _enigma.eCec_handleExternal(self, isExternal)
+
+    def sendMsg(self, *args):
+        """sendMsg(eCec self, int to, int cmd, IntList data) -> bool"""
+        return _enigma.eCec_sendMsg(self, *args)
+
+    def requireAddress(self):
+        """requireAddress(eCec self)"""
+        return _enigma.eCec_requireAddress(self)
+
     def getKnownDevices(self):
         """getKnownDevices(eCec self) -> eCecDevicePtrVector"""
         return _enigma.eCec_getKnownDevices(self)
@@ -5646,6 +5678,9 @@ eCec.getDeviceType = new_instancemethod(_enigma.eCec_getDeviceType,None,eCec)
 eCec.setDeviceType = new_instancemethod(_enigma.eCec_setDeviceType,None,eCec)
 eCec.getVendor = new_instancemethod(_enigma.eCec_getVendor,None,eCec)
 eCec.setVendor = new_instancemethod(_enigma.eCec_setVendor,None,eCec)
+eCec.handleExternal = new_instancemethod(_enigma.eCec_handleExternal,None,eCec)
+eCec.sendMsg = new_instancemethod(_enigma.eCec_sendMsg,None,eCec)
+eCec.requireAddress = new_instancemethod(_enigma.eCec_requireAddress,None,eCec)
 eCec.getKnownDevices = new_instancemethod(_enigma.eCec_getKnownDevices,None,eCec)
 eCec_swigregister = _enigma.eCec_swigregister
 eCec_swigregister(eCec)
@@ -6683,6 +6718,78 @@ class eSignal2IntInt(object):
 eSignal2IntInt.connect2 = new_instancemethod(_enigma.eSignal2IntInt_connect2,None,eSignal2IntInt)
 eSignal2IntInt_swigregister = _enigma.eSignal2IntInt_swigregister
 eSignal2IntInt_swigregister(eSignal2IntInt)
+
+class eSlot2IntIntList(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot2IntIntList:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2IntIntList_swiginit(self,_enigma.new_eSlot2IntIntList(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2IntIntList
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2IntIntList(self)
+        return weakref_proxy(self)
+eSlot2IntIntList.cb_func = new_instancemethod(_enigma.eSlot2IntIntList_cb_func,None,eSlot2IntIntList)
+eSlot2IntIntList_swigregister = _enigma.eSlot2IntIntList_swigregister
+eSlot2IntIntList_swigregister(eSlot2IntIntList)
+
+class eSignal2IntIntList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot2IntIntList(eSlot2IntIntList):
+            def __init__(self, func):
+                eSlot2IntIntList.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2IntIntList(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal2IntIntList_swiginit(self,_enigma.new_eSignal2IntIntList())
+    __swig_destroy__ = _enigma.delete_eSignal2IntIntList
+eSignal2IntIntList.connect2 = new_instancemethod(_enigma.eSignal2IntIntList_connect2,None,eSignal2IntIntList)
+eSignal2IntIntList_swigregister = _enigma.eSignal2IntIntList_swigregister
+eSignal2IntIntList_swigregister(eSignal2IntIntList)
+
+class eSlot3IntIntIntList(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self): 
+        if self.__class__ == eSlot3IntIntIntList:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot3IntIntIntList_swiginit(self,_enigma.new_eSlot3IntIntIntList(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot3IntIntIntList
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot3IntIntIntList(self)
+        return weakref_proxy(self)
+eSlot3IntIntIntList.cb_func = new_instancemethod(_enigma.eSlot3IntIntIntList_cb_func,None,eSlot3IntIntIntList)
+eSlot3IntIntIntList_swigregister = _enigma.eSlot3IntIntIntList_swigregister
+eSlot3IntIntIntList_swigregister(eSlot3IntIntIntList)
+
+class eSignal3IntIntIntList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def connect(self, func):
+        class ePythonSlot3IntIntIntList(eSlot3IntIntIntList):
+            def __init__(self, func):
+                eSlot3IntIntIntList.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot3IntIntIntList(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+    def __init__(self): 
+        _enigma.eSignal3IntIntIntList_swiginit(self,_enigma.new_eSignal3IntIntIntList())
+    __swig_destroy__ = _enigma.delete_eSignal3IntIntIntList
+eSignal3IntIntIntList.connect2 = new_instancemethod(_enigma.eSignal3IntIntIntList_connect2,None,eSignal3IntIntIntList)
+eSignal3IntIntIntList_swigregister = _enigma.eSignal3IntIntIntList_swigregister
+eSignal3IntIntIntList_swigregister(eSignal3IntIntIntList)
 
 class eSlot1StrMap(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

@@ -11,7 +11,7 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, fileExists
 
 from time import time, localtime
-from re import compile
+from Tools.PiconResolver import PiconResolver
 
 import NavigationInstance
 
@@ -19,26 +19,9 @@ class PiconLoader():
 	def __init__(self):
 		self.nameCache = { }
 		config.usage.configselection_piconspath.addNotifier(self.piconPathChanged, initial_call = False)
-		self.partnerbox = compile('1:0:[0-9a-fA-F]+:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[1-9a-fA-F]+[0-9a-fA-F]*:[0-9a-fA-F]+:[0-9a-fA-F]+:[0-9a-fA-F]+:http')
 
 	def getPicon(self, sRef):
-		pos = sRef.rfind(':')
-		pos2 = sRef.rfind(':', 0, pos)
-		if pos - pos2 == 1 or self.partnerbox.match(sRef) is not None:
-			sRef = sRef[:pos2].replace(':', '_')
-		else:
-			sRef = sRef[:pos].replace(':', '_')
-		pngname = self.nameCache.get(sRef, "")
-		if pngname == "":
-			pngname = self.findPicon(sRef)
-			if pngname != "":
-				self.nameCache[sRef] = pngname
-			if pngname == "": # no picon for service found
-				pngname = self.nameCache.get("default", "")
-				if pngname == "": # no default yet in cache..
-					pngname = self.findPicon("picon_default")
-					if pngname != "":
-						self.nameCache["default"] = pngname
+		pngname = PiconResolver.getPngName(sRef, self.nameCache, self.findPicon)
 		if fileExists(pngname):
 			return LoadPixmap(cached = True, path = pngname)
 		else:
@@ -355,7 +338,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				additionalInfoColor = self.additionalInfoColor
 				additionalInfoColorSelected = self.additionalInfoColorSelected
 
-		if (marked == 0 and isPlayable and service_info and self.is_playable_ignore.valid() and not service_info.isPlayable(service, self.is_playable_ignore)):
+		if (marked == 0 and isPlayable and service_info and not service_info.isPlayable(service, self.is_playable_ignore)):
 			forgroundColor = forgroundColorSel = additionalInfoColor = additionalInfoColorSelected = serviceDescriptionColor = serviceDescriptionColorSelected = self.serviceNotAvail
 
 		# set windowstyle
@@ -392,13 +375,13 @@ class ServiceList(HTMLComponent, GUIComponent):
 		# picons
 		if isPlayable and showPicons:
 			picon = self._buildOptionEntryServicePicon(service)
+			if bigPicons:
+				pix_width = self._componentSizes.get(self.KEY_PICON_WIDTH_BIG, 108)
+			else:
+				pix_width = self._componentSizes.get(self.KEY_PICON_WIDTH, 58)
 			if picon:
-				if bigPicons:
-					pix_width = self._componentSizes.get(self.KEY_PICON_WIDTH_BIG, 108)
-				else:
-					pix_width = self._componentSizes.get(self.KEY_PICON_WIDTH, 58)
 				res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, xoffset, 0, pix_width, height, picon))
-				xoffset += pix_width
+			xoffset += pix_width
 			xoffset += self._componentSizes.get(self.KEY_PICON_OFFSET, 8)
 
 		# progressbar between servicenumber and servicename

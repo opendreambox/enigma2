@@ -15,6 +15,13 @@ from Tools.BoundFunction import boundFunction
 FOCUS_CONFIG, FOCUS_STREAMS = range(2)
 [PAGE_AUDIO, PAGE_SUBTITLES] = ["audio", "subtitles"]
 
+def subs_equal(s1, s2):
+	if s1[0] != s2[0]:
+		return False
+	if s1[0] == 1:
+		return s1[2] == s2[2] and s1[3] == s2[3]
+	return s1[1] == s2[1]
+
 class AudioSelection(Screen, ConfigListScreen):
 	def __init__(self, session, infobar=None, page=PAGE_AUDIO):
 		Screen.__init__(self, session)
@@ -34,7 +41,6 @@ class AudioSelection(Screen, ConfigListScreen):
 				iPlayableService.evUpdatedInfo: self.__updatedInfo
 			})
 		self.cached_subtitle_checked = False
-		self.__last_selected_subtitle_idx = None
 		self["actions"] = NumberActionMap(["ColorActions", "SetupActions", "DirectionActions"],
 		{
 			"red": self.keyRed,
@@ -140,7 +146,6 @@ class AudioSelection(Screen, ConfigListScreen):
 
 			if self.subtitlesEnabled():
 				sel = self.infobar.selected_subtitle
-				self.__last_selected_subtitle_idx = sel[1]
 			else:
 				sel = None
 
@@ -156,7 +161,7 @@ class AudioSelection(Screen, ConfigListScreen):
 					language = _("<unknown>")
 					selected = ""
 
-					if sel and x[1] == sel[1]:
+					if sel and subs_equal(sel, x):
 						selected = _("Running")
 						if x[0] == 2 and x[3] & eServiceMP3.SUB_FILTER_SHOW_FORCED_ONLY:
 							selected = _("forced only")
@@ -364,7 +369,7 @@ class AudioSelection(Screen, ConfigListScreen):
 					status = ("enable") #_()
 					if self.subtitlesEnabled():
 						sel = self.infobar.selected_subtitle
-						if sel and sel[1] == cur[0][1] and (self.settings.togglesubs and int(self.settings.togglesubs.getValue()) == cur[0][3]):
+						if sel and subs_equal(sel, cur[0]) and (self.settings.togglesubs is None or int(self.settings.togglesubs.getValue()) == cur[0][3]):
 							status = ("disable")  #_()
 					text = _("Press OK to %s the subtitle track %s and close") % (status, str(cur[2]))
 		self["help_label"].setText(text)
@@ -373,7 +378,7 @@ class AudioSelection(Screen, ConfigListScreen):
 		if self.settings.menupage.getValue() == PAGE_SUBTITLES:
 			cur = self["streams"].getCurrent()
 			conflist = self["config"].list
-			if cur and cur[0] and cur[0][5] > 0:
+			if cur and cur[0] > 1 and cur[0][5] > 0:
 				default = False
 				choicelist = []
 				forcefilter = ""
@@ -398,11 +403,11 @@ class AudioSelection(Screen, ConfigListScreen):
 			val = int(self.settings.togglesubs.getValue())
 		if self.subtitlesEnabled():
 			sel = self.infobar.selected_subtitle
-			if sel and sel[1] == cur[0][1] and sel[3] == val:
+			if sel and subs_equal(sel, cur[0]) and (sel[0] < 2 or sel[3] == val):
 				val = False
 		if val and cur and isinstance(cur[0], tuple):
 			x = list(cur[0])
-			if isinstance(val, int):
+			if type(True) != type(val): # this is a check if val is a boolean type! ... not int
 				x[3] = val
 			self.enableSubtitle(tuple(x))
 		else:

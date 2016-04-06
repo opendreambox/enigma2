@@ -24,6 +24,7 @@ class HdmiCec:
 		}
 
 	config.cec = ConfigSubsection()
+	config.cec.enabled = ConfigOnOff(default=True)
 	config.cec.name = ConfigText(default=HardwareInfo().get_device_name(), fixed_size = False)
 	config.cec.sendpower = ConfigOnOff(default=True)
 	config.cec.enable_avr = ConfigOnOff(default=True)
@@ -41,6 +42,7 @@ class HdmiCec:
 	config.cec.activate_on_tvpower = ConfigOnOff(default=True)
 	config.cec.ignore_powerstates = ConfigOnOff(default=False)
 	config.cec.ignore_active_source_nontv = ConfigOnOff(default=False)
+	config.cec.ignore_ready_state = ConfigOnOff(default=False)
 
 	def __init__(self):
 		self.instance = eCec.getInstance()

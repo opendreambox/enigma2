@@ -111,6 +111,12 @@ class Listbox(Renderer, object):
 			self.backlogMode = self.source.backlogMode
 		if len(what) > 1 and isinstance(what[1], str) and what[1] == "style":
 			return
+		elif len(what) > 1 and isinstance(what[1], str) and what[1] == "hide":
+			self.instance.hide()
+			return
+		elif len(what) > 1 and isinstance(what[1], str) and what[1] == "show":
+			self.instance.show()
+			return
 		self.content = self.source.content
 
 	def entry_changed(self, index):

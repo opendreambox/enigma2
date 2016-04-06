@@ -21,6 +21,7 @@ class CecConfig(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 
 		ConfigListScreen.__init__(self, [])
+		config.cec.enabled.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.sendpower.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.enable_avr.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.receivepower.addNotifier(self._recreateSetup, initial_call=False)
@@ -44,13 +45,13 @@ class CecConfig(ConfigListScreen, Screen):
 		}, -2)
 
 		self.onClose.append(self.__onClose)
-
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def _showDeviceList(self):
 		self.session.open(CeCDeviceList)
 
 	def __onClose(self):
+		config.cec.enabled.removeNotifier(self._recreateSetup)
 		config.cec.sendpower.removeNotifier(self._recreateSetup)
 		config.cec.enable_avr.removeNotifier(self._recreateSetup)
 		config.cec.receivepower.removeNotifier(self._recreateSetup)
@@ -69,11 +70,15 @@ class CecConfig(ConfigListScreen, Screen):
 
 	def _createSetup(self):
 		isExpert = config.usage.setup_level.index >= 2
-		lst = [
+		lst =  [getConfigListEntry(_("HDMI CEC"), config.cec.enabled),]
+		if not config.cec.enabled.value:
+			self["config"].list = lst
+			return
+		lst.extend([
 			getConfigListEntry(_("OSD Name"), config.cec.name),
 			getConfigListEntry(_("Power Handling")),
 			getConfigListEntry(_("Send HDMI CEC Power Events"), config.cec.sendpower),
-			]
+			])
 		if config.cec.sendpower.value:
 			lst.append(getConfigListEntry(_("Power on AV-Receiver"), config.cec.enable_avr))
 			if config.cec.enable_avr.value and isExpert:
@@ -108,6 +113,8 @@ class CecConfig(ConfigListScreen, Screen):
 			getConfigListEntry(_("General")),
 			getConfigListEntry(_("Enable vendor specific handling"), config.cec.enable_vendor_quirks),
 		])
+		if isExpert:
+			lst.append(getConfigListEntry(_("Ignore CeC ready-state on startup"), config.cec.ignore_ready_state))
 		self["config"].list = lst
 
 	def layoutFinished(self):

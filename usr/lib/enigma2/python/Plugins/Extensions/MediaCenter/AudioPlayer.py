@@ -277,7 +277,7 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 		Log.i("playSelected=%s" % playSelected)
 		if playSelected:
 			service = self._playlist.playSelected()
-			if not self.service or service.toCompareString() != self.service.toCompareString():
+			if not self.service or not service or service.toCompareString() != self.service.toCompareString():
 				self.service = service
 				self._updateMusicInformation(clear=True)
 			else:

@@ -25,6 +25,7 @@ def PlaylistEntryComponent(serviceref, state):
 	sizes = componentSizes[PlayList.SKIN_COMPONENT_KEY]
 	iconWidth = sizes.get(PlayList.SKIN_COMPONENT_ICON_WIDTH, 20)
 	iconHeight = sizes.get(PlayList.SKIN_COMPONENT_ICON_HEIGHT, 16)
+	iconHPos = sizes.get(PlayList.SKIN_COMPONENT_ICON_HPOS, 3)
 	configEntryWidth = sizes.get(componentSizes.ITEM_WIDTH, 1000)
 	configEntryHeight = sizes.get(componentSizes.ITEM_HEIGHT, 22)
 
@@ -48,7 +49,7 @@ def PlaylistEntryComponent(serviceref, state):
 		png = ForwardIcon
 
 	if png is not None:
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, 3, iconWidth,iconHeight, png))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, iconHPos, iconWidth,iconHeight, png))
 
 	return res
 
@@ -56,6 +57,7 @@ class PlayList(MenuList):
 	SKIN_COMPONENT_KEY = "MediaplayerPlayList"
 	SKIN_COMPONENT_ICON_HEIGHT = "iconHeight"
 	SKIN_COMPONENT_ICON_WIDTH = "iconWidth"
+	SKIN_COMPONENT_ICON_HPOS = "iconHPos"
 
 	def __init__(self, enableWrapAround = False):
 		MenuList.__init__(self, [], enableWrapAround, eListboxPythonMultiContent)

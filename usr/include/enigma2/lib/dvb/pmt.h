@@ -85,7 +85,7 @@ class eDVBServicePMTHandler: public sigc::trackable
 	ePtr<eDVBService> m_service;
 
 	static std::map<uint32_t, uint8_t> sdt_versions;
-	static bool ddp_support;
+	static bool ddp_support, h265_support;
 
 	int m_last_channel_state;
 	eDVBCAService *m_ca_servicePtr;
@@ -130,6 +130,7 @@ private:
 public:
 #endif
 	static void setDDPSupport(bool b) { ddp_support = b; }
+	static void setH265Support(bool b) { h265_support = b; }
 
 	enum
 	{
@@ -156,7 +157,7 @@ public:
 	{
 		int pid;
 		int component_tag;
-		enum { vtMPEG2, vtMPEG4_H264, vtMPEG1, vtMPEG4_Part2, vtVC1, vtVC1_SM };
+		enum { vtMPEG2, vtMPEG4_H264, vtMPEG1, vtMPEG4_Part2, vtVC1, vtVC1_SM, vtH265 };
 		int type;
 	};
 	

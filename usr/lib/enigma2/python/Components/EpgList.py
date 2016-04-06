@@ -11,7 +11,7 @@ from time import localtime, time
 from ServiceReference import ServiceReference
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 
-from skin import TemplatedListFonts
+from skin import TemplatedListFonts, componentSizes
 
 EPG_TYPE_SINGLE = 0
 EPG_TYPE_MULTI = 1
@@ -37,6 +37,12 @@ class Rect:
 		return self.__width
 
 class EPGList(HTMLComponent, GUIComponent):
+	SKIN_COMPONENT_KEY = "EPGList"
+	SKIN_COMPONENT_ICON_HEIGHT = "iconHeight"
+	SKIN_COMPONENT_ICON_WIDTH = "iconWidth"
+	SKIN_COMPONENT_ICON_HPOS = "iconHPos"
+	SKIN_COMPONENT_ITEM_MARGIN = "itemMargin"
+
 	def __init__(self, type=EPG_TYPE_SINGLE, selChangedCB=None, timer = None):
 		self.days = (_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun"))
 		self.timer = timer
@@ -50,6 +56,12 @@ class EPGList(HTMLComponent, GUIComponent):
 		tlf = TemplatedListFonts()
 		self.l.setFont(0, gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG)))
 		self.l.setFont(1, gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL)))
+
+		sizes = componentSizes[EPGList.SKIN_COMPONENT_KEY]
+		self._iconWidth = sizes.get(EPGList.SKIN_COMPONENT_ICON_WIDTH, 21)
+		self._iconHeight = sizes.get(EPGList.SKIN_COMPONENT_ICON_HEIGHT, 21)
+		self._iconHPos = sizes.get(EPGList.SKIN_COMPONENT_ICON_HPOS, 4)
+		self._itemMargin = sizes.get(EPGList.SKIN_COMPONENT_ITEM_MARGIN, 10)
 
 		if type == EPG_TYPE_SINGLE:
 			self.l.setBuildFunc(self.buildSingleEntry)
@@ -126,25 +138,31 @@ class EPGList(HTMLComponent, GUIComponent):
 		esize = self.l.getItemSize()
 		width = esize.width()
 		height = esize.height()
+		#precalc rect values
+		weekday_width = int(width * 0.05)
+		datetime_x = weekday_width + self._itemMargin
+		datetime_width = int(width * 0.15)
+		desc_x = datetime_x + datetime_width + self._itemMargin
+		desc_width = width - desc_x - self._itemMargin
 		if self.type == EPG_TYPE_SINGLE:
-			self.weekday_rect = Rect(0, 0, width/20*2-10, height)
-			self.datetime_rect = Rect(width/20*2, 0, width/20*5-15, height)
-			self.descr_rect = Rect(width/20*7, 0, width/20*13, height)
+			self.weekday_rect = Rect(0, 0, weekday_width, height)
+			self.datetime_rect = Rect(datetime_x, 0, datetime_width, height)
+			self.descr_rect = Rect(desc_x, 0, desc_width, height)
 		elif self.type == EPG_TYPE_MULTI:
-			xpos = 0;
-			w = width/10*3;
-			self.service_rect = Rect(xpos, 0, w-10, height)
-			xpos += w;
-			w = width/10*2;
-			self.start_end_rect = Rect(xpos, 0, w-10, height)
-			self.progress_rect = Rect(xpos, 4, w-10, height-8)
-			xpos += w
-			w = width/10*5;
-			self.descr_rect = Rect(xpos, 0, width, height)
+			xpos = self._itemMargin;
+			w = width / 3;
+			self.service_rect = Rect(xpos, 0, w, height)
+			xpos += w + self._itemMargin;
+			w = width / 6;
+			self.start_end_rect = Rect(xpos, 0, w, height)
+			self.progress_rect = Rect(xpos, 4, w, height - self._itemMargin)
+			xpos += w + self._itemMargin
+			w = width - xpos - self._itemMargin;
+			self.descr_rect = Rect(xpos, 0, w, height)
 		else: # EPG_TYPE_SIMILAR
-			self.weekday_rect = Rect(0, 0, width/20*2-10, height)
-			self.datetime_rect = Rect(width/20*2, 0, width/20*5-15, height)
-			self.service_rect = Rect(width/20*7, 0, width/20*13, height)
+			self.weekday_rect = Rect(0, 0, weekday_width, height)
+			self.datetime_rect = Rect(datetime_x, 0, datetime_width, height)
+			self.service_rect = Rect(desc_x, 0, desc_width, height)
 
 	def getClockPixmap(self, refstr, beginTime, duration, eventId):
 		pre_clock = 1
@@ -187,12 +205,12 @@ class EPGList(HTMLComponent, GUIComponent):
 		res = [
 			None, # no private data needed
 			(eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width(), r1.height(), 0, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, self.days[t[6]]),
-			(eListboxPythonMultiContent.TYPE_TEXT, r2.left(), r2.top(), r2.width(), r1.height(), 0, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, "%02d.%02d, %02d:%02d"%(t[2],t[1],t[3],t[4]))
+			(eListboxPythonMultiContent.TYPE_TEXT, r2.left(), r2.top(), r2.width(), r1.height(), 0, RT_HALIGN_CENTER|RT_VALIGN_CENTER, "%02d.%02d, %02d:%02d"%(t[2],t[1],t[3],t[4]))
 		]
 		if rec:
 			res.extend((
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), 4, 21, 21, clock_pic),
-				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + 30, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName)
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), self._iconHPos, self._iconWidth, self._iconHeight, clock_pic),
+				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + self._iconWidth, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName)
 			))
 		else:
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName))
@@ -207,12 +225,12 @@ class EPGList(HTMLComponent, GUIComponent):
 		res = [
 			None,  # no private data needed
 			(eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width(), r1.height(), 0, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, self.days[t[6]]),
-			(eListboxPythonMultiContent.TYPE_TEXT, r2.left(), r2.top(), r2.width(), r1.height(), 0, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, "%02d.%02d, %02d:%02d"%(t[2],t[1],t[3],t[4]))
+			(eListboxPythonMultiContent.TYPE_TEXT, r2.left(), r2.top(), r2.width(), r1.height(), 0, RT_HALIGN_CENTER|RT_VALIGN_CENTER, "%02d.%02d, %02d:%02d"%(t[2],t[1],t[3],t[4]))
 		]
 		if rec:
 			res.extend((
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), 4, 21, 21, clock_pic),
-				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + 30, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name)
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), self._iconHPos, self._iconWidth, self._iconHeight, clock_pic),
+				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + self._iconWidth, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name)
 			))
 		else:
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name))
@@ -227,8 +245,8 @@ class EPGList(HTMLComponent, GUIComponent):
 		res = [ None ] # no private data needed
 		if rec:
 			res.extend((
-				(eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width()-26, r1.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name),
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r1.left()+r1.width()-16, 4, 21, 21, clock_pic)
+				(eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width()-self._iconWidth, r1.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name),
+				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r1.left()+r1.width()-self._iconWidth, self._iconHPos, self._iconWidth, self._iconHeight, clock_pic)
 			))
 		else:
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width(), r1.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name))

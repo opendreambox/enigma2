@@ -21,7 +21,7 @@
 		<menu weight="80" level="0" text="Setup" flushConfigOnClose="1" entryID="setup_selection" description="Configure and set up your Dreambox.">
 			<id val="setup" />
 
-			<menu weight="10" level="0" text="Network" requires="NetworkManager" entryId="network_tools" description="Network Setup and Tools.">
+			<menu weight="10" level="0" text="Network" requires="NetworkManager" entryID="network_tools" description="Network Setup and Tools.">
 				<id val="network"/>
 			</menu>
 
