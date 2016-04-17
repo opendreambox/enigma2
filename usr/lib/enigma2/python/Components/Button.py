@@ -30,6 +30,7 @@ class Button(VariableText, HTMLComponent, GUIComponent):
 
 	def postWidgetCreate(self, instance):
 		instance.setText(self.text)
+		instance.setDefaultAnimationEnabled(True)
 		self.selected_conn = instance.selected.connect(self.push)
 
 	def preWidgetRemove(self, instance):

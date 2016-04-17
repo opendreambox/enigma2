@@ -17,6 +17,7 @@ class FrontendInfo(Converter, object):
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
+		self.isAnimated = False
 		if type == "BER":
 			self.type = self.BER
 		elif type == "SNR":

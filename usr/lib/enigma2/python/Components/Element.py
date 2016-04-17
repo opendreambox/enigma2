@@ -29,6 +29,8 @@ class Element(object):
 	CHANGED_CLEAR = 2     # we're expecting a real update soon. don't bother polling NOW, but clear data.
 	CHANGED_SPECIFIC = 3  # second tuple will specify what exactly changed
 	CHANGED_POLL = 4      # a timer expired
+	CHANGED_PULSATE = 5   # element should pulsate
+	CHANGED_ANIMATED = 6  # element should be animated
 
 	SINGLE_SOURCE = True
 
@@ -108,3 +110,17 @@ class Element(object):
 
 	def destroy(self):
 		pass
+
+class AnimatedElement(Element):
+	def __init__(self):
+		Element.__init__(self)
+		self._isAnimated = True
+
+	def isAnimated(self):
+		return self._isAnimated
+
+	def setAnimated(self, isAnimated):
+		self._isAnimated = isAnimated
+		self.changed((self.CHANGED_ANIMATED,))
+
+	isAnimated = property(isAnimated, setAnimated)

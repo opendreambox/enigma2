@@ -30,6 +30,18 @@ class VideoFinetune(Screen):
 			"ok": self.callNext,
 			"cancel": self.close,
 		})
+		self._size = None
+		self.next = None
+		self._clear()
+		self.onLayoutFinish.append(self._onLayoutFinish)
+
+	def _clear(self):
+		c = self["Canvas"]
+		c.clear()
+		c.flush()
+
+	def _onLayoutFinish(self):
+		self._size = self["Canvas"].master.instance.size()
 		self.testpic_brightness()
 
 	def callNext(self):
@@ -46,10 +58,9 @@ class VideoFinetune(Screen):
 	def testpic_brightness(self):
 		self.next = self.testpic_contrast
 		c = self["Canvas"]
+		xres, yres = self._size.width(), self._size.height()
 
-		xres, yres = 720, 576
-
-		bbw, bbh = xres / 192, yres / 192
+#		bbw, bbh = xres / 192, yres / 192
 		c.fill(0, 0, xres, yres, RGB(0,0,0))
 
 #		for i in range(8):
@@ -70,8 +81,8 @@ class VideoFinetune(Screen):
 			height = yres / 3
 			eh = height / 8
 			offset = yres/6 + eh * i
-			x = xres * 2 / 3
 			width = yres / 6
+			x = xres - width - xres/10
 
 			c.fill(x, offset, width, eh, RGB(col, col, col))
 			if col == 0 or col == 16 or col == 116:
@@ -95,18 +106,18 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_contrast(self):
-#		self.next = self.testpic_colors
 		self.next = self.close
+#		self.next = self.testpic_colors
 
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
-		bbw, bbh = xres / 192, yres / 192
+#		bbw, bbh = xres / 192, yres / 192
 		c.fill(0, 0, xres, yres, RGB(0,0,0))
 
-		bbw = xres / 192
-		bbh = yres / 192
+#		bbw = xres / 192
+#		bbh = yres / 192
 		c.fill(0, 0, xres, yres, RGB(255,255,255))
 
 #		for i in range(15):
@@ -128,8 +139,8 @@ class VideoFinetune(Screen):
 			height = yres / 3
 			eh = height / 8
 			offset = yres/6 + eh * i
-			x = xres * 2 / 3
 			width = yres / 6
+			x = xres - width - xres/10
 
 			c.fill(x, offset, width, eh, RGB(col, col, col))
 #			if col == 0 or col == 36:
@@ -152,11 +163,12 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_colors(self):
-		self.next = self.close
+#		self.next = self.close
+		self.next = self.testpic_filter
 
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		bbw = xres / 192
 		bbh = yres / 192
@@ -192,8 +204,8 @@ class VideoFinetune(Screen):
 				height = yres / 3;
 				eh = height / 8;
 				offset = yres/6 + eh * i;
-				x = xres * 2 / 3;
-				width = yres / 6;
+				width = yres / 6
+				x = xres - width - xres/10
 
 				c.fill(x, offset, width, eh, self.basic_colors[i])
 				if i == 0:
@@ -209,9 +221,10 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_filter(self):
+		self.next = self.testpic_gamma
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		c.fill(0, 0, xres, yres, RGB(64, 64, 64))
 
@@ -239,11 +252,12 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_gamma(self):
-		self.next = None
+		self.next = self.close
+#		self.next = self.testpic_fubk
 
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		c.fill(0, 0, xres, yres, RGB(0, 0, 0))
 
@@ -272,14 +286,14 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_fubk(self):
-		self.next = None
+		self.next = self.close
 
 		# TODO:
 		# this test currently only works for 4:3 aspect.
 		# also it's hardcoded to 720,576
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		c.fill(0, 0, xres, yres, RGB(128, 128, 128))
 

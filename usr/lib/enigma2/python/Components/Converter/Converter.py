@@ -1,8 +1,8 @@
-from Components.Element import Element
+from Components.Element import AnimatedElement
 
-class Converter(Element):
+class Converter(AnimatedElement):
 	def __init__(self, arguments):
-		Element.__init__(self)
+		AnimatedElement.__init__(self)
 		self.converter_arguments = arguments
 
 	def __repr__(self):

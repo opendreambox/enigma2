@@ -1,7 +1,7 @@
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 
-from enigma import eEPGCache, eListbox, eListboxPythonMultiContent, gFont, getDesktop, \
+from enigma import eLabel, eEPGCache, eListbox, eListboxPythonMultiContent, gFont, getDesktop, \
 	RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER
 
 from Components.config import config
@@ -54,8 +54,11 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.l = eListboxPythonMultiContent()
 
 		tlf = TemplatedListFonts()
-		self.l.setFont(0, gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG)))
-		self.l.setFont(1, gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL)))
+		self._font0 = gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG))
+		self._font1 = gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL))
+		self.l.setFont(0, self._font0)
+		self.l.setFont(1, self._font1)
+		self._textRenderer = None
 
 		sizes = componentSizes[EPGList.SKIN_COMPONENT_KEY]
 		self._iconWidth = sizes.get(EPGList.SKIN_COMPONENT_ICON_WIDTH, 21)
@@ -117,11 +120,6 @@ class EPGList(HTMLComponent, GUIComponent):
 		for x in self.onSelChanged:
 			if x is not None:
 				x()
-#				try:
-#					x()
-#				except: # FIXME!!!
-#					print "FIXME in EPGList.selectionChanged"
-#					pass
 
 	GUI_WIDGET = eListbox
 
@@ -129,19 +127,29 @@ class EPGList(HTMLComponent, GUIComponent):
 		instance.setWrapAround(True)
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		instance.setContent(self.l)
+		self._textRenderer = eLabel(instance)
+		self._textRenderer.hide()
 
 	def preWidgetRemove(self, instance):
 		self.selectionChanged_conn = None
 		instance.setContent(None)
+
+	def _calcTextWidth(self, text, font=None, size=None):
+		if size:
+			self._textRenderer.resize(size)
+		if font:
+			self._textRenderer.setFont(font)
+		self._textRenderer.setText(text)
+		return self._textRenderer.calculateSize().width()
 
 	def recalcEntrySize(self):
 		esize = self.l.getItemSize()
 		width = esize.width()
 		height = esize.height()
 		#precalc rect values
-		weekday_width = int(width * 0.05)
+		weekday_width = self._calcTextWidth("Do", font=self._font0, size=esize) + self._itemMargin
 		datetime_x = weekday_width + self._itemMargin
-		datetime_width = int(width * 0.15)
+		datetime_width = self._calcTextWidth("00.00, 00:00", font=self._font0, size=esize) + self._itemMargin
 		desc_x = datetime_x + datetime_width + self._itemMargin
 		desc_width = width - desc_x - self._itemMargin
 		if self.type == EPG_TYPE_SINGLE:
@@ -155,7 +163,7 @@ class EPGList(HTMLComponent, GUIComponent):
 			xpos += w + self._itemMargin;
 			w = width / 6;
 			self.start_end_rect = Rect(xpos, 0, w, height)
-			self.progress_rect = Rect(xpos, 4, w, height - self._itemMargin)
+			self.progress_rect = Rect(xpos,  self._itemMargin / 2, w, height - self._itemMargin)
 			xpos += w + self._itemMargin
 			w = width - xpos - self._itemMargin;
 			self.descr_rect = Rect(xpos, 0, w, height)

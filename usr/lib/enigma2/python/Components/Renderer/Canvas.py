@@ -12,6 +12,9 @@ class Canvas(Renderer):
 		self.sequence = None
 		self.draw_count = 0
 
+	def postWidgetCreate(self, instance):
+		instance.setDefaultAnimationEnabled(self.source.isAnimated)
+
 	def pull_updates(self):
 		if self.instance is None:
 			return
@@ -40,7 +43,11 @@ class Canvas(Renderer):
 				raise RuntimeError("invalid drawlist entry")
 
 	def changed(self, what):
-		self.pull_updates()
+		if what[0] == self.CHANGED_ANIMATED:
+			if self.instance:
+				self.instance.setDefaultAnimationEnabled(self.source.isAnimated)
+		else:
+			self.pull_updates()
 
 	def applySkin(self, desktop, parent):
 		self.sequence = None

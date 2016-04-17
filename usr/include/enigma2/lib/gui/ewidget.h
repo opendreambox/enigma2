@@ -119,6 +119,7 @@ protected:
 	ePtr<eWidgetAnimationSet> m_animations;
 	bool m_animations_enabled;
 	bool m_can_animate;
+	bool m_uses_default_animations;
 	ePtr<eTimer> m_invalidationTimer;
 	std::string m_parent_title;
 

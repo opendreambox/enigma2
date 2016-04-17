@@ -2132,7 +2132,11 @@ class eWindowAnimationManager(object):
     setDefault = staticmethod(_enigma.eWindowAnimationManager_setDefault)
     setAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_setAnimationsEnabled)
     isAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_isAnimationsEnabled)
+    setWidgetDefault = staticmethod(_enigma.eWindowAnimationManager_setWidgetDefault)
+    isWidgetAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_isWidgetAnimationsEnabled)
+    setWidgetAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_setWidgetAnimationsEnabled)
     defaultAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultAnimationChanged_get, _enigma.eWindowAnimationManager_defaultAnimationChanged_set)
+    defaultWidgetAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultWidgetAnimationChanged_get, _enigma.eWindowAnimationManager_defaultWidgetAnimationChanged_set)
 eWindowAnimationManager.__ref__ = new_instancemethod(_enigma.eWindowAnimationManager___ref__,None,eWindowAnimationManager)
 eWindowAnimationManager.getPtrString = new_instancemethod(_enigma.eWindowAnimationManager_getPtrString,None,eWindowAnimationManager)
 eWindowAnimationManager.__deref__ = new_instancemethod(_enigma.eWindowAnimationManager___deref__,None,eWindowAnimationManager)
@@ -2162,6 +2166,18 @@ eWindowAnimationManager_setAnimationsEnabled = _enigma.eWindowAnimationManager_s
 def eWindowAnimationManager_isAnimationsEnabled():
   return _enigma.eWindowAnimationManager_isAnimationsEnabled()
 eWindowAnimationManager_isAnimationsEnabled = _enigma.eWindowAnimationManager_isAnimationsEnabled
+
+def eWindowAnimationManager_setWidgetDefault(*args):
+  return _enigma.eWindowAnimationManager_setWidgetDefault(*args)
+eWindowAnimationManager_setWidgetDefault = _enigma.eWindowAnimationManager_setWidgetDefault
+
+def eWindowAnimationManager_isWidgetAnimationsEnabled():
+  return _enigma.eWindowAnimationManager_isWidgetAnimationsEnabled()
+eWindowAnimationManager_isWidgetAnimationsEnabled = _enigma.eWindowAnimationManager_isWidgetAnimationsEnabled
+
+def eWindowAnimationManager_setWidgetAnimationsEnabled(*args):
+  return _enigma.eWindowAnimationManager_setWidgetAnimationsEnabled(*args)
+eWindowAnimationManager_setWidgetAnimationsEnabled = _enigma.eWindowAnimationManager_setWidgetAnimationsEnabled
 
 class eWidget(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2240,6 +2256,7 @@ class eAnimatedWidget(eWidget):
     __swig_destroy__ = _enigma.delete_eAnimatedWidget
 eAnimatedWidget.doBlit = new_instancemethod(_enigma.eAnimatedWidget_doBlit,None,eAnimatedWidget)
 eAnimatedWidget.prepareForChangeAnimation = new_instancemethod(_enigma.eAnimatedWidget_prepareForChangeAnimation,None,eAnimatedWidget)
+eAnimatedWidget.setDefaultAnimationEnabled = new_instancemethod(_enigma.eAnimatedWidget_setDefaultAnimationEnabled,None,eAnimatedWidget)
 eAnimatedWidget_swigregister = _enigma.eAnimatedWidget_swigregister
 eAnimatedWidget_swigregister(eAnimatedWidget)
 
@@ -2435,6 +2452,9 @@ eWidgetDesktop.size = new_instancemethod(_enigma.eWidgetDesktop_size,None,eWidge
 eWidgetDesktop.isDimmable = new_instancemethod(_enigma.eWidgetDesktop_isDimmable,None,eWidgetDesktop)
 eWidgetDesktop.createScreenshot = new_instancemethod(_enigma.eWidgetDesktop_createScreenshot,None,eWidgetDesktop)
 eWidgetDesktop.setFrameTime = new_instancemethod(_enigma.eWidgetDesktop_setFrameTime,None,eWidgetDesktop)
+eWidgetDesktop.isAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_isAnimationsEnabled,None,eWidgetDesktop)
+eWidgetDesktop.setAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_setAnimationsEnabled,None,eWidgetDesktop)
+eWidgetDesktop.flags = new_instancemethod(_enigma.eWidgetDesktop_flags,None,eWidgetDesktop)
 eWidgetDesktop_swigregister = _enigma.eWidgetDesktop_swigregister
 eWidgetDesktop_swigregister(eWidgetDesktop)
 

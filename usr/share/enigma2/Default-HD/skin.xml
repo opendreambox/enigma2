@@ -2481,7 +2481,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 	</screen>
 	<!-- Video Finetune -->
 	<screen name="VideoFinetune" position="0,0" size="1280,720" backgroundColor="black">
-		<widget source="Canvas" render="Canvas" position="280,70" size="720,576" />
+		<widget source="Canvas" render="Canvas" position="center,center" size="1280,720" />
 	</screen>
 	<!-- VirtualKeyBoard -->
 	<screen name="VirtualKeyBoard" position="center,120" size="820,520" zPosition="99" title="Virtual KeyBoard">
