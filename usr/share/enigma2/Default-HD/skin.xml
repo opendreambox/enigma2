@@ -55,7 +55,7 @@
 		<listfont type="Big" font="Regular" size="22" />
 		<listfont type="Medium" font="Regular" size="20" />
 		<listfont type="Small" font="Regular" size="18" />
-		<listfont type="Smaller" font="Regular" size="16" />
+		<listfont type="Smaller" font="Regular" size="14" />
 	</windowstyle>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">
@@ -173,6 +173,14 @@
 			</template>
 		</component>
 		<component type="VirtualKeyBoardList" itemHeight="45" />
+		<component
+			type="PicturePlayer"
+			thumbDescriptionSize="35"
+			thumpMargin="10"
+			thumbSpaceX="60"
+			thumbSpaceY="30"
+			thumbX="190"
+			thumbY="200" />
 	</components>
 	<!-- DVD Player -->
 	<screen name="DVDPlayer" position="0,561" size="1280,133" title="InfoBar" flags="wfNoBorder">
@@ -674,7 +682,7 @@
 		<widget name="config" position="10,50" size="800,330" scrollbarMode="showOnDemand" />
 	</screen>
 	<!-- Channel selection - TV -->
-	<screen name="ChannelSelection" position="center,120" size="1100,520" title="Channel Selection">
+	<screen name="ChannelSelection" zPosition="1000" position="center,120" size="1100,520" title="Channel Selection">
 		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />

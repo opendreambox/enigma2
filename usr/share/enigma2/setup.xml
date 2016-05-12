@@ -32,6 +32,7 @@
 				<item level="2" text="Composition of the recording filenames">config.recording.filename_composition</item>
 			<item level="1" text="Subtitles" />
 				<item level="1" text="Text subtitle presentation">config.usage.text_subtitle_presentation</item>
+				<item level="1" text="Text subtitle black box transparency">config.usage.text_subtitle_black_box_transparency</item>
 				<item level="2" text="New ttx subtitle charset detection">config.usage.ttx_subtitle_prefer_pmt_language_code</item>
 			<item level="1" text="EPG" />
 				<item level="1" text="Multi-EPG bouquet selection">config.usage.multiepg_ask_bouquet</item>

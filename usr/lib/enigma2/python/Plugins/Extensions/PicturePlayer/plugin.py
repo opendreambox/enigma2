@@ -11,8 +11,9 @@ from Components.FileList import FileList
 from Components.AVSwitch import AVSwitch
 from Components.Sources.List import List
 from Components.ConfigList import ConfigListScreen
-
 from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigOnOff, getConfigListEntry
+
+from skin import componentSizes, TemplatedListFonts
 
 def getScale():
 	return AVSwitch().getFramebufferScale()
@@ -298,20 +299,35 @@ T_NAME = 3
 T_FULL = 4
 
 class Pic_Thumb(Screen):
+	SKIN_COMPONENT_KEY = "PicturePlayer"
+	SKIN_COMPONENT_DESCRIPTION_SIZE = "thumbDescriptionSize"
+	SKIN_COMPONENT_MARGIN =  "thumpMargin"
+	SKIN_COMPONENT_SPACE_X = "thumbSpaceX"
+	SKIN_COMPONENT_SPACE_Y = "thumbSpaceY"
+	SKIN_COMPONENT_THUMP_X = "thumbX"
+	SKIN_COMPONENT_THUMP_Y = "thumbY"
+
 	def __init__(self, session, piclist, lastindex, path):
 
 		self.textcolor = config.pic.textcolor.value
 		self.color = config.pic.bgcolor.value
-		textsize = 20
-		self.spaceX = 35
-		self.picX = 190
-		self.spaceY = 30
-		self.picY = 200
+
+		tlf = TemplatedListFonts()
+		self._labelFontSize = tlf.size(tlf.SMALLER)
+		self._labelFontFace = tlf.face(tlf.SMALLER)
+
+		sizes = componentSizes[Pic_Thumb.SKIN_COMPONENT_KEY]
+		self._descSize = sizes.get(Pic_Thumb.SKIN_COMPONENT_DESCRIPTION_SIZE, 35)
+		self._margin = sizes.get(Pic_Thumb.SKIN_COMPONENT_MARGIN, 10)
+		self._spaceX = sizes.get(Pic_Thumb.SKIN_COMPONENT_SPACE_X, 60)
+		self._spaceY = sizes.get(Pic_Thumb.SKIN_COMPONENT_SPACE_Y, 30)
+		self._thumbX = sizes.get(Pic_Thumb.SKIN_COMPONENT_THUMP_X, 190)
+		self._thumbY = sizes.get(Pic_Thumb.SKIN_COMPONENT_THUMP_Y, 200)
 
 		size_w = getDesktop(0).size().width()
 		size_h = getDesktop(0).size().height()
-		self.thumbsX = size_w / (self.spaceX + self.picX) # thumbnails in X
-		self.thumbsY = size_h / (self.spaceY + self.picY) # thumbnails in Y
+		self.thumbsX = size_w / (self._spaceX + self._thumbX) # thumbnails in X
+		self.thumbsY = size_h / (self._spaceY + self._thumbY) # thumbnails in Y
 		self.thumbsC = self.thumbsX * self.thumbsY # all thumbnails
 
 		self.positionlist = []
@@ -324,16 +340,19 @@ class Pic_Thumb(Screen):
 			if posX >= self.thumbsX:
 				posX = 0
 
-			absX = self.spaceX + (posX*(self.spaceX + self.picX))
-			absY = self.spaceY + (posY*(self.spaceY + self.picY))
+			absX = self._spaceX + (posX * (self._spaceX + self._thumbX))
+			absY = self._spaceY + (posY * (self._spaceY + self._thumbY))
 			self.positionlist.append((absX, absY))
-			skincontent += "<widget source=\"label" + str(x) + "\" render=\"Label\" position=\"" + str(absX+5) + "," + str(absY+self.picY-textsize) + "\" size=\"" + str(self.picX - 10) + ","  + str(textsize) + "\" font=\"Regular;14\" zPosition=\"2\" transparent=\"1\" noWrap=\"1\" foregroundColor=\"" + self.textcolor + "\" />"
-			skincontent += "<widget name=\"thumb" + str(x) + "\" position=\"" + str(absX+5)+ "," + str(absY+5) + "\" size=\"" + str(self.picX -10) + "," + str(self.picY - (textsize*2)) + "\" zPosition=\"2\" transparent=\"1\" />"
+			absX += self._margin
+			absY += self._margin
+			skincontent += '<widget source="label%s" render="Label" position="%s,%s" size="%s,%s" font="%s;%s" valign="top" halign="center" zPosition="2" transparent="1" foregroundColor="%s"/>' % (x, absX, absY + self._thumbY - self._descSize, self._thumbX, self._descSize, self._labelFontFace, self._labelFontSize, self.textcolor)
+			skincontent += '<widget name="thumb%s" position="%s,%s" size="%s,%s" zPosition="2" transparent="1" />' % (x, absX, absY, self._thumbX, self._thumbY - self._descSize - self._margin)
 
 		# Screen, backgroundlabel and MovingPixmap
-		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\"" + self.color + "\" /> \
-			<widget name=\"frame\" position=\"35,30\" size=\"190,200\" pixmap=\"pic_frame.png\" zPosition=\"1\" alphatest=\"on\" />"  + skincontent + "</screen>"
+		doubleMargin = self._margin * 2
+		self.skin = """<screen position="0,0" size="{0},{1}" flags="wfNoBorder" >
+			<eLabel position="0,0" zPosition="0" size="{0},{1}" backgroundColor="{2}" /> \
+			<widget name="frame" position="35,30" size="{3},{4}" pixmap="pic_frame.png" zPosition="1" alphatest="on" />{5}</screen>""".format(size_w, size_h, self.color, self._thumbX + doubleMargin, self._thumbY + doubleMargin, skincontent)
 
 		Screen.__init__(self, session)
 

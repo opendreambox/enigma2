@@ -154,7 +154,7 @@ public:
 	AppendResult appendGlyph(eFont *current_font, FT_Face current_face, FT_UInt glyphIndex, int flags, int rflags, unsigned long &argb);
 	void newLine(int flags);
 	void setFont(eFont *font, eFont *replacement_font);
-	eRect boundBox;
+	eRect boundBox, renderBox;
 	void calc_bbox();
 	int bboxValid;
 	void clear();
@@ -188,7 +188,15 @@ public:
 
 		return boundBox;
 	}
-	
+
+	const eRect & getRenderBox()
+	{
+		if (!bboxValid)
+			calc_bbox();
+
+		return renderBox;
+	}
+
 	int size() const
 	{
 		return glyphs.size();
