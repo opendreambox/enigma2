@@ -165,9 +165,7 @@ public:
 	{
 		int pid,
 		    rdsPid; // hack for some radio services which transmit radiotext on different pid (i.e. harmony fm, HIT RADIO FFH, ...)
-		enum { atMPEG, atAC3, atDTS, atAAC, atAACHE, atLPCM, atDTSHD, atDDP };
-		int type; // mpeg2, ac3, dts, ...
-		
+		int type; // mpeg2, ac3, dts, ... as defined in iAudioType_ENUMS
 		int component_tag;
 		std::string language_code; /* iso-639, if available. */
 	};
@@ -216,7 +214,7 @@ public:
 		};
 		std::vector<videoStream> videoStreams;
 		std::vector<audioStream> audioStreams;
-		int defaultAudioStream;
+		int savedAudioStream;
 		std::vector<subtitleStream> subtitleStreams;
 		std::vector<aitStream> aitStreams;
 		std::list<capid_pair> caids;

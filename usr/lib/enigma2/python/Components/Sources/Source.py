@@ -1,6 +1,6 @@
-from Components.Element import Element
+from Components.Element import AnimatedElement
 
-class Source(Element):
+class Source(AnimatedElement):
 	def execBegin(self):
 		pass
 	

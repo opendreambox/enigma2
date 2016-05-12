@@ -63,8 +63,8 @@ class ToastManager(object):
 	def _onTimeout(self):
 		if self._currentToast:
 			self._deleteQueue.append(self._currentToast)
-			self._currentToast.onHideFinished.append(self._processQueue)
 			self._currentToast.hide()
+			self._currentToast.onHideFinished.append(self._processQueue)
 			self._currentToast = None
 		self._processQueue()
 

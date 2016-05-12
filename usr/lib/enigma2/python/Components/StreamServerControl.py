@@ -1,8 +1,13 @@
 from enigma import eStreamServer, eServiceReference, eServiceCenter, getBestPlayableServiceReference, iServiceInformation
-from Components.config import config, ConfigInteger, ConfigOnOff, ConfigPassword, ConfigSelection, ConfigSubsection, ConfigText
+from Components.config import config, ConfigInteger, ConfigOnOff, ConfigPassword, ConfigSelection, ConfigSubsection, ConfigText, ConfigYesNo
 
 from Tools.Log import Log
 from urlparse import parse_qs
+
+from Tools import Notifications
+from Screens.MessageBox import MessageBox
+NOTIFICATION_DOMAIN_STREAMSERVER = "StreamServer"
+Notifications.notificationQueue.registerDomain(NOTIFICATION_DOMAIN_STREAMSERVER, _("Streaming Server"))
 
 class StreamServerControl(object):
 	FRAME_RATE_25 = 25
@@ -16,6 +21,10 @@ class StreamServerControl(object):
 	RES_720 = (1280, 720)
 	RES_PAL = (720, 576)
 
+	RES_KEY_1080P = "1080p"
+	RES_KEY_720P = "720p"
+	RES_KEY_PAL = "576p"
+
 	RESOLUTIONS = {
 			"1080p"	: RES_1080,
 			"720p"	: RES_720,
@@ -28,7 +37,7 @@ class StreamServerControl(object):
 		RES_PAL : "576p",
 	}
 
-	AUDIO_BITRATE_LIMITS = [32, 512]
+	AUDIO_BITRATE_LIMITS = [32, 448]
 	VIDEO_BITRATE_LIMITS = [256, 10000]
 	PORT_LIMITS = [1, 65535]
 
@@ -68,6 +77,12 @@ class StreamServerControl(object):
 	URI_PARAM_VIDEO_BITRATE = "video_bitrate"
 	URI_PARAM_AUDIO_BITRATE = "audio_bitrate"
 
+	ENCODER_SERVICE_SET = 0
+	ENCODER_SERVICE_ALREADY_ACTIVE = 1
+	ENCODER_SERVICE_INVALID_MODE = -1
+	ENCODER_SERVICE_INVALID = -2
+	ENCODER_SERVICE_INSUFFICIENT_RESOURCES = -3
+
 	def __init__(self):
 		self._streamServer = eStreamServer.getInstance()
 		self._encoderService = None
@@ -78,12 +93,37 @@ class StreamServerControl(object):
 		self._upstreamBitrateChanged_conn = self._streamServer.upstreamBitrateChanged.connect(self._onUpstreamBitrateChanged)
 		self._rtspClientCountChanged_conn = self._streamServer.rtspClientCountChanged.connect(self._onRtspClientCountChanged)
 		self._onUriParametersChanged_conn = self._streamServer.uriParametersChanged.connect(self._onUriParametersChanged)
+		self._dbusError_conn = self._streamServer.dbusError.connect(self._onDBusError)
+		self._mediatorStateBeforeStandby = config.streamserver.mediator.enabled.value
 		self.onAvailabilityChanged = []
 		self.onSourceStateChanged = []
 		self.onUpstreamStateChanged = []
 		self.onUpstreamBitrateChanged = []
 		self.onRtspClientCountChanged = []
 		self.onUriParametersChanged = []
+		self._isRunning = False
+
+	def start(self):
+		if not self._isRunning:
+			config.misc.standbyCounter.addNotifier(self._onStandby, initial_call = False)
+			self._isRunning = True
+		else:
+			Log.w("start was called multiple times, this is not harmful but unneccessary!")
+
+	def _onStandby(self, element):
+		Log.d()
+		from Screens.Standby import inStandby
+		inStandby.onClose.append(self._onLeaveStandby)
+		if config.streamserver.source.value == str(self.INPUT_MODE_LIVE) and config.streamserver.mediator.enabled.value:
+			Log.i("Going into Standby, mode is Follow Live, stopping proxy stream")
+			self._mediatorStateBeforeStandby = config.streamserver.mediator.enabled.value
+			config.streamserver.mediator.enabled.value = False
+
+	def _onLeaveStandby(self):
+		Log.d()
+		if config.streamserver.source.value == str(self.INPUT_MODE_LIVE) and self._mediatorStateBeforeStandby:
+			Log.i("Leaving Standby, mode is Follow live, recovering upload state=%s" %(self._mediatorStateBeforeStandby,))
+			config.streamserver.mediator.enabled.value = self._mediatorStateBeforeStandby
 
 	def _onAvailabilityChanged(self, available):
 		for fnc in self.onAvailabilityChanged:
@@ -123,6 +163,10 @@ class StreamServerControl(object):
 		for fnc in self.onUriParametersChanged:
 			fnc(params)
 
+	def _onDBusError(self, error):
+		Log.w("DBUS ERROR! %s" %(error,))
+		Notifications.AddPopup("%s" %(error,), MessageBox.TYPE_ERROR, -1, domain=NOTIFICATION_DOMAIN_STREAMSERVER)
+
 	def _applyUriParameters(self, params):
 		ref = str(params.get(self.URI_PARAM_REF, [""])[0])
 		ref = eServiceReference(ref)
@@ -151,7 +195,8 @@ class StreamServerControl(object):
 			refstr = ref.toString()
 			config.streamserver.lastservice.value = refstr
 			config.streamserver.save()
-			self._startEncoderService(service)
+			return self._startEncoderService(service)
+		return self.ENCODER_SERVICE_INVALID
 
 	def getEncoderService(self):
 		if self._currentService:
@@ -160,13 +205,17 @@ class StreamServerControl(object):
 
 	encoderService = property(getEncoderService, setEncoderService)
 
+	def isAnyEnabled(self):
+		return config.streamserver.rtsp.enabled.value or config.streamserver.hls.enabled.value or config.streamserver.mediator.enabled.value
+
 	def _startEncoderService(self, service):
-		if not config.streamserver.enabled.value \
+		if not self.isAnyEnabled() \
 			or int(config.streamserver.source.value) != self.INPUT_MODE_BACKGROUND \
 			or self.sourceState <= eStreamServer.SOURCE_STATE_READY:
 			self.stopEncoderService()
-			Log.i("Streamserver disabled, not in TV Service mode or no client connected, will not allocate service (%s, %s, %s)" % (config.streamserver.enabled.value, config.streamserver.source.value, self._streamServer.sourceState()))
-			return
+			Log.i("Streamserver disabled, not in TV Service mode or no client connected, will not allocate service (%s, %s, %s, %s, %s)" 
+				% (config.streamserver.rtsp.enabled.value, config.streamserver.hls.enabled.value, config.streamserver.mediator.enabled.value, config.streamserver.source.value, self._streamServer.sourceState()))
+			return self.ENCODER_SERVICE_INVALID_MODE
 		ref = self._getRef(service)
 		if ref:
 			cur_ref = self._encoderService
@@ -174,12 +223,17 @@ class StreamServerControl(object):
 			cur_ref = cur_ref and cur_ref.getInfoString(iServiceInformation.sServiceref)
 			if cur_ref == ref.toString():
 				Log.i("ignore request to play already running background streaming service (%s)" %cur_ref)
+				return self.ENCODER_SERVICE_ALREADY_ACTIVE
 			else:
 				self.stopEncoderService()
 				self._encoderService = eServiceCenter.getInstance().play(ref)
 				if self._encoderService and not self._encoderService.setTarget(self.ENCODER_TARGET):
 					Log.i("Starting encoder service [%s]!" % (service.toCompareString()))
 					self._encoderService.start()
+					return self.ENCODER_SERVICE_SET
+				else:
+					return self.ENCODER_SERVICE_INSUFFICIENT_RESOURCES
+		return self.ENCODER_SERVICE_INVALID
 
 	def _getRef(self, service):
 		if service and (service.flags & eServiceReference.isGroup):
@@ -196,11 +250,15 @@ class StreamServerControl(object):
 	def isConnected(self):
 		return self._streamServer.isAvailable()
 
-	def setEnabled(self, enabled, path, port, user, password):
+	def enableRTSP(self, enabled, path, port, user, password):
 		return self._streamServer.enableRTSP(enabled, path, port, user, password)
 
+	def enableHLS(self, enabled, port, user, password):
+		#TODO streamserver has no user/password functionality for hls atm
+		return self._streamServer.enableHLS(enabled, port, user, password)
+
 	def isEnabled(self):
-		return self._streamServer.isRTSPEnabled()
+		return self.isAnyEnabled()
 
 	enabled = property(isEnabled)
 
@@ -325,17 +383,32 @@ class StreamServerControl(object):
 
 #Streamserver base config
 config.streamserver = ConfigSubsection()
-config.streamserver.enabled = ConfigOnOff(default=False)
 config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(StreamServerControl.INPUT_MODE_LIVE))
-config.streamserver.audioBitrate = ConfigInteger(128, StreamServerControl.AUDIO_BITRATE_LIMITS)
-config.streamserver.videoBitrate = ConfigInteger(2048, StreamServerControl.VIDEO_BITRATE_LIMITS)
+config.streamserver.audioBitrate = ConfigInteger(96, StreamServerControl.AUDIO_BITRATE_LIMITS)
+config.streamserver.videoBitrate = ConfigInteger(1500, StreamServerControl.VIDEO_BITRATE_LIMITS)
 config.streamserver.autoBitrate = ConfigOnOff(default=False)
-config.streamserver.resolution = ConfigSelection(StreamServerControl.RESOLUTIONS.keys(), default="720p")
+config.streamserver.resolution = ConfigSelection(StreamServerControl.RESOLUTIONS.keys(), default=StreamServerControl.RES_KEY_PAL)
 config.streamserver.framerate = ConfigSelection(StreamServerControl.FRAME_RATES, default=StreamServerControl.FRAME_RATE_25)
-config.streamserver.rtspport = ConfigInteger(554, StreamServerControl.PORT_LIMITS)
-config.streamserver.rtsppath = ConfigText(default="stream", fixed_size=False)
+config.streamserver.rtsp = ConfigSubsection()
+config.streamserver.rtsp.enabled = ConfigOnOff(default=False)
+config.streamserver.rtsp.port = ConfigInteger(554, StreamServerControl.PORT_LIMITS)
+config.streamserver.rtsp.path = ConfigText(default="stream", fixed_size=False)
+config.streamserver.hls = ConfigSubsection()
+config.streamserver.hls.enabled = ConfigOnOff(default=False)
+config.streamserver.hls.port = ConfigInteger(8080, StreamServerControl.PORT_LIMITS)
 config.streamserver.user = ConfigText(default="", fixed_size=False)
 config.streamserver.password = ConfigPassword(default="")
 config.streamserver.lastservice = ConfigText(default=config.tv.lastservice.value)
+config.streamserver.mediator = ConfigSubsection()
+config.streamserver.mediator.enabled = ConfigOnOff(default=False)
+config.streamserver.mediator.boxid = ConfigText()
+config.streamserver.mediator.boxkey = ConfigText()
+config.streamserver.mediator.streaminggroups = ConfigSubsection()
+config.streamserver.mediator.streaminggroups.member_alias = ConfigText(default="dreambox", fixed_size=False)
+config.streamserver.mediator.streaminggroups.stream_alias = ConfigText(default="", fixed_size=False)
+config.streamserver.mediator.streaminggroups.hide_empty = ConfigYesNo(default=False)
+config.streamserver.client = ConfigSubsection()
+config.streamserver.client.boxid = ConfigText(default="", fixed_size=False)
+config.streamserver.client.boxkey = ConfigText(default="", fixed_size=False)
 
 streamServerControl = StreamServerControl()

@@ -123,6 +123,8 @@ public:
 	static const char FIELD_TYPE[];
 	static const char FIELD_NAME[];
 	static const char FIELD_COVER_ART_ID[];
+	static const char FIELD_SAVED_AUDIO_TRACK[];
+	static const char FIELD_SAVED_SUBTITLE_TRACK[];
 
 	static eMediaDatabase *getInstance();
 
@@ -183,6 +185,8 @@ public:
 	ePtr<eMediaDatabaseResult> setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
 	ePtr<eMediaDatabaseResult> getRecordEit(int file_id);
 	ePtr<eMediaDatabaseResult> setRecordEit(int file_id, uint8_t eit_raw[], bool update=false);
+	ePtr<eMediaDatabaseResult> setLastPlayed(int file_id, int64_t lastplayed, int64_t lastplaypos);
+	SWIG_VOID(int) getLastPlayed(int file_id, int64_t &lastplayed, int64_t &lastplaypos);
 
 	ePtr<eMediaDatabaseResult> getFileByPath(const std::string &filepath);
 
@@ -190,6 +194,7 @@ public:
 	ePtr<eMediaDatabaseResult> deleteFileAttribute(int file_id, const std::string &key);
 	ePtr<eMediaDatabaseResult> getFileAttributes(int file_id);
 	ePtr<eMediaDatabaseResult> getFileAttribute(int file_id, const std::string &key);
+	SWIG_VOID(int) getFileAttributeValue(int file_id, const std::string &key, std::string &SWIG_OUTPUT);
 
 	SWIG_VOID(int) getCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT);
 	ePtr<eMediaDatabaseResult> getCoverArtData(int cover_art_id);
@@ -299,6 +304,8 @@ public:
 	QSqlQuery setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
 	QSqlQuery getRecordEit(int file_id);
 	QSqlQuery setRecordEit(int file_id, const uint8_t eit_raw[], bool update=false);
+	QSqlQuery setLastPlayed(int file_id, int64_t lastplayed, int64_t lastplaypos);
+	QSqlQuery getLastPlayed(int file_id);
 
 	QSqlQuery getByFile(const std::string &filepath);
 	QSqlQuery getAudioByFile(const std::string &filepath);
@@ -312,6 +319,7 @@ public:
 	QSqlQuery deleteFileAttribute(int file_id, const std::string &key);
 	QSqlQuery getFileAttributes(int file_id);
 	QSqlQuery getFileAttribute(int file_id, const std::string &key);
+	QSqlQuery getFileAttributeValue(int file_id, const std::string &key);
 
 	QSqlQuery getCoverArt(const std::string &key);
 	QSqlQuery getCoverArt(int cover_art_id);

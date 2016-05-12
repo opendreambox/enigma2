@@ -62,6 +62,11 @@ class ServiceEventTracker:
 #			if set.InfoBarStackSize:
 #				print "ServiceEventTracker reset active '" + str(stack[set.InfoBarStackSize-1]) + "'"
 
+	@staticmethod
+	def getActiveInfoBar():
+		set = ServiceEventTracker
+		return set.InfoBarStackSize and set.InfoBarStack[set.InfoBarStackSize-1] or None
+
 	def __init__(self, screen, eventmap):
 		self.__screen = screen
 		self.__eventmap = eventmap

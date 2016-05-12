@@ -132,7 +132,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.log_entries.append((int(time()), code, msg))
 		print "[TIMER]", msg
 
-	def calculateFilename(self):
+	def calculateFilename(self, record_service):
 		service_name = self.service_ref.getServiceName()
 		begin_date = strftime("%Y%m%d %H%M", localtime(self.begin))
 		begin_shortdate = strftime("%Y%m%d", localtime(self.begin))
@@ -163,7 +163,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			dirname = defaultMoviePath()
 		else:
 			dirname = self.dirname
-		self.Filename = Directories.getRecordingFilename(filename, dirname)
+		self.Filename = Directories.getRecordingFilename(filename, dirname) + record_service.getFileExtension()
 		self.log(0, "Filename calculated as: '%s'" % self.Filename)
 		#begin_date + " - " + service_name + description)
 
@@ -171,7 +171,6 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		if self.justplay:
 			return True
 		else:
-			self.calculateFilename()
 			rec_ref = self.service_ref and self.service_ref.ref
 			if rec_ref and rec_ref.flags & eServiceReference.isGroup:
 				rec_ref = getBestPlayableServiceReference(rec_ref, eServiceReference())
@@ -184,6 +183,8 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			if not self.record_service:
 				self.log(1, "'record service' failed")
 				return False
+
+			self.calculateFilename(self.record_service)
 
 			if self.repeated:
 				epgcache = eEPGCache.getInstance()
@@ -199,7 +200,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				if event_id is None:
 					event_id = -1
 
-			prep_res=self.record_service.prepare(self.Filename + ".ts", self.begin, self.end, event_id, self.name.replace("\n", ""), self.description.replace("\n", ""), ' '.join(self.tags))
+			prep_res=self.record_service.prepare(self.Filename, self.begin, self.end, event_id, self.name.replace("\n", ""), self.description.replace("\n", ""), ' '.join(self.tags))
 			if prep_res:
 				if prep_res == -255:
 					self.log(4, "failed to write meta information")
@@ -237,7 +238,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				# i.e. cable / sat.. then the second recording needs an own extension... when we create the file
 				# here than calculateFilename is happy
 				if not self.justplay:
-					open(self.Filename + ".ts", "we").close()
+					open(self.Filename, "we").close()
 				# fine. it worked, resources are allocated.
 				self.next_activation = self.begin
 				self.backoff = 0
@@ -420,6 +421,10 @@ class RecordTimerEntry(timer.TimerEntry, object):
 
 			if config.usage.show_message_when_recording_starts.value:
 				Notifications.AddPopup(text = text, type = MessageBox.TYPE_INFO, timeout = 3, domain = "RecordTimer")
+		elif event == iRecordableService.evGstRecordEOS:
+			if self.repeated:
+				self.processRepeated(findRunningEvent = False)
+			NavigationInstance.instance.RecordTimer.doActivate(self)
 
 	# we have record_service as property to automatically subscribe to record service events
 	def setRecordService(self, service):

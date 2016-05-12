@@ -327,6 +327,7 @@ public:
 	void endNativePainting();
 
 	void setMatrix(const eMatrix4x4 &matrix);
+	int flags();
 };
 
 class gDC: public iObject
@@ -368,6 +369,7 @@ public:
 	gRegion &getClip() { return m_current_clip; }
 	int getPixmap(ePtr<gPixmap> &pm) { pm = m_pixmap; return 0; }
 	gRGBA getRGB(gColor col);
+	int flags(){ return m_pixmap ? m_pixmap->flags() : 0; }
 	virtual eSize size() { return m_pixmap ? m_pixmap->size() : eSize(0, 0); }
 	virtual gPixelFormat pixelFormat() const;
 	virtual int islocked() { return 0; }

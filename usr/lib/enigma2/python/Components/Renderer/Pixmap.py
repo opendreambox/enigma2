@@ -14,6 +14,8 @@ class Pixmap(Renderer):
 		self.changed((self.CHANGED_DEFAULT,))
 		if self._pulsate:
 			self._doPulsate(instance)
+		else:
+			instance.setDefaultAnimationEnabled(self.source.isAnimated)
 
 	def canPulsate(self):
 		return True
@@ -22,7 +24,10 @@ class Pixmap(Renderer):
 		instance.setPulsate(self._pulsate)
 
 	def changed(self, what):
-		if what[0] == self.CHANGED_PULSATE:
+		if what[0] == self.CHANGED_ANIMATED:
+			if self.instance:
+				self.instance.setDefaultAnimationEnabled(self.source.isAnimated)
+		elif what[0] == self.CHANGED_PULSATE:
 			self._pulsate = what[1]
 			if self.instance:
 				self._doPulsate(self.instance)

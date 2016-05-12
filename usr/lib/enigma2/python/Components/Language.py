@@ -68,6 +68,8 @@ class Language:
 			self.currLangObj.install(names="ngettext")
 			try:
 				locale.setlocale(locale.LC_TIME, lang[3])
+				locale.setlocale(locale.LC_ALL, lang[3])
+				os.environ["LANGUAGE"] = self.getLanguage()
 			except Exception, e:
 				print "Error settings system language, date/time will not be translated %s" %(e)
 			self.activeLanguage = index

@@ -12,7 +12,7 @@ class ServicePosition(Poll, Converter, object):
 	def __init__(self, type):
 		Poll.__init__(self)
 		Converter.__init__(self, type)
-
+		self.isAnimated = False
 		args = type.split(',')
 		type = args.pop(0)
 
@@ -130,6 +130,8 @@ class ServicePosition(Poll, Converter, object):
 	value = property(getValue)
 
 	def changed(self, what):
+		if what[0] == self.CHANGED_ANIMATED:
+			return
 		cutlist_refresh = what[0] != self.CHANGED_SPECIFIC or what[1] in (iPlayableService.evCuesheetChanged,)
 		time_refresh = what[0] == self.CHANGED_POLL or what[0] == self.CHANGED_SPECIFIC and what[1] in (iPlayableService.evCuesheetChanged,)
 

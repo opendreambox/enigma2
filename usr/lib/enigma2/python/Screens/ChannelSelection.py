@@ -1250,7 +1250,20 @@ class ChannelSelectionEncoderService(object):
 	def _setEncoderService(self):
 		ref = self.getCurrentSelection()
 		if ref:
-			streamServerControl.setEncoderService(ref)
+			res = streamServerControl.setEncoderService(ref)
+			infotext = ""
+			if res == streamServerControl.ENCODER_SERVICE_SET:
+				infotext = _("Encoder service now set to {0}").format(ref.getName())
+			elif res == streamServerControl.ENCODER_SERVICE_ALREADY_ACTIVE:
+				infotext = _("Encoder service was already set to {0}").format(ref.getName())
+			elif res == streamServerControl.ENCODER_SERVICE_INVALID_MODE:
+				infotext = _("Encoder service can only be set when in TV-Services mode!")
+			elif res == streamServerControl.ENCODER_SERVICE_INSUFFICIENT_RESOURCES:
+				infotext = _("Setting new encoder service to {0} failed! (Insufficient resources)".format(ref.getName()))
+			else:
+				infotext = _("Setting new encoder service to {0} failed!".format(ref.getName()))
+			if infotext:
+				self.session.toastManager.showToast(infotext)
 
 HISTORYSIZE = 20
 

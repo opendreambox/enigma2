@@ -95,6 +95,7 @@ DISPLAY_FBDEV = _enigma.DISPLAY_FBDEV
 ENABLE_EWEBVIEW = _enigma.ENABLE_EWEBVIEW
 ENABLE_LCD = _enigma.ENABLE_LCD
 HAVE_DLFCN_H = _enigma.HAVE_DLFCN_H
+HAVE_GST_1 = _enigma.HAVE_GST_1
 HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
@@ -499,6 +500,7 @@ class iServiceInformation_ENUMS(object):
     sTagChannelMode = _enigma.iServiceInformation_ENUMS_sTagChannelMode
     sTransferBPS = _enigma.iServiceInformation_ENUMS_sTransferBPS
     sLastUpdated = _enigma.iServiceInformation_ENUMS_sLastUpdated
+    sAngle = _enigma.iServiceInformation_ENUMS_sAngle
     sUser = _enigma.iServiceInformation_ENUMS_sUser
     resNA = _enigma.iServiceInformation_ENUMS_resNA
     resIsString = _enigma.iServiceInformation_ENUMS_resIsString
@@ -604,15 +606,41 @@ iSeekableServicePtr.seekTitle = new_instancemethod(_enigma.iSeekableServicePtr_s
 iSeekableServicePtr_swigregister = _enigma.iSeekableServicePtr_swigregister
 iSeekableServicePtr_swigregister(iSeekableServicePtr)
 
-class iAudioTrackInfo(object):
+class iAudioType_ENUMS(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    atMPEG = _enigma.iAudioType_ENUMS_atMPEG
+    atAC3 = _enigma.iAudioType_ENUMS_atAC3
+    atDTS = _enigma.iAudioType_ENUMS_atDTS
+    atAAC = _enigma.iAudioType_ENUMS_atAAC
+    atAACHE = _enigma.iAudioType_ENUMS_atAACHE
+    atLPCM = _enigma.iAudioType_ENUMS_atLPCM
+    atDTSHD = _enigma.iAudioType_ENUMS_atDTSHD
+    atDDP = _enigma.iAudioType_ENUMS_atDDP
+    atMP3 = _enigma.iAudioType_ENUMS_atMP3
+    atPCM = _enigma.iAudioType_ENUMS_atPCM
+    atOGG = _enigma.iAudioType_ENUMS_atOGG
+    atFLAC = _enigma.iAudioType_ENUMS_atFLAC
+    atWMA = _enigma.iAudioType_ENUMS_atWMA
+    atUnknown = _enigma.iAudioType_ENUMS_atUnknown
+iAudioType_ENUMS_swigregister = _enigma.iAudioType_ENUMS_swigregister
+iAudioType_ENUMS_swigregister(iAudioType_ENUMS)
+
+class iAudioTrackInfo(iAudioType_ENUMS):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+    __swig_destroy__ = _enigma.delete_iAudioTrackInfo
     def __init__(self): 
         _enigma.iAudioTrackInfo_swiginit(self,_enigma.new_iAudioTrackInfo())
-    __swig_destroy__ = _enigma.delete_iAudioTrackInfo
 iAudioTrackInfo.getDescription = new_instancemethod(_enigma.iAudioTrackInfo_getDescription,None,iAudioTrackInfo)
 iAudioTrackInfo.getLanguage = new_instancemethod(_enigma.iAudioTrackInfo_getLanguage,None,iAudioTrackInfo)
 iAudioTrackInfo.getPID = new_instancemethod(_enigma.iAudioTrackInfo_getPID,None,iAudioTrackInfo)
+iAudioTrackInfo.getType = new_instancemethod(_enigma.iAudioTrackInfo_getType,None,iAudioTrackInfo)
+iAudioTrackInfo.isSaved = new_instancemethod(_enigma.iAudioTrackInfo_isSaved,None,iAudioTrackInfo)
+iAudioTrackInfo.isDefault = new_instancemethod(_enigma.iAudioTrackInfo_isDefault,None,iAudioTrackInfo)
+iAudioTrackInfo.setLanguage = new_instancemethod(_enigma.iAudioTrackInfo_setLanguage,None,iAudioTrackInfo)
+iAudioTrackInfo.setDescription = new_instancemethod(_enigma.iAudioTrackInfo_setDescription,None,iAudioTrackInfo)
 iAudioTrackInfo_swigregister = _enigma.iAudioTrackInfo_swigregister
 iAudioTrackInfo_swigregister(iAudioTrackInfo)
 
@@ -757,21 +785,81 @@ iCueSheetPtr.setCutListEnable = new_instancemethod(_enigma.iCueSheetPtr_setCutLi
 iCueSheetPtr_swigregister = _enigma.iCueSheetPtr_swigregister
 iCueSheetPtr_swigregister(iCueSheetPtr)
 
-class iSubtitleOutputPtr(object):
+class iSubtitleType_ENUMS(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    NONE = _enigma.iSubtitleType_ENUMS_NONE
+    DVB = _enigma.iSubtitleType_ENUMS_DVB
+    TTX = _enigma.iSubtitleType_ENUMS_TTX
+    DVD = _enigma.iSubtitleType_ENUMS_DVD
+    GST = _enigma.iSubtitleType_ENUMS_GST
+iSubtitleType_ENUMS_swigregister = _enigma.iSubtitleType_ENUMS_swigregister
+iSubtitleType_ENUMS_swigregister(iSubtitleType_ENUMS)
+
+class iGstSubtitleType_ENUMS(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    stUnknown = _enigma.iGstSubtitleType_ENUMS_stUnknown
+    stPlainText = _enigma.iGstSubtitleType_ENUMS_stPlainText
+    stSSA = _enigma.iGstSubtitleType_ENUMS_stSSA
+    stASS = _enigma.iGstSubtitleType_ENUMS_stASS
+    stVOB = _enigma.iGstSubtitleType_ENUMS_stVOB
+    stPGS = _enigma.iGstSubtitleType_ENUMS_stPGS
+iGstSubtitleType_ENUMS_swigregister = _enigma.iGstSubtitleType_ENUMS_swigregister
+iGstSubtitleType_ENUMS_swigregister(iGstSubtitleType_ENUMS)
+
+class iSubtitleFilterType_ENUMS(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    SUB_FILTER_NONE = _enigma.iSubtitleFilterType_ENUMS_SUB_FILTER_NONE
+    SUB_FILTER_SHOW_FORCED_ONLY = _enigma.iSubtitleFilterType_ENUMS_SUB_FILTER_SHOW_FORCED_ONLY
+    SUB_FILTER_SHOW_ALL = _enigma.iSubtitleFilterType_ENUMS_SUB_FILTER_SHOW_ALL
+iSubtitleFilterType_ENUMS_swigregister = _enigma.iSubtitleFilterType_ENUMS_swigregister
+iSubtitleFilterType_ENUMS_swigregister(iSubtitleFilterType_ENUMS)
+
+class iSubtitleTrackInfo(iSubtitleType_ENUMS,iGstSubtitleType_ENUMS):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    __swig_destroy__ = _enigma.delete_iSubtitleTrackInfo
+    def __init__(self): 
+        _enigma.iSubtitleTrackInfo_swiginit(self,_enigma.new_iSubtitleTrackInfo())
+iSubtitleTrackInfo.getType = new_instancemethod(_enigma.iSubtitleTrackInfo_getType,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getPID = new_instancemethod(_enigma.iSubtitleTrackInfo_getPID,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getLanguage = new_instancemethod(_enigma.iSubtitleTrackInfo_getLanguage,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getCompositionPageID = new_instancemethod(_enigma.iSubtitleTrackInfo_getCompositionPageID,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getAncillaryPageID = new_instancemethod(_enigma.iSubtitleTrackInfo_getAncillaryPageID,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getPageNumber = new_instancemethod(_enigma.iSubtitleTrackInfo_getPageNumber,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getMagazineNumber = new_instancemethod(_enigma.iSubtitleTrackInfo_getMagazineNumber,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getGstSubtype = new_instancemethod(_enigma.iSubtitleTrackInfo_getGstSubtype,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.isSaved = new_instancemethod(_enigma.iSubtitleTrackInfo_isSaved,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.isDefault = new_instancemethod(_enigma.iSubtitleTrackInfo_isDefault,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.isForced = new_instancemethod(_enigma.iSubtitleTrackInfo_isForced,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.getFilter = new_instancemethod(_enigma.iSubtitleTrackInfo_getFilter,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.setLanguage = new_instancemethod(_enigma.iSubtitleTrackInfo_setLanguage,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.setFilter = new_instancemethod(_enigma.iSubtitleTrackInfo_setFilter,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo.setGstSubtype = new_instancemethod(_enigma.iSubtitleTrackInfo_setGstSubtype,None,iSubtitleTrackInfo)
+iSubtitleTrackInfo_swigregister = _enigma.iSubtitleTrackInfo_swigregister
+iSubtitleTrackInfo_swigregister(iSubtitleTrackInfo)
+
+class iSubtitleTrackSelectionPtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     def __init__(self, *args): 
-        _enigma.iSubtitleOutputPtr_swiginit(self,_enigma.new_iSubtitleOutputPtr(*args))
-    __swig_destroy__ = _enigma.delete_iSubtitleOutputPtr
-iSubtitleOutputPtr.__ref__ = new_instancemethod(_enigma.iSubtitleOutputPtr___ref__,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr.getPtrString = new_instancemethod(_enigma.iSubtitleOutputPtr_getPtrString,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr.__deref__ = new_instancemethod(_enigma.iSubtitleOutputPtr___deref__,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr.enableSubtitles = new_instancemethod(_enigma.iSubtitleOutputPtr_enableSubtitles,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr.disableSubtitles = new_instancemethod(_enigma.iSubtitleOutputPtr_disableSubtitles,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr.getSubtitleList = new_instancemethod(_enigma.iSubtitleOutputPtr_getSubtitleList,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr.getCachedSubtitle = new_instancemethod(_enigma.iSubtitleOutputPtr_getCachedSubtitle,None,iSubtitleOutputPtr)
-iSubtitleOutputPtr_swigregister = _enigma.iSubtitleOutputPtr_swigregister
-iSubtitleOutputPtr_swigregister(iSubtitleOutputPtr)
+        _enigma.iSubtitleTrackSelectionPtr_swiginit(self,_enigma.new_iSubtitleTrackSelectionPtr(*args))
+    __swig_destroy__ = _enigma.delete_iSubtitleTrackSelectionPtr
+iSubtitleTrackSelectionPtr.__ref__ = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr___ref__,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.getPtrString = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getPtrString,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.__deref__ = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr___deref__,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.getNumberOfSubtitleTracks = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getNumberOfSubtitleTracks,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.getSubtitleTrackInfo = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getSubtitleTrackInfo,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.getCurrentSubtitleTrack = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getCurrentSubtitleTrack,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.enableSubtitles = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_enableSubtitles,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.disableSubtitles = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_disableSubtitles,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr_swigregister = _enigma.iSubtitleTrackSelectionPtr_swigregister
+iSubtitleTrackSelectionPtr_swigregister(iSubtitleTrackSelectionPtr)
 
 class iMutableServiceListPtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -910,6 +998,8 @@ class iPlayableService_ENUMS(object):
     evVideoProgressiveChanged = _enigma.iPlayableService_ENUMS_evVideoProgressiveChanged
     evBuffering = _enigma.iPlayableService_ENUMS_evBuffering
     evStopped = _enigma.iPlayableService_ENUMS_evStopped
+    evSubtitleListChanged = _enigma.iPlayableService_ENUMS_evSubtitleListChanged
+    evAudioListChanged = _enigma.iPlayableService_ENUMS_evAudioListChanged
     evUser = _enigma.iPlayableService_ENUMS_evUser
 iPlayableService_ENUMS_swigregister = _enigma.iPlayableService_ENUMS_swigregister
 iPlayableService_ENUMS_swigregister(iPlayableService_ENUMS)
@@ -936,7 +1026,7 @@ iPlayableServicePtr.subServices = new_instancemethod(_enigma.iPlayableServicePtr
 iPlayableServicePtr.frontendInfo = new_instancemethod(_enigma.iPlayableServicePtr_frontendInfo,None,iPlayableServicePtr)
 iPlayableServicePtr.timeshift = new_instancemethod(_enigma.iPlayableServicePtr_timeshift,None,iPlayableServicePtr)
 iPlayableServicePtr.cueSheet = new_instancemethod(_enigma.iPlayableServicePtr_cueSheet,None,iPlayableServicePtr)
-iPlayableServicePtr.subtitle = new_instancemethod(_enigma.iPlayableServicePtr_subtitle,None,iPlayableServicePtr)
+iPlayableServicePtr.subtitleTracks = new_instancemethod(_enigma.iPlayableServicePtr_subtitleTracks,None,iPlayableServicePtr)
 iPlayableServicePtr.audioDelay = new_instancemethod(_enigma.iPlayableServicePtr_audioDelay,None,iPlayableServicePtr)
 iPlayableServicePtr.rdsDecoder = new_instancemethod(_enigma.iPlayableServicePtr_rdsDecoder,None,iPlayableServicePtr)
 iPlayableServicePtr.stream = new_instancemethod(_enigma.iPlayableServicePtr_stream,None,iPlayableServicePtr)
@@ -960,6 +1050,7 @@ class iRecordableService_ENUMS(object):
     evRecordFailed = _enigma.iRecordableService_ENUMS_evRecordFailed
     evRecordWriteError = _enigma.iRecordableService_ENUMS_evRecordWriteError
     evNewEventInfo = _enigma.iRecordableService_ENUMS_evNewEventInfo
+    evGstRecordEOS = _enigma.iRecordableService_ENUMS_evGstRecordEOS
     NoError = _enigma.iRecordableService_ENUMS_NoError
     errOpenRecordFile = _enigma.iRecordableService_ENUMS_errOpenRecordFile
     errNoDemuxAvailable = _enigma.iRecordableService_ENUMS_errNoDemuxAvailable
@@ -989,6 +1080,7 @@ iRecordableServicePtr.stop = new_instancemethod(_enigma.iRecordableServicePtr_st
 iRecordableServicePtr.frontendInfo = new_instancemethod(_enigma.iRecordableServicePtr_frontendInfo,None,iRecordableServicePtr)
 iRecordableServicePtr.stream = new_instancemethod(_enigma.iRecordableServicePtr_stream,None,iRecordableServicePtr)
 iRecordableServicePtr.subServices = new_instancemethod(_enigma.iRecordableServicePtr_subServices,None,iRecordableServicePtr)
+iRecordableServicePtr.getFileExtension = new_instancemethod(_enigma.iRecordableServicePtr_getFileExtension,None,iRecordableServicePtr)
 iRecordableServicePtr_swigregister = _enigma.iRecordableServicePtr_swigregister
 iRecordableServicePtr_swigregister(iRecordableServicePtr)
 
@@ -1025,23 +1117,24 @@ def eServiceCenter_getInstance():
   return _enigma.eServiceCenter_getInstance()
 eServiceCenter_getInstance = _enigma.eServiceCenter_getInstance
 
-atUnknown = _enigma.atUnknown
-atMPEG = _enigma.atMPEG
-atMP3 = _enigma.atMP3
-atAC3 = _enigma.atAC3
-atDTS = _enigma.atDTS
-atAAC = _enigma.atAAC
-atPCM = _enigma.atPCM
-atOGG = _enigma.atOGG
-atFLAC = _enigma.atFLAC
-atWMA = _enigma.atWMA
-stUnknown = _enigma.stUnknown
-stPlainText = _enigma.stPlainText
-stSSA = _enigma.stSSA
-stASS = _enigma.stASS
-stSRT = _enigma.stSRT
-stVOB = _enigma.stVOB
-stPGS = _enigma.stPGS
+HTTP_TIMEOUT = _enigma.HTTP_TIMEOUT
+class eGstMsgContainer(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    eMsgtNone = _enigma.eGstMsgContainer_eMsgtNone
+    eMsgtBusMessage = _enigma.eGstMsgContainer_eMsgtBusMessage
+    eMsgtGstStateChange = _enigma.eGstMsgContainer_eMsgtGstStateChange
+    eMsgtSubtitleAvailable = _enigma.eGstMsgContainer_eMsgtSubtitleAvailable
+    eMsgtSubtitleCaps = _enigma.eGstMsgContainer_eMsgtSubtitleCaps
+    def __init__(self, *args): 
+        _enigma.eGstMsgContainer_swiginit(self,_enigma.new_eGstMsgContainer(*args))
+    __swig_destroy__ = _enigma.delete_eGstMsgContainer
+eGstMsgContainer.getType = new_instancemethod(_enigma.eGstMsgContainer_getType,None,eGstMsgContainer)
+eGstMsgContainer.getTransition = new_instancemethod(_enigma.eGstMsgContainer_getTransition,None,eGstMsgContainer)
+eGstMsgContainer.getSource = new_instancemethod(_enigma.eGstMsgContainer_getSource,None,eGstMsgContainer)
+eGstMsgContainer_swigregister = _enigma.eGstMsgContainer_swigregister
+eGstMsgContainer_swigregister(eGstMsgContainer)
+
 ctNone = _enigma.ctNone
 ctMPEGTS = _enigma.ctMPEGTS
 ctMPEGPS = _enigma.ctMPEGPS
@@ -1062,14 +1155,11 @@ class eServiceMP3_ENUMS(object):
     evEmbeddedCoverArt = _enigma.eServiceMP3_ENUMS_evEmbeddedCoverArt
     evUpdatedBitrate = _enigma.eServiceMP3_ENUMS_evUpdatedBitrate
     evStreamingSrcError = _enigma.eServiceMP3_ENUMS_evStreamingSrcError
-    SUB_FILTER_NONE = _enigma.eServiceMP3_ENUMS_SUB_FILTER_NONE
-    SUB_FILTER_SHOW_FORCED_ONLY = _enigma.eServiceMP3_ENUMS_SUB_FILTER_SHOW_FORCED_ONLY
-    SUB_FILTER_SHOW_ALL = _enigma.eServiceMP3_ENUMS_SUB_FILTER_SHOW_ALL
-    GST_MATROSKA_TRACK_ENABLED = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_ENABLED
-    GST_MATROSKA_TRACK_DEFAULT = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_DEFAULT
-    GST_MATROSKA_TRACK_LACING = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_LACING
-    GST_MATROSKA_TRACK_FORCED = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_FORCED
-    GST_MATROSKA_TRACK_SHIFT = _enigma.eServiceMP3_ENUMS_GST_MATROSKA_TRACK_SHIFT
+    evFileReadError = _enigma.eServiceMP3_ENUMS_evFileReadError
+    evTypeNotFoundError = _enigma.eServiceMP3_ENUMS_evTypeNotFoundError
+    evGeneralGstError = _enigma.eServiceMP3_ENUMS_evGeneralGstError
+    SUB_STREAM_FLAG_SELECT = _enigma.eServiceMP3_ENUMS_SUB_STREAM_FLAG_SELECT
+    SUB_STREAM_FLAG_FORCED = _enigma.eServiceMP3_ENUMS_SUB_STREAM_FLAG_FORCED
 eServiceMP3_ENUMS_swigregister = _enigma.eServiceMP3_ENUMS_swigregister
 eServiceMP3_ENUMS_swigregister(eServiceMP3_ENUMS)
 
@@ -2132,7 +2222,11 @@ class eWindowAnimationManager(object):
     setDefault = staticmethod(_enigma.eWindowAnimationManager_setDefault)
     setAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_setAnimationsEnabled)
     isAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_isAnimationsEnabled)
+    setWidgetDefault = staticmethod(_enigma.eWindowAnimationManager_setWidgetDefault)
+    isWidgetAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_isWidgetAnimationsEnabled)
+    setWidgetAnimationsEnabled = staticmethod(_enigma.eWindowAnimationManager_setWidgetAnimationsEnabled)
     defaultAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultAnimationChanged_get, _enigma.eWindowAnimationManager_defaultAnimationChanged_set)
+    defaultWidgetAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultWidgetAnimationChanged_get, _enigma.eWindowAnimationManager_defaultWidgetAnimationChanged_set)
 eWindowAnimationManager.__ref__ = new_instancemethod(_enigma.eWindowAnimationManager___ref__,None,eWindowAnimationManager)
 eWindowAnimationManager.getPtrString = new_instancemethod(_enigma.eWindowAnimationManager_getPtrString,None,eWindowAnimationManager)
 eWindowAnimationManager.__deref__ = new_instancemethod(_enigma.eWindowAnimationManager___deref__,None,eWindowAnimationManager)
@@ -2162,6 +2256,18 @@ eWindowAnimationManager_setAnimationsEnabled = _enigma.eWindowAnimationManager_s
 def eWindowAnimationManager_isAnimationsEnabled():
   return _enigma.eWindowAnimationManager_isAnimationsEnabled()
 eWindowAnimationManager_isAnimationsEnabled = _enigma.eWindowAnimationManager_isAnimationsEnabled
+
+def eWindowAnimationManager_setWidgetDefault(*args):
+  return _enigma.eWindowAnimationManager_setWidgetDefault(*args)
+eWindowAnimationManager_setWidgetDefault = _enigma.eWindowAnimationManager_setWidgetDefault
+
+def eWindowAnimationManager_isWidgetAnimationsEnabled():
+  return _enigma.eWindowAnimationManager_isWidgetAnimationsEnabled()
+eWindowAnimationManager_isWidgetAnimationsEnabled = _enigma.eWindowAnimationManager_isWidgetAnimationsEnabled
+
+def eWindowAnimationManager_setWidgetAnimationsEnabled(*args):
+  return _enigma.eWindowAnimationManager_setWidgetAnimationsEnabled(*args)
+eWindowAnimationManager_setWidgetAnimationsEnabled = _enigma.eWindowAnimationManager_setWidgetAnimationsEnabled
 
 class eWidget(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2240,6 +2346,7 @@ class eAnimatedWidget(eWidget):
     __swig_destroy__ = _enigma.delete_eAnimatedWidget
 eAnimatedWidget.doBlit = new_instancemethod(_enigma.eAnimatedWidget_doBlit,None,eAnimatedWidget)
 eAnimatedWidget.prepareForChangeAnimation = new_instancemethod(_enigma.eAnimatedWidget_prepareForChangeAnimation,None,eAnimatedWidget)
+eAnimatedWidget.setDefaultAnimationEnabled = new_instancemethod(_enigma.eAnimatedWidget_setDefaultAnimationEnabled,None,eAnimatedWidget)
 eAnimatedWidget_swigregister = _enigma.eAnimatedWidget_swigregister
 eAnimatedWidget_swigregister(eAnimatedWidget)
 
@@ -2435,6 +2542,9 @@ eWidgetDesktop.size = new_instancemethod(_enigma.eWidgetDesktop_size,None,eWidge
 eWidgetDesktop.isDimmable = new_instancemethod(_enigma.eWidgetDesktop_isDimmable,None,eWidgetDesktop)
 eWidgetDesktop.createScreenshot = new_instancemethod(_enigma.eWidgetDesktop_createScreenshot,None,eWidgetDesktop)
 eWidgetDesktop.setFrameTime = new_instancemethod(_enigma.eWidgetDesktop_setFrameTime,None,eWidgetDesktop)
+eWidgetDesktop.isAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_isAnimationsEnabled,None,eWidgetDesktop)
+eWidgetDesktop.setAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_setAnimationsEnabled,None,eWidgetDesktop)
+eWidgetDesktop.flags = new_instancemethod(_enigma.eWidgetDesktop_flags,None,eWidgetDesktop)
 eWidgetDesktop_swigregister = _enigma.eWidgetDesktop_swigregister
 eWidgetDesktop_swigregister(eWidgetDesktop)
 
@@ -2747,44 +2857,6 @@ eVideoWidget.setFBSize = new_instancemethod(_enigma.eVideoWidget_setFBSize,None,
 eVideoWidget_swigregister = _enigma.eVideoWidget_swigregister
 eVideoWidget_swigregister(eVideoWidget)
 
-class ePangoSubtitlePageElement(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    m_color = _swig_property(_enigma.ePangoSubtitlePageElement_m_color_get, _enigma.ePangoSubtitlePageElement_m_color_set)
-    m_have_color = _swig_property(_enigma.ePangoSubtitlePageElement_m_have_color_get, _enigma.ePangoSubtitlePageElement_m_have_color_set)
-    m_pango_line = _swig_property(_enigma.ePangoSubtitlePageElement_m_pango_line_get, _enigma.ePangoSubtitlePageElement_m_pango_line_set)
-    m_area = _swig_property(_enigma.ePangoSubtitlePageElement_m_area_get, _enigma.ePangoSubtitlePageElement_m_area_set)
-    def __init__(self, *args): 
-        _enigma.ePangoSubtitlePageElement_swiginit(self,_enigma.new_ePangoSubtitlePageElement(*args))
-    __swig_destroy__ = _enigma.delete_ePangoSubtitlePageElement
-ePangoSubtitlePageElement_swigregister = _enigma.ePangoSubtitlePageElement_swigregister
-ePangoSubtitlePageElement_swigregister(ePangoSubtitlePageElement)
-
-class ePangoSubtitlePage(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    m_show_pts = _swig_property(_enigma.ePangoSubtitlePage_m_show_pts_get, _enigma.ePangoSubtitlePage_m_show_pts_set)
-    m_timeout = _swig_property(_enigma.ePangoSubtitlePage_m_timeout_get, _enigma.ePangoSubtitlePage_m_timeout_set)
-    m_elements = _swig_property(_enigma.ePangoSubtitlePage_m_elements_get, _enigma.ePangoSubtitlePage_m_elements_set)
-    def __init__(self): 
-        _enigma.ePangoSubtitlePage_swiginit(self,_enigma.new_ePangoSubtitlePage())
-    __swig_destroy__ = _enigma.delete_ePangoSubtitlePage
-ePangoSubtitlePage.clear = new_instancemethod(_enigma.ePangoSubtitlePage_clear,None,ePangoSubtitlePage)
-ePangoSubtitlePage_swigregister = _enigma.ePangoSubtitlePage_swigregister
-ePangoSubtitlePage_swigregister(ePangoSubtitlePage)
-
-class eVobSubtitlePage(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-    m_show_pts = _swig_property(_enigma.eVobSubtitlePage_m_show_pts_get, _enigma.eVobSubtitlePage_m_show_pts_set)
-    m_timeout = _swig_property(_enigma.eVobSubtitlePage_m_timeout_get, _enigma.eVobSubtitlePage_m_timeout_set)
-    m_pixmap = _swig_property(_enigma.eVobSubtitlePage_m_pixmap_get, _enigma.eVobSubtitlePage_m_pixmap_set)
-    def __init__(self): 
-        _enigma.eVobSubtitlePage_swiginit(self,_enigma.new_eVobSubtitlePage())
-    __swig_destroy__ = _enigma.delete_eVobSubtitlePage
-eVobSubtitlePage_swigregister = _enigma.eVobSubtitlePage_swigregister
-eVobSubtitlePage_swigregister(eVobSubtitlePage)
-
 class eSubtitleWidget(eWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -2800,6 +2872,7 @@ class eSubtitleWidget(eWidget):
 eSubtitleWidget.setPage = new_instancemethod(_enigma.eSubtitleWidget_setPage,None,eSubtitleWidget)
 eSubtitleWidget.clearPage = new_instancemethod(_enigma.eSubtitleWidget_clearPage,None,eSubtitleWidget)
 eSubtitleWidget.setPixmap = new_instancemethod(_enigma.eSubtitleWidget_setPixmap,None,eSubtitleWidget)
+eSubtitleWidget.setFullscreenPixmap = new_instancemethod(_enigma.eSubtitleWidget_setFullscreenPixmap,None,eSubtitleWidget)
 eSubtitleWidget_swigregister = _enigma.eSubtitleWidget_swigregister
 eSubtitleWidget_swigregister(eSubtitleWidget)
 
@@ -3864,6 +3937,14 @@ class eMediaDatabase(object):
         """
         return _enigma.eMediaDatabase_setRecordEit(self, *args)
 
+    def setLastPlayed(self, *args):
+        """setLastPlayed(eMediaDatabase self, int file_id, int64_t lastplayed, int64_t lastplaypos) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_setLastPlayed(self, *args)
+
+    def getLastPlayed(self, *args):
+        """getLastPlayed(eMediaDatabase self, int file_id, int64_t & lastplayed, int64_t & lastplaypos)"""
+        return _enigma.eMediaDatabase_getLastPlayed(self, *args)
+
     def getFileByPath(self, *args):
         """getFileByPath(eMediaDatabase self, std::string const & filepath) -> eMediaDatabaseResultPtr"""
         return _enigma.eMediaDatabase_getFileByPath(self, *args)
@@ -3883,6 +3964,10 @@ class eMediaDatabase(object):
     def getFileAttribute(self, *args):
         """getFileAttribute(eMediaDatabase self, int file_id, std::string const & key) -> eMediaDatabaseResultPtr"""
         return _enigma.eMediaDatabase_getFileAttribute(self, *args)
+
+    def getFileAttributeValue(self, *args):
+        """getFileAttributeValue(eMediaDatabase self, int file_id, std::string const & key)"""
+        return _enigma.eMediaDatabase_getFileAttributeValue(self, *args)
 
     def getCoverArt(self, *args):
         """getCoverArt(eMediaDatabase self, int cover_art_id)"""
@@ -4006,11 +4091,14 @@ eMediaDatabase.getRecordMeta = new_instancemethod(_enigma.eMediaDatabase_getReco
 eMediaDatabase.setRecordMeta = new_instancemethod(_enigma.eMediaDatabase_setRecordMeta,None,eMediaDatabase)
 eMediaDatabase.getRecordEit = new_instancemethod(_enigma.eMediaDatabase_getRecordEit,None,eMediaDatabase)
 eMediaDatabase.setRecordEit = new_instancemethod(_enigma.eMediaDatabase_setRecordEit,None,eMediaDatabase)
+eMediaDatabase.setLastPlayed = new_instancemethod(_enigma.eMediaDatabase_setLastPlayed,None,eMediaDatabase)
+eMediaDatabase.getLastPlayed = new_instancemethod(_enigma.eMediaDatabase_getLastPlayed,None,eMediaDatabase)
 eMediaDatabase.getFileByPath = new_instancemethod(_enigma.eMediaDatabase_getFileByPath,None,eMediaDatabase)
 eMediaDatabase.setFileAttribute = new_instancemethod(_enigma.eMediaDatabase_setFileAttribute,None,eMediaDatabase)
 eMediaDatabase.deleteFileAttribute = new_instancemethod(_enigma.eMediaDatabase_deleteFileAttribute,None,eMediaDatabase)
 eMediaDatabase.getFileAttributes = new_instancemethod(_enigma.eMediaDatabase_getFileAttributes,None,eMediaDatabase)
 eMediaDatabase.getFileAttribute = new_instancemethod(_enigma.eMediaDatabase_getFileAttribute,None,eMediaDatabase)
+eMediaDatabase.getFileAttributeValue = new_instancemethod(_enigma.eMediaDatabase_getFileAttributeValue,None,eMediaDatabase)
 eMediaDatabase.getCoverArt = new_instancemethod(_enigma.eMediaDatabase_getCoverArt,None,eMediaDatabase)
 eMediaDatabase.getCoverArtData = new_instancemethod(_enigma.eMediaDatabase_getCoverArtData,None,eMediaDatabase)
 eMediaDatabase.getAlbumCoverArt = new_instancemethod(_enigma.eMediaDatabase_getAlbumCoverArt,None,eMediaDatabase)
@@ -4073,6 +4161,8 @@ eMediaDatabase.FIELD_SERVICEREFRENCE = _enigma.cvar.eMediaDatabase_FIELD_SERVICE
 eMediaDatabase.FIELD_TYPE = _enigma.cvar.eMediaDatabase_FIELD_TYPE
 eMediaDatabase.FIELD_NAME = _enigma.cvar.eMediaDatabase_FIELD_NAME
 eMediaDatabase.FIELD_COVER_ART_ID = _enigma.cvar.eMediaDatabase_FIELD_COVER_ART_ID
+eMediaDatabase.FIELD_SAVED_AUDIO_TRACK = _enigma.cvar.eMediaDatabase_FIELD_SAVED_AUDIO_TRACK
+eMediaDatabase.FIELD_SAVED_SUBTITLE_TRACK = _enigma.cvar.eMediaDatabase_FIELD_SAVED_SUBTITLE_TRACK
 
 def eMediaDatabase_getInstance():
   """eMediaDatabase_getInstance() -> eMediaDatabase"""
@@ -4998,6 +5088,12 @@ class eStreamServer(object):
     UPSTREAM_STATE_TRANSMITTING = _enigma.eStreamServer_UPSTREAM_STATE_TRANSMITTING
     UPSTREAM_STATE_OVERLOAD = _enigma.eStreamServer_UPSTREAM_STATE_OVERLOAD
     UPSTREAM_STATE_ADJUSTING = _enigma.eStreamServer_UPSTREAM_STATE_ADJUSTING
+    RTSP_STATE_DISABLED = _enigma.eStreamServer_RTSP_STATE_DISABLED
+    RTSP_STATE_IDLE = _enigma.eStreamServer_RTSP_STATE_IDLE
+    RTSP_STATE_RUNNING = _enigma.eStreamServer_RTSP_STATE_RUNNING
+    HLS_STATE_DISABLED = _enigma.eStreamServer_HLS_STATE_DISABLED
+    HLS_STATE_IDLE = _enigma.eStreamServer_HLS_STATE_IDLE
+    HLS_STATE_RUNNING = _enigma.eStreamServer_HLS_STATE_RUNNING
     SOURCE_STATE_VOID_PENDING = _enigma.eStreamServer_SOURCE_STATE_VOID_PENDING
     SOURCE_STATE_NULL = _enigma.eStreamServer_SOURCE_STATE_NULL
     SOURCE_STATE_READY = _enigma.eStreamServer_SOURCE_STATE_READY
@@ -5010,6 +5106,10 @@ class eStreamServer(object):
     def isRTSPEnabled(self):
         """isRTSPEnabled(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_isRTSPEnabled(self)
+
+    def isHLSEnabled(self):
+        """isHLSEnabled(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_isHLSEnabled(self)
 
     def isUpstreamEnabled(self):
         """isUpstreamEnabled(eStreamServer self) -> bool"""
@@ -5026,6 +5126,14 @@ class eStreamServer(object):
     def upstreamState(self):
         """upstreamState(eStreamServer self) -> int"""
         return _enigma.eStreamServer_upstreamState(self)
+
+    def rtspState(self):
+        """rtspState(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_rtspState(self)
+
+    def hlsState(self):
+        """hlsState(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_hlsState(self)
 
     def width(self):
         """width(eStreamServer self) -> int"""
@@ -5094,6 +5202,14 @@ class eStreamServer(object):
         """
         return _enigma.eStreamServer_enableRTSP(self, *args)
 
+    def enableHLS(self, *args):
+        """
+        enableHLS(eStreamServer self, bool state, uint32_t port, std::string const & user="", std::string const & _pass="") -> bool
+        enableHLS(eStreamServer self, bool state, uint32_t port, std::string const & user="") -> bool
+        enableHLS(eStreamServer self, bool state, uint32_t port) -> bool
+        """
+        return _enigma.eStreamServer_enableHLS(self, *args)
+
     def enableUpstream(self, *args):
         """enableUpstream(eStreamServer self, bool state, std::string const & host, uint32_t port, std::string const & token) -> bool"""
         return _enigma.eStreamServer_enableUpstream(self, *args)
@@ -5107,13 +5223,20 @@ class eStreamServer(object):
     upstreamStateChanged = _swig_property(_enigma.eStreamServer_upstreamStateChanged_get, _enigma.eStreamServer_upstreamStateChanged_set)
     upstreamBitrateChanged = _swig_property(_enigma.eStreamServer_upstreamBitrateChanged_get, _enigma.eStreamServer_upstreamBitrateChanged_set)
     rtspClientCountChanged = _swig_property(_enigma.eStreamServer_rtspClientCountChanged_get, _enigma.eStreamServer_rtspClientCountChanged_set)
+    rtspStateChanged = _swig_property(_enigma.eStreamServer_rtspStateChanged_get, _enigma.eStreamServer_rtspStateChanged_set)
+    hlsStateChanged = _swig_property(_enigma.eStreamServer_hlsStateChanged_get, _enigma.eStreamServer_hlsStateChanged_set)
     uriParametersChanged = _swig_property(_enigma.eStreamServer_uriParametersChanged_get, _enigma.eStreamServer_uriParametersChanged_set)
+    dbusError = _swig_property(_enigma.eStreamServer_dbusError_get, _enigma.eStreamServer_dbusError_set)
+    ping = _swig_property(_enigma.eStreamServer_ping_get, _enigma.eStreamServer_ping_set)
 eStreamServer.isAvailable = new_instancemethod(_enigma.eStreamServer_isAvailable,None,eStreamServer)
 eStreamServer.isRTSPEnabled = new_instancemethod(_enigma.eStreamServer_isRTSPEnabled,None,eStreamServer)
+eStreamServer.isHLSEnabled = new_instancemethod(_enigma.eStreamServer_isHLSEnabled,None,eStreamServer)
 eStreamServer.isUpstreamEnabled = new_instancemethod(_enigma.eStreamServer_isUpstreamEnabled,None,eStreamServer)
 eStreamServer.rtspClientCount = new_instancemethod(_enigma.eStreamServer_rtspClientCount,None,eStreamServer)
 eStreamServer.sourceState = new_instancemethod(_enigma.eStreamServer_sourceState,None,eStreamServer)
 eStreamServer.upstreamState = new_instancemethod(_enigma.eStreamServer_upstreamState,None,eStreamServer)
+eStreamServer.rtspState = new_instancemethod(_enigma.eStreamServer_rtspState,None,eStreamServer)
+eStreamServer.hlsState = new_instancemethod(_enigma.eStreamServer_hlsState,None,eStreamServer)
 eStreamServer.width = new_instancemethod(_enigma.eStreamServer_width,None,eStreamServer)
 eStreamServer.height = new_instancemethod(_enigma.eStreamServer_height,None,eStreamServer)
 eStreamServer.path = new_instancemethod(_enigma.eStreamServer_path,None,eStreamServer)
@@ -5129,6 +5252,7 @@ eStreamServer.setAutoBitrate = new_instancemethod(_enigma.eStreamServer_setAutoB
 eStreamServer.framerate = new_instancemethod(_enigma.eStreamServer_framerate,None,eStreamServer)
 eStreamServer.setFramerate = new_instancemethod(_enigma.eStreamServer_setFramerate,None,eStreamServer)
 eStreamServer.enableRTSP = new_instancemethod(_enigma.eStreamServer_enableRTSP,None,eStreamServer)
+eStreamServer.enableHLS = new_instancemethod(_enigma.eStreamServer_enableHLS,None,eStreamServer)
 eStreamServer.enableUpstream = new_instancemethod(_enigma.eStreamServer_enableUpstream,None,eStreamServer)
 eStreamServer.setResolution = new_instancemethod(_enigma.eStreamServer_setResolution,None,eStreamServer)
 eStreamServer_swigregister = _enigma.eStreamServer_swigregister

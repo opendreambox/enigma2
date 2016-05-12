@@ -33,4 +33,4 @@ class ServiceReference(eServiceReference):
 	def isRecordable(self):
 		ref = self.ref
 		path = ref.getPath()
-		return ref.flags & eServiceReference.isGroup or (ref.type == eServiceReference.idDVB and (path == '' or path[0] != '/'))
+		return ref.flags & eServiceReference.isGroup or (ref.type in [eServiceReference.idDVB, 0x1001] and (path == '' or path[0] != '/'))

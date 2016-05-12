@@ -14,8 +14,14 @@ class Label(VariableText, Renderer):
 		Renderer.connect(self, source)
 		self.changed((self.CHANGED_DEFAULT,))
 
+	def postWidgetCreate(self, instance):
+		VariableText.postWidgetCreate(self, instance)
+		instance.setDefaultAnimationEnabled(self.source.isAnimated)
+
 	def changed(self, what):
-		if what[0] == self.CHANGED_CLEAR:
+		if what[0] == self.CHANGED_ANIMATED and self.instance:
+			self.instance.setDefaultAnimationEnabled(self.source.isAnimated)
+		elif what[0] == self.CHANGED_CLEAR:
 			self.text = ""
 		else:
 			self.text = self.source.text

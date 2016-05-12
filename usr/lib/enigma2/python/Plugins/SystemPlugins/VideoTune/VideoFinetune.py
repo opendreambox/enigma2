@@ -4,6 +4,8 @@ from Components.ActionMap import ActionMap
 from enigma import gFont
 from enigma import RT_HALIGN_RIGHT, RT_WRAP
 
+from skin import TemplatedListFonts
+
 def RGB(r,g,b):
 	return (r<<16)|(g<<8)|b
 
@@ -18,6 +20,12 @@ class VideoFinetune(Screen):
 		self["Canvas"] = CanvasSource()
 
 		self.basic_colors = [RGB(255, 255, 255), RGB(255, 255, 0), RGB(0, 255, 255), RGB(0, 255, 0), RGB(255, 0, 255), RGB(255, 0, 0), RGB(0, 0, 255), RGB(0, 0, 0)]
+		tlf = TemplatedListFonts()
+		self._textFont = gFont(tlf.face(tlf.BIGGER), tlf.size(tlf.BIGGER))
+
+		self._headerSize = tlf.size(tlf.BIGGER) * 2
+		self._headerFont = gFont(tlf.face(tlf.BIGGER), self._headerSize)
+		self._headerSize = int(self._headerSize * 1.5)
 
 		self["actions"] = ActionMap(["InputActions", "OkCancelActions"],
 		{
@@ -30,6 +38,19 @@ class VideoFinetune(Screen):
 			"ok": self.callNext,
 			"cancel": self.close,
 		})
+
+		self._size = None
+		self.next = None
+		self._clear()
+		self.onLayoutFinish.append(self._onLayoutFinish)
+
+	def _clear(self):
+		c = self["Canvas"]
+		c.clear()
+		c.flush()
+
+	def _onLayoutFinish(self):
+		self._size = self["Canvas"].master.instance.size()
 		self.testpic_brightness()
 
 	def callNext(self):
@@ -46,10 +67,9 @@ class VideoFinetune(Screen):
 	def testpic_brightness(self):
 		self.next = self.testpic_contrast
 		c = self["Canvas"]
+		xres, yres = self._size.width(), self._size.height()
 
-		xres, yres = 720, 576
-
-		bbw, bbh = xres / 192, yres / 192
+#		bbw, bbh = xres / 192, yres / 192
 		c.fill(0, 0, xres, yres, RGB(0,0,0))
 
 #		for i in range(8):
@@ -70,8 +90,8 @@ class VideoFinetune(Screen):
 			height = yres / 3
 			eh = height / 8
 			offset = yres/6 + eh * i
-			x = xres * 2 / 3
 			width = yres / 6
+			x = xres - width - xres/10
 
 			c.fill(x, offset, width, eh, RGB(col, col, col))
 			if col == 0 or col == 16 or col == 116:
@@ -79,11 +99,11 @@ class VideoFinetune(Screen):
 #			if col == 0 or col == 36:
 #				self.bbox(x, offset, width, eh, RGB(255,255,255), bbw, bbh)
 			if i < 2:
-				c.writeText(x + width, offset, width, eh, RGB(255, 255, 255), RGB(0,0,0), gFont("Regular", 20), "%d." % (i+1))
+				c.writeText(x + width, offset, width, eh, RGB(255, 255, 255), RGB(0,0,0), self._textFont, "%d." % (i+1))
 
-		c.writeText(xres / 10, yres / 6 - 40, xres * 3 / 5, 40, RGB(128,255,255), RGB(0,0,0), gFont("Regular", 40), 
+		c.writeText(xres / 10, yres / 6 - self._headerSize, xres * 3 / 5, 40, RGB(128,255,255), RGB(0,0,0), self._headerFont, 
 			_("Brightness"))
-		c.writeText(xres / 10, yres / 6, xres * 4 / 7, yres / 6, RGB(255,255,255), RGB(0,0,0), gFont("Regular", 20),
+		c.writeText(xres / 10, yres / 6, xres * 4 / 7, yres / 6, RGB(255,255,255), RGB(0,0,0), self._textFont,
 			_("If your TV has a brightness or contrast enhancement, disable it. If there is something called \"dynamic\", "
 				"set it to standard. Adjust the backlight level to a value suiting your taste. "
 				"Turn down contrast on your TV as much as possible.\nThen turn the brightness setting as "
@@ -95,18 +115,18 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_contrast(self):
-#		self.next = self.testpic_colors
 		self.next = self.close
+#		self.next = self.testpic_colors
 
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
-		bbw, bbh = xres / 192, yres / 192
+#		bbw, bbh = xres / 192, yres / 192
 		c.fill(0, 0, xres, yres, RGB(0,0,0))
 
-		bbw = xres / 192
-		bbh = yres / 192
+#		bbw = xres / 192
+#		bbh = yres / 192
 		c.fill(0, 0, xres, yres, RGB(255,255,255))
 
 #		for i in range(15):
@@ -128,8 +148,8 @@ class VideoFinetune(Screen):
 			height = yres / 3
 			eh = height / 8
 			offset = yres/6 + eh * i
-			x = xres * 2 / 3
 			width = yres / 6
+			x = xres - width - xres/10
 
 			c.fill(x, offset, width, eh, RGB(col, col, col))
 #			if col == 0 or col == 36:
@@ -139,11 +159,11 @@ class VideoFinetune(Screen):
 			if col == 185 or col == 235 or col == 255:
 				c.fill(x, offset, width, 2, RGB(0,0,0)) 
 			if i >= 13:
-				c.writeText(x + width, offset, width, eh, RGB(0, 0, 0), RGB(255, 255, 255), gFont("Regular", 20), "%d." % (i-13+1))
+				c.writeText(x + width, offset, width, eh, RGB(0, 0, 0), RGB(255, 255, 255), self._textFont, "%d." % (i-13+1))
 
-		c.writeText(xres / 10, yres / 6 - 40, xres * 3 / 5, 40, RGB(128,0,0), RGB(255,255,255), gFont("Regular", 40), 
+		c.writeText(xres / 10, yres / 6 - self._headerSize, xres * 3 / 5, 40, RGB(128,0,0), RGB(255,255,255), self._headerFont, 
 			_("Contrast"))
-		c.writeText(xres / 10, yres / 6, xres / 2, yres / 6, RGB(0,0,0), RGB(255,255,255), gFont("Regular", 20),
+		c.writeText(xres / 10, yres / 6, xres / 2, yres / 6, RGB(0,0,0), RGB(255,255,255), self._textFont,
 			_("Now, use the contrast setting to turn up the brightness of the background as much as possible, "
 				"but make sure that you can still see the difference between the two brightest levels of shades."
 				"If you have done that, press OK."),
@@ -152,11 +172,12 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_colors(self):
-		self.next = self.close
+#		self.next = self.close
+		self.next = self.testpic_filter
 
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		bbw = xres / 192
 		bbh = yres / 192
@@ -192,16 +213,16 @@ class VideoFinetune(Screen):
 				height = yres / 3;
 				eh = height / 8;
 				offset = yres/6 + eh * i;
-				x = xres * 2 / 3;
-				width = yres / 6;
+				width = yres / 6
+				x = xres - width - xres/10
 
 				c.fill(x, offset, width, eh, self.basic_colors[i])
 				if i == 0:
 					self.bbox(x, offset, width, eh, RGB(0,0,0), bbw, bbh)
 
-		c.writeText(xres / 10, yres / 6 - 40, xres * 3 / 5, 40, RGB(128,0,0), RGB(255,255,255), gFont("Regular", 40), 
+		c.writeText(xres / 10, yres / 6 - self._headerSize, xres * 3 / 5, 40, RGB(128,0,0), RGB(255,255,255), self._headerFont, 
 			("Color"))
-		c.writeText(xres / 10, yres / 6, xres / 2, yres / 6, RGB(0,0,0), RGB(255,255,255), gFont("Regular", 20),
+		c.writeText(xres / 10, yres / 6, xres / 2, yres / 6, RGB(0,0,0), RGB(255,255,255), self._textFont,
 			_("Adjust the color settings so that all the color shades are distinguishable, but appear as saturated as possible. "
 				"If you are happy with the result, press OK to close the video fine-tuning, or use the number keys to select other test screens."),
 				RT_WRAP)
@@ -209,9 +230,10 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_filter(self):
+		self.next = self.testpic_gamma
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		c.fill(0, 0, xres, yres, RGB(64, 64, 64))
 
@@ -239,11 +261,12 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_gamma(self):
-		self.next = None
+		self.next = self.close
+#		self.next = self.testpic_fubk
 
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		c.fill(0, 0, xres, yres, RGB(0, 0, 0))
 
@@ -272,14 +295,14 @@ class VideoFinetune(Screen):
 		c.flush()
 
 	def testpic_fubk(self):
-		self.next = None
+		self.next = self.close
 
 		# TODO:
 		# this test currently only works for 4:3 aspect.
 		# also it's hardcoded to 720,576
 		c = self["Canvas"]
 
-		xres, yres = 720, 576
+		xres, yres = self._size.width(), self._size.height()
 
 		c.fill(0, 0, xres, yres, RGB(128, 128, 128))
 

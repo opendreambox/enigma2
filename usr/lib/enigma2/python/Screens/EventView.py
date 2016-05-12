@@ -6,6 +6,7 @@ from Components.Button import Button
 from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
 from Components.UsageConfig import preferredTimerPath
+from Components.Sources.ServiceEvent import ServiceEvent
 from enigma import eEPGCache, eTimer, eServiceReference
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from TimerEntry import TimerEntry
@@ -21,6 +22,7 @@ class EventViewBase:
 		self.currentService=Ref
 		self.isRecording = (not Ref.ref.flags & eServiceReference.isGroup) and Ref.ref.getPath() and Ref.ref.getPath()[0] == '/'
 		self.event = Event
+		self["Service"] = ServiceEvent()
 		self["epg_description"] = ScrollLabel()
 		self["datetime"] = Label()
 		self["channel"] = Label()
@@ -111,6 +113,7 @@ class EventViewBase:
 
 	def setService(self, service):
 		self.currentService=service
+		self["Service"].newService(self.currentService.ref)
 		if self.isRecording:
 			self["channel"].setText(_("Recording"))
 		else:

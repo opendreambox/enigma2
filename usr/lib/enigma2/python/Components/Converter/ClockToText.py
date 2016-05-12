@@ -19,6 +19,7 @@ class ClockToText(Converter, object):
 		Converter.__init__(self, type)
 		if type == "WithSeconds":
 			self.type = self.WITH_SECONDS
+			self.isAnimated = False
 		elif type == "InMinutes":
 			self.type = self.IN_MINUTES
 		elif type == "Date":
@@ -27,9 +28,11 @@ class ClockToText(Converter, object):
 			self.type = self.AS_LENGTH
 		elif type == "Timestamp":	
 			self.type = self.TIMESTAMP
+			self.isAnimated = False
 		elif str(type).find("Format") != -1:
 			self.type = self.FORMAT
 			self.fmt_string = type[7:]
+			self.isAnimated = False
 		else:
 			self.type = self.DEFAULT
 

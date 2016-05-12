@@ -3,7 +3,7 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
 from Screens.HelpMenu import HelpableScreen
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarShowHide, InfoBarNotifications, InfoBarAudioSelection, InfoBarSubtitleSupport
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarShowHide, InfoBarNotifications, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarExtensions, InfoBarPlugins
 from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
@@ -194,7 +194,7 @@ class ChapterZap(Screen):
 		self.Timer_conn = self.Timer.timeout.connect(self.keyOK)
 		self.Timer.start(3000, True)
 
-class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport):
+class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarPVRState, InfoBarShowHide, HelpableScreen, InfoBarCueSheetSupport, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarExtensions, InfoBarPlugins):
 	ALLOW_SUSPEND = Screen.SUSPEND_PAUSES
 	ENABLE_RESUME_SUPPORT = True
 
@@ -265,11 +265,13 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 	def __init__(self, session, dvd_device = None, dvd_filelist = [ ], args = None):
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
-		InfoBarNotifications.__init__(self)
 		InfoBarCueSheetSupport.__init__(self, actionmap = "MediaPlayerCueSheetActions")
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
+		InfoBarExtensions.__init__(self)
+		InfoBarPlugins.__init__(self)
+		InfoBarNotifications.__init__(self)
 		HelpableScreen.__init__(self)
 		self.save_infobar_seek_config()
 		self.change_infobar_seek_config()
@@ -285,31 +287,31 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		self["chapterLabel"] = Label("")
 		self["anglePix"] = Pixmap()
 		self["anglePix"].hide()
-		self.last_audioTuple = None
-		self.last_subtitleTuple = None
+		self.last_audioString = None
+		self.last_subtitleString = None
 		self.last_angleTuple = None
 		self.totalChapters = 0
 		self.currentChapter = 0
 		self.totalTitles = 0
 		self.currentTitle = 0
+		self._subs_enabled = False
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evEnd: self.__serviceStopped,
 				iPlayableService.evStopped: self.__serviceStopped,
-				iPlayableService.evUser: self.__timeUpdated,
+				iPlayableService.evAudioListChanged: self.__osdAudioInfoAvail,
+				iPlayableService.evSubtitleListChanged: self.__osdSubtitleInfoAvail,
 				iPlayableService.evUser+1: self.__statePlay,
 				iPlayableService.evUser+2: self.__statePause,
 				iPlayableService.evUser+3: self.__osdFFwdInfoAvail,
 				iPlayableService.evUser+4: self.__osdFBwdInfoAvail,
 				iPlayableService.evUser+5: self.__osdStringAvail,
-				iPlayableService.evUser+6: self.__osdAudioInfoAvail,
-				iPlayableService.evUser+7: self.__osdSubtitleInfoAvail,
-				iPlayableService.evUser+8: self.__chapterUpdated,
-				iPlayableService.evUser+9: self.__titleUpdated,
-				iPlayableService.evUser+11: self.__menuOpened,
-				iPlayableService.evUser+12: self.__menuClosed,
-				iPlayableService.evUser+13: self.__osdAngleInfoAvail
+				iPlayableService.evUser+6: self.__osdAngleInfoAvail,
+				iPlayableService.evUser+7: self.__chapterUpdated,
+				iPlayableService.evUser+8: self.__titleUpdated,
+				iPlayableService.evUser+9: self.__menuOpened,
+				iPlayableService.evUser+10: self.__menuClosed
 			})
 
 		self["DVDPlayerDirectionActions"] = ActionMap(["DirectionActions"],
@@ -410,11 +412,13 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			self.in_menu = False
 			self["NumberActions"].setEnabled(True)
 		self.dvdScreen.hide()
-		subs = self.getServiceInterface("subtitle")
-		if subs:
-			subs.disableSubtitles(self.session.current_dialog.instance)
+		subTracks = self.session.infobar.getCurrentServiceSubtitle()
+		if subTracks:
+			subTracks.disableSubtitles(self.session.current_dialog.instance)
 
 	def serviceStarted(self): #override InfoBarShowHide function
+		subTracks = self.session.infobar.getCurrentServiceSubtitle()
+		subTracks.enableSubtitles(self.dvdScreen.instance, 0) # give parent widget reference to service for drawing menu highlights in a repurposed subtitle widget
 		self.dvdScreen.show()
 
 	def doEofInternal(self, playing):
@@ -452,9 +456,6 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			self.toggleShow()
 			print "toggleInfo"
 
-	def __timeUpdated(self):
-		print "timeUpdated"
-
 	def __statePlay(self):
 		print "statePlay"
 
@@ -473,32 +474,39 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		print "StringAvail"
 
 	def __osdAudioInfoAvail(self):
-		info = self.getServiceInterface("info")
-		audioTuple = info and info.getInfoObject(iServiceInformation.sUser+6)
-		print "AudioInfoAvail ", repr(audioTuple)
-		if audioTuple:
-			audioString = "%d: %s (%s)" % (audioTuple[0],audioTuple[1],audioTuple[2])
+		service = self.session.nav.getCurrentService()
+		audioTracks = service and service.audioTracks()
+		if not audioTracks:
+			return
+		currentTrack = audioTracks.getCurrentTrack()
+		audioInfo = currentTrack != -1 and audioTracks.getTrackInfo(currentTrack)
+		if audioInfo:
+			audioString = "%d: %s (%s)" % (audioInfo.getPID(), audioInfo.getLanguage(), audioInfo.getDescription())
 			self["audioLabel"].setText(audioString)
-			if audioTuple != self.last_audioTuple and not self.in_menu:
+			if audioString != self.last_audioString and not self.in_menu:
 				self.doShow()
-		self.last_audioTuple = audioTuple
+				self.last_audioString = audioString
 
 	def __osdSubtitleInfoAvail(self):
-		info = self.getServiceInterface("info")
-		subtitleTuple = info and info.getInfoObject(iServiceInformation.sUser+7)
-		print "SubtitleInfoAvail ", repr(subtitleTuple)
-		if subtitleTuple:
-			subtitleString = ""
-			if subtitleTuple[0] is not 0:
-				subtitleString = "%d: %s" % (subtitleTuple[0],subtitleTuple[1])
-			self["subtitleLabel"].setText(subtitleString)
-			if subtitleTuple != self.last_subtitleTuple and not self.in_menu:
-				self.doShow()
-		self.last_subtitleTuple = subtitleTuple
+		subTracks = self.session.infobar.getCurrentServiceSubtitle()
+		subtitleString = ""
+		if not subTracks:
+			return
+		currentTrack = subTracks.getCurrentSubtitleTrack()
+		subInfo = currentTrack != -1 and subTracks.getSubtitleTrackInfo(currentTrack)
+		if subInfo:
+			subtitleString = "%d: %s" % (subInfo.getPID(), subInfo.getLanguage())
+			if self._subs_enabled == False:
+				self._subs_enabled = True
+				subTracks.enableSubtitles(self.dvdScreen.instance, subInfo.getPID())
+		self["subtitleLabel"].setText(subtitleString)
+		if subtitleString != self.last_subtitleString and not self.in_menu:
+			self.doShow()
+			self.last_subtitleString = subtitleString
 
 	def __osdAngleInfoAvail(self):
 		info = self.getServiceInterface("info")
-		angleTuple = info and info.getInfoObject(iServiceInformation.sUser+8)
+		angleTuple = info and info.getInfoObject(iServiceInformation.sAngle)
 		print "AngleInfoAvail ", repr(angleTuple)
 		if angleTuple:
 			angleString = ""
@@ -650,9 +658,6 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 				self.service = self.session.nav.getCurrentService()
 				print "self.service", self.service
 				print "cur_dlg", self.session.current_dialog
-				subs = self.getServiceInterface("subtitle")
-				if subs:
-					subs.enableSubtitles(self.dvdScreen.instance, None)
 
 	def exitCB(self, answer):
 		if answer is not None:

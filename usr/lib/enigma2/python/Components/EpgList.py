@@ -1,7 +1,7 @@
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 
-from enigma import eEPGCache, eListbox, eListboxPythonMultiContent, gFont, getDesktop, \
+from enigma import eLabel, eEPGCache, eListbox, eListboxPythonMultiContent, gFont, getDesktop, \
 	RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER
 
 from Components.config import config
@@ -54,8 +54,11 @@ class EPGList(HTMLComponent, GUIComponent):
 		self.l = eListboxPythonMultiContent()
 
 		tlf = TemplatedListFonts()
-		self.l.setFont(0, gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG)))
-		self.l.setFont(1, gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL)))
+		self._font0 = gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG))
+		self._font1 = gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL))
+		self.l.setFont(0, self._font0)
+		self.l.setFont(1, self._font1)
+		self._textRenderer = None
 
 		sizes = componentSizes[EPGList.SKIN_COMPONENT_KEY]
 		self._iconWidth = sizes.get(EPGList.SKIN_COMPONENT_ICON_WIDTH, 21)
@@ -63,13 +66,12 @@ class EPGList(HTMLComponent, GUIComponent):
 		self._iconHPos = sizes.get(EPGList.SKIN_COMPONENT_ICON_HPOS, 4)
 		self._itemMargin = sizes.get(EPGList.SKIN_COMPONENT_ITEM_MARGIN, 10)
 
-		if type == EPG_TYPE_SINGLE:
+		if type in (EPG_TYPE_SINGLE, EPG_TYPE_SIMILAR):
 			self.l.setBuildFunc(self.buildSingleEntry)
-		elif type == EPG_TYPE_MULTI:
-			self.l.setBuildFunc(self.buildMultiEntry)
 		else:
-			assert(type == EPG_TYPE_SIMILAR)
-			self.l.setBuildFunc(self.buildSimilarEntry)
+			assert(type == EPG_TYPE_MULTI)
+			self.l.setBuildFunc(self.buildMultiEntry)
+
 		self.epgcache = eEPGCache.getInstance()
 		self.clock_pixmap = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/epgclock.png'))
 		self.clock_add_pixmap = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/epgclock_add.png'))
@@ -117,11 +119,6 @@ class EPGList(HTMLComponent, GUIComponent):
 		for x in self.onSelChanged:
 			if x is not None:
 				x()
-#				try:
-#					x()
-#				except: # FIXME!!!
-#					print "FIXME in EPGList.selectionChanged"
-#					pass
 
 	GUI_WIDGET = eListbox
 
@@ -129,40 +126,47 @@ class EPGList(HTMLComponent, GUIComponent):
 		instance.setWrapAround(True)
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		instance.setContent(self.l)
+		self._textRenderer = eLabel(instance)
+		self._textRenderer.hide()
 
 	def preWidgetRemove(self, instance):
 		self.selectionChanged_conn = None
 		instance.setContent(None)
+
+	def _calcTextWidth(self, text, font=None, size=None):
+		if size:
+			self._textRenderer.resize(size)
+		if font:
+			self._textRenderer.setFont(font)
+		self._textRenderer.setText(text)
+		return self._textRenderer.calculateSize().width()
 
 	def recalcEntrySize(self):
 		esize = self.l.getItemSize()
 		width = esize.width()
 		height = esize.height()
 		#precalc rect values
-		weekday_width = int(width * 0.05)
+		weekday_width = self._calcTextWidth("Do", font=self._font0, size=esize) + self._itemMargin
 		datetime_x = weekday_width + self._itemMargin
-		datetime_width = int(width * 0.15)
+		datetime_width = self._calcTextWidth("00.00, 00:00", font=self._font0, size=esize) + self._itemMargin
 		desc_x = datetime_x + datetime_width + self._itemMargin
 		desc_width = width - desc_x - self._itemMargin
-		if self.type == EPG_TYPE_SINGLE:
+		if self.type in (EPG_TYPE_SINGLE, EPG_TYPE_SIMILAR):
 			self.weekday_rect = Rect(0, 0, weekday_width, height)
 			self.datetime_rect = Rect(datetime_x, 0, datetime_width, height)
 			self.descr_rect = Rect(desc_x, 0, desc_width, height)
-		elif self.type == EPG_TYPE_MULTI:
+		else: # EPG_TYPE_MULTI
 			xpos = self._itemMargin;
 			w = width / 3;
 			self.service_rect = Rect(xpos, 0, w, height)
 			xpos += w + self._itemMargin;
 			w = width / 6;
 			self.start_end_rect = Rect(xpos, 0, w, height)
-			self.progress_rect = Rect(xpos, 4, w, height - self._itemMargin)
+			self.progress_rect = Rect(xpos,  self._itemMargin / 2, w, height - self._itemMargin)
 			xpos += w + self._itemMargin
 			w = width - xpos - self._itemMargin;
 			self.descr_rect = Rect(xpos, 0, w, height)
-		else: # EPG_TYPE_SIMILAR
-			self.weekday_rect = Rect(0, 0, weekday_width, height)
-			self.datetime_rect = Rect(datetime_x, 0, datetime_width, height)
-			self.service_rect = Rect(desc_x, 0, desc_width, height)
+
 
 	def getClockPixmap(self, refstr, beginTime, duration, eventId):
 		pre_clock = 1
@@ -196,11 +200,12 @@ class EPGList(HTMLComponent, GUIComponent):
 			clock_pic = None
 		return (clock_pic, rec)
 
-	def buildSingleEntry(self, service, eventId, beginTime, duration, EventName):
+	def buildSingleEntry(self, service, eventId, beginTime, duration, name):
 		(clock_pic, rec) = self.getPixmapForEntry(service, eventId, beginTime, duration)
 		r1=self.weekday_rect
 		r2=self.datetime_rect
 		r3=self.descr_rect
+		textOffset = r3.left() + self._iconWidth + self._itemMargin
 		t = localtime(beginTime)
 		res = [
 			None, # no private data needed
@@ -210,30 +215,10 @@ class EPGList(HTMLComponent, GUIComponent):
 		if rec:
 			res.extend((
 				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), self._iconHPos, self._iconWidth, self._iconHeight, clock_pic),
-				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + self._iconWidth, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName)
+				(eListboxPythonMultiContent.TYPE_TEXT, textOffset, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, name)
 			))
 		else:
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName))
-		return res
-
-	def buildSimilarEntry(self, service, eventId, beginTime, service_name, duration):
-		(clock_pic, rec) = self.getPixmapForEntry(service, eventId, beginTime, duration)
-		r1=self.weekday_rect
-		r2=self.datetime_rect
-		r3=self.service_rect
-		t = localtime(beginTime)
-		res = [
-			None,  # no private data needed
-			(eListboxPythonMultiContent.TYPE_TEXT, r1.left(), r1.top(), r1.width(), r1.height(), 0, RT_HALIGN_RIGHT|RT_VALIGN_CENTER, self.days[t[6]]),
-			(eListboxPythonMultiContent.TYPE_TEXT, r2.left(), r2.top(), r2.width(), r1.height(), 0, RT_HALIGN_CENTER|RT_VALIGN_CENTER, "%02d.%02d, %02d:%02d"%(t[2],t[1],t[3],t[4]))
-		]
-		if rec:
-			res.extend((
-				(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, r3.left(), self._iconHPos, self._iconWidth, self._iconHeight, clock_pic),
-				(eListboxPythonMultiContent.TYPE_TEXT, r3.left() + self._iconWidth, r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name)
-			))
-		else:
-			res.append((eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, service_name))
+			res.append((eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, name))
 		return res
 
 	def buildMultiEntry(self, changecount, service, eventId, beginTime, duration, EventName, nowTime, service_name):
@@ -359,7 +344,7 @@ class EPGList(HTMLComponent, GUIComponent):
 	 # search similar broadcastings
 		if event_id is None:
 			return
-		l = self.epgcache.search(('RIBND', 1024, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, refstr, event_id))
+		l = self.epgcache.search(('RIBDN', 1024, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, refstr, event_id))
 		if l and len(l):
 			l.sort(key=lambda x: x[2])
 		self.l.setList(l)

@@ -1,25 +1,27 @@
 # -*- coding: UTF-8 -*-
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
-from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport
+from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarExtensions, InfoBarPlugins
 
 from Components.ActionMap import ActionMap
 
 from Tools.Log import Log
 from MediaPlayerLCDScreen import MediaPlayerLCDScreen
 
-class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport):
+class MoviePlayer(Screen, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarExtensions, InfoBarPlugins, InfoBarNotifications):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
 	def __init__(self, session, service, infoCallback=None, getNextService=None, getPrevService=None, stopCallback=None):
 		Screen.__init__(self, session)
-		InfoBarNotifications.__init__(self)
 		InfoBarSeek.__init__(self)
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
 		InfoBarCueSheetSupport.__init__(self)
+		InfoBarExtensions.__init__(self)
+		InfoBarPlugins.__init__(self)
+		InfoBarNotifications.__init__(self)
 		#TODO FIX THIS HACK
 		# currently we just want to be able to resume playback (if supported by e2),
 		# for now we don't care about cutting or jumpmarks or anything like that...

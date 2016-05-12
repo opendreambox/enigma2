@@ -55,7 +55,7 @@
 		<listfont type="Big" font="Regular" size="22" />
 		<listfont type="Medium" font="Regular" size="20" />
 		<listfont type="Small" font="Regular" size="18" />
-		<listfont type="Smaller" font="Regular" size="16" />
+		<listfont type="Smaller" font="Regular" size="14" />
 	</windowstyle>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">
@@ -173,6 +173,14 @@
 			</template>
 		</component>
 		<component type="VirtualKeyBoardList" itemHeight="45" />
+		<component
+			type="PicturePlayer"
+			thumbDescriptionSize="35"
+			thumpMargin="10"
+			thumbSpaceX="60"
+			thumbSpaceY="30"
+			thumbX="190"
+			thumbY="200" />
 	</components>
 	<!-- DVD Player -->
 	<screen name="DVDPlayer" position="0,561" size="1280,133" title="InfoBar" flags="wfNoBorder">
@@ -605,7 +613,7 @@
 		<widget name="PluginInfo" position="10,488" size="800,25" font="Regular;22" halign="center" transparent="1" />
 	</screen>
 	<!-- Audio selection -->
-	<screen name="AudioSelection" position="center,165" size="620,520" title="Audio">
+	<screen name="AudioSelection" position="center,center" size="820,550" title="Audio">
 		<widget source="key_red" render="Pixmap" position="10,10" size="35,25" pixmap="skin_default/buttons/key_red.png" alphatest="on">
 			<convert type="ConditionalShowHide" />
 		</widget>
@@ -618,32 +626,49 @@
 		<widget source="key_blue" render="Pixmap" position="10,100" size="35,25" pixmap="skin_default/buttons/key_blue.png" alphatest="on">
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget name="config" position="55,10" size="555,120" itemHeight="30" scrollbarMode="showOnDemand" />
-		<eLabel position="10,140" size="600,1" backgroundColor="grey"/>
-		<widget source="streams" render="Listbox" position="10,150" size="600,330" zPosition="3" scrollbarMode="showOnDemand" transparent="1" >
+		<widget source="key_menu" render="Pixmap" position="10,130" size="35,25" pixmap="skin_default/buttons/key_menu.png" alphatest="on">
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget name="config" position="55,10" size="755,150" itemHeight="30" scrollbarMode="showOnDemand" />
+		<eLabel position="10,170" size="800,1" backgroundColor="grey"/>
+		<widget source="streams" render="Listbox" position="0,180" size="810,330" zPosition="3" scrollbarMode="showOnDemand" transparent="1" >
 			<convert type="TemplatedMultiContent">
 				{"templates":
 					{"default": (30, [
-						MultiContentEntryText(pos = (  0, 3), size = (  0, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 1), # key,
-						MultiContentEntryText(pos = ( 10, 3), size = ( 60, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 2), # number,
-						MultiContentEntryText(pos = ( 70, 3), size = (120, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 3), # description,
-						MultiContentEntryText(pos = (210, 3), size = (240, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 4), # language,
-						MultiContentEntryText(pos = (470, 6), size = (120, 25), font = 1, flags = RT_HALIGN_RIGHT, text = 5), # selection,
+						MultiContentEntryText(pos = (  0, 3), size = ( 45, 25), font = 0, flags = RT_HALIGN_CENTER,text = 1), # pid,
+						MultiContentEntryText(pos = ( 65, 3), size = (260, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 2), # language,
+						MultiContentEntryText(pos = (345, 3), size = (125, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 3), # codec,
+						MultiContentEntryText(pos = (490, 3), size = (260, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 4), # description,
+						MultiContentEntryPixmapAlphaTest(pos = (770, 0), size = (30, 30), png = 5), # selection
 					], True, "showNever"),
 					"notselected": (30, [
-						MultiContentEntryText(pos = (  0, 3), size = (  0, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 1), # key,
-						MultiContentEntryText(pos = ( 10, 3), size = ( 60, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 2), # number,
-						MultiContentEntryText(pos = ( 70, 3), size = (120, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 3), # description,
-						MultiContentEntryText(pos = (210, 3), size = (240, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 4), # language,
-						MultiContentEntryText(pos = (470, 6), size = (120, 25), font = 1, flags = RT_HALIGN_RIGHT, text = 5), # selection,
+						MultiContentEntryText(pos = (  0, 3), size = ( 45, 25), font = 0, flags = RT_HALIGN_CENTER,text = 1), # pid,
+						MultiContentEntryText(pos = ( 65, 3), size = (260, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 2), # language,
+						MultiContentEntryText(pos = (345, 3), size = (125, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 3), # codec,
+						MultiContentEntryText(pos = (490, 3), size = (260, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 4), # description,
+						MultiContentEntryPixmapAlphaTest(pos = (770, 0), size = (30, 30), png = 5), # selection
+					], False, "showNever"),
+					"subs": (30, [
+						MultiContentEntryText(pos = (  0, 3), size = ( 45, 25), font = 0, flags = RT_HALIGN_CENTER,text = 1), # pid,
+						MultiContentEntryText(pos = ( 65, 3), size = (260, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 2), # language,
+						MultiContentEntryText(pos = (345, 0), size = (125, 30), font = 1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER|RT_WRAP,text = 3), # codec,
+						MultiContentEntryText(pos = (490, 0), size = (260, 30), font = 1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER|RT_WRAP,text = 4), # description,
+						MultiContentEntryPixmapAlphaTest(pos = (770, 0), size = (30, 30), png = 5), # selection
+					], True, "showNever"),
+					"subs_notselected": (30, [
+						MultiContentEntryText(pos = (  0, 3), size = ( 45, 25), font = 0, flags = RT_HALIGN_CENTER,text = 1), # pid,
+						MultiContentEntryText(pos = ( 65, 3), size = (260, 25), font = 0, flags = RT_HALIGN_LEFT,  text = 2), # language,
+						MultiContentEntryText(pos = (345, 0), size = (125, 30), font = 1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER|RT_WRAP,text = 3), # codec,
+						MultiContentEntryText(pos = (490, 0), size = (260, 30), font = 1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER|RT_WRAP,text = 4), # description,
+						MultiContentEntryPixmapAlphaTest(pos = (770, 0), size = (30, 30), png = 5), # selection
 					], False, "showNever")
 					},
-				"fonts": [gFont("Regular", 22), gFont("Regular", 18)],
+				"fonts": [gFont("Regular", 22), gFont("Regular", 14)],
 				"itemHeight": 30
 				}
 			</convert>
 		</widget>
-		<widget name="help_label" position="10,490" size="600,25" font="Regular;22"/>
+		<widget name="help_label" position="10,520" size="600,25" font="Regular;22"/>
 	</screen>
 	<!-- Bouquet selector -->
 	<screen name="BouquetSelector" position="center,220" size="470,320" title="Choose bouquet">
@@ -674,7 +699,7 @@
 		<widget name="config" position="10,50" size="800,330" scrollbarMode="showOnDemand" />
 	</screen>
 	<!-- Channel selection - TV -->
-	<screen name="ChannelSelection" position="center,120" size="1100,520" title="Channel Selection">
+	<screen name="ChannelSelection" zPosition="1000" position="center,120" size="1100,520" title="Channel Selection">
 		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="Default-HD/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
@@ -2481,7 +2506,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 	</screen>
 	<!-- Video Finetune -->
 	<screen name="VideoFinetune" position="0,0" size="1280,720" backgroundColor="black">
-		<widget source="Canvas" render="Canvas" position="280,70" size="720,576" />
+		<widget source="Canvas" render="Canvas" position="center,center" size="1280,720" />
 	</screen>
 	<!-- VirtualKeyBoard -->
 	<screen name="VirtualKeyBoard" position="center,120" size="820,520" zPosition="99" title="Virtual KeyBoard">

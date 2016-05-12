@@ -187,7 +187,7 @@ public:
 
 	int compare(const eServiceReference &ref) const { return ref == *this ? 0 : ref < *this ? -1 : 1; };
 
-	long hash() const; // provides an hash... but take care a hash must NOT be unique!
+	long hash() const; // provides an hash... but take care a hash MIGHT NOT be unique!
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(eServiceReference);
 SWIG_HASH_FUNC(eServiceReference,hash);
@@ -370,6 +370,8 @@ public:
 
 		sTransferBPS,
 		sLastUpdated,
+		sAngle,
+
 		sUser = 0x100
 	};
 	enum {
@@ -496,16 +498,44 @@ public:
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iSeekableService>, iSeekableServicePtr);
 
-struct iAudioTrackInfo
+class iAudioType_ENUMS
 {
-#ifndef SWIG
-	std::string m_description;
-	std::string m_language; /* iso639 */
-	int m_pid; /* for association with the stream. */
+#ifdef SWIG
+	iAudioType_ENUMS();
+	~iAudioType_ENUMS();
 #endif
+public:
+	enum { atMPEG, atAC3, atDTS, atAAC, atAACHE, atLPCM, atDTSHD, atDDP, atMP3, atPCM, atOGG, atFLAC, atWMA, atUnknown=-1};
+};
+
+class iAudioTrackInfo: public iAudioType_ENUMS
+{
+	int m_type;
+	int m_pid; /* for association with the stream. */
+	std::string m_language; /* iso639 */
+	std::string m_description;
+	bool m_saved;
+	bool m_default;
+
+#ifndef SWIG
+public:
+#endif
+	iAudioTrackInfo(int type, int pid, std::string language, std::string description = "", bool saved = false, bool defaultf = false)
+		: m_type(type), m_pid(pid), m_language(language), m_description(description), m_saved(saved), m_default(defaultf) {}
+#ifdef SWIG
+public:
+	~iAudioTrackInfo();
+#endif
+	iAudioTrackInfo() : m_type(atUnknown), m_pid(0), m_language("und"), m_description(""), m_saved(false), m_default(false) {};
+
 	std::string getDescription() { return m_description; }
 	std::string getLanguage() { return m_language; }
 	int getPID() { return m_pid; }
+	int getType() { return m_type; }
+	int isSaved() { return m_saved; }
+	int isDefault() { return m_default; }
+	void setLanguage(std::string language) { m_language = language; }
+	void setDescription(std::string description) { m_description = description; }
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(iAudioTrackInfo);
 
@@ -649,16 +679,122 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iCueSheet>, iCueSheetPtr);
 class eWidget;
 class PyList;
 
-SWIG_IGNORE(iSubtitleOutput);
-class iSubtitleOutput: public iObject
+class iSubtitleType_ENUMS
 {
+#ifdef SWIG
+	iSubtitleType_ENUMS();
+	~iSubtitleType_ENUMS();
+#endif
 public:
-	virtual RESULT enableSubtitles(eWidget *parent, SWIG_PYOBJECT(ePyObject) entry)=0;
-	virtual RESULT disableSubtitles(eWidget *parent)=0;
-	virtual std::list<std::tuple<int, int, int, int, std::string, int> > getSubtitleList()=0;
-	virtual PyObject *getCachedSubtitle()=0;
+	enum { NONE, DVB, TTX, DVD, GST };
 };
-SWIG_TEMPLATE_TYPEDEF(ePtr<iSubtitleOutput>, iSubtitleOutputPtr);
+
+class iGstSubtitleType_ENUMS
+{
+#ifdef SWIG
+	iGstSubtitleType_ENUMS();
+	~iGstSubtitleType_ENUMS();
+#endif
+public:
+	enum { stUnknown, stPlainText, stSSA, stASS, stVOB, stPGS };
+};
+
+class iSubtitleFilterType_ENUMS
+{
+#ifdef SWIG
+	iSubtitleFilterType_ENUMS();
+	~iSubtitleFilterType_ENUMS();
+#endif
+public:
+	enum { SUB_FILTER_NONE, SUB_FILTER_SHOW_FORCED_ONLY, SUB_FILTER_SHOW_ALL };
+};
+
+class iSubtitleTrackInfo: public iSubtitleType_ENUMS, public iGstSubtitleType_ENUMS, iSubtitleFilterType_ENUMS
+{
+	int m_type;
+	int m_pid;
+	std::string m_language; /* iso639 */
+	bool m_saved;
+	bool m_default;
+
+	/* dvb */
+	int m_composition_page_id;
+	int m_ancillary_page_id;
+
+	/* ttx */
+	int m_teletext_page_number;
+	int m_teletext_magazine_number;
+
+	/* gst */
+	bool m_forced;
+	int *m_filter;
+	int m_gst_subtype;
+
+#ifndef SWIG
+public:
+#endif
+	iSubtitleTrackInfo(int type, int pid, std::string language, int data1, int data2, bool saved = false)
+		: m_type(type), m_pid(pid), m_language(language), m_saved(saved), m_default(false), m_forced(false), m_filter(NULL), m_gst_subtype(0)
+		{
+			if (type == DVB)
+			{
+				m_composition_page_id = data1;
+				m_ancillary_page_id = data2;
+			}
+			else if (type == TTX)
+			{
+				m_teletext_page_number = data1;
+				m_teletext_magazine_number = data2;
+			}
+		}
+	iSubtitleTrackInfo(int type, int pid, std::string language, bool saved, bool defaultf, bool forced, int filter, int gst_subtype = NONE)
+		: m_type(type), m_pid(pid), m_language(language), m_saved(saved), m_default(defaultf), m_forced(forced), m_gst_subtype(gst_subtype)
+		{
+			m_filter = (int*)malloc(sizeof(int));
+			*m_filter = filter;
+		}
+#ifdef SWIG
+public:
+	~iSubtitleTrackInfo() {
+		if (m_filter)
+			free (m_filter);
+	};
+#endif
+	iSubtitleTrackInfo() : m_type(NONE) {};
+
+	int getType() { return m_type; }
+	int getPID() { return m_pid; }
+	std::string getLanguage() { return m_language; }
+	int getCompositionPageID() { return m_composition_page_id; }
+	int getAncillaryPageID() { return m_ancillary_page_id; }
+	int getPageNumber() { return m_teletext_page_number; }
+	int getMagazineNumber() { return m_teletext_magazine_number; }
+	int getGstSubtype() { return m_gst_subtype; }
+	int isSaved() { return m_saved; }
+	int isDefault() { return m_default; }
+	int isForced() { return m_forced; }
+	int getFilter() { return *m_filter; }
+	void setLanguage(std::string language) { m_language = language; }
+	void setFilter(int filter) { *m_filter = filter; }
+	void setGstSubtype(int gst_subtype) { m_gst_subtype = gst_subtype; }
+};
+SWIG_ALLOW_OUTPUT_SIMPLE(iSubtitleTrackInfo);
+
+SWIG_IGNORE(iSubtitleTrackSelection);
+class iSubtitleTrackSelection: public iSubtitleType_ENUMS, public iObject
+{
+#ifdef SWIG
+	iSubtitleTrackSelection();
+	~iSubtitleTrackSelection();
+#endif
+public:
+	virtual int getNumberOfSubtitleTracks()=0;
+	virtual SWIG_VOID(RESULT) getSubtitleTrackInfo(iSubtitleTrackInfo &SWIG_OUTPUT, unsigned int n)=0;
+	virtual int getCurrentSubtitleTrack()=0;
+	virtual RESULT enableSubtitles(eWidget *parent, unsigned int i)=0;
+	virtual RESULT disableSubtitles(eWidget *parent)=0;
+};
+SWIG_TEMPLATE_TYPEDEF(ePtr<iSubtitleTrackSelection>, iSubtitleTrackSelectionPtr);
 
 SWIG_IGNORE(iMutableServiceList);
 class iMutableServiceList: public iObject
@@ -867,6 +1003,9 @@ public:
 
 		evStopped,
 
+		evSubtitleListChanged,
+		evAudioListChanged,
+
 		evUser = 0x100
 	};
 };
@@ -896,7 +1035,7 @@ public:
 	virtual SWIG_VOID(RESULT) frontendInfo(ePtr<iFrontendInformation> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
 	virtual SWIG_VOID(RESULT) timeshift(ePtr<iTimeshiftService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
 	virtual SWIG_VOID(RESULT) cueSheet(ePtr<iCueSheet> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
-	virtual SWIG_VOID(RESULT) subtitle(ePtr<iSubtitleOutput> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
+	virtual SWIG_VOID(RESULT) subtitleTracks(ePtr<iSubtitleTrackSelection> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
 	virtual SWIG_VOID(RESULT) audioDelay(ePtr<iAudioDelay> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
 	virtual SWIG_VOID(RESULT) rdsDecoder(ePtr<iRdsDecoder> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
 	virtual SWIG_VOID(RESULT) stream(ePtr<iStreamableService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
@@ -923,7 +1062,8 @@ public:
 		evNewProgramInfo,
 		evRecordFailed,
 		evRecordWriteError,
-		evNewEventInfo
+		evNewEventInfo,
+		evGstRecordEOS
 	};
 	enum {
 		NoError=0,
@@ -956,6 +1096,7 @@ public:
 	virtual SWIG_VOID(RESULT) frontendInfo(ePtr<iFrontendInformation> &SWIG_OUTPUT)=0;
 	virtual SWIG_VOID(RESULT) stream(ePtr<iStreamableService> &SWIG_OUTPUT)=0;
 	virtual SWIG_VOID(RESULT) subServices(ePtr<iSubserviceList> &SWIG_OUTPUT)=0;
+	virtual SWIG_VOID(RESULT) getFileExtension(std::string &SWIG_OUTPUT)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iRecordableService>, iRecordableServicePtr);
 

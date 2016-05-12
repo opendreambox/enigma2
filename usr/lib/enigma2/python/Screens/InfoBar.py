@@ -231,8 +231,11 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 			{
 				eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
 				eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
-				eServiceMP3.evPluginError: self.__evPluginError,
-				eServiceMP3.evStreamingSrcError: self.__evStreamingSrcError
+				eServiceMP3.evPluginError:      self.__evPluginError,
+				eServiceMP3.evStreamingSrcError:self.__evStreamingSrcError,
+				eServiceMP3.evFileReadError:    self.__evFileReadError,
+				eServiceMP3.evTypeNotFoundError:self.__evTypeNotFoundError,
+				eServiceMP3.evGeneralGstError:  self.__evGeneralGstError
 			})
 
 	def __evAudioDecodeError(self):
@@ -266,6 +269,29 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
 		print "[__evStreamingSrcError]", message
 		self.session.open(MessageBox, _("Streaming error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 20 )
+
+	def __evFileReadError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		print "[__evFileReadError]", message
+		self.session.open(MessageBox, _("Gstreamer error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 20 )
+
+	def __evTypeNotFoundError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		print "[__evTypeNotFoundError]"
+		self.session.open(MessageBox, _("Couldn't find media type"), type = MessageBox.TYPE_INFO, timeout = 20)
+
+	def __evGeneralGstError(self):
+		from Screens.MessageBox import MessageBox
+		from enigma import iServiceInformation
+		currPlay = self.session.nav.getCurrentService()
+		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		print "[__evGeneralGstError]", message
+		self.session.open(MessageBox, _("Gstreamer error: %s") % message, type = MessageBox.TYPE_INFO, timeout = 20)
 
 	def handleLeave(self, how):
 		self.is_closing = True

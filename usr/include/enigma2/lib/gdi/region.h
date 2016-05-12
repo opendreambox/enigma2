@@ -3,6 +3,7 @@
 
 #include <lib/base/object.h>
 #include <lib/gdi/erect.h>
+#include <glib.h>
 #include <vector>
 
 class gRegion
@@ -61,6 +62,12 @@ private:
 
 	std::vector<eRect> m_rects;
 	eRect m_extends;
+
+	typedef struct
+	{
+		guint pos_x, pos_y;
+		guint width, height;
+	} gRectangle;
 public:
 
 	const std::vector<eRect> &rects() const { return m_rects; };
@@ -76,6 +83,7 @@ public:
 	
 	gRegion(const std::vector<eRect> &rects);
 	gRegion(const eRect &rect);
+	gRegion(const GList *g_rects);
 	gRegion();
 
 	gRegion operator&(const gRegion &r2) const;
@@ -112,6 +120,17 @@ inline gRegion::gRegion(const std::vector<eRect> &rects)
 inline gRegion::gRegion(const eRect &rect)
 {
 	setRect(rect);
+}
+
+inline gRegion::gRegion(const GList *g_rects)
+{
+	std::vector<eRect> rects;
+	while (g_rects != NULL) {
+		gRectangle *g_rect = (gRectangle *) g_rects->data;
+		rects.push_back(eRect(g_rect->pos_x, g_rect->pos_y, g_rect->width, g_rect->height));
+		g_rects = g_rects->next;
+	}
+	setRects(rects);
 }
 
 inline gRegion::gRegion()

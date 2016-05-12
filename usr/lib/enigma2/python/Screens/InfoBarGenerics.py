@@ -40,7 +40,7 @@ from Tools import Notifications
 from Tools.Directories import fileExists
 
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, \
-	iPlayableService, eServiceReference, eEPGCache, eActionMap, eServiceMP3
+	iPlayableService, eServiceReference, eEPGCache, eActionMap
 
 from time import time, localtime, strftime
 from bisect import insort
@@ -2431,52 +2431,39 @@ class InfoBarSubtitleSupport(object):
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
-				iPlayableService.evEnd: self.__serviceStopped,
-				iPlayableService.evUpdatedInfo: self.__updatedInfo,
-				iPlayableService.evUpdatedEventInfo: self.__updatedEventInfo
+				iPlayableService.evSubtitleListChanged: self.__subtitlesChanged,
+				iPlayableService.evEnd: self.__serviceStopped
 			})
 		self.cached_subtitle_checked = False
-		self.__initially_forced_subtitles = False
 		self.__selected_subtitle = None
 
 	def __serviceStopped(self):
 		self.cached_subtitle_checked = False
-		if self.__subtitles_enabled:
-			self.subtitle_window.hide()
-			self.__subtitles_enabled = False
-			self.__selected_subtitle = None
+		self.setSubtitlesEnable(False)
 
-	def __updatedInfo(self):
-		if not self.cached_subtitle_checked:
-			self.cached_subtitle_checked = True
-			subtitle = self.getCurrentServiceSubtitle()
-			self.setSelectedSubtitle(subtitle and subtitle.getCachedSubtitle())
-			if self.__selected_subtitle:
-				self.setSubtitlesEnable(True)
-
-	def __updatedEventInfo(self):
-		s = self.getCurrentServiceSubtitle()
-		subs = s and s.getSubtitleList() or [ ]
-		if not self.__initially_forced_subtitles:
-			for streamtup in subs:
-				streaml = list(streamtup)
-				if streaml[5] & eServiceMP3.GST_MATROSKA_TRACK_FORCED:
-					streaml[3] = eServiceMP3.SUB_FILTER_SHOW_FORCED_ONLY
-					self.setSelectedSubtitle(tuple(streaml))
-					self.setSubtitlesEnable(True)
-					self.__initially_forced_subtitles = True
-					return
+	def __subtitlesChanged(self):
+		subtitle = self.getCurrentServiceSubtitle()
+		sub_count = subtitle and subtitle.getNumberOfSubtitleTracks() or 0
+		if self.cached_subtitle_checked != sub_count:
+			self.cached_subtitle_checked = sub_count
+			if not config.plugins.dict().has_key('TrackAutoselect') or config.plugins.TrackAutoselect.subtitle_autoselect_enable.value:
+				for idx in range(sub_count):
+					info = subtitle.getSubtitleTrackInfo(idx)
+					if info.isSaved():
+						self.selected_subtitle = idx
+						self.subtitles_enabled = True
+						return
 
 	def getCurrentServiceSubtitle(self):
 		service = self.session.nav.getCurrentService()
-		return service and service.subtitle()
+		return service and service.subtitleTracks()
 
 	def setSubtitlesEnable(self, enable=True):
 		subtitle = self.getCurrentServiceSubtitle()
 		if enable:
-			if self.__selected_subtitle:
-				if subtitle and not self.__subtitles_enabled:
-					subtitle.enableSubtitles(self.subtitle_window.instance, self.selected_subtitle)
+			if self.__selected_subtitle != None:
+				if subtitle and (not self.__subtitles_enabled or self.__selected_subtitle != subtitle.getCurrentSubtitleTrack()):
+					subtitle.enableSubtitles(self.subtitle_window.instance, self.__selected_subtitle)
 					self.subtitle_window.show()
 					self.__subtitles_enabled = True
 		else:
@@ -2486,8 +2473,9 @@ class InfoBarSubtitleSupport(object):
 			self.__subtitles_enabled = False
 			self.subtitle_window.hide()
 
-	def setSelectedSubtitle(self, subtitle):
-		self.__selected_subtitle = subtitle
+	def setSelectedSubtitle(self, idx):
+		if isinstance(idx, int):
+			self.__selected_subtitle = idx
 
 	subtitles_enabled = property(lambda self: self.__subtitles_enabled, setSubtitlesEnable)
 	selected_subtitle = property(lambda self: self.__selected_subtitle, setSelectedSubtitle)

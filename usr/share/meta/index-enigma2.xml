@@ -170,6 +170,12 @@
 			<tag type="Network" />
 		</prerequisites>
 	</package>
+	<package details="plugin_streaminggroups.xml" name="Streaming Groups" packagename="enigma2-plugin-systemplugins-streaminggroups" shortdescription="Dreambox Streaming Groups">
+		<prerequisites>
+			<tag type="Multimedia" />
+			<tag type="Network" />
+		</prerequisites>
+	</package>
 	<package details="plugin_tempfancontrol.xml" name="TempFanControl" packagename="enigma2-plugin-systemplugins-tempfancontrol" shortdescription="Control your system fan">
 		<prerequisites>
 			<tag type="System" />

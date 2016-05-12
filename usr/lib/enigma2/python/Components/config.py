@@ -1252,17 +1252,20 @@ class ConfigSatlist(ConfigSelection):
 	orbital_position = property(getOrbitalPosition)
 
 class ConfigSet(ConfigElement):
-	def __init__(self, choices, default = []):
+	def __init__(self, choices, default = [], resort=True):
 		ConfigElement.__init__(self)
+		self.resort = resort
 		if isinstance(choices, list):
-			choices.sort()
+			if resort:
+				choices.sort()
 			self.choices = choicesList(choices, choicesList.LIST_TYPE_LIST)
 		else:
 			assert False, "ConfigSet choices must be a list!"
 		if default is None:
 			default = []
 		self.pos = -1
-		default.sort()
+		if resort:
+			default.sort()
 		self.default = default
 		self.value = default[:]
 
@@ -1272,7 +1275,8 @@ class ConfigSet(ConfigElement):
 			value.remove(choice)
 		else:
 			value.append(choice)
-			value.sort()
+			if self.resort:
+				value.sort()
 		self.changed()
 
 	def handleKey(self, key):
@@ -1310,7 +1314,8 @@ class ConfigSet(ConfigElement):
 			mem = ch in self.value
 			if not mem:
 				tmp.append(ch)
-				tmp.sort()
+				if self.resort:
+					tmp.sort()
 			ind = tmp.index(ch)
 			val1 = self.genString(tmp[:ind])
 			val2 = " "+self.genString(tmp[ind+1:])

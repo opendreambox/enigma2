@@ -1,14 +1,14 @@
-from enigma import eStreamServer, eServiceReference
-from Components.config import config
 from Components.StreamServerControl import streamServerControl
 from Plugins.Plugin import PluginDescriptor
-from Screens.MoviePlayer import MoviePlayer
 from StreamServerConfig import StreamServerConfig, applyConfig as applyStreamServerConfig
-
 from Tools.Log import Log
 
+from WatchDog import WatchDog
 def main(session, **kwargs):
 	session.open(StreamServerConfig)
+
+external_start = []
+external_shutdown = []
 
 def menu(menuid, **kwargs):
 	if menuid == "network":
@@ -24,15 +24,17 @@ def availabilityChanged(available):
 
 def autostart(reason, session=None, **kwargs):
 	if reason == 0:
-
 		if session:
+			WatchDog()
+			streamServerControl.start()
+			streamServerControl.onAvailabilityChanged.append(availabilityChanged)
 			if streamServerControl.isConnected():
 				applyStreamServerConfig(streamServerControl, initial=True)
-				streamServerControl.onAvailabilityChanged.append(availabilityChanged)
-
-def doPlay(session, ref):
-	if session and ref:
-		session.open(MoviePlayer, ref, streamMode=True)
+			for fnc in external_start:
+				fnc()
+	else:
+		for fnc in external_shutdown:
+			fnc()
 
 def Plugins(**kwargs):
 	return [ PluginDescriptor(name=_("Streaming Server Setup"), description=_("Streaming Server Setup"), where=PluginDescriptor.WHERE_MENU, fnc=menu),

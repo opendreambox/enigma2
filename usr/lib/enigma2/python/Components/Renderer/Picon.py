@@ -29,9 +29,13 @@ class Picon(Renderer):
 
 	def postWidgetCreate(self, instance):
 		instance.setScale(1)
+		instance.setDefaultAnimationEnabled(self.source.isAnimated)
 
 	def changed(self, what):
 		if self.instance:
+			if what[0] == self.CHANGED_ANIMATED:
+				self.instance.setDefaultAnimationEnabled(self.source.isAnimated)
+				return
 			pngname = ""
 			sname = self.source.text
 			if what[0] != self.CHANGED_CLEAR:

@@ -6,6 +6,7 @@ class TunerInfo(Source):
 
 	def __init__(self):
 		Source.__init__(self)
+		self.isAnimated = False
 		self.tuner_use_mask = 0
 		res_mgr = eDVBResourceManager.getInstance()
 		if res_mgr:

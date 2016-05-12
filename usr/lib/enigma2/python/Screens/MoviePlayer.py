@@ -2,27 +2,29 @@
 
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
-from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport
+from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins
 
 from Components.ActionMap import ActionMap
 from Components.ServiceEventTracker import InfoBarBase
 
 from Tools.Log import Log
 
-class MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport):
+class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarNotifications):
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
-	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None, pauseCallback = None, streamMode = False):
+	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None, pauseCallback = None, streamMode = False, askBeforeLeaving=True):
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
-		InfoBarNotifications.__init__(self)
 		InfoBarSeek.__init__(self)
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
 		InfoBarCueSheetSupport.__init__(self)
 		InfoBarServiceErrorPopupSupport.__init__(self)
+		InfoBarExtensions.__init__(self)
+		InfoBarPlugins.__init__(self)
+		InfoBarNotifications.__init__(self)
 		#TODO FIX THIS HACK
 		# currently we just want to be able to resume playback (if supported by e2),
 		# for now we don't care about cutting or jumpmarks or anything like that...
@@ -57,6 +59,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			}, -2)
 
 		self.returning = False
+		self._askBeforeLeaving = askBeforeLeaving
 
 		self.onFirstExecBegin.append(self.play)
 		self.onClose.append(self.__onClose)
@@ -142,7 +145,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBa
 			self.leavePlayerConfirmed([True, "quit"])
 
 	def leavePlayer(self):
-		self.handleLeave()
+		self.handleLeave(ask=self._askBeforeLeaving)
 
 	def leavePlayerConfirmed(self, answer):
 		answer = answer and answer[1]
