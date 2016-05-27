@@ -1118,7 +1118,7 @@ def eServiceCenter_getInstance():
 eServiceCenter_getInstance = _enigma.eServiceCenter_getInstance
 
 HTTP_TIMEOUT = _enigma.HTTP_TIMEOUT
-class eGstMsgContainer(iObject):
+class eGstMsgContainer(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     eMsgtNone = _enigma.eGstMsgContainer_eMsgtNone
@@ -3567,7 +3567,6 @@ class eDVBServicePMTHandler(object):
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     setDDPSupport = staticmethod(_enigma.eDVBServicePMTHandler_setDDPSupport)
-    setH265Support = staticmethod(_enigma.eDVBServicePMTHandler_setH265Support)
     eventNoResources = _enigma.eDVBServicePMTHandler_eventNoResources
     eventTuneFailed = _enigma.eDVBServicePMTHandler_eventTuneFailed
     eventNoPAT = _enigma.eDVBServicePMTHandler_eventNoPAT
@@ -3588,10 +3587,6 @@ eDVBServicePMTHandler_swigregister(eDVBServicePMTHandler)
 def eDVBServicePMTHandler_setDDPSupport(*args):
   return _enigma.eDVBServicePMTHandler_setDDPSupport(*args)
 eDVBServicePMTHandler_setDDPSupport = _enigma.eDVBServicePMTHandler_setDDPSupport
-
-def eDVBServicePMTHandler_setH265Support(*args):
-  return _enigma.eDVBServicePMTHandler_setH265Support(*args)
-eDVBServicePMTHandler_setH265Support = _enigma.eDVBServicePMTHandler_setH265Support
 
 class eDeviceEventManager(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

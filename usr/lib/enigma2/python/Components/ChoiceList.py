@@ -25,7 +25,7 @@ def ChoiceEntryComponent(key = "", text = ["--"]):
 		res.append((eListboxPythonMultiContent.TYPE_TEXT, 0, 0, tw, th, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, "-" * fillers))
 	else:
 		res.append((eListboxPythonMultiContent.TYPE_TEXT, tx, ty, tw, th, 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, text[0]))
-		png = key and LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/buttons/key_" + key + ".png")) or None
+		png = (key != "False") and LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/buttons/key_" + key + ".png")) or None
 		if png is not None:
 			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 5, 0, pxw, pxh, png))
 

@@ -132,7 +132,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.log_entries.append((int(time()), code, msg))
 		print "[TIMER]", msg
 
-	def calculateFilename(self, record_service):
+	def calculateFilename(self, record_service=None):
 		service_name = self.service_ref.getServiceName()
 		begin_date = strftime("%Y%m%d %H%M", localtime(self.begin))
 		begin_shortdate = strftime("%Y%m%d", localtime(self.begin))
@@ -163,7 +163,8 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			dirname = defaultMoviePath()
 		else:
 			dirname = self.dirname
-		self.Filename = Directories.getRecordingFilename(filename, dirname) + record_service.getFileExtension()
+		self.Filename = Directories.getRecordingFilename(filename, dirname) + (".ts" if record_service is None else record_service.getFileExtension())
+
 		self.log(0, "Filename calculated as: '%s'" % self.Filename)
 		#begin_date + " - " + service_name + description)
 
@@ -305,6 +306,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				return True
 		elif next_state == self.StateEnded:
 			old_end = self.end
+			# autoincrease (maybe reduced by other timers) instanttimer if possible
 			if self.setAutoincreaseEnd():
 				self.log(12, "autoincrase recording %d minute(s)" % int((self.end - old_end)/60))
 				self.state -= 1
@@ -794,13 +796,12 @@ class RecordTimer(timer.Timer):
 		print "in processed: ", entry in self.processed_timers
 		print "in running: ", entry in self.timer_list
 
-# the following looks wrong... why autoincrease endtime of all timers when one single timer has ended
-# disabled for testing (ghost 20.01.2015)
-		# autoincrease instanttimer if possible
-#		if not entry.dontSave:
-#			for x in self.timer_list:
-#				if x.setAutoincreaseEnd():
-#					self.timeChanged(x)
+		# autoincrease (maybe reduced by other timers) instanttimer if possible
+		# this is just needed to show a correct recording duration in timerlist for reduced instant timers
+		if not entry.dontSave:
+			for x in self.timer_list:
+				if x.setAutoincreaseEnd():
+					self.timeChanged(x)
 
 		# now the timer should be in the processed_timers list. remove it from there.
 		self.processed_timers.remove(entry)

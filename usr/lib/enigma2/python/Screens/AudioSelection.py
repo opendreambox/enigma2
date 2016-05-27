@@ -29,7 +29,7 @@ AUDIO_FORMATS = {
 	iAt.atAC3:    ("AC3",   _("AC3"),   6),
 	iAt.atMPEG:   ("MPEG",  _("MPEG"),  7),
 	iAt.atMP3:    ("MP3",   _("MP3"),   8),
-	iAt.atPCM:    ("LPCM",  _("LPCM"),  9),
+	iAt.atLPCM:   ("LPCM",  _("LPCM"),  9),
 	iAt.atPCM:    ("PCM",   _("PCM"),  10),
 	iAt.atWMA:    ("WMA",   _("WMA"),  11),
 	iAt.atFLAC:   ("FLAC",  _("FLAC"), -1),

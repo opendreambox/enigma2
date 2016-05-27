@@ -1,5 +1,5 @@
 from Components.Converter.Converter import Converter
-from enigma import iServiceInformation, iPlayableService
+from enigma import iServiceInformation, iPlayableService, iAudioType_ENUMS as iAt
 from Components.Element import cached
 
 class ServiceInfo(Converter, object):
@@ -61,10 +61,8 @@ class ServiceInfo(Converter, object):
 	def getBoolean(self):
 		service = self.source.service
 		if self.type == self.HAS_SUBTITLES:
-			subtitle = service and service.subtitle()
-			if subtitle and subtitle.getSubtitleList():
-				return True
-			return False
+			subtitle = service and service.subtitleTracks()
+			return subtitle and subtitle.getNumberOfSubtitleTracks() > 0
 
 		info = service and service.info()
 		if not info:
@@ -81,8 +79,7 @@ class ServiceInfo(Converter, object):
 				idx = 0
 				while idx < n:
 					i = audio.getTrackInfo(idx)
-					description = i.getDescription();
-					if "AC3" in description or "DTS" in description:
+					if i.getType() in (iAt.atAC3, iAt.atDDP, iAt.atDTS, iAt.atDTSHD):
 						return True
 					idx += 1
 			return False

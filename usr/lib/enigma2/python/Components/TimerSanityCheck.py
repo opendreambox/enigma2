@@ -183,12 +183,12 @@ class TimerSanityCheck:
 					fakeRecResult = -1
 				if not fakeRecResult: # tune okay
 					fakeRecService.frontendInfo() and tunerType.append(fakeRecService.frontendInfo().getFrontendData().get("tuner_type"))
-				else: # tune failed.. so we must go another way to get service type (DVB-S, DVB-T, DVB-C)
+				else: # tune failed.. so we must go another way to get service type (iDVBFrontend.feSatellite, iDVBFrontend.feTerrestrial, iDVBFrontend.feCable)
 
 					def getServiceType(ref): # helper function to get a service type of a service reference
 						serviceInfo = serviceHandler.info(ref)
 						serviceInfo = serviceInfo and serviceInfo.getInfoObject(ref, iServiceInformation.sTransponderData)
-						return serviceInfo and serviceInfo["tuner_type"] or ""
+						return -1 if serviceInfo is None else serviceInfo.get("tuner_type", -1)
 
 					ref = timer.service_ref.ref
 					if ref.flags & eServiceReference.isGroup: # service group ?

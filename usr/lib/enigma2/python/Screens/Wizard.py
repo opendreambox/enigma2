@@ -324,6 +324,9 @@ class Wizard(Screen):
 		self.setAnimation(self.PREVIOUS_STEP_ANIMATION, key)
 
 	def _initAnimation(self):
+		import Screens.AnimationSetup # needed to initialize config.osd.window_animation_default
+		if config.osd.window_animation_default.value == "_-disabled-_":
+			self.setNoAnimations()
 		self.setShowHideAnimation(self.__nextStepAnimation)
 
 	def openScreen(self, *args, **kwargs):

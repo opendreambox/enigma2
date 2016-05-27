@@ -215,10 +215,3 @@ def InitAVSwitch():
 		config.av.scaler_sharpness.addNotifier(setScaler_sharpness)
 	else:
 		config.av.scaler_sharpness = NoSave(ConfigNothing())
-
-	try:
-		pcr_offset_h265 = open("/proc/stb/vmpeg/0/pcr_offset_h265", "r").read()
-		eDVBServicePMTHandler.setH265Support(True)
-	except:
-		pass
-
