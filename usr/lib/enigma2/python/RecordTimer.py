@@ -293,6 +293,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 				return True
 		elif next_state == self.StateEnded:
 			old_end = self.end
+			# autoincrease (maybe reduced by other timers) instanttimer if possible
 			if self.setAutoincreaseEnd():
 				self.log(12, "autoincrase recording %d minute(s)" % int((self.end - old_end)/60))
 				self.state -= 1
@@ -772,13 +773,12 @@ class RecordTimer(timer.Timer):
 		print "in processed: ", entry in self.processed_timers
 		print "in running: ", entry in self.timer_list
 
-# the following looks wrong... why autoincrease endtime of all timers when one single timer has ended
-# disabled for testing (ghost 20.01.2015)
-		# autoincrease instanttimer if possible
-#		if not entry.dontSave:
-#			for x in self.timer_list:
-#				if x.setAutoincreaseEnd():
-#					self.timeChanged(x)
+		# autoincrease (maybe reduced by other timers) instanttimer if possible
+		# this is just needed to show a correct recording duration in timerlist for reduced instant timers
+		if not entry.dontSave:
+			for x in self.timer_list:
+				if x.setAutoincreaseEnd():
+					self.timeChanged(x)
 
 		# now the timer should be in the processed_timers list. remove it from there.
 		self.processed_timers.remove(entry)

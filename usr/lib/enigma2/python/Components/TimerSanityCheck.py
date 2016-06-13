@@ -222,6 +222,8 @@ class TimerSanityCheck:
 			else:
 				print "Bug: unknown flag!"
 			self.nrep_eventlist[idx] = (event[0],event[1],event[2],cnt,overlaplist[:]) # insert a duplicate into current overlaplist
+			fakeRecService = None
+			feinfo = None
 			idx += 1
 
 		if ConflictTimer is None: # no conflict found :)

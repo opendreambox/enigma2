@@ -1,5 +1,5 @@
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, ConfigInteger
+from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, ConfigInteger, ConfigSlider
 from Tools.Directories import resolveFilename, SCOPE_HDD
 from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv
 from SystemInfo import SystemInfo
@@ -130,6 +130,7 @@ def FinalInitUsageConfig():
 	config.usage.timerlist_finished_timer_position = ConfigSelection(default = "beginning", choices = [("beginning", _("at beginning")), ("end", _("at end"))])
 
 	config.usage.text_subtitle_presentation = ConfigSelection(default = "black box", choices = [("black box", _("black box")), ("drop-shadow", _("drop-shadow"))])
+	config.usage.text_subtitle_black_box_transparency = ConfigSlider(default = 0x64, increment = 5, limits = (0, 0xff))
 	config.usage.ttx_subtitle_prefer_pmt_language_code = ConfigYesNo(default=True)
 
 	# Channelselection settings

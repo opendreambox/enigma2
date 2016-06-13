@@ -29,6 +29,7 @@
 			<item level="2" text="Show Message when Recording starts">config.usage.show_message_when_recording_starts</item>
 			<item level="2" text="Load Length of Movies in Movielist">config.usage.load_length_of_movies_in_moviellist</item>
 			<item level="1" text="Text subtitle presentation">config.usage.text_subtitle_presentation</item>
+			<item level="1" text="Text subtitle black box transparency">config.usage.text_subtitle_black_box_transparency</item>
 			<item level="2" text="New ttx subtitle charset detection">config.usage.ttx_subtitle_prefer_pmt_language_code</item>
 			<item level="1" text="Show positioner movement">config.usage.showdish</item>
 			<item level="1" text="Enable multiple bouquets">config.usage.multibouquet</item>

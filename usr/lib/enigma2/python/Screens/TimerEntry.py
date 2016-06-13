@@ -152,7 +152,7 @@ class TimerEntry(Screen, ConfigListScreen):
 						setupFnc = p.__call__["setupFnc"]
 						if setupFnc is not None:
 							if p.__call__.has_key("configListEntry"):
-								entry = p.__call__["configListEntry"]
+								entry = p.__call__["configListEntry"]()
 								pdata = None
 								if p.name in self.timer.plugins:
 									pval = self.timer.plugins[p.name][0]

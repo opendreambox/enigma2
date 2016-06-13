@@ -820,7 +820,16 @@ class SatelliteTransponderSearchSupport:
 		x = { }
 		self.frontend.getFrontendStatus(x)
 		assert x, "getFrontendStatus failed!"
-		if x["tuner_state"] in ("LOCKED", "FAILED") or frontend_ptr is None:
+		tuner_state = x["tuner_state"]
+
+		if self.driver_wa and frontend_ptr and tuner_state in tuner_state in ("LOCKED", "FAILED"):
+			self.parm.symbol_rate = self.driver_wa
+			self.driver_wa = False
+			self.tuneNext()
+			return
+
+		if tuner_state in ("LOCKED", "FAILED") or frontend_ptr is None:
+			band_base_freq = self.parm.frequency
 			state = self.satellite_search_session
 
 			d = { }
@@ -830,6 +839,14 @@ class SatelliteTransponderSearchSupport:
 
 			if x["tuner_state"] == "LOCKED":
 				freq = d["frequency"]
+
+				# Hack for C-Band
+				if self.scan_sat.bs_freq_limits[0] == 3400000 and self.scan_sat.bs_freq_limits[1] == 4200000:
+					tuned_freq = abs(band_base_freq - 5150000)
+					tune_offs = band_base_freq - tuned_freq
+					freq -= tune_offs
+					freq = 5150000 - freq
+
 				parm = eDVBFrontendParametersSatellite()
 				parm.frequency = int(round(float(freq*2) / 1000)) * 1000
 				parm.frequency /= 2
@@ -870,7 +887,6 @@ class SatelliteTransponderSearchSupport:
 					if parm.system == eDVBFrontendParametersSatellite.System_DVB_S2:
 						parm.rolloff = d["rolloff"]
 						parm.pilot = d["pilot"]
-					self.__tlist.append(parm)
 
 					if self.auto_scan:
 						print "LOCKED at", freq
@@ -880,9 +896,13 @@ class SatelliteTransponderSearchSupport:
 						self.parm.frequency += (135L*((sr+999)/1000)/200)
 						self.parm.frequency += self.parm.symbol_rate/2
 
-					bm = state.getConstellationBitmap(5)
-					self.tp_found.append((fstr, bm))
-					state.updateConstellation(bm)
+					if freq < self.min_freq or freq > self.max_freq:
+						print "SKIPPED", freq, "out of search range"
+					else:
+						self.__tlist.append(parm)
+						bm = state.getConstellationBitmap(5)
+						self.tp_found.append((fstr, bm))
+						state.updateConstellation(bm)
 
 					if len(self.tp_found):
 						state["list"].updateList(self.tp_found)
@@ -891,16 +911,27 @@ class SatelliteTransponderSearchSupport:
 						state["list"].setIndex(0)
 			elif frontend_ptr:
 				if self.auto_scan: #when driver based auto scan is used we got a tuneFailed event when the scan has scanned the last frequency...
+					freq_old = self.parm.frequency
+					sr_old = self.parm.symbol_rate
 					self.parm = self.setNextRange()
+					self.driver_wa = self.parm is not None and freq_old == self.parm.frequency and sr_old == self.parm.symbol_rate
 				else:
 					self.parm.frequency += self.parm.symbol_rate
 
 			if self.auto_scan:
 				freq = d["frequency"]
-				freq = int(round(float(freq*2) / 1000)) * 1000
-				freq /= 2
+
+				# Hack for C-Band
+				if self.scan_sat.bs_freq_limits[0] == 3400000 and self.scan_sat.bs_freq_limits[1] == 4200000:
+					tuned_freq = abs(band_base_freq - 5150000)
+					tune_offs = band_base_freq - tuned_freq
+					freq -= tune_offs
+					freq = 5150000 - freq
+
 				mhz_complete, mhz_done = self.stats(freq)
+
 				print "CURRENT freq", freq, "%d/%d" %(mhz_done, mhz_complete)
+
 				check_finished = self.parm is None
 			else:
 				print "NEXT freq", self.parm.frequency
@@ -956,7 +987,14 @@ class SatelliteTransponderSearchSupport:
 				self.updateStateTimer.start(1000, True)
 
 			if not self.auto_scan or frontend_ptr is not None:
-				self.tuneNext()
+				if self.driver_wa:
+					self.driver_wa = self.parm.symbol_rate
+					self.parm.symbol_rate = 12345000
+					tparm = eDVBFrontendParameters()
+					tparm.setDVBS(self.parm, False)
+					self.frontend.tune(tparm)
+				else:
+					self.tuneNext()
 		else:
 			print "unhandled tuner state", x["tuner_state"]
 
@@ -974,7 +1012,12 @@ class SatelliteTransponderSearchSupport:
 			bs_range = self.range_list[self.current_range]
 			print "Sat Blindscan current range", bs_range
 			parm = eDVBFrontendParametersSatellite()
-			parm.frequency = bs_range[0]
+
+			# Hack for C-Band
+			limits = self.scan_sat.bs_freq_limits
+			idx = 1 if self.auto_scan and limits[0] == 3400000 and limits[1] == 4200000 else 0
+			parm.frequency = bs_range[idx]
+
 			if self.nim.isCompatible("DVB-S2"):
 				steps = { 5 : 2000, 4 : 4000, 3 : 6000, 2 : 8000, 1 : 10000 }[self.scan_sat.bs_accuracy.value]
 				parm.system = self.scan_sat.bs_system.value
@@ -1005,7 +1048,12 @@ class SatelliteTransponderSearchSupport:
 			mhz = (range[1] - range[0]) / 1000
 			mhz_complete += mhz
 			if cnt == self.current_range:
-				mhz_done += (freq - range[0]) / 1000
+				# Hack for C-Band
+				limits = self.scan_sat.bs_freq_limits
+				if self.auto_scan and limits[0] == 3400000 and limits[1] == 4200000:
+					mhz_done += (range[1] - freq) / 1000
+				else:
+					mhz_done += (freq - range[0]) / 1000
 			elif cnt < self.current_range:
 				mhz_done += mhz
 			cnt += 1
@@ -1022,6 +1070,7 @@ class SatelliteTransponderSearchSupport:
 		self.range_list = [ ]
 		tuner_no = -1
 		self.auto_scan = False
+		self.driver_wa = False
 
 		if tunername in ("BCM4505", "BCM4506 (internal)", "BCM4506", "Alps BSBE1 C01A/D01A.", "Si2166B"):
 			self.auto_scan = tunername == 'Si2166B'
@@ -1044,16 +1093,18 @@ class SatelliteTransponderSearchSupport:
 
 			s1 = self.scan_sat.bs_freq_start.value * 1000
 			s2 = self.scan_sat.bs_freq_stop.value * 1000
-			start = min(s1,s2)
-			stop = max(s1,s2)
-			if self.scan_sat.bs_vertical.value:
-				if self.auto_scan and band_cutoff_frequency:
-					if start < band_cutoff_frequency:
-						self.range_list.append((start, min(stop, band_cutoff_frequency), eDVBFrontendParametersSatellite.Polarisation_Vertical))
-					if stop > band_cutoff_frequency:
-						self.range_list.append((max(band_cutoff_frequency, start), stop, eDVBFrontendParametersSatellite.Polarisation_Vertical))
-				else:
-					self.range_list.append((start, stop, eDVBFrontendParametersSatellite.Polarisation_Vertical))
+
+			start = self.min_freq = min(s1,s2)
+			stop = self.max_freq = max(s1,s2)
+
+			if self.auto_scan: # hack for driver based blindscan... extend search range +/- 50Mhz
+				limits = self.scan_sat.bs_freq_limits
+				start -= 50000
+				stop += 50000
+				if start < limits[0]:
+					start = limits[0]
+				if stop >limits[1]:
+					stop = limits[1]
 
 			if self.scan_sat.bs_horizontal.value:
 				if self.auto_scan and band_cutoff_frequency and stop > band_cutoff_frequency:
@@ -1063,6 +1114,15 @@ class SatelliteTransponderSearchSupport:
 						self.range_list.append((max(band_cutoff_frequency, start), stop, eDVBFrontendParametersSatellite.Polarisation_Horizontal))
 				else:
 					self.range_list.append((start, stop, eDVBFrontendParametersSatellite.Polarisation_Horizontal))
+
+			if self.scan_sat.bs_vertical.value:
+				if self.auto_scan and band_cutoff_frequency:
+					if start < band_cutoff_frequency:
+						self.range_list.append((start, min(stop, band_cutoff_frequency), eDVBFrontendParametersSatellite.Polarisation_Vertical))
+					if stop > band_cutoff_frequency:
+						self.range_list.append((max(band_cutoff_frequency, start), stop, eDVBFrontendParametersSatellite.Polarisation_Vertical))
+				else:
+					self.range_list.append((start, stop, eDVBFrontendParametersSatellite.Polarisation_Vertical))
 
 			self.parm = self.setNextRange()
 			if self.parm is not None:
@@ -1184,13 +1244,13 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		if nim.isCompatible("DVB-S"):
 			if self.scan_type.value == "single_transponder":
 				self.updateSatList()
+				self.list.append(getConfigListEntry(_('Satellite'), self.scan_satselection[index_to_scan]))
 				if nim.isCompatible("DVB-S2"):
 					self.systemEntry = getConfigListEntry(_('System'), self.scan_sat.system)
 					self.list.append(self.systemEntry)
 				else:
 					# downgrade to dvb-s, in case a -s2 config was active
 					self.scan_sat.system.value = eDVBFrontendParametersSatellite.System_DVB_S
-				self.list.append(getConfigListEntry(_('Satellite'), self.scan_satselection[index_to_scan]))
 				self.list.append(getConfigListEntry(_('Frequency'), self.scan_sat.frequency))
 				self.list.append(getConfigListEntry(_('Inversion'), self.scan_sat.inversion))
 				self.list.append(getConfigListEntry(_('Symbol rate'), self.scan_sat.symbolrate))
@@ -1198,11 +1258,11 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec))
 				elif self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
+					self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
 					if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_8PSK:
 						self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_8psk))
 					else:
 						self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_qpsk))
-					self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
 					self.list.append(self.modulationEntry)
 					self.list.append(getConfigListEntry(_('Roll-off'), self.scan_sat.rolloff))
 					self.list.append(getConfigListEntry(_('Pilot'), self.scan_sat.pilot))
@@ -1215,7 +1275,14 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				selected_sat_pos = self.scan_satselection[index_to_scan].value
 				limit_list = self.nim_sat_frequency_range[index_to_scan][int(selected_sat_pos)]
 				l = limit_list[0]
+				self.scan_sat.bs_freq_limits = l
 				limits = ( l[0]/1000, l[1]/1000 )
+
+				# Hack for C-Band
+				if limits[0] == 6100 and limits[1] == 7300:
+					limits = ( 3400, 4200 )
+					self.scan_sat.bs_freq_limits = ( limits[0]*1000, limits[1]*1000 )
+
 				self.scan_sat.bs_freq_start = ConfigInteger(default = limits[0], limits = (limits[0], limits[1]))
 				self.scan_sat.bs_freq_stop = ConfigInteger(default = limits[1], limits = (limits[0], limits[1]))
 				self.satelliteEntry = getConfigListEntry(_("Satellite"), self.scan_satselection[index_to_scan])
@@ -1715,11 +1782,14 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 					orbpos = nimsats[selsatidx][0]
 					if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 						fec = self.scan_sat.fec.value
+						mod = eDVBFrontendParametersSatellite.Modulation_QPSK
 					else:
-						if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_QPSK:
+						mod = self.scan_sat.modulation.value
+						if mod == eDVBFrontendParametersSatellite.Modulation_QPSK:
 							fec = self.scan_sat.fec_s2_qpsk.value
 						else:
 							fec = self.scan_sat.fec_s2_8psk.value
+
 					print "add sat transponder"
 					self.addSatTransponder(tlist, self.scan_sat.frequency.value,
 								self.scan_sat.symbolrate.value,
@@ -1728,7 +1798,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 								self.scan_sat.inversion.value,
 								orbpos,
 								self.scan_sat.system.value,
-								self.scan_sat.modulation.value,
+								mod,
 								self.scan_sat.rolloff.value,
 								self.scan_sat.pilot.value)
 				removeAll = False
@@ -2019,4 +2089,3 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 			if x == pos:
 				return 1
 		return 0
-

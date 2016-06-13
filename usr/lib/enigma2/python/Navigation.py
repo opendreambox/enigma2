@@ -31,6 +31,7 @@ class Navigation:
 		self.record_event = [ ]
 		self.currentlyPlayingServiceReference = None
 		self.currentlyPlayingService = None
+		self.immediatePlay = False
 		self.RecordTimer = RecordTimer.RecordTimer()
 		self.__wasTimerWakeup = False
 		if getFPWasTimerWakeup():
@@ -120,9 +121,6 @@ class Navigation:
 		return service
 
 	def stopRecordService(self, service):
-		if not self.immediatePlay:
-			self.scheduledServiceReference = None
-			return
 		ret = self.pnav and self.pnav.stopRecordService(service)
 		return ret
 
@@ -135,6 +133,9 @@ class Navigation:
 		return self.currentlyPlayingService
 
 	def stopService(self):
+		if not self.immediatePlay:
+			self.scheduledServiceReference = None
+			return
 		print "stopService"
 		if self.pnav:
 			self.pnav.stopService()

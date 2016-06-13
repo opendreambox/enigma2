@@ -111,6 +111,7 @@ class e2reactor(PosixReactorBase):
 		self._reads = {}
 		self._writes = {}
 		self.savedTimeout = None
+		self._shutdownRunning = 0
 		self._timer = eTimer()
 		self._timer.callback.append(self.simulate)
 		self._insimulate = False
@@ -122,8 +123,14 @@ class e2reactor(PosixReactorBase):
 		PosixReactorBase.__init__(self)
 		self.addSystemEventTrigger('after', 'shutdown', self.cleanup)
 
+	def doShutdown(self):
+		while self._timer: # iterate until cleanup is called...
+			self.runUntilCurrent()
+			self._insertNewDelayedCalls()
+			self._shutdownRunning += 1 # without this hack the shutdown takes thirty seconds.. i dont know why
+
 	def now(self):
-		return self._insimulate and self._now or monotonic_time()
+		return self._insimulate and self._now or monotonic_time()+self._shutdownRunning
 
 	def callLater(self, _seconds, _f, *args, **kw):
 		ret = PosixReactorBase.callLater(self, _seconds, _f, *args, **kw)

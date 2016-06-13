@@ -226,7 +226,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				additionalInfoColor = self.additionalInfoColor
 				additionalInfoColorSelected = self.additionalInfoColorSelected
 
-		if (marked == 0 and isPlayable and service_info and self.is_playable_ignore.valid() and not service_info.isPlayable(service, self.is_playable_ignore)):
+		if (marked == 0 and isPlayable and service_info and not service_info.isPlayable(service, self.is_playable_ignore)):
 			forgroundColor = forgroundColorSel = additionalInfoColor = additionalInfoColorSelected = serviceDescriptionColor = serviceDescriptionColorSelected = self.serviceNotAvail
 
 		# set windowstyle
