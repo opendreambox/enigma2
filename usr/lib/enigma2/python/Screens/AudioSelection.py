@@ -243,6 +243,7 @@ class AudioSelection(Screen, ConfigListScreen):
 						flags.append(_("Default"))
 					if trackinfo.isForced():
 						flags.append(_("Forced"))
+				if trackinfo.getType() == iSt.DVD or trackinfo.getType() == iSt.GST and trackinfo.getGstSubtype() in [iGSt.stPGS, iGSt.stVOB]:
 					if trackinfo.getFilter() & iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_FORCED_ONLY:
 						flags.append(_("forced only"))
 					if trackinfo.getFilter() & iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_ALL:
@@ -449,7 +450,7 @@ class AudioSelection(Screen, ConfigListScreen):
 			cur = self["streams"].getCurrent()
 			sel_sub = cur and isinstance(cur[0], SelectionTrackinfoEntry) and cur[0].info
 			conflist = self["config"].list
-			if sel_sub and sel_sub.getType() in [iSt.GST, iSt.DVD]:
+			if sel_sub and (sel_sub.getType() == iSt.DVD or sel_sub.getType() == iSt.GST and sel_sub.getGstSubtype() in [iGSt.stPGS, iGSt.stVOB]):
 				default = False
 				forcefilter = str(sel_sub.getFilter())
 				choicelist = [(str(iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_FORCED_ONLY), "forced only"), (str(iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_ALL), "show all")]

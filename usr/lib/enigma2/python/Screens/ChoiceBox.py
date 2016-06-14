@@ -134,7 +134,7 @@ class ChoiceBox(Screen):
 			if pos > curpos-2 and pos < curpos+5:
 				if pos == curpos:
 					summarytext += ">"
-				else:
+				elif isinstance(entry[0], str):
 					summarytext += entry[0]
 				summarytext += ' ' + entry[1] + '\n'
 			pos += 1

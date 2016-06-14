@@ -668,7 +668,7 @@
 				}
 			</convert>
 		</widget>
-		<widget name="help_label" position="10,520" size="600,25" font="Regular;22"/>
+		<widget name="help_label" position="10,520" size="800,25" font="Regular;22"/>
 	</screen>
 	<!-- Bouquet selector -->
 	<screen name="BouquetSelector" position="center,220" size="470,320" title="Choose bouquet">

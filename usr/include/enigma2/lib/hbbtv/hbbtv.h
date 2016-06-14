@@ -7,7 +7,14 @@
 #include <lib/service/iservice.h>
 #include <lib/service/event.h>
 
+#include <qglobal.h>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;1.1;1.0;) CE-HTML/1.0; en) AppleWebKit/538.1 no/Volksbox QtWebkit OIPF/1.1";
+#else
 #define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;0.1a;1.0;) CE-HTML/1.0; en) AppleWebKit/535.19 no/Volksbox QtWebkit/2.2";
+#endif
+
 
 class eDVBServiceAITHandler;
 

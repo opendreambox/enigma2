@@ -140,10 +140,9 @@ class StreamServerControl(object):
 
 	def _onUpstreamStateChanged(self, state):
 		if state > self._streamServer.UPSTREAM_STATE_WAITING and self._currentService and not self._encoderService:
-			Log.i("Upstream required. Aquiring service")
-			self.setEncoderService(self._currentService)
+			Log.i("Upstream running.")
 		if state <= self._streamServer.UPSTREAM_STATE_WAITING and self._encoderService:
-			Log.i("Upstream superflous. Freeing service")
+			Log.i("Upstream idle.")
 		for fnc in self.onUpstreamStateChanged:
 			fnc(state)
 

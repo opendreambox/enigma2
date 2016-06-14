@@ -176,13 +176,13 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 	def _evAudioDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
-		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
+		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sUser+12)
 		Log.i("audio-codec %s can't be decoded by hardware" % (sTagAudioCodec))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagAudioCodec, type=MessageBox.TYPE_INFO, timeout=20)
 
 	def _evVideoDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
-		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
+		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sUser+12)
 		Log.i("video-codec %s can't be decoded by hardware" % (sTagVideoCodec))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagVideoCodec, type=MessageBox.TYPE_INFO, timeout=20)
 

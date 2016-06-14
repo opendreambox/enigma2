@@ -29,9 +29,6 @@
 #include <lib/service/event.h>
 #include <lib/python/python.h>
 
-#include <QSqlQuery>
-#include <QSqlDatabase>
-
 #define CLEAN_INTERVAL 60000    //  1 min
 #define UPDATE_INTERVAL 3600000  // 60 min
 #define ZAP_DELAY 2000          // 2 sek
@@ -228,6 +225,8 @@ private:
 
 class eEPGCache: public iObject, public eMainloop_native, private eThread, public Object
 {
+	E_DECLARE_PRIVATE(eEPGCache)
+
 #ifndef SWIG
 	DECLARE_REF(eEPGCache)
 	struct channel_data: public sigc::trackable
@@ -368,43 +367,6 @@ private:
 	int m_outdated_epg_timespan;
 	char m_filename[1024];
 
-	QSqlDatabase m_db_rw, m_db_ro;
-	QSqlQuery m_stmt_service_id_q;
-	QSqlQuery m_stmt_service_add;
-
-	QSqlQuery m_stmt_event_id_q;
-	QSqlQuery m_stmt_event_add;
-	QSqlQuery m_stmt_event_update;
-	QSqlQuery m_stmt_event_delete;
-	QSqlQuery m_stmt_event_cleanup_outdated;
-
-	QSqlQuery m_stmt_event_service_q;
-
-	QSqlQuery m_stmt_title_id_q;
-	QSqlQuery m_stmt_title_add;
-
-	QSqlQuery m_stmt_short_description_id_q;
-	QSqlQuery m_stmt_short_description_add;
-
-	QSqlQuery m_stmt_extended_description_id_q;
-	QSqlQuery m_stmt_extended_description_add;
-
-	QSqlQuery m_stmt_data_id_q;
-	QSqlQuery m_stmt_data_add;
-	QSqlQuery m_stmt_data_update;
-	QSqlQuery m_stmt_data_delete;
-
-	// queries for public access
-	QSqlQuery m_stmt_lookup_begin_time;
-	QSqlQuery m_stmt_lookup_event_id;
-	QSqlQuery m_stmt_lookup_now;
-	QSqlQuery m_stmt_lookup_before;
-
-	QSqlQuery m_stmt_lookup_all;
-	QSqlQuery m_stmt_lookup_end_time;
-	QSqlQuery m_stmt_service_id_q_ro;
-	QSqlQuery m_stmt_has_external_source;
-
 	EPGDBThread m_db_thread;
 	__u8 *m_next_section_buffer;
 
@@ -413,7 +375,7 @@ private:
 	void saveInternal(bool do_cleanup=false);
 
 	void thread();  // thread function
-	bool copyDatabase(QSqlDatabase *memorydb, char* filename, bool save, bool do_cleanup=false);
+	bool copyDatabase(void *memorydb, char* filename, bool save, bool do_cleanup=false);
 #ifdef ENABLE_PRIVATE_EPG
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif
