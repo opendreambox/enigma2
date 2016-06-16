@@ -16,22 +16,25 @@ class LogConfig(object):
 		if LogConfig._initialized:
 			return
 		else:
-			from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection, ConfigInteger
+			from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection
 			config.log = ConfigSubsection()
 			config.log.level = ConfigSelection(
-				choices={ LOG_TYPE_INFO : "INFO", LOG_TYPE_WARNING : "WARNING", LOG_TYPE_ERROR : "ERROR" }, default=LOG_TYPE_INFO)
+				choices={ str(LOG_LEVEL_DEBUG) : "DEBUG", str(LOG_LEVEL_INFO) : "INFO", str(LOG_LEVEL_WARNING) : "WARNING", str(LOG_LEVEL_ERROR) : "ERROR",  }, default=str(LOG_LEVEL_INFO))
 			config.log.verbose = ConfigOnOff(default=False)
 			config.log.colored = ConfigOnOff(default=True)
 			LogConfig._initialized = True
 
 	@staticmethod
 	def level():
-		return config.log.level.value
+		from Components.config import config
+		return int(config.log.level.value)
 
 	@staticmethod
 	def verbose():
+		from Components.config import config
 		return config.log.verbose.value
 
 	@staticmethod
 	def colored():
+		from Components.config import config
 		return config.log.colored.value
