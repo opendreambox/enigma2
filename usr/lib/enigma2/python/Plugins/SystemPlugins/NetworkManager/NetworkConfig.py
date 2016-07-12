@@ -244,18 +244,18 @@ class NetworkConfigGlobal(Screen, ConfigListScreen):
 
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
-		<screen name="NetworkServiceConfig" position="center,center" size="1020,500" title="Network Configuration" zPosition="0">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
+		<screen name="NetworkServiceConfig" position="center,120" size="920,520" title="Network Configuration" zPosition="0">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="150,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="290,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="430,0" size="140,40" alphatest="on" />
 
-			<widget name="key_red" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget name="key_green" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="key_yellow" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="key_blue" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget name="key_red" position="10,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+			<widget name="key_green" position="150,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget name="key_yellow" position="290,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget name="key_blue" position="430,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
 
-			<widget source="list" render="Listbox" position="5,50" size="550,400" scrollbarMode="showOnDemand" zPosition="1">
+			<widget source="list" render="Listbox" position="15,50" size="550,400" scrollbarMode="showOnDemand" zPosition="1">
 				<convert type="TemplatedMultiContent">
 					{"template":[
 							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
@@ -271,12 +271,10 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 					}
 				</convert>
 			</widget>
-
-			<widget name="hint" position="5,470" zPosition="1" size="555,25" font="Regular;20" halign="center" valign="center" transparent="1" />
-
-			<eLabel position="570,10" size="440,480" zPosition="0" backgroundColor="#0E3B62" />
-			<widget name="details_label" position="580,20" zPosition="1" size="420,25" font="Regular;22" backgroundColor="#0E3B62" transparent="1" />
-			<widget name="details" position="580,55" zPosition="1" size="420,430" font="Regular;16" backgroundColor="#0E3B62" transparent="1" />
+            <ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+			<widget name="details_label" position="590,30" zPosition="2" size="310,25" font="Regular;22" backgroundColor="background" halign="center" transparent="1" />
+            <widget name="details" position="590,70" zPosition="2" size="300,300" font="Regular;18" halign="center" backgroundColor="background" transparent="1" />
+            <widget name="hint" position="590,470" zPosition="2" size="300,25" font="Regular;20" halign="center" backgroundColor="background" transparent="1" />
 		</screen>"""
 
 	def __init__(self, session):

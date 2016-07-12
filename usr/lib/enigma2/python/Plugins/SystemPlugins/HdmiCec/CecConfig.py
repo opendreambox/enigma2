@@ -7,14 +7,15 @@ from CeCDeviceList import CeCDeviceList
 
 class CecConfig(ConfigListScreen, Screen):
 	skin = """
-		<screen name="CecConfig" position="center,center" size="560,400" title="HDMI CEC: Setup">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
-			<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
+		<screen name="CecConfig" position="center,120" size="820,520" title="HDMI CEC: Setup">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,0" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,0" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,0" size="200,40" alphatest="on" />
+			<widget source="key_red" render="Label" position="10,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+			<widget source="key_green" render="Label" position="210,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_blue" render="Label" position="610,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="config" position="5,60" size="810,450" scrollbarMode="showOnDemand" enableWrapAround="1"/>
 		</screen>"""
 
 	def __init__(self, session, args=0):

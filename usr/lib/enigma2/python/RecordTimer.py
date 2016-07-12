@@ -672,7 +672,7 @@ class RecordTimer(timer.Timer):
 	def getNextZapTime(self):
 		now = time()
 		for timer in self.timer_list:
-			if not timer.justplay or timer.disabled or timer.begin < now:
+			if not timer.justplay or timer.disabled or timer.begin < now or timer.state >= timer.StateRunning:
 				continue
 			return timer.begin
 		return -1
@@ -681,7 +681,7 @@ class RecordTimer(timer.Timer):
 		now = time()
 		for timer in self.timer_list:
 			next_act = timer.getNextActivation()
-			if timer.disabled or timer.justplay or next_act < now:
+			if timer.disabled or timer.justplay or next_act < now or timer.state >= timer.StateRunning:
 				continue
 			return next_act
 		return -1

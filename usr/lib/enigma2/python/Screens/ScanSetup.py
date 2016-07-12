@@ -9,6 +9,7 @@ from Components.NimManager import nimmanager, getConfigSatlist
 from Components.Label import Label
 from Tools.Directories import resolveFilename, SCOPE_DEFAULTPARTITIONMOUNTDIR, SCOPE_DEFAULTDIR, SCOPE_DEFAULTPARTITION
 from Tools.Transponder import ConvertToHumanReadable
+from Tools.BoundFunction import boundFunction
 from Screens.MessageBox import MessageBox
 from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, \
 	eDVBSatelliteEquipmentControl as secClass, eDVBFrontendParametersTerrestrial, \
@@ -20,6 +21,8 @@ feSatellite = iDVBFrontend.feSatellite
 feCable = iDVBFrontend.feCable
 stateLock = iDVBFrontend.stateLock
 stateFailed = iDVBFrontend.stateFailed
+
+can_t_t2_auto_delsys = [ 'Si2169C', 'ATBM781x' ]
 
 def buildTerTransponder(frequency,
 		system = eDVBFrontendParametersTerrestrial.System_DVB_T,
@@ -76,7 +79,7 @@ def getInitialCableTransponderList(tlist, nim):
 			#print "inversion:", 2
 			tlist.append(parm)
 
-def getInitialTerrestrialTransponderList(tlist, region, can_t2):
+def getInitialTerrestrialTransponderList(tlist, region, can_t_t2_auto_delsys):
 	list = nimmanager.getTranspondersTerrestrial(region)
 
 	#self.transponders[self.parsedTer].append((2,freq,bw,const,crh,crl,guard,transm,hierarchy,inv))
@@ -89,7 +92,7 @@ def getInitialTerrestrialTransponderList(tlist, region, can_t2):
 
 	for x in list:
 		if x[0] == 2: #TERRESTRIAL
-			system = x[10] if not can_t2 or x[10] == eDVBFrontendParametersTerrestrial.System_DVB_T2 else eDVBFrontendParametersTerrestrial.System_DVB_T_T2
+			system = x[10] if not can_t_t2_auto_delsys or x[10] == eDVBFrontendParametersTerrestrial.System_DVB_T2 else eDVBFrontendParametersTerrestrial.System_DVB_T_T2
 			parm = buildTerTransponder(x[1], system, x[9], x[2], x[4], x[5], x[3], x[7], x[6], x[8], x[11])
 			tlist.append(parm)
 
@@ -135,6 +138,7 @@ def CableScanHelperDMM(nim_idx):
 	cableScanHelpers = {
 		'CXD1981': 'cxd1978',
 		'Philips CU1216Mk3': 'tda1002x',
+		'ATBM781x': 'atbm781x',
 	}
 	cmd = cableScanHelpers.get(tunername, None)
 	if cmd is not None:
@@ -246,7 +250,8 @@ class CableTransponderSearchSupport:
 					"QAM32" : parm.Modulation_QAM32,
 					"QAM64" : parm.Modulation_QAM64,
 					"QAM128" : parm.Modulation_QAM128,
-					"QAM256" : parm.Modulation_QAM256 }
+					"QAM256" : parm.Modulation_QAM256,
+					"QAM_AUTO" : parm.Modulation_Auto }
 				inv = { "INVERSION_OFF" : parm.Inversion_Off,
 					"INVERSION_ON" : parm.Inversion_On,
 					"INVERSION_AUTO" : parm.Inversion_Unknown }
@@ -341,7 +346,7 @@ class CableTransponderSearchSupport:
 
 			if cmd is not None:
 				if cableConfig.scan_type.value == "bands":
-					if cmd.startswith("cxd1978") or cmd.startswith("tda1002x"):
+					if cmd.startswith("cxd1978") or cmd.startswith("tda1002x") or cmd.startswith("atbm781x"):
 						cmd += " --scan-flags DVB-C"
 						EU = False
 						US = False
@@ -450,32 +455,40 @@ class CableTransponderSearchSupport:
 				else:
 					cmd += " --scan-stepsize "
 					cmd += str(cableConfig.scan_frequency_steps.value)
-				if cableConfig.scan_mod_qam16.value:
-					cmd += " --mod 16"
-				if cableConfig.scan_mod_qam32.value:
-					cmd += " --mod 32"
-				if cableConfig.scan_mod_qam64.value:
-					cmd += " --mod 64"
-				if cableConfig.scan_mod_qam128.value:
-					cmd += " --mod 128"
-				if cableConfig.scan_mod_qam256.value:
-					cmd += " --mod 256"
-				if cableConfig.scan_sr_6900.value:
-					cmd += " --sr 6900000"
-				if cableConfig.scan_sr_6875.value:
-					cmd += " --sr 6875000"
-				if cableConfig.scan_sr_ext1.value > 450:
-					cmd += " --sr "
-					cmd += str(cableConfig.scan_sr_ext1.value)
-					cmd += "000"
-				if cableConfig.scan_sr_ext2.value > 450:
-					cmd += " --sr "
-					cmd += str(cableConfig.scan_sr_ext2.value)
-					cmd += "000"
+
+				if cmd.startswith("atbm781x"):
+					cmd += " --timeout 800"
+				else:
+					if cableConfig.scan_mod_qam16.value:
+						cmd += " --mod 16"
+					if cableConfig.scan_mod_qam32.value:
+						cmd += " --mod 32"
+					if cableConfig.scan_mod_qam64.value:
+						cmd += " --mod 64"
+					if cableConfig.scan_mod_qam128.value:
+						cmd += " --mod 128"
+					if cableConfig.scan_mod_qam256.value:
+						cmd += " --mod 256"
+					if cableConfig.scan_sr_6900.value:
+						cmd += " --sr 6900000"
+					if cableConfig.scan_sr_6875.value:
+						cmd += " --sr 6875000"
+					if cableConfig.scan_sr_ext1.value > 450:
+						cmd += " --sr "
+						cmd += str(cableConfig.scan_sr_ext1.value)
+						cmd += "000"
+					if cableConfig.scan_sr_ext2.value > 450:
+						cmd += " --sr "
+						cmd += str(cableConfig.scan_sr_ext2.value)
+						cmd += "000"
 
 				print "DVB-C scan command: ", cmd
 
-				self.cable_search_container.execute(cmd)
+				# we need a timer here because our frontends are running in other threads... so delay is called later...
+				self.delayTimer = eTimer()
+				self.delayTimer_conn = self.delayTimer.timeout.connect(boundFunction(lambda self, cmd: self.cable_search_container and self.cable_search_container.execute(cmd), self, cmd))
+				self.delayTimer.start(1000, True)
+
 				tmpstr = _("Try to find used transponders in cable network.. please wait...")
 				tmpstr += "\n\n..."
 				self.cable_search_session = self.session.openWithCallback(self.cableTransponderSearchSessionClosed, MessageBox, tmpstr, MessageBox.TYPE_INFO)
@@ -1853,8 +1866,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				removeAll = False
 			elif self.scan_typeterrestrial.value == "complete":
 				tunername = nimmanager.getNimName(index_to_scan)
-				can_t2 = tunername == "Si2169C"
-				getInitialTerrestrialTransponderList(tlist, nimmanager.getTerrestrialDescription(index_to_scan), can_t2)
+				getInitialTerrestrialTransponderList(tlist, nimmanager.getTerrestrialDescription(index_to_scan), tunername in can_t_t2_auto_delsys)
 
 		flags = self.scan_networkScan.value and eComponentScan.scanNetworkSearch or 0
 
@@ -2032,8 +2044,7 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 						action = SEARCH_CABLE_TRANSPONDERS
 				elif nim.isCompatible("DVB-T"):
 					tunername = nimmanager.getNimName(n.nim_index)
-					can_t2 = tunername == "Si2169C"
-					getInitialTerrestrialTransponderList(tlist, nimmanager.getTerrestrialDescription(nim.slot), can_t2)
+					getInitialTerrestrialTransponderList(tlist, nimmanager.getTerrestrialDescription(nim.slot), tunername in can_t_t2_auto_delsys)
 				else:
 					assert False
 

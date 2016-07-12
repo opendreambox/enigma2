@@ -18,21 +18,22 @@ class MainMenu(Screen):
 	icon_path = resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/")
 
 	skin = """
-			<screen name="MainMenu" flags="wfNoBorder" position="0,0" size="1280,720" zPosition="1" transparent="0">
-				<widget name="header" position="50,50" size="800, 80" font="Regular;72" />
-				<widget name="subheader" position="50,140" size="800, 50" font="Regular;36" />
-
-				<widget source="menulist" render="Listbox" position="320,300" zPosition="7" size="640,250" scrollbarMode="showOnDemand" transparent="0">
+			<screen name="MainMenu" position="center,center" size="650,460" title="MediaCenter Menu">
+			<ePixmap position="4,3" size="248,452" pixmap="skin_default/menu.png" zPosition="-1"/>
+				<widget name="header" position="255,10" size="385,50" halign="center" font="Regular;45" transparent="1"/>
+				<eLabel position="265,65" size="365,2" backgroundColor="grey" />       
+				<widget name="subheader" position="15,320" size="230,70" halign="center" valign="center" font="Regular;26" backgroundColor="background" transparent="1"/>
+				<widget source="menulist" render="Listbox" position="255,100" size="385,450" enableWrapAround="1" scrollbarMode="showOnDemand">
 					<convert type="TemplatedMultiContent">
 						{"template": [
-								MultiContentEntryText(pos = (5, 0), size = (640, 52), font=0, flags = RT_HALIGN_LEFT, text = 0), # index 0 is the name
+								MultiContentEntryText(pos = (5,0), size = (640,45), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the name
 							],
-						"fonts": [gFont("Regular", 48)],
-						"itemHeight": 52
+						"fonts": [gFont("Regular", 30)],
+						"itemHeight": 45
 						}
 					</convert>
 				</widget>
-				<widget name="menuIcon" position="20,233" size="255,255" alphatest="on" pixmap="skin_default/no_coverArt.png" transparent="1" />
+				<widget name="menuIcon" position="40,25" size="180,180" alphatest="on" />
 			</screen>
 		"""
 

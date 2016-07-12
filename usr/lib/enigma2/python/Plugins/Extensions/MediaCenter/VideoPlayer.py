@@ -12,30 +12,28 @@ class VideoPlayer(PlaylistPlayer):
 	remove = _("Remove")
 
 	skin = """
-		<screen position="center,center" size="780,500"  title="%s" >
-			<widget source="playlist" render="Listbox" position="10,5" size="760,440" scrollbarMode="showOnDemand">
+		<screen position="center,120" size="820,520"  title="%s" >
+			<widget source="playlist" render="Listbox" position="5,60" size="810,450" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
 					{"templates":{
-						"default": (55, [
-							MultiContentEntryText(pos = (5, 1), size = (750, 55), font = 0, flags = RT_VALIGN_CENTER, text = 2),
+						"default": (45, [
+							MultiContentEntryText(pos = (5, 1), size = (800, 45), font = 0, flags = RT_VALIGN_CENTER, text = 2),
 						]),
-						"simple": (55, [
-							MultiContentEntryText(pos = (5, 1), size = (750, 55), font = 0, flags = RT_VALIGN_CENTER, text = 2),
+						"simple": (45, [
+							MultiContentEntryText(pos = (5, 1), size = (800, 45), font = 0, flags = RT_VALIGN_CENTER, text = 2),
 						]),
 						},
 					"fonts": [gFont("Regular", 26), gFont("Regular", 18), gFont("Regular", 13)]
 					}
 				</convert>
 			</widget>
-
-			<ePixmap pixmap="skin_default/buttons/button_red.png" position="10,470" size="15,16" alphatest="on" />
-			<eLabel text="%s" position="30, 460" size="100, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_green.png" position="140,470" size="15,16" alphatest="on" />
-			<eLabel text="%s" position="160, 460" size="100, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_blue.png" position="270,470" size="15,16" alphatest="on" />
-			<eLabel text="%s" position="290, 460" size="100, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,0" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,0" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,0" size="200,40" alphatest="on" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<eLabel text="%s" position="10,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+			<eLabel text="%s" position="210,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<eLabel text="%s" position="610,0" zPosition="1" size="200,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
 		</screen>""" % (title, clear, add, remove)
 
 	def __init__(self, session, playlist=None):

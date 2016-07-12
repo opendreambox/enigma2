@@ -68,21 +68,20 @@ class EncoderPreset(object):
 
 class StreamServerConfig(Screen, ConfigListScreen):
 	skin = """
-		<screen name="StreamServerConfig" position="center,center" size="900,550" title="Stream Server configuration">
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
-			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="config" position="5,40" size="550,450" scrollbarMode="showOnDemand" zPosition="1"/>
+		<screen name="StreamServerConfig" position="center,120" size="920,520" title="Stream Server configuration">
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="10,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="210,5" size="200,40" alphatest="on" />
+			<widget source="key_yellow" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_blue" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="560,1" backgroundColor="grey" />
+			<widget name="config" position="10,55" size="560,450" scrollbarMode="showOnDemand" zPosition="1"/>
+			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
 			<!-- details -->
-			<eLabel position="565,5" size="330,485" zPosition="0" backgroundColor="#0E3B62" />
-			<widget name="details_label" position="570,20" zPosition="2" size="410,25" font="Regular;22" backgroundColor="#0E3B62" transparent="1" />
-			<widget name="details" position="570,55" zPosition="2" size="330,320" font="Regular;16" backgroundColor="#0E3B62" transparent="1" />
-			<widget name="details_hint" position="570,440" zPosition="2" size="330,50" valign="bottom" font="Regular;16" backgroundColor="#0E3B62" transparent="1" />
+			<widget name="details_label" position="590,20" zPosition="2" size="300,25" font="Regular;20" backgroundColor="background" halign="center" transparent="1" />
+			<widget name="details" position="590,50" zPosition="2" size="300,320" font="Regular;18" backgroundColor="background" halign="center" transparent="1" />
+			<widget name="details_hint" position="580,390" zPosition="2" size="330,45" font="Regular;17" backgroundColor="background" halign="center" transparent="1" />
 			<!-- info -->
-			<eLabel position="5,495" size="890,50" zPosition="0" backgroundColor="#0E3B62" />
-			<widget name="info" position="5,495" size="890,50" zPosition="1" font="Regular;16" halign="center" valign="center" backgroundColor="#0E3B62" transparent="1" />
+			<widget name="info" position="590,450" zPosition="2" size="310,45" font="Regular;17" halign="center" valign="bottom" backgroundColor="background" transparent="1" />
 		</screen>"""
 
 	BASIC_SETTINGS = [

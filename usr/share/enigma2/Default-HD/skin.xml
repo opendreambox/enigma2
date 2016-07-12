@@ -728,7 +728,7 @@
 			<convert type="EventTime">EndTime</convert>
 			<convert type="ClockToText">Format:- %H:%M</convert>
 		</widget>
-		<widget source="ServiceEvent" render="Progress" position="975,177" pixmap="skin_default/progress_medium.png" size="80,11" borderWidth="2" borderColor="#cccccc">
+		<widget source="ServiceEvent" render="Progress" position="975,177" pixmap="Default-HD/progress_medium.png" size="80,11" borderWidth="2" borderColor="#cccccc">
 			<convert type="EventTime">Progress</convert>
 		</widget>
 		<widget source="ServiceEvent" render="Label" position="830,205" size="265,310" font="Regular;19" foregroundColor="grey">
@@ -1210,7 +1210,7 @@ self.instance.move(ePoint((1280-wsizex)/2, (720-wsizey)/2))
 			<convert type="EventTime">EndTime</convert>
 			<convert type="ClockToText">Format:- %H:%M</convert>
 		</widget>
-		<widget source="Event" render="Progress" position="10,535" size="120,12" pixmap="skin_default/progress_medium.png" borderWidth="2" borderColor="#cccccc">
+		<widget source="Event" render="Progress" position="10,535" size="120,12" pixmap="Default-HD/progress_medium.png" borderWidth="2" borderColor="#cccccc">
 			<convert type="EventTime">Progress</convert>
 		</widget>
 		<widget source="Event" render="Label" position="10,554" size="350,20" font="Regular;18" noWrap="1">
@@ -2050,7 +2050,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 			<convert type="RdsInfo">RasInteractiveAvailable</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.Event_Now" render="Progress" position="590,11" size="120,11" pixmap="skin_default/progress_medium.png" borderWidth="2" borderColor="#cccccc" transparent="1">
+		<widget source="session.Event_Now" render="Progress" position="590,11" size="120,11" pixmap="Default-HD/progress_medium.png" borderWidth="2" borderColor="#cccccc" transparent="1">
 			<convert type="EventTime">Progress</convert>
 		</widget>
 		<widget source="session.RecordState" render="Pixmap" position="720,11" zPosition="2" size="14,14" pixmap="skin_default/icons/record.png" alphatest="on">

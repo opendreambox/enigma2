@@ -26,7 +26,7 @@ class About(Screen):
 		self["FPVersion"] = StaticText(fp_version)
 
 		nims = nimmanager.nimList()
-		for count in (0, 1, 2, 3):
+		for count in (0, 1, 2, 3, 4):
 			if count < len(nims):
 				self["Tuner" + str(count)] = StaticText(nims[count])
 			else:

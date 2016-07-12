@@ -1,6 +1,7 @@
 #ifndef __base_object_h
 #define __base_object_h
 
+#include <atomic>
 #include <assert.h>
 #include <lib/base/smartptr.h>
 #include <lib/base/elock.h>
@@ -47,6 +48,25 @@ public:
 };
 
 #ifndef SWIG
+    #if defined(ATOMIC_INT_LOCK_FREE) && ATOMIC_INT_LOCK_FREE == 2
+	struct oRefCount : public std::atomic_int
+	{
+		oRefCount(): std::atomic_int(0)
+		{
+		}
+
+	#ifdef OBJECT_DEBUG
+		~oRefCount()
+		{
+			int count = load();
+			if (count)
+				eDebug("OBJECT_DEBUG FATAL: %p has %d references!", this, count);
+			else
+				eDebug("OBJECT_DEBUG refcount ok! (%p)", this);
+		}
+	#endif
+	};
+    #else
 	struct oRefCount
 	{
 		volatile int count;
@@ -62,6 +82,7 @@ public:
 	#endif
 		}
 	};
+    #endif
 	struct oBoolean
 	{
 		bool value;
@@ -114,6 +135,20 @@ public:
 				} \
 				if (!ref) \
 					Delete(); \
+			}
+	#elif defined(ATOMIC_INT_LOCK_FREE) && ATOMIC_INT_LOCK_FREE == 2
+		#define DECLARE_REF(x) 			\
+			__DECLARE_REF_COMMON(x)
+		#define DEFINE_REF(c)			\
+			__DEFINE_REF_COMMON(c)		\
+			void c::AddRef()		\
+			{				\
+				++ref;			\
+			}				\
+			void c::Release()		\
+			{				\
+				if (!--ref)		\
+					Delete();	\
 			}
 	#elif defined(__mips__)
 		#define DECLARE_REF(x) 			\

@@ -66,18 +66,26 @@ def setPixmap(dest, ptr, scaleSize, aspectRatio):
 
 class picshow(Screen):
 	skin = """
-		<screen name="picshow" position="center,center" size="560,440" title="PicturePlayer" >
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />
-			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" />
-			<widget source="label" render="Label" position="5,55" size="350,140" font="Regular;19" backgroundColor="#25062748" transparent="1"  />
-			<widget name="thn" position="360,40" size="180,160" />
-			<widget name="filelist" position="5,205" zPosition="2" size="550,230" scrollbarMode="showOnDemand" />
+		<screen name="picshow" position="center,80" size="1200,610" title="PicturePlayer">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="global.CurrentTime" render="Label" position="1130,12" size="60,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+				<convert type="ClockToText">Default</convert>
+			</widget>
+			<widget source="global.CurrentTime" render="Label" position="820,12" size="300,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+				<convert type="ClockToText">Format:%A %d. %B</convert>
+			</widget>
+			<eLabel position="10,50" size="1180,1" backgroundColor="grey" />
+			<eLabel position="380,50" size="1,585" backgroundColor="grey" />
+			<widget source="label" render="Label" position="20,370" size="330,140" font="Regular;19"/>
+			<widget name="thn" position="40,60" size="300,300" />
+			<widget name="filelist" position="400,60" size="790,540" scrollbarMode="showOnDemand" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -251,16 +259,16 @@ class Pic_Setup(Screen, ConfigListScreen):
 
 class Pic_Exif(Screen):
 	skin = """
-		<screen name="Pic_Exif" position="center,center" size="560,360" title="Info" >
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="menu" render="Listbox" position="5,50" size="550,310" scrollbarMode="showOnDemand" selectionDisabled="1" >
+		<screen name="Pic_Exif" position="center,120" size="820,520" title="Info">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+			<eLabel	position="10,50"   size="800,1" backgroundColor="grey"/>
+			<widget source="menu" render="Listbox" position="10,55" size="800,455" zPosition="1" enableWrapAround="1" scrollbarMode="showOnDemand" selectionDisabled="1">
 				<convert type="TemplatedMultiContent">
-				{
-					"template": [  MultiContentEntryText(pos = (5, 5), size = (250, 30), flags = RT_HALIGN_LEFT, text = 0), MultiContentEntryText(pos = (260, 5), size = (290, 30), flags = RT_HALIGN_LEFT, text = 1)],
-					"fonts": [gFont("Regular", 20)],
-					"itemHeight": 30
-				}
+				{"template": [  MultiContentEntryText(pos=(10,6),size=(280,30),flags=RT_HALIGN_LEFT,text=0),
+				MultiContentEntryText(pos=(300,6),size=(490,30),flags=RT_HALIGN_LEFT,text=1)],
+				"fonts": [gFont("Regular",22)],
+				"itemHeight": 35 }
 				</convert>
 			</widget>
 		</screen>"""
@@ -319,7 +327,7 @@ class Pic_Thumb(Screen):
 		sizes = componentSizes[Pic_Thumb.SKIN_COMPONENT_KEY]
 		self._descSize = sizes.get(Pic_Thumb.SKIN_COMPONENT_DESCRIPTION_SIZE, 35)
 		self._margin = sizes.get(Pic_Thumb.SKIN_COMPONENT_MARGIN, 10)
-		self._spaceX = sizes.get(Pic_Thumb.SKIN_COMPONENT_SPACE_X, 60)
+		self._spaceX = sizes.get(Pic_Thumb.SKIN_COMPONENT_SPACE_X, 55)
 		self._spaceY = sizes.get(Pic_Thumb.SKIN_COMPONENT_SPACE_Y, 30)
 		self._thumbX = sizes.get(Pic_Thumb.SKIN_COMPONENT_THUMP_X, 190)
 		self._thumbY = sizes.get(Pic_Thumb.SKIN_COMPONENT_THUMP_Y, 200)
@@ -523,9 +531,9 @@ class Pic_Full_View(Screen):
 		{
 			"cancel":	(self.Exit, _("Exit")),
 			"playpause":	(self.PlayPause, _("Play/Pause")),
-			"next": 	(self.nextPic, _("Next")),
+			"next":		(self.nextPic, _("Next")),
 			"previous":	(self.prevPic, _("Prev")),
-			"info": 	(self.StartExif, _("Info"))
+			"info":	(self.StartExif, _("Info"))
 		}, -2);
 
 		self["point"] = Pixmap()

@@ -13,12 +13,12 @@ class FileBrowser(Screen):
 	select = _("Select")
 
 	skin = """
-		<screen name="FileBrowser_Generic" position="center,center" size="600,600"  title="%s" >
-			<widget name="green" position="10,5" size="200,40" pixmap="Default-HD/buttons/green.png" alphatest="on"/>
+		<screen name="FileBrowser_Generic" position="center,120" size="820,520"  title="%s" >
+			<widget name="green" position="10,5" size="200,40" pixmap="skin_default/buttons/green.png" alphatest="on"/>
 			<widget name="key_green" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-
-			<widget name="filelist" position="10,55" size="580,435" scrollbarMode="showOnDemand"/>
-			<widget name="status" position="0,545" size="600,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="filelist" position="10,60" size="800,420" scrollbarMode="showOnDemand"/>
+			<widget name="status" position="10,490" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
 		</screen>""" % (title)
 
 	def __init__(self, session, showDirectories=True, showFiles=True, showMountpoints=True, matchingPattern=None, useServiceRef=False, inhibitDirs=False, inhibitMounts=False, isTop=False, enableWrapAround=False, additionalExtensions=None, closeOnSelection=False):

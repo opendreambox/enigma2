@@ -84,24 +84,23 @@ class MediaBrowserSearch(MediaBrowser):
 	TITLE = _("Search")
 
 	skin = """
-		<screen name="MediaBrowserSearch" position="center,center" size="700,500" title="Search">
-			<widget name="needle" position="10,5" size="680,45" font="Regular;20" halign="left" valign="bottom" backgroundColor="background" />
-			<widget name="list" position="10,55" size="680,385" scrollbarMode="showOnDemand"/>
-			<widget name="status" position="10,445" size="700,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_green_off.png" zPosition="1" position="10,470" size="15,16" alphatest="on"/>
-			<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="10,470" size="15,16" alphatest="on">
+		<screen name="MediaBrowserSearch" position="center,120" size="820,520" title="Search">
+		    <widget name="needle" position="10,5" size="800,45" font="Regular;20" halign="left" valign="bottom" backgroundColor="background" />
+			<widget name="list" position="10,60" size="800,360" scrollbarMode="showOnDemand"/>
+			<widget name="status" position="10,450" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
+			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="10,490" size="20,20" alphatest="on"/>
+			<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="10,490" size="20,20" alphatest="on">
 				<convert type="ConditionalShowHide" />
 			</widget>
-			<widget name="add" position="30, 460" size="200, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center">
-
+			<widget name="add" position="40, 480" size="200, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center">
 			</widget>
-			<ePixmap pixmap="skin_default/buttons/button_blue_off.png" zPosition="1" position="240,470" size="15,16" alphatest="on" />
-			<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="240,470" size="15,16" alphatest="on">
+			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="240,490" size="20,20" alphatest="on" />
+			<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="240,490" size="20,20" alphatest="on">
 				<convert type="ConditionalShowHide" />
 			</widget>
-			<widget name="add_and_play" position="260, 460" size="200, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+			<widget name="add_and_play" position="270, 480" size="400, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
 		</screen>"""
+	
 
 	def __init__(self, session, type=type, player=None):
 		MediaBrowser.__init__(self, session, type=type, player=player)

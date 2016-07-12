@@ -145,7 +145,7 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 
 		tlf = TemplatedListFonts()
 		self.l.setFont(0, gFont(tlf.face(tlf.MEDIUM), tlf.size(tlf.MEDIUM)))
-		itemHeight = componentSizes.itemHeight(componentSizes.FILE_LIST, 25)
+		itemHeight = componentSizes.itemHeight(componentSizes.FILE_LIST, 30)
 		self.l.setItemHeight(itemHeight)
 		self.l.setBuildFunc(self._buildListEntry)
 

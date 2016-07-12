@@ -41,23 +41,28 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 	ITEM_CREATE_PLAYLIST = 3
 
 	skin = """
-		<screen position="center,center" size="1280,720" title="Audio Player">
-			<widget name="coverArt" position="110,40" size="300,300" pixmap="skin_default/no_coverArt.png" zPosition="1" transparent="1" alphatest="blend" scale="1" />
-			<widget name="album" position="110,355" size="300, 25" zPosition="1" font="Regular;20" valign="center" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="genre" position="110,385" size="300, 25" zPosition="1" font="Regular;20" valign="center" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="year" position="110,415" size="300, 25" zPosition="1" font="Regular;20" valign="center" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-
-			<ePixmap pixmap="skin_default/buttons/button_red.png" position="110,555" size="15,16" alphatest="on" />
-			<widget name="red" position="130, 552" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_green.png" position="110,585" size="15,16" alphatest="on" />
-			<widget name="green" position="130, 582" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_yellow.png" position="110,615" size="15,16" alphatest="on" />
-			<widget name="yellow" position="130, 612" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
-
-			<ePixmap pixmap="skin_default/buttons/button_blue.png" position="110,645" size="15,16" alphatest="on" />
-			<widget name="blue" position="130, 642" size="270, 25" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+		<screen position="center,80" size="1200,610" title="Audio Player">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
+			<widget name="red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="global.CurrentTime" render="Label" position="1130,12" size="60,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+				<convert type="ClockToText">Default</convert>
+			</widget>
+			<widget source="global.CurrentTime" render="Label" position="820,12" size="300,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+				<convert type="ClockToText">Format:%A %d. %B</convert>
+			</widget>
+			<eLabel position="10,50" size="1180,1" backgroundColor="grey" />
+			<eLabel position="380,50" size="1,555" backgroundColor="grey" />
+			<widget name="coverArt" position="40,55" size="300,300" pixmap="skin_default/no_coverArt.png" />
+			<widget name="artist" position="30,490" size="330,25" font="Regular;22" backgroundColor="background"/>
+			<widget name="album" position="30,520" size="330, 25" font="Regular;20" valign="center"/>
+			<widget name="genre" position="30,550" size="330, 25" font="Regular;20" valign="center"/>
+			<widget name="year" position="30,580" size="330, 25" font="Regular;20" valign="center"/>
 
 			<!--
 			<widget name="repeat" pixmaps="skin_default/repeat_off.png,skin_default/repeat_on.png" position="1160,343" size="50,30" transparent="1" alphatest="blend"/>
@@ -69,38 +74,36 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 			<widget name="genretext" position="0,0" size="0,0"/>
 			<widget name="titletext" position="0,0" size="0,0"/>
 
-			<widget name="title" position="430,45" size="550, 25" zPosition="1" font="Regular;22" valign="top" backgroundColor="background" transparent="1" />
-			<widget name="artist" position="830,45" size="200, 25" zPosition="1" font="Regular;22" halign="right" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
+			<widget name="title" position="30,365" size="330,50" halign="center" valign="center" font="Regular;22" backgroundColor="background" />
 
-			<widget source="session.CurrentService" render="Label" zPosition="1" position="430,70" size="150,20" font="Regular;18" halign="left" backgroundColor="black" transparent="1">
+			<eLabel position="30,433" size="330,2" backgroundColor="grey" />
+			<widget source="session.CurrentService" render="Progress" position="30,430" size="330,8" zPosition="1" pixmap="skin_default/progress.png" transparent="1">
 				<convert type="ServicePosition">Position</convert>
 			</widget>
-			<widget source="session.CurrentService" render="Label" zPosition="1" position="1030,70" size="150,20" font="Regular;18" halign="right" backgroundColor="black" transparent="1">
+			<widget source="session.CurrentService" render="Label" position="30,450" size="70,20" font="Regular;18" noWrap="1">
+				<convert type="ServicePosition">Position</convert>
+			</widget>
+			<widget source="session.CurrentService" render="Label" position="290,450" size="70,20" font="Regular;18" halign="right" noWrap="1">
 				<convert type="ServicePosition">Length</convert>
 			</widget>
 
-			<eLabel position="430,93" size="750,7" backgroundColor="foreground" />
-			<widget source="session.CurrentService" render="Progress" zPosition="1" position="430,93" size="750,7" pixmap="skin_default/progress_small.png" transparent="1" backgroundColor="foreground">
-				<convert type="ServicePosition">Position</convert>
-			</widget>
-
-			<widget source="playlist" render="Listbox" position="430,110" size="750,550" scrollbarMode="showOnDemand">
+			<widget source="playlist" render="Listbox" position="400,70" size="790,530" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
 					{"templates":{
-						"default": (55, [
+						"default": (53, [
 							MultiContentEntryPixmapAlphaTest(pos = (1, 1), size = (53, 53), png = 6),
-							MultiContentEntryPixmapAlphaTest(pos = (19, 19), size = (16, 16), png = 1),
-							MultiContentEntryText(pos = (60, 3), size = (565, 25), font = 0, flags = RT_VALIGN_CENTER, text = 2),
-							MultiContentEntryText(pos = (60, 30), size = (280, 25), font = 1, flags = RT_VALIGN_CENTER, text = 3),
-							MultiContentEntryText(pos = (345, 30), size = (280, 25), font = 1, flags = RT_VALIGN_CENTER, text = 4),
-							MultiContentEntryText(pos = (625, 3), size = (95, 55), font = 1, flags = RT_VALIGN_CENTER|RT_HALIGN_RIGHT, text = 5),
+							MultiContentEntryPixmapAlphaTest(pos = (740, 3), size = (20, 20), png = 1),
+							MultiContentEntryText(pos = (60, 1), size = (650, 28), font = 0, flags = RT_VALIGN_CENTER, text = 2),
+							MultiContentEntryText(pos = (60, 30), size = (290, 22), font = 1, flags = RT_VALIGN_CENTER, text = 3,color=0xa0a0a0),
+							MultiContentEntryText(pos = (355, 30), size = (290, 22), font = 1, flags = RT_VALIGN_CENTER, text = 4,color=0xa0a0a0),
+							MultiContentEntryText(pos = (670, 30), size = (100, 22), font = 1, flags = RT_VALIGN_CENTER|RT_HALIGN_RIGHT, text = 5,color=0xa0a0a0),
 						]),
-						"simple": (55, [
+						"simple": (53, [
 							MultiContentEntryPixmapAlphaTest(pos = (19, 19), size = (16, 16), png = 1),
-							MultiContentEntryText(pos = (25, 1), size = (730, 55), font = 0, flags = RT_VALIGN_CENTER, text = 2),
+							MultiContentEntryText(pos = (25, 0), size = (760, 53), font = 0, flags = RT_VALIGN_CENTER, text = 2),
 						]),
 						},
-					"fonts": [gFont("Regular", 24), gFont("Regular", 18)]
+					"fonts": [gFont("Regular", 22), gFont("Regular", 18)]
 					}
 				</convert>
 			</widget>
@@ -176,13 +179,13 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 	def _evAudioDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
-		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
 		Log.i("audio-codec %s can't be decoded by hardware" % (sTagAudioCodec))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagAudioCodec, type=MessageBox.TYPE_INFO, timeout=20)
 
 	def _evVideoDecodeError(self):
 		currPlay = self.session.nav.getCurrentService()
-		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sUser+12)
+		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
 		Log.i("video-codec %s can't be decoded by hardware" % (sTagVideoCodec))
 		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagVideoCodec, type=MessageBox.TYPE_INFO, timeout=20)
 

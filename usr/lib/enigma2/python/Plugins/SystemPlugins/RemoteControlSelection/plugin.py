@@ -13,10 +13,10 @@ class RemoteControlSelection(Screen):
 	SKIN_DEFAULT = "skin_default"
 
 	skin = """
-		<screen name="RemoteControlSelection" position="center,center" size="400,570" title="RemoteControlSelection" >
-			<widget name="rc" pixmap="skin_default/rc0.png" position="10,10" size="380,500" alphatest="blend"/>
-			<widget name="color_hint" position="10,515" size="380,20" font="Regular;16" halign="center" valign="center" backgroundColor="background" transparent="0" />
-			<widget name="ok" position="10,540" size="380,24" font="Regular;22" halign="center" valign="center" backgroundColor="background" transparent="0" />
+		<screen name="RemoteControlSelection" position="center,80" size="420,610" title="RemoteControlSelection" >
+			<widget name="rc" pixmap="skin_default/rc0.png" position="20,10" size="380,500" alphatest="on"/>
+			<widget name="color_hint" position="10,520" size="400,50" font="Regular;18" halign="center" valign="center" backgroundColor="background" transparent="0" />
+			<widget name="ok" position="10,580" size="400,24" font="Regular;22" halign="center" valign="center" backgroundColor="background" transparent="0" />
 		</screen>
 	"""
 

@@ -24,7 +24,14 @@ lastMenuID = None
 def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 	png = png_cache.get(entryID, None)
 	if png is None: # no cached entry
-		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png"), cached=True) #lets look for a dedicated icon
+		pngPath = resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")
+		pos = config.skin.primary_skin.value.rfind('/')
+		if pos > -1:
+			current_skin = config.skin.primary_skin.value[:pos+1]
+		else:
+			current_skin = ""
+		if ( current_skin in pngPath and current_skin ) or not current_skin:
+			png = LoadPixmap(pngPath, cached=True) #lets look for a dedicated icon
 		if png is None: # no dedicated icon found
 			if lastMenuID is not None:
 				png = png_cache.get(lastMenuID, None)

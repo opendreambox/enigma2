@@ -10,15 +10,17 @@ from Components.Pixmap import Pixmap
 
 import bludiscmenu
 
-BD_PATHS = ["/media/bludisc/", "/media/net/bludisc", "/autofs/sr0/"]
+BD_PATHS = ["/media/bludisc/", "/media/net/bludisc", "/media/network/bludisc", "/autofs/sr0/"]
 BD_AACS_ERRORS = {-1: _("corrupted disc"), -2: _("AACS configuration file missing"), -3: _("no matching processing key"), -4: _("no valid AACS certificate"), -5: _("AACS certificate revoked"), -6: _("MMC authentication failed")}
 
 class BludiscMenu(Screen):
 	skin = """
-	<screen name="BludiscMenu" position="center,center" size="560,480" title="Bludisc Player">
-			<widget name="pixmap" position="8,8" size="544,306" />
-			<widget name="menu" position="8,320" size="544,125" scrollbarMode="showOnDemand" />
-			<widget source="statusbar" render="Label" position="10,450" size="530,30" halign="left" valign="center" font="Regular;14" backgroundColor="#254f7497" foregroundColor="#272F97" />
+	<screen name="BludiscMenu" position="center,80" size="820,610" title="Bludisc Player">
+			<widget name="pixmap" position="60,10" size="700,397" />
+			<eLabel position="10,410" size="800,1" backgroundColor="grey" />
+			<widget name="menu" position="10,415" size="800,150" enableWrapAround="1" scrollbarMode="showOnDemand" />
+			<eLabel position="10,570" size="800,1" backgroundColor="grey" />
+			<widget source="statusbar" render="Label" position="10,575" size="800,25" font="Regular;22" halign="center" transparent="1" />
 	</screen>"""
 	def __init__(self, session, bd_mountpoint = None):
 		
@@ -60,8 +62,8 @@ class BludiscMenu(Screen):
 				for filename, x, y in thumbs:
 					if x > max_x or ( x == -1 and filename.lower().find("lg") > 0 ):
 						thumb_filename = filename
-			        thumb_path = self.bd_mountpoint+"/BDMV/META/DL/"+thumb_filename
-			        print "decoding thumbnail:", thumb_path
+					thumb_path = self.bd_mountpoint+"/BDMV/META/DL/"+thumb_filename
+					print "decoding thumbnail:", thumb_path
 				self.picload.startDecode(thumb_path)
 			if self.discinfo["di_name"]:
 				self.setTitle(_("Bludisc Player") + ": " + self.discinfo["di_name"])
