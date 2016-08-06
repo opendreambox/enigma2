@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from Tools.Log import Log
-from MoviePlayer import MoviePlayer
+from Screens.MoviePlayer import MoviePlayer
 from Screens.Screen import Screen
 
 import copy
@@ -45,11 +45,11 @@ class MediaCore:
 		self.session = session
 
 	#TODO need to determine automatically wether it is audio or video that should be played
-	def play(self, service, type=TYPE_AUDIO, args=[]):
+	def play(self, service, type=TYPE_AUDIO, *args, **kwargs):
 		if type == MediaCore.TYPE_AUDIO:
 			self.session.nav.playService(service)
 		elif type == MediaCore.TYPE_VIDEO:
-			self.session.open(MoviePlayer, service, *args)
+			self.session.open(MoviePlayer, service, *args, **kwargs)
 
 	def pause(self):
 		service = self.session.nav.getCurrentService()

@@ -100,7 +100,7 @@ class UPnPPlayer(object):
 			if self._state == UPnPMediaRenderer.STATE_PAUSED:
 				if self.unpause():
 					return
-			service = eServiceReference(4097, 0, self.uri)
+			service = eServiceReference(eServiceReference.idGST, 0, self.uri)
 			if self.metadata != None:
 				title = self.metadata.get(Statics.META_TITLE, None)
 				artist = self.metadata.get(Statics.META_ARTIST, None)

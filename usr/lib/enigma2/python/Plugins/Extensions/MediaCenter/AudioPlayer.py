@@ -10,7 +10,6 @@ from Screens.MessageBox import MessageBox
 
 from Helpers import EasyPixmap
 from MediaCore import MediaCore, mediaCore
-from MediaPlayerLCDScreen import MediaPlayerLCDScreen
 from Playlist import Playlist
 from DatabasePlaylist import DatabasePlaylist
 from PlaylistPlayer import PlaylistPlayer
@@ -18,6 +17,7 @@ from PlaylistPlayer import PlaylistPlayer
 from Tools.Log import Log
 
 from os import path as os_path
+from Components.Sources.StaticText import StaticText
 
 class MediaPixmap(EasyPixmap):
 	def folderCoverArtPath(self, path):
@@ -136,6 +136,8 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 		self["green"] = Label(_("Add"))
 		self["yellow"] = Label(_("Shuffle - Off"))
 		self["blue"] = Label(_("Repeat - None"))
+		self._summary_list = StaticText("")
+		self["summary_list"] = self._summary_list
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
@@ -253,9 +255,6 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 			self._updateMusicInformation()
 
 	def _updateMusicInformation(self, artist="", title="", album="", year="", genre="", clear=True):
-		self.summaries.setText(artist, 3)
-		self.summaries.setText(title, 4)
-
 		self.updateLabel("artist", artist, clear)
 		self.updateLabel("title", title, clear)
 		self.updateLabel("album", album, clear)
@@ -272,9 +271,6 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 	def _close(self):
 		self.close()
-
-	def createSummary(self):
-		return MediaPlayerLCDScreen
 
 	def play(self, playSelected=True):
 		Log.i("playSelected=%s" % playSelected)

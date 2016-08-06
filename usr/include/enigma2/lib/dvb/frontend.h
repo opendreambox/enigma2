@@ -91,7 +91,7 @@ private:
 	char m_description[128];
 	static int dvb_api_minor;
 	dvb_frontend_parameters parm;
-	union {
+	struct {
 		eDVBFrontendParametersSatellite sat;
 		eDVBFrontendParametersCable cab;
 		eDVBFrontendParametersTerrestrial ter;

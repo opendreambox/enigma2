@@ -18,12 +18,12 @@ class MainMenu(Screen):
 	icon_path = resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/")
 
 	skin = """
-			<screen name="MainMenu" position="center,center" size="650,460" title="MediaCenter Menu">
-			<ePixmap position="4,3" size="248,452" pixmap="skin_default/menu.png" zPosition="-1"/>
-				<widget name="header" position="255,10" size="385,50" halign="center" font="Regular;45" transparent="1"/>
-				<eLabel position="265,65" size="365,2" backgroundColor="grey" />       
-				<widget name="subheader" position="15,320" size="230,70" halign="center" valign="center" font="Regular;26" backgroundColor="background" transparent="1"/>
-				<widget source="menulist" render="Listbox" position="255,100" size="385,450" enableWrapAround="1" scrollbarMode="showOnDemand">
+			<screen name="MainMenu" position="center,120" size="720,520" title="MediaCenter Menu">
+				<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+				<widget name="header" position="320,10" size="390,50" halign="center" font="Regular;45" transparent="1"/>
+				<eLabel position="330,65" size="370,2" backgroundColor="grey" />
+				<widget name="subheader" position="30,350" size="260,70" halign="center" valign="center" font="Regular;26" backgroundColor="background" transparent="1"/>
+				<widget source="menulist" render="Listbox" position="320,100" size="390,450" enableWrapAround="1" scrollbarMode="showOnDemand">
 					<convert type="TemplatedMultiContent">
 						{"template": [
 								MultiContentEntryText(pos = (5,0), size = (640,45), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the name
@@ -33,7 +33,8 @@ class MainMenu(Screen):
 						}
 					</convert>
 				</widget>
-				<widget name="menuIcon" position="40,25" size="180,180" alphatest="on" />
+				<widget name="menuIcon" position="65,50" size="192,192" alphatest="on" />
+				<ePixmap pixmap="skin_default/icons/dmm_logo.png" position="20,470" size="280,17" alphatest="on" />
 			</screen>
 		"""
 
@@ -161,9 +162,9 @@ def filescan_open(type, filelist, session, **kwargs):
 	playlist = []
 	for file in filelist:
 		if file.mimetype == "video/MP2T":
-			stype = 1
+			stype = eServiceReference.idDVB
 		else:
-			stype = 4097
+			stype = eServiceReference.idGST
 		ref = eServiceReference(stype, 0, file.path)
 		playlist.append(ref)
 

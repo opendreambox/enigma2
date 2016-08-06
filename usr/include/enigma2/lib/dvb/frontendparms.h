@@ -6,6 +6,7 @@
 class SatelliteDeliverySystemDescriptor;
 class CableDeliverySystemDescriptor;
 class TerrestrialDeliverySystemDescriptor;
+class T2DeliverySystemDescriptor;
 
 struct eDVBFrontendParametersSatellite
 {
@@ -72,7 +73,9 @@ SWIG_ALLOW_OUTPUT_SIMPLE(eDVBFrontendParametersCable);
 struct eDVBFrontendParametersTerrestrial
 {
 #ifndef SWIG
+	eDVBFrontendParametersTerrestrial();
 	void set(const TerrestrialDeliverySystemDescriptor  &);
+	void set(const T2DeliverySystemDescriptor &, unsigned int freq);
 #endif
 	enum {
 		Bandwidth_8MHz, Bandwidth_7MHz, Bandwidth_6MHz, Bandwidth_Auto, Bandwidth_5MHz, Bandwidth_1_712MHz, Bandwidth_10MHz

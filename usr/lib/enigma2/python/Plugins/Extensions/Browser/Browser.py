@@ -315,6 +315,11 @@ class Browser(Screen, HelpableScreen):
 			"0": self.keyNumberGlobal
 		})
 
+	def ignoreSource(self, source):
+		# its not needed to create the canvas when this is a Hbbtv Browser
+		# this saves a lot of accel memory...
+		return source == "canvas" and self.__isHbbtv
+
 	def execEnd(self):
 		Screen.execEnd(self)
 		for fnc in self.onExecEnd:
@@ -489,7 +494,7 @@ class Browser(Screen, HelpableScreen):
 			if answer[0] == "download":
 				self.__onDownloadRequested(answer[1])
 			else:
-				service = eServiceReference(4097,0,answer[1])
+				service = eServiceReference(eServiceReference.idGST,0,answer[1])
 				self.session.open(MoviePlayer, service)
 
 	def __actionMenu(self):

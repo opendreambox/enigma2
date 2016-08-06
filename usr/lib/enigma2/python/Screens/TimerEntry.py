@@ -96,11 +96,14 @@ class TimerEntry(Screen, ConfigListScreen):
 				weekday = (int(strftime("%w", localtime(self.timer.begin))) - 1) % 7
 				day[weekday] = 1
 
-			justplay_default = {0: "record", 1: "zap"}[justplay]
-			tmp_dir = self.timer.dirname or defaultMoviePath()
-			if not harddiskmanager.inside_mountpoint(tmp_dir):
-				justplay_default = {0: "record", 1: "zap"}[True]
-			self.timerentry_justplay = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record"))], default = justplay_default)
+			if not config.misc.recording_allowed.value:
+				self.timerentry_justplay = ConfigSelection(choices = [("zap", _("zap"))], default = "zap")
+			else:
+				tmp_dir = self.timer.dirname or defaultMoviePath()
+				if not harddiskmanager.inside_mountpoint(tmp_dir):
+					justplay = 1
+				justplay_default = {0: "record", 1: "zap"}[justplay]
+				self.timerentry_justplay = ConfigSelection(choices = [("zap", _("zap")), ("record", _("record"))], default = justplay_default)
 
 			if SystemInfo["DeepstandbySupport"]:
 				shutdownString = _("go to standby")

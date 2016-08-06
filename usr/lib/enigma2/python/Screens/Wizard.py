@@ -19,25 +19,8 @@ from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 
 class WizardSummary(Screen):
-	skin = """
-	<screen position="0,0" size="132,64">
-		<widget source="text" render="Label" position="6,0" size="120,16" font="Regular;16" transparent="1" />
-		<widget source="parent.list" render="Label" position="6,18" size="120,46" font="Regular;12">
-			<convert type="StringListSelection" />
-		</widget>
-	</screen>"""
-	
 	def __init__(self, session, parent):
 		Screen.__init__(self, session, parent)
-		
-		#names = parent.skinName
-		#if not isinstance(names, list):
-			#names = [names]
-#			
-		#self.skinName = [x + "_summary" for x in names ]
-		#self.skinName.append("Wizard")
-		#print "*************+++++++++++++++++****************++++++++++******************* WizardSummary", self.skinName
-			#
 		self["text"] = StaticText("")
 		self.onShow.append(self.setCallback)
 		
@@ -229,6 +212,8 @@ class Wizard(Screen):
 
 		if showConfig:
 			self["config"] = ConfigList([], session = session)
+		self["configEntry"] = StaticText("")
+		self["configValue"] = StaticText("")
 
 		if self.showSteps:
 			self["step"] = Label()
@@ -510,7 +495,7 @@ class Wizard(Screen):
 			self["config"].handleKey(KEY_ASCII)
 		elif (self.wizard[self.currStep]["config"]["type"] == "dynamic"):
 			self["config"].handleKey(KEY_ASCII)
-		
+
 	def left(self):
 		self.resetCounter()
 		if (self.wizard[self.currStep]["config"]["screen"] != None):
@@ -518,7 +503,7 @@ class Wizard(Screen):
 		elif (self.wizard[self.currStep]["config"]["type"] == "dynamic"):
 			self["config"].handleKey(KEY_LEFT)
 		print "left"
-	
+
 	def right(self):
 		self.resetCounter()
 		if (self.wizard[self.currStep]["config"]["screen"] != None):
@@ -545,7 +530,7 @@ class Wizard(Screen):
 				self.selection = self["multicontentlist"].current
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 		print "up"
-		
+
 	def down(self):
 		self.resetCounter()
 		if (self.showConfig and self.wizard[self.currStep]["config"]["screen"] != None  or self.wizard[self.currStep]["config"]["type"] == "dynamic"):
@@ -567,10 +552,9 @@ class Wizard(Screen):
 				self.selection = self["multicontentlist"].current
 				exec("self." + self.wizard[self.currStep]["onselect"] + "()")
 		print "down"
-		
+
 	def selChanged(self):
 		self.resetCounter()
-		
 		if (self.showConfig and self.wizard[self.currStep]["config"]["screen"] != None):
 			self["config"].instance.moveSelection(self["config"].instance.moveUp)
 		elif (self.showList and len(self.wizard[self.currStep].get("evaluatedlist", [])) > 0):
@@ -615,7 +599,6 @@ class Wizard(Screen):
 			return
 
 		self.timeoutTimer.stop()
-		
 		if self.configInstance is not None:
 			# remove callbacks
 			self.configInstance["config"].onSelectionChanged = []
@@ -759,6 +742,8 @@ class Wizard(Screen):
 						print "config type is dynamic"
 						self["config"].instance.setZPosition(2)
 						self["config"].l.setList(eval("self." + self.wizard[self.currStep]["config"]["source"])())
+						if not self._configSelChanged in self["config"].onSelectionChanged:
+							self["config"].onSelectionChanged.append(self._configSelChanged)
 				elif (self.wizard[self.currStep]["config"]["screen"] != None):
 					if self.wizard[self.currStep]["config"]["type"] == "standalone":
 						print "Type is standalone"
@@ -775,16 +760,17 @@ class Wizard(Screen):
 						self.configInstance["config"].destroy()
 						print "clearConfigList", self.configInstance["config"], self["config"]
 						self.configInstance["config"] = self["config"]
+						if not self._configSelChanged in callbacks:
+							callbacks.append(self._configSelChanged)
 						self.configInstance["config"].onSelectionChanged = callbacks
 						print "clearConfigList", self.configInstance["config"], self["config"]
 				else:
 					self["config"].l.setList([])
 					self.handleInputHelpers()
-					
-					
 			else:
 				if self.has_key("config"):
 					self["config"].hide()
+			self._configSelChanged()
 
 	def timeoutCounterFired(self):
 		self.timeoutCounter -= 1
@@ -797,6 +783,22 @@ class Wizard(Screen):
 				if self.wizard[self.currStep]["timeoutaction"] == "changestep":
 					self.finished(gotoStep = self.wizard[self.currStep]["timeoutstep"])
 		self.updateText()
+
+	def _getCurrentConfigEntry(self):
+		current = self["config"].getCurrent()
+		return current and current[0] or ""
+
+	def _getCurrentConfigValue(self):
+		current = self["config"].getCurrent()
+		return current and str(current[1].getText()) or ""
+
+	def _configSelChanged(self):
+		if self.showConfig and self["config"].getCurrent() is not None:
+			self["configEntry"].text = _(self._getCurrentConfigEntry())
+			self["configValue"].text = _(self._getCurrentConfigValue())
+		else:
+			self["configEntry"].text = ""
+			self["configValue"].text = ""
 
 	def handleInputHelpers(self):
 		if self["config"].getCurrent() is not None:

@@ -311,7 +311,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 		elif attrib == 'id':
 			pass
 		else:
-			raise SkinError("unsupported attribute " + attrib + "=" + value)
+			print "WARNING!!!!: unsupported skin attribute " + attrib + "=" + value
 	except int:
 # AttributeError:
 		print "widget %s (%s) doesn't support attribute %s!" % ("", guiObject.__class__.__name__, attrib)
@@ -800,7 +800,7 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 
 		# and collect attributes for this
 		collectAttributes(attributes, widget, skin_path_prefix, ignore=['name'])
-	elif wsource:
+	elif wsource and not screen.ignoreSource(wsource):
 		# get corresponding source
 		# print "Widget source=", wsource
 

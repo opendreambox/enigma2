@@ -10,10 +10,10 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
 from skin import componentSizes
 
-from MediaPlayerLCDScreen import MediaPlayerLCDScreen
 from MediaCore import MediaCore
 
 from Tools.Log import Log
+from Components.Sources.StaticText import StaticText
 
 class MediaBrowser(Screen):
 	ITEM_TYPE_FOLDER = 0
@@ -77,6 +77,8 @@ class MediaBrowser(Screen):
 		self["add"] = Label(_("Add"))
 		self["add_and_play"] = Label(_("Add & play"))
 		self["status"] = MultiColorLabel("")
+		self._summary_list = StaticText("")
+		self["summary_list"] = self._summary_list
 
 		self["actions"] = ActionMap(["ListboxActions", "OkCancelActions", "ColorActions"],
 		{
@@ -116,9 +118,6 @@ class MediaBrowser(Screen):
 			self._loadMessageBox.close()
 			self._loadMessageBox = None
 
-	def createSummary(self):
-		return MediaPlayerLCDScreen
-
 	def ok(self):
 		if self._list.canDescend():
 			self._list.descend()
@@ -131,6 +130,9 @@ class MediaBrowser(Screen):
 
 	def _selectionChanged(self):
 		self._setButtonsEnabled( self.canAddSelected() )
+		item = self._list.getSelectedItem()
+		if item:
+			self._summary_list.text = self.getItemName(item)
 
 	def getSelectedItemData(self):
 		item = self._list.getSelectedItem()
@@ -142,7 +144,7 @@ class MediaBrowser(Screen):
 
 		return item, itemName, ref, extra
 
-	def getItemName(self, item):
+	def getItemName(self, item=None):
 		return self._list.getItemName(item)
 
 	def addAndPlaySelected(self):

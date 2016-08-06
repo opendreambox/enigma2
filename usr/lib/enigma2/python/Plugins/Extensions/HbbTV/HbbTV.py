@@ -22,8 +22,8 @@ from urlparse import urlparse
 
 class HbbTVVideoWindow(Screen):
 	skin = """
-		<screen name="HbbTVVideoWindow" flags="wfNoBorder" zPosition="-1" position="0,0" size="1280,720" title="HbbTVVideoWindow" backgroundColor="transparent">
-			<widget name="video" position="0,0" zPosition="0" size="0,0" backgroundColor="transparent"/>
+		<screen name="HbbTVVideoWindow" flags="wfNoBorder" zPosition="-1" position="0,0" size="1280,720" title="HbbTVVideoWindow" backgroundColor="transparent" transparent="1" >
+			<widget name="video" position="0,0" zPosition="0" size="0,0" backgroundColor="transparent" />
 		</screen>
 	"""
 

@@ -125,6 +125,8 @@ public:
 	static const char FIELD_COVER_ART_ID[];
 	static const char FIELD_SAVED_AUDIO_TRACK[];
 	static const char FIELD_SAVED_SUBTITLE_TRACK[];
+	static const char FIELD_TAG_ID[];
+	static const char FIELD_TAG[];
 
 	static eMediaDatabase *getInstance();
 
@@ -177,6 +179,7 @@ public:
 	ePtr<eMediaDatabaseResult> getTracksByAlbumId(int album_id);
 	ePtr<eMediaDatabaseResult> getAllAudio(int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getAllVideos(int limit = -1, int offset = 0);
+	ePtr<eMediaDatabaseResult> getVideos(const std::string &dir, const std::list<std::string> &tags = std::list<std::string>(), int limit = -1, int offset = 0);
 
 	ePtr<eMediaDatabaseResult> addRecording(const std::string &filepath, const std::string & title, int created);
 	ePtr<eMediaDatabaseResult> getAllRecordings(int limit = -1, int offset = 0);
@@ -185,6 +188,8 @@ public:
 	ePtr<eMediaDatabaseResult> setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
 	ePtr<eMediaDatabaseResult> getRecordEit(int file_id);
 	ePtr<eMediaDatabaseResult> setRecordEit(int file_id, uint8_t eit_raw[], bool update=false);
+	ePtr<eMediaDatabaseResult> getRecordTags(int file_id);
+	ePtr<eMediaDatabaseResult> setRecordTags(int file_id, const std::vector<std::string> &tags);
 	ePtr<eMediaDatabaseResult> setLastPlayed(int file_id, int64_t lastplayed, int64_t lastplaypos);
 	SWIG_VOID(int) getLastPlayed(int file_id, int64_t &lastplayed, int64_t &lastplaypos);
 
@@ -295,6 +300,7 @@ public:
 
 	QSqlQuery getAllAudio(int limit = -1, int offset = 0);
 	QSqlQuery getAllVideos(int limit = -1, int offset = 0);
+	QSqlQuery getVideos(const std::string &dir, const std::list<std::string> &tags = std::list<std::string>(), int limit = -1, int offset = 0);
 
 	//Recordings
 	QSqlQuery addRecording(const std::string &filepath, const std::string & title, int created);
@@ -304,6 +310,8 @@ public:
 	QSqlQuery setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
 	QSqlQuery getRecordEit(int file_id);
 	QSqlQuery setRecordEit(int file_id, const uint8_t eit_raw[], bool update=false);
+	QSqlQuery getRecordTags(int file_id);
+	QSqlQuery setRecordTags(int file_id, const std::vector<std::string> &tags);
 	QSqlQuery setLastPlayed(int file_id, int64_t lastplayed, int64_t lastplaypos);
 	QSqlQuery getLastPlayed(int file_id);
 
@@ -455,6 +463,7 @@ private:
 	insert_result getSetDirectory(int parent_id, const std::string &path, bool parent = false, bool watch = false);
 	insert_result getSetFile(int dir_id, const std::string &name, int64_t size, int type, int64_t duration, int64_t lastmodified, int popularity=0, int64_t lastplaypos=0, int cover_art_id=0);
 	int getFileLastModified(int dir_id, const std::string &name, int64_t *timestamp);
+	insert_result getSetTag(const std::string &tag);
 	insert_result getSetCodec(const std::string &codec, const std::string &codec_long);
 	insert_result setAudioTrack(int file_id, int codec_id, const std::string &lang, bool deleteOld=false);
 	insert_result getSetArtist(const std::string &artist);

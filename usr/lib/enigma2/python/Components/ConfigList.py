@@ -51,6 +51,8 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 	
 	def invalidateCurrent(self):
 		self.l.invalidateEntry(self.l.getCurrentSelectionIndex())
+		for x in self.onSelectionChanged:
+			x()
 
 	def invalidate(self, entry):
 		# when the entry to invalidate does not exist, just ignore the request.
@@ -145,7 +147,7 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 
 		return is_changed
 
-class ConfigListScreen:
+class ConfigListScreen(object):
 	def __init__(self, list, session = None, on_change = None):
 		self["config_actions"] = NumberActionMap(["SetupActions", "InputAsciiActions", "KeyboardInputActions"],
 		{
@@ -179,14 +181,18 @@ class ConfigListScreen:
 		self["VirtualKB"].setEnabled(False)
 		
 		self["config"] = ConfigList(list, session = session)
-		
-		if on_change is not None:
-			self.__changed = on_change
-		else:
-			self.__changed = lambda: None
-		
+		self.setup_title = ""
+
+		self.onChangedEntry = []
+		if on_change:
+			self.onChangedEntry.append(on_change)
+
 		if not self.handleInputHelpers in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.handleInputHelpers)
+
+	def _changedEntry(self):
+		for fnc in self.onChangedEntry:
+			fnc()
 
 	def handleInputHelpers(self):
 		if self["config"].getCurrent() is not None:
@@ -222,39 +228,39 @@ class ConfigListScreen:
 
 	def keyLeft(self):
 		self["config"].handleKey(KEY_LEFT)
-		self.__changed()
+		self._changedEntry()
 
 	def keyRight(self):
 		self["config"].handleKey(KEY_RIGHT)
-		self.__changed()
+		self._changedEntry()
 
 	def keyHome(self):
 		self["config"].handleKey(KEY_HOME)
-		self.__changed()
+		self._changedEntry()
 
 	def keyEnd(self):
 		self["config"].handleKey(KEY_END)
-		self.__changed()
+		self._changedEntry()
 
 	def keyDelete(self):
 		self["config"].handleKey(KEY_DELETE)
-		self.__changed()
+		self._changedEntry()
 
 	def keyBackspace(self):
 		self["config"].handleKey(KEY_BACKSPACE)
-		self.__changed()
+		self._changedEntry()
 
 	def keyToggleOW(self):
 		self["config"].handleKey(KEY_TOGGLEOW)
-		self.__changed()
+		self._changedEntry()
 
 	def keyGotAscii(self):
 		self["config"].handleKey(KEY_ASCII)
-		self.__changed()
+		self._changedEntry()
 
 	def keyNumberGlobal(self, number):
 		self["config"].handleKey(KEY_0 + number)
-		self.__changed()
+		self._changedEntry()
 
 	def keyPreviousSection(self):
 		self["config"].jumpToPreviousSection()
@@ -287,3 +293,15 @@ class ConfigListScreen:
 			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
 		else:
 			self.close()
+
+	def getCurrentEntry(self):
+		current = self["config"].getCurrent()
+		return current and current[0] or ""
+
+	def getCurrentValue(self):
+		current = self["config"].getCurrent()
+		return current and str(current[1].getText()) or ""
+
+	def createSummary(self):
+		from Screens.Setup import SetupSummary
+		return SetupSummary

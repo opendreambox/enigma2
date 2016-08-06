@@ -566,7 +566,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 			self.savePlaylistOnExit = False
 			self.isAudioCD = True
 			for file in self.cdAudioTrackFiles:
-				ref = eServiceReference(4097, 0, file)
+				ref = eServiceReference(eServiceReference.idGST, 0, file)
 				self.playlist.addFile(ref)
 			cdinfo = Query(self)
 			cdinfo.scan()
@@ -688,7 +688,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 				if recursive:
 					if x[0][0] != directory:
 						self.copyDirectory(x[0][0])
-			elif filelist.getServiceRef() and filelist.getServiceRef().type == 4097:
+			elif filelist.getServiceRef() and filelist.getServiceRef().type == eServiceReference.idGST:
 				self.playlist.addFile(x[0][0])
 		self.playlist.updateList()
 
@@ -981,9 +981,9 @@ def filescan_open(list, session, **kwargs):
 
 	for file in list:
 		if file.mimetype == "video/MP2T":
-			stype = 1
+			stype = eServiceReference.idDVB
 		else:
-			stype = 4097
+			stype = eServiceReference.idGST
 		ref = eServiceReference(stype, 0, file.path)
 		mp.playlist.addFile(ref)
 

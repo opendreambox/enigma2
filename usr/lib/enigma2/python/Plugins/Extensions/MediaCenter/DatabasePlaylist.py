@@ -164,11 +164,11 @@ class DatabasePlaylist(Playlist):
 					Log.w("Playlist entry invalid, %s" % data)
 					continue
 				if file_uri.endswith('.ts'):
-					ref = eServiceReference(1, 0, file_uri)
+					ref = eServiceReference(eServiceReference.idDVB, 0, file_uri)
 				elif file_uri.endswith('.m2ts'):
 					ref = eServiceReference(3, 0, file_uri)
 				else:
-					ref = eServiceReference(4097, 0, file_uri)
+					ref = eServiceReference(eServiceReference.idGST, 0, file_uri)
 				self.add(ref, data, True)
 			self._valid = True
 		else:

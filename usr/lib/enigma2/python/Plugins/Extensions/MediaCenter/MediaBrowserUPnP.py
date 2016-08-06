@@ -193,9 +193,12 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 	def getMeta(self, item):
 		return upnpMeta2DBMeta(self._browser.getItemMetadata(item))
 
-	def getItemName(self):
-		item = self.getSelectedItem()
-		if item != None:
+	def getItemName(self, item=None):
+		if not item:
+			item = self.getSelectedItem()
+		if item:
+			if item == MediaBrowser.ITEM_TYPE_UP:
+				return MediaBrowser.ITEM_TEXT_UP
 			meta = self._browser.getItemMetadata(item)
 			return meta[Statics.META_TITLE]
 		return "--- error getting item name ---"
@@ -208,11 +211,11 @@ class MediaBrowserUPnPList(MenuList, MediaBrowserList):
 		meta = self._browser.getItemMetadata(item)
 		filename = meta[Statics.META_URI]
 		if filename.endswith('.ts'):
-			ref = eServiceReference(1,0,filename)
+			ref = eServiceReference(eServiceReference.idDVB,0,filename)
 		elif filename.endswith('.m2ts'):
 			ref = eServiceReference(3,0,filename)
 		else:
-			ref = eServiceReference(4097,0,filename)
+			ref = eServiceReference(eServiceReference.idGST,0,filename)
 		ref.setName(meta[Statics.META_TITLE])
 		return ref
 

@@ -1,17 +1,21 @@
 from enigma import eNetworkManager
 
 from Screen import Screen
+from Components.config import config
+from API import api
 from Components.About import about
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.Harddisk import harddiskmanager
 from Components.NimManager import nimmanager
 from Tools.DreamboxHardware import getFPVersion
+from Tools.Log import Log
 
 class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
+		self["Model"] = StaticText(api.enigma2.systeminfo.modelname())
 		self["EnigmaVersion"] = StaticText("Dreambox OS: " + about.getEnigmaVersionString())
 		self["ImageVersion"] = StaticText("Image: " + about.getImageVersionString())
 
@@ -33,8 +37,21 @@ class About(Screen):
 				self["Tuner" + str(count)] = StaticText("")
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
+		hdd = None
 		hddlist = harddiskmanager.HDDList()
-		hdd = hddlist and hddlist[0][1] or None
+		defaultDisk = harddiskmanager.getDefaultStorageDevicebyUUID(config.storage_options.default_device.value)
+		if defaultDisk:
+			default_hdd = "/dev/%s" %(defaultDisk.device,)
+			for hd in hddlist:
+				hd = hd[1]
+				if default_hdd.startswith(hd.getDeviceDir()):
+					Log.i("Default HDD matched! (%s -> %s)" %(default_hdd,hd.getDeviceDir()))
+					hdd = hd
+					break
+		if not hdd:
+			hdd = hddlist and hddlist[0][1] or None
+			Log.w("No default Harddisk found. Falling back to first in list -> %s" %(hdd,))
+
 		if hdd is not None and hdd.model() != "":
 			self["hddA"] = StaticText(_("%s\n(%s, %d MB free)") % (hdd.model(), hdd.capacity(),hdd.free()))
 		else:

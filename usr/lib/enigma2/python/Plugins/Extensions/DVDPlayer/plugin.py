@@ -642,7 +642,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		if val is None:
 			self.askLeavePlayer()
 		else:
-			newref = eServiceReference(4369, 0, val)
+			newref = eServiceReference(eServiceReference.idDVD, 0, val)
 			print "play", newref.toString()
 			if curref is None or curref != newref:
 				self.service = None
@@ -728,6 +728,29 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 						self.physicalDVD = True
 						return
 		self.physicalDVD = False
+
+	def _InfoBarSubtitleSupport__subtitlesChanged(self):
+		subtitle = self.getCurrentServiceSubtitle()
+		sub_count = subtitle and subtitle.getNumberOfSubtitleTracks() or 0
+		if self.cached_subtitle_checked != sub_count:
+			self.cached_subtitle_checked = sub_count
+			hasTrackAutoselect = config.plugins.dict().has_key('TrackAutoselect')
+
+			currentSREF = self.session.nav.getCurrentlyPlayingServiceReference()
+			stype = currentSREF and currentSREF.valid() and currentSREF.type or None
+			if (stype == eServiceReference.idDVD) and (not hasTrackAutoselect or (hasTrackAutoselect and not "servicedvd" in config.plugins.TrackAutoselect.handle_services.value)):
+				self.selected_subtitle = subtitle.getCurrentSubtitleTrack()
+				self.subtitles_enabled = True
+				return
+
+			if not hasTrackAutoselect or config.plugins.TrackAutoselect.subtitle_autoselect_enable.value:
+				for idx in range(sub_count):
+					info = subtitle.getSubtitleTrackInfo(idx)
+					if info.isSaved():
+						self.selected_subtitle = idx
+						self.subtitles_enabled = True
+						return
+
 
 def main(session, **kwargs):
 	session.open(DVDPlayer)

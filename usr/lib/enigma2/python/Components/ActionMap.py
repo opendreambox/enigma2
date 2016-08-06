@@ -1,4 +1,5 @@
 from enigma import eActionMap
+from Components.config import config
 
 class ActionMap:
 	def __init__(self, contexts = [ ], actions = { }, prio=0):
@@ -43,7 +44,10 @@ class ActionMap:
 
 	def action(self, context, action):
 		print " ".join(("action -> ", context, action))
-		if self.actions.has_key(action):
+		if action in ('instantRecord', 'timeshiftStart') and not config.misc.recording_allowed.value:
+			print "recording / timeshift not allowed with this dreambox!"
+			return 0
+		elif self.actions.has_key(action):
 			res = self.actions[action]()
 			if res is not None:
 				return res

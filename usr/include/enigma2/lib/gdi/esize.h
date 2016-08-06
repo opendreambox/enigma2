@@ -34,6 +34,7 @@ public:
 	eSize &operator/=( double c );
 
 	friend inline bool	operator==( const eSize &, const eSize & );
+	friend inline bool	operator<( const eSize &, const eSize & );
 	friend inline bool	operator!=( const eSize &, const eSize & );
 	friend inline eSize operator+( const eSize &, const eSize & );
 	friend inline eSize operator-( const eSize &, const eSize & );
@@ -104,6 +105,9 @@ inline bool operator==( const eSize &s1, const eSize &s2 )
 
 inline bool operator!=( const eSize &s1, const eSize &s2 )
 { return s1.wd != s2.wd || s1.ht != s2.ht; }
+
+inline bool operator<( const eSize &s1, const eSize &s2 )
+{ return s1.wd < s2.wd || (s1.wd == s2.wd && s1.ht < s2.ht); }
 
 inline eSize operator+( const eSize & s1, const eSize & s2 )
 { return eSize(s1.wd+s2.wd, s1.ht+s2.ht); }

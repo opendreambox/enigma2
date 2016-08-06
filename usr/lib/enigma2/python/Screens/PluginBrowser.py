@@ -14,15 +14,7 @@ from Tools.LoadPixmap import LoadPixmap
 from time import time
 
 class PluginBrowserSummary(Screen):
-	skin = """
-	<screen position="0,0" size="132,64">	
-		<widget source="parent.pluginlist" render="Label" position="6,0" size="120,30" font="Regular;15">
-			<convert type="StringListSelection">1</convert>
-		</widget>
-		<widget source="parent.pluginlist" render="Label" position="6,30" size="120,36" font="Regular;12">
-			<convert type="StringListSelection">2</convert>
-		</widget>
-	</screen>"""
+	pass
 
 class PluginBrowser(Screen):
 	def __init__(self, session):

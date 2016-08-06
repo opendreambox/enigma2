@@ -87,13 +87,14 @@ class VideoPlayer(PlaylistPlayer):
 			self.service = self["playlist"].playSelected()
 		if self.service:
 			self.hide()
-			mediaCore.play(self.service, MediaCore.TYPE_VIDEO, [None, self.playNext, self.playPrev, self.stop])
+			mediaCore.play(self.service, MediaCore.TYPE_VIDEO, restoreService=True, infoCallback=None, getNextService=self.playNext, getPrevService=self.playPrev, stopCallback=self.stop)
 
 	def pause(self):
 		self["playlist"].pause()
 
 	def stop(self):
 		self["playlist"].stop()
+		self.session.nav.stopService()
 		self.show()
 
 	def removeSelectedPlaylistEntry(self):

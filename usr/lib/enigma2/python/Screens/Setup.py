@@ -29,9 +29,8 @@ class SetupError(Exception):
 class SetupSummary(Screen):
 
 	def __init__(self, session, parent):
-
 		Screen.__init__(self, session, parent = parent)
-		self["SetupTitle"] = StaticText(_(parent.setup_title))
+		self["SetupTitle"] = StaticText(_(parent.setup_title) or parent["Title"].text)
 		self["SetupEntry"] = StaticText("")
 		self["SetupValue"] = StaticText("")
 		self.onShow.append(self.addWatcher)
@@ -74,12 +73,9 @@ class Setup(ConfigListScreen, Screen):
 		Screen.__init__(self, session)
 		# for the skin: first try a setup_<setupID>, then Setup
 		self.skinName = ["setup_" + setup, "Setup" ]
-
-		self.onChangedEntry = [ ]
-
+		ConfigListScreen.__init__(self, [], session = session)
 		self.setup = setup
-		list = []
-		self.refill(list)
+		self.levelChanged(None)
 
 		#check for list.entries > 0 else self.close
 		self["key_red"] = StaticText(_("Cancel"))
@@ -91,18 +87,11 @@ class Setup(ConfigListScreen, Screen):
 				"save": self.keySave,
 			}, -2)
 
-		ConfigListScreen.__init__(self, list, session = session, on_change = self.changedEntry)
-
-		self.changedEntry()
+		self._changedEntry()
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def layoutFinished(self):
 		self.setTitle(_(self.setup_title))
-
-	# for summary:
-	def changedEntry(self):
-		for x in self.onChangedEntry:
-			x()
 
 	def getCurrentEntry(self):
 		return self["config"].getCurrent()[0]

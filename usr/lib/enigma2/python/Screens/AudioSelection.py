@@ -85,7 +85,7 @@ class AudioSelection(Screen, ConfigListScreen):
 			})
 		self.cached_subtitle_checked = False
 		self.plugincallerdict = {}
-		self["actions"] = NumberActionMap(["ColorActions", "SetupActions", "DirectionActions", "MenuActions"],
+		self["actions"] = NumberActionMap(["ColorActions", "SetupActions", "DirectionActions", "MenuActions", "InfobarAudioSelectionActions"],
 		{
 			"red": self.keyRed,
 			"green": self.keyGreen,
@@ -94,6 +94,7 @@ class AudioSelection(Screen, ConfigListScreen):
 			"menu": self.keyMenu,
 			"ok": self.keyOk,
 			"cancel": self.cancel,
+			"audioSelection": self.cancel,
 			"up": self.keyUp,
 			"down": self.keyDown,
 			"previousSection": self.enablePrevious,
@@ -237,19 +238,21 @@ class AudioSelection(Screen, ConfigListScreen):
 
 				if trackinfo.getType() == iSt.GST:
 					s_codec = GST_SUB_FORMATS[trackinfo.getGstSubtype()][1]
-					if trackinfo.isSaved():
-						flags.append(_("Saved"))
+				else:
+					s_codec = SUB_FORMATS[trackinfo.getType()][1]
+
+				if trackinfo.getType() in [iSt.GST, iSt.DVD]:
 					if trackinfo.isDefault():
 						flags.append(_("Default"))
 					if trackinfo.isForced():
 						flags.append(_("Forced"))
-				if trackinfo.getType() == iSt.DVD or trackinfo.getType() == iSt.GST and trackinfo.getGstSubtype() in [iGSt.stPGS, iGSt.stVOB]:
-					if trackinfo.getFilter() & iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_FORCED_ONLY:
-						flags.append(_("forced only"))
-					if trackinfo.getFilter() & iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_ALL:
-						flags.append(_("show all"))
-				else:
-					s_codec = SUB_FORMATS[trackinfo.getType()][1]
+					if trackinfo.getType() == iSt.DVD or trackinfo.getGstSubtype() in [iGSt.stPGS, iGSt.stVOB]:
+						if trackinfo.getFilter() & iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_FORCED_ONLY:
+							flags.append(_("forced only"))
+						if trackinfo.getFilter() & iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_ALL:
+							flags.append(_("show all"))
+				if trackinfo.isSaved():
+					flags.append(_("Saved"))
 				s_flags = (", ").join(flags)
 
 				stream = (SelectionTrackinfoEntry(idx, trackinfo), s_number, s_language, s_codec, s_flags, selected and selectionpng or None)

@@ -271,10 +271,10 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 					}
 				</convert>
 			</widget>
-            <ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
 			<widget name="details_label" position="590,30" zPosition="2" size="310,25" font="Regular;22" backgroundColor="background" halign="center" transparent="1" />
-            <widget name="details" position="590,70" zPosition="2" size="300,300" font="Regular;18" halign="center" backgroundColor="background" transparent="1" />
-            <widget name="hint" position="590,470" zPosition="2" size="300,25" font="Regular;20" halign="center" backgroundColor="background" transparent="1" />
+			<widget name="details" position="590,70" zPosition="2" size="300,300" font="Regular;18" halign="center" backgroundColor="background" transparent="1" />
+			<widget name="hint" position="590,470" zPosition="2" size="300,25" font="Regular;20" halign="center" backgroundColor="background" transparent="1" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -303,6 +303,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		}, -2)
 
 		self["list"] = self._services
+		self["summary_list"] = StaticText("")
 		self._hasWireless = False
 
 		self._services.buildfunc = self._buildListEntry
@@ -335,6 +336,32 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 
 	def _selectionChanged(self):
 		self._checkButtons()
+		self._updateSummary()
+
+	def _updateSummary(self):
+		text = ""
+		service = self._currentService
+		if not service:
+			self["summary_list"].setText(text)
+			return
+		if isinstance(service, eNetworkServicePtr):
+			text = service.name()
+			if service.connected():
+				ni = NetworkInterface(service)
+				ip = ni.getIpv4()
+				if not ip:
+					ip = ni.getIpv6()
+				if ip:
+					ip = ip.address
+				else:
+					ip = self.translateState(service.state())
+				text = "%s\n%s" %(text, ip)
+			else:
+				text = "%s\n%s" %(text, self.translateState(service.state()))
+		else:
+			powered = _("On") if service.powered() else _("Off")
+			text = "%s - %s" %(service.name(), powered)
+		self["summary_list"].setText(text)
 
 	def _checkButtons(self):
 		self["hint"].setText("")
@@ -486,6 +513,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	def layoutFinished(self):
 		self.setTitle(_("Network Config"))
 		self._checkButtons()
+		self._updateSummary()
 
 class ServiceBoundConfiguration(object):
 	def __init__(self, service):

@@ -109,7 +109,7 @@ profile("LOAD:Navigation")
 from Navigation import Navigation
 
 profile("LOAD:skin")
-from skin import readSkin
+from skin import readSkin, SkinError
 
 profile("LOAD:Tools")
 from Tools.Directories import InitFallbackFiles, resolveFilename, SCOPE_CURRENT_SKIN, SCOPE_PLUGINS, SCOPE_CONFIG
@@ -132,6 +132,7 @@ config.misc.prev_wakeup_time = ConfigInteger(default=0)
 #config.misc.prev_wakeup_time_type is only valid when wakeup_time is not 0
 config.misc.prev_wakeup_time_type = ConfigInteger(default=0) # 0 = RecordTimer, 1 = SleepTimer, 2 = Plugin
 config.misc.use_legacy_virtual_subservices_detection = ConfigYesNo(default=False)
+config.misc.recording_allowed = ConfigYesNo(default=True)
 
 #gstreamer User-Agent settings (used by servicemp3)
 config.mediaplayer = ConfigSubsection()
@@ -367,10 +368,16 @@ class Session:
 			del kwargs["zPosition"]
 		try:
 			dlg = self.create(screen, arguments, **kwargs)
-		except:
+		except Exception as e:
 			print 'EXCEPTION IN DIALOG INIT CODE, ABORTING:'
 			print '-'*60
 			print_exc(file=stdout)
+			if isinstance(e, SkinError):
+				print "SKIN ERROR", e
+				print "defaulting to standard skin..."
+				config.skin.primary_skin.value = "skin.xml"
+				config.skin.primary_skin.save()
+				configfile.save()
 			quitMainloop(5)
 			print '-'*60
 
@@ -796,9 +803,15 @@ try:
 
 	from Components.ParentalControl import parentalControl
 	parentalControl.save()
-except:
+except Exception as e:
 	print 'EXCEPTION IN PYTHON STARTUP CODE:'
 	print '-'*60
 	print_exc(file=stdout)
+	if isinstance(e, SkinError):
+		print "SKIN ERROR", e
+		print "defaulting to standard skin..."
+		config.skin.primary_skin.value = "skin.xml"
+		config.skin.primary_skin.save()
+		configfile.save()
 	quitMainloop(5)
 	print '-'*60

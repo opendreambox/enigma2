@@ -280,3 +280,7 @@ class Screen(dict, GUISkin):
 		if self.instance:
 			return self.instance.canAnimate()
 		return None #We do not know that without an instance
+
+	def ignoreSource(self, name):
+		return False
+
