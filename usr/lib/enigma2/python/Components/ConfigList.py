@@ -181,17 +181,18 @@ class ConfigListScreen(object):
 		self["VirtualKB"].setEnabled(False)
 		
 		self["config"] = ConfigList(list, session = session)
-		self.setup_title = ""
+		if not hasattr(self, "setup_title"):
+			self.setup_title = ""
 
-		self.onChangedEntry = []
+		self.onConfigEntryChanged = []
 		if on_change:
-			self.onChangedEntry.append(on_change)
+			self.onConfigEntryChanged.append(on_change)
 
 		if not self.handleInputHelpers in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.handleInputHelpers)
 
 	def _changedEntry(self):
-		for fnc in self.onChangedEntry:
+		for fnc in self.onConfigEntryChanged:
 			fnc()
 
 	def handleInputHelpers(self):

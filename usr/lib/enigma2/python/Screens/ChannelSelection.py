@@ -1564,6 +1564,8 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 		self["RdsActions"].setEnabled(False)
 		infobar.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
 		self.onClose.append(self.__onClose)
+		self.onShow.append(self.info.show)
+		self.onHide.append(self.info.hide)
 
 	def __onClose(self):
 		del self.info["RdsDecoder"]

@@ -40,7 +40,6 @@ class Picon(Renderer):
 			sname = self.source.text
 			if what[0] != self.CHANGED_CLEAR:
 				pngname = PiconResolver.getPngName(sname, self.nameCache, self.findPicon)
-				self.nameCache[sname] = pngname
 			if pngname == "": # no picon for service found, resolve skin default picon
 				tmp = resolveFilename(SCOPE_CURRENT_SKIN, "picon_default.png")
 				if fileExists(tmp):

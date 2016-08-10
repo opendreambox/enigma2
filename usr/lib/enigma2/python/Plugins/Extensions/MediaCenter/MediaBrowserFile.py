@@ -34,6 +34,8 @@ class MediaBrowserFileList(FileList, MediaBrowserList):
 		else:
 			if isinstance(item, str):
 				return item
+			elif isinstance(item, eServiceReference):
+				return item.getPath()
 			elif isinstance(item[0], eServiceReference):
 				return item[0].getPath()
 		return None
