@@ -86,6 +86,7 @@ self.session.openWithCallback(msgClosed, FactoryReset)
 			<item text="Idle Mode" entryID="standby" description="Put your Dreambox into idle mode."><screen module="Standby" screen="Standby"/></item>
 			<item text="Restart" entryID="restart" description="Reboot your Dreambox."><screen module="Standby" screen="TryQuitMainloop">2</screen></item>
 			<item level="2" text="Restart GUI" entryID="restart_enigma" description="Restart Enigma2 only."><screen module="Standby" screen="TryQuitMainloop">3</screen></item>
+			<item level="2" text="Recovery Mode" entryID="maintenance_mode" description="Shut down Dreambox OS and start Recovery Mode to flash firmware images."><screen module="Standby" screen="TryQuitMainloop">16</screen></item>
 			<item text="Standby" requires="DeepstandbySupport" entryID="deep_standby" description="Put your Dreambox into standby."><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
 			<item text="Shutdown" requires="!DeepstandbySupport" entryID="deep_standby" description="Shut down your Dreambox."><screen module="Standby" screen="TryQuitMainloop">1</screen></item>
 		</menu>

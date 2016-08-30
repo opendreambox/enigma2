@@ -2,7 +2,7 @@ from Components.config import config
 from Components.ActionMap import HelpableActionMap
 
 from MediaCore import MediaCore, mediaCore
-from MediaPlayerLCDScreen import MediaPlayerLCDScreen
+from MediaCenterLCDScreen import MediaCenterLCDScreen
 from PlaylistPlayer import PlaylistPlayer
 
 class VideoPlayer(PlaylistPlayer):
@@ -72,15 +72,15 @@ class VideoPlayer(PlaylistPlayer):
 		if ref:
 			text = ref.getPath()
 			text = text.split('/')[-1]
-			self.summaries.setText(text, 2)
+			self.summaries.setText(text, 3)
 		else:
-			self.summaries.setText("", 2)
+			self.summaries.setText("", 3)
 
 	def _close(self):
 		self.close()
 
 	def createSummary(self):
-		return MediaPlayerLCDScreen
+		return MediaCenterLCDScreen
 
 	def play(self, playSelected=True):
 		if playSelected:

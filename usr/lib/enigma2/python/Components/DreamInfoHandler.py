@@ -5,8 +5,9 @@ from Components.NimManager import nimmanager
 from Components.Ipkg import IpkgComponent
 from Components.config import config, configfile
 from Tools.HardwareInfo import HardwareInfo
-from enigma import eConsoleAppContainer, eDVBDB
+from enigma import eConsoleAppContainer, eDVBDB, eNetworkManager
 import os
+from Components.Network import NetworkInterface
 
 class InfoHandlerParseError(Exception):
 	def __init__(self, value):
@@ -34,7 +35,7 @@ class InfoHandler(xml.sax.ContentHandler):
 		#print name, ":", attrs.items()
 		self.elements.append(name)
 
-		if name in ("hardware", "bcastsystem", "satellite", "tag", "flag"):
+		if name in ("hardware", "bcastsystem", "satellite", "tag", "flag", "eth0mac"):
 			if not attrs.has_key("type"):
 					self.printError(str(name) + " tag with no type attribute")
 			if self.elements[-3] in ("default", "package"):
@@ -250,6 +251,7 @@ class DreamInfoHandler:
 		return self.packageDetails
 			
 	def prerequisiteMet(self, prerequisites):
+
 		# TODO: we need to implement a hardware detection here...
 		print "prerequisites:", prerequisites
 		met = True
@@ -293,6 +295,13 @@ class DreamInfoHandler:
 					hardware_found = True
 			if not hardware_found:
 				return False
+		if prerequisites.has_key("eth0mac"):
+			nm = eNetworkManager.getInstance()
+			for service in nm.getServices():
+				ethernet = NetworkInterface(service).ethernet
+				if ethernet.interface == "eth0":
+					if ethernet.mac != prerequisites["eth0mac"]:
+						return False
 		return True
 	
 	def installPackages(self, indexes):

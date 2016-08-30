@@ -2013,11 +2013,12 @@ def filescan(**kwargs):
 		Scanner(mimetypes = ["application/x-debian-package"], 
 			paths_to_scan = 
 				[
-					ScanPath(path = "ipk", with_subdirs = True), 
+					ScanPath(path = "ipk", with_subdirs = True),
+					ScanPath(path = "deb", with_subdirs = True),
 					ScanPath(path = "tmp", with_subdirs = True),
 					ScanPath(path = "", with_subdirs = False), 
 				], 
-			name = "Ipkg", 
+			name = "Dpkg",
 			description = _("Install extensions."),
 			openfnc = filescan_open, )
 
@@ -2041,7 +2042,7 @@ def Plugins(path, **kwargs):
 	
 	list = [
 		PluginDescriptor(name=_("Software management"), description=_("Manage your receiver's software"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=startSetup),
-		PluginDescriptor(name=_("Ipkg"), where = PluginDescriptor.WHERE_FILESCAN, needsRestart = False, fnc = filescan)
+		PluginDescriptor(name=_("Dpkg"), where = PluginDescriptor.WHERE_FILESCAN, needsRestart = False, fnc = filescan)
 	]
 	if config.usage.setup_level.index >= 2: # expert+
 		list.append(PluginDescriptor(name=_("Software management"), description=_("Manage your receiver's software"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, needsRestart = False, fnc=UpgradeMain))

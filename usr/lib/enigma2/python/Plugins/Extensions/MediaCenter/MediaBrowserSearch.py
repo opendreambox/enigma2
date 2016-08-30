@@ -85,9 +85,10 @@ class MediaBrowserSearch(MediaBrowser):
 
 	skin = """
 		<screen name="MediaBrowserSearch" position="center,120" size="820,520" title="Search">
-		    <widget name="needle" position="10,5" size="800,45" font="Regular;20" halign="left" valign="bottom" backgroundColor="background" />
-			<widget name="list" position="10,60" size="800,360" scrollbarMode="showOnDemand"/>
-			<widget name="status" position="10,450" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
+		    <eLabel text="Search with 0-9 :" position="10,5" size="190,25" font="Regular;22" backgroundColor="#1f771f"/>
+			<widget name="needle" position="200,5" size="610,25" font="Regular;22" halign="left" backgroundColor="#1f771f"/>
+			<widget name="list" position="10,40" size="800,390" scrollbarMode="showOnDemand"/>
+			<widget name="status" position="10,450" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#1f771f,#9f1313"/>
 			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="10,490" size="20,20" alphatest="on"/>
 			<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="10,490" size="20,20" alphatest="on">
 				<convert type="ConditionalShowHide" />

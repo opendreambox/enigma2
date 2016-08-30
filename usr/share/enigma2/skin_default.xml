@@ -56,22 +56,22 @@
 		<ePixmap pixmap="menu/info_screen.png" position="65,50" size="192,192" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/green.png" position="45,370" size="230,40" alphatest="on"/>
 		<eLabel font="Regular;20" position="45,370" size="230,40" text="Translation" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="Model" render="Label" position="320,10" size="490,26" font="Regular;22">
+		<widget source="Model" render="Label" position="320,10" size="490,26" font="Regular;24" foregroundColor="grey">
 			<convert type="DreamboxModel" />
 		</widget>
 		<widget source="EnigmaVersion" render="Label" position="320,45" size="490,26" font="Regular;22" />
 		<widget source="ImageVersion" render="Label" position="320,80" size="490,26" font="Regular;22" />
-		<widget source="FPVersion" render="Label" position="320,130" size="490,26" font="Regular;22" />
-		<widget source="TunerHeader" render="Label" position="320,165" size="490,26" font="Regular;24" />
-		<widget source="Tuner0" render="Label" position="320,190" size="490,24" font="Regular;20" />
-		<widget source="Tuner1" render="Label" position="320,215" size="490,24" font="Regular;20" />
-		<widget source="Tuner2" render="Label" position="320,240" size="490,24" font="Regular;20" />
-		<widget source="Tuner3" render="Label" position="320,265" size="490,24" font="Regular;20" />
-		<widget source="Tuner4" render="Label" position="320,290" size="490,24" font="Regular;20" />
-		<widget source="HDDHeader" render="Label" position="320,330" size="490,26" font="Regular;24" />
-		<widget source="hddA" render="Label" position="320,365" size="490,45" font="Regular;20" />
-		<widget source="IPHeader" render="Label" position="320,430" size="490,26" font="Regular;24" />
-		<widget source="ipA" render="Label" position="320,455" size="490,45" font="Regular;20" />
+		<widget source="FPVersion" render="Label" position="320,125" size="490,26" font="Regular;22" />
+		<widget source="TunerHeader" render="Label" position="320,165" size="490,26" font="Regular;24" foregroundColor="grey"/>
+		<widget source="Tuner0" render="Label" position="320,200" size="490,24" font="Regular;20" />
+		<widget source="Tuner1" render="Label" position="320,225" size="490,24" font="Regular;20" />
+		<widget source="Tuner2" render="Label" position="320,250" size="490,24" font="Regular;20" />
+		<widget source="Tuner3" render="Label" position="320,275" size="490,24" font="Regular;20" />
+		<widget source="Tuner4" render="Label" position="320,300" size="490,24" font="Regular;20" />
+		<widget source="HDDHeader" render="Label" position="320,340" size="490,26" font="Regular;24" foregroundColor="grey"/>
+		<widget source="hddA" render="Label" position="320,375" size="490,45" font="Regular;20" />
+		<widget source="IPHeader" render="Label" position="320,440" size="490,26" font="Regular;24" foregroundColor="grey"/>
+		<widget source="ipA" render="Label" position="320,470" size="490,30" font="Regular;20" />
 		<ePixmap pixmap="skin_default/icons/dmm_logo.png" position="20,470" size="280,17" alphatest="on" />
 	</screen>
 	<!-- Audio selection -->
@@ -185,17 +185,21 @@
 		</widget>
 	</screen>
 	<!-- Channel selection - Radio -->
-	<screen name="ChannelSelectionRadio" position="center,120" size="820,370" title="Channel Selection">
+	<screen name="ChannelSelectionRadio" position="center,120" size="920,410" title="Channel Selection">
 		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
 		<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+		<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  shadowColor="black" shadowOffset="-2,-2" />
 		<widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-		<widget name="list" position="10,60" size="800,300" enableWrapAround="1" scrollbarMode="showOnDemand"  serviceItemHeight="30" serviceInfoFont="Regular;19" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" foregroundColorServiceNotAvail="grey" picServiceEventProgressbar="skin_default/progcl.png" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white" />
+		<widget source="global.CurrentTime" render="Label" position="830,12" size="60,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget name="list" position="10,58" size="900,340" enableWrapAround="1" scrollbarMode="showOnDemand" backgroundColor="background" serviceInfoFont="Regular;20" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" foregroundColorServiceNotAvail="grey" picServiceEventProgressbar="skin_default/progcl.png" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white" />
+		<eLabel position="10,50" size="900,1" backgroundColor="grey" />
+		<eLabel position="10,405" size="900,1" backgroundColor="grey" />
 	</screen>
 	<!-- Choice box -->
 	<screen name="ChoiceBox" position="center,120" size="620,520" title="Input">
@@ -238,7 +242,6 @@ newwidth=wsize[0]
 self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 		</applet>
 	</screen>
-
 	<!-- Common interface -->
 	<screen name="MMIDialog" position="center,center" size="620,400" title="Common interface">
 		<widget name="title" position="10,10" size="600,25" font="Regular;23" />
@@ -589,10 +592,10 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 	</screen>
 	<!-- IPKG -->
 	<screen name="Ipkg" position="center,center" size="620,160" title="Installing Software...">
-		<widget name="activityslider" position="10,10" size="620,10"  borderWidth="2" borderColor="#cccccc"/>
-		<widget name="package" position="10,40" size="620,25" font="Regular;22" />
-		<widget name="status" position="10,70" size="620,45" font="Regular;22" />
-		<widget name="slider" position="10,140" size="620,12" borderWidth="2" borderColor="#cccccc" />
+		<widget name="activityslider" position="10,10" size="600,10"  borderWidth="2" borderColor="#cccccc"/>
+		<widget name="package" position="10,40" size="600,25" font="Regular;22" />
+		<widget name="status" position="10,70" size="600,45" font="Regular;22" />
+		<widget name="slider" position="10,140" size="600,12" borderWidth="2" borderColor="#cccccc" />
 	</screen>
 	<!-- Language selection -->
 	<screen name="LanguageSelection" position="center,120" size="720,520" title="Language selection">
@@ -889,77 +892,54 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget backgroundColor="background" name="state" position="0,0" size="200,30" font="Regular;25" halign="center" transparent="1"/>
 	</screen>
 	<!-- Radio infobar -->
-	<screen name="RadioInfoBar" position="center,495" size="820,120" zPosition="-1" flags="wfNoBorder">
-		<widget source="session.CurrentService" render="Label" position="10,5" size="500,26" font="Regular;22" noWrap="1" transparent="1">
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<eLabel  position="540,13" size="170,2" backgroundColor="grey" />
-		<widget source="session.Event_Now" render="Progress" position="540,11" size="170,6" pixmap="skin_default/progress.png" transparent="1" zPosition="1">
+	<screen name="RadioInfoBar" position="center,530" size="920,130" flags="wfNoBorder">
+		<widget source="session.Event_Now" render="Progress" position="10,10" size="150,2" backgroundColor="grey">
 			<convert type="EventTime">Progress</convert>
 		</widget>
-		<widget source="session.RecordState" render="Pixmap" position="720,11" zPosition="2" size="14,14" pixmap="skin_default/icons/record.png" alphatest="on">
+		<widget source="session.Event_Now" render="Progress" position="10,8" pixmap="skin_default/progress.png" size="150,6" transparent="1" zPosition="1" >
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Label" position="200,0" size="600,27" font="Regular;24" valign="top" noWrap="1" backgroundColor="#263c59" transparent="1">
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Picon" position="30,26" zPosition="1" size="100,60" alphatest="on">
+			<convert type="ServiceName">Reference</convert>
+		</widget>
+		<widget source="session.RecordState" render="Pixmap" position="850,3" size="42,20" pixmap="skin_default/icons/icon_rec.png" alphatest="on">
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
-		<widget source="global.CurrentTime" render="Label" position="740,5" size="70,28" font="Regular;22" halign="right" transparent="1">
-			<convert type="ClockToText">Default</convert>
-		</widget>
-		<widget source="session.Event_Now" render="Label" position="10,32" size="70,23" font="Regular;20" transparent="1">
+		<ePixmap pixmap="skin_default/icons/icon_event.png" position="200,40" size="20,13" alphatest="on" />
+		<widget source="session.Event_Now" render="Label" position="240,35" size="70,24" font="Regular;22" backgroundColor="background" transparent="1">
 			<convert type="EventTime">StartTime</convert>
 			<convert type="ClockToText">Default</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Label" position="80,32" size="620,23" font="Regular;20" transparent="1">
+		<widget source="session.Event_Now" render="Label" position="310,35" size="470,24" font="Regular;22" backgroundColor="background" transparent="1">
 			<convert type="EventName">Name</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Label" position="710,32" size="100,23" font="Regular;20" halign="right" transparent="1">
+		<widget source="session.Event_Now" render="Label" position="800,35" size="100,24" font="Regular;22" backgroundColor="background" halign="right" transparent="1">
 			<convert type="EventTime">Remaining</convert>
 			<convert type="RemainingToText">InMinutes</convert>
 		</widget>
-		<widget source="session.Event_Next" render="Label" position="10,60" size="70,23" font="Regular;20" transparent="1">
+		<widget source="session.Event_Next" render="Label" position="240,68" size="70,24" font="Regular;22" backgroundColor="background" foregroundColor="grey" transparent="1">
 			<convert type="EventTime">StartTime</convert>
 			<convert type="ClockToText">Default</convert>
 		</widget>
-		<widget source="session.Event_Next" render="Label" position="80,60" size="620,23" font="Regular;20" transparent="1">
+		<widget source="session.Event_Next" render="Label" position="310,68" size="470,24" font="Regular;22" backgroundColor="background" foregroundColor="grey" transparent="1">
 			<convert type="EventName">Name</convert>
 		</widget>
-		<widget source="session.Event_Next" render="Label" position="710,60" size="100,23" font="Regular;20" halign="right" transparent="1">
+		<widget source="session.Event_Next" render="Label" position="800,68" size="100,24" font="Regular;22" backgroundColor="background" foregroundColor="grey" halign="right" transparent="1">
 			<convert type="EventTime">Duration</convert>
 			<convert type="ClockToText">InMinutes</convert>
 		</widget>
-		<eLabel position="10,87" size="800,1" backgroundColor="grey"/>
-		<widget source="RdsDecoder" render="Label" position="10,90" size="800,25" font="LCD;22" foregroundColor="#80ffff">
+		<eLabel position="10,98" size="900,1" backgroundColor="grey" />
+		<widget source="RdsDecoder" render="Label" position="10,100" size="900,25" font="LCD;23" backgroundColor="background" foregroundColor="#80ffff" transparent="1">
 			<convert type="RdsInfo">RadioText</convert>
 		</widget>
 	</screen>
-	<!-- RASS -->
-	<screen name="RassInteractive" position="50,180" size="100,275" backgroundColor="transpWhite" flags="wfNoBorder">
-		<ePixmap pixmap="skin_default/icons/rass_logo.png" position="25,0" size="50,21" alphatest="on" />
-		<eLabel text="Index" position="36,25" size="60,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<eLabel text="0" position="5,25" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="Marker" position="21,25" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<eLabel text="1" position="5,50" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_1" position="35,50" size="36,20" alphatest="on" />
-		<eLabel text="2" position="5,75" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_2" position="35,75" size="36,20" alphatest="on" />
-		<eLabel text="3" position="5,100" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_3" position="35,100" size="36,20" alphatest="on" />
-		<eLabel text="4" position="5,125" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_4" position="35,125" size="36,20" alphatest="on" />
-		<eLabel text="5" position="5,150" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_5" position="35,150" size="36,20" alphatest="on" />
-		<eLabel text="6" position="5,175" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_6" position="35,175" size="36,20" alphatest="on" />
-		<eLabel text="7" position="5,200" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_7" position="35,200" size="36,20" alphatest="on" />
-		<eLabel text="8" position="5,225" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_8" position="35,225" size="36,20" alphatest="on" />
-		<eLabel text="9" position="5,250" size="16,25" font="Regular;21" foregroundColor="black" backgroundColor="transpWhite" />
-		<widget name="subpages_9" position="35,250" size="36,20" alphatest="on" />
-	</screen>
 	<!-- RDS info -->
-	<screen name="RdsInfoDisplay" position="70,600" size="1140,90" zPosition="-2" backgroundColor="transparent" flags="wfNoBorder">
-		<widget name="RassLogo" position="5,5" size="50,21" pixmap="skin_default/icons/rass_logo.png"/>
-		<widget name="RadioText" position="5,30" size="1130,30" font="Regular;23" noWrap="1" backgroundColor="#003258" />
-		<widget name="RtpText" position="5,60" size="1130,30" font="Regular;23" halign="right" noWrap="1" backgroundColor="#003258" />
+	<screen name="RdsInfoDisplay" position="200,405" size="880,90" zPosition="-2" backgroundColor="transparent" flags="wfNoBorder">
+		<widget name="RadioText" position="5,30" size="870,30" font="Regular;23" noWrap="1" backgroundColor="black" transparent="1"/>
+		<widget name="RtpText" position="5,60" size="870,30" font="Regular;23" halign="right" noWrap="1" backgroundColor="black" transparent="1"/>
 	</screen>
 	<!-- RecordPaths -->
 	<screen name="RecordPathsSettings" position="center,120" size="820,520" title="Recording paths...">
@@ -1105,7 +1085,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ClockToText">Format:%A %d. %B</convert>
 		</widget>
 		<eLabel position="10,50" size="1000,1" backgroundColor="grey" />
-		<widget name="SkinList" position="10,60" size="420,300" enableWrapAround="1" scrollbarMode="showOnDemand" />
+		<widget name="SkinList" position="10,60" size="420,390" enableWrapAround="1" scrollbarMode="showOnDemand" />
 		<eLabel position="440,50" size="1,420" backgroundColor="grey" />
 		<widget name="Preview" position="450,65" size="560,387" alphatest="on" />
 		<eLabel position="10,470" size="1000,1" backgroundColor="grey" />
@@ -1201,18 +1181,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<!-- Service Number -->
 		<widget name="CurrentSubserviceNumber" position="290,10" size="80,27" font="Console; 24" halign="center" valign="top" noWrap="1" backgroundColor="#263c59" transparent="1" />
 		<!-- Service name -->
-		<widget source="session.CurrentService" render="Label" position="390,10" size="400,27" font="Regular;24" valign="top" noWrap="1" backgroundColor="#263c59" transparent="1">
+		<widget source="session.CurrentService" render="Label" position="390,10" size="470,27" font="Regular;24" valign="top" noWrap="1" backgroundColor="#263c59" transparent="1">
 			<convert type="ServiceName">Name</convert>
-		</widget>
-		<!-- Signal Quality -->
-		<eLabel text="SNR:" position="820,1" size="50,22" font="Regular;17" backgroundColor="#263c59" transparent="1" />
-		<widget source="session.FrontendStatus" render="Label" position="875,1" size="75,22" font="Regular;17" backgroundColor="#263c59" transparent="1">
-			<convert type="FrontendInfo">SNRdB</convert>
-		</widget>
-		<!-- Bit error rate -->
-		<eLabel text="BER:" position="820,22" size="50,22" font="Regular;17" noWrap="1" backgroundColor="#263c59" transparent="1"/>
-		<widget source="session.FrontendStatus" render="Label" position="875,22" size="75,22" font="Regular;17" backgroundColor="#263c59" transparent="1" noWrap="1">
-			<convert type="FrontendInfo">BER</convert>
 		</widget>
 		<!-- Audio icon (is there multichannel audio?) -->
 		<ePixmap pixmap="skin_default/icons/ico_dolby_off.png" position="1100,30" size="42,20" alphatest="on" />
@@ -1317,6 +1287,9 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget name="ok" pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
 		<widget name="canceltext" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget name="oktext" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+		<widget source="global.CurrentTime" render="Label" position="860,15" size="60,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+			<convert type="ClockToText">Default</convert>
+		</widget>
 		<eLabel position="10,50" size="930,1" backgroundColor="grey" />
 		<widget name="config" position="10,60" size="930,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
 	</screen>
@@ -1374,10 +1347,10 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		</widget>
 	</screen>
 	<!-- Translator Info -->
-	<screen name="TranslationInfo" position="center,center" size="420,350" title="Translation">
-		<eLabel position="10,20" size="380,23" font="Regular;23" text="Translation:" />
-		<widget source="TranslatorName" render="Label" position="10,55" size="380,20" font="Regular;20" />
-		<widget source="TranslationInfo" render="Label" position="10,100" size="380,250" font="Regular;20" />
+	<screen name="TranslationInfo" position="center,center" size="420,250" title="Translation">
+		<eLabel position="10,10" size="380,28" font="Regular;23" text="Translation:" />
+		<widget source="TranslatorName" render="Label" position="10,50" size="380,23" font="Regular;20" />
+		<widget source="TranslationInfo" render="Label" position="10,100" size="380,140" font="Regular;20" />
 	</screen>
 	<!-- Tutorial Wizard -->
 	<screen name="TutorialWizard" position="0,0" size="720,576" title="Welcome..." flags="wfNoBorder">
@@ -1484,6 +1457,26 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		</widget>
 		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
 			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- LCD screen (SubservicesQuickzap) -->
+	<screen name="SubservicesQuickzap_summary" position="0,0" size="132,64" id="1">
+		<widget font="Display;14" halign="center" position="1,1" render="Label" size="131,42" source="session.CurrentService">
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<eLabel backgroundColor="white" position="0,46" size="132,1" />
+		<widget font="Display;16" position="1,47" render="Label" size="50,18" source="global.CurrentTime">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget font="Display;16" halign="right" position="50,47" render="Label" size="81,18" source="session.Event_Now">
+			<convert type="EventTime">Remaining</convert>
+			<convert type="RemainingToText">inMinutes</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (SubservicesQuickzap) -->
+	<screen name="SubservicesQuickzap_summary" position="0,0" size="96,64" id="2">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="96,64" font="Display;16" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
 		</widget>
 	</screen>
 	<!-- LCD screen (main) -->
@@ -1761,21 +1754,17 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	</screen>
 		<!-- LCD screen (VideoWizard) -->
 	<screen name="VideoWizardSummary" position="0,0" size="132,64" id="1">
-		<widget source="text" render="Label" position="6,0" size="120,64" font="Display;15" halign="center" valign="top"/>
-		<widget source="parent.list" render="Label" position="6,18" size="120,46" font="Display;12" valign="center" halign="center" transparent="1">
+		<widget source="text" render="Label" position="6,0" size="120,64" font="Display;15" halign="left" valign="top"/>
+		<widget source="parent.list" render="Label" position="6,34" size="120,46" font="Display;12" valign="center" halign="center" transparent="1">
 			<convert type="StringListSelection" />
 		</widget>
-		<widget source="parent.configEntry" render="Label" position="0,34" size="96,12" halign="left" font="Display;10" transparent="1"/>
-		<widget source="parent.configValue" render="Label" position="0,48" size="96,12" halign="right" font="Display;10"  transparent="1"/>
 	</screen>
 	<!-- Color OLED screen (Wizard) -->
 	<screen name="VideoWizardSummary" position="0,0" size="96,64" id="2">
-		<widget source="text" render="Label" position="0,0" size="96,64" font="Display;15" halign="center" valign="top"/>
+		<widget source="text" render="Label" position="0,0" size="96,64" font="Display;15" halign="left" valign="top"/>
 		<widget source="parent.list" render="Label" position="0,34" size="96,30" font="Display;12" valign="center" halign="center" transparent="1">
 			<convert type="StringListSelection" />
 		</widget>
-		<widget source="parent.configEntry" render="Label" position="0,34" size="96,12" halign="left" font="Display;10" transparent="1"/>
-		<widget source="parent.configValue" render="Label" position="0,48" size="96,12" halign="right" font="Display;10"  transparent="1"/>
 	</screen>
 	<!-- LCD screen (Channelselection Radio) -->
 	<screen name="ChannelSelectionRadio_summary" position="0,0" size="132,64" id="1">

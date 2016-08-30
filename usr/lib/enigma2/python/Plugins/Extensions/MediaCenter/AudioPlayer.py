@@ -60,22 +60,10 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 			<eLabel position="380,50" size="1,555" backgroundColor="grey" />
 			<widget name="coverArt" position="40,55" size="300,300" pixmap="skin_default/no_coverArt.png" />
 			<widget name="artist" position="30,490" size="330,25" font="Regular;22" backgroundColor="background"/>
-			<widget name="album" position="30,520" size="330, 25" font="Regular;20" valign="center"/>
-			<widget name="genre" position="30,550" size="330, 25" font="Regular;20" valign="center"/>
-			<widget name="year" position="30,580" size="330, 25" font="Regular;20" valign="center"/>
-
-			<!--
-			<widget name="repeat" pixmaps="skin_default/repeat_off.png,skin_default/repeat_on.png" position="1160,343" size="50,30" transparent="1" alphatest="blend"/>
-			-->
-
-			<widget name="artisttext" position="0,0" size="0,0"/>
-			<widget name="albumtext" position="0,0" size="0,0"/>
-			<widget name="yeartext" position="0,0" size="0,0"/>
-			<widget name="genretext" position="0,0" size="0,0"/>
-			<widget name="titletext" position="0,0" size="0,0"/>
-
+			<widget name="album" position="30,520" size="330,25" font="Regular;20" />
+			<widget name="genre" position="30,550" size="330,25" font="Regular;20" />
+			<widget name="year" position="30,580" size="330,25" font="Regular;20" />
 			<widget name="title" position="30,365" size="330,50" halign="center" valign="center" font="Regular;22" backgroundColor="background" />
-
 			<eLabel position="30,433" size="330,2" backgroundColor="grey" />
 			<widget source="session.CurrentService" render="Progress" position="30,430" size="330,8" zPosition="1" pixmap="skin_default/progress.png" transparent="1">
 				<convert type="ServicePosition">Position</convert>
@@ -86,7 +74,6 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 			<widget source="session.CurrentService" render="Label" position="290,450" size="70,20" font="Regular;18" halign="right" noWrap="1">
 				<convert type="ServicePosition">Length</convert>
 			</widget>
-
 			<widget source="playlist" render="Listbox" position="400,70" size="790,530" scrollbarMode="showOnDemand">
 				<convert type="TemplatedMultiContent">
 					{"templates":{

@@ -12,7 +12,7 @@ from AudioPlayer import AudioPlayer
 from VideoPlayer import VideoPlayer
 from Helpers import EasyPixmap
 from MediaCore import MediaCore, mediaCore
-from MediaPlayerLCDScreen import MediaPlayerLCDScreen
+from MediaCenterLCDScreen import MediaCenterLCDScreen
 
 class MainMenu(Screen):
 	icon_path = resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/")
@@ -72,7 +72,7 @@ class MainMenu(Screen):
 			pass
 
 	def createSummary(self):
-		return MediaPlayerLCDScreen
+		return MediaCenterLCDScreen
 
 	def runOnFirstExec(self):
 		self["menulist"].setIndex(self.type)

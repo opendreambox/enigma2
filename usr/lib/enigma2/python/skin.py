@@ -14,6 +14,8 @@ from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Log import Log
 
+HAS_SKIN_USER_DISPLAY = True
+
 colorNames = dict()
 
 def dump(x, i=0):
@@ -54,6 +56,11 @@ config.skin = ConfigSubsection()
 config.skin.primary_skin = ConfigText(default = "Default-HD/skin.xml")
 
 profile("LoadSkin")
+try:
+	loadSkin('skin_user_display.xml', SCOPE_CONFIG)
+except (SkinError, IOError, AssertionError), err:
+	print "not loading display user skin: ", err
+
 try:
 	loadSkin('skin_user.xml', SCOPE_CONFIG)
 except (SkinError, IOError, AssertionError), err:

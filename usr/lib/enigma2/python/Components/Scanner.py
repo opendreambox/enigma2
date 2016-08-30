@@ -5,7 +5,7 @@ from os import path as os_path, walk as os_walk
 from re import compile as re_compile
 from mimetypes import guess_type, add_type
 
-add_type("application/x-debian-package", ".ipk")
+add_type("application/x-debian-package", ".deb")
 add_type("application/ogg", ".ogg")
 add_type("audio/x-flac", ".flac")
 add_type("application/x-dream-package", ".dmpkg")

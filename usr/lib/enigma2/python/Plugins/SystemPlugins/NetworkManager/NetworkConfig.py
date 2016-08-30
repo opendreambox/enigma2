@@ -198,18 +198,8 @@ class NetworkConfigGeneral(object):
 
 class NetworkConfigGlobal(Screen, ConfigListScreen):
 	skin = """
-	<screen name="NetworkConfigGlobal" position="center,center" size="560,400" title="Network: General configuration">
-		<!--
-		<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
-		<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-		<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-		<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-		-->
-		<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
+	<screen name="NetworkConfigGlobal" position="center,center" size="720,100" title="Network: General configuration">
+		<widget name="config" position="10,10" size="700,80" scrollbarMode="showOnDemand" zPosition="1"/>
 	</screen>"""
 
 	def __init__(self, session):
@@ -245,17 +235,16 @@ class NetworkConfigGlobal(Screen, ConfigListScreen):
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
 		<screen name="NetworkServiceConfig" position="center,120" size="920,520" title="Network Configuration" zPosition="0">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="150,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="290,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="430,0" size="140,40" alphatest="on" />
-
-			<widget name="key_red" position="10,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget name="key_green" position="150,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="key_yellow" position="290,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="key_blue" position="430,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-
-			<widget source="list" render="Listbox" position="15,50" size="550,400" scrollbarMode="showOnDemand" zPosition="1">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="150,5" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="290,5" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="430,5" size="140,40" alphatest="on" />
+			<widget name="key_red" position="10,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="key_green" position="150,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="key_yellow" position="290,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="key_blue" position="430,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="560,1" backgroundColor="grey" />
+			<widget source="list" render="Listbox" position="15,60" size="550,450" scrollbarMode="showOnDemand" zPosition="1">
 				<convert type="TemplatedMultiContent">
 					{"template":[
 							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
@@ -273,7 +262,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			</widget>
 			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
 			<widget name="details_label" position="590,30" zPosition="2" size="310,25" font="Regular;22" backgroundColor="background" halign="center" transparent="1" />
-			<widget name="details" position="590,70" zPosition="2" size="300,300" font="Regular;18" halign="center" backgroundColor="background" transparent="1" />
+			<widget name="details" position="590,70" zPosition="2" size="300,360" font="Regular;18" halign="center" backgroundColor="background" transparent="1" />
 			<widget name="hint" position="590,470" zPosition="2" size="300,25" font="Regular;20" halign="center" backgroundColor="background" transparent="1" />
 		</screen>"""
 
@@ -463,6 +452,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 
 				text = "%s\n\n" %(service.name())
 				ni = NetworkInterface(service)
+
 				ip4 = ni.getIpv4()
 				ip6 = ni.getIpv6()
 				iptext = _("%s IPv%s\n  Address: %s\n  %s: %s\n  Gateway: %s\n\n")
@@ -496,6 +486,9 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				text = _("%sNameserver\n%s\n") %(text, ns) or _("n/a")
 				ts = self._textFormatIpList( service.timeservers() )
 				text = _("%s\nTimeserver\n%s\n") %(text, ts)
+
+				mac = ni.ethernet.mac
+				text = ("%s\n" + _("Hardware address") + "\n%s\n") %(text, mac)
 				break
 		self["details"].setText(text)
 
@@ -704,20 +697,21 @@ class ServiceIPConfiguration(object):
 
 class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
 	skin = """
-		<screen name="NetworkServiceIPConfig" position="center,center" size="560,400" title="Network: Service configuration">
+		<screen name="NetworkServiceIPConfig" position="center,120" size="820,520" title="Network: Service configuration">
 			<!--
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
 			-->
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
 			<!--
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 			-->
-			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="config" position="5,50" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
+			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="config" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
 		</screen>"""
 
 	def __init__(self, session, service):
@@ -799,18 +793,19 @@ class ServiceNSConfiguration(object):
 
 class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
 	skin = """
-		<screen name="NetworkServiceNSConfig" position="center,center" size="560,400" title="Service: Nameserver configuration">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="420,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green"
-			 render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_blue" render="Label" position="420,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget name="config" position="5,50" size="550,260" scrollbarMode="showOnDemand" zPosition="1"/>
-			<widget source="activedns" position="5,320" size="550,80" render="Label" font="Regular;20" valign="bottom" backgroundColor="background" transparent="1" zPosition="1" />
+		<screen name="NetworkServiceNSConfig" position="center,120" size="820,520" title="Service: Nameserver configuration">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="config" position="10,60" size="800,360" enableWrapAround="1" scrollbarMode="showOnDemand" />
+			<eLabel position="10,430" size="800,1" backgroundColor="grey" />
+			<widget source="activedns" render="Label" position="10,440" size="800,75" font="Regular;20" valign="bottom"/>
 		</screen>"""
 
 	def __init__(self, session, service):

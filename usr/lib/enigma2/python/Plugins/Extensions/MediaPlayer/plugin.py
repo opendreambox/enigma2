@@ -424,7 +424,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 					text += " "
 				if text[:2] != "..":
 					text = "/" + text
-			self.summaries.setText(text,1)
+			self.summaries.setText(text,2)
 
 			idx += 1
 			if idx < len(self.filelist.list):
@@ -460,7 +460,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 				return
 			#display current selected entry on LCD
 			text = self.getIdentifier(t)
-			self.summaries.setText(text,1)
+			self.summaries.setText(text,2)
 			self["currenttext"].setText(text)
 			idx = self.playlist.getSelectionIndex()
 			idx += 1
@@ -848,7 +848,7 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 					self.hide()
 				else:
 					needsInfoUpdate = True
-				self.summaries.setText(text,1)
+				self.summaries.setText(text,2)
 
 				# get the next two entries
 				idx += 1
@@ -935,30 +935,36 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 class MediaPlayerLCDScreen(Screen):
 	skin = (
 	"""<screen name="MediaPlayerLCDScreen" position="0,0" size="132,64" id="1">
-		<widget name="text1" position="4,0" size="132,35" font="Regular;16"/>
-		<widget name="text3" position="4,36" size="132,14" font="Regular;10"/>
-		<widget name="text4" position="4,49" size="132,14" font="Regular;10"/>
+		<widget name="text1" position="2,1" size="128,18" halign="center" font="Display;16"/>
+		<eLabel backgroundColor="white" position="0,19" size="132,1" />
+		<widget name="text2" position="2,21" size="128,14" font="Display;12"/>
+		<widget name="text3" position="2,36" size="128,14" font="Display;12"/>
+		<widget name="text4" position="2,50" size="128,14" font="Display;12"/>
 	</screen>""",
 	"""<screen name="MediaPlayerLCDScreen" position="0,0" size="96,64" id="2">
-		<widget name="text1" position="0,0" size="96,35" font="Regular;14"/>
-		<widget name="text3" position="0,36" size="96,14" font="Regular;10"/>
-		<widget name="text4" position="0,49" size="96,14" font="Regular;10"/>
+		<widget name="text1" position="0,1" size="96,17" font="Display;15"/>
+		<widget name="text2" position="0,19" size="96,13" font="Display;11"/>
+		<widget name="text3" position="0,33" size="96,13" font="Display;11"/>
+		<widget name="text4" position="0,48" size="96,13" font="Display;11"/>
 	</screen>""")
 
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
 		self["text1"] = Label("Mediaplayer")
+		self["text2"] = Label("")
 		self["text3"] = Label("")
 		self["text4"] = Label("")
 
 	def setText(self, text, line):
-		if len(text) > 10:
+		if len(text) > 40:
 			if text[-4:] == ".mp3":
 				text = text[:-4]
 		textleer = "    "
 		text = text + textleer*10
 		if line == 1:
 			self["text1"].setText(text)
+		elif line == 2:
+			self["text2"].setText(text)
 		elif line == 3:
 			self["text3"].setText(text)
 		elif line == 4:

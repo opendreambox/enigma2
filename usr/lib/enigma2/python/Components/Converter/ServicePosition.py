@@ -1,3 +1,4 @@
+import time
 from Converter import Converter
 from Poll import Poll
 from enigma import iPlayableService
@@ -8,6 +9,7 @@ class ServicePosition(Poll, Converter, object):
 	TYPE_POSITION = 1
 	TYPE_REMAINING = 2
 	TYPE_GAUGE = 3
+	TYPE_ENDTIME = 4
 
 	def __init__(self, type):
 		Poll.__init__(self)
@@ -29,11 +31,15 @@ class ServicePosition(Poll, Converter, object):
 			self.type = self.TYPE_REMAINING
 		elif type == "Gauge":
 			self.type = self.TYPE_GAUGE
+		elif type == "EndTime":
+			self.type = self.TYPE_ENDTIME
 		else:
-			raise ElementError("type must be {Length|Position|Remaining|Gauge} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for ServicePosition converter")
+			raise ElementError("type must be {Length|Position|Remaining|Gauge|EndTime} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for ServicePosition converter")
 
 		if self.detailed:
 			self.poll_interval = 100
+		elif self.TYPE_ENDTIME:
+			self.poll_interval = 1000
 		elif self.type == self.TYPE_LENGTH:
 			self.poll_interval = 2000
 		else:
@@ -83,6 +89,14 @@ class ServicePosition(Poll, Converter, object):
 				l = self.position
 			elif self.type == self.TYPE_REMAINING:
 				l = self.length - self.position
+			elif self.type == self.TYPE_ENDTIME:
+				l = (self.length - self.position) / 90000
+				t = time.time()
+				t = time.localtime(t + l)
+				if self.showNoSeconds:
+					return "%02d:%02d" % (t.tm_hour, t.tm_min)
+				else:
+					return "%02d:%02d:%02d" % (t.tm_hour, t.tm_min, t.tm_sec)
 
 			if not self.detailed:
 				l /= 90000

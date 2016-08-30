@@ -1,6 +1,8 @@
 from enigma import eConsoleAppContainer
 
-class IpkgComponent:
+from Tools.Log import Log
+
+class PkgComponent:
 	EVENT_INSTALL = 0
 	EVENT_DOWNLOAD = 1
 	EVENT_CONFIGURING = 3
@@ -16,8 +18,8 @@ class IpkgComponent:
 	CMD_UPDATE = 3
 	CMD_UPGRADE = 4
 
-	def __init__(self, ipkg = 'opkg'):
-		self.ipkg = ipkg
+	def __init__(self, dpkg = 'dpkg'):
+		self.dpkg = dpkg
 		self.cmd = eConsoleAppContainer()
 		self.cmd_appClosed_conn = self.cmd.appClosed.connect(self.cmdFinished)
 		self.cmd_dataAvail_conn = self.cmd.dataAvail.connect(self.cmdData)
@@ -30,11 +32,12 @@ class IpkgComponent:
 		self.currentCommand = command
 
 	def runCmd(self, cmd):
-		print "executing", self.ipkg, cmd
-		if self.cmd.execute(self.ipkg + " " + cmd):
+		Log.i("executing %s %s" %(self.dpkg, cmd))
+		if self.cmd.execute(self.dpkg + " " + cmd):
 			self.cmdFinished(-1)
 
 	def startCmd(self, cmd, args = None):
+		self.args = args
 		if cmd == self.CMD_UPDATE:
 			self.runCmd("update")
 			self.update_done = True
@@ -51,7 +54,11 @@ class IpkgComponent:
 			else:
 				self.runCmd("list")
 		elif cmd == self.CMD_INSTALL:
-			self.runCmd("install " + args['package'])
+			self.preInstCmd = eConsoleAppContainer()
+			self.preInstCmd_appClosed_conn = self.preInstCmd.appClosed.connect(self.preInstCmdFinished)
+			self.preInstCmd_dataAvail_conn = self.preInstCmd.dataAvail.connect(self.cmdData)
+			Log.i("executing apt-get update")
+			self.preInstCmd.execute("apt-get update")
 		elif cmd == self.CMD_REMOVE:
 			append = ""
 			if args["autoremove"]:
@@ -59,11 +66,24 @@ class IpkgComponent:
 			self.runCmd("remove " + append + args['package'])
 		self.setCurrentCommand(cmd)
 
+	def preInstCmdFinished(self, retval):
+		self.instcmd = eConsoleAppContainer()
+		self.instcmd_appClosed_conn = self.instcmd.appClosed.connect(self.instCmdFinished)
+		self.instcmd_dataAvail_conn = self.instcmd.dataAvail.connect(self.cmdData)
+		self.instcmd.execute("dpkg -i " + self.args['package'])
+
+	def instCmdFinished(self, retval):
+		self.postcmd = eConsoleAppContainer()
+		self.postcmd_appClosed_conn = self.postcmd.appClosed.connect(self.cmdFinished)
+		self.postcmd_dataAvail_conn = self.postcmd.dataAvail.connect(self.cmdData)
+		Log.i("executing apt-get -f -y --force-yes install")
+		self.postcmd.execute("apt-get -f -y --force-yes install")
+
 	def cmdFinished(self, retval):
 		self.callCallbacks(self.EVENT_DONE)
 
 	def cmdData(self, data):
-		print "data:", data
+		Log.i("data: %s" %(data,))
 		if self.cache is None:
 			self.cache = data
 		else:
@@ -87,13 +107,13 @@ class IpkgComponent:
 			self.callCallbacks(self.EVENT_LISTITEM, item)
 		else:
 			tokens = data.split()
-			# opkg
+			# dpkg
 			if data.startswith('Downloading'):
 				# Extract package name from URL.
 				self.callCallbacks(self.EVENT_DOWNLOAD, tokens[1].split('/')[-1].split('_')[0])
 			elif data.startswith('Upgrading'):
 				self.callCallbacks(self.EVENT_UPGRADE, tokens[1])
-			elif data.startswith('Installing'):
+			elif data.startswith('Installing') or data.startswith('Unpacking'):
 				self.callCallbacks(self.EVENT_INSTALL, tokens[1])
 			elif data.startswith('Removing package'):
 				self.callCallbacks(self.EVENT_REMOVE, tokens[2])
@@ -127,3 +147,6 @@ class IpkgComponent:
 
 	def isRunning(self):
 		return self.cmd.running()
+
+class IpkgComponent(PkgComponent):
+	pass

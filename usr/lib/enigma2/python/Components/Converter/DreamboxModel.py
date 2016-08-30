@@ -2,6 +2,7 @@ from Components.Converter.Converter import Converter
 
 class DreamboxModel(Converter):
 	MODEL_MAP = {
+		"dm525"  : "DM525 HD",
 		"dm520"  : "DM520 HD",
 		"dm820"  : "DM820 HD",
 		"dm7080" : "DM7080 HD",

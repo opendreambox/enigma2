@@ -13,9 +13,9 @@ class MultiInputBox(Screen, ConfigListScreen):
 	TYPE_PIN = 2
 
 	skin = """
-		<screen position="center,center" size="700,120"  title="Input">
-			<widget source="title" render="Label" position="5,0" zPosition="1" size="690,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="background" transparent="1" />
-			<widget name="config" position="15,30" size="690,80" scrollbarMode="showOnDemand" zPosition="1"/>
+		<screen position="center,center" size="720,120"  title="Input">
+			<widget source="title" render="Label" position="5,5" size="690,30" font="Regular;22" halign="left" valign="bottom" />
+			<widget name="config" position="10,40" size="700,600" scrollbarMode="showOnDemand"/>
 		</screen>"""
 
 	default_config = [

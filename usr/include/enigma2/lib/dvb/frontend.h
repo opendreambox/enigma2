@@ -6,6 +6,10 @@
 #include <lib/dvb/idvb.h>
 #include <linux/dvb/frontend.h>
 
+#ifdef SWIG
+%feature("notabstract") eDVBFrontendParameters;
+#endif
+
 class eDVBFrontendParameters: public iDVBFrontendParameters
 {
 	DECLARE_REF(eDVBFrontendParameters);

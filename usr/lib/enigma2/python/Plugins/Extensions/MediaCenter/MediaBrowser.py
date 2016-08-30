@@ -41,7 +41,7 @@ class MediaBrowser(Screen):
 	skin = """
 		<screen name="MediaBrowser" position="center,120" size="820,520" title="Browser">
 			<widget name="list" position="10,5" size="800,420" scrollbarMode="showOnDemand"/>
-			<widget name="status" position="10,450" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
+			<widget name="status" position="10,450" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#1f771f,#9f1313"/>
 			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="10,490" size="20,20" alphatest="on"/>
 			<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="10,490" size="20,20" alphatest="on">
 				<convert type="ConditionalShowHide" />

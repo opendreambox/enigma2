@@ -1,0 +1,4 @@
+config.misc.rcused=2
+config.skin.primary_skin=skin.xml
+config.osd.window_animation_default=_-disabled-_
+config.misc.recording_allowed=false

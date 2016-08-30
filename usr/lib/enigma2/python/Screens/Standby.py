@@ -143,6 +143,8 @@ class TryQuitMainloop(MessageBox):
 				reason += "%s: %s (%d%%)\n" % (job.getStatustext(), job.name, int(100*job.progress/float(job.end)))
 			else:
 				reason += (_("%d jobs are running in the background!") % jobs) + '\n'
+		if retvalue == 16:
+			reason += _("Really reboot into Recovery Mode?\n")
 		if reason:
 			if retvalue == 1:
 				MessageBox.__init__(self, session, reason+_("Really shutdown now?"), type = MessageBox.TYPE_YESNO, timeout = timeout, default = default_yes)
@@ -150,6 +152,8 @@ class TryQuitMainloop(MessageBox):
 				MessageBox.__init__(self, session, reason+_("Really reboot now?"), type = MessageBox.TYPE_YESNO, timeout = timeout, default = default_yes)
 			elif retvalue == 4:
 				pass
+			elif retvalue == 16:
+				MessageBox.__init__(self, session, reason+_("You won't be able to leave Recovery Mode without physical access to the device!"), type = MessageBox.TYPE_YESNO, timeout = timeout, default = default_yes)
 			else:
 				MessageBox.__init__(self, session, reason+_("Really restart now?"), type = MessageBox.TYPE_YESNO, timeout = timeout, default = default_yes)
 			self.skinName = "MessageBox"
