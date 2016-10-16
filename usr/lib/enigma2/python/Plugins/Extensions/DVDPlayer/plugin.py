@@ -412,12 +412,12 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			self.in_menu = False
 			self["NumberActions"].setEnabled(True)
 		self.dvdScreen.hide()
-		subTracks = self.session.infobar.getCurrentServiceSubtitle()
+		subTracks = self.getCurrentServiceSubtitle()
 		if subTracks:
 			subTracks.disableSubtitles(self.session.current_dialog.instance)
 
 	def serviceStarted(self): #override InfoBarShowHide function
-		subTracks = self.session.infobar.getCurrentServiceSubtitle()
+		subTracks = self.getCurrentServiceSubtitle()
 		subTracks.enableSubtitles(self.dvdScreen.instance, 0) # give parent widget reference to service for drawing menu highlights in a repurposed subtitle widget
 		self.dvdScreen.show()
 
@@ -488,7 +488,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 				self.last_audioString = audioString
 
 	def __osdSubtitleInfoAvail(self):
-		subTracks = self.session.infobar.getCurrentServiceSubtitle()
+		subTracks = self.getCurrentServiceSubtitle()
 		subtitleString = ""
 		if not subTracks:
 			return

@@ -6,9 +6,12 @@ from MediaBrowser import MediaBrowser, MediaBrowserList
 from MediaCore import MediaCore, mediaCore
 
 class MediaBrowserFileList(FileList, MediaBrowserList):
-	filter_audio = "(?i)^.*\.(mp2|mp3|ogg|wav|wave|m4a|flac)"
-	filter_video = "(?i)^.*\.(mpg|vob|avi|divx|m4v|mkv|mp4|dat|mov|ts)"
-	filter_media = "(?i)^.*\.(mp2|mp3|ogg|ts|wav|wave|m3u|pls|e2pls|mpg|vob|avi|divx|m4v|mkv|mp4|m4a|dat|flac|mov)"
+	audio_ext = ["mp2", "mp3", "flac", "wma", "fla", "flc", "m4a", "aac", "ogg", "wav", "wave", "pcm"]
+	video_ext = ["mpg", "mpeg", "avi", "divx", "vob", "m4v", "mkv", "mp4", "dat", "mov", "ts", "wmv", "mts", "m2ts", "e2pls", "m2t", "xvid"]
+
+	filter_audio = "(?i)^.*\.(%s)" %("|".join(audio_ext),)
+	filter_video = "(?i)^.*\.(%s)" %("|".join(video_ext),)
+	filter_media = "(?i)^.*\.(%s|%s)" %("|".join(audio_ext), "|".join(video_ext))
 
 	def __init__(self, type):
 		MediaBrowserList.__init__(self, type)

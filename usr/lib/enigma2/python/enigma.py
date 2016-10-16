@@ -3232,6 +3232,8 @@ class eEPGCache(iObject):
     cacheState = _swig_property(_enigma.eEPGCache_cacheState_get, _enigma.eEPGCache_cacheState_set)
 eEPGCache.load = new_instancemethod(_enigma.eEPGCache_load,None,eEPGCache)
 eEPGCache.save = new_instancemethod(_enigma.eEPGCache_save,None,eEPGCache)
+eEPGCache.applyDbBugfix20161008 = new_instancemethod(_enigma.eEPGCache_applyDbBugfix20161008,None,eEPGCache)
+eEPGCache.createUpdateTriggers = new_instancemethod(_enigma.eEPGCache_createUpdateTriggers,None,eEPGCache)
 eEPGCache.setCacheFile = new_instancemethod(_enigma.eEPGCache_setCacheFile,None,eEPGCache)
 eEPGCache.setCacheTimespan = new_instancemethod(_enigma.eEPGCache_setCacheTimespan,None,eEPGCache)
 eEPGCache.setOutdatedEPGTimespan = new_instancemethod(_enigma.eEPGCache_setOutdatedEPGTimespan,None,eEPGCache)
@@ -5712,6 +5714,10 @@ class eCec(object):
         """isReady(eCec self) -> bool"""
         return _enigma.eCec_isReady(self)
 
+    def isActiveSource(self):
+        """isActiveSource(eCec self) -> bool"""
+        return _enigma.eCec_isActiveSource(self)
+
     def setName(self, *args):
         """setName(eCec self, std::string const & name)"""
         return _enigma.eCec_setName(self, *args)
@@ -5812,6 +5818,7 @@ eCec.cec_register_raw_command = new_instancemethod(_enigma.eCec_cec_register_raw
 eCec.cec_unregister_raw_command = new_instancemethod(_enigma.eCec_cec_unregister_raw_command,None,eCec)
 eCec.get_volume_control_dest = new_instancemethod(_enigma.eCec_get_volume_control_dest,None,eCec)
 eCec.isReady = new_instancemethod(_enigma.eCec_isReady,None,eCec)
+eCec.isActiveSource = new_instancemethod(_enigma.eCec_isActiveSource,None,eCec)
 eCec.setName = new_instancemethod(_enigma.eCec_setName,None,eCec)
 eCec.setPowerstate = new_instancemethod(_enigma.eCec_setPowerstate,None,eCec)
 eCec.otpEnable = new_instancemethod(_enigma.eCec_otpEnable,None,eCec)

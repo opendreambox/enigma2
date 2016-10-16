@@ -77,11 +77,12 @@ class PluginDescriptor:
 	#Managed ControlPoint start. arguments: reason, session [0=start,1=shutdown]
 	WHERE_UPNP = 20
 
-	def __init__(self, name = "Plugin", where = [ ], description = "", icon = None, fnc = None, wakeupfnc = None, needsRestart = None, internal = False, weight = 0):
+	def __init__(self, name = "Plugin", where = [ ], description = "", icon = None, fnc = None, wakeupfnc = None, needsRestart = None, internal = False, weight = 0, helperfnc = None):
 		self.name = name
 		self.internal = internal
 		self.needsRestart = needsRestart
 		self.path = None
+		self.helperfnc = helperfnc
 		if isinstance(where, list):
 			self.where = where
 		else:

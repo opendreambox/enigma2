@@ -39,6 +39,21 @@
 		<color name="WindowTitleForeground" color="#ffffff" />
 		<color name="WindowTitleBackground" color="#000000" />
 	</windowstyle>
+	<!-- Main screen colors (id=3 Color LCD (dm???)) -->
+	<windowstyle type="skinned" id="3">
+		<color name="Background" color="#0d1940" />
+		<color name="LabelForeground" color="#ffffff" />
+		<color name="ListboxBackground" color="#000000" />
+		<color name="ListboxForeground" color="#ffffff" />
+		<color name="ListboxSelectedBackground" color="#000000" />
+		<color name="ListboxSelectedForeground" color="#ffffff" />
+		<color name="ListboxMarkedBackground" color="#000000" />
+		<color name="ListboxMarkedForeground" color="#ffffff" />
+		<color name="ListboxMarkedAndSelectedBackground" color="#000000" />
+		<color name="ListboxMarkedAndSelectedForeground" color="#ffffff" />
+		<color name="WindowTitleForeground" color="#ffffff" />
+		<color name="WindowTitleBackground" color="#000000" />
+	</windowstyle>
 	<windowstylescrollbar id="4"/>
 	<fonts>
 		<font filename="nmsbd.ttf" name="Display" scale="90"/>
@@ -826,7 +841,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget name="config" position="10,10" size="700,480" enableWrapAround="1" scrollbarMode="showOnDemand" />
 	</screen>
 	<!-- Numberzap -->
-	<screen name="NumberZap" position="center,center" size="250,60" title="Channel">
+	<screen name="NumberZap" position="center,center" size="250,60" flags="wfNoBorder">
 		<widget name="channel" position="35,15" size="110,25" font="Regular;23" />
 		<widget name="number" position="145,15" size="80,25" halign="right" font="Regular;23" />
 	</screen>
@@ -1425,13 +1440,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="DreamboxModel" />
 		</widget>
 	</screen>
-	<!-- Color OLED screen (About) -->
-	<screen name="About_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.Title" render="Label" position="0,0" size="96,15" font="Display;15" halign="center" valign="top" />
-		<widget source="parent.Model" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;14">
-			<convert type="DreamboxModel" />
-		</widget>
-	</screen>
 	<!-- LCD screen (channelselection) -->
 	<screen name="ChannelSelection_summary" position="0,0" size="132,64" id="1">
 		<widget source="parent.ServiceEvent" render="Label" position="6,0" size="120,25" font="Display;14" halign="center" valign="center" >
@@ -1447,18 +1455,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ClockToText">Format:%S</convert>
 		</widget>
 	</screen>
-	<!-- Color OLED screen (ChannelSelection) -->
-	<screen name="ChannelSelection_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.ServiceEvent" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.Event_Now" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="EventTime">Progress</convert>
-		</widget>
-		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
-			<convert type="ClockToText">Format:%H:%M</convert>
-		</widget>
-	</screen>
 	<!-- LCD screen (SubservicesQuickzap) -->
 	<screen name="SubservicesQuickzap_summary" position="0,0" size="132,64" id="1">
 		<widget font="Display;14" halign="center" position="1,1" render="Label" size="131,42" source="session.CurrentService">
@@ -1471,12 +1467,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget font="Display;16" halign="right" position="50,47" render="Label" size="81,18" source="session.Event_Now">
 			<convert type="EventTime">Remaining</convert>
 			<convert type="RemainingToText">inMinutes</convert>
-		</widget>
-	</screen>
-	<!-- Color OLED screen (SubservicesQuickzap) -->
-	<screen name="SubservicesQuickzap_summary" position="0,0" size="96,64" id="2">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="96,64" font="Display;16" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
 		</widget>
 	</screen>
 	<!-- LCD screen (main) -->
@@ -1498,22 +1488,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 	</screen>
-	<!-- Color OLED screen (main) -->
-	<screen name="InfoBarSummary" position="0,0" size="96,64" id="2">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.Event_Now" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="EventTime">Progress</convert>
-		</widget>
-		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
-			<convert type="ClockToText">Format:%H:%M</convert>
-		</widget>
-		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,38" zPosition="1" size="96,26">
-			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink</convert>
-		</widget>
-	</screen>
 	<!-- LCD screen (movieplayer) -->
 	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="132,64" id="1">
 		<widget source="session.CurrentService" render="Label" position="6,0" size="120,25" font="Display;14" halign="center" valign="center" >
@@ -1530,22 +1504,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 	</screen>
-	<!-- Color OLED screen (movieplayer) -->
-	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="96,64" id="2">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="ServicePosition">Position</convert>
-		</widget>
-		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
-			<convert type="ClockToText">Format:%H:%M</convert>
-		</widget>
-		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,38" zPosition="1" size="96,26">
-			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink</convert>
-		</widget>
-	</screen>
 	<!-- LCD screen (PluginBrowserSummary) -->
 	<screen name="PluginBrowserSummary" position="0,0" size="132,64" id="1">
 		<widget source="parent.pluginlist" render="Label" position="6,0" size="120,30" font="Display;16" halign="center" valign="top">
@@ -1553,27 +1511,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		</widget>
 		<widget source="parent.pluginlist" render="Label" position="6,30" size="120,36" font="Display;12" halign="center" valign="top">
 			<convert type="StringListSelection">2</convert>
-		</widget>
-	</screen>
-	<!-- Color OLED screen (PluginBrowserSummary) -->
-	<screen name="PluginBrowserSummary" position="0,0" size="96,64" id="2">
-		<widget source="parent.pluginlist" render="Label" position="3,0" size="90,30" font="Display;14" halign="center" valign="top">
-			<convert type="StringListSelection">1</convert>
-		</widget>
-		<widget source="parent.pluginlist" render="Label" position="3,30" size="90,36" font="Display;12" halign="center" valign="top">
-			<convert type="StringListSelection">2</convert>
-		</widget>
-	</screen>
-	<!-- Color OLED screen (MoviePlayer) -->
-	<screen name="MoviePlayer_summary" position="0,0" size="96,64" id="2">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;14" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="ServicePosition">Position</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
-			<convert type="ServicePosition">Position</convert>
 		</widget>
 	</screen>
 	<!-- LCD screen (MoviePlayer) -->
@@ -1600,67 +1537,29 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ServicePosition">Position</convert>
 		</widget>
 	</screen>
-	<!-- Color OLED screen (AudioPlayer) -->
-	<screen name="AudioPlayer_summary" position="0,0" size="96,64" id="2">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;15" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="ServicePosition">Position</convert>
-		</widget>
-		<widget source="session.CurrentService" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
-			<convert type="ServicePosition">Position</convert>
-		</widget>
-	</screen>
 	<!-- LCD screen (MediaBrowser) -->
 	<screen name="MediaBrowser_summary" position="0,0" size="132,64" id="1">
 		<widget source="parent.Title" render="Label" position="0,0" size="132,14" font="Display;14" halign="center" valign="top" />
 		<widget source="parent.summary_list" render="Label" position="6,16" size="126,48" valign="center" halign="center" font="Display;13" />
-	</screen>
-	<!-- Color OLED screen (MediaBrowser) -->
-	<screen name="MediaBrowser_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.Title" render="Label" position="0,0" size="96,14" font="Display;14" halign="center" valign="top" />
-		<widget source="parent.summary_list" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;13" />
 	</screen>
 	<!-- LCD screen (NetworkServiceConfig) -->
 	<screen name="NetworkServiceConfig_summary" position="0,0" size="132,64" id="1">
 		<widget source="parent.Title" render="Label" position="0,0" size="132,14" font="Display;14" halign="center" valign="top" />
 		<widget source="parent.summary_list" render="Label" position="6,16" size="126,48" valign="center" halign="center" font="Display;13" />
 	</screen>
-	<!-- Color OLED screen (NetworkServiceConfig) -->
-	<screen name="NetworkServiceConfig_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.Title" render="Label" position="0,0" size="96,14" font="Display;14" halign="center" valign="top" />
-		<widget source="parent.summary_list" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;13" />
-	</screen>
 	<!-- LCD screen (ChoiceBox) -->
 	<screen name="ChoiceBox_summary" position="0,0" size="132,64" id="1">
 		<widget source="parent.summary_list" render="Label" position="6,2" size="126,60" font="Display;11" />
-	</screen>
-	<!-- Color OLED screen (ChoiceBox) -->
-	<screen name="ChoiceBox_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.summary_list" render="Label" position="0,0" size="96,64" font="Display;10" />
 	</screen>
 	<!-- LCD screen (MessageBox) -->
 	<screen name="MessageBox_summary" position="0,0" size="132,64" id="1">
 		<widget source="parent.Text" render="Label" position="0,0" size="132,52" font="Display;11" halign="center" valign="center" />
 		<widget source="parent.selectedChoice" render="Label" position="6,50" size="120,14" font="Display;14" halign="center" valign="center" />
 	</screen>
-	<!-- Color OLED screen (MessageBox) -->
-	<screen name="MessageBox_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.Text" render="Label" position="0,0" size="96,52" font="Display;10" halign="center" valign="center" />
-		<widget source="parent.selectedChoice" render="Label" position="0,50" size="96,14" font="Display;12" halign="center" valign="center" />
-	</screen>
 	<!-- LCD screen (menus) -->
 	<screen name="MenuSummary" position="0,0" size="132,64" id="1">
 		<widget source="parent.title" render="Label" position="6,0" size="120,32" font="Display;15" halign="center" valign="top"/>
 		<widget source="parent.menu" render="Label" position="6,32" size="120,32" font="Display;16" halign="center" valign="center">
-			<convert type="StringListSelection" />
-		</widget>
-	</screen>
-	<!-- Color OLED screen (menus) -->
-	<screen name="MenuSummary" position="0,0" size="96,64" id="2">
-		<widget source="parent.title" render="Label" position="0,0" size="96,32" font="Display;14" halign="center" valign="top"/>
-		<widget source="parent.menu" render="Label" position="0,32" size="96,32" font="Display;16" halign="center" valign="top">
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
@@ -1670,31 +1569,15 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget name="Service" position="6,22" size="120,26" font="Display;12" transparent="1" />
 		<widget name="scan_progress" position="6,50" zPosition="1" borderWidth="1" size="56,12" backgroundColor="dark" />
 	</screen>
-	<!-- Color OLED screen (ServiceScan) -->
-	<screen name="ServiceScanSummary" position="0,0" size="96,64" id="2">
-		<widget name="Title" position="0,0" size="96,30" font="Display;14" transparent="1" />
-		<widget name="Service" position="0,30" size="96,20" font="Display;10" transparent="1" />
-		<widget name="scan_progress" position="0,50" zPosition="1" borderWidth="1" size="96,12" backgroundColor="dark" />
-	</screen>
 	<!-- LCD screen (setup) -->
 	<screen name="SetupSummary" position="0,0" size="132,64" id="1">
 		<widget source="SetupTitle" render="Label" position="6,0" size="120,24" halign="left" font="Display;12" />
 		<widget source="SetupEntry" render="Label" position="6,24" size="120,24" halign="center" font="Display;12" />
 		<widget source="SetupValue" render="Label" position="6,48" size="120,14" halign="right" font="Display;12" />
 	</screen>
-	<!-- Color OLED screen (setup) -->
-	<screen name="SetupSummary" position="0,0" size="96,64" id="2">
-		<widget source="SetupTitle" render="Label" position="0,0" size="96,24" halign="left" font="Display;10" />
-		<widget source="SetupEntry" render="Label" position="0,24" size="96,24" halign="center" font="Display;10" />
-		<widget source="SetupValue" render="Label" position="0,48" size="96,16" halign="right" font="Display;10" />
-	</screen>
 	<!-- LCD screen (misc) -->
 	<screen name="SimpleSummary" position="0,0" size="132,64" id="1">
 		<widget source="parent.Title" render="Label" position="6,0" size="120,64" font="Display;16" halign="center" valign="center" />
-	</screen>
-	<!-- Color OLED screen (misc) -->
-	<screen name="SimpleSummary" position="0,0" size="96,64" id="2">
-		<widget source="parent.Title" render="Label" position="0,0" size="96,64" font="Display;14" halign="center" valign="center" />
 	</screen>
 	<!-- LCD screen (standby) -->
 	<screen name="StandbySummary" position="0,0" size="132,64" id="1">
@@ -1702,16 +1585,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 		<widget source="session.RecordState" render="FixedLabel" position="6,0" zPosition="1" size="120,64" text=" ">
-			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
-			<convert type="ConditionalShowHide">Blink</convert>
-		</widget>
-	</screen>
-	<!-- Color OLED screen (standby) -->
-	<screen name="StandbySummary" position="0,0" size="96,64" id="2">
-		<widget source="global.CurrentTime" render="Label" position="0,0" size="96,64" font="Display;38" halign="center" valign="center">
-			<convert type="ClockToText">Format:%H:%M</convert>
-		</widget>
-		<widget source="session.RecordState" render="FixedLabel" position="0,0" zPosition="1" size="96,64" text=" ">
 			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
@@ -1725,15 +1598,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ProgressToText" />
 		</widget>
 	</screen>
-	<!-- Color OLED screen (JobView) -->
-	<screen name="JobView_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.summary_job_name" render="Label" position="0,4" size="96,42" font="Display;14" />
-		<widget source="parent.summary_job_task" render="Label" position="0,22" size="96,26" font="Display;10" />
-		<widget source="parent.summary_job_progress" render="Progress" position="0,50" size="60,12" borderWidth="1" zPosition="1" />
-		<widget source="parent.summary_job_progress" render="Label" position="60,50" size="36,12" font="Display;10" zPosition="2" halign="center" transparent="1"  >
-			<convert type="ProgressToText" />
-		</widget>
-	</screen>
 	<!-- LCD screen (Wizard) -->
 	<screen name="WizardSummary" position="0,0" size="132,64" id="1">
 		<widget source="text" render="Label" position="6,0" size="120,34" font="Display;15" halign="center" valign="top" />
@@ -1743,26 +1607,10 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget source="parent.configEntry" render="Label" position="0,34" size="120,12" halign="left" font="Display;10" transparent="1"/>
 		<widget source="parent.configValue" render="Label" position="0,48" size="120,12" halign="right" font="Display;10"  transparent="1"/>
 	</screen>
-	<!-- Color OLED screen (Wizard) -->
-	<screen name="WizardSummary" position="0,0" size="96,64" id="2">
-		<widget source="text" render="Label" position="0,0" size="96,32" font="Display;15" halign="center" valign="top" />
-		<widget source="parent.list" render="Label" position="0,34" size="96,30" font="Display;12" valign="center" halign="center">
-			<convert type="StringListSelection" />
-		</widget>
-		<widget source="parent.configEntry" render="Label" position="0,34" size="96,12" halign="left" font="Display;10" transparent="1"/>
-		<widget source="parent.configValue" render="Label" position="0,48" size="96,12" halign="right" font="Display;10"  transparent="1"/>
-	</screen>
 		<!-- LCD screen (VideoWizard) -->
 	<screen name="VideoWizardSummary" position="0,0" size="132,64" id="1">
 		<widget source="text" render="Label" position="6,0" size="120,64" font="Display;15" halign="left" valign="top"/>
 		<widget source="parent.list" render="Label" position="6,34" size="120,46" font="Display;12" valign="center" halign="center" transparent="1">
-			<convert type="StringListSelection" />
-		</widget>
-	</screen>
-	<!-- Color OLED screen (Wizard) -->
-	<screen name="VideoWizardSummary" position="0,0" size="96,64" id="2">
-		<widget source="text" render="Label" position="0,0" size="96,64" font="Display;15" halign="left" valign="top"/>
-		<widget source="parent.list" render="Label" position="0,34" size="96,30" font="Display;12" valign="center" halign="center" transparent="1">
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
@@ -1786,6 +1634,185 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ClockToText">Format:%S</convert>
 		</widget>
 	</screen>
+	<!-- Color OLED screen (ChannelSelection) -->
+	<screen name="ChannelSelection_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.ServiceEvent" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.Event_Now" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (SubservicesQuickzap) -->
+	<screen name="SubservicesQuickzap_summary" position="0,0" size="96,64" id="2">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="96,64" font="Display;16" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (About) -->
+	<screen name="About_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.Title" render="Label" position="0,0" size="96,15" font="Display;15" halign="center" valign="top" />
+		<widget source="parent.Model" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;14">
+			<convert type="DreamboxModel" />
+		</widget>
+	</screen>
+	<!-- Color OLED screen (movieplayer) -->
+	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="96,64" id="2">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,38" zPosition="1" size="96,26">
+			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
+			<convert type="ConditionalShowHide">Blink</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (PluginBrowserSummary) -->
+	<screen name="PluginBrowserSummary" position="0,0" size="96,64" id="2">
+		<widget source="parent.pluginlist" render="Label" position="3,0" size="90,30" font="Display;14" halign="center" valign="top">
+			<convert type="StringListSelection">1</convert>
+		</widget>
+		<widget source="parent.pluginlist" render="Label" position="3,30" size="90,36" font="Display;12" halign="center" valign="top">
+			<convert type="StringListSelection">2</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (MoviePlayer) -->
+	<screen name="MoviePlayer_summary" position="0,0" size="96,64" id="2">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;14" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (AudioPlayer) -->
+	<screen name="AudioPlayer_summary" position="0,0" size="96,64" id="2">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;15" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (menus) -->
+	<screen name="MenuSummary" position="0,0" size="96,64" id="2">
+		<widget source="parent.title" render="Label" position="0,0" size="96,32" font="Display;14" halign="center" valign="top"/>
+		<widget source="parent.menu" render="Label" position="0,32" size="96,32" font="Display;16" halign="center" valign="top">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>
+	<!-- Color OLED screen (MessageBox) -->
+	<screen name="MessageBox_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.Text" render="Label" position="0,0" size="96,52" font="Display;10" halign="center" valign="center" />
+		<widget source="parent.selectedChoice" render="Label" position="0,50" size="96,14" font="Display;12" halign="center" valign="center" />
+	</screen>
+	<!-- Color OLED screen (ChoiceBox) -->
+	<screen name="ChoiceBox_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.summary_list" render="Label" position="0,0" size="96,64" font="Display;10" />
+	</screen>
+	<!-- Color OLED screen (NetworkServiceConfig) -->
+	<screen name="NetworkServiceConfig_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.Title" render="Label" position="0,0" size="96,14" font="Display;14" halign="center" valign="top" />
+		<widget source="parent.summary_list" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;13" />
+	</screen>
+	<!-- Color OLED screen (MediaBrowser) -->
+	<screen name="MediaBrowser_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.Title" render="Label" position="0,0" size="96,14" font="Display;14" halign="center" valign="top" />
+		<widget source="parent.summary_list" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;13" />
+	</screen>
+	<!-- Color OLED screen (JobView) -->
+	<screen name="JobView_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.summary_job_name" render="Label" position="0,4" size="96,42" font="Display;14" />
+		<widget source="parent.summary_job_task" render="Label" position="0,22" size="96,26" font="Display;10" />
+		<widget source="parent.summary_job_progress" render="Progress" position="0,50" size="60,12" borderWidth="1" zPosition="1" />
+		<widget source="parent.summary_job_progress" render="Label" position="60,50" size="36,12" font="Display;10" zPosition="2" halign="center" transparent="1"  >
+			<convert type="ProgressToText" />
+		</widget>
+	</screen>
+	<!-- Color OLED screen (standby) -->
+	<screen name="StandbySummary" position="0,0" size="96,64" id="2">
+		<widget source="global.CurrentTime" render="Label" position="0,0" size="96,64" font="Display;38" halign="center" valign="center">
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+		<widget source="session.RecordState" render="FixedLabel" position="0,0" zPosition="1" size="96,64" text=" ">
+			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
+			<convert type="ConditionalShowHide">Blink</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (misc) -->
+	<screen name="SimpleSummary" position="0,0" size="96,64" id="2">
+		<widget source="parent.Title" render="Label" position="0,0" size="96,64" font="Display;14" halign="center" valign="center" />
+	</screen>
+	<!-- Color OLED screen (setup) -->
+	<screen name="SetupSummary" position="0,0" size="96,64" id="2">
+		<widget source="SetupTitle" render="Label" position="0,0" size="96,24" halign="left" font="Display;10" />
+		<widget source="SetupEntry" render="Label" position="0,24" size="96,24" halign="center" font="Display;10" />
+		<widget source="SetupValue" render="Label" position="0,48" size="96,16" halign="right" font="Display;10" />
+	</screen>
+	<!-- Color OLED screen (ServiceScan) -->
+	<screen name="ServiceScanSummary" position="0,0" size="96,64" id="2">
+		<widget name="Title" position="0,0" size="96,30" font="Display;14" transparent="1" />
+		<widget name="Service" position="0,30" size="96,20" font="Display;10" transparent="1" />
+		<widget name="scan_progress" position="0,50" zPosition="1" borderWidth="1" size="96,12" backgroundColor="dark" />
+	</screen>
+	<!-- Color OLED screen (Wizard) -->
+	<screen name="VideoWizardSummary" position="0,0" size="96,64" id="2">
+		<widget source="text" render="Label" position="0,0" size="96,64" font="Display;15" halign="left" valign="top"/>
+		<widget source="parent.list" render="Label" position="0,34" size="96,30" font="Display;12" valign="center" halign="center" transparent="1">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>
+	<!-- Color OLED screen (Wizard) -->
+	<screen name="WizardSummary" position="0,0" size="96,64" id="2">
+		<widget source="text" render="Label" position="0,0" size="96,32" font="Display;15" halign="center" valign="top" />
+		<widget source="parent.list" render="Label" position="0,34" size="96,30" font="Display;12" valign="center" halign="center">
+			<convert type="StringListSelection" />
+		</widget>
+		<widget source="parent.configEntry" render="Label" position="0,34" size="96,12" halign="left" font="Display;10" transparent="1"/>
+		<widget source="parent.configValue" render="Label" position="0,48" size="96,12" halign="right" font="Display;10"  transparent="1"/>
+	</screen>
+	<!-- Color OLED screen (ChannelSelection) -->
+	<screen name="ChannelSelection_summary" position="0,0" size="96,64" id="2">
+		<widget source="parent.ServiceEvent" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="parent.ServiceEvent" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color OLED screen (main) -->
+	<screen name="InfoBarSummary" position="0,0" size="96,64" id="2">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.Event_Now" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+		<widget source="session.RecordState" render="FixedLabel" text=" " position="0,38" zPosition="1" size="96,26">
+			<convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
+			<convert type="ConditionalShowHide">Blink</convert>
+		</widget>
+	</screen>
 	<!-- Color OLED screen (Channelselection Radio) -->
 	<screen name="ChannelSelectionRadio_summary" position="0,0" size="96,64" id="2">
 		<widget source="session.CurrentService" render="Label" position="0,0" size="96,18" font="Display;16" halign="center" valign="center" >
@@ -1800,5 +1827,171 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget source="global.CurrentTime" render="Label" position="0,42" size="96,22" font="Display;20" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
+	</screen>
+	<!-- Color LCD screen (About) -->
+	<screen name="About_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
+		<widget source="parent.Model" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1">
+			<convert type="DreamboxModel" />
+		</widget>
+	</screen>
+		<!-- Color LCD screen (channelselection) -->
+	<screen name="ChannelSelection_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.ServiceEvent" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="parent.ServiceEvent" render="Progress" position="center,90" size="380,40" borderWidth="1" backgroundColor="dark">
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (main) -->
+	<screen name="InfoBarSummary" position="0,0" size="400,240" id="3">
+		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.Event_Now" render="Progress" position="10,90" size="380,40" borderWidth="1" backgroundColor="dark">
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (movieplayer) -->
+	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="400,240" id="3">
+		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Progress" position="center,90" size="380,40" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (PluginBrowserSummary) -->
+	<screen name="PluginBrowserSummary" position="0,0" size="400,240" id="3">
+		<widget source="parent.pluginlist" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="top">
+			<convert type="StringListSelection">1</convert>
+		</widget>
+		<widget source="parent.pluginlist" render="Label" position="center,100" size="400,140" font="Display;36" halign="center" valign="top">
+			<convert type="StringListSelection">2</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (MoviePlayer) -->
+	<screen name="MoviePlayer_summary" position="0,0" size="400,240" id="3">
+		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Progress" position="center,100" size="380,40" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+	</screen>
+	<screen name="AudioPlayer_summary" position="0,0" size="400,240" id="3">
+		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Progress" position="center,100" size="380,40" borderWidth="1" backgroundColor="dark">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget source="session.CurrentService" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (MediaBrowser) -->
+	<screen name="MediaBrowser_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1" />
+	</screen>
+	<!-- Color LCD screen (NetworkServiceConfig) -->
+	<screen name="NetworkServiceConfig_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
+		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1" />
+	</screen>
+	<!-- Color LCD screen (ChoiceBox) -->
+	<screen name="ChoiceBox_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="Display;42"  halign="center" valign="center"/>
+	</screen>
+	<!-- Color LCD screen (MessageBox) -->
+	<screen name="MessageBox_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.Text" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
+		<widget source="parent.selectedChoice" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1" />
+	</screen>
+	<!-- Color LCD screen (menus) -->
+	<screen name="MenuSummary" position="0,0" size="400,240" id="3">
+		<widget source="parent.title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
+		<widget source="parent.menu" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>
+	<!-- Color LCD screen (ServiceScan) -->
+	<screen name="ServiceScanSummary" position="0,0" size="400,240" id="3">
+		<widget name="Title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
+		<widget name="Service" render="Label" position="0,42" size="400,156" font="Display;72" halign="center" valign="center" transparent="1" />
+		<widget name="scan_progress" position="center,198" zPosition="1" borderWidth="1" size="420,42" backgroundColor="dark" />
+	</screen>
+	<!-- Color LCD screen (setup) -->
+	<screen name="SetupSummary" position="0,0" size="400,240" id="3">
+		<widget source="SetupTitle" render="Label" position="0,0" size="400,90" halign="center" font="Display;42" />
+		<widget source="SetupEntry" render="Label" position="0,100" size="400,90" halign="left" font="Display;42" />
+		<widget source="SetupValue" render="Label" position="0,200" size="400,40" halign="right" font="Display;42" />
+	</screen>
+	<!-- Color LCD screen (SimpleSummary) -->
+	<screen name="SimpleSummary" position="0,0" size="400,240" id="3">
+		<widget source="parent.Title" render="Label" position="0,0" size="400,240" font="Display;42" halign="center" valign="center" />
+	</screen>
+	<!-- Color LCD screen (standby) -->
+	<screen name="StandbySummary" position="0,0" size="400,240" id="3">
+		<widget source="global.CurrentTime" render="Label" position="0,0" size="400,240" font="Display;120" halign="center" valign="center">
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (JobView) -->
+	<screen name="JobView_summary" position="0,0" size="400,240" id="3">
+		<widget source="parent.summary_job_name" render="Label" position="0,0" size="400,90" font="Display;42" />
+		<widget source="parent.summary_job_task" render="Label" position="0,100" size="400,90" font="Display;42" />
+		<widget source="parent.summary_job_progress" render="Progress" position="center,195" size="400,40" borderWidth="1" zPosition="1" />
+		<widget source="parent.summary_job_progress" render="Label" position="center,195" size="400,40" font="Display;32" zPosition="2" halign="center" valign="center" transparent="1"  >
+			<convert type="ProgressToText" />
+		</widget>
+	</screen>
+	<!-- Color LCD screen (Wizard) -->
+	<screen name="WizardSummary" position="0,0" size="400,240" id="3">
+		<widget source="text" render="Label" position="0,0" size="400,50" font="Display;42"  halign="center" valign="top"/>
+		<widget source="parent.list" render="Label" position="0,55" size="400,75" font="Display;42" valign="center" halign="center">
+			<convert type="StringListSelection" />
+		</widget>
+		<widget source="parent.configEntry" render="Label" position="0,130" size="400,50" valign="center" halign="left" font="Display;42" transparent="1"/>
+		<widget source="parent.configValue" render="Label" position="0,190" size="400,50" valign="center" halign="right" font="Display;42"  transparent="1"/>
+	</screen>
+	<!-- Color LCD screen (VideoWizard) -->
+	<screen name="VideoWizardSummary" position="0,0" size="132,64" id="3">
+		<widget source="text" render="Label" position="0,0" size="400,50" font="Display;42"  halign="center" valign="top"/>
+		<widget source="parent.list" render="Label" position="0,55" size="400,75" font="Display;42" valign="center" halign="center">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>
+	<!-- Color LCD screen (Channelselection Radio) -->
+	<screen name="ChannelSelectionRadio_summary" position="0,0" size="400,240" id="3">
+		<widget source="session.CurrentService" render="Label" position="center,0" size="400,46" font="Display;42" halign="center" valign="center">
+			<convert type="ServiceName">Name</convert>
+		</widget>
+		<widget source="parent.RdsDecoder" render="Label" position="center,48" size="400,52" font="Display;22" halign="center" valign="center">
+			<convert type="RdsInfo">RadioText</convert>
+		</widget>
+		<widget source="session.Event_Now" render="Progress" position="center,90" size="380,40" borderWidth="1" backgroundColor="dark">
+			<convert type="EventTime">Progress</convert>
+		</widget>
+		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+			<convert type="ClockToText">Format:%H:%M</convert>
+		</widget>
+	</screen>
+	<!-- Color LCD screen (SubservicesQuickzap) -->
+	<screen name="SubservicesQuickzap_summary" position="0,0" size="400,240" id="3">
+		<widget source="session.CurrentService" render="Label" position="0,0" size="400,240" font="Display;66"  halign="center" valign="center"/>
 	</screen>
 </skin>

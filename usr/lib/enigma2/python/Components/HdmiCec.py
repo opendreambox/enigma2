@@ -31,6 +31,7 @@ class HdmiCec:
 	config.cec.avr_power_explicit = ConfigOnOff(default=False)
 	config.cec.receivepower = ConfigOnOff(default=False)
 	config.cec.enable_vendor_quirks = ConfigOnOff(default=False)
+	config.cec.enable_experimental_vendor_quirks = ConfigOnOff(default=False)
 	config.cec.receive_remotekeys = ConfigOnOff(default=True)
 	config.cec.volume_forward = ConfigOnOff(default=False)
 	config.cec.volume_target = ConfigSelection(VOLUME_TARGETS, default=VOLUME_TARGET_DYNAMIC)

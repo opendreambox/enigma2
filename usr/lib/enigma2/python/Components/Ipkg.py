@@ -1,6 +1,7 @@
 from enigma import eConsoleAppContainer
-
 from Tools.Log import Log
+
+from pipes import quote as pipes_quote
 
 class PkgComponent:
 	EVENT_INSTALL = 0
@@ -18,8 +19,9 @@ class PkgComponent:
 	CMD_UPDATE = 3
 	CMD_UPGRADE = 4
 
-	def __init__(self, dpkg = 'dpkg'):
+	def __init__(self, dpkg = 'opkg', dpkg_local='dpkg'):
 		self.dpkg = dpkg
+		self.dpkg_local = dpkg_local
 		self.cmd = eConsoleAppContainer()
 		self.cmd_appClosed_conn = self.cmd.appClosed.connect(self.cmdFinished)
 		self.cmd_dataAvail_conn = self.cmd.dataAvail.connect(self.cmdData)
@@ -54,11 +56,14 @@ class PkgComponent:
 			else:
 				self.runCmd("list")
 		elif cmd == self.CMD_INSTALL:
-			self.preInstCmd = eConsoleAppContainer()
-			self.preInstCmd_appClosed_conn = self.preInstCmd.appClosed.connect(self.preInstCmdFinished)
-			self.preInstCmd_dataAvail_conn = self.preInstCmd.dataAvail.connect(self.cmdData)
-			Log.i("executing apt-get update")
-			self.preInstCmd.execute("apt-get update")
+			if args['package'].startswith('/'):
+				self.preInstCmd = eConsoleAppContainer()
+				self.preInstCmd_appClosed_conn = self.preInstCmd.appClosed.connect(self.preInstCmdFinished)
+				self.preInstCmd_dataAvail_conn = self.preInstCmd.dataAvail.connect(self.cmdData)
+				Log.i("A local package is to be installed: executing apt-get update before doing so")
+				self.preInstCmd.execute("apt-get update")
+			else:
+				self.runCmd("install " + args['package'])
 		elif cmd == self.CMD_REMOVE:
 			append = ""
 			if args["autoremove"]:
@@ -70,7 +75,7 @@ class PkgComponent:
 		self.instcmd = eConsoleAppContainer()
 		self.instcmd_appClosed_conn = self.instcmd.appClosed.connect(self.instCmdFinished)
 		self.instcmd_dataAvail_conn = self.instcmd.dataAvail.connect(self.cmdData)
-		self.instcmd.execute("dpkg -i " + self.args['package'])
+		self.instcmd.execute(self.dpkg_local + " -i " + pipes_quote(self.args['package']))
 
 	def instCmdFinished(self, retval):
 		self.postcmd = eConsoleAppContainer()

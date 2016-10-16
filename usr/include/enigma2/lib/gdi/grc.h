@@ -209,6 +209,7 @@ class gRC : public GRC_THREAD_BASE, public iObject, public sigc::trackable
 
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
+	bool m_locked;
 #if defined(DISPLAY_QT)
 	virtual void run();
 #else

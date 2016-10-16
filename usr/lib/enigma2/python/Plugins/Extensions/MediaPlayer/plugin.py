@@ -1,6 +1,6 @@
 from os import path as os_path, remove as os_remove, listdir as os_listdir
 from time import strftime
-from enigma import iPlayableService, eTimer, eServiceCenter, iServiceInformation, ePicLoad, eServiceMP3
+from enigma import iPlayableService, eTimer, eServiceCenter, iServiceInformation, ePicLoad, eServiceMP3, eServiceReference
 from ServiceReference import ServiceReference
 from Screens.Screen import Screen
 from Screens.HelpMenu import HelpableScreen

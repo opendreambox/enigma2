@@ -428,6 +428,9 @@ public:
 	void load();
 	void save();
 
+	void applyDbBugfix20161008();
+	void createUpdateTriggers();
+
 	// must be called once!
 	void setCacheFile(const char *filename);
 	void setCacheTimespan(int days);

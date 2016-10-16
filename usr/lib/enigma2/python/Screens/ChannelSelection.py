@@ -96,6 +96,10 @@ def append_when_current_valid(current, menu, args, level = 0, key = ""):
 	if current and current.valid() and level <= config.usage.setup_level.index:
 		menu.append(ChoiceEntryComponent(key, args))
 
+def append_when_level(menu, args, level = 0, key = ""):
+	if level <= config.usage.setup_level.index:
+		menu.append(ChoiceEntryComponent(key, args))
+
 class ChannelContextMenu(Screen):
 	def __init__(self, session, csel):
 
@@ -124,11 +128,22 @@ class ChannelContextMenu(Screen):
 		haveBouquets = config.usage.multibouquet.value
 		channel_context_menu_plugins = plugins.getPlugins(PluginDescriptor.WHERE_CHANNEL_CONTEXT_MENU)
 
-		if not (current_sel_path or current_sel_flags & (eServiceReference.isDirectory|eServiceReference.isMarker)):
+		isPlayableService = not (current_sel_path or current_sel_flags & (eServiceReference.isDirectory|eServiceReference.isMarker))
+		if isPlayableService:
 			append_when_current_valid(current, menu, (_("show transponder info"), self.showServiceInformations), level = 2)
-			if len(channel_context_menu_plugins):
-				for p in channel_context_menu_plugins:
-					append_when_current_valid(current, menu, (p.description, boundFunction(self.execPlugin, p, csel.getCurrentSelection())))
+
+		plugins_to_remove = []
+		for p in channel_context_menu_plugins:
+			if p.helperfnc != None:
+				if p.helperfnc(csel):
+					append_when_level(menu, (p.description, boundFunction(self.execPlugin, p, csel.getCurrentSelection())))
+				plugins_to_remove.append(p)
+		channel_context_menu_plugins = [x for x in channel_context_menu_plugins if x not in plugins_to_remove]
+		plugins_to_remove = None
+
+		if isPlayableService:
+			for p in channel_context_menu_plugins:
+				append_when_current_valid(current, menu, (p.description, boundFunction(self.execPlugin, p, csel.getCurrentSelection())))
 		if csel.bouquet_mark_edit == OFF and not csel.movemode:
 			if not inBouquetRootList:
 				isPlayable = not (current_sel_flags & (eServiceReference.isMarker|eServiceReference.isDirectory))
@@ -389,7 +404,7 @@ class ChannelContextMenu(Screen):
 		self.close()
 
 	def execPlugin(self, plugin, service):
-		plugin(self.session, service)
+		plugin(self.session, service, csel=self.csel)
 
 
 class SelectionEventInfo:

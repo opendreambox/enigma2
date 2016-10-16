@@ -5,6 +5,7 @@
 
 #include <lib/gdi/rgba.h>
 #include <lib/gdi/color.h>
+#include <vector>
 
 class gPalette
 {

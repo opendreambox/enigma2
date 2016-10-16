@@ -21,7 +21,7 @@ class CecConfig(ConfigListScreen, Screen):
 	def __init__(self, session, args=0):
 		Screen.__init__(self, session)
 
-		ConfigListScreen.__init__(self, [])
+		ConfigListScreen.__init__(self, [], session=session)
 		config.cec.enabled.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.sendpower.addNotifier(self._recreateSetup, initial_call=False)
 		config.cec.enable_avr.addNotifier(self._recreateSetup, initial_call=False)
@@ -114,6 +114,8 @@ class CecConfig(ConfigListScreen, Screen):
 			getConfigListEntry(_("General")),
 			getConfigListEntry(_("Enable vendor specific handling"), config.cec.enable_vendor_quirks),
 		])
+		if config.cec.enable_vendor_quirks.value:
+			lst.append(getConfigListEntry(_("Experimental vendor specific handling"), config.cec.enable_experimental_vendor_quirks))
 		if isExpert:
 			lst.append(getConfigListEntry(_("Ignore CeC ready-state on startup"), config.cec.ignore_ready_state))
 		self["config"].list = lst
