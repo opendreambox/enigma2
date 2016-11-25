@@ -50,7 +50,7 @@ def applyConfig(streamServerControl, initial=False, forceRestart=False):
 		if resolution != streamServerControl.resolution:
 			streamServerControl.resolution = StreamServerControl.RESOLUTIONS[config.streamserver.resolution.value]
 
-		framerate = config.streamserver.framerate.value
+		framerate = int(config.streamserver.framerate.value)
 		if framerate != streamServerControl.framerate:
 			streamServerControl.framerate = framerate
 

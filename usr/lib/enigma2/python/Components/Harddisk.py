@@ -659,6 +659,25 @@ DEVICEDB = \
 		"/devices/platform/strict-ahci.0/ata1/": _("SATA"),	# front
 		"/devices/platform/strict-ahci.0/ata2/": _("SATA"),	# back
 	},
+	"dm520":
+	{
+		"/devices/platform/ehci-brcm.0/usb1/1-2/": _("Back, outer USB"),
+		"/devices/platform/ohci-brcm.0/usb2/2-2/": _("Back, outer USB"),
+		"/devices/platform/ehci-brcm.0/usb1/1-1/": _("Back, inner USB"),
+		"/devices/platform/ohci-brcm.0/usb2/2-1/": _("Back, inner USB"),
+	},
+	"dm900":
+	{
+		"/devices/platform/brcmstb-ahci.0/ata1/": _("SATA"),
+		"/devices/rdb.4/f03e0000.sdhci/mmc_host/mmc0/": _("eMMC"),
+		"/devices/rdb.4/f03e0200.sdhci/mmc_host/mmc1/": _("SD"),
+		"/devices/rdb.4/f0470600.ohci_v2/usb6/6-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0470300.ehci_v2/usb3/3-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port1/": _("Front USB"),
+		"/devices/rdb.4/f0470400.ohci_v2/usb5/5-0:1.0/port1/": _("Back USB"),
+		"/devices/rdb.4/f0470500.ehci_v2/usb4/4-0:1.0/port1/": _("Back USB"),
+		"/devices/rdb.4/f0471000.xhci_v2/usb2/2-0:1.0/port2/": _("Back USB"),
+	},
 	"dm800se":
 	{
 		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("SATA"),
@@ -684,6 +703,8 @@ DEVICEDB = \
 		"/devices/pci0000:01/0000:01:00.0/host0/target0:0:0/0:0:0:0": _("eSATA"),
 	},
 	}
+
+DEVICEDB["dm525"] = DEVICEDB["dm520"] 
 
 class BlockDevice:
 	def __init__(self, devname):
@@ -952,6 +973,16 @@ class HarddiskManager:
 		if self.__isBlacklisted(data):
 			print "ignoring event for %s (blacklisted)" % devpath
 			return
+
+		if action in ("add", "change"):
+			#enable PVR features when a internal harddisc is detected
+			device = blkdev.name()
+			physdev = blkdev.sysfsPath('device', physdev=True)[4:]
+			description = self.getUserfriendlyDeviceName(device, physdev)
+			if description.startswith(_("SATA")) and config.misc.recording_allowed.value == False:
+				config.misc.recording_allowed.value = True
+				config.misc.recording_allowed.save()
+				configfile.save()
 
 		if action == "add":
 			self.__addHotplugDevice(blkdev, data)
@@ -1457,6 +1488,7 @@ class HarddiskManager:
 					description = pdescription + ' - ' + description
 				else:
 					description = pdescription
+				break
 		# not wholedisk and not partition 1
 		if part and part != 1:
 			description += " (Partition %d)" % part

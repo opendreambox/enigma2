@@ -101,6 +101,8 @@ def append_when_level(menu, args, level = 0, key = ""):
 		menu.append(ChoiceEntryComponent(key, args))
 
 class ChannelContextMenu(Screen):
+	ALLOW_SUSPEND = True
+
 	def __init__(self, session, csel):
 
 		Screen.__init__(self, session)
@@ -808,6 +810,8 @@ service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 
 service_types_radio = '1:7:2:0:0:0:0:0:0:0:(type == 2) || (type == 10)'
 
 class ChannelSelectionBase(Screen):
+	ALLOW_SUSPEND = True
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
@@ -1543,7 +1547,6 @@ class RadioInfoBar(Screen):
 		self["RdsDecoder"] = RdsDecoder(self.session.nav)
 
 class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, InfoBarBase):
-	ALLOW_SUSPEND = True
 
 	def __init__(self, session, infobar):
 		ChannelSelectionBase.__init__(self, session)

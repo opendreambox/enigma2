@@ -1491,16 +1491,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2, (720-wsizey)/2))
 	<screen name="MinuteInput" position="center,center" size="280,60" title="Seek">
 		<widget name="minutes" position="80,15" size="160,25" halign="right" font="Regular;23" />
 	</screen>
-	<!-- Modem Setup -->
-	<screen name="ModemSetup" position="center,175" size="600,370" title="Modem" >
-		<ePixmap pixmap="Default-HD/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
-		<ePixmap pixmap="Default-HD/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
-		<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-		<eLabel	position="10,50" size="580,1" backgroundColor="grey"/>
-		<widget name="list" position="10,60" size="580,180" itemHeight="30"/>
-		<widget name="state" position="10,270" size="580,90" font="Regular;22"/>
-	</screen>
 	<!-- Movie context menu -->
 	<screen name="MovieContextMenu" position="center,220" size="470,320" title="Movielist menu">
 		<widget name="menu" position="10,10" size="450,300" itemHeight="30" scrollbarMode="showOnDemand" />

@@ -1,9 +1,13 @@
 <default>
 	<prerequisites>
 		<!-- hardware can occur more than once -->
-		<hardware type="dm800se" />
+		<hardware type="dm820" />
+		<hardware type="dm7080" />
+		<hardware type="dm520" />
+		<hardware type="dm525" />
+		<hardware type="dm900" />
 	</prerequisites>
-	
+
 	<info>
 		<author>Dream Property GmbH</author>
 		<name>Dream Multimedia Default</name>
@@ -12,13 +16,26 @@
 		<!-- available types: "directories" -->
 	<files type="directories">
 		<!--file type="skin" directory="test_skin/" flag="default" name="Default Skin" /-->
-		<file type="config" name="settings.800se" />
 		<!--file type="services" name="lamedb.192">
 			<prerequisites>
 				<bcastsystem type="DVB-S" />
 				<satellite type="192" />
 			</prerequisites>
 		</file-->
+		<file type="config" name="settings.rc2" />
+		<file type="config" name="settings.rec_off">
+			<prerequisites>
+				<hardware type="dm520" />
+				<hardware type="dm525" />
+				<hardware type="dm900" />
+			</prerequisites>
+		</file>
+		<file type="config" name="settings.anim_off">
+			<prerequisites>
+				<hardware type="dm520" />
+				<hardware type="dm525" />
+			</prerequisites>
+		</file>
 		<file type="favourites" directory="" name="bouquets.tv">
 			<prerequisites>
 				<bcastsystem type="DVB-S" />
@@ -41,6 +58,7 @@
 				<bcastsystem type="DVB-T" />
 			</prerequisites>
 		</file>
+
 		<!--file type="package" directory="packages/" name="small-test_1.0_mipsel.ipk" /-->
 	</files>
 </default>

@@ -53,7 +53,7 @@ def loadSkin(name, scope = SCOPE_SKIN):
 
 # example: loadSkin("nemesis_greenline/skin.xml")
 config.skin = ConfigSubsection()
-config.skin.primary_skin = ConfigText(default = "Default-HD/skin.xml")
+config.skin.primary_skin = ConfigText(default = "skin.xml")
 
 profile("LoadSkin")
 try:
@@ -244,20 +244,22 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 				guiObject.setVAlign(
 					{ "top": guiObject.alignTop,
 						"center": guiObject.alignCenter,
-						"bottom": guiObject.alignBottom
+						"bottom": guiObject.alignBottom,
+						"centerOrBottom" : guiObject.alignCenterOrBottom
 					}[value])
 			except KeyError:
-				print "valign must be either top, center or bottom!"
+				print "valign must be either top, center, bottom or centerOrBottom!"
 		elif attrib == "halign":
 			try:
 				guiObject.setHAlign(
 					{ "left": guiObject.alignLeft,
 						"center": guiObject.alignCenter,
 						"right": guiObject.alignRight,
-						"block": guiObject.alignBlock
+						"block": guiObject.alignBlock,
+						"centerOrRight": guiObject.alignCenterOrRight
 					}[value])
 			except KeyError:
-				print "halign must be either left, center, right or block!"
+				print "halign must be either left, center, right, block or centerOrRight!"
 		elif attrib == "flags":
 			flags = value.split(',')
 			for f in flags:

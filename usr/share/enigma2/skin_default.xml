@@ -39,7 +39,7 @@
 		<color name="WindowTitleForeground" color="#ffffff" />
 		<color name="WindowTitleBackground" color="#000000" />
 	</windowstyle>
-	<!-- Main screen colors (id=3 Color LCD (dm???)) -->
+	<!-- Main screen colors (id=3 Color LCD (dm900UHD)) -->
 	<windowstyle type="skinned" id="3">
 		<color name="Background" color="#0d1940" />
 		<color name="LabelForeground" color="#ffffff" />
@@ -535,7 +535,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
-		<widget source="icon" render="Pixmap" position="30,70" size="88,126" alphatest="on">
+		<widget source="icon" render="Pixmap" position="20,70" size="128,128" alphatest="on">
 			<convert type="ValueToPixmap">Path</convert>
 		</widget>
 		<widget source="model" render="Label" position="160,70" size="650,25" font="Regular;23"/>
@@ -575,7 +575,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 		<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
-		<widget source="icon" render="Pixmap" position="30,70" size="88,126" alphatest="on">
+		<widget source="icon" render="Pixmap" position="20,70" size="128,128" alphatest="on">
 			<convert type="ValueToPixmap">Path</convert>
 		</widget>
 		<widget source="model" render="Label" position="160,70" size="650,25" font="Regular;23"/>
@@ -863,7 +863,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Parental control - editor -->
 	<screen name="ParentalControlEditor" position="center,center" size="520,400" title="Parental control services Editor">
-		<widget name="servicelist" position="10,10" size="500,350" scrollbarMode="showOnDemand" />
+		<widget name="servicelist" position="10,5" size="500,390" scrollbarMode="showOnDemand" />
 	</screen>
 	<!-- Picture in picture -->
 	<screen name="PictureInPicture" position="400,60" zPosition="-1" size="240,192" flags="wfNoBorder">
@@ -878,7 +878,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Picture in picture setup -->
 	<screen name="PiPSetup" position="center,center" size="620,170" backgroundColor="transparent" flags="wfNoBorder" title="PiPSetup">
-		<widget name="text" position="10,10" size="600,150" font="Regular;23" />
+		<widget name="text" position="10,10" size="600,150" font="Regular;23" halign="center" valign="center"/>
 	</screen>
 	<!-- Plugin browser -->
 	<screen name="PluginBrowser" position="center,120" size="820,520" title="Plugin browser">
@@ -1540,7 +1540,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	<!-- LCD screen (MediaBrowser) -->
 	<screen name="MediaBrowser_summary" position="0,0" size="132,64" id="1">
 		<widget source="parent.Title" render="Label" position="0,0" size="132,14" font="Display;14" halign="center" valign="top" />
-		<widget source="parent.summary_list" render="Label" position="6,16" size="126,48" valign="center" halign="center" font="Display;13" />
+		<widget source="parent.summary_list" render="Label" position="6,16" size="126,48" valign="centerOrBottom" halign="center" font="Display;13" />
 	</screen>
 	<!-- LCD screen (NetworkServiceConfig) -->
 	<screen name="NetworkServiceConfig_summary" position="0,0" size="132,64" id="1">
@@ -1732,7 +1732,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	<!-- Color OLED screen (MediaBrowser) -->
 	<screen name="MediaBrowser_summary" position="0,0" size="96,64" id="2">
 		<widget source="parent.Title" render="Label" position="0,0" size="96,14" font="Display;14" halign="center" valign="top" />
-		<widget source="parent.summary_list" render="Label" position="0,16" size="96,48" valign="center" halign="center" font="Display;13" />
+		<widget source="parent.summary_list" render="Label" position="0,16" size="96,48" valign="centerOrBottom" halign="center" font="Display;13" />
 	</screen>
 	<!-- Color OLED screen (JobView) -->
 	<screen name="JobView_summary" position="0,0" size="96,64" id="2">
@@ -1828,170 +1828,209 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
+
 	<!-- Color LCD screen (About) -->
 	<screen name="About_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.Title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
-		<widget source="parent.Model" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.Title" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.Model" render="Label" position="0,12" size="400,240" font="Display;60" halign="center" valign="center" transparent="1">
 			<convert type="DreamboxModel" />
 		</widget>
 	</screen>
 		<!-- Color LCD screen (channelselection) -->
 	<screen name="ChannelSelection_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.ServiceEvent" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.ServiceEvent" render="Label" position="center,5" size="400,92" font="Display;48" foregroundColor="yellow" halign="center" valign="center" transparent="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="parent.ServiceEvent" render="Progress" position="center,90" size="380,40" borderWidth="1" backgroundColor="dark">
+		<widget source="parent.ServiceEvent" render="Progress" position="center,112" size="380,15" borderWidth="1" pixmap="skin_default/progress.png" backgroundColor="dark">
 			<convert type="EventTime">Progress</convert>
 		</widget>
-		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+		<widget source="global.CurrentTime" render="Label" position="center,146" size="400,84" font="Display;80" halign="center" valign="center" transparent="1">
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (main) -->
 	<screen name="InfoBarSummary" position="0,0" size="400,240" id="3">
-		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="session.CurrentService" render="Label" position="center,5" size="400,92" font="Display;48" halign="center" valign="center" transparent="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Progress" position="10,90" size="380,40" borderWidth="1" backgroundColor="dark">
+		<widget source="session.Event_Now" render="Progress" position="center,112" size="380,15" borderWidth="1" pixmap="skin_default/progress.png" backgroundColor="dark">
 			<convert type="EventTime">Progress</convert>
 		</widget>
-		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+		<widget source="global.CurrentTime" render="Label" position="center,146" size="400,84" font="Display;80" halign="center" valign="center" transparent="1">
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (movieplayer) -->
 	<screen name="InfoBarMoviePlayerSummary" position="0,0" size="400,240" id="3">
-		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="session.CurrentService" render="Label" position="center,5" size="400,92" font="Display;48" halign="center" valign="center" transparent="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="session.CurrentService" render="Progress" position="center,90" size="380,40" borderWidth="1" backgroundColor="dark">
+		<widget source="session.CurrentService" render="Progress" position="center,112" size="380,15" borderWidth="1" pixmap="skin_default/progress.png" backgroundColor="dark">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
-		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+		<widget source="global.CurrentTime" render="Label" position="center,146" size="400,84" font="Display;80" halign="center" valign="center" transparent="1">
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (PluginBrowserSummary) -->
 	<screen name="PluginBrowserSummary" position="0,0" size="400,240" id="3">
-		<widget source="parent.pluginlist" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="top">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.pluginlist" render="Label" position="center,5" size="400,92" font="Display;48" halign="center" valign="top" transparent="1">
 			<convert type="StringListSelection">1</convert>
 		</widget>
-		<widget source="parent.pluginlist" render="Label" position="center,100" size="400,140" font="Display;36" halign="center" valign="top">
+		<widget source="parent.pluginlist" render="Label" position="center,105" size="400,132" font="Display;36" halign="center" valign="top" transparent="1">
 			<convert type="StringListSelection">2</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (MoviePlayer) -->
 	<screen name="MoviePlayer_summary" position="0,0" size="400,240" id="3">
-		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="session.CurrentService" render="Label" position="center,5" size="400,92" font="Display;48" halign="center" valign="center"  transparent="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="session.CurrentService" render="Progress" position="center,100" size="380,40" borderWidth="1" backgroundColor="dark">
+		<widget source="session.CurrentService" render="Progress" position="center,112" size="380,15" borderWidth="1" pixmap="skin_default/progress.png" backgroundColor="dark">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
-		<widget source="session.CurrentService" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+		<widget source="session.CurrentService" render="Label" position="center,146" size="400,84" font="Display;80" halign="center" valign="center" transparent="1">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
 	</screen>
 	<screen name="AudioPlayer_summary" position="0,0" size="400,240" id="3">
-		<widget source="session.CurrentService" render="Label" position="center,0" size="400,90" font="Display;42" halign="center" valign="center" >
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="session.CurrentService" render="Label" position="center,5" size="400,92" font="Display;48" halign="center" valign="center" transparent="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="session.CurrentService" render="Progress" position="center,100" size="380,40" borderWidth="1" backgroundColor="dark">
+		<widget source="session.CurrentService" render="Progress" position="center,112" size="380,15" borderWidth="1" pixmap="skin_default/progress.png" backgroundColor="dark">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
-		<widget source="session.CurrentService" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+		<widget source="session.CurrentService" render="Label" position="center,146" size="400,84" font="Display;80" halign="center" valign="center" transparent="1">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (MediaBrowser) -->
 	<screen name="MediaBrowser_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1" />
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.summary_list" render="Label" position="0,5" size="400,220" font="Display;60" halign="center" valign="centerOrBottom" transparent="1" />
 	</screen>
 	<!-- Color LCD screen (NetworkServiceConfig) -->
 	<screen name="NetworkServiceConfig_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.Title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
-		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1" />
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.Title" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.summary_list" render="Label" position="0,60" size="400,170" font="Display;44" halign="center" valign="center" transparent="1" />
 	</screen>
 	<!-- Color LCD screen (ChoiceBox) -->
 	<screen name="ChoiceBox_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.summary_list" render="Label" position="0,0" size="400,240" font="Display;42"  halign="center" valign="center"/>
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.summary_list" render="Label" position="0,5" size="400,225" font="Display;32" halign="center" transparent="1"/>
 	</screen>
 	<!-- Color LCD screen (MessageBox) -->
 	<screen name="MessageBox_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.Text" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
-		<widget source="parent.selectedChoice" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1" />
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.Text" render="Label" position="0,5" size="400,176" font="Display;44" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.selectedChoice" render="Label" position="0,184" size="400,44" font="Display;44" halign="center" valign="center" transparent="1" />
 	</screen>
 	<!-- Color LCD screen (menus) -->
 	<screen name="MenuSummary" position="0,0" size="400,240" id="3">
-		<widget source="parent.title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
-		<widget source="parent.menu" render="Label" position="0,0" size="400,240" font="Display;72" halign="center" valign="center" transparent="1">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.title" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.menu" render="Label" position="0,12" size="400,220" font="Display;60" halign="center" valign="center" transparent="1">
 			<convert type="StringListSelection" />
 		</widget>
 	</screen>
 	<!-- Color LCD screen (ServiceScan) -->
 	<screen name="ServiceScanSummary" position="0,0" size="400,240" id="3">
-		<widget name="Title" render="Label" position="0,0" size="400,42" font="Display;42"  halign="center" valign="top"/>
-		<widget name="Service" render="Label" position="0,42" size="400,156" font="Display;72" halign="center" valign="center" transparent="1" />
-		<widget name="scan_progress" position="center,198" zPosition="1" borderWidth="1" size="420,42" backgroundColor="dark" />
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget name="Title" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget name="Service" render="Label" position="0,65" size="400,100" font="Display;48" halign="center" valign="center" transparent="1" />
+		<widget name="scan_progress" position="center,190" zPosition="1" borderWidth="1" size="380,15" pixmap="skin_default/progress.png" backgroundColor="dark" />
 	</screen>
 	<!-- Color LCD screen (setup) -->
 	<screen name="SetupSummary" position="0,0" size="400,240" id="3">
-		<widget source="SetupTitle" render="Label" position="0,0" size="400,90" halign="center" font="Display;42" />
-		<widget source="SetupEntry" render="Label" position="0,100" size="400,90" halign="left" font="Display;42" />
-		<widget source="SetupValue" render="Label" position="0,200" size="400,40" halign="right" font="Display;42" />
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="SetupTitle" render="Label" position="0,5" size="400,88" halign="center" font="Display;48" transparent="1"/>
+		<widget source="SetupEntry" render="Label" position="0,98" size="400,78" halign="left" font="Display;42" transparent="1"/>
+		<widget source="SetupValue" render="Label" position="0,181" size="400,39" halign="right" font="Display;42" transparent="1"/>
 	</screen>
 	<!-- Color LCD screen (SimpleSummary) -->
 	<screen name="SimpleSummary" position="0,0" size="400,240" id="3">
-		<widget source="parent.Title" render="Label" position="0,0" size="400,240" font="Display;42" halign="center" valign="center" />
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.Title" render="Label" position="0,5" size="400,220" font="Display;48" halign="center" valign="center" transparent="1"/>
 	</screen>
 	<!-- Color LCD screen (standby) -->
 	<screen name="StandbySummary" position="0,0" size="400,240" id="3">
-		<widget source="global.CurrentTime" render="Label" position="0,0" size="400,240" font="Display;120" halign="center" valign="center">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="global.CurrentTime" render="Label" position="0,0" size="400,240" font="Display;120" halign="center" valign="center" transparent="1">
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (JobView) -->
 	<screen name="JobView_summary" position="0,0" size="400,240" id="3">
-		<widget source="parent.summary_job_name" render="Label" position="0,0" size="400,90" font="Display;42" />
-		<widget source="parent.summary_job_task" render="Label" position="0,100" size="400,90" font="Display;42" />
-		<widget source="parent.summary_job_progress" render="Progress" position="center,195" size="400,40" borderWidth="1" zPosition="1" />
-		<widget source="parent.summary_job_progress" render="Label" position="center,195" size="400,40" font="Display;32" zPosition="2" halign="center" valign="center" transparent="1"  >
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="parent.summary_job_name" render="Label" position="0,5" size="400,80" font="Display;42" />
+		<widget source="parent.summary_job_task" render="Label" position="0,95" size="400,80" font="Display;42" transparent="1"/>
+		<widget source="parent.summary_job_progress" render="Progress" position="center,193" size="380,15" borderWidth="1" zPosition="1" transparent="1" pixmap="skin_default/progress.png"/>
+		<widget source="parent.summary_job_progress" render="Label" position="center,180" size="400,40" font="Display;32" zPosition="2" halign="center" valign="center" transparent="1">
 			<convert type="ProgressToText" />
 		</widget>
 	</screen>
 	<!-- Color LCD screen (Wizard) -->
 	<screen name="WizardSummary" position="0,0" size="400,240" id="3">
-		<widget source="text" render="Label" position="0,0" size="400,50" font="Display;42"  halign="center" valign="top"/>
-		<widget source="parent.list" render="Label" position="0,55" size="400,75" font="Display;42" valign="center" halign="center">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="text" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.list" render="Label" position="0,55" size="400,84" font="Display;42" valign="center" halign="center" transparent="1">
 			<convert type="StringListSelection" />
 		</widget>
-		<widget source="parent.configEntry" render="Label" position="0,130" size="400,50" valign="center" halign="left" font="Display;42" transparent="1"/>
-		<widget source="parent.configValue" render="Label" position="0,190" size="400,50" valign="center" halign="right" font="Display;42"  transparent="1"/>
+		<widget source="parent.configEntry" render="Label" position="0,142" size="400,42" valign="center" halign="left" font="Display;42" transparent="1"/>
+		<widget source="parent.configValue" render="Label" position="0,184" size="400,42" valign="center" halign="right" font="Display;42"  transparent="1"/>
 	</screen>
 	<!-- Color LCD screen (VideoWizard) -->
-	<screen name="VideoWizardSummary" position="0,0" size="132,64" id="3">
-		<widget source="text" render="Label" position="0,0" size="400,50" font="Display;42"  halign="center" valign="top"/>
-		<widget source="parent.list" render="Label" position="0,55" size="400,75" font="Display;42" valign="center" halign="center">
+	<screen name="VideoWizardSummary" position="0,0" size="400,240" id="3">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="text" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.list" render="Label" position="0,55" size="400,84" font="Display;42" valign="center" halign="center" transparent="1">
 			<convert type="StringListSelection" />
 		</widget>
+		<widget source="parent.configEntry" render="Label" position="0,142" size="400,42" valign="center" halign="left" font="Display;42" transparent="1"/>
+		<widget source="parent.configValue" render="Label" position="0,184" size="400,42" valign="center" halign="right" font="Display;42"  transparent="1"/>
 	</screen>
 	<!-- Color LCD screen (Channelselection Radio) -->
 	<screen name="ChannelSelectionRadio_summary" position="0,0" size="400,240" id="3">
-		<widget source="session.CurrentService" render="Label" position="center,0" size="400,46" font="Display;42" halign="center" valign="center">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="session.CurrentService" render="Label" position="center,5" size="400,48" font="Display;48" halign="center" valign="center" transparent="1">
 			<convert type="ServiceName">Name</convert>
 		</widget>
-		<widget source="parent.RdsDecoder" render="Label" position="center,48" size="400,52" font="Display;22" halign="center" valign="center">
+		<widget source="parent.RdsDecoder" render="Label" position="center,55" size="400,45" font="Display;24" halign="center" valign="center" transparent="1">
 			<convert type="RdsInfo">RadioText</convert>
 		</widget>
-		<widget source="session.Event_Now" render="Progress" position="center,90" size="380,40" borderWidth="1" backgroundColor="dark">
+		<widget source="session.Event_Now" render="Progress" position="center,112" size="380,15" borderWidth="1" pixmap="skin_default/progress.png" backgroundColor="dark">
 			<convert type="EventTime">Progress</convert>
 		</widget>
-		<widget source="global.CurrentTime" render="Label" position="center,140" size="400,90" font="Display;84" halign="center" valign="center">
+		<widget source="global.CurrentTime" render="Label" position="center,146" size="400,84" font="Display;80" halign="center" valign="center" transparent="1">
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
 	<!-- Color LCD screen (SubservicesQuickzap) -->
 	<screen name="SubservicesQuickzap_summary" position="0,0" size="400,240" id="3">
-		<widget source="session.CurrentService" render="Label" position="0,0" size="400,240" font="Display;66"  halign="center" valign="center"/>
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="session.CurrentService" render="Label" position="0,0" size="400,240" font="Display;66"  halign="center" valign="center" transparent="1"/>
+	</screen>
+	<!--  Color LCD screen (MediaCenter) -->
+	<screen name="MediaCenterMenuSummary" position="0,0" size="400,240" id="3">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="Title" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.menulist" render="Label" position="0,12" size="400,220" font="Display;60" halign="center" valign="center" transparent="1">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>
+	<screen name="MediaCenterLCDScreen" position="0,0" size="400,240" id="3">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget name="text1" font="Display;48" halign="center" position="0,5" size="400,48" transparent="1"/>
+		<eLabel backgroundColor="yellow" position="0,52" size="400,2" />
+		<widget name="text2" font="Display;36" halign="center" valign="center" position="0,56" size="400,72" transparent="1"/>
+		<widget name="text3" font="Display;36" halign="center" valign="center" position="0,130" size="400,112" transparent="1"/>
 	</screen>
 </skin>

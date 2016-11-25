@@ -40,7 +40,7 @@ public:
 	eSize size() const { return eSize(x, y); }
 	unsigned long physAddr() const { return m_phys_addr; }
 	void setData(const eSize &size, unsigned int stride, void *data, unsigned long phys_addr = 0);
-	bool valid() { return m_valid; }
+	bool valid() const { return m_valid; }
 	unsigned int alignment() const;
 	bool glTexture(unsigned int *glHandle, unsigned int *glTarget) const;
 	void flushCache(const eRect &rect);

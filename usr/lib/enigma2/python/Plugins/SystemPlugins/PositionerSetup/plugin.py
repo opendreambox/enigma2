@@ -21,30 +21,34 @@ from time import sleep
 
 class PositionerSetup(Screen):
 	skin = """
-		<screen position="100,100" size="560,400" title="Positioner setup..." >
-			<widget name="list" position="100,0" size="350,155" />
+		<screen position="center,center" size="620,400" title="Positioner setup..." >
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="150,60" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="160,5" size="150,60" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="310,5" size="150,60" alphatest="on" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="460,5" size="150,60" alphatest="on" />
+			<widget name="red" position="10,5" size="150,60" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="green" position="160,5" size="150,60" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="yellow" position="320,5" size="130,60" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="blue" position="460,5" size="150,60" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel	position="10,70" size="600,1" backgroundColor="grey"/>
+			<widget name="list" position="10,80" size="600,180" enableWrapAround="1" scrollbarMode="showOnDemand" />
+			<eLabel	position="10,270" size="600,1" backgroundColor="grey"/>
+			<widget name="snr_db" position="60,280" size="180,26" halign="center" font="Regular;21" />
+			<eLabel text="SNR:" position="20,310" size="60,26" font="Regular;21" />
+			<eLabel text="BER:" position="20,335" size="60,26" font="Regular;21" />
+			<eLabel text="Lock:" position="20,360" size="60,26" font="Regular;21" />
+			<widget name="snr_percentage" position="270,310" size="60,26" font="Regular;21" />
+			<widget name="ber_value" position="270,335" size="60,26" font="Regular;21" />
+			<widget name="lock_state" position="100,360" size="150,26" font="Regular;21" />
+			<widget name="snr_bar" position="100,310" size="150,22" />
+			<widget name="ber_bar" position="100,335" size="150,22" />
 
-			<widget name="red" position="0,155" size="140,80" backgroundColor="red" halign="center" valign="center" font="Regular;21" />
-			<widget name="green" position="140,155" size="140,80" backgroundColor="green" halign="center" valign="center" font="Regular;21" />
-			<widget name="yellow" position="280,155" size="140,80" backgroundColor="yellow" halign="center" valign="center" font="Regular;21" />
-			<widget name="blue" position="420,155" size="140,80" backgroundColor="blue" halign="center" valign="center" font="Regular;21" />
-
-			<widget name="snr_db" position="60,245" size="150,22" halign="center" valign="center" font="Regular;21" />
-			<eLabel text="SNR:" position="0,270" size="60,22" font="Regular;21" />
-			<eLabel text="BER:" position="0,295" size="60,22" font="Regular;21" />
-			<eLabel text="Lock:" position="0,320" size="60,22" font="Regular;21" />
-			<widget name="snr_percentage" position="220,270" size="60,22" font="Regular;21" />
-			<widget name="ber_value" position="220,295" size="60,22" font="Regular;21" />
-			<widget name="lock_state" position="60,320" size="150,22" font="Regular;21" />
-			<widget name="snr_bar" position="60,270" size="150,22" />
-			<widget name="ber_bar" position="60,295" size="150,22" />
-
-			<eLabel text="Frequency:" position="300,245" size="120,22" font="Regular;21" />
-			<eLabel text="Symbolrate:" position="300,270" size="120,22" font="Regular;21" />
-			<eLabel text="FEC:" position="300,295" size="120,22" font="Regular;21" />
-			<widget name="frequency_value" position="420,245" size="120,22" font="Regular;21" />
-			<widget name="symbolrate_value" position="420,270" size="120,22" font="Regular;21" />
-			<widget name="fec_value" position="420,295" size="120,22" font="Regular;21" />
+			<eLabel text="Frequency:" position="360,285" size="120,26" font="Regular;21" />
+			<eLabel text="Symbolrate:" position="360,310" size="120,26" font="Regular;21" />
+			<eLabel text="FEC:" position="360,335" size="120,26" font="Regular;21" />
+			<widget name="frequency_value" position="500,285" size="120,26" font="Regular;21" />
+			<widget name="symbolrate_value" position="500,310" size="120,26" font="Regular;21" />
+			<widget name="fec_value" position="500,335" size="120,26" font="Regular;21" />
 		</screen>"""
 	def __init__(self, session, feid):
 		self.skin = PositionerSetup.skin
@@ -412,9 +416,9 @@ tuning = None
 
 class TunerScreen(ScanSetup):
 	skin = """
-		<screen position="90,100" size="520,400" title="Tune">
-			<widget name="config" position="20,10" size="460,350" scrollbarMode="showOnDemand" />
-			<widget name="introduction" position="20,360" size="350,30" font="Regular;23" />
+		<screen position="center,center" size="620,400" title="Tune">
+			<widget name="config" position="10,10" size="600,330" enableWrapAround="1" scrollbarMode="showOnDemand" />
+			<widget name="introduction" position="20,370" size="350,30" font="Regular;23" />
 		</screen>"""
 
 	def __init__(self, session, feid, fe_data):
@@ -564,8 +568,8 @@ class TunerScreen(ScanSetup):
 
 class RotorNimSelection(Screen):
 	skin = """
-		<screen position="140,165" size="400,130" title="select Slot">
-			<widget name="nimlist" position="20,10" size="360,100" />
+		<screen position="center,center" size="620,220" title="select Slot">
+			<widget name="nimlist" position="10,10" size="600,180" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 		</screen>"""
 
 	def __init__(self, session):

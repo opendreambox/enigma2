@@ -55,6 +55,7 @@ class SortableList(MenuList):
 	def buildEntry(self, obj, text, marked=False):
 		sizes = componentSizes[componentSizes.SELECTION_LIST]
 		tx = sizes.get("textX", 30)
+		ty = sizes.get("textY", 0)
 		tw = sizes.get("textWidth", 1000)
 		th = sizes.get("textHeight", 30)
 
@@ -65,7 +66,7 @@ class SortableList(MenuList):
 
 		res = [
 			(obj, text, marked),
-			(eListboxPythonMultiContent.TYPE_TEXT, tx, 0, tw, th, 0, RT_HALIGN_LEFT, text, forgroundColor, forgroundColor, backgroundColor, None)
+			(eListboxPythonMultiContent.TYPE_TEXT, tx, ty, tw, th, 0, RT_HALIGN_LEFT, text, forgroundColor, forgroundColor, backgroundColor, None)
 		]
 		return res
 

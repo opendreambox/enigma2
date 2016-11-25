@@ -14,7 +14,6 @@ def getNumVideoDecoders():
 SystemInfo["NumVideoDecoders"] = getNumVideoDecoders()
 SystemInfo["CanMeasureFrontendInputPower"] = eDVBResourceManager.getInstance().canMeasureFrontendInputPower()
 
-
 def countFrontpanelLEDs():
 	leds = 0
 	if fileExists("/proc/stb/fp/led_set_pattern"):
@@ -34,3 +33,7 @@ try:
 	SystemInfo["NetworkManager"] = True
 except:
 	SystemInfo["NetworkManager"] = False
+
+device_name = HardwareInfo().device_name
+SystemInfo["HaveTouchSensor"] = device_name in ('dm520', 'dm525', 'dm900')
+SystemInfo["DefaultDisplayBrightness"] = device_name == 'dm900' and 8 or 5

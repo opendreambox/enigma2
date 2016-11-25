@@ -30,10 +30,12 @@ class About:
 					date = '-'.join((year, month, day))
 					if image_type == '0':
 						image_type = "Release"
-						version = '.'.join((major, minor, revision))
-						return ' '.join((image_type, version, date))
 					else:
 						image_type = "Experimental"
+					version = '.'.join((major, minor, revision))
+					if version != '0.0.0':
+						return ' '.join((image_type, version, date))
+					else:
 						return ' '.join((image_type, date))
 			file.close()
 		except IOError:

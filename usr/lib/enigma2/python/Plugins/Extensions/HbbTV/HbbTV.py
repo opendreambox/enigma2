@@ -371,7 +371,6 @@ class HbbTV(object):
 
 	def _showApplicationList(self):
 		apps = eHbbtv.getInstance().getApplicationIdsAndName()
-		apps.append(("putpat.tv", "http://www.putpat.tv/device/phupaw9t"))
 		if len(apps) == 0:
 			apps.append((_("No HbbTV Application available"), None))
 		self.session.openWithCallback(self._applicationSelected, ChoiceBox, title=_("Please select an HbbTV application"), list=apps)

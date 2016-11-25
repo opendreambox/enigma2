@@ -174,6 +174,8 @@ class choicesList(object): # XXX: we might want a better name for this
 
 	def __init__(self, choices, type = None):
 		self.choices = choices
+		self.__itemDescriptionUpdatedCallbacks = []
+
 		if type is None:
 			if isinstance(choices, list):
 				self.type = choicesList.LIST_TYPE_LIST
@@ -201,6 +203,9 @@ class choicesList(object): # XXX: we might want a better name for this
 	def __len__(self):
 		return len(self.choices) or 1
 
+	def additemDescriptionUpdatedCallback(self, callback):
+		self.__itemDescriptionUpdatedCallbacks.append(callback)
+
 	def updateItemDescription(self, index, descr):
 		if self.type == choicesList.LIST_TYPE_LIST:
 			orig = self.choices[index]
@@ -209,6 +214,14 @@ class choicesList(object): # XXX: we might want a better name for this
 		else:
 			key = self.choices.keys()[index]
 			self.choices[key] = descr
+		for cb in self.__itemDescriptionUpdatedCallbacks:
+			try:
+				cb()
+			except:
+				from traceback import print_exc
+				print "WARNING: callback", cb, "in config.choicesList.__itemDescriptionUpdatedCallbacks throws exception (removing callback):"
+				print_exc()
+				self.__itemDescriptionUpdatedCallbacks.remove(cb)
 
 	def __getitem__(self, index):
 		if self.type == choicesList.LIST_TYPE_LIST:
@@ -292,15 +305,17 @@ class ConfigSelection(ConfigElement):
 	def __init__(self, choices, default = None):
 		ConfigElement.__init__(self)
 		self.choices = choicesList(choices)
+		self.choices.additemDescriptionUpdatedCallback(self._invalidateCachedDescription)
 
 		if default is None:
 			default = self.choices.default()
 
-		self._descr = None
+		self._invalidateCachedDescription()
 		self.default = self._value = default
 
 	def setChoices(self, choices, default = None):
 		self.choices = choicesList(choices)
+		self.choices.additemDescriptionUpdatedCallback(self._invalidateCachedDescription)
 
 		if default is None:
 			default = self.choices.default()
@@ -308,6 +323,11 @@ class ConfigSelection(ConfigElement):
 
 		if self.value not in self.choices:
 			self.value = default
+		self._invalidateCachedDescription()
+		self.changed()
+
+	def _invalidateCachedDescription(self):
+		self._descr = None
 
 	def getChoices(self):
 		return self.choices.choices
@@ -1650,7 +1670,10 @@ class ConfigSubsection(object):
 		for (key, val) in self.content.items.items():
 			value = values.get(key, None)
 			if value is not None:
-				val.saved_value = value
+				if append and isinstance(val, ConfigSubsection):
+					val.setSavedValue(value, append)
+				else:
+					val.saved_value = value
 
 	saved_value = property(getSavedValue, setSavedValue)
 

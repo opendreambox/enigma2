@@ -3,7 +3,7 @@ from Components.Console import Console
 from Tools.Log import Log
 
 class WatchDog(object):
-	DAEMON_TIMEOUT = 7
+	DAEMON_TIMEOUT = 45
 	DAEMON_NAME = "dreamrtspserver"
 
 	instance = None

@@ -305,6 +305,7 @@ class BufferPtr(object):
     __swig_destroy__ = _enigma.delete_BufferPtr
 BufferPtr.__ref__ = new_instancemethod(_enigma.BufferPtr___ref__,None,BufferPtr)
 BufferPtr.getPtrString = new_instancemethod(_enigma.BufferPtr_getPtrString,None,BufferPtr)
+BufferPtr.ptrValid = new_instancemethod(_enigma.BufferPtr_ptrValid,None,BufferPtr)
 BufferPtr.__deref__ = new_instancemethod(_enigma.BufferPtr___deref__,None,BufferPtr)
 BufferPtr.data = new_instancemethod(_enigma.BufferPtr_data,None,BufferPtr)
 BufferPtr.size = new_instancemethod(_enigma.BufferPtr_size,None,BufferPtr)
@@ -322,6 +323,7 @@ class eServiceEvent(object):
     setEPGLanguage = staticmethod(_enigma.eServiceEvent_setEPGLanguage)
 eServiceEvent.__ref__ = new_instancemethod(_enigma.eServiceEvent___ref__,None,eServiceEvent)
 eServiceEvent.getPtrString = new_instancemethod(_enigma.eServiceEvent_getPtrString,None,eServiceEvent)
+eServiceEvent.ptrValid = new_instancemethod(_enigma.eServiceEvent_ptrValid,None,eServiceEvent)
 eServiceEvent.__deref__ = new_instancemethod(_enigma.eServiceEvent___deref__,None,eServiceEvent)
 eServiceEvent.getBeginTime = new_instancemethod(_enigma.eServiceEvent_getBeginTime,None,eServiceEvent)
 eServiceEvent.getDuration = new_instancemethod(_enigma.eServiceEvent_getDuration,None,eServiceEvent)
@@ -348,9 +350,12 @@ class eServiceReference(object):
     idStructure = _enigma.eServiceReference_idStructure
     idDVB = _enigma.eServiceReference_idDVB
     idFile = _enigma.eServiceReference_idFile
+    idM2TS = _enigma.eServiceReference_idM2TS
+    idDB = _enigma.eServiceReference_idDB
     idUser = _enigma.eServiceReference_idUser
     idGST = _enigma.eServiceReference_idGST
     idDVD = _enigma.eServiceReference_idDVD
+    idURI = _enigma.eServiceReference_idURI
     type = _swig_property(_enigma.eServiceReference_type_get, _enigma.eServiceReference_type_set)
     isDirectory = _enigma.eServiceReference_isDirectory
     mustDescent = _enigma.eServiceReference_mustDescent
@@ -404,6 +409,7 @@ class iStaticServiceInformationPtr(object):
     __swig_destroy__ = _enigma.delete_iStaticServiceInformationPtr
 iStaticServiceInformationPtr.__ref__ = new_instancemethod(_enigma.iStaticServiceInformationPtr___ref__,None,iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getPtrString = new_instancemethod(_enigma.iStaticServiceInformationPtr_getPtrString,None,iStaticServiceInformationPtr)
+iStaticServiceInformationPtr.ptrValid = new_instancemethod(_enigma.iStaticServiceInformationPtr_ptrValid,None,iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.__deref__ = new_instancemethod(_enigma.iStaticServiceInformationPtr___deref__,None,iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getName = new_instancemethod(_enigma.iStaticServiceInformationPtr_getName,None,iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getLength = new_instancemethod(_enigma.iStaticServiceInformationPtr_getLength,None,iStaticServiceInformationPtr)
@@ -523,6 +529,7 @@ class iServiceInformationPtr(object):
     __swig_destroy__ = _enigma.delete_iServiceInformationPtr
 iServiceInformationPtr.__ref__ = new_instancemethod(_enigma.iServiceInformationPtr___ref__,None,iServiceInformationPtr)
 iServiceInformationPtr.getPtrString = new_instancemethod(_enigma.iServiceInformationPtr_getPtrString,None,iServiceInformationPtr)
+iServiceInformationPtr.ptrValid = new_instancemethod(_enigma.iServiceInformationPtr_ptrValid,None,iServiceInformationPtr)
 iServiceInformationPtr.__deref__ = new_instancemethod(_enigma.iServiceInformationPtr___deref__,None,iServiceInformationPtr)
 iServiceInformationPtr.getName = new_instancemethod(_enigma.iServiceInformationPtr_getName,None,iServiceInformationPtr)
 iServiceInformationPtr.getEvent = new_instancemethod(_enigma.iServiceInformationPtr_getEvent,None,iServiceInformationPtr)
@@ -557,6 +564,7 @@ class iFrontendInformationPtr(object):
     __swig_destroy__ = _enigma.delete_iFrontendInformationPtr
 iFrontendInformationPtr.__ref__ = new_instancemethod(_enigma.iFrontendInformationPtr___ref__,None,iFrontendInformationPtr)
 iFrontendInformationPtr.getPtrString = new_instancemethod(_enigma.iFrontendInformationPtr_getPtrString,None,iFrontendInformationPtr)
+iFrontendInformationPtr.ptrValid = new_instancemethod(_enigma.iFrontendInformationPtr_ptrValid,None,iFrontendInformationPtr)
 iFrontendInformationPtr.__deref__ = new_instancemethod(_enigma.iFrontendInformationPtr___deref__,None,iFrontendInformationPtr)
 iFrontendInformationPtr.getFrontendInfo = new_instancemethod(_enigma.iFrontendInformationPtr_getFrontendInfo,None,iFrontendInformationPtr)
 iFrontendInformationPtr.getFrontendData = new_instancemethod(_enigma.iFrontendInformationPtr_getFrontendData,None,iFrontendInformationPtr)
@@ -574,6 +582,7 @@ class iPauseableServicePtr(object):
     __swig_destroy__ = _enigma.delete_iPauseableServicePtr
 iPauseableServicePtr.__ref__ = new_instancemethod(_enigma.iPauseableServicePtr___ref__,None,iPauseableServicePtr)
 iPauseableServicePtr.getPtrString = new_instancemethod(_enigma.iPauseableServicePtr_getPtrString,None,iPauseableServicePtr)
+iPauseableServicePtr.ptrValid = new_instancemethod(_enigma.iPauseableServicePtr_ptrValid,None,iPauseableServicePtr)
 iPauseableServicePtr.__deref__ = new_instancemethod(_enigma.iPauseableServicePtr___deref__,None,iPauseableServicePtr)
 iPauseableServicePtr.pause = new_instancemethod(_enigma.iPauseableServicePtr_pause,None,iPauseableServicePtr)
 iPauseableServicePtr.unpause = new_instancemethod(_enigma.iPauseableServicePtr_unpause,None,iPauseableServicePtr)
@@ -600,6 +609,7 @@ class iSeekableServicePtr(object):
     __swig_destroy__ = _enigma.delete_iSeekableServicePtr
 iSeekableServicePtr.__ref__ = new_instancemethod(_enigma.iSeekableServicePtr___ref__,None,iSeekableServicePtr)
 iSeekableServicePtr.getPtrString = new_instancemethod(_enigma.iSeekableServicePtr_getPtrString,None,iSeekableServicePtr)
+iSeekableServicePtr.ptrValid = new_instancemethod(_enigma.iSeekableServicePtr_ptrValid,None,iSeekableServicePtr)
 iSeekableServicePtr.__deref__ = new_instancemethod(_enigma.iSeekableServicePtr___deref__,None,iSeekableServicePtr)
 iSeekableServicePtr.getLength = new_instancemethod(_enigma.iSeekableServicePtr_getLength,None,iSeekableServicePtr)
 iSeekableServicePtr.seekTo = new_instancemethod(_enigma.iSeekableServicePtr_seekTo,None,iSeekableServicePtr)
@@ -658,6 +668,7 @@ class iAudioTrackSelectionPtr(object):
     __swig_destroy__ = _enigma.delete_iAudioTrackSelectionPtr
 iAudioTrackSelectionPtr.__ref__ = new_instancemethod(_enigma.iAudioTrackSelectionPtr___ref__,None,iAudioTrackSelectionPtr)
 iAudioTrackSelectionPtr.getPtrString = new_instancemethod(_enigma.iAudioTrackSelectionPtr_getPtrString,None,iAudioTrackSelectionPtr)
+iAudioTrackSelectionPtr.ptrValid = new_instancemethod(_enigma.iAudioTrackSelectionPtr_ptrValid,None,iAudioTrackSelectionPtr)
 iAudioTrackSelectionPtr.__deref__ = new_instancemethod(_enigma.iAudioTrackSelectionPtr___deref__,None,iAudioTrackSelectionPtr)
 iAudioTrackSelectionPtr.getNumberOfTracks = new_instancemethod(_enigma.iAudioTrackSelectionPtr_getNumberOfTracks,None,iAudioTrackSelectionPtr)
 iAudioTrackSelectionPtr.selectTrack = new_instancemethod(_enigma.iAudioTrackSelectionPtr_selectTrack,None,iAudioTrackSelectionPtr)
@@ -685,6 +696,7 @@ class iAudioChannelSelectionPtr(object):
     __swig_destroy__ = _enigma.delete_iAudioChannelSelectionPtr
 iAudioChannelSelectionPtr.__ref__ = new_instancemethod(_enigma.iAudioChannelSelectionPtr___ref__,None,iAudioChannelSelectionPtr)
 iAudioChannelSelectionPtr.getPtrString = new_instancemethod(_enigma.iAudioChannelSelectionPtr_getPtrString,None,iAudioChannelSelectionPtr)
+iAudioChannelSelectionPtr.ptrValid = new_instancemethod(_enigma.iAudioChannelSelectionPtr_ptrValid,None,iAudioChannelSelectionPtr)
 iAudioChannelSelectionPtr.__deref__ = new_instancemethod(_enigma.iAudioChannelSelectionPtr___deref__,None,iAudioChannelSelectionPtr)
 iAudioChannelSelectionPtr.getCurrentChannel = new_instancemethod(_enigma.iAudioChannelSelectionPtr_getCurrentChannel,None,iAudioChannelSelectionPtr)
 iAudioChannelSelectionPtr.selectChannel = new_instancemethod(_enigma.iAudioChannelSelectionPtr_selectChannel,None,iAudioChannelSelectionPtr)
@@ -699,6 +711,7 @@ class iAudioDelayPtr(object):
     __swig_destroy__ = _enigma.delete_iAudioDelayPtr
 iAudioDelayPtr.__ref__ = new_instancemethod(_enigma.iAudioDelayPtr___ref__,None,iAudioDelayPtr)
 iAudioDelayPtr.getPtrString = new_instancemethod(_enigma.iAudioDelayPtr_getPtrString,None,iAudioDelayPtr)
+iAudioDelayPtr.ptrValid = new_instancemethod(_enigma.iAudioDelayPtr_ptrValid,None,iAudioDelayPtr)
 iAudioDelayPtr.__deref__ = new_instancemethod(_enigma.iAudioDelayPtr___deref__,None,iAudioDelayPtr)
 iAudioDelayPtr.getAC3Delay = new_instancemethod(_enigma.iAudioDelayPtr_getAC3Delay,None,iAudioDelayPtr)
 iAudioDelayPtr.getPCMDelay = new_instancemethod(_enigma.iAudioDelayPtr_getPCMDelay,None,iAudioDelayPtr)
@@ -725,6 +738,7 @@ class iRdsDecoderPtr(object):
     __swig_destroy__ = _enigma.delete_iRdsDecoderPtr
 iRdsDecoderPtr.__ref__ = new_instancemethod(_enigma.iRdsDecoderPtr___ref__,None,iRdsDecoderPtr)
 iRdsDecoderPtr.getPtrString = new_instancemethod(_enigma.iRdsDecoderPtr_getPtrString,None,iRdsDecoderPtr)
+iRdsDecoderPtr.ptrValid = new_instancemethod(_enigma.iRdsDecoderPtr_ptrValid,None,iRdsDecoderPtr)
 iRdsDecoderPtr.__deref__ = new_instancemethod(_enigma.iRdsDecoderPtr___deref__,None,iRdsDecoderPtr)
 iRdsDecoderPtr.getText = new_instancemethod(_enigma.iRdsDecoderPtr_getText,None,iRdsDecoderPtr)
 iRdsDecoderPtr.showRassSlidePicture = new_instancemethod(_enigma.iRdsDecoderPtr_showRassSlidePicture,None,iRdsDecoderPtr)
@@ -741,6 +755,7 @@ class iSubserviceListPtr(object):
     __swig_destroy__ = _enigma.delete_iSubserviceListPtr
 iSubserviceListPtr.__ref__ = new_instancemethod(_enigma.iSubserviceListPtr___ref__,None,iSubserviceListPtr)
 iSubserviceListPtr.getPtrString = new_instancemethod(_enigma.iSubserviceListPtr_getPtrString,None,iSubserviceListPtr)
+iSubserviceListPtr.ptrValid = new_instancemethod(_enigma.iSubserviceListPtr_ptrValid,None,iSubserviceListPtr)
 iSubserviceListPtr.__deref__ = new_instancemethod(_enigma.iSubserviceListPtr___deref__,None,iSubserviceListPtr)
 iSubserviceListPtr.getNumberOfSubservices = new_instancemethod(_enigma.iSubserviceListPtr_getNumberOfSubservices,None,iSubserviceListPtr)
 iSubserviceListPtr.getSubservice = new_instancemethod(_enigma.iSubserviceListPtr_getSubservice,None,iSubserviceListPtr)
@@ -755,6 +770,7 @@ class iTimeshiftServicePtr(object):
     __swig_destroy__ = _enigma.delete_iTimeshiftServicePtr
 iTimeshiftServicePtr.__ref__ = new_instancemethod(_enigma.iTimeshiftServicePtr___ref__,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.getPtrString = new_instancemethod(_enigma.iTimeshiftServicePtr_getPtrString,None,iTimeshiftServicePtr)
+iTimeshiftServicePtr.ptrValid = new_instancemethod(_enigma.iTimeshiftServicePtr_ptrValid,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.__deref__ = new_instancemethod(_enigma.iTimeshiftServicePtr___deref__,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.startTimeshift = new_instancemethod(_enigma.iTimeshiftServicePtr_startTimeshift,None,iTimeshiftServicePtr)
 iTimeshiftServicePtr.stopTimeshift = new_instancemethod(_enigma.iTimeshiftServicePtr_stopTimeshift,None,iTimeshiftServicePtr)
@@ -784,6 +800,7 @@ class iCueSheetPtr(object):
     __swig_destroy__ = _enigma.delete_iCueSheetPtr
 iCueSheetPtr.__ref__ = new_instancemethod(_enigma.iCueSheetPtr___ref__,None,iCueSheetPtr)
 iCueSheetPtr.getPtrString = new_instancemethod(_enigma.iCueSheetPtr_getPtrString,None,iCueSheetPtr)
+iCueSheetPtr.ptrValid = new_instancemethod(_enigma.iCueSheetPtr_ptrValid,None,iCueSheetPtr)
 iCueSheetPtr.__deref__ = new_instancemethod(_enigma.iCueSheetPtr___deref__,None,iCueSheetPtr)
 iCueSheetPtr.getCutList = new_instancemethod(_enigma.iCueSheetPtr_getCutList,None,iCueSheetPtr)
 iCueSheetPtr.setCutList = new_instancemethod(_enigma.iCueSheetPtr_setCutList,None,iCueSheetPtr)
@@ -858,6 +875,7 @@ class iSubtitleTrackSelectionPtr(object):
     __swig_destroy__ = _enigma.delete_iSubtitleTrackSelectionPtr
 iSubtitleTrackSelectionPtr.__ref__ = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr___ref__,None,iSubtitleTrackSelectionPtr)
 iSubtitleTrackSelectionPtr.getPtrString = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getPtrString,None,iSubtitleTrackSelectionPtr)
+iSubtitleTrackSelectionPtr.ptrValid = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_ptrValid,None,iSubtitleTrackSelectionPtr)
 iSubtitleTrackSelectionPtr.__deref__ = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr___deref__,None,iSubtitleTrackSelectionPtr)
 iSubtitleTrackSelectionPtr.getNumberOfSubtitleTracks = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getNumberOfSubtitleTracks,None,iSubtitleTrackSelectionPtr)
 iSubtitleTrackSelectionPtr.getSubtitleTrackInfo = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getSubtitleTrackInfo,None,iSubtitleTrackSelectionPtr)
@@ -875,6 +893,7 @@ class iMutableServiceListPtr(object):
     __swig_destroy__ = _enigma.delete_iMutableServiceListPtr
 iMutableServiceListPtr.__ref__ = new_instancemethod(_enigma.iMutableServiceListPtr___ref__,None,iMutableServiceListPtr)
 iMutableServiceListPtr.getPtrString = new_instancemethod(_enigma.iMutableServiceListPtr_getPtrString,None,iMutableServiceListPtr)
+iMutableServiceListPtr.ptrValid = new_instancemethod(_enigma.iMutableServiceListPtr_ptrValid,None,iMutableServiceListPtr)
 iMutableServiceListPtr.__deref__ = new_instancemethod(_enigma.iMutableServiceListPtr___deref__,None,iMutableServiceListPtr)
 iMutableServiceListPtr.flushChanges = new_instancemethod(_enigma.iMutableServiceListPtr_flushChanges,None,iMutableServiceListPtr)
 iMutableServiceListPtr.addService = new_instancemethod(_enigma.iMutableServiceListPtr_addService,None,iMutableServiceListPtr)
@@ -892,6 +911,7 @@ class iListableServicePtr(object):
     __swig_destroy__ = _enigma.delete_iListableServicePtr
 iListableServicePtr.__ref__ = new_instancemethod(_enigma.iListableServicePtr___ref__,None,iListableServicePtr)
 iListableServicePtr.getPtrString = new_instancemethod(_enigma.iListableServicePtr_getPtrString,None,iListableServicePtr)
+iListableServicePtr.ptrValid = new_instancemethod(_enigma.iListableServicePtr_ptrValid,None,iListableServicePtr)
 iListableServicePtr.__deref__ = new_instancemethod(_enigma.iListableServicePtr___deref__,None,iListableServicePtr)
 iListableServicePtr.getContent = new_instancemethod(_enigma.iListableServicePtr_getContent,None,iListableServicePtr)
 iListableServicePtr.getNext = new_instancemethod(_enigma.iListableServicePtr_getNext,None,iListableServicePtr)
@@ -908,6 +928,7 @@ class iServiceOfflineOperationsPtr(object):
     __swig_destroy__ = _enigma.delete_iServiceOfflineOperationsPtr
 iServiceOfflineOperationsPtr.__ref__ = new_instancemethod(_enigma.iServiceOfflineOperationsPtr___ref__,None,iServiceOfflineOperationsPtr)
 iServiceOfflineOperationsPtr.getPtrString = new_instancemethod(_enigma.iServiceOfflineOperationsPtr_getPtrString,None,iServiceOfflineOperationsPtr)
+iServiceOfflineOperationsPtr.ptrValid = new_instancemethod(_enigma.iServiceOfflineOperationsPtr_ptrValid,None,iServiceOfflineOperationsPtr)
 iServiceOfflineOperationsPtr.__deref__ = new_instancemethod(_enigma.iServiceOfflineOperationsPtr___deref__,None,iServiceOfflineOperationsPtr)
 iServiceOfflineOperationsPtr.deleteFromDisk = new_instancemethod(_enigma.iServiceOfflineOperationsPtr_deleteFromDisk,None,iServiceOfflineOperationsPtr)
 iServiceOfflineOperationsPtr.getListOfFilenames = new_instancemethod(_enigma.iServiceOfflineOperationsPtr_getListOfFilenames,None,iServiceOfflineOperationsPtr)
@@ -923,6 +944,7 @@ class iStreamableServicePtr(object):
     __swig_destroy__ = _enigma.delete_iStreamableServicePtr
 iStreamableServicePtr.__ref__ = new_instancemethod(_enigma.iStreamableServicePtr___ref__,None,iStreamableServicePtr)
 iStreamableServicePtr.getPtrString = new_instancemethod(_enigma.iStreamableServicePtr_getPtrString,None,iStreamableServicePtr)
+iStreamableServicePtr.ptrValid = new_instancemethod(_enigma.iStreamableServicePtr_ptrValid,None,iStreamableServicePtr)
 iStreamableServicePtr.__deref__ = new_instancemethod(_enigma.iStreamableServicePtr___deref__,None,iStreamableServicePtr)
 iStreamableServicePtr.getStreamingData = new_instancemethod(_enigma.iStreamableServicePtr_getStreamingData,None,iStreamableServicePtr)
 iStreamableServicePtr_swigregister = _enigma.iStreamableServicePtr_swigregister
@@ -936,12 +958,28 @@ class iStreamedServicePtr(object):
     __swig_destroy__ = _enigma.delete_iStreamedServicePtr
 iStreamedServicePtr.__ref__ = new_instancemethod(_enigma.iStreamedServicePtr___ref__,None,iStreamedServicePtr)
 iStreamedServicePtr.getPtrString = new_instancemethod(_enigma.iStreamedServicePtr_getPtrString,None,iStreamedServicePtr)
+iStreamedServicePtr.ptrValid = new_instancemethod(_enigma.iStreamedServicePtr_ptrValid,None,iStreamedServicePtr)
 iStreamedServicePtr.__deref__ = new_instancemethod(_enigma.iStreamedServicePtr___deref__,None,iStreamedServicePtr)
 iStreamedServicePtr.getBufferCharge = new_instancemethod(_enigma.iStreamedServicePtr_getBufferCharge,None,iStreamedServicePtr)
 iStreamedServicePtr.setBufferSize = new_instancemethod(_enigma.iStreamedServicePtr_setBufferSize,None,iStreamedServicePtr)
 iStreamedServicePtr.setTransportHeaders = new_instancemethod(_enigma.iStreamedServicePtr_setTransportHeaders,None,iStreamedServicePtr)
 iStreamedServicePtr_swigregister = _enigma.iStreamedServicePtr_swigregister
 iStreamedServicePtr_swigregister(iStreamedServicePtr)
+
+class iUriServicePtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        _enigma.iUriServicePtr_swiginit(self,_enigma.new_iUriServicePtr(*args))
+    __swig_destroy__ = _enigma.delete_iUriServicePtr
+iUriServicePtr.__ref__ = new_instancemethod(_enigma.iUriServicePtr___ref__,None,iUriServicePtr)
+iUriServicePtr.getPtrString = new_instancemethod(_enigma.iUriServicePtr_getPtrString,None,iUriServicePtr)
+iUriServicePtr.ptrValid = new_instancemethod(_enigma.iUriServicePtr_ptrValid,None,iUriServicePtr)
+iUriServicePtr.__deref__ = new_instancemethod(_enigma.iUriServicePtr___deref__,None,iUriServicePtr)
+iUriServicePtr.setResolvedUri = new_instancemethod(_enigma.iUriServicePtr_setResolvedUri,None,iUriServicePtr)
+iUriServicePtr.failedToResolveUri = new_instancemethod(_enigma.iUriServicePtr_failedToResolveUri,None,iUriServicePtr)
+iUriServicePtr_swigregister = _enigma.iUriServicePtr_swigregister
+iUriServicePtr_swigregister(iUriServicePtr)
 
 class iServiceKeys_ENUMS(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -965,6 +1003,7 @@ class iServiceKeysPtr(object):
     __swig_destroy__ = _enigma.delete_iServiceKeysPtr
 iServiceKeysPtr.__ref__ = new_instancemethod(_enigma.iServiceKeysPtr___ref__,None,iServiceKeysPtr)
 iServiceKeysPtr.getPtrString = new_instancemethod(_enigma.iServiceKeysPtr_getPtrString,None,iServiceKeysPtr)
+iServiceKeysPtr.ptrValid = new_instancemethod(_enigma.iServiceKeysPtr_ptrValid,None,iServiceKeysPtr)
 iServiceKeysPtr.__deref__ = new_instancemethod(_enigma.iServiceKeysPtr___deref__,None,iServiceKeysPtr)
 iServiceKeysPtr.keyPressed = new_instancemethod(_enigma.iServiceKeysPtr_keyPressed,None,iServiceKeysPtr)
 iServiceKeysPtr_swigregister = _enigma.iServiceKeysPtr_swigregister
@@ -978,6 +1017,7 @@ class iHbbtvPtr(object):
     __swig_destroy__ = _enigma.delete_iHbbtvPtr
 iHbbtvPtr.__ref__ = new_instancemethod(_enigma.iHbbtvPtr___ref__,None,iHbbtvPtr)
 iHbbtvPtr.getPtrString = new_instancemethod(_enigma.iHbbtvPtr_getPtrString,None,iHbbtvPtr)
+iHbbtvPtr.ptrValid = new_instancemethod(_enigma.iHbbtvPtr_ptrValid,None,iHbbtvPtr)
 iHbbtvPtr.__deref__ = new_instancemethod(_enigma.iHbbtvPtr___deref__,None,iHbbtvPtr)
 iHbbtvPtr_swigregister = _enigma.iHbbtvPtr_swigregister
 iHbbtvPtr_swigregister(iHbbtvPtr)
@@ -1020,6 +1060,7 @@ class iPlayableServicePtr(object):
     __swig_destroy__ = _enigma.delete_iPlayableServicePtr
 iPlayableServicePtr.__ref__ = new_instancemethod(_enigma.iPlayableServicePtr___ref__,None,iPlayableServicePtr)
 iPlayableServicePtr.getPtrString = new_instancemethod(_enigma.iPlayableServicePtr_getPtrString,None,iPlayableServicePtr)
+iPlayableServicePtr.ptrValid = new_instancemethod(_enigma.iPlayableServicePtr_ptrValid,None,iPlayableServicePtr)
 iPlayableServicePtr.__deref__ = new_instancemethod(_enigma.iPlayableServicePtr___deref__,None,iPlayableServicePtr)
 iPlayableServicePtr.start = new_instancemethod(_enigma.iPlayableServicePtr_start,None,iPlayableServicePtr)
 iPlayableServicePtr.stop = new_instancemethod(_enigma.iPlayableServicePtr_stop,None,iPlayableServicePtr)
@@ -1078,6 +1119,7 @@ class iRecordableServicePtr(object):
     __swig_destroy__ = _enigma.delete_iRecordableServicePtr
 iRecordableServicePtr.__ref__ = new_instancemethod(_enigma.iRecordableServicePtr___ref__,None,iRecordableServicePtr)
 iRecordableServicePtr.getPtrString = new_instancemethod(_enigma.iRecordableServicePtr_getPtrString,None,iRecordableServicePtr)
+iRecordableServicePtr.ptrValid = new_instancemethod(_enigma.iRecordableServicePtr_ptrValid,None,iRecordableServicePtr)
 iRecordableServicePtr.__deref__ = new_instancemethod(_enigma.iRecordableServicePtr___deref__,None,iRecordableServicePtr)
 iRecordableServicePtr.getError = new_instancemethod(_enigma.iRecordableServicePtr_getError,None,iRecordableServicePtr)
 iRecordableServicePtr.prepare = new_instancemethod(_enigma.iRecordableServicePtr_prepare,None,iRecordableServicePtr)
@@ -1103,6 +1145,7 @@ class iServiceHandlerPtr(object):
     __swig_destroy__ = _enigma.delete_iServiceHandlerPtr
 iServiceHandlerPtr.__ref__ = new_instancemethod(_enigma.iServiceHandlerPtr___ref__,None,iServiceHandlerPtr)
 iServiceHandlerPtr.getPtrString = new_instancemethod(_enigma.iServiceHandlerPtr_getPtrString,None,iServiceHandlerPtr)
+iServiceHandlerPtr.ptrValid = new_instancemethod(_enigma.iServiceHandlerPtr_ptrValid,None,iServiceHandlerPtr)
 iServiceHandlerPtr.__deref__ = new_instancemethod(_enigma.iServiceHandlerPtr___deref__,None,iServiceHandlerPtr)
 iServiceHandlerPtr.play = new_instancemethod(_enigma.iServiceHandlerPtr_play,None,iServiceHandlerPtr)
 iServiceHandlerPtr.record = new_instancemethod(_enigma.iServiceHandlerPtr_record,None,iServiceHandlerPtr)
@@ -1171,6 +1214,61 @@ eServiceMP3_ENUMS_swigregister = _enigma.eServiceMP3_ENUMS_swigregister
 eServiceMP3_ENUMS_swigregister(eServiceMP3_ENUMS)
 
 eServiceMP3 = eServiceMP3_ENUMS
+class eUriResolver(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        """__init__(eUriResolver self, StringList schemas) -> eUriResolver"""
+        if self.__class__ == eUriResolver:
+            _self = None
+        else:
+            _self = self
+        _enigma.eUriResolver_swiginit(self,_enigma.new_eUriResolver(_self, *args))
+    __swig_destroy__ = _enigma.delete_eUriResolver
+    def resolve(self, *args):
+        """resolve(eUriResolver self, iUriServicePtr service, std::string const & uri) -> bool"""
+        return _enigma.eUriResolver_resolve(self, *args)
+
+    def schemas(self):
+        """schemas(eUriResolver self) -> StringList"""
+        return _enigma.eUriResolver_schemas(self)
+
+    def addResolver(*args):
+        """addResolver(eUriResolver resolver)"""
+        return _enigma.eUriResolver_addResolver(*args)
+
+    addResolver = staticmethod(addResolver)
+    def removeResolver(*args):
+        """removeResolver(eUriResolver resolver) -> bool"""
+        return _enigma.eUriResolver_removeResolver(*args)
+
+    removeResolver = staticmethod(removeResolver)
+    def tryResolveUri(*args):
+        """tryResolveUri(iUriServicePtr service, std::string const & uri) -> bool"""
+        return _enigma.eUriResolver_tryResolveUri(*args)
+
+    tryResolveUri = staticmethod(tryResolveUri)
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eUriResolver(self)
+        return weakref_proxy(self)
+eUriResolver.resolve = new_instancemethod(_enigma.eUriResolver_resolve,None,eUriResolver)
+eUriResolver.schemas = new_instancemethod(_enigma.eUriResolver_schemas,None,eUriResolver)
+eUriResolver_swigregister = _enigma.eUriResolver_swigregister
+eUriResolver_swigregister(eUriResolver)
+
+def eUriResolver_addResolver(*args):
+  """eUriResolver_addResolver(eUriResolver resolver)"""
+  return _enigma.eUriResolver_addResolver(*args)
+
+def eUriResolver_removeResolver(*args):
+  """eUriResolver_removeResolver(eUriResolver resolver) -> bool"""
+  return _enigma.eUriResolver_removeResolver(*args)
+
+def eUriResolver_tryResolveUri(*args):
+  """eUriResolver_tryResolveUri(iUriServicePtr service, std::string const & uri) -> bool"""
+  return _enigma.eUriResolver_tryResolveUri(*args)
+
 class ePythonMessagePump(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -1278,6 +1376,7 @@ class gPixmapPtr(object):
     __swig_destroy__ = _enigma.delete_gPixmapPtr
 gPixmapPtr.__ref__ = new_instancemethod(_enigma.gPixmapPtr___ref__,None,gPixmapPtr)
 gPixmapPtr.getPtrString = new_instancemethod(_enigma.gPixmapPtr_getPtrString,None,gPixmapPtr)
+gPixmapPtr.ptrValid = new_instancemethod(_enigma.gPixmapPtr_ptrValid,None,gPixmapPtr)
 gPixmapPtr.__deref__ = new_instancemethod(_enigma.gPixmapPtr___deref__,None,gPixmapPtr)
 gPixmapPtr.size = new_instancemethod(_enigma.gPixmapPtr_size,None,gPixmapPtr)
 gPixmapPtr.color = new_instancemethod(_enigma.gPixmapPtr_color,None,gPixmapPtr)
@@ -1301,6 +1400,7 @@ class gMainDC(object):
     getInstance = staticmethod(_enigma.gMainDC_getInstance)
 gMainDC.__ref__ = new_instancemethod(_enigma.gMainDC___ref__,None,gMainDC)
 gMainDC.getPtrString = new_instancemethod(_enigma.gMainDC_getPtrString,None,gMainDC)
+gMainDC.ptrValid = new_instancemethod(_enigma.gMainDC_ptrValid,None,gMainDC)
 gMainDC.__deref__ = new_instancemethod(_enigma.gMainDC___deref__,None,gMainDC)
 gMainDC.setResolution = new_instancemethod(_enigma.gMainDC_setResolution,None,gMainDC)
 gMainDC_swigregister = _enigma.gMainDC_swigregister
@@ -1596,6 +1696,7 @@ class iProgressInterpolator(object):
 
 iProgressInterpolator.__ref__ = new_instancemethod(_enigma.iProgressInterpolator___ref__,None,iProgressInterpolator)
 iProgressInterpolator.getPtrString = new_instancemethod(_enigma.iProgressInterpolator_getPtrString,None,iProgressInterpolator)
+iProgressInterpolator.ptrValid = new_instancemethod(_enigma.iProgressInterpolator_ptrValid,None,iProgressInterpolator)
 iProgressInterpolator.__deref__ = new_instancemethod(_enigma.iProgressInterpolator___deref__,None,iProgressInterpolator)
 iProgressInterpolator.at = new_instancemethod(_enigma.iProgressInterpolator_at,None,iProgressInterpolator)
 iProgressInterpolator_swigregister = _enigma.iProgressInterpolator_swigregister
@@ -1614,6 +1715,7 @@ class eLinearInterpolator(object):
 
 eLinearInterpolator.__ref__ = new_instancemethod(_enigma.eLinearInterpolator___ref__,None,eLinearInterpolator)
 eLinearInterpolator.getPtrString = new_instancemethod(_enigma.eLinearInterpolator_getPtrString,None,eLinearInterpolator)
+eLinearInterpolator.ptrValid = new_instancemethod(_enigma.eLinearInterpolator_ptrValid,None,eLinearInterpolator)
 eLinearInterpolator.__deref__ = new_instancemethod(_enigma.eLinearInterpolator___deref__,None,eLinearInterpolator)
 eLinearInterpolator.at = new_instancemethod(_enigma.eLinearInterpolator_at,None,eLinearInterpolator)
 eLinearInterpolator_swigregister = _enigma.eLinearInterpolator_swigregister
@@ -1636,6 +1738,7 @@ class eAcclerateInterpolator(object):
 
 eAcclerateInterpolator.__ref__ = new_instancemethod(_enigma.eAcclerateInterpolator___ref__,None,eAcclerateInterpolator)
 eAcclerateInterpolator.getPtrString = new_instancemethod(_enigma.eAcclerateInterpolator_getPtrString,None,eAcclerateInterpolator)
+eAcclerateInterpolator.ptrValid = new_instancemethod(_enigma.eAcclerateInterpolator_ptrValid,None,eAcclerateInterpolator)
 eAcclerateInterpolator.__deref__ = new_instancemethod(_enigma.eAcclerateInterpolator___deref__,None,eAcclerateInterpolator)
 eAcclerateInterpolator.at = new_instancemethod(_enigma.eAcclerateInterpolator_at,None,eAcclerateInterpolator)
 eAcclerateInterpolator_swigregister = _enigma.eAcclerateInterpolator_swigregister
@@ -1658,6 +1761,7 @@ class eDecelerateInterpolator(object):
 
 eDecelerateInterpolator.__ref__ = new_instancemethod(_enigma.eDecelerateInterpolator___ref__,None,eDecelerateInterpolator)
 eDecelerateInterpolator.getPtrString = new_instancemethod(_enigma.eDecelerateInterpolator_getPtrString,None,eDecelerateInterpolator)
+eDecelerateInterpolator.ptrValid = new_instancemethod(_enigma.eDecelerateInterpolator_ptrValid,None,eDecelerateInterpolator)
 eDecelerateInterpolator.__deref__ = new_instancemethod(_enigma.eDecelerateInterpolator___deref__,None,eDecelerateInterpolator)
 eDecelerateInterpolator.at = new_instancemethod(_enigma.eDecelerateInterpolator_at,None,eDecelerateInterpolator)
 eDecelerateInterpolator_swigregister = _enigma.eDecelerateInterpolator_swigregister
@@ -1680,6 +1784,7 @@ class eOvershootInterpolator(object):
 
 eOvershootInterpolator.__ref__ = new_instancemethod(_enigma.eOvershootInterpolator___ref__,None,eOvershootInterpolator)
 eOvershootInterpolator.getPtrString = new_instancemethod(_enigma.eOvershootInterpolator_getPtrString,None,eOvershootInterpolator)
+eOvershootInterpolator.ptrValid = new_instancemethod(_enigma.eOvershootInterpolator_ptrValid,None,eOvershootInterpolator)
 eOvershootInterpolator.__deref__ = new_instancemethod(_enigma.eOvershootInterpolator___deref__,None,eOvershootInterpolator)
 eOvershootInterpolator.at = new_instancemethod(_enigma.eOvershootInterpolator_at,None,eOvershootInterpolator)
 eOvershootInterpolator_swigregister = _enigma.eOvershootInterpolator_swigregister
@@ -1702,6 +1807,7 @@ class eBounceInterpolator(object):
 
 eBounceInterpolator.__ref__ = new_instancemethod(_enigma.eBounceInterpolator___ref__,None,eBounceInterpolator)
 eBounceInterpolator.getPtrString = new_instancemethod(_enigma.eBounceInterpolator_getPtrString,None,eBounceInterpolator)
+eBounceInterpolator.ptrValid = new_instancemethod(_enigma.eBounceInterpolator_ptrValid,None,eBounceInterpolator)
 eBounceInterpolator.__deref__ = new_instancemethod(_enigma.eBounceInterpolator___deref__,None,eBounceInterpolator)
 eBounceInterpolator.at = new_instancemethod(_enigma.eBounceInterpolator_at,None,eBounceInterpolator)
 eBounceInterpolator_swigregister = _enigma.eBounceInterpolator_swigregister
@@ -1775,6 +1881,7 @@ class eFloatAnimation(object):
     create = staticmethod(_enigma.eFloatAnimation_create)
 eFloatAnimation.__ref__ = new_instancemethod(_enigma.eFloatAnimation___ref__,None,eFloatAnimation)
 eFloatAnimation.getPtrString = new_instancemethod(_enigma.eFloatAnimation_getPtrString,None,eFloatAnimation)
+eFloatAnimation.ptrValid = new_instancemethod(_enigma.eFloatAnimation_ptrValid,None,eFloatAnimation)
 eFloatAnimation.__deref__ = new_instancemethod(_enigma.eFloatAnimation___deref__,None,eFloatAnimation)
 eFloatAnimation_swigregister = _enigma.eFloatAnimation_swigregister
 eFloatAnimation_swigregister(eFloatAnimation)
@@ -1870,6 +1977,7 @@ class ePointAnimation(object):
 
 ePointAnimation.__ref__ = new_instancemethod(_enigma.ePointAnimation___ref__,None,ePointAnimation)
 ePointAnimation.getPtrString = new_instancemethod(_enigma.ePointAnimation_getPtrString,None,ePointAnimation)
+ePointAnimation.ptrValid = new_instancemethod(_enigma.ePointAnimation_ptrValid,None,ePointAnimation)
 ePointAnimation.__deref__ = new_instancemethod(_enigma.ePointAnimation___deref__,None,ePointAnimation)
 ePointAnimation.at = new_instancemethod(_enigma.ePointAnimation_at,None,ePointAnimation)
 ePointAnimation.animateX = new_instancemethod(_enigma.ePointAnimation_animateX,None,ePointAnimation)
@@ -1947,6 +2055,7 @@ class eSizeAnimation(object):
     create = staticmethod(_enigma.eSizeAnimation_create)
 eSizeAnimation.__ref__ = new_instancemethod(_enigma.eSizeAnimation___ref__,None,eSizeAnimation)
 eSizeAnimation.getPtrString = new_instancemethod(_enigma.eSizeAnimation_getPtrString,None,eSizeAnimation)
+eSizeAnimation.ptrValid = new_instancemethod(_enigma.eSizeAnimation_ptrValid,None,eSizeAnimation)
 eSizeAnimation.__deref__ = new_instancemethod(_enigma.eSizeAnimation___deref__,None,eSizeAnimation)
 eSizeAnimation_swigregister = _enigma.eSizeAnimation_swigregister
 eSizeAnimation_swigregister(eSizeAnimation)
@@ -2019,6 +2128,7 @@ class eMatrixAnimation(object):
     create = staticmethod(_enigma.eMatrixAnimation_create)
 eMatrixAnimation.__ref__ = new_instancemethod(_enigma.eMatrixAnimation___ref__,None,eMatrixAnimation)
 eMatrixAnimation.getPtrString = new_instancemethod(_enigma.eMatrixAnimation_getPtrString,None,eMatrixAnimation)
+eMatrixAnimation.ptrValid = new_instancemethod(_enigma.eMatrixAnimation_ptrValid,None,eMatrixAnimation)
 eMatrixAnimation.__deref__ = new_instancemethod(_enigma.eMatrixAnimation___deref__,None,eMatrixAnimation)
 eMatrixAnimation_swigregister = _enigma.eMatrixAnimation_swigregister
 eMatrixAnimation_swigregister(eMatrixAnimation)
@@ -2075,6 +2185,7 @@ class eWidgetAnimationSet(object):
 
 eWidgetAnimationSet.__ref__ = new_instancemethod(_enigma.eWidgetAnimationSet___ref__,None,eWidgetAnimationSet)
 eWidgetAnimationSet.getPtrString = new_instancemethod(_enigma.eWidgetAnimationSet_getPtrString,None,eWidgetAnimationSet)
+eWidgetAnimationSet.ptrValid = new_instancemethod(_enigma.eWidgetAnimationSet_ptrValid,None,eWidgetAnimationSet)
 eWidgetAnimationSet.__deref__ = new_instancemethod(_enigma.eWidgetAnimationSet___deref__,None,eWidgetAnimationSet)
 eWidgetAnimationSet.isValid = new_instancemethod(_enigma.eWidgetAnimationSet_isValid,None,eWidgetAnimationSet)
 eWidgetAnimationSet.setAlphaAnimation = new_instancemethod(_enigma.eWidgetAnimationSet_setAlphaAnimation,None,eWidgetAnimationSet)
@@ -2186,6 +2297,7 @@ class eWindowAnimationSet(object):
 
 eWindowAnimationSet.__ref__ = new_instancemethod(_enigma.eWindowAnimationSet___ref__,None,eWindowAnimationSet)
 eWindowAnimationSet.getPtrString = new_instancemethod(_enigma.eWindowAnimationSet_getPtrString,None,eWindowAnimationSet)
+eWindowAnimationSet.ptrValid = new_instancemethod(_enigma.eWindowAnimationSet_ptrValid,None,eWindowAnimationSet)
 eWindowAnimationSet.__deref__ = new_instancemethod(_enigma.eWindowAnimationSet___deref__,None,eWindowAnimationSet)
 eWindowAnimationSet.isInternal = new_instancemethod(_enigma.eWindowAnimationSet_isInternal,None,eWindowAnimationSet)
 eWindowAnimationSet.getKey = new_instancemethod(_enigma.eWindowAnimationSet_getKey,None,eWindowAnimationSet)
@@ -2236,6 +2348,7 @@ class eWindowAnimationManager(object):
     defaultWidgetAnimationChanged = _swig_property(_enigma.eWindowAnimationManager_defaultWidgetAnimationChanged_get, _enigma.eWindowAnimationManager_defaultWidgetAnimationChanged_set)
 eWindowAnimationManager.__ref__ = new_instancemethod(_enigma.eWindowAnimationManager___ref__,None,eWindowAnimationManager)
 eWindowAnimationManager.getPtrString = new_instancemethod(_enigma.eWindowAnimationManager_getPtrString,None,eWindowAnimationManager)
+eWindowAnimationManager.ptrValid = new_instancemethod(_enigma.eWindowAnimationManager_ptrValid,None,eWindowAnimationManager)
 eWindowAnimationManager.__deref__ = new_instancemethod(_enigma.eWindowAnimationManager___deref__,None,eWindowAnimationManager)
 eWindowAnimationManager_swigregister = _enigma.eWindowAnimationManager_swigregister
 eWindowAnimationManager_swigregister(eWindowAnimationManager)
@@ -2368,6 +2481,8 @@ class eLabel(eAnimatedWidget):
     alignRight = _enigma.eLabel_alignRight
     alignBottom = _enigma.eLabel_alignBottom
     alignBlock = _enigma.eLabel_alignBlock
+    alignCenterOrBottom = _enigma.eLabel_alignCenterOrBottom
+    alignCenterOrRight = _enigma.eLabel_alignCenterOrRight
     __swig_destroy__ = _enigma.delete_eLabel
 eLabel.setText = new_instancemethod(_enigma.eLabel_setText,None,eLabel)
 eLabel.setMarkedPos = new_instancemethod(_enigma.eLabel_setMarkedPos,None,eLabel)
@@ -2746,6 +2861,7 @@ class eWindowStylePtr(object):
     __swig_destroy__ = _enigma.delete_eWindowStylePtr
 eWindowStylePtr.__ref__ = new_instancemethod(_enigma.eWindowStylePtr___ref__,None,eWindowStylePtr)
 eWindowStylePtr.getPtrString = new_instancemethod(_enigma.eWindowStylePtr_getPtrString,None,eWindowStylePtr)
+eWindowStylePtr.ptrValid = new_instancemethod(_enigma.eWindowStylePtr_ptrValid,None,eWindowStylePtr)
 eWindowStylePtr.__deref__ = new_instancemethod(_enigma.eWindowStylePtr___deref__,None,eWindowStylePtr)
 eWindowStylePtr.getColor = new_instancemethod(_enigma.eWindowStylePtr_getColor,None,eWindowStylePtr)
 eWindowStylePtr.getListFontSize = new_instancemethod(_enigma.eWindowStylePtr_getListFontSize,None,eWindowStylePtr)
@@ -2762,6 +2878,7 @@ class eWindowStyleManager(object):
     getInstance = staticmethod(_enigma.eWindowStyleManager_getInstance)
 eWindowStyleManager.__ref__ = new_instancemethod(_enigma.eWindowStyleManager___ref__,None,eWindowStyleManager)
 eWindowStyleManager.getPtrString = new_instancemethod(_enigma.eWindowStyleManager_getPtrString,None,eWindowStyleManager)
+eWindowStyleManager.ptrValid = new_instancemethod(_enigma.eWindowStyleManager_ptrValid,None,eWindowStyleManager)
 eWindowStyleManager.__deref__ = new_instancemethod(_enigma.eWindowStyleManager___deref__,None,eWindowStyleManager)
 eWindowStyleManager.getStyle = new_instancemethod(_enigma.eWindowStyleManager_getStyle,None,eWindowStyleManager)
 eWindowStyleManager.setStyle = new_instancemethod(_enigma.eWindowStyleManager_setStyle,None,eWindowStyleManager)
@@ -2994,6 +3111,7 @@ class eActionMap(object):
         return slot
 eActionMap.__ref__ = new_instancemethod(_enigma.eActionMap___ref__,None,eActionMap)
 eActionMap.getPtrString = new_instancemethod(_enigma.eActionMap_getPtrString,None,eActionMap)
+eActionMap.ptrValid = new_instancemethod(_enigma.eActionMap_ptrValid,None,eActionMap)
 eActionMap.__deref__ = new_instancemethod(_enigma.eActionMap___deref__,None,eActionMap)
 eActionMap.bindActionSlot = new_instancemethod(_enigma.eActionMap_bindActionSlot,None,eActionMap)
 eActionMap.bindKey = new_instancemethod(_enigma.eActionMap_bindKey,None,eActionMap)
@@ -3440,6 +3558,7 @@ class iDVBFrontendParametersPtr(object):
     __swig_destroy__ = _enigma.delete_iDVBFrontendParametersPtr
 iDVBFrontendParametersPtr.__ref__ = new_instancemethod(_enigma.iDVBFrontendParametersPtr___ref__,None,iDVBFrontendParametersPtr)
 iDVBFrontendParametersPtr.getPtrString = new_instancemethod(_enigma.iDVBFrontendParametersPtr_getPtrString,None,iDVBFrontendParametersPtr)
+iDVBFrontendParametersPtr.ptrValid = new_instancemethod(_enigma.iDVBFrontendParametersPtr_ptrValid,None,iDVBFrontendParametersPtr)
 iDVBFrontendParametersPtr.__deref__ = new_instancemethod(_enigma.iDVBFrontendParametersPtr___deref__,None,iDVBFrontendParametersPtr)
 iDVBFrontendParametersPtr.getSystem = new_instancemethod(_enigma.iDVBFrontendParametersPtr_getSystem,None,iDVBFrontendParametersPtr)
 iDVBFrontendParametersPtr.getDVBS = new_instancemethod(_enigma.iDVBFrontendParametersPtr_getDVBS,None,iDVBFrontendParametersPtr)
@@ -3503,6 +3622,7 @@ class iDVBFrontendPtr(object):
     __swig_destroy__ = _enigma.delete_iDVBFrontendPtr
 iDVBFrontendPtr.__ref__ = new_instancemethod(_enigma.iDVBFrontendPtr___ref__,None,iDVBFrontendPtr)
 iDVBFrontendPtr.getPtrString = new_instancemethod(_enigma.iDVBFrontendPtr_getPtrString,None,iDVBFrontendPtr)
+iDVBFrontendPtr.ptrValid = new_instancemethod(_enigma.iDVBFrontendPtr_ptrValid,None,iDVBFrontendPtr)
 iDVBFrontendPtr.__deref__ = new_instancemethod(_enigma.iDVBFrontendPtr___deref__,None,iDVBFrontendPtr)
 iDVBFrontendPtr.getFrontendType = new_instancemethod(_enigma.iDVBFrontendPtr_getFrontendType,None,iDVBFrontendPtr)
 iDVBFrontendPtr.tune = new_instancemethod(_enigma.iDVBFrontendPtr_tune,None,iDVBFrontendPtr)
@@ -3546,6 +3666,7 @@ class eDVBResourceManager(object):
     frontendUseMaskChanged = _swig_property(_enigma.eDVBResourceManager_frontendUseMaskChanged_get, _enigma.eDVBResourceManager_frontendUseMaskChanged_set)
 eDVBResourceManager.__ref__ = new_instancemethod(_enigma.eDVBResourceManager___ref__,None,eDVBResourceManager)
 eDVBResourceManager.getPtrString = new_instancemethod(_enigma.eDVBResourceManager_getPtrString,None,eDVBResourceManager)
+eDVBResourceManager.ptrValid = new_instancemethod(_enigma.eDVBResourceManager_ptrValid,None,eDVBResourceManager)
 eDVBResourceManager.__deref__ = new_instancemethod(_enigma.eDVBResourceManager___deref__,None,eDVBResourceManager)
 eDVBResourceManager.canAllocateFrontend = new_instancemethod(_enigma.eDVBResourceManager_canAllocateFrontend,None,eDVBResourceManager)
 eDVBResourceManager.canMeasureFrontendInputPower = new_instancemethod(_enigma.eDVBResourceManager_canMeasureFrontendInputPower,None,eDVBResourceManager)
@@ -4227,6 +4348,7 @@ class eMediaDatabaseResultPtr(object):
 
 eMediaDatabaseResultPtr.__ref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___ref__,None,eMediaDatabaseResultPtr)
 eMediaDatabaseResultPtr.getPtrString = new_instancemethod(_enigma.eMediaDatabaseResultPtr_getPtrString,None,eMediaDatabaseResultPtr)
+eMediaDatabaseResultPtr.ptrValid = new_instancemethod(_enigma.eMediaDatabaseResultPtr_ptrValid,None,eMediaDatabaseResultPtr)
 eMediaDatabaseResultPtr.__deref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___deref__,None,eMediaDatabaseResultPtr)
 eMediaDatabaseResultPtr.error = new_instancemethod(_enigma.eMediaDatabaseResultPtr_error,None,eMediaDatabaseResultPtr)
 eMediaDatabaseResultPtr.rowsAffected = new_instancemethod(_enigma.eMediaDatabaseResultPtr_rowsAffected,None,eMediaDatabaseResultPtr)
@@ -4775,6 +4897,7 @@ class eNetworkServicePtr(object):
     connectedChanged = _swig_property(_enigma.eNetworkServicePtr_connectedChanged_get, _enigma.eNetworkServicePtr_connectedChanged_set)
 eNetworkServicePtr.__ref__ = new_instancemethod(_enigma.eNetworkServicePtr___ref__,None,eNetworkServicePtr)
 eNetworkServicePtr.getPtrString = new_instancemethod(_enigma.eNetworkServicePtr_getPtrString,None,eNetworkServicePtr)
+eNetworkServicePtr.ptrValid = new_instancemethod(_enigma.eNetworkServicePtr_ptrValid,None,eNetworkServicePtr)
 eNetworkServicePtr.__deref__ = new_instancemethod(_enigma.eNetworkServicePtr___deref__,None,eNetworkServicePtr)
 eNetworkServicePtr.name = new_instancemethod(_enigma.eNetworkServicePtr_name,None,eNetworkServicePtr)
 eNetworkServicePtr.type = new_instancemethod(_enigma.eNetworkServicePtr_type,None,eNetworkServicePtr)
@@ -5038,6 +5161,7 @@ class eNetworkTechnologyPtr(object):
     tetheringPassphraseChanged = _swig_property(_enigma.eNetworkTechnologyPtr_tetheringPassphraseChanged_get, _enigma.eNetworkTechnologyPtr_tetheringPassphraseChanged_set)
 eNetworkTechnologyPtr.__ref__ = new_instancemethod(_enigma.eNetworkTechnologyPtr___ref__,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr.getPtrString = new_instancemethod(_enigma.eNetworkTechnologyPtr_getPtrString,None,eNetworkTechnologyPtr)
+eNetworkTechnologyPtr.ptrValid = new_instancemethod(_enigma.eNetworkTechnologyPtr_ptrValid,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr.__deref__ = new_instancemethod(_enigma.eNetworkTechnologyPtr___deref__,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr.name = new_instancemethod(_enigma.eNetworkTechnologyPtr_name,None,eNetworkTechnologyPtr)
 eNetworkTechnologyPtr.type = new_instancemethod(_enigma.eNetworkTechnologyPtr_type,None,eNetworkTechnologyPtr)
@@ -5878,6 +6002,7 @@ class eCecDevicePtr(object):
     __swig_destroy__ = _enigma.delete_eCecDevicePtr
 eCecDevicePtr.__ref__ = new_instancemethod(_enigma.eCecDevicePtr___ref__,None,eCecDevicePtr)
 eCecDevicePtr.getPtrString = new_instancemethod(_enigma.eCecDevicePtr_getPtrString,None,eCecDevicePtr)
+eCecDevicePtr.ptrValid = new_instancemethod(_enigma.eCecDevicePtr_ptrValid,None,eCecDevicePtr)
 eCecDevicePtr.__deref__ = new_instancemethod(_enigma.eCecDevicePtr___deref__,None,eCecDevicePtr)
 eCecDevicePtr.logicalAddress = new_instancemethod(_enigma.eCecDevicePtr_logicalAddress,None,eCecDevicePtr)
 eCecDevicePtr.vendor = new_instancemethod(_enigma.eCecDevicePtr_vendor,None,eCecDevicePtr)

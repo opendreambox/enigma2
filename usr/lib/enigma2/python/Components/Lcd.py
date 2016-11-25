@@ -69,7 +69,7 @@ def InitLcd():
 		config.lcd.standby.addNotifier(setLCDbright);
 		config.lcd.standby.apply = lambda : setLCDbright(config.lcd.standby)
 
-		config.lcd.bright = ConfigSlider(default=5, limits=(0, 10))
+		config.lcd.bright = ConfigSlider(default=SystemInfo["DefaultDisplayBrightness"], limits=(0, 10))
 		config.lcd.bright.addNotifier(setLCDbright, call_on_save_or_cancel=True);
 		config.lcd.bright.apply = lambda : setLCDbright(config.lcd.bright)
 

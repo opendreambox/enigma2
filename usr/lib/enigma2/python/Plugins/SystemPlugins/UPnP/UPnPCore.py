@@ -104,6 +104,8 @@ please see the helper classes (UPnPBrowser and AbstractUPnPRenderer) for more
 '''
 class ManagedControlPoint(object):
 	DEVICE_TYPE_SATIP_SERVER = "SatIPServer"
+	DEVICE_TYPE_DREAMBOX = "Dreambox"
+	URI_BASE_DREAMBOX = "urn:dreambox-de:device"
 
 	def __init__(self):
 		self.coherence = None
@@ -120,6 +122,8 @@ class ManagedControlPoint(object):
 		self.onMediaDeviceRemoved = []
 		self.onSatIpServerDetected = []
 		self.onSatIpServerRemoved = []
+		self.onDreamboxDetected = []
+		self.onDreamboxRemoved = []
 		self._session = None
 		self.__deferredShutDown = None
 		self._startPending = False
@@ -210,9 +214,14 @@ class ManagedControlPoint(object):
 		if device.udn in self.__mediaDevices:
 			return
 		self.__mediaDevices[device.udn] = device
-		if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
-			Log.i("New Device found: %s (%s - %s)" %(device.get_friendly_name(), device.get_friendly_device_type(), device.get_satipcap()))
+		device_type = device.get_friendly_device_type()
+		if device_type == self.DEVICE_TYPE_SATIP_SERVER:
+			Log.i("New SAT>IP Server found: %s (%s - %s)" %(device.get_friendly_name(), device.get_friendly_device_type(), device.get_satipcap()))
 			for fnc in self.onSatIpServerDetected:
+				fnc(device)
+		elif device_type == self.DEVICE_TYPE_DREAMBOX:
+			Log.i("New Dreambox found: %s (%s - %s)" %(device.get_friendly_name(), device.get_friendly_device_type(), device.get_presentation_url()))
+			for fnc in self.onDreamboxDetected:
 				fnc(device)
 		else:
 			Log.i("New Device found: %s (%s)" % (device.get_friendly_name(), device.get_friendly_device_type()))
@@ -221,8 +230,12 @@ class ManagedControlPoint(object):
 		if usn in self.__mediaDevices:
 			print "[DLNA] Device removed: %s" % (usn)
 			device = self.__mediaDevices[usn]
-			if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
+			device_type = device.get_friendly_device_type()
+			if device_type == self.DEVICE_TYPE_SATIP_SERVER:
 				for fnc in self.onSatIpServerRemoved:
+					fnc(device)
+			elif device_type == self.DEVICE_TYPE_DREAMBOX:
+				for fnc in self.onDreamboxRemoved:
 					fnc(device)
 			for fnc in self.onMediaDeviceRemoved:
 				fnc(device)
@@ -238,6 +251,10 @@ class ManagedControlPoint(object):
 		self.__devices.append(server)
 		return server
 
+	def registerDevice(self, instance, **kwargs):
+		self.__devices.append(instance)
+		return instance
+
 	def getServerList(self):
 		return self.__mediaServerClients.values()
 
@@ -251,6 +268,13 @@ class ManagedControlPoint(object):
 		devices = []
 		for device in self.__mediaDevices.itervalues():
 			if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
+				devices.append(device)
+		return devices
+
+	def getDreamboxes(self):
+		devices = []
+		for device in self.__mediaDevices.itervalues():
+			if device.get_friendly_device_type() == self.DEVICE_TYPE_DREAMBOX:
 				devices.append(device)
 		return devices
 

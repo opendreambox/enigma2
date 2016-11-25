@@ -83,6 +83,11 @@ public:
 	{
 		return m_ptrStr;
 	}
+
+	bool ptrValid()
+	{
+		return this->ptr;
+	}
 #ifndef SWIG
 	T* grabRef() { if (!ptr) return 0; ptr->AddRef(); return ptr; }
 	T* &ptrref() { ASSERT(!ptr); return ptr; }

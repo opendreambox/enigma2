@@ -23,9 +23,12 @@ public:
 		idStructure,	// service_id == 0 is root
 		idDVB,
 		idFile,
+		idM2TS,
+		idDB=5,
 		idUser=0x1000,
 		idGST=0x1001,	// == 4097
-		idDVD=0x1111
+		idDVD=0x1111,
+		idURI=0x2001,
 	};
 	int type;
 
@@ -924,6 +927,19 @@ public:
 	virtual void setTransportHeaders(stringMap headers)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamedService>, iStreamedServicePtr);
+
+SWIG_IGNORE(iUriService);
+class iUriService: public iObject
+{
+#ifdef SWIG
+	iUriService();
+	~iUriService();
+#endif
+public:
+	virtual SWIG_VOID(RESULT) setResolvedUri(const std::string &resolvedUri, int serviceType)=0;
+	virtual SWIG_VOID(RESULT) failedToResolveUri()=0;
+};
+SWIG_TEMPLATE_TYPEDEF(ePtr<iUriService>, iUriServicePtr);
 
 class iServiceKeys_ENUMS
 {

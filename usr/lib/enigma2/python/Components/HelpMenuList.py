@@ -18,6 +18,7 @@ class HelpMenuList(GUIComponent):
 
 		l = [ ]
 		sizes = componentSizes[componentSizes.HELP_MENU_LIST]
+		textX = sizes.get("textX", 5)
 		textY = sizes.get("textY", 35)
 		textWidth = sizes.get("textWidth", 1000)
 		textHeight = sizes.get("textHeight", 35)
@@ -52,7 +53,7 @@ class HelpMenuList(GUIComponent):
 						(eListboxPythonMultiContent.TYPE_TEXT, 0, textY, textWidth, textHeight, 1, RT_VALIGN_CENTER, help[1])
 					))
 				else:
-					entry.append( (eListboxPythonMultiContent.TYPE_TEXT, 0, 0, textWidth, textHeight, 0, RT_VALIGN_CENTER, help) )
+					entry.append( (eListboxPythonMultiContent.TYPE_TEXT, textX, 0, textWidth, textHeight, 0, RT_VALIGN_CENTER, help) )
 					
 				l.append(entry)
 

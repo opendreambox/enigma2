@@ -98,12 +98,14 @@ You may combine all 3 types of animations, but only one of each kind for one typ
 		<size val="0,0" centered=""/>
 		<size_hide val="0,0" centered=""/>
 	</animation>
-	<animation key="wizard_previous" title="Slide in left + Slide out right (Wizard)" duration="1000">
-		<position val="-1.0" animateX="" interpolate="overshoot" tension="3.0"/>
+	<animation key="wizard_previous" title="Slide in left + Slide out right (Wizard)" duration="300">
+		<alpha val="0.0" interpolate="accelerate" factor="1.5"/>
+		<position val="-1.0" animateX="" interpolate="decelerate" factor="1.5"/>
 		<position_hide val="2.0" animateX="" interpolate="accelerate" factor="1.5"/>
 	</animation>
-	<animation key="wizard_next" title="Slide in right + Slide out left (Wizard)" duration="1000">
-		<position val="2.0" animateX="" interpolate="overshoot" tension="3.0"/>
+	<animation key="wizard_next" title="Slide in right + Slide out left (Wizard)" duration="300">
+		<alpha val="0.0" interpolate="accelerate" factor="1.5"/>
+		<position val="2.0" animateX="" interpolate="decelerate" factor="1.5"/>
 		<position_hide val="-1.0" animateX="" interpolate="accelerate" factor="1.5"/>
 	</animation>
 </animations>

@@ -115,7 +115,7 @@ class VideoWizard():
 	def modeSelect(self, mode):
 		ratesList = self.listRates(mode)
 		print "ratesList:", ratesList
-		if self.port == "DVI" and mode in ("720p", "1080p", "1080i"):
+		if self.port == "DVI" and mode in ("720p", "1080p", "1080i", "2160p"):
 			self.rate = "multi"
 			self.hw.setMode(port = self.port, mode = mode, rate = "multi")
 		else:
@@ -151,7 +151,7 @@ class VideoWizard():
 		self.hw.setMode(port = self.port, mode = self.mode, rate = rate)
 
 	def keyNumberGlobal(self, number):
-		if number in (1,2,3,4):
+		if number in (1,2,3,4) and self.isCurrentStepID("modeselection"):
 			if number == 1:
 				self.hw.saveMode("DVI", "720p", "multi")
 			elif number == 2:

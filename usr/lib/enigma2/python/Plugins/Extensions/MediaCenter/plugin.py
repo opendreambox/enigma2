@@ -12,7 +12,25 @@ from AudioPlayer import AudioPlayer
 from VideoPlayer import VideoPlayer
 from Helpers import EasyPixmap
 from MediaCore import MediaCore, mediaCore
-from MediaCenterLCDScreen import MediaCenterLCDScreen
+
+class MediaCenterMenuSummary(Screen):
+	skin = ("""
+	<screen name="MediaCenterMenuSummary" position="0,0" size="132,64" id="1">
+		<widget source="Title" render="Label" position="6,0" size="120,32" font="Display;15" halign="center" valign="top"/>
+		<widget source="parent.menulist" render="Label" position="6,32" size="120,32" font="Display;16" halign="center" valign="center">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>""",
+	"""<screen name="MediaCenterMenuSummary" position="0,0" size="96,64" id="2">
+		<widget source="Title" render="Label" position="0,0" size="96,32" font="Display;14" halign="center" valign="top"/>
+		<widget source="parent.menulist" render="Label" position="0,32" size="96,32" font="Display;16" halign="center" valign="center">
+			<convert type="StringListSelection" />
+		</widget>
+	</screen>
+	""")
+
+	def __init__(self, session, parent, windowTitle=_("MediaCenter")):
+		Screen.__init__(self, session, parent, windowTitle)
 
 class MainMenu(Screen):
 	icon_path = resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/")
@@ -72,7 +90,7 @@ class MainMenu(Screen):
 			pass
 
 	def createSummary(self):
-		return MediaCenterLCDScreen
+		return MediaCenterMenuSummary
 
 	def runOnFirstExec(self):
 		self["menulist"].setIndex(self.type)
@@ -94,7 +112,6 @@ class MainMenu(Screen):
 		self.list = l
 		self["menulist"].setList(l)
 		self["menulist"].setIndex(0)
-		self.summaries.setText("MediaCenter", 1)
 
 	def ok(self, playlist=None):
 		choice = self["menulist"].getCurrent()
@@ -110,7 +127,6 @@ class MainMenu(Screen):
 	def _onItemChanged(self):
 		if self.list and len(self.list) > 0:
 			choice = self["menulist"].getCurrent()
-			self.summaries.setText(choice[0], 2)
 
 			iconPath = choice[2].get("icon", None)
 			if iconPath is not None:

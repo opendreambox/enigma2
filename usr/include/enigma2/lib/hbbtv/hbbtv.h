@@ -8,9 +8,9 @@
 #include <lib/service/event.h>
 
 #if QT_VERSION >= 0x050000
-#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;1.1;1.0;) CE-HTML/1.0; en) AppleWebKit/538.1 no/Volksbox QtWebkit OIPF/1.1";
+#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;1.1;1.0;) CE-HTML/1.0; en) AppleWebKit/538.1 compatible/Volksbox compatible/iCord QtWebkit OIPF/1.1";
 #else
-#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;0.1a;1.0;) CE-HTML/1.0; en) AppleWebKit/535.19 no/Volksbox QtWebkit/2.2";
+#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;1.1;1.0;) CE-HTML/1.0; en) AppleWebKit/535.19 compatible/Volksbox compatible/iCord QtWebkit/2.2 OIPF/1.1";
 #endif
 
 

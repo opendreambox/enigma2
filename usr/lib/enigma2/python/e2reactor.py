@@ -25,25 +25,9 @@ from twisted.internet.posixbase import PosixReactorBase
 from ctypes import CDLL, Structure, c_long, c_int, POINTER, pointer, get_errno
 from os import strerror
 from sys import exc_info
+from monotonic import monotonic
 
-CLOCK_MONOTONIC = 1 # see <linux/time.h>
-
-class timespec(Structure):
-	_fields_ = [
-		('tv_sec', c_long),
-		('tv_nsec', c_long)
-	]
-
-librt = CDLL('librt.so.1', use_errno=True)
-clock_gettime = librt.clock_gettime
-clock_gettime.argtypes = [c_int, POINTER(timespec)]
-
-def monotonic_time():
-	t = timespec()
-	if clock_gettime(CLOCK_MONOTONIC, pointer(t)) != 0:
-		errno_ = get_errno()
-		raise OSError(errno_, strerror(errno_))
-	return t.tv_sec + t.tv_nsec * 1e-9
+monotonic_time = monotonic
 
 class TwistedSocketNotifier:
 	"""
