@@ -6,5 +6,5 @@ includedir=/usr/include
 Name: enigma2
 Description: Enigma2
 Version: 4.3.0
-Cflags: -I${includedir}/enigma2 -std=gnu++11
+Cflags: -I${includedir}/enigma2 -std=gnu++14
 Requires.private: sigc++-2.0

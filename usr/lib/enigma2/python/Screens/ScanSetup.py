@@ -1091,8 +1091,8 @@ class SatelliteTransponderSearchSupport:
 		self.auto_scan = False
 		self.driver_wa = False
 
-		if tunername in ("BCM4505", "BCM4506 (internal)", "BCM4506", "Alps BSBE1 C01A/D01A.", "Si2166B"):
-			self.auto_scan = tunername == 'Si2166B'
+		if tunername in ("BCM4505", "BCM4506 (internal)", "BCM4506", "Alps BSBE1 C01A/D01A.", "Si2166B", "Si2169C"):
+			self.auto_scan = tunername == 'Si2166B' or tunername == 'Si2169C'
 			(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 			if not self.frontend:
 				self.session.nav.stopService()
@@ -1309,7 +1309,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				self.list.append(getConfigListEntry(_("Frequency start"), self.scan_sat.bs_freq_start))
 				self.list.append(getConfigListEntry(_("Frequency stop"), self.scan_sat.bs_freq_stop))
 				tunername = nimmanager.getNimName(index_to_scan)
-				if nim.isCompatible("DVB-S2") and tunername != "Si2166B":
+				if nim.isCompatible("DVB-S2") and tunername != 'Si2166B' and tunername != 'Si2169C':
 					self.list.append(getConfigListEntry(_("Accuracy (higher is better)"), self.scan_sat.bs_accuracy))
 				self.list.append(getConfigListEntry(_("Horizontal"), self.scan_sat.bs_horizontal))
 				self.list.append(getConfigListEntry(_("Vertical"), self.scan_sat.bs_vertical))

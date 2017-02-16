@@ -39,7 +39,7 @@ class Language:
 		self.addLanguage(_("Polish"), "pl", "PL")
 		self.addLanguage(_("Portuguese"), "pt", "PT")
 		self.addLanguage(_("Russian"), "ru", "RU")
-		self.addLanguage(_("Serbian"), "sr", "YU", "sr_RS@latin")
+		self.addLanguage(_("Serbian"), "sr", "YU", "sr_RS")
 		self.addLanguage(_("Slovakian"), "sk", "SK")
 		self.addLanguage(_("Slovenian"), "sl", "SI")
 		self.addLanguage(_("Spanish"), "es", "ES")

@@ -95,11 +95,6 @@ class NetworkAgent(object):
 		else:
 			self._nm.sendUserReply(StringMap())
 
-	def shutdown(self):
-		Log.i("cancelling any pending request")
-		if self._userInputScreen:
-			self._nm.sendUserReply(StringMap()) #cancel request
-
 global networkagent
 networkagent = None
 def main(reason, **kwargs):
@@ -108,8 +103,6 @@ def main(reason, **kwargs):
 		session = kwargs.get("session", None)
 		if session:
 			networkagent = NetworkAgent(session)
-	elif reason == 1 and networkagent:
-		networkagent.shutdown()
 
 def nw_setup(session, **kwargs):
 	session.open(NetworkServiceConfig)

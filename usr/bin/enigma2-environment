@@ -3,7 +3,7 @@
 mkdir -p /run/enigma2
 
 LD_PRELOAD=""
-for lib in libopen.so libpagecache.so libpassthrough.so; do
+for lib in libopen.so libpagecache.so libusbtuner.so libpassthrough.so; do
 	if [ -f /usr/lib/${lib} ]; then
 		LD_PRELOAD="${LD_PRELOAD} /usr/lib/${lib}"
 	fi

@@ -1,0 +1,16 @@
+<default>
+	<prerequisites>
+		<tag type="System" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>FSBL Updater</name>
+		<packagename>enigma2-plugin-systemplugins-fsblupdater</packagename>
+		<shortdescription>Bootloader Updater</shortdescription>
+		<description>Updates the dreambox bootloader when required</description>
+	</info>
+
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-fsblupdater" />
+	</files>
+</default>
