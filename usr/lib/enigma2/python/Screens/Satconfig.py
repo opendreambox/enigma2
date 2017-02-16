@@ -95,7 +95,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.advancedManufacturer = None
 		self.advancedSCR = None
 		self.advancedConnected = None
-		
+		self.unicableUsePinEntry = None
+
 		if self.nim.isMultiType():
 			multiType = self.nimConfig.multiType
 			self.multiType = getConfigListEntry(_("Tuner type"), multiType)
@@ -215,9 +216,13 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		checkList = (self.configMode, self.diseqcModeEntry, self.advancedSatsEntry, \
 			self.advancedLnbsEntry, self.advancedDiseqcMode, self.advancedUsalsEntry, \
 			self.advancedLof, self.advancedPowerMeasurement, self.turningSpeed, \
-			self.advancedType, self.advancedSCR, self.advancedManufacturer, self.advancedUnicable, self.advancedConnected, \
-			self.uncommittedDiseqcCommand, self.cableScanType, self.multiType)
-		if self["config"].getCurrent() == self.multiType:
+			self.advancedType, self.advancedSCR, self.advancedManufacturer, self.advancedUnicable, \
+			self.advancedConnected, self.uncommittedDiseqcCommand, self.cableScanType, self.multiType, \
+			self.unicableUsePinEntry
+		)
+
+		current = self["config"].getCurrent
+		if current == self.multiType:
 			from Components.NimManager import InitNimManager
 			InitNimManager(nimmanager, self.slotid)
 			self.nim = nimmanager.nim_slots[self.slotid]
@@ -267,18 +272,23 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 
 		if currLnb:
 			self.list.append(getConfigListEntry(_("Priority"), currLnb.prio))
-			self.advancedLof = getConfigListEntry(_("LOF"), currLnb.lof)
+			self.advancedLof = getConfigListEntry(_("Type"), currLnb.lof)
 			self.list.append(self.advancedLof)
 			if currLnb.lof.value == "user_defined":
 				self.list.append(getConfigListEntry(_("LOF/L"), currLnb.lofl))
 				self.list.append(getConfigListEntry(_("LOF/H"), currLnb.lofh))
 				self.list.append(getConfigListEntry(_("Threshold"), currLnb.threshold))
 #			self.list.append(getConfigListEntry(_("12V Output"), currLnb.output_12v))
-			
+
 			if currLnb.lof.value == "unicable":
 				self.advancedUnicable = getConfigListEntry("Unicable "+_("Configuration Mode"), currLnb.unicable)
 				self.list.append(self.advancedUnicable)
 				if currLnb.unicable.value == "unicable_user":
+					product_name = "unicable_user"
+					self._checkUnicableLofUpdateRequired(currLnb, self._lastUnicableManufacturerName, product_name)
+					self._lastUnicableProductName = product_name
+
+					self.list.append(getConfigListEntry(_("Mode"), currLnb.satcruser_mode))
 					self.advancedSCR = getConfigListEntry(_("Channel"), currLnb.satcruser)
 					self.list.append(self.advancedSCR)
 					self.list.append(getConfigListEntry(_("Frequency"), currLnb.satcrvcouser[currLnb.satcruser.index]))
@@ -286,27 +296,51 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.list.append(getConfigListEntry(_("LOF/H"), currLnb.lofh))
 					self.list.append(getConfigListEntry(_("Threshold"), currLnb.threshold))
 				elif currLnb.unicable.value == "unicable_matrix":
-					manufacturer_name = currLnb.unicableMatrixManufacturer.value
-					manufacturer = currLnb.unicableMatrix[manufacturer_name]
-					product_name = manufacturer.product.value
-					self.advancedManufacturer = getConfigListEntry(_("Manufacturer"), currLnb.unicableMatrixManufacturer)
-					self.advancedType = getConfigListEntry(_("Type"), manufacturer.product)
-					self.advancedSCR = getConfigListEntry(_("Channel"), manufacturer.scr[product_name])
+					try:
+						manufacturer_name = currLnb.unicableMatrix.manufacturer.value
+						product_name = currLnb.unicableMatrix.product.value
+					except:
+						manufacturer_name = product_name = "unicable_matrix"
+
+					self._checkUnicableLofUpdateRequired(currLnb, manufacturer_name, product_name)
+					self._lastUnicableManufacturerName = manufacturer_name
+					self._lastUnicableProductName = product_name
+
+					matrixConfig = currLnb.unicableMatrix
+					self.advancedManufacturer = getConfigListEntry(_("Manufacturer"), matrixConfig.manufacturer)
+					self.advancedType = getConfigListEntry(_("Type"), matrixConfig.product)
+					self.advancedSCR = getConfigListEntry(_("Channel"), matrixConfig.scr)
 					self.list.append(self.advancedManufacturer)
 					self.list.append(self.advancedType)
 					self.list.append(self.advancedSCR)
-					self.list.append(getConfigListEntry(_("Frequency"), manufacturer.vco[product_name][manufacturer.scr[product_name].index])) 
+					self.list.append(getConfigListEntry(_("Frequency"), matrixConfig.vco[matrixConfig.scr.index]))
 				elif currLnb.unicable.value == "unicable_lnb":
-					manufacturer_name = currLnb.unicableLnbManufacturer.value
-					manufacturer = currLnb.unicableLnb[manufacturer_name]
-					product_name = manufacturer.product.value
-					self.advancedManufacturer = getConfigListEntry(_("Manufacturer"), currLnb.unicableLnbManufacturer)
-					self.advancedType = getConfigListEntry(_("Type"), manufacturer.product)
-					self.advancedSCR = getConfigListEntry(_("Channel"), manufacturer.scr[product_name])
+					try:
+						product_name = currLnb.unicableLnb.product.value
+						manufacturer_name = currLnb.unicableLnb.manufacturer.value
+					except:
+						manufacturer_name = product_name = "unicable_lnb"
+					self._checkUnicableLofUpdateRequired(currLnb, manufacturer_name, product_name)
+					self._lastUnicableManufacturerName = manufacturer_name
+					self._lastUnicableProductName = product_name
+
+					lnbConfig = currLnb.unicableLnb
+					self.advancedManufacturer = getConfigListEntry(_("Manufacturer"), lnbConfig.manufacturer)
+					self.advancedType = getConfigListEntry(_("Type"), lnbConfig.product)
 					self.list.append(self.advancedManufacturer)
 					self.list.append(self.advancedType)
+					try:
+						idx = lnbConfig.scr.index
+					except ValueError:
+						idx = 0
+						lnbConfig.scr.setChoices(lnbConfig.scr.getChoices())
+					self.advancedSCR = getConfigListEntry(_("Channel"), lnbConfig.scr)
 					self.list.append(self.advancedSCR)
-					self.list.append(getConfigListEntry(_("Frequency"), manufacturer.vco[product_name][manufacturer.scr[product_name].index])) 
+					self.list.append(getConfigListEntry(_("Frequency"), lnbConfig.vco[idx]))
+				self.unicableUsePinEntry = getConfigListEntry(_("Use PIN"), currLnb.unicable_use_pin)
+				self.list.append(self.unicableUsePinEntry)
+				if currLnb.unicable_use_pin.value: 
+					self.list.append(getConfigListEntry(_("PIN"), currLnb.unicable_pin))
 
 				choices = []
 				connectable = nimmanager.canConnectTo(self.slotid)
@@ -377,6 +411,11 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					if config.usage.setup_level.index >= 2: # expert
 						self.list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), self.nimConfig.positionerExclusively))
 
+	def _checkUnicableLofUpdateRequired(self, currLnb, manufacturer, product_name):
+		from Components.NimManager import configLOFChanged
+		if self._lastUnicableManufacturerName != manufacturer or self._lastUnicableProductName != product_name:
+			configLOFChanged(currLnb.lof)
+
 	def keySave(self):
 		old_configured_sats = nimmanager.getConfiguredSats()
 		self.run()
@@ -434,6 +473,10 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.slotid = slotid
 		self.nim = nimmanager.nim_slots[slotid]
 		self.nimConfig = self.nim.config
+
+		self._lastUnicableManufacturerName = None
+		self._lastUnicableProductName = None
+
 		self.createConfigMode()
 		self.createSetup()
 

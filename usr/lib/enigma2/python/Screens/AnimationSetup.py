@@ -1,16 +1,19 @@
-from enigma import eWindowAnimationManager
-from Components.config import config, ConfigText, ConfigOnOff
-from Components.ActionMap import ActionMap
+from enigma import eWindowAnimationManager, getDesktop
+from Components.config import config, ConfigInteger, ConfigOnOff, ConfigText, getConfigListEntry
+from Components.ActionMap import ActionMap, NumberActionMap
+from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.MenuList import MenuList
+from Components.Sources.StaticText import StaticText
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-
+from Tools.HardwareInfo import HardwareInfo
 
 config.osd.window_animation = ConfigOnOff(default=True)
 config.osd.window_animation_default = ConfigText(default="simple_fade")
 config.osd.widget_animation = ConfigOnOff(default=False)
-config.osd.widget_animation_default = ConfigText(default="simple_fade")
+config.osd.widget_animation_display = ConfigOnOff(default=False)
+config.osd.widget_animation_duration = ConfigInteger(default=400, limits=(50,1000))
 
 class AnimationSetup(Screen):
 	skin = """
@@ -76,18 +79,56 @@ class AnimationSetup(Screen):
 			self.session.open(MessageBox, current[0], MessageBox.TYPE_INFO, timeout=3, custom_animation=current[1])
 
 	def _extended(self):
-		self.session.openWithCallback(self._onExtendedAnimationSet, MessageBox, _("Do you want to enable extended Animations?"), default=config.osd.widget_animation.value, type=MessageBox.TYPE_YESNO, title=_("Extended Animations"), )
+		self.session.open(ExtendedAnimationsSetup)
 
-	def _onExtendedAnimationSet(self, answer):
-		if answer is None:
-			return
-		text = None
-		if answer == True:
-			config.osd.widget_animation.value = True
-			text = _("Extended animations are now enabled")
+class ExtendedAnimationsSetup(Screen, ConfigListScreen):
+	DEVICES_TO_ANIMATE = ["dm900"]
+
+	def __init__(self, session, windowTitle=_("Extend Animations Configuration")):
+		Screen.__init__(self, session, windowTitle=windowTitle)
+		ConfigListScreen.__init__(self, [], session=session, on_change=self._onChange)
+
+		self.skinName = "Setup"
+
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("OK"))
+
+		self["actions"] = NumberActionMap(["SetupActions"],
+			{
+				"cancel": self.keyCancel,
+				"save": self.keySave,
+			}, -2)
+
+		self._dsk_osd = getDesktop(0)
+		if HardwareInfo().get_device_name() in self.DEVICES_TO_ANIMATE:
+			self._dsk_dsp = getDesktop(1)
 		else:
-			config.osd.widget_animation.value = False
-			text = _("Extended animations are now disabled")
-		config.osd.widget_animation.save()
+			self._dsk_dsp = None
+		self._createSetup()
+
+	def _onChange(self):
+		self._createSetup()
+
+	def saveAll(self):
+		ConfigListScreen.saveAll(self)
 		eWindowAnimationManager.setWidgetDefault()
-		self.session.toastManager.showToast(text)
+		self._dsk_osd.setAnimationsEnabled(config.osd.widget_animation.value)
+		if self._dsk_dsp:
+			self._dsk_dsp.setAnimationsEnabled(config.osd.widget_animation_display.value)
+
+	def _createSetup(self):
+		entries = [
+			getConfigListEntry(_("OSD")),
+			getConfigListEntry(_("OSD cross-fading for text and pictures)"), config.osd.widget_animation),
+		]
+		if self._dsk_dsp:
+			entries.extend([
+				getConfigListEntry(("Display")),
+				getConfigListEntry(_("Display cross-fading for text and pictures"), config.osd.widget_animation_display),
+			])
+		if config.osd.widget_animation.value or config.osd.widget_animation_display.value:
+			entries.extend([
+				getConfigListEntry(_("General Settings")),
+				getConfigListEntry(_("Cross-fading duration"), config.osd.widget_animation_duration),
+			])
+		self["config"].list = entries

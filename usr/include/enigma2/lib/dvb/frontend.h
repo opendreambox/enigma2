@@ -69,7 +69,6 @@ public:
 		LINKED_NEXT_PTR,      // next double linked list (for linked FEs)
 		SATPOS_DEPENDS_PTR,   // pointer to FE with configured rotor (with twin/quattro lnb)
 		FREQ_OFFSET,          // frequency offset for tuned transponder
-		FREQ_OFFSET_TNR,      // frequency offset for tuner frequency
 		CUR_VOLTAGE,          // current voltage
 		CUR_TONE,             // current continuous tone
 		SATCR,                // current SatCR

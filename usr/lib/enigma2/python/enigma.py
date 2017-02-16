@@ -144,6 +144,9 @@ HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 _enigma.HAVE_LIBSYSTEMD_swigconstant(_enigma)
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 
+_enigma.HAVE_LIBUNWIND_H_swigconstant(_enigma)
+HAVE_LIBUNWIND_H = _enigma.HAVE_LIBUNWIND_H
+
 _enigma.HAVE_MEMORY_H_swigconstant(_enigma)
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
 
@@ -189,8 +192,8 @@ HAVE_SYS_TYPES_H = _enigma.HAVE_SYS_TYPES_H
 _enigma.HAVE_UNISTD_H_swigconstant(_enigma)
 HAVE_UNISTD_H = _enigma.HAVE_UNISTD_H
 
-_enigma.HAVE_V3DDRIVER_swigconstant(_enigma)
-HAVE_V3DDRIVER = _enigma.HAVE_V3DDRIVER
+_enigma.HAVE_VC5DRIVER_swigconstant(_enigma)
+HAVE_VC5DRIVER = _enigma.HAVE_VC5DRIVER
 
 _enigma.LT_OBJDIR_swigconstant(_enigma)
 LT_OBJDIR = _enigma.LT_OBJDIR
@@ -3656,9 +3659,9 @@ class eDVBSatelliteLNBParameters(object):
     ON = _enigma.eDVBSatelliteLNBParameters_ON
     SatCR_positions = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_positions_get, _enigma.eDVBSatelliteLNBParameters_SatCR_positions_set)
     SatCR_idx = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_idx_get, _enigma.eDVBSatelliteLNBParameters_SatCR_idx_set)
+    SatCR_mode = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_mode_get, _enigma.eDVBSatelliteLNBParameters_SatCR_mode_set)
+    SatCR_pin = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_pin_get, _enigma.eDVBSatelliteLNBParameters_SatCR_pin_set)
     SatCRvco = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCRvco_get, _enigma.eDVBSatelliteLNBParameters_SatCRvco_set)
-    UnicableTuningWord = _swig_property(_enigma.eDVBSatelliteLNBParameters_UnicableTuningWord_get, _enigma.eDVBSatelliteLNBParameters_UnicableTuningWord_set)
-    UnicableConfigWord = _swig_property(_enigma.eDVBSatelliteLNBParameters_UnicableConfigWord_get, _enigma.eDVBSatelliteLNBParameters_UnicableConfigWord_set)
     guard_offset = _swig_property(_enigma.eDVBSatelliteLNBParameters_guard_offset_get, _enigma.eDVBSatelliteLNBParameters_guard_offset_set)
     LNBNum = _swig_property(_enigma.eDVBSatelliteLNBParameters_LNBNum_get, _enigma.eDVBSatelliteLNBParameters_LNBNum_set)
 eDVBSatelliteLNBParameters_swigregister = _enigma.eDVBSatelliteLNBParameters_swigregister
@@ -3735,10 +3738,14 @@ eDVBSatelliteEquipmentControl.setInputpowerDelta = new_instancemethod(_enigma.eD
 eDVBSatelliteEquipmentControl.setRotorTurningSpeed = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setRotorTurningSpeed, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCR = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCR, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRvco = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRvco, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.setLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRpositions = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpositions, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.setLNBSatCRmode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRmode, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCR = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCR, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRvco = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRvco, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.getLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRpositions = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRpositions, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.getLNBSatCRmode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRmode, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.addSatellite = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_addSatellite, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setVoltageMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setVoltageMode, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setToneMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setToneMode, None, eDVBSatelliteEquipmentControl)

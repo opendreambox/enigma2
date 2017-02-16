@@ -871,7 +871,9 @@ class HarddiskManager:
 				output.append(x)
 			else:
 				# remove or replace existing entry
-				if src == partitionPath and dst == mountpoint:
+				realDst = path.realpath(dst)
+				realMountpoint = path.realpath(mountpoint)
+				if src == partitionPath and realDst == realMountpoint:
 					if mode == 'remove':
 						continue
 					opts = set(mntops.split(',')) - { 'auto', 'noauto', 'fail' }
@@ -880,6 +882,9 @@ class HarddiskManager:
 					output.append('\t'.join([src, dst, vfstype, mntops, freq, passno]))
 					# remove possible duplicate entries
 					mode = 'remove'
+				elif realDst == realMountpoint:
+					#we cannot mount two sources to the same dest, so we drop the old one
+					continue
 				else:
 					output.append(x)
 

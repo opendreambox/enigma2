@@ -3,7 +3,12 @@ if [ -f /run/enigma2/system-state ]; then
 	state=`cat /run/enigma2/system-state`
 	case "$state" in
 		"system-restart")
-			systemctl --no-block reboot
+			if [ -f /proc/stb/fp/force_restart ]; then
+				echo 1 > /proc/stb/fp/force_restart
+				systemctl --no-block poweroff
+			else
+				systemctl --no-block reboot
+			fi
 			;;
 		"system-standby")
 			systemctl --no-block poweroff

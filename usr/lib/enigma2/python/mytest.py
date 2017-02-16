@@ -313,6 +313,7 @@ class Session:
 			summary = c.createSummary() or SimpleSummary
 			self.summary = self.instantiateSummaryDialog(summary, c)
 			if self.summary:
+				self.summary.neverAnimate()
 				self.summary.show()
 				c.addSummary(self.summary)
 

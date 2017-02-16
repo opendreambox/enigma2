@@ -266,14 +266,14 @@ public:
 #define guard_offset_min -8000
 #define guard_offset_max 8000
 #define guard_offset_step 8000
-#define MAX_SATCR 8
+#define MAX_SATCR 32
 #define MAX_LNBNUM 32
 
 	int SatCR_positions;
 	int SatCR_idx;
+	int SatCR_mode;
+	int SatCR_pin;
 	unsigned int SatCRvco;
-	unsigned int UnicableTuningWord;
-	unsigned int UnicableConfigWord;
 /*
 	int old_frequency;
 	int old_polarisation;
@@ -369,10 +369,14 @@ public:
 /* Unicable Specific Parameters */
 	RESULT setLNBSatCR(int SatCR_idx);
 	RESULT setLNBSatCRvco(int SatCRvco);
+	RESULT setLNBSatCRpin(int SatCRpin);
 	RESULT setLNBSatCRpositions(int SatCR_positions);
+	RESULT setLNBSatCRmode(int mode);
 	RESULT getLNBSatCR();
 	RESULT getLNBSatCRvco();
+	RESULT getLNBSatCRpin();
 	RESULT getLNBSatCRpositions();
+	RESULT getLNBSatCRmode();
 /* Satellite Specific Parameters */
 	RESULT addSatellite(int orbital_position);
 	RESULT setVoltageMode(int mode);
