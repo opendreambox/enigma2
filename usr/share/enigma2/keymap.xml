@@ -282,6 +282,16 @@
 		<device name="dreambox front panel">
 			<key id="KEY_POWER" mapto="deepstandby" flags="l" />
 		</device>
+		<!-- the followong entries are only used with non vendor ir rc 
+		     like harmony for discrete power on/off -->
+		<device name="dreambox remote control (native)">
+			<key id="KEY_KP0" mapto="power_down" flags="m" />
+			<key id="KEY_KP0" mapto="power_up" flags="b" />
+		</device>
+		<device name="dreambox advanced remote control (native)">
+			<key id="KEY_KP0" mapto="power_down" flags="m" />
+			<key id="KEY_KP0" mapto="power_up" flags="b" />
+		</device>
 	</map>
 	
 	<map context="PowerKeyActions">
@@ -698,6 +708,14 @@
 	</map>
 	<map context="StandbyActions">
 		<key id="KEY_POWER" mapto="power" flags="m" />
+		<!-- the followong entries are only used with non vendor ir rc 
+		     like harmony for discrete power on/off -->
+		<device name="dreambox remote control (native)">
+			<key id="KEY_KP1" mapto="power" flags="m" />
+		</device>
+		<device name="dreambox advanced remote control (native)">
+			<key id="KEY_KP1" mapto="power" flags="m" />
+		</device>
 	</map>
 	
 	<map context="SleepTimerEditorActions">

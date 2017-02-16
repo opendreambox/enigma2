@@ -1,8 +1,10 @@
 from Screens.Console import Console
 from Tools.Log import Log
 
-import hashlib
 from Screens.MessageBox import MessageBox
+
+import hashlib
+from distutils import spawn
 
 class FSBLCheckerBase(object):
 	def getCurrentHash(self):
@@ -37,10 +39,14 @@ class FSBLUpdater(Console):
 	CHECKER_LUT = {
 		"dm900" : FSBLCheckerDM900
 	}
-	FLASH_FSBL_BINARY = "flash-fsbl"
+	FLASH_FSBL_BINARY = spawn.find_executable("flash-fsbl")
 
 	@staticmethod
 	def isUpdateRequired(boxtype):
+		if not FSBLUpdater.FLASH_FSBL_BINARY:
+			Log.w("FSBL flasher not available - aborting!")
+			return False
+		Log.i(FSBLUpdater.FLASH_FSBL_BINARY)
 		checker = FSBLUpdater.CHECKER_LUT.get(boxtype, None)
 		if checker:
 			return checker().isUpdateRequired()

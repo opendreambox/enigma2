@@ -20,8 +20,12 @@ class ServiceName(Converter, object):
 	def getServiceInfoValue(self, info, what, ref=None):
 		v = ref and info.getInfo(ref, what) or info.getInfo(what)
 		if v != iServiceInformation.resIsString:
-			return "N/A"
-		return ref and info.getInfoString(ref, what) or info.getInfoString(what)
+			ret = "N/A" if not ref or self.type != self.REFERENCE else ref.toString()
+		elif ref:
+			ret = info.getInfoString(ref, what) or self.type == self.REFERENCE and ref.toString()
+		else:
+			ret = info.getInfoString(what)
+		return ret
 
 	@cached
 	def getText(self):

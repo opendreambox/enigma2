@@ -69,6 +69,12 @@ class VideoHardware:
 			"multi":	{ 50: "2160p50", 60: "2160p60" },
 		}
 
+		self.rates["2160p25/30"] = {
+			"25Hz":		{ 50: "2160p25" },
+			"30Hz":		{ 60: "2160p30" },
+			"multi":	{ 50: "2160p25", 60: "2160p30" },
+		}
+
 		self.rates["PC"] = {
 			"1024x768": { 60: "1024x768" }, # not possible on DM7025
 			"800x600" : { 60: "800x600" },  # also not possible
@@ -89,10 +95,10 @@ class VideoHardware:
 			self.modes["Scart"] = ["PAL", "NTSC", "Multi"]
 			self.modes["YPbPr"] = ["720p", "1080p", "1080i", "576p", "480p", "576i", "480i"]
 
-		self.modes["DVI"] = ["2160p", "1080i", "720p", "1080p", "576p", "480p", "576i", "480i"]
+		self.modes["DVI"] = ["2160p", "1080i", "720p", "1080p", "2160p25/30", "576p", "480p", "576i", "480i"]
 		self.modes["DVI-PC"] = ["PC"]
 
-		self.widescreen_modes = set(["2160p", "720p", "1080p", "1080i"])
+		self.widescreen_modes = set(["2160p", "2160p25/30", "720p", "1080p", "1080i"])
 
 	def getOutputAspect(self):
 		ret = (16,9)

@@ -68,7 +68,8 @@ def ConvertToHumanReadable(tp, ttype = None):
 			ret["rolloff"] = {
 				eDVBFrontendParametersSatellite.RollOff_alpha_0_35 : "0.35",
 				eDVBFrontendParametersSatellite.RollOff_alpha_0_25 : "0.25",
-				eDVBFrontendParametersSatellite.RollOff_alpha_0_20 : "0.20"}[tp["rolloff"]]
+				eDVBFrontendParametersSatellite.RollOff_alpha_0_20 : "0.20",
+				3                                                  : "unknown"}[tp["rolloff"]]
 			ret["pilot"] = {
 				eDVBFrontendParametersSatellite.Pilot_Unknown : _("Auto"),
 				eDVBFrontendParametersSatellite.Pilot_On : _("On"),

@@ -1962,8 +1962,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Color LCD screen (standby) -->
 	<screen name="StandbySummary" position="0,0" size="400,240" id="3">
-		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
-		<widget source="global.CurrentTime" render="Label" position="0,0" size="400,240" font="Display;120" halign="center" valign="center" transparent="1">
+		<widget source="global.CurrentTime" render="Label" position="0,0" size="400,240" font="Display;120" halign="center" valign="center" backgroundColor="#000000" transparent="0">
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
@@ -2016,7 +2015,9 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	<!-- Color LCD screen (SubservicesQuickzap) -->
 	<screen name="SubservicesQuickzap_summary" position="0,0" size="400,240" id="3">
 		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
-		<widget source="session.CurrentService" render="Label" position="0,0" size="400,240" font="Display;66"  halign="center" valign="center" transparent="1"/>
+		<widget source="session.CurrentService" render="Label" position="0,0" size="400,240" font="Display;66" halign="center" valign="center" transparent="1">
+			<convert type="ServiceName">Name</convert>
+		</widget>
 	</screen>
 	<!--  Color LCD screen (MediaCenter) -->
 	<screen name="MediaCenterMenuSummary" position="0,0" size="400,240" id="3">
