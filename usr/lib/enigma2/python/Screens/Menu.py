@@ -3,6 +3,7 @@ from Components.Sources.List import List
 from Components.ActionMap import NumberActionMap
 from Components.Sources.StaticText import StaticText
 from Components.config import configfile
+from Components.Pixmap import Pixmap
 from Components.PluginComponent import plugins
 from Components.config import config
 from Components.SystemInfo import SystemInfo
@@ -254,7 +255,11 @@ class Menu(Screen):
 		# Sort by Weight
 		list.sort(key=lambda x: int(x[3]))
 
-		self["menu"] = List(list)
+		self._list = List(list)
+		self._list.onSelectionChanged.append(self._onSelectionChanged)
+		self["menu"] = self._list
+		self["pixmap"] = Pixmap()
+		self["description"] = StaticText()
 
 		self["actions"] = NumberActionMap(["OkCancelActions", "MenuActions", "NumberActions"],
 			{
@@ -278,6 +283,10 @@ class Menu(Screen):
 			a = _(parent.get("text", "").encode("UTF-8"))
 		self["title"] = StaticText(a)
 		self.menu_title = a
+		self.onLayoutFinish.append(self._onLayoutFinish)
+
+	def _onLayoutFinish(self):
+		self._onSelectionChanged()
 
 	def keyNumberGlobal(self, number):
 		print "menu keyNumber:", number
@@ -287,6 +296,15 @@ class Menu(Screen):
 		if len(self["menu"].list) > number:
 			self["menu"].setIndex(number)
 			self.okbuttonClick()
+
+	def _onSelectionChanged(self):
+		current = self._list.current
+		description, pixmap = "", None
+		if current:
+			description, pixmap = current[4:]
+		self["description"].setText(_(description))
+		if pixmap:
+			self["pixmap"].setPixmap(pixmap)
 
 	def closeNonRecursive(self):
 		self.close(False)

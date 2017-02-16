@@ -60,10 +60,12 @@ You may combine all 3 types of animations, but only one of each kind for one typ
 
 <animations>
 	<animation key="simple_fade" title="Simple fade" duration="300" interpolate="linear">
-		<alpha val="0.0" />
+		<alpha val="0.0" interpolate="decelerate" factor="1.75"/>
+		<alpha_hide val="0.0" interpolate="accelerate" factor="1.75"/>
 	</animation>
 	<animation key="quick_fade" title="Quick fade" duration="200" interpolate="linear">
-		<alpha val="0.0" />
+		<alpha val="0.0" interpolate="decelerate" factor="1.75"/>
+		<alpha_hide val="0.0" interpolate="accelerate" factor="1.75"/>
 	</animation>
 	<animation key="slide_left_to_right" title="Slide in left + Slide out right" duration="250">
 		<position val="-1.0" animateX="" />

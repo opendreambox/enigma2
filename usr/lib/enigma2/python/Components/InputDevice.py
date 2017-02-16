@@ -2,26 +2,13 @@
 from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
 
 import struct
-from fcntl import ioctl
-from os import listdir, open as os_open, close as os_close, write as os_write, O_RDWR
+from ioctl import ioctl
+from ioctl.linux import IOC
+from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY
 O_CLOEXEC = 02000000
 
-# asm-generic/ioctl.h
-IOC_NRBITS = 8L
-IOC_TYPEBITS = 8L
-IOC_SIZEBITS = 13L
-IOC_DIRBITS = 3L
-
-IOC_NRSHIFT = 0L
-IOC_TYPESHIFT = IOC_NRSHIFT+IOC_NRBITS
-IOC_SIZESHIFT = IOC_TYPESHIFT+IOC_TYPEBITS
-IOC_DIRSHIFT = IOC_SIZESHIFT+IOC_SIZEBITS
-
-IOC_READ = 2L
-
 def EVIOCGNAME(length):
-	return (IOC_READ<<IOC_DIRSHIFT)|(length<<IOC_SIZESHIFT)|(0x45<<IOC_TYPESHIFT)|(0x06<<IOC_NRSHIFT)
-
+    return IOC('r', 'E', 0x06, length)
 
 class inputDevices:
 
@@ -31,28 +18,32 @@ class inputDevices:
 		self.getInputDevices()
 	
 	def getInputDevices(self):
-		devices = listdir("/dev/input/")
+            for evdev in sorted(listdir("/dev/input")):
+                try:
+                    fd = os_open("/dev/input/%s" % evdev, O_RDONLY | O_CLOEXEC)
+                except:
+                    continue
 
-		for evdev in devices:
-			try:
-				buffer = "\0"*512
-				fd = os_open("/dev/input/" + evdev, O_RDWR | O_CLOEXEC)
-				self.name = ioctl(fd, EVIOCGNAME(256), buffer)
-				self.name = self.name[:self.name.find("\0")]
-				os_close(fd)
-			except (IOError,OSError), err:
-				print '[iInputDevices] getInputDevices  <ERROR: ioctl(EVIOCGNAME): ' + str(err) + ' >'
-				self.name = None
-			
-			if self.name:
-				if self.name == 'dreambox front panel':
-					continue
-				if self.name == "dreambox advanced remote control (native)" and config.misc.rcused.value not in (0, 2):
-					continue
-				if self.name == "dreambox remote control (native)" and config.misc.rcused.value in (0, 2):
-					continue
-				self.Devices[evdev] = {'name': self.name, 'type': self.getInputDeviceType(self.name),'enabled': False, 'configuredName': None }
-	
+                buf = "\0"*256
+                try:
+                    size = ioctl(fd, EVIOCGNAME(len(buf)), buf)
+                except:
+                    os_close(fd)
+                    continue
+
+                os_close(fd)
+                if size <= 0:
+                    continue
+
+                name = buf[:size - 1]
+                if name:
+                    if name == "dreambox advanced remote control (native)" and config.misc.rcused.value not in (0, 2):
+                        continue
+                    if name == "dreambox remote control (native)" and config.misc.rcused.value in (0, 2):
+                        continue
+                    if name == "dreambox front panel":
+                        continue
+                    self.Devices[evdev] = {'name': name, 'type': self.getInputDeviceType(name),'enabled': False, 'configuredName': None }
 
 	def getInputDeviceType(self,name):
 		if name.find("remote control") != -1:

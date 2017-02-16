@@ -109,8 +109,7 @@ def autostart(reason, **kwargs):
 	session = kwargs.get('session', None)
 	if session is not None:
 		cec.start(session)
-	if reason == 0:
-		if session is not None:
+		if reason == 0:
 			cec.ready()
 	elif getExitCode() == 1: # send CEC poweroff only on complete box shutdown
 		cec.powerOff()

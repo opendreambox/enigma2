@@ -70,7 +70,7 @@ class CecConfig(ConfigListScreen, Screen):
 		self._createSetup()
 
 	def _createSetup(self):
-		isExpert = config.usage.setup_level.index >= 2
+		isExpert = config.usage.setup_level.index >= 1
 		lst =  [getConfigListEntry(_("HDMI CEC"), config.cec.enabled),]
 		if not config.cec.enabled.value:
 			self["config"].list = lst
@@ -86,17 +86,17 @@ class CecConfig(ConfigListScreen, Screen):
 				lst.append(getConfigListEntry(_("Send explicit on/off to Audio System"), config.cec.avr_power_explicit))
 
 		lst.extend([
-				getConfigListEntry(_("Handle received HDMI CEC Power Events"), config.cec.receivepower),
+				getConfigListEntry(_("Power on/off based on CEC Events"), config.cec.receivepower),
 			])
 
-		if config.cec.receivepower.value and isExpert:
+		if isExpert:
 			lst.extend([
-				getConfigListEntry(_("Power-On Events (For Experts Only)")),
-				getConfigListEntry(_("Handle 'Routing Info' as power up/down"), config.cec.activate_on_routing_info),
-				getConfigListEntry(_("Handle 'Routing Change' as power up/down"), config.cec.activate_on_routing_change),
-				getConfigListEntry(_("Handle 'Active Source' as power up/down"), config.cec.activate_on_active_source),
-				getConfigListEntry(_("Handle 'Set Stream' as power up"), config.cec.activate_on_stream),
-				getConfigListEntry(_("Handle 'TV Power Status On' as power up"), config.cec.activate_on_tvpower),
+				getConfigListEntry(_("Special Event Handlers")),
+				getConfigListEntry(_("Check state on 'Routing Info'"), config.cec.activate_on_routing_info),
+				getConfigListEntry(_("Check state on 'Routing Change'"), config.cec.activate_on_routing_change),
+				getConfigListEntry(_("Check state on 'Active Source'"), config.cec.activate_on_active_source),
+				getConfigListEntry(_("Check state on 'Set Stream' (on only)"), config.cec.activate_on_stream),
+				getConfigListEntry(_("Check state on 'TV Power Status On' (on only)"), config.cec.activate_on_tvpower),
 				getConfigListEntry(_("Ignore Device Power States"), config.cec.ignore_powerstates),
 				getConfigListEntry(_("Ignore 'Active Source' when not sent by the TV"), config.cec.ignore_active_source_nontv),
 			])

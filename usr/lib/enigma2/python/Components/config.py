@@ -1754,7 +1754,35 @@ class Config(ConfigSubsection):
 
 	def loadFromFile(self, filename, base_file=False, append = False):
 		f = open(filename, "r")
-		self.unpickle(f.readlines(), base_file, append)
+		lines_read = f.readlines()
+		lines = []
+
+		# HACK to migrate changed unicable configuration
+		for l in lines_read:
+			changed = False
+			tmp = l.split('=')
+			x = tmp[0].split('.')
+			ent = len(x)
+			if ent > 6:
+				if x[1] == 'Nims' and x[3] == 'advanced' and x[6].startswith('unicable'):
+					if ent > 8 and x[8] in ('vco', 'scr', 'product'):
+						if x[8] != 'product':
+							del x[9]
+						del x[7]
+						changed = True
+					elif x[6] == 'unicableLnbManufacturer':
+						x[6] = 'unicableLnb.manufacturer'
+						changed = True
+					elif x[6] == 'unicableMatrixManufacturer':
+						x[6] = 'unicableMatrix.manufacturer'
+						changed = True
+					if changed:
+						tmp[0] = '.'.join(x) 
+						l = '='.join(tmp)
+						print "UNICABLE MIGRATION", l,
+			lines.append(l)
+
+		self.unpickle(lines, base_file, append)
 		f.close()
 
 config = Config()

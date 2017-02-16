@@ -13,11 +13,18 @@ class Pixmap(GUIComponent):
 	def setPixmap(self, pixmap):
 		self.instance.setPixmap(pixmap)
 
+	def setDefaultAnimationEnabled(self, enabled):
+		self.instance.setDefaultAnimationEnabled(enabled)
+
 	def setShowHideAnimation(self, key):
 		self.instance.setShowHideAnimation(key)
 
 	def resetShowHideAnimation(self):
 		self.instance.setShowHideAnimation("")
+
+	def execBegin(self):
+		GUIComponent.execBegin(self)
+		self.instance.setDefaultAnimationEnabled(True)
 
 class PixmapConditional(ConditionalWidget, Pixmap):
 	def __init__(self, withTimer = True):

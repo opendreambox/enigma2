@@ -221,7 +221,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.unicableUsePinEntry
 		)
 
-		current = self["config"].getCurrent
+		current = self["config"].getCurrent()
+
 		if current == self.multiType:
 			from Components.NimManager import InitNimManager
 			InitNimManager(nimmanager, self.slotid)
@@ -229,7 +230,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.nimConfig = self.nim.config
 
 		for x in checkList:
-			if self["config"].getCurrent() == x:
+			if current == x:
 				self.createSetup()
 				break
 

@@ -144,9 +144,6 @@ HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 _enigma.HAVE_LIBSYSTEMD_swigconstant(_enigma)
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 
-_enigma.HAVE_LIBUNWIND_H_swigconstant(_enigma)
-HAVE_LIBUNWIND_H = _enigma.HAVE_LIBUNWIND_H
-
 _enigma.HAVE_MEMORY_H_swigconstant(_enigma)
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
 
@@ -192,8 +189,8 @@ HAVE_SYS_TYPES_H = _enigma.HAVE_SYS_TYPES_H
 _enigma.HAVE_UNISTD_H_swigconstant(_enigma)
 HAVE_UNISTD_H = _enigma.HAVE_UNISTD_H
 
-_enigma.HAVE_VC5DRIVER_swigconstant(_enigma)
-HAVE_VC5DRIVER = _enigma.HAVE_VC5DRIVER
+_enigma.HAVE_V3DDRIVER_swigconstant(_enigma)
+HAVE_V3DDRIVER = _enigma.HAVE_V3DDRIVER
 
 _enigma.LT_OBJDIR_swigconstant(_enigma)
 LT_OBJDIR = _enigma.LT_OBJDIR
