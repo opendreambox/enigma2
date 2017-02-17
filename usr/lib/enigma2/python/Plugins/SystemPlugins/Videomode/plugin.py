@@ -6,7 +6,6 @@ from Components.config import getConfigListEntry, config, ConfigBoolean, ConfigN
 from Components.Sources.StaticText import StaticText
 
 import VideoHardware
-from Components.ResourceManager import resourcemanager
 
 config.misc.videowizardenabled = ConfigBoolean(default = True)
 

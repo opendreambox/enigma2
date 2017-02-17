@@ -47,7 +47,10 @@ public:
 	{
 		blitAlphaTest=1,
 		blitAlphaBlend=2,
-		blitScale=4
+		blitScale=4,
+		blitDestinationColorPlusZero=8,
+		blitOnePlusOne=16,
+		blitSourceAlphaPlusOne=32,
 	};
 
 	gPixmap(gSurface *surface, bool takeOwnership = false);

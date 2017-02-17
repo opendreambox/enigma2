@@ -23,7 +23,7 @@ class TitleCutter(CutListEditor):
 		if n > 0:
 			from Title import ConfigFixedText
 			from Project import iso639language
-			from Components.config import config, ConfigSubsection, ConfigSubList, ConfigSelection, ConfigYesNo
+			from Components.config import ConfigSubsection, ConfigSubList, ConfigSelection, ConfigYesNo
 			self.t.properties.audiotracks = ConfigSubList()
 			for x in range(n):
 				i = audio.getTrackInfo(x)

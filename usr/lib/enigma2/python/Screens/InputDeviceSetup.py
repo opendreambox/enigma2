@@ -81,7 +81,6 @@ class InputDeviceSelection(Screen,HelpableScreen):
 
 	def buildInterfaceList(self,device,description,type ):
 		divpng = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "skin_default/div-h.png"))
-		activepng = None
 		devicepng = None
 		enabled = iInputDevices.getDeviceAttribute(device, 'enabled')
 

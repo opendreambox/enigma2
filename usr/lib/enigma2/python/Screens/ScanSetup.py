@@ -252,9 +252,9 @@ class CableTransponderSearchSupport:
 					"QAM128" : parm.Modulation_QAM128,
 					"QAM256" : parm.Modulation_QAM256,
 					"QAM_AUTO" : parm.Modulation_Auto }
-				inv = { "INVERSION_OFF" : parm.Inversion_Off,
-					"INVERSION_ON" : parm.Inversion_On,
-					"INVERSION_AUTO" : parm.Inversion_Unknown }
+				#inv = { "INVERSION_OFF" : parm.Inversion_Off,
+				#	"INVERSION_ON" : parm.Inversion_On,
+				#	"INVERSION_AUTO" : parm.Inversion_Unknown }
 				fec = { "FEC_AUTO" : parm.FEC_Auto,
 					"FEC_1_2" : parm.FEC_1_2,
 					"FEC_2_3" : parm.FEC_2_3,
@@ -701,7 +701,6 @@ FOUND_HISTORY_SIZE = 8
 from Components.Sources.CanvasSource import CanvasSource
 from Components.Sources.List import List
 from Tools.Directories import fileExists
-from enigma import eTimer
 
 class SatBlindscanState(Screen):
 	def __init__(self, session, fe_num, text):
@@ -1153,7 +1152,7 @@ class SatelliteTransponderSearchSupport:
 			else:
 				tmpstr = _("Nothing to scan! Press Exit!")
 			x = { }
-			data = self.frontend.getFrontendData(x)
+			self.frontend.getFrontendData(x)
 			tuner_no = x["tuner_number"]
 		else:
 			tmpstr = _("Blindscan is not supported by this tuner (%s)") %tunername
@@ -1825,7 +1824,6 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				sat = self.satList[index_to_scan][self.scan_satselection[index_to_scan].index]
 				getInitialTransponderList(tlist, sat[0])
 			elif self.scan_type.value.find("multisat") != -1:
-				SatList = nimmanager.getSatListForNim(index_to_scan)
 				for x in self.multiscanlist:
 					if x[1].value:
 						print "   " + str(x[0])
@@ -1954,7 +1952,6 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 		}, -2)
 
 		self.list = []
-		tlist = []
 
 		known_networks = [ ]
 		nims_to_scan = [ ]

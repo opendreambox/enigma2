@@ -35,7 +35,7 @@ class Hotplug(object):
 			try:
 				callback(dev, action)
 			except AttributeError:
-				unregisterEventCallback(callback)
+				self.unregisterEventCallback(callback)
 
 	def registerEventCallback(self, callback):
 		self.__eventCallbacks.append(callback)

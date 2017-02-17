@@ -1,7 +1,6 @@
 from Components.config import config
 from Components.ResourceManager import resourcemanager
 
-from NetworkConfig import NetworkConfigGeneral
 from NetworkWizard import NetworkWizardNew
 
 def EarlyPlugins(**kwargs):

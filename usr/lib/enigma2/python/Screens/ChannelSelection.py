@@ -934,7 +934,6 @@ class ChannelSelectionBase(Screen):
 		self.setTitle(title)
 
 	def setRoot(self, root, justSet=False):
-		path = root.getPath()
 		setModeFavourites = False
 
 		serviceHandler = eServiceCenter.getInstance()

@@ -2,6 +2,8 @@ from Screen import Screen
 from Components.Sources.List import List
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
+from Components.Pixmap import Pixmap
+
 
 class FixedMenu(Screen):
 	def okbuttonClick(self):
@@ -13,6 +15,8 @@ class FixedMenu(Screen):
 		Screen.__init__(self, session)
 
 		self["menu"] = List(list)	
+		self["pixmap"] = Pixmap()
+		self["description"] = StaticText()
 
 		self["actions"] = ActionMap(["OkCancelActions"], 
 			{

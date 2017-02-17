@@ -1,4 +1,4 @@
-from Components.config import config, ConfigYesNo, ConfigOnOff, ConfigText, ConfigInteger, ConfigSubsection
+from Components.config import config, ConfigYesNo, ConfigOnOff, ConfigText, ConfigSubsection
 from Tools.HardwareInfo import HardwareInfo
 
 config.plugins.mediaserver = ConfigSubsection()

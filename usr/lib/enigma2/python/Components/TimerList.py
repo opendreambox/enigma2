@@ -3,7 +3,6 @@ from GUIComponent import GUIComponent
 from TemplatedMultiContentComponent import TemplatedMultiContentComponent
 
 from Tools.FuzzyDate import FuzzyTime
-from Tools.Log import Log
 
 from enigma import eListbox, eServiceReference
 from Tools.LoadPixmap import LoadPixmap
@@ -11,6 +10,7 @@ from timer import TimerEntry
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 
 from skin import componentSizes
+
 
 class TimerList(HTMLComponent, TemplatedMultiContentComponent, object):
 #

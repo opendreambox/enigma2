@@ -1,9 +1,7 @@
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
-from Screens.Rc import Rc
 import VideoHardware
 
-from Components.Pixmap import Pixmap
 from Components.config import config, configfile
 
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS

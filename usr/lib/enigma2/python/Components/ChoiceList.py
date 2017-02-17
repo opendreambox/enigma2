@@ -4,8 +4,6 @@ from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent,
 from skin import TemplatedListFonts, componentSizes
 from Tools.LoadPixmap import LoadPixmap
 
-from Tools.Log import Log
-
 #return (eListboxPythonMultiContent.TYPE_TEXT, pos[0], pos[1], size[0], size[1], font, flags, text, color, color_sel, backcolor, backcolor_sel, border_width, border_color)
 
 def ChoiceEntryComponent(key = "", text = ["--"]):

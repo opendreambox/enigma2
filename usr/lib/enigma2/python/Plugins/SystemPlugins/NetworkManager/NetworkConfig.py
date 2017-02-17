@@ -261,6 +261,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				</convert>
 			</widget>
 			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+			<ePixmap pixmap="skin_default/buttons/key_menu.png" position="845,10" size="60,30" alphatest="on" zPosition="2"/>
 			<widget name="details_label" position="590,30" zPosition="2" size="310,25" font="Regular;22" backgroundColor="background" halign="center" transparent="1" />
 			<widget name="details" position="590,70" zPosition="2" size="300,360" font="Regular;18" halign="center" backgroundColor="background" transparent="1" />
 			<widget name="hint" position="590,470" zPosition="2" size="300,25" font="Regular;20" halign="center" backgroundColor="background" transparent="1" />

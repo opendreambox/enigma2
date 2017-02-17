@@ -2,9 +2,8 @@ from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayab
 from Components.config import config
 from Components.ParentalControl import parentalControl
 from Tools.BoundFunction import boundFunction
-from Tools.DreamboxHardware import setFPWakeuptime, getFPWakeuptime, getFPWasTimerWakeup, clearFPWasTimerWakeup
+from Tools.DreamboxHardware import getFPWasTimerWakeup, clearFPWasTimerWakeup
 from Tools import Notifications
-from time import time
 import RecordTimer
 import SleepTimer
 import Screens.Standby

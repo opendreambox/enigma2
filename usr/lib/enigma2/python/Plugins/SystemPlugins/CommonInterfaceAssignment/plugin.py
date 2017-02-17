@@ -4,6 +4,7 @@ from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.config import config, ConfigNothing
 from Components.ConfigList import ConfigList
+from Components.NimManager import nimmanager
 from Components.SelectionList import SelectionList
 from ServiceReference import ServiceReference
 from Plugins.Plugin import PluginDescriptor
@@ -268,7 +269,6 @@ class CIconfigMenu(Screen):
 			return
 
 		def getValue(definitions, default):
-			ret = ""
 			Len = len(definitions)
 			return Len > 0 and definitions[Len-1].text or default
 
@@ -333,8 +333,6 @@ class easyCIconfigMenu(CIconfigMenu):
 		</screen>"""
 
 	def __init__(self, session, ci_slot="9"):
-
-		ci=ci_slot
 		CIconfigMenu.__init__(self, session, ci_slot)
 
 		self["actions"] = ActionMap(["ColorActions","SetupActions"],
@@ -574,8 +572,6 @@ def activate_all(session):
 	if NUM_CI > 0:
 		ci_config=[]
 		def getValue(definitions, default):
-			# Initialize Output
-			ret = ""
 			# How many definitions are present
 			Len = len(definitions)
 			return Len > 0 and definitions[Len-1].text or default	

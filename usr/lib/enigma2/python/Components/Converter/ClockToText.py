@@ -1,7 +1,7 @@
 from Converter import Converter
 from time import localtime, strftime
 from Components.Element import cached
-import locale
+
 
 class ClockToText(Converter, object):
 	DEFAULT = 0

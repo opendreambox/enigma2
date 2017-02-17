@@ -139,7 +139,6 @@ class EPGList(HTMLComponent, GUIComponent):
 	def getCurrent(self):
 		if self.cur_service is None:
 			return ( None, None )
-		old_service = self.cur_service  #(service, service_name, events)
 		events = self.cur_service[2]
 		refstr = self.cur_service[0]
 		if self.cur_event is None or not events or not len(events):
@@ -399,6 +398,9 @@ class EPGList(HTMLComponent, GUIComponent):
 		else:
 			return self.clock_prepost_pixmap
 
+	def rebuild(self):
+		self.l.setList(self.list)
+
 class TimelineText(HTMLComponent, GUIComponent):
 	def __init__(self):
 		GUIComponent.__init__(self)
@@ -653,7 +655,8 @@ class GraphMultiEPG(Screen):
 		self.session.nav.RecordTimer.removeEntry(timer)
 		self["key_green"].setText(_("Add timer"))
 		self.key_green_choice = self.ADD_TIMER
-	
+		self["list"].rebuild()
+
 	def timerAdd(self):
 		cur = self["list"].getCurrent()
 		event = cur[0]

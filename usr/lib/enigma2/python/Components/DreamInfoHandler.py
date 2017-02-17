@@ -66,8 +66,6 @@ class InfoHandler(xml.sax.ContentHandler):
 				if not attrs.has_key("name"):
 					self.printError("file tag with no name attribute")
 				else:	
-					if not attrs.has_key("directory"):
-						directory = self.directory
 					type = attrs["type"]
 					if not type in self.validFileTypes:
 						self.printError("file tag with invalid type attribute")
@@ -254,7 +252,6 @@ class DreamInfoHandler:
 
 		# TODO: we need to implement a hardware detection here...
 		print "prerequisites:", prerequisites
-		met = True
 		if self.neededTag is None:
 			if prerequisites.has_key("tag"):
 				return False
@@ -335,7 +332,7 @@ class DreamInfoHandler:
 	def installNext(self, *args, **kwargs):
 		if self.reloadFavourites:
 			self.reloadFavourites = False
-			db = eDVBDB.getInstance().reloadBouquets()
+			eDVBDB.getInstance().reloadBouquets()
 
 		self.currentIndex += 1
 		attributes = self.installingAttributes

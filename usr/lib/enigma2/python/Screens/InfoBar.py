@@ -16,7 +16,7 @@ from Screens.InfoBarGenerics import InfoBarShowHide, \
 	InfoBarSubserviceSelection, InfoBarShowMovies, InfoBarTimeshift,  \
 	InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView, \
 	InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications, \
-	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarAutoSleepTimer
+	InfoBarSubtitleSupport, InfoBarPiP, InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarAutoSleepTimer, InfoBarGstreamerErrorPopupSupport
 
 from Screens.InfoBarPrivate import InfoBarPrivateExtensions
 profile("LOAD:InitBar_Components")
@@ -42,7 +42,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarSubserviceSelection, InfoBarTimeshift, InfoBarSeek,
 	InfoBarSummarySupport, InfoBarTimeshiftState, InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications,
 	InfoBarPiP, InfoBarPlugins, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarJobman, InfoBarAutoSleepTimer,
-	InfoBarPrivateExtensions,
+	InfoBarPrivateExtensions, InfoBarGstreamerErrorPopupSupport,
 	Screen):
 
 	ALLOW_SUSPEND = True
@@ -66,7 +66,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				InfoBarAdditionalInfo, InfoBarDish, InfoBarSubserviceSelection, \
 				InfoBarTimeshift, InfoBarSeek, InfoBarSummarySupport, InfoBarTimeshiftState, \
 				InfoBarTeletextPlugin, InfobarHbbtvPlugin, InfoBarExtensions, InfoBarNotifications, InfoBarPiP, InfoBarSubtitleSupport, InfoBarJobman, \
-				InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarAutoSleepTimer, InfoBarPrivateExtensions:
+				InfoBarPlugins, InfoBarServiceErrorPopupSupport, InfoBarAutoSleepTimer, InfoBarPrivateExtensions, InfoBarGstreamerErrorPopupSupport:
 			x.__init__(self)
 
 		self.helpList.append((self["actions"], "InfobarActions", [("showMovies", _("view recordings..."))]))
@@ -187,7 +187,6 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		self.rds_display.show()  # in InfoBarRdsDecoder
 
 	def showMovies(self):
-		from Screens.MovieSelection import MovieSelection
 		self.session.openWithCallback(self.movieSelected, MovieSelection)
 
 	def movieSelected(self, service):
@@ -199,13 +198,12 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		InfoBarSeek, InfoBarShowMovies, InfoBarAudioSelection, HelpableScreen,
 		InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, InfoBarSimpleEventView,
 		InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, Screen, InfoBarTeletextPlugin,
-		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, InfoBarPlugins, InfoBarPiP):
+		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, InfoBarPlugins, InfoBarPiP, InfoBarGstreamerErrorPopupSupport):
 
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
 	def __init__(self, session, service):
-		from enigma import eServiceMP3
 		Screen.__init__(self, session)
 
 		self["actions"] = HelpableActionMap(self, "MoviePlayerActions",
@@ -221,77 +219,11 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 				InfoBarServiceNotifications, InfoBarPVRState, InfoBarCueSheetSupport, \
 				InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, \
 				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, \
-				InfoBarPlugins, InfoBarPiP:
+				InfoBarPlugins, InfoBarPiP, InfoBarGstreamerErrorPopupSupport:
 			x.__init__(self)
 
 		session.nav.playService(service)
 		self.returning = False
-
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
-				eServiceMP3.evAudioDecodeError: self.__evAudioDecodeError,
-				eServiceMP3.evVideoDecodeError: self.__evVideoDecodeError,
-				eServiceMP3.evPluginError:      self.__evPluginError,
-				eServiceMP3.evStreamingSrcError:self.__evStreamingSrcError,
-				eServiceMP3.evFileReadError:    self.__evFileReadError,
-				eServiceMP3.evTypeNotFoundError:self.__evTypeNotFoundError,
-				eServiceMP3.evGeneralGstError:  self.__evGeneralGstError
-			})
-
-	def __evAudioDecodeError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evAudioDecodeError] audio-codec %s can't be decoded by hardware" % (sTagAudioCodec)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagAudioCodec, type = MessageBox.TYPE_INFO,timeout = 20 )
-
-	def __evVideoDecodeError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evVideoDecodeError] video-codec %s can't be decoded by hardware" % (sTagVideoCodec)
-		self.session.open(MessageBox, _("This Dreambox can't decode %s streams!") % sTagVideoCodec, type = MessageBox.TYPE_INFO,timeout = 20 )
-
-	def __evPluginError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evPluginError]" , message
-		self.session.open(MessageBox, message, type = MessageBox.TYPE_INFO,timeout = 20 )
-
-	def __evStreamingSrcError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evStreamingSrcError]", message
-		self.session.open(MessageBox, _("Streaming error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 20 )
-
-	def __evFileReadError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evFileReadError]", message
-		self.session.open(MessageBox, _("Gstreamer error: %s") % message, type = MessageBox.TYPE_INFO,timeout = 20 )
-
-	def __evTypeNotFoundError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		print "[__evTypeNotFoundError]"
-		self.session.open(MessageBox, _("Couldn't find media type"), type = MessageBox.TYPE_INFO, timeout = 20)
-
-	def __evGeneralGstError(self):
-		from Screens.MessageBox import MessageBox
-		from enigma import iServiceInformation
-		currPlay = self.session.nav.getCurrentService()
-		message = currPlay.info().getInfoString(iServiceInformation.sUser+12)
-		print "[__evGeneralGstError]", message
-		self.session.open(MessageBox, _("Gstreamer error: %s") % message, type = MessageBox.TYPE_INFO, timeout = 20)
 
 	def handleLeave(self, how):
 		self.is_closing = True
@@ -349,7 +281,6 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		elif answer == "movielist":
 			ref = self.session.nav.getCurrentlyPlayingServiceReference()
 			self.returning = True
-			from Screens.MovieSelection import MovieSelection
 			self.session.openWithCallback(self.movieSelected, MovieSelection, ref)
 			self.session.nav.stopService()
 		elif answer == "restart":
@@ -365,7 +296,6 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 
 	def showMovies(self):
 		ref = self.session.nav.getCurrentlyPlayingServiceReference()
-		from Screens.MovieSelection import MovieSelection
 		self.session.openWithCallback(self.movieSelected, MovieSelection, ref)
 
 	def movieSelected(self, service):

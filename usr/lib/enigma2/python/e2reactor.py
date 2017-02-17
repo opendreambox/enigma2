@@ -22,8 +22,6 @@ from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log
 from twisted.internet.posixbase import PosixReactorBase
 
-from ctypes import CDLL, Structure, c_long, c_int, POINTER, pointer, get_errno
-from os import strerror
 from sys import exc_info
 from monotonic import monotonic
 

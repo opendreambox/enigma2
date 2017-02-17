@@ -1,17 +1,13 @@
 from Screen import Screen
-from enigma import eConsoleAppContainer
 
 from Components.ActionMap import ActionMap
 from Components.PluginComponent import plugins
 from Components.PluginList import PluginEntryComponent, PluginList
 from Components.Label import Label
 from Screens.MessageBox import MessageBox
-from Screens.Console import Console
 from Plugins.Plugin import PluginDescriptor
-from Tools.Directories import resolveFilename, fileExists, SCOPE_PLUGINS, SCOPE_SKIN_IMAGE
-from Tools.LoadPixmap import LoadPixmap
+from Tools.Directories import resolveFilename, fileExists, SCOPE_PLUGINS
 
-from time import time
 
 class PluginBrowserSummary(Screen):
 	pass

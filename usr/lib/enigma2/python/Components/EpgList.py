@@ -1,7 +1,7 @@
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 
-from enigma import eLabel, eEPGCache, eListbox, eListboxPythonMultiContent, gFont, getDesktop, \
+from enigma import eLabel, eEPGCache, eListbox, eListboxPythonMultiContent, gFont, \
 	RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER
 
 from Components.config import config
@@ -252,6 +252,9 @@ class EPGList(HTMLComponent, GUIComponent):
 					(eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName)
 				))
 		return res
+
+	def rebuild(self):
+		self.l.setList(self.list)
 
 	def queryEPG(self, list, buildFunc=None):
 		if self.epgcache is not None:

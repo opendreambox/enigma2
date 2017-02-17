@@ -787,7 +787,6 @@ class BrowserMenu(Screen):
 
 	def __ckDeleteAll(self):
 		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
-			cookie = self.detailList.getCurrent()[0]
 			text = _("Do you really want to delete ALL cookies?")
 			dlg = self.session.openWithCallback( self.__ckDeleteAllCB, MessageBox, text, type = MessageBox.TYPE_YESNO )
 			dlg.setTitle(_("Delete Cookie?"))

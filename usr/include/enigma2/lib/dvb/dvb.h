@@ -266,6 +266,7 @@ public:
 
 	RESULT connectStateChange(const sigc::slot1<void,iDVBChannel*> &stateChange, ePtr<eConnection> &connection);
 	RESULT connectEvent(const sigc::slot2<void,iDVBChannel*,int> &eventChange, ePtr<eConnection> &connection);
+	RESULT connectSourceEvent(const sigc::slot2<void,int,std::string> &sourceEventChange, ePtr<eConnection> &connection);
 	
 	RESULT getState(int &state);
 
@@ -298,6 +299,7 @@ private:
 	eDVBChannelID m_channel_id;
 	sigc::signal1<void,iDVBChannel*> m_stateChanged;
 	sigc::signal2<void,iDVBChannel*,int> m_event;
+	sigc::signal2<void,int,std::string> m_sourceEvent;
 	int m_state;
 
 			/* for channel list */
@@ -336,6 +338,9 @@ private:
 	ePtr<iDVBDemux> m_tsid_onid_demux;
 	ePtr<eTable<ServiceDescriptionSection> > m_SDT;
 	void SDTready(int err);
+
+	ePtr<eConnection> m_conn_sourceEvent;
+	void onSourceEvent(int, std::string);
 };
 #endif // SWIG
 

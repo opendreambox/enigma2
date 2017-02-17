@@ -355,10 +355,6 @@ class Condition:
 	def getErrorMessage(self, task):
 		return _("An unknown error occured!") + " (%s @ task %s)" % (self.__class__.__name__, task.__class__.__name__)
 
-class WorkspaceExistsPrecondition(Condition):
-	def check(self, task):
-		return os.access(task.job.workspace, os.W_OK)
-
 class DiskspacePrecondition(Condition):
 	def __init__(self, diskspace_required):
 		self.diskspace_required = diskspace_required

@@ -9,9 +9,7 @@ from Components.ActionMap import HelpableActionMap, ActionMap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Components.Sources.Progress import Progress
-from Components.MultiContent import MultiContentEntryText
 from Components.Label import MultiColorLabel
-from enigma import gFont, RT_HALIGN_LEFT, RT_HALIGN_RIGHT
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 
 MODE_DVD, MODE_BLUDISC = range(2)
@@ -350,12 +348,12 @@ class TitleList(Screen, HelpableScreen):
 		t = self.current_edit_title
 		t.titleEditDone(cutlist)
 		all_hd = True
-		all_sd = True
+		#all_sd = True
 		for title in self.project.titles:
 			if title != self.current_edit_title and title.VideoType == 0:
 				all_hd = False
-			if title != self.current_edit_title and title.VideoType == 1:
-				all_sd = False
+			#if title != self.current_edit_title and title.VideoType == 1:
+			#	all_sd = False
 
 		choices = []
 

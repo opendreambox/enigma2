@@ -1,9 +1,10 @@
 from Screen import Screen
-from Components.Button import Button
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import config, getConfigListEntry
 from Components.Sources.StaticText import StaticText
+
+
 class ChannelSelectionDisplaySettings(Screen, ConfigListScreen):
 	skin = """
 		<screen name="ChannelSelectionDisplaySettings" position="center,center" size="600,400" title="ChannelSelection Display Settings" >

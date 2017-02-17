@@ -144,7 +144,6 @@ class DemuxTask(Task):
 	def haveProgress(self, progress):
 		#print "PROGRESS [%s]" % progress
 		MSG_CHECK = "check & synchronize audio file"
-		MSG_DONE = "done..."
 		if progress == "preparing collection(s)...":
 			self.prog_state = 0
 		elif progress[:len(MSG_CHECK)] == MSG_CHECK:
@@ -181,10 +180,10 @@ class DemuxTask(Task):
 		print self.mplex_streamfiles
 
 		if failed:
-			import os
+			from os import remove
 			for file in self.generated_files:
 				try:
-					os.remove(file)
+					remove(file)
 				except OSError:
 					pass
 
@@ -506,7 +505,7 @@ class MenuImageTask(Task):
 	def run(self, callback):
 		self.callback = callback
 		#try:
-		import ImageDraw, Image, os
+		import ImageDraw, Image
 		s = self.job.project.menutemplate.settings
 		s_top = s.margin_top.getValue()
 		s_bottom = s.margin_bottom.getValue()

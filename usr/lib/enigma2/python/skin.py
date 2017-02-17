@@ -1,14 +1,13 @@
 from Tools.Profile import profile
 profile("LOAD:ElementTree")
 import xml.etree.cElementTree
-from os import path
+from os.path import dirname
 
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
 	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent
 from Components.config import ConfigSubsection, ConfigText, config
-from Components.Converter.Converter import Converter
-from Components.Sources.Source import Source, ObsoleteSource
+from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
@@ -38,7 +37,7 @@ dom_skins = [ ]
 def loadSkin(name, scope = SCOPE_SKIN):
 	# read the skin
 	filename = resolveFilename(scope, name)
-	mpath = path.dirname(filename) + "/"
+	mpath = dirname(filename) + "/"
 	dom_skins.append((mpath, xml.etree.cElementTree.parse(filename).getroot()))
 
 # we do our best to always select the "right" value
@@ -175,14 +174,14 @@ def collectAttributes(skinAttributes, node, skin_path_prefix=None, ignore=[]):
 		if attrib not in ignore:
 			skinAttributes.append((attrib, value.encode("utf-8")))
 
-def loadPixmap(path, desktop):
+def loadPixmap(path, desktop, size=eSize()):
 	cached = False
 	option = path.find("#")
 	if option != -1:
 		options = path[option+1:].split(',')
 		path = path[:option]
 		cached = "cached" in options
-	ptr = LoadPixmap(path, desktop, cached)
+	ptr = LoadPixmap(path, desktop, cached, size=size)
 	if ptr is None:
 		raise SkinError("pixmap file %s not found!" % (path))
 	return ptr
@@ -205,7 +204,10 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 		elif attrib == 'itemHeight':
 			guiObject.setItemHeight(int(value))
 		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
-			ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
+			if attrib == "pixmap" and value.endswith("svg"):
+				ptr = loadPixmap(value, desktop, guiObject.size())
+			else:
+				ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
 			if attrib == "pixmap":
 				guiObject.setPixmap(ptr)
 			elif attrib == "backgroundPixmap":
@@ -329,14 +331,18 @@ def applyAllAttributes(guiObject, desktop, attributes, scale, skipZPosition=Fals
 	size_key = 'size'
 	pos_key = 'position'
 	zpos_key = 'zPosition'
-	size_val = pos_val = None
-
+	pixmap_key = 'pixmap'
+	size_val = pos_val = pixmap_val = None
 	for (attrib, value) in attributes:
 		if attrib == pos_key:
 			pos_val = value
 			continue
 		elif attrib == size_key:
 			size_val = value
+			continue
+		#SVG's really should be scaled at load-time and not by the GPU, so we handle that exception
+		elif attrib == pixmap_key and value.endswith("svg"):
+			pixmap_val = value
 			continue
 		elif skipZPosition and attrib == zpos_key:
 			continue
@@ -347,6 +353,8 @@ def applyAllAttributes(guiObject, desktop, attributes, scale, skipZPosition=Fals
 		applySingleAttribute(guiObject, desktop, size_key, size_val, scale)
 	if pos_val is not None:
 		applySingleAttribute(guiObject, desktop, pos_key, pos_val, scale)
+	if pixmap_val is not None:
+		applySingleAttribute(guiObject, desktop, pixmap_key, pixmap_val, scale)
 
 def loadSingleSkinData(desktop, skin, path_prefix):
 	"""loads skin data like colors, windowstyle etc."""
@@ -438,7 +446,7 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			#print "Font: ", resolved_font, name, scale, is_replacement
 
 	for c in skin.findall("subtitles"):
-		from enigma import eWidget, eSubtitleWidget
+		from enigma import eSubtitleWidget
 		scale = ((1,1),(1,1))
 		for substyle in c.findall("sub"):
 			get_attr = substyle.attrib.get

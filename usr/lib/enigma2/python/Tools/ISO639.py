@@ -476,8 +476,6 @@ class ISO639Language:
 			for long_id in long_ids:
 				self.name_and_shortid_by_longid[long_id] = (short_id, lang)
 
-		translated_generic_languages = [_("Miscellaneous languages"), _("Multiple languages")]
-
 	def getChoices(self):
 		from Components.Language import language as syslanguage
 		syslang = syslanguage.getLanguage()[:2]

@@ -161,7 +161,8 @@ class ScreenAnimations(object):
 		attrs = item.attrib
 		if "interpolate" in attrs:
 			interpolator = self._buildInterpolator(attrs)
-		x,y,z = float(attrs.get("x", "0")), float(attrs.get("y", "0")), float(attrs.get("z", "0"))
+		x,y = float(attrs.get("x", "0")), float(attrs.get("y", "0"))
+		#z = float(attrs.get("z", "0"))
 		fromMatrix = eMatrix4x4.rotateX(x) * eMatrix4x4.rotateY(y)#z axis rotation is currently not suported * eMatrix4x4.rotateZ(z)
 		toMatrix = eMatrix4x4.identity()
 		return eMatrixAnimation.create(duration, fromMatrix, toMatrix, False, interpolator)

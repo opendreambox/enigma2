@@ -41,7 +41,6 @@ class FileBrowser(Screen):
 			if lastpath == "":  # 'None' is magic to start at the list of mountpoints
 				currDir = None
 
-			inhibitDirs = ["/bin", "/boot", "/dev", "/etc", "/home", "/lib", "/proc", "/sbin", "/share", "/sys", "/tmp", "/usr", "/var"]
 			self.filelist = FileList(currDir, matchingPattern = "(?i)^.*\.(iso|img)", useServiceRef = True)
 			self["filelist"] = self.filelist
 

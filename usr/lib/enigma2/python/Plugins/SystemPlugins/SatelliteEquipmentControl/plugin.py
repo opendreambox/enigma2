@@ -59,8 +59,6 @@ def SecSetupMain(Session, **kwargs):
 	session.openWithCallback(confirmed, MessageBox, _("Please do not change any values unless you know what you are doing!"), MessageBox.TYPE_INFO)
 
 def SecSetupStart(menuid):
-	show = False
-	
 	# other menu than "scan"?
 	if menuid != "scan": 
 		return [ ]

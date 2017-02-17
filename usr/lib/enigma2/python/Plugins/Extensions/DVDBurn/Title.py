@@ -39,7 +39,7 @@ class Title:
 		from os import path
 		from enigma import eServiceCenter, iServiceInformation
 		from ServiceReference import ServiceReference
-		from time import localtime, time
+		from time import localtime
 		self.source = service
 		serviceHandler = eServiceCenter.getInstance()
 		info = serviceHandler.info(service)
@@ -110,10 +110,9 @@ class Title:
 		CUT_TYPE_IN = 0
 		CUT_TYPE_OUT = 1
 		CUT_TYPE_MARK = 2
-		CUT_TYPE_LAST = 3
 
 		accumulated_in = 0
-		accumulated_at = 0
+		#accumulated_at = 0
 		last_in = 0
 
 		self.cutlist = [ ]
@@ -136,7 +135,7 @@ class Title:
 
 				# accumulate the segment
 				accumulated_in += pts - last_in 
-				accumulated_at = pts
+				#accumulated_at = pts
 				currently_in = False
 
 			if type == CUT_TYPE_MARK and currently_in:

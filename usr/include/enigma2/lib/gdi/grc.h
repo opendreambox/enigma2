@@ -300,6 +300,9 @@ public:
 		BT_ALPHATEST = gPixmap::blitAlphaTest,
 		BT_ALPHABLEND = gPixmap::blitAlphaBlend,
 		BT_SCALE = gPixmap::blitScale, /* will be automatically set by blitScale */
+		BT_DESTINATION_COLOR_PLUS_ZERO = gPixmap::blitDestinationColorPlusZero,
+		BT_ONE_PLUS_ONE = gPixmap::blitOnePlusOne,
+		BT_SOURCEALPHA_PLUS_ONE = gPixmap::blitSourceAlphaPlusOne,
 	};
 
 	void blit(const ePtr<gPixmap> &pixmap, const ePoint &pos, const eRect &clip=eRect(), int flags=0, float alpha = 1.0);

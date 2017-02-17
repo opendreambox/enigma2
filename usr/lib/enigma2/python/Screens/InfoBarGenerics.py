@@ -17,7 +17,6 @@ except:
 from Components.config import config, ConfigBoolean, ConfigClock
 from Components.SystemInfo import SystemInfo
 from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath, defaultStorageDevice
-from Components.ResourceManager import resourcemanager
 from EpgSelection import EPGSelection, OutdatedEPGSelection
 from Plugins.Plugin import PluginDescriptor
 
@@ -40,7 +39,7 @@ from Tools import Notifications
 from Tools.Directories import fileExists
 
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, \
-	iPlayableService, eServiceReference, eEPGCache, eActionMap
+	iPlayableService, eServiceReference, eEPGCache, eActionMap, eServiceMP3
 
 from time import time, localtime, strftime
 from bisect import insort
@@ -1548,7 +1547,6 @@ class InfoBarExtensions:
 				entry = self.extensionKeys[x]
 				extension = self.extensionsList[entry]
 				if extension[2]():
-					name = str(extension[0]())
 					list.append((extension[0](), extension))
 					keys.append(x)
 					extensionsList.remove(extension)
@@ -2522,3 +2520,54 @@ class InfoBarServiceErrorPopupSupport:
 			Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError", domain = "ZapError", additionalActionMap=actions)
 		else:
 			Notifications.RemovePopup(id = "ZapError")
+
+class InfoBarGstreamerErrorPopupSupport(object):
+	def __init__(self):
+		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
+		{
+			eServiceMP3.evAudioDecodeError	: self.__evAudioDecodeError,
+			eServiceMP3.evVideoDecodeError	: self.__evVideoDecodeError,
+			eServiceMP3.evPluginError		: self.__evPluginError,
+			eServiceMP3.evStreamingSrcError	: self.__evStreamingSrcError,
+			eServiceMP3.evFileReadError		: self.__evFileReadError,
+			eServiceMP3.evTypeNotFoundError	: self.__evTypeNotFoundError,
+			eServiceMP3.evGeneralGstError	: self.__evGeneralGstError
+		})
+		self.__messages = {
+				eServiceMP3.evAudioDecodeError 	: _("This Dreambox can't decode %s streams!"),
+				eServiceMP3.evVideoDecodeError	: _("This Dreambox can't decode %s streams!"),
+				eServiceMP3.evPluginError		: "%s",
+				eServiceMP3.evStreamingSrcError	: _("Streaming error: %s"),
+				eServiceMP3.evFileReadError		: _("Couldn't read file: %s"),
+				eServiceMP3.evTypeNotFoundError	: _("Couldn't find media type"),
+				eServiceMP3.evGeneralGstError	: _("Gstreamer error: %s")
+			}
+
+	def __notify(self, key, hasMessage=True):
+		actions = self.get("ChannelSelectActions", None)
+		error = self.__messages.get(key)
+		if hasMessage:
+			currPlay = self.session.nav.getCurrentService()
+			error = error %(currPlay.info().getInfoString(iServiceInformation.sErrorText),)
+		Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError", domain = "ZapError", additionalActionMap=actions)
+
+	def __evAudioDecodeError(self):
+		self.__notify(eServiceMP3.evAudioDecodeError)
+
+	def __evVideoDecodeError(self):
+		self.__notify(eServiceMP3.evVideoDecodeError)
+
+	def __evPluginError(self):
+		self.__notify(eServiceMP3.evPluginError)
+
+	def __evStreamingSrcError(self):
+		self.__notify(eServiceMP3.evStreamingSrcError)
+
+	def __evFileReadError(self):
+		self.__notify(eServiceMP3.evFileReadError)
+
+	def __evTypeNotFoundError(self):
+		self.__notify(eServiceMP3.evTypeNotFoundError, hasMessage=False)
+
+	def __evGeneralGstError(self):
+		self.__notify(eServiceMP3.evGeneralGstError)

@@ -1,6 +1,6 @@
 from GUIComponent import GUIComponent
 
-from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop,\
+from enigma import eListboxPythonMultiContent, eListbox, gFont, \
 	RT_VALIGN_CENTER
 from Tools.KeyBindings import queryKeyBinding, getKeyDescription
 from skin import componentSizes, TemplatedListFonts

@@ -110,6 +110,8 @@ class eDVBServicePMTHandler: public sigc::trackable
 	ePtr<eConnection> m_channelEvent_connection;
 	void SDTScanEvent(int);
 	ePtr<eConnection> m_scan_event_connection;
+	void channelSourceEvent(int, std::string);
+	ePtr<eConnection> m_channelSourceEvent_connection;
 
 	void PMTready(int error);
 	void PATready(int error);
@@ -151,6 +153,7 @@ public:
 	};
 #ifndef SWIG
 	sigc::signal1<void,int> serviceEvent;
+	sigc::signal2<void,int,std::string> sourceEvent;
 
 	struct videoStream
 	{

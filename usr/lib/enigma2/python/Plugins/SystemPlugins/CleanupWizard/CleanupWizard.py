@@ -1,6 +1,5 @@
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
-from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Components.Console import Console
 from Components.Ipkg import IpkgComponent
@@ -84,8 +83,6 @@ class CleanupWizard(WizardLanguage, Rc):
 
 	def buildList(self,action):
 		if self.NextStep is not 'end':
-			if not self.Console:
-				self.Console = Console()
 			cmd = "opkg list_installed | grep enigma2"
 			self.Console.ePopen(cmd, self.buildListInstalled_Finished)
 			self.buildListRef = self.session.openWithCallback(self.buildListfinishedCB, MessageBox, _("Please wait while searching for removable packages..."), type = MessageBox.TYPE_INFO, enable_input = False)

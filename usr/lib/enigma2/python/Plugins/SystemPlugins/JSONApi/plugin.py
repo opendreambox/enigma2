@@ -1,11 +1,12 @@
 from Plugins.Plugin import PluginDescriptor
 from twisted.web import resource
 from API import api, getFunctionTree, getSubAPITree
-import json, traceback
+from json import dumps, loads
+
 
 class APIRoot(resource.Resource):
 	def render(self, request):
-		return json.dumps({ "methods": {
+		return dumps({ "methods": {
 				"/call" : "Call any api function",
 				"/getSubAPITree" : "Get a tree of SubAPIs",
 				"/getFunctionTree" : "Get the function-tree of a SubAPI",
@@ -16,7 +17,7 @@ class APIJSONResource(resource.Resource):
 		body = self._getRequestBody(request)
 		try:
 			request.setHeader('Content-Type','application/json;charset=UTF-8')
-			return self.render_JSON(json.loads(body))
+			return self.render_JSON(loads(body))
 		except Exception as e:
 			return self._error(e)
 	
@@ -30,13 +31,13 @@ class APIJSONResource(resource.Resource):
 		return body
 	
 	def render_JSON(self, j):
-		return json.dumps({})
+		return dumps({})
 	
 	def _error(self, message, id=None, data=None):
-		return json.dumps({"error": {"code": -1, "message" : str(message), "data": data}})
+		return dumps({"error": {"code": -1, "message" : str(message), "data": data}})
 	
 	def _result(self, data, id=None):
-		return json.dumps({"result": data, "id" : id , "error" : None})
+		return dumps({"result": data, "id" : id , "error" : None})
 
 class APICallResource(APIJSONResource):
 	def render_JSON(self, j):

@@ -8,8 +8,6 @@ from Tools.LoadPixmap import LoadPixmap
 from re import compile as re_compile
 from os import path as os_path, listdir
 
-from Tools.Log import Log
-
 EXTENSIONS = {
 		"m4a": "music",
 		"mp2": "music",

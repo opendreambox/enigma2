@@ -13,7 +13,6 @@ class VolumeControl:
 	"""Volume control, handles volUp, volDown, volMute actions and display
 	a corresponding dialog"""
 	def __init__(self, session):
-		global globalActionMap
 		globalActionMap.actions["volumeUp"]=self.volUp
 		globalActionMap.actions["volumeDown"]=self.volDown
 		globalActionMap.actions["volumeMute"]=self.volMute
@@ -23,6 +22,7 @@ class VolumeControl:
 
 		config.audio = ConfigSubsection()
 		config.audio.volume = ConfigInteger(default = 100, limits = (0, 100))
+		config.audio.volume_stepsize = ConfigInteger(default=5, limits=(1,10))
 
 		self.volumeDialog = session.instantiateDialog(Volume,zPosition=10000)
 		self.volumeDialog.neverAnimate()
@@ -55,11 +55,12 @@ class VolumeControl:
 		self.setVolume(-1)
 
 	def setVolume(self, direction):
-		oldvol = self.volctrl.getVolume()
 		if direction > 0:
-			self.volctrl.volumeUp()
+			val = config.audio.volume_stepsize.value
+			self.volctrl.volumeUp(val, val)
 		else:
-			self.volctrl.volumeDown()
+			val = config.audio.volume_stepsize.value
+			self.volctrl.volumeDown(val, val)
 		is_muted = self.volctrl.isMuted()
 		vol = self.volctrl.getVolume()
 		self.volumeDialog.show()

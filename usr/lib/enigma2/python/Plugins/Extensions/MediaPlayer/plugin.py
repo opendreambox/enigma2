@@ -488,7 +488,6 @@ class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoB
 				self.copyFile()
 
 		if self.currList == "playlist":
-			selection = self["playlist"].getSelection()
 			self.changeEntry(self.playlist.getSelectionIndex())
 
 	def showMenu(self):
@@ -997,8 +996,6 @@ def filescan_open(list, session, **kwargs):
 	mp.switchToPlayList()
 
 def audioCD_open(list, session, **kwargs):
-	from enigma import eServiceReference
-
 	mp = session.open(MediaPlayer)
 	mp.cdAudioTrackFiles = []
 	for file in list:
@@ -1037,7 +1034,6 @@ def filescan(**kwargs):
 			openfnc = filescan_open,
 		)]
 	try:
-		from Plugins.Extensions.CDInfo.plugin import Query
 		mediatypes.append(
 		Scanner(mimetypes = ["audio/x-cda"],
 			paths_to_scan =

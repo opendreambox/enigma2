@@ -1,7 +1,6 @@
 from enigma import eListboxPythonMultiContent
 
 from skin import componentSizes
-from Tools.Log import Log
 from Components.GUIComponent import GUIComponent
 
 class TemplatedMultiContentComponent(GUIComponent):

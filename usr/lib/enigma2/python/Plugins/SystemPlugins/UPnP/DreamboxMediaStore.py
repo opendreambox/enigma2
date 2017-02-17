@@ -611,10 +611,8 @@ class DreamboxMediaStore(AbstractBackendStore):
 		self.init_cover_root()
 		Log.d("%s" % (kwargs,))
 		ContainerID = kwargs['ContainerID']
-		Filter = kwargs['Filter']
 		StartingIndex = int(kwargs['StartingIndex'])
 		RequestedCount = int(kwargs['RequestedCount'])
-		SortCriteria = kwargs['SortCriteria']
 		SearchCriteria = kwargs['SearchCriteria']
 
 		total = 0

@@ -216,14 +216,24 @@ class ConfigListScreen(object):
 				self["VKeyIcon"].boolean = False
 
 	def KeyText(self):
+		helpwin = self._getHelpWindow()
+		if helpwin:
+			helpwin.hide()
 		from Screens.VirtualKeyBoard import VirtualKeyBoard
 		self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title = self["config"].getCurrent()[0], text = self["config"].getCurrent()[1].getValue())
 
 	def VirtualKeyBoardCallback(self, callback = None):
+		helpwin = self._getHelpWindow()
+		if helpwin:
+			helpwin.show()
 		if callback is not None and len(callback):
 			self["config"].getCurrent()[1].setValue(callback)
 			self["config"].invalidate(self["config"].getCurrent())
-			
+
+	def _getHelpWindow(self):
+		helpwin = self["config"].getCurrent()[1].help_window
+		return (helpwin and helpwin.instance) or None
+
 	def keyOK(self):
 		self["config"].handleKey(KEY_OK)
 

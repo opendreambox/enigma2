@@ -35,10 +35,6 @@ def setPixmap(dest, ptr, scaleSize, aspectRatio):
 	if scaleSize.isValid() and aspectRatio.isValid():
 		pic_scale_size = ptr.size().scale(scaleSize, aspectRatio)
 
-		pic_size = ptr.size()
-		pic_width = pic_size.width()
-		pic_height = pic_size.height()
-
 		dest_size = dest.getSize()
 		dest_width = dest_size.width()
 		dest_height = dest_size.height()
@@ -46,7 +42,6 @@ def setPixmap(dest, ptr, scaleSize, aspectRatio):
 		pic_scale_width = pic_scale_size.width()
 		pic_scale_height = pic_scale_size.height()
 
-#		print "pic size %dx%d" %(pic_width, pic_height)
 #		print "pic scale size %dx%d" %(pic_scale_width, pic_scale_height)
 #		print "dest area size %dx%d" %(dest_width, dest_height)
 

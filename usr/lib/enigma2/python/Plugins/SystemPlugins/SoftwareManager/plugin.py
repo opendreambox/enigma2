@@ -826,7 +826,6 @@ class PluginManager(Screen, DreamInfoHandler):
 			prerequisites = package[0]["prerequisites"]
 			if prerequisites.has_key("tag"):
 				for foundtag in prerequisites["tag"]:
-					attributes = package[0]["attributes"]
 					if foundtag not in self.categories:
 						self.categories.append(foundtag)
 						self.categoryList.append(self.buildCategoryComponent(foundtag))
@@ -1032,7 +1031,6 @@ class PluginManagerInfo(Screen):
 		self.list = []
 		if self.cmdlist is not None:
 			for entry in self.cmdlist:
-				cmd = entry[0]
 				if entry[0] in (0,2):
 					self.list.append((entry))
 		self.close((False,self.list))
@@ -1573,7 +1571,6 @@ class IPKGSource(Screen):
 				pass
 
 		desk = getDesktop(0)
-		x= int(desk.size().width())
 		y= int(desk.size().height())
 
 		self["key_red"] = StaticText(_("Cancel"))

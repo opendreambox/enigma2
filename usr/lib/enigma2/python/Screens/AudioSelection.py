@@ -1,8 +1,9 @@
 from Screen import Screen
+from Screens.ChoiceBox import ChoiceBox
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.ActionMap import NumberActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, ConfigSubsection, getConfigListEntry, ConfigNothing, ConfigSelection, ConfigOnOff, ConfigBoolean
+from Components.config import config, ConfigSubsection, getConfigListEntry, ConfigNothing, ConfigSelection, ConfigOnOff
 from Components.Label import Label
 from Components.Sources.List import List
 from Components.Sources.Boolean import Boolean
@@ -267,17 +268,26 @@ class AudioSelection(Screen, ConfigListScreen):
 					self.args = args
 				def __call__(self, *args, **kwargs):
 					self.fnc(*self.args)
-			Plugins = [ (p.name, PluginCaller(self.infobar.runPlugin, p)) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_AUDIOMENU) ]
-			if len(Plugins) > 0:
+			audioPlugins = [ (p.name, PluginCaller(self.infobar.runPlugin, p)) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_AUDIOMENU) ]
+			if len(audioPlugins) > 0:
 				self["key_blue"].setBoolean(True)
-				conflist.append(getConfigListEntry(Plugins[0][0], ConfigNothing()))
-				self.plugincallerdict[Plugins[0][0]] = Plugins[0][1]
-			if len(Plugins) > 1:
+				text, fnc = audioPlugins[0]
+				conflist.append(getConfigListEntry(text, ConfigNothing()))
+				self.plugincallerdict[text] = fnc
+			if len(audioPlugins) > 1:
 				self["key_menu"].setBoolean(True)
-				conflist.append(getConfigListEntry(Plugins[1][0], ConfigNothing()))
-				self.plugincallerdict[Plugins[1][0]] = Plugins[1][1]
-			if len(Plugins) > 2:
-				print "[AudioSelection] plugin(s) installed but not displayed in the dialog box:", Plugins[2:] #fixme display choicebox
+				if len(audioPlugins) == 2:
+					text, fnc = audioPlugins[1]
+					self.plugincallerdict[text] = fnc
+					conflist.append(getConfigListEntry(text, ConfigNothing()))
+				else:
+					self._extendedAudioPlugins = audioPlugins[1:]
+					text, fnc = _("More ..."), self.showExtendedAudioPluginChoice
+					audioPlugins.append([text, fnc])
+					conflist.append(getConfigListEntry(text, ConfigNothing()))
+					self.plugincallerdict[text] = fnc
+					for text, fnc in audioPlugins[1:]:
+						self.plugincallerdict[text] = fnc
 
 		self["config"].list = conflist
 		self["config"].l.setList(conflist)
@@ -288,6 +298,13 @@ class AudioSelection(Screen, ConfigListScreen):
 		elif isinstance(playing_idx, int):
 			self["streams"].setIndex(playing_idx)
 		self.setToggleSubsFilterKey()
+
+	def showExtendedAudioPluginChoice(self):
+		self.session.openWithCallback(self.onExtendedAudioPluginChoice, ChoiceBox, list=self._extendedAudioPlugins, windowTitle=_("Audio Plugin Selection"))
+
+	def onExtendedAudioPluginChoice(self, choice):
+		if choice:
+			choice[1]()
 
 	def changeAC3Downmix(self, downmix):
 		if downmix.getValue() == True:
@@ -454,7 +471,6 @@ class AudioSelection(Screen, ConfigListScreen):
 			sel_sub = cur and isinstance(cur[0], SelectionTrackinfoEntry) and cur[0].info
 			conflist = self["config"].list
 			if sel_sub and (sel_sub.getType() == iSt.DVD or sel_sub.getType() == iSt.GST and sel_sub.getGstSubtype() in [iGSt.stPGS, iGSt.stVOB]):
-				default = False
 				forcefilter = str(sel_sub.getFilter())
 				choicelist = [(str(iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_FORCED_ONLY), "forced only"), (str(iSubtitleFilterType_ENUMS.SUB_FILTER_SHOW_ALL), "show all")]
 				togglesubsfilter = ConfigSelection(choices = choicelist, default = forcefilter)

@@ -1,24 +1,13 @@
 from os import fchmod, fsync, path, rename, unlink
 from tempfile import NamedTemporaryFile
+from subprocess import Popen, PIPE
 
-try:
-	from subprocess import Popen, PIPE
-	haveSubprocess = True
-except ImportError:
-	from os import popen
-	haveSubprocess = False
 
 def runPipe(cmd):
-	if haveSubprocess:
-		p = Popen(cmd, stdout=PIPE, close_fds=True)
-		output = p.stdout.read()
-		p.stdout.close()
-		return p.wait(), output.splitlines()
-	else:
-		p = popen(' '.join(cmd), 're')
-		output = p.read()
-		rc = p.close()
-		return (rc >> 8 if rc is not None else 0), output.splitlines()
+	p = Popen(cmd, stdout=PIPE, close_fds=True)
+	output = p.stdout.read()
+	p.stdout.close()
+	return p.wait(), output.splitlines()
 
 def saveFile(filename, data, mode=0644):
 	tmpFilename = None

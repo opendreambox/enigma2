@@ -572,6 +572,7 @@ public:
 	};
 	virtual RESULT connectStateChange(const sigc::slot1<void,iDVBChannel*> &stateChange, ePtr<eConnection> &connection)=0;
 	virtual RESULT connectEvent(const sigc::slot2<void,iDVBChannel*,int> &eventChange, ePtr<eConnection> &connection)=0;
+	virtual RESULT connectSourceEvent(const sigc::slot2<void,int,std::string> &sourceEventChange, ePtr<eConnection> &connection){return -1;};
 
 		/* demux capabilities */
 	enum

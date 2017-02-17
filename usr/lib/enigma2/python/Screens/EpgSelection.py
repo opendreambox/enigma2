@@ -223,6 +223,7 @@ class EPGSelection(Screen):
 		self.session.nav.RecordTimer.removeEntry(timer)
 		self["key_green"].setText(_("Add timer"))
 		self.key_green_choice = self.ADD_TIMER
+		self["list"].rebuild()
 
 	def timerAdd(self):
 		cur = self["list"].getCurrent()

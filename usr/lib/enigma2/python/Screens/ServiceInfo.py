@@ -2,7 +2,7 @@ from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label
 from Components.NimManager import nimmanager
-from Components.ServiceInfoList import ServiceInfoList, ServiceInfoListEntry, TYPE_TEXT, TYPE_VALUE_HEX, TYPE_VALUE_DEC, TYPE_VALUE_HEX_DEC, TYPE_SLIDER
+from Components.ServiceInfoList import ServiceInfoList, ServiceInfoListEntry, TYPE_TEXT, TYPE_VALUE_HEX, TYPE_VALUE_DEC, TYPE_VALUE_HEX_DEC
 from ServiceReference import ServiceReference
 from enigma import iServiceInformation, eServiceCenter, iDVBFrontend
 from Tools.Transponder import ConvertToHumanReadable

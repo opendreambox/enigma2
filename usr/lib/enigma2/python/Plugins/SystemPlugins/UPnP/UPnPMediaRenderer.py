@@ -464,8 +464,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		"""
 		from urllib import unquote
 		from cgi import parse_qs
-		from coherence.extern.et import ET
-		from coherence.upnp.core.utils import parse_xml
 
 		def handle_reply(r, uri, action, kw):
 			try:
@@ -599,18 +597,14 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		self.server.rendering_control_server.set_variable(0, 'Mute', self.get_mute())
 
 	def upnp_Play(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
-		Speed = int(kwargs['Speed'])
 		self.play()
 		return {}
 
 	def upnp_Pause(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
 		self.pause()
 		return {}
 
 	def upnp_Stop(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
 		self.stop()
 		return {}
 
@@ -681,7 +675,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		return self.upnp_Seek(self, InstanceID=InstanceID, Unit='TRACK_NR', Target=str(int(track_nr.value) - 1))
 
 	def upnp_SetNextAVTransportURI(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
 		NextURI = kwargs['NextURI']
 		current_connection_id = self.server.connection_manager_server.lookup_avt_id(self.current_connection_id)
 		NextMetaData = kwargs['NextURIMetaData']
@@ -703,7 +696,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		return {}
 
 	def upnp_SetAVTransportURI(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
 		CurrentURI = kwargs['CurrentURI']
 		CurrentURIMetaData = kwargs['CurrentURIMetaData']
 		#print "upnp_SetAVTransportURI",InstanceID, CurrentURI, CurrentURIMetaData
@@ -741,8 +733,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		return failure.Failure(errorCode(714))
 
 	def upnp_SetMute(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
-		Channel = kwargs['Channel']
 		DesiredMute = kwargs['DesiredMute']
 		if DesiredMute in ['TRUE', 'True', 'true', '1', 'Yes', 'yes']:
 			self.mute()
@@ -751,8 +741,6 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		return {}
 
 	def upnp_SetVolume(self, *args, **kwargs):
-		InstanceID = int(kwargs['InstanceID'])
-		Channel = kwargs['Channel']
 		DesiredVolume = int(kwargs['DesiredVolume'])
 		self.set_volume(DesiredVolume)
 		return {}

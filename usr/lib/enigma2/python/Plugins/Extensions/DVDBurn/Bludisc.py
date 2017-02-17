@@ -138,7 +138,6 @@ class BludiscStream(object):
 	pid = property(getPIDBytes)
 
 	def getFormatByte(self):
-		val = 0
 		if self.isVideo:
 			yres = self.__parent.resolution[1]
 			videoformat = 0

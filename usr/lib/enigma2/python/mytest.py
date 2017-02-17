@@ -60,6 +60,10 @@ def ePositionGauge_setPointer(self, which, pixmap, center):
 		ePositionGauge_setPointer_org(self, which, pixmap, center)
 enigma.ePositionGauge.setPointer = ePositionGauge_setPointer
 
+def iUriService_ptrValid(self):
+	return True
+enigma.iUriService.ptrValid = iUriService_ptrValid
+
 from Tools.Profile import profile, profile_final
 
 profile("PYTHON_START")

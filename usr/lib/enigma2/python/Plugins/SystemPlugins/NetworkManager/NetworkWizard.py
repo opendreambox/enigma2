@@ -1,12 +1,7 @@
 from enigma import eNetworkManager
-
-from Components.Label import Label
-from Components.Pixmap import Pixmap
-from Components.Sources.Boolean import Boolean
 from Screens.WizardLanguage import WizardLanguage
-from Screens.Rc import Rc
-from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from NetworkConfig import NetworkConfigGeneral, ServiceIPConfiguration, ServiceNSConfiguration
+
 
 class NetworkWizardNew(NetworkConfigGeneral):
 	def __init__(self):

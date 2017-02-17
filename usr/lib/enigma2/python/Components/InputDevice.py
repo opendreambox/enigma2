@@ -4,7 +4,7 @@ from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigTe
 import struct
 from ioctl import ioctl
 from ioctl.linux import IOC
-from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY
+from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY, O_RDWR
 O_CLOEXEC = 02000000
 
 def EVIOCGNAME(length):

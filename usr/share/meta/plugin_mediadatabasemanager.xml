@@ -1,0 +1,18 @@
+<default>
+	  <prerequisites>
+                    <tag type="Multimedia" />
+	  </prerequisites>
+          <info>
+                    <author>Dream Property GmbH</author>
+                    <name>Media Database Manager</name>
+                    <packagename>enigma2-plugin-systemplugins-mediadatabasemanager</packagename>
+                    <shortdescription>Manage your Media Database</shortdescription>
+                    <description>The Media Database Manager helps you manging Folders that should be scanned for media files.\n
+                    </description>
+                    <screenshot src="http://www.dreamboxupdate.com/preview/plugin_mediadatabase.jpg" />
+          </info>
+	  <files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-mediadatabasemanager" />
+	</files>
+
+</default>

@@ -31,11 +31,6 @@
 			<tag type="Multimedia" />
 		</prerequisites>
 	</package>
-	<package details="plugin_tuxboxplugins.xml" name="TuxboxPlugins" packagename="TuxboxPlugins" shortdescription="Execute TuxboxPlugins">
-		<prerequisites>
-			<tag type="System" />
-		</prerequisites>
-	</package>
 	<package details="plugin_cutlisteditor.xml" name="CutListEditor" packagename="enigma2-plugin-extensions-cutlisteditor" shortdescription="CutListEditor allows you to edit your movies">
 		<prerequisites>
 			<tag type="Recording" />

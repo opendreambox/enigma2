@@ -386,7 +386,8 @@ public:
 		sLastUpdated,
 		sAngle,
 
-		sUser = 0x100
+		sUser = 0x100,
+		sErrorText = sUser + 12,
 	};
 	enum {
 		resNA = -1,
@@ -928,7 +929,6 @@ public:
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamedService>, iStreamedServicePtr);
 
-SWIG_IGNORE(iUriService);
 class iUriService: public iObject
 {
 #ifdef SWIG

@@ -1,15 +1,8 @@
-from datetime import datetime
 from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
-from Components.config import config, ConfigYesNo
 from Components.ActionMap import NumberActionMap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
-from Components.MultiContent import MultiContentEntryText
-from Components.ResourceManager import resourcemanager
-from Tools.BoundFunction import boundFunction
 from Tools import Notifications
-from enigma import gFont, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_WRAP
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 

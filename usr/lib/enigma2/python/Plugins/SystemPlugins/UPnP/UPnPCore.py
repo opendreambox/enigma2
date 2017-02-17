@@ -12,7 +12,6 @@ from HTMLParser import HTMLParser
 from Plugins.Plugin import PluginDescriptor
 from Tools.Log import Log
 
-from Tools.Log import Log
 
 class Statics:
 	CONTAINER_ID_ROOT = 0
@@ -332,14 +331,15 @@ class Item(object):
 				return Statics.ITEM_TYPE_CONTAINER
 
 			elif itemClass.startswith("object.item"):
-				type = item.upnp_class.split('.')[-1]
-				if type == "videoItem" or type == "movie":
+				typeList = item.upnp_class.split('.')
+				if "videoItem" in typeList or "movie" in typeList:
 					return Statics.ITEM_TYPE_VIDEO
-				elif type == "musicTrack" or type == "audioItem":
+				elif "musicTrack" in typeList or "audioItem" in typeList:
 					return Statics.ITEM_TYPE_AUDIO
-				elif type == "photo":
+				elif "photo" in typeList:
 					return Statics.ITEM_TYPE_PICTURE
-
+				else:
+					return Statics.ITEM_TYPE_FILE
 		return None
 
 	@staticmethod

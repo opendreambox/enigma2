@@ -6,6 +6,7 @@ from copy import copy as copy_copy
 from os import path as os_path
 from time import localtime, strftime
 from netaddr import IPAddress
+from ast import literal_eval
 
 from Tools.Log import Log
 # ConfigElement, the base class of all ConfigElements.
@@ -31,7 +32,7 @@ from Tools.Log import Log
 class ConfigElement(object):
 	def __init__(self):
 		self.saved_value = None
-		self.save_forced = False
+		self.save_forced = True
 		self.save_disabled = False
 		self.__notifiers = { }
 		self.__notifiers_final = { }
@@ -602,7 +603,6 @@ class ConfigSequence(ConfigElement):
 				number = getKeyNumber(key)
 
 			block_len = [len(str(x[1])) for x in self.limits]
-			total_len = sum(block_len)
 
 			pos = 0
 			blocknumber = 0
@@ -1354,7 +1354,7 @@ class ConfigSet(ConfigElement):
 		return str(value)
 
 	def fromstring(self, val):
-		return eval(val)
+		return literal_eval(val)
 
 	description = property(lambda self: descriptionList(self.choices.choices, choicesList.LIST_TYPE_LIST))
 
@@ -1391,7 +1391,7 @@ class ConfigLocations(ConfigElement):
 		return str(value)
 
 	def fromstring(self, val):
-		return eval(val)
+		return literal_eval(val)
 
 	def load(self):
 		sv = self.saved_value
