@@ -638,6 +638,7 @@ class ComponentSizes():
 	TIMER_LIST = "TimerList"
 	MOVIE_LIST = "MovieList"
 	TIMELINE_TEXT = "TimelineText"
+	MENU_PIXMAP = "MenuPixmap"
 	ITEM_HEIGHT = "itemHeight"
 	ITEM_WIDTH = "itemWidth"
 	TEMPLATE = "template"
@@ -664,8 +665,19 @@ class ComponentSizes():
 	def __getitem__(self, component_id):
 		return component_id in self.components and self.components[component_id] or {}
 
-	def itemHeight(self, component_id, default=30):
-		return component_id in self.components and self.components[component_id].get(self.ITEM_HEIGHT, default) or default
+	def itemHeight(self, component_id, default=None):
+		val = component_id in self.components and self.components[component_id].get(self.ITEM_HEIGHT, default) or default
+		if not val:
+			val = 30 #30 is quite random, I went for a small value because that would probably fit most of the time
+			Log.w("No itemWidth set for %s and default is %s falling back to %s") %(component_id, str(default), val)
+		return val
+
+	def itemWidth(self, component_id, default=None):
+		val = component_id in self.components and self.components[component_id].get(self.ITEM_WIDTH, default) or default
+		if not val:
+			val = 30 #30 is quite random, I went for a small value because that would probably fit most of the time
+			Log.w("No itemWidth set for %s and default is %s falling back to %s") %(component_id, str(default), val)
+		return val
 
 	def template(self, component_id):
 		return component_id in self.components and self.components[component_id].get(self.TEMPLATE, None) or None

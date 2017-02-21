@@ -1323,6 +1323,10 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 		self.revertMode = None
 		config.usage.multibouquet.addNotifier(self.multibouquet_config_changed)
 		self.new_service_played = False
+		self.onExecBegin.append(self.__execBegin)
+
+	def __execBegin(self):
+		self.setKeyboardModeAscii()
 
 	def multibouquet_config_changed(self, val):
 		self.recallBouquetMode()

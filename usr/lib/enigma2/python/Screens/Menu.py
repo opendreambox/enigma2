@@ -1,3 +1,5 @@
+from enigma import eSize
+
 from Screen import Screen
 from Components.Sources.List import List
 from Components.ActionMap import NumberActionMap
@@ -20,19 +22,25 @@ from Screens.Setup import Setup, getSetupTitle
 #		<item text="File-Mode">self.setModeFile()</item>
 #			<item text="Sleep Timer"></item>
 
+from skin import componentSizes
 lastMenuID = None
 
 def MenuEntryPixmap(entryID, png_cache, lastMenuID):
+	width = componentSizes.itemWidth(componentSizes.MENU_PIXMAP, default=192)
+	height = componentSizes.itemHeight(componentSizes.MENU_PIXMAP, default=192)
+	pixmapSize = eSize(width, height)
 	png = png_cache.get(entryID, None)
 	if png is None: # no cached entry
-		pngPath = resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")
+		pngPath = resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".svg")
+		if not pngPath:
+			resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")
 		pos = config.skin.primary_skin.value.rfind('/')
 		if pos > -1:
 			current_skin = config.skin.primary_skin.value[:pos+1]
 		else:
 			current_skin = ""
 		if ( current_skin in pngPath and current_skin ) or not current_skin:
-			png = LoadPixmap(pngPath, cached=True) #lets look for a dedicated icon
+			png = LoadPixmap(pngPath, cached=True, size=pixmapSize) #lets look for a dedicated icon
 		if png is None: # no dedicated icon found
 			if lastMenuID is not None:
 				png = png_cache.get(lastMenuID, None)
@@ -40,7 +48,9 @@ def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 	if png is None:
 		png = png_cache.get("missing", None)
 		if png is None:
-			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/missing.png"), cached=True)
+			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/missing.svg"), cached=True, size=pixmapSize)
+			if not png:
+				png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "menu/missing.png"), cached=True, size=pixmapSize)
 			png_cache["missing"] = png
 	return png
 

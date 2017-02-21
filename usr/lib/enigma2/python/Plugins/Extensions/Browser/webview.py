@@ -207,6 +207,7 @@ eWebView.setUserAgent = new_instancemethod(_webview.eWebView_setUserAgent, None,
 eWebView.resetUserAgent = new_instancemethod(_webview.eWebView_resetUserAgent, None, eWebView)
 eWebView_swigregister = _webview.eWebView_swigregister
 eWebView_swigregister(eWebView)
+cvar = _webview.cvar
 
 class StdStringList(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

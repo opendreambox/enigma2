@@ -888,8 +888,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		</widget>
 	</screen>
 	<!-- PVR state -->
-	<screen backgroundColor="transparent" name="PVRState" position="550,650" size="200,30" flags="wfNoBorder" zPosition="1000">
-		<widget backgroundColor="background" name="state" position="0,0" size="200,30" font="Regular;25" halign="center" transparent="1"/>
+	<screen backgroundColor="transparent" name="PVRState" position="center,center" size="300,50" flags="wfNoBorder" zPosition="1000">
+		<widget backgroundColor="background" name="state" position="0,0" size="300,50" font="Regular;40" halign="center" valign="center" transparent="1"/>
 	</screen>
 	<!-- Radio infobar -->
 	<screen name="RadioInfoBar" position="center,530" size="920,130" flags="wfNoBorder">
@@ -1617,18 +1617,6 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget source="global.CurrentTime" render="Label" position="85,41" zPosition="1" size="26,15" font="Display;16"
 			valign="top">
 			<convert type="ClockToText">Format:%S</convert>
-		</widget>
-	</screen>
-	<!-- Color OLED screen (ChannelSelection) -->
-	<screen name="ChannelSelection_summary" position="0,0" size="96,64" id="2">
-		<widget source="parent.ServiceEvent" render="Label" position="0,0" size="96,28" font="Display;16" halign="center" valign="center" >
-			<convert type="ServiceName">Name</convert>
-		</widget>
-		<widget source="session.Event_Now" render="Progress" position="0,30" size="96,8" borderWidth="1" backgroundColor="dark">
-			<convert type="EventTime">Progress</convert>
-		</widget>
-		<widget source="global.CurrentTime" render="Label" position="0,38" size="96,26" font="Display;32" halign="center" valign="center" foregroundColor="#FFFFFF" backgroundColor="#000000" >
-			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 	</screen>
 	<!-- Color OLED screen (SubservicesQuickzap) -->

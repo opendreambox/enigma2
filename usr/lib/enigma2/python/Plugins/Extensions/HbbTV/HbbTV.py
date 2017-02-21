@@ -1,4 +1,4 @@
-from enigma import eHbbtv, eServiceReference, ePoint, eSize, eRect, getDesktop, eTimer, eDVBVolumecontrol, HBBTV_USER_AGENT
+from enigma import eHbbtv, eServiceReference, ePoint, eSize, eRect, getDesktop, eTimer, eDVBVolumecontrol, cvar
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
@@ -187,7 +187,7 @@ class HbbTV(object):
 			extension = "mp4"
 			filename = "%s_%s_%s.%s" % (datestring, host, file[0], extension)
 			path = "%s%s" % (path, filename)
-			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename, HBBTV_USER_AGENT))
+			downloadManager.AddJob(DownloadJob(self.__currentStreamRef.getPath(), path, filename, cvar.hbbtvUserAgent))
 			self.session.open(MessageBox, _("Download started..."), type=MessageBox.TYPE_INFO, timeout=3)
 
 	def _onUrlChanged(self, url):
@@ -233,10 +233,11 @@ class HbbTV(object):
 		self._showVideoIfAvail()
 
 	def _playStream(self, sref):
-		config.mediaplayer.useAlternateUserAgent.value = False
 		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_CONNECTING)
 		self.session.nav.stopService()
-		self.session.nav.playService(eServiceReference(sref))
+		ref = eServiceReference(sref)
+		ref.setUserAgent(cvar.hbbtvUserAgent)
+		self.session.nav.playService(ref)
 
 	def actionPause(self):
 		if self.__browser:

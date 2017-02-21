@@ -14,6 +14,8 @@
 
 class eServiceEvent;
 
+extern std::string mediaRecvUserAgent;
+
 class eServiceReference
 {
 public:
