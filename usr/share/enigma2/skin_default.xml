@@ -68,7 +68,7 @@
 	<!-- About screen -->
 	<screen name="About" position="center,120" size="820,520" title="About">
 		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
-		<ePixmap pixmap="menu/info_screen.png" position="65,50" size="192,192" alphatest="on" />
+		<ePixmap pixmap="menu/info_screen.svg" position="65,50" size="192,192" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/green.png" position="45,370" size="230,40" alphatest="on"/>
 		<eLabel font="Regular;20" position="45,370" size="230,40" text="Translation" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget source="Model" render="Label" position="320,10" size="490,26" font="Regular;24" foregroundColor="grey">
@@ -615,7 +615,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 	<!-- Language selection -->
 	<screen name="LanguageSelection" position="center,120" size="720,520" title="Language selection">
 		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
-		<ePixmap pixmap="menu/language_setup.png" position="65,50" size="192,192" alphatest="on" />
+		<ePixmap pixmap="menu/language_setup.svg" position="65,50" size="192,192" alphatest="on" />
 		<widget source="languages" render="Listbox" position="320,10" size="390,500" enableWrapAround="1" scrollbarMode="showOnDemand">
 			<convert type="TemplatedMultiContent">
 				{"template": [

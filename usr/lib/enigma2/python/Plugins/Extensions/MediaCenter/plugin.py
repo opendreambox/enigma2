@@ -187,7 +187,9 @@ def filescan_open(type, filelist, session, **kwargs):
 	session.open(MainMenu, type, playlist)
 
 def getIcon(key):
-	filename = resolveFilename(SCOPE_CURRENT_SKIN, "menu/mc_%s.png" %key)
+	filename = resolveFilename(SCOPE_CURRENT_SKIN, "menu/mc_%s.svg" %key)
+	if not pathExists(filename):
+		filename = resolveFilename(SCOPE_CURRENT_SKIN, "menu/mc_%s.png" %key)
 	if pathExists(filename):
 		return filename
 	else:

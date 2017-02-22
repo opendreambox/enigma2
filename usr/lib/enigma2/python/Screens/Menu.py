@@ -10,7 +10,7 @@ from Components.PluginComponent import plugins
 from Components.config import config
 from Components.SystemInfo import SystemInfo
 
-from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_CURRENT_SKIN
+from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_CURRENT_SKIN, fileExists
 from Tools.LoadPixmap import LoadPixmap
 
 import xml.etree.cElementTree
@@ -32,13 +32,13 @@ def MenuEntryPixmap(entryID, png_cache, lastMenuID):
 	png = png_cache.get(entryID, None)
 	if png is None: # no cached entry
 		pngPath = resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".svg")
-		if not pngPath:
-			resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")
 		pos = config.skin.primary_skin.value.rfind('/')
 		if pos > -1:
 			current_skin = config.skin.primary_skin.value[:pos+1]
 		else:
 			current_skin = ""
+		if not fileExists(pngPath) or not (( current_skin in pngPath and current_skin ) or not current_skin ):
+			pngPath = resolveFilename(SCOPE_CURRENT_SKIN, "menu/" + entryID + ".png")
 		if ( current_skin in pngPath and current_skin ) or not current_skin:
 			png = LoadPixmap(pngPath, cached=True, size=pixmapSize) #lets look for a dedicated icon
 		if png is None: # no dedicated icon found

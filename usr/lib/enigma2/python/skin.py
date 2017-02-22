@@ -207,7 +207,17 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			if attrib == "pixmap" and value.endswith("svg"):
 				ptr = loadPixmap(value, desktop, guiObject.size())
 			else:
-				ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
+				try:
+					ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
+				except SkinError:
+					s = value.split('/')
+					if attrib == "pixmap" and len(s) > 2 and s[-2] == 'menu' and s[-1].endswith("png"):
+						Log.w("Please fix the skin... try .svg now");
+						value2 = value[:-3]
+						value2 += 'svg'
+						ptr = loadPixmap(value2, desktop, guiObject.size())
+					else:
+						raise
 			if attrib == "pixmap":
 				guiObject.setPixmap(ptr)
 			elif attrib == "backgroundPixmap":
