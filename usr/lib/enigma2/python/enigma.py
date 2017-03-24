@@ -147,6 +147,24 @@ HAVE_CXX14 = _enigma.HAVE_CXX14
 _enigma.HAVE_DLFCN_H_swigconstant(_enigma)
 HAVE_DLFCN_H = _enigma.HAVE_DLFCN_H
 
+_enigma.HAVE_DRM_DRM_FOURCC_H_swigconstant(_enigma)
+HAVE_DRM_DRM_FOURCC_H = _enigma.HAVE_DRM_DRM_FOURCC_H
+
+_enigma.HAVE_EGL_DREAMEGLPLATFORM_H_swigconstant(_enigma)
+HAVE_EGL_DREAMEGLPLATFORM_H = _enigma.HAVE_EGL_DREAMEGLPLATFORM_H
+
+_enigma.HAVE_EGL_EGLEXT_H_swigconstant(_enigma)
+HAVE_EGL_EGLEXT_H = _enigma.HAVE_EGL_EGLEXT_H
+
+_enigma.HAVE_EGL_EGL_H_swigconstant(_enigma)
+HAVE_EGL_EGL_H = _enigma.HAVE_EGL_EGL_H
+
+_enigma.HAVE_GLES2_GL2EXT_H_swigconstant(_enigma)
+HAVE_GLES2_GL2EXT_H = _enigma.HAVE_GLES2_GL2EXT_H
+
+_enigma.HAVE_GLES2_GL2_H_swigconstant(_enigma)
+HAVE_GLES2_GL2_H = _enigma.HAVE_GLES2_GL2_H
+
 _enigma.HAVE_GST_1_swigconstant(_enigma)
 HAVE_GST_1 = _enigma.HAVE_GST_1
 
@@ -201,8 +219,8 @@ HAVE_SYS_TYPES_H = _enigma.HAVE_SYS_TYPES_H
 _enigma.HAVE_UNISTD_H_swigconstant(_enigma)
 HAVE_UNISTD_H = _enigma.HAVE_UNISTD_H
 
-_enigma.HAVE_V3DDRIVER_swigconstant(_enigma)
-HAVE_V3DDRIVER = _enigma.HAVE_V3DDRIVER
+_enigma.HAVE_VC5DREAM_swigconstant(_enigma)
+HAVE_VC5DREAM = _enigma.HAVE_VC5DREAM
 
 _enigma.LT_OBJDIR_swigconstant(_enigma)
 LT_OBJDIR = _enigma.LT_OBJDIR
@@ -1721,6 +1739,9 @@ eRect.unite = new_instancemethod(_enigma.eRect_unite, None, eRect)
 eRect.intersect = new_instancemethod(_enigma.eRect_intersect, None, eRect)
 eRect.intersects = new_instancemethod(_enigma.eRect_intersects, None, eRect)
 eRect.scaleToCenterOf = new_instancemethod(_enigma.eRect_scaleToCenterOf, None, eRect)
+eRect.scaleToWidthOf = new_instancemethod(_enigma.eRect_scaleToWidthOf, None, eRect)
+eRect.scaleToHeightOf = new_instancemethod(_enigma.eRect_scaleToHeightOf, None, eRect)
+eRect.centerIn = new_instancemethod(_enigma.eRect_centerIn, None, eRect)
 eRect.scale = new_instancemethod(_enigma.eRect_scale, None, eRect)
 eRect_swigregister = _enigma.eRect_swigregister
 eRect_swigregister(eRect)
@@ -2852,6 +2873,12 @@ class ePixmap(eAnimatedWidget):
     FMT_GIF = _enigma.ePixmap_FMT_GIF
     FMT_JPEG = _enigma.ePixmap_FMT_JPEG
     FMT_PNG = _enigma.ePixmap_FMT_PNG
+    SCALE_TYPE_NONE = _enigma.ePixmap_SCALE_TYPE_NONE
+    SCALE_TYPE_ASPECT = _enigma.ePixmap_SCALE_TYPE_ASPECT
+    SCALE_TYPE_CENTER = _enigma.ePixmap_SCALE_TYPE_CENTER
+    SCALE_TYPE_WIDTH = _enigma.ePixmap_SCALE_TYPE_WIDTH
+    SCALE_TYPE_HEIGHT = _enigma.ePixmap_SCALE_TYPE_HEIGHT
+    SCALE_TYPE_STRETCH = _enigma.ePixmap_SCALE_TYPE_STRETCH
     __swig_destroy__ = _enigma.delete_ePixmap
 ePixmap.setPixmap = new_instancemethod(_enigma.ePixmap_setPixmap, None, ePixmap)
 ePixmap.setPixmapFromFile = new_instancemethod(_enigma.ePixmap_setPixmapFromFile, None, ePixmap)
@@ -3002,6 +3029,9 @@ class eWidgetDesktop(object):
     __swig_destroy__ = _enigma.delete_eWidgetDesktop
     cmImmediate = _enigma.eWidgetDesktop_cmImmediate
     cmBuffered = _enigma.eWidgetDesktop_cmBuffered
+    off = _enigma.eWidgetDesktop_off
+    sbs = _enigma.eWidgetDesktop_sbs
+    tab = _enigma.eWidgetDesktop_tab
 eWidgetDesktop.addRootWidget = new_instancemethod(_enigma.eWidgetDesktop_addRootWidget, None, eWidgetDesktop)
 eWidgetDesktop.removeRootWidget = new_instancemethod(_enigma.eWidgetDesktop_removeRootWidget, None, eWidgetDesktop)
 eWidgetDesktop.movedWidget = new_instancemethod(_enigma.eWidgetDesktop_movedWidget, None, eWidgetDesktop)
@@ -3016,6 +3046,9 @@ eWidgetDesktop.makeCompatiblePixmap = new_instancemethod(_enigma.eWidgetDesktop_
 eWidgetDesktop.pixelFormat = new_instancemethod(_enigma.eWidgetDesktop_pixelFormat, None, eWidgetDesktop)
 eWidgetDesktop.compositionMode = new_instancemethod(_enigma.eWidgetDesktop_compositionMode, None, eWidgetDesktop)
 eWidgetDesktop.setCompositionMode = new_instancemethod(_enigma.eWidgetDesktop_setCompositionMode, None, eWidgetDesktop)
+eWidgetDesktop.get3dMode = new_instancemethod(_enigma.eWidgetDesktop_get3dMode, None, eWidgetDesktop)
+eWidgetDesktop.set3dMode = new_instancemethod(_enigma.eWidgetDesktop_set3dMode, None, eWidgetDesktop)
+eWidgetDesktop.set3dOffset = new_instancemethod(_enigma.eWidgetDesktop_set3dOffset, None, eWidgetDesktop)
 eWidgetDesktop.getStyleID = new_instancemethod(_enigma.eWidgetDesktop_getStyleID, None, eWidgetDesktop)
 eWidgetDesktop.setStyleID = new_instancemethod(_enigma.eWidgetDesktop_setStyleID, None, eWidgetDesktop)
 eWidgetDesktop.resize = new_instancemethod(_enigma.eWidgetDesktop_resize, None, eWidgetDesktop)
@@ -3334,6 +3367,7 @@ class eWindowStyleSkinned(object):
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle, None, eWindowStyleSkinned)
 eWindowStyleSkinned.setPixmap = new_instancemethod(_enigma.eWindowStyleSkinned_setPixmap, None, eWindowStyleSkinned)
+eWindowStyleSkinned.setColorBorder = new_instancemethod(_enigma.eWindowStyleSkinned_setColorBorder, None, eWindowStyleSkinned)
 eWindowStyleSkinned.setColor = new_instancemethod(_enigma.eWindowStyleSkinned_setColor, None, eWindowStyleSkinned)
 eWindowStyleSkinned.getColor = new_instancemethod(_enigma.eWindowStyleSkinned_getColor, None, eWindowStyleSkinned)
 eWindowStyleSkinned.setTitleOffset = new_instancemethod(_enigma.eWindowStyleSkinned_setTitleOffset, None, eWindowStyleSkinned)
@@ -4076,6 +4110,7 @@ iDVBFrontendPtr.__ref__ = new_instancemethod(_enigma.iDVBFrontendPtr___ref__, No
 iDVBFrontendPtr.getPtrString = new_instancemethod(_enigma.iDVBFrontendPtr_getPtrString, None, iDVBFrontendPtr)
 iDVBFrontendPtr.__deref__ = new_instancemethod(_enigma.iDVBFrontendPtr___deref__, None, iDVBFrontendPtr)
 iDVBFrontendPtr.getFrontendType = new_instancemethod(_enigma.iDVBFrontendPtr_getFrontendType, None, iDVBFrontendPtr)
+iDVBFrontendPtr.getTunedType = new_instancemethod(_enigma.iDVBFrontendPtr_getTunedType, None, iDVBFrontendPtr)
 iDVBFrontendPtr.tune = new_instancemethod(_enigma.iDVBFrontendPtr_tune, None, iDVBFrontendPtr)
 iDVBFrontendPtr.closeFrontend = new_instancemethod(_enigma.iDVBFrontendPtr_closeFrontend, None, iDVBFrontendPtr)
 iDVBFrontendPtr.reopenFrontend = new_instancemethod(_enigma.iDVBFrontendPtr_reopenFrontend, None, iDVBFrontendPtr)
@@ -4089,7 +4124,6 @@ iDVBFrontendPtr.getFrontendStatus = new_instancemethod(_enigma.iDVBFrontendPtr_g
 iDVBFrontendPtr.getTransponderData = new_instancemethod(_enigma.iDVBFrontendPtr_getTransponderData, None, iDVBFrontendPtr)
 iDVBFrontendPtr.getFrontendData = new_instancemethod(_enigma.iDVBFrontendPtr_getFrontendData, None, iDVBFrontendPtr)
 iDVBFrontendPtr.getStateChangeSignal = new_instancemethod(_enigma.iDVBFrontendPtr_getStateChangeSignal, None, iDVBFrontendPtr)
-iDVBFrontendPtr.changeType = new_instancemethod(_enigma.iDVBFrontendPtr_changeType, None, iDVBFrontendPtr)
 iDVBFrontendPtr_swigregister = _enigma.iDVBFrontendPtr_swigregister
 iDVBFrontendPtr_swigregister(iDVBFrontendPtr)
 
@@ -5916,6 +5950,39 @@ class eStreamServer(object):
     SOURCE_STATE_READY = _enigma.eStreamServer_SOURCE_STATE_READY
     SOURCE_STATE_PAUSED = _enigma.eStreamServer_SOURCE_STATE_PAUSED
     SOURCE_STATE_PLAYING = _enigma.eStreamServer_SOURCE_STATE_PLAYING
+    INPUT_MODE_LIVE = _enigma.eStreamServer_INPUT_MODE_LIVE
+    INPUT_MODE_HDMI_IN = _enigma.eStreamServer_INPUT_MODE_HDMI_IN
+    INPUT_MODE_BACKGROUND = _enigma.eStreamServer_INPUT_MODE_BACKGROUND
+    GOP_LENGTH_MIN = _enigma.eStreamServer_GOP_LENGTH_MIN
+    GOP_LENGTH_AUTO = _enigma.eStreamServer_GOP_LENGTH_AUTO
+    GOP_LENGTH_MAX = _enigma.eStreamServer_GOP_LENGTH_MAX
+    PROFILE_MAIN = _enigma.eStreamServer_PROFILE_MAIN
+    PROFILE_DEFAULT = _enigma.eStreamServer_PROFILE_DEFAULT
+    PROFILE_HIGH = _enigma.eStreamServer_PROFILE_HIGH
+    BFRAMES_MIN = _enigma.eStreamServer_BFRAMES_MIN
+    BFRAMES_DEFAULT = _enigma.eStreamServer_BFRAMES_DEFAULT
+    BFRAMES_MAX = _enigma.eStreamServer_BFRAMES_MAX
+    PFRAMES_MIN = _enigma.eStreamServer_PFRAMES_MIN
+    PFRAMES_DEFAULT = _enigma.eStreamServer_PFRAMES_DEFAULT
+    PFRAMES_MAX = _enigma.eStreamServer_PFRAMES_MAX
+    SLICES_MIN = _enigma.eStreamServer_SLICES_MIN
+    SLICES_DEFAULT = _enigma.eStreamServer_SLICES_DEFAULT
+    SLICES_MAX = _enigma.eStreamServer_SLICES_MAX
+    LEVEL1_1 = _enigma.eStreamServer_LEVEL1_1
+    LEVEL1_2 = _enigma.eStreamServer_LEVEL1_2
+    LEVEL1_3 = _enigma.eStreamServer_LEVEL1_3
+    LEVEL2_0 = _enigma.eStreamServer_LEVEL2_0
+    LEVEL2_1 = _enigma.eStreamServer_LEVEL2_1
+    LEVEL2_2 = _enigma.eStreamServer_LEVEL2_2
+    LEVEL3_0 = _enigma.eStreamServer_LEVEL3_0
+    LEVEL3_1 = _enigma.eStreamServer_LEVEL3_1
+    LEVEL3_2 = _enigma.eStreamServer_LEVEL3_2
+    LEVEL4_0 = _enigma.eStreamServer_LEVEL4_0
+    LEVEL4_1 = _enigma.eStreamServer_LEVEL4_1
+    LEVEL4_2 = _enigma.eStreamServer_LEVEL4_2
+    LEVEL_MIN = _enigma.eStreamServer_LEVEL_MIN
+    LEVEL_DEFAULT = _enigma.eStreamServer_LEVEL_DEFAULT
+    LEVEL_MAX = _enigma.eStreamServer_LEVEL_MAX
 
     def isAvailable(self):
         """isAvailable(eStreamServer self) -> bool"""
@@ -6022,6 +6089,86 @@ class eStreamServer(object):
         return _enigma.eStreamServer_setAutoBitrate(self, value)
 
 
+    def gopLength(self):
+        """gopLength(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_gopLength(self)
+
+
+    def setGopLength(self, value):
+        """setGopLength(eStreamServer self, int value)"""
+        return _enigma.eStreamServer_setGopLength(self, value)
+
+
+    def gopOnSceneChange(self):
+        """gopOnSceneChange(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_gopOnSceneChange(self)
+
+
+    def setGopOnSceneChange(self, enabled):
+        """setGopOnSceneChange(eStreamServer self, bool enabled)"""
+        return _enigma.eStreamServer_setGopOnSceneChange(self, enabled)
+
+
+    def openGop(self):
+        """openGop(eStreamServer self) -> bool"""
+        return _enigma.eStreamServer_openGop(self)
+
+
+    def setOpenGop(self, enabled):
+        """setOpenGop(eStreamServer self, bool enabled)"""
+        return _enigma.eStreamServer_setOpenGop(self, enabled)
+
+
+    def bFrames(self):
+        """bFrames(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_bFrames(self)
+
+
+    def setBFrames(self, bFrames):
+        """setBFrames(eStreamServer self, int bFrames)"""
+        return _enigma.eStreamServer_setBFrames(self, bFrames)
+
+
+    def pFrames(self):
+        """pFrames(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_pFrames(self)
+
+
+    def setPFrames(self, pFrames):
+        """setPFrames(eStreamServer self, int pFrames)"""
+        return _enigma.eStreamServer_setPFrames(self, pFrames)
+
+
+    def slices(self):
+        """slices(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_slices(self)
+
+
+    def setSlices(self, slices):
+        """setSlices(eStreamServer self, int slices)"""
+        return _enigma.eStreamServer_setSlices(self, slices)
+
+
+    def level(self):
+        """level(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_level(self)
+
+
+    def setLevel(self, level):
+        """setLevel(eStreamServer self, int level)"""
+        return _enigma.eStreamServer_setLevel(self, level)
+
+
+    def profile(self):
+        """profile(eStreamServer self) -> int"""
+        return _enigma.eStreamServer_profile(self)
+
+
+    def setProfile(self, profile):
+        """setProfile(eStreamServer self, int profile)"""
+        return _enigma.eStreamServer_setProfile(self, profile)
+
+
     def framerate(self):
         """framerate(eStreamServer self) -> int"""
         return _enigma.eStreamServer_framerate(self)
@@ -6092,6 +6239,22 @@ eStreamServer.videoBitrate = new_instancemethod(_enigma.eStreamServer_videoBitra
 eStreamServer.setVideoBitrate = new_instancemethod(_enigma.eStreamServer_setVideoBitrate, None, eStreamServer)
 eStreamServer.autoBitrate = new_instancemethod(_enigma.eStreamServer_autoBitrate, None, eStreamServer)
 eStreamServer.setAutoBitrate = new_instancemethod(_enigma.eStreamServer_setAutoBitrate, None, eStreamServer)
+eStreamServer.gopLength = new_instancemethod(_enigma.eStreamServer_gopLength, None, eStreamServer)
+eStreamServer.setGopLength = new_instancemethod(_enigma.eStreamServer_setGopLength, None, eStreamServer)
+eStreamServer.gopOnSceneChange = new_instancemethod(_enigma.eStreamServer_gopOnSceneChange, None, eStreamServer)
+eStreamServer.setGopOnSceneChange = new_instancemethod(_enigma.eStreamServer_setGopOnSceneChange, None, eStreamServer)
+eStreamServer.openGop = new_instancemethod(_enigma.eStreamServer_openGop, None, eStreamServer)
+eStreamServer.setOpenGop = new_instancemethod(_enigma.eStreamServer_setOpenGop, None, eStreamServer)
+eStreamServer.bFrames = new_instancemethod(_enigma.eStreamServer_bFrames, None, eStreamServer)
+eStreamServer.setBFrames = new_instancemethod(_enigma.eStreamServer_setBFrames, None, eStreamServer)
+eStreamServer.pFrames = new_instancemethod(_enigma.eStreamServer_pFrames, None, eStreamServer)
+eStreamServer.setPFrames = new_instancemethod(_enigma.eStreamServer_setPFrames, None, eStreamServer)
+eStreamServer.slices = new_instancemethod(_enigma.eStreamServer_slices, None, eStreamServer)
+eStreamServer.setSlices = new_instancemethod(_enigma.eStreamServer_setSlices, None, eStreamServer)
+eStreamServer.level = new_instancemethod(_enigma.eStreamServer_level, None, eStreamServer)
+eStreamServer.setLevel = new_instancemethod(_enigma.eStreamServer_setLevel, None, eStreamServer)
+eStreamServer.profile = new_instancemethod(_enigma.eStreamServer_profile, None, eStreamServer)
+eStreamServer.setProfile = new_instancemethod(_enigma.eStreamServer_setProfile, None, eStreamServer)
 eStreamServer.framerate = new_instancemethod(_enigma.eStreamServer_framerate, None, eStreamServer)
 eStreamServer.setFramerate = new_instancemethod(_enigma.eStreamServer_setFramerate, None, eStreamServer)
 eStreamServer.enableRTSP = new_instancemethod(_enigma.eStreamServer_enableRTSP, None, eStreamServer)
@@ -6456,6 +6619,10 @@ class eCec(object):
     RC_9 = _enigma.eCec_RC_9
     RC_CHANNEL_UP = _enigma.eCec_RC_CHANNEL_UP
     RC_CHANNEL_DOWN = _enigma.eCec_RC_CHANNEL_DOWN
+    RC_INFO = _enigma.eCec_RC_INFO
+    RC_HELP = _enigma.eCec_RC_HELP
+    RC_PAGE_UP = _enigma.eCec_RC_PAGE_UP
+    RC_PAGE_DOWN = _enigma.eCec_RC_PAGE_DOWN
     RC_POWER = _enigma.eCec_RC_POWER
     RC_VOLUME_UP = _enigma.eCec_RC_VOLUME_UP
     RC_VOLUME_DOWN = _enigma.eCec_RC_VOLUME_DOWN

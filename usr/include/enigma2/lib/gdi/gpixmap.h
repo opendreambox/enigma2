@@ -30,15 +30,15 @@ class gPixmap: public iObject
 	gSurface *m_surface;
 	bool m_glsl;
 
-	void drawPixel8(const ePoint &pos, unsigned int pixel);
-	void drawPixel16(const ePoint &pos, unsigned int pixel);
-	void drawPixel24(const ePoint &pos, unsigned int pixel);
-	void drawPixel32(const ePoint &pos, unsigned int pixel);
+	void drawPixel8(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
+	void drawPixel16(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
+	void drawPixel24(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
+	void drawPixel32(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
 	void drawLine(const gRegion &clip, const ePoint &start, const ePoint &dst, unsigned int pixel, const eMatrix4x4 &matrix);
 
-	void fillRect8(const eRect &area, unsigned int pixel);
-	void fillRect16(const eRect &area, unsigned int pixel);
-	void fillRect32(const eRect &area, unsigned int pixel);
+	void fillRect8(void *mem, unsigned int stride, const eRect &area, unsigned int pixel);
+	void fillRect16(void *mem, unsigned int stride, const eRect &area, unsigned int pixel);
+	void fillRect32(void *mem, unsigned int stride, const eRect &area, unsigned int pixel);
 	void fillRegion(const gRegion &region, unsigned int pixel, int flags, const eMatrix4x4 &matrix);
 
 public:
@@ -92,16 +92,22 @@ public:
 	ePtr<gPixmap> read() const;
 
 #ifndef SWIG
-	const void *map() const;
-	void *map();
+	/* See surface_flags.h */
+	const void *map(unsigned int flags, unsigned int *stride) const;
+	void *map(unsigned int flags, unsigned int *stride);
 	void unmap(const void *ptr) const;
 	void unmap(void *ptr);
+
+	unsigned int width() const;
+	unsigned int height() const;
+	unsigned int stride() const;
 #endif
 
 private:
 	E_DECLARE_PRIVATE(gPixmap)
 
 	friend class gDC;
+	friend class gSyncPainter;
 	void fill(const gRegion &clip, const gColor &color, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
 	void fill(const gRegion &clip, const gRGBA &color, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
 	void fill(const std::vector<eRect> &rects, const ePoint &offset, const gColor &c, const gRegion &clip, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
@@ -112,7 +118,7 @@ private:
 	
 	void blit(const gPixmap &src, const eRect &pos, const gRegion &clip, int flags, float alpha = 1.0, const eMatrix4x4 &matrix = eMatrix4x4::identity());
 
-	void beginNativePainting();
+	bool beginNativePainting();
 	void endNativePainting();
 	
 	ePtr<gPixmap> colorScale(ePtr<gPixmap> &dst, const eSize &size) const;

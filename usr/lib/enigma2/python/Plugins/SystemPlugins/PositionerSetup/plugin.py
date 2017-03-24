@@ -424,7 +424,7 @@ class TunerScreen(ScanSetup):
 	def __init__(self, session, feid, fe_data):
 		self.feid = feid
 		self.fe_data = fe_data
-		ScanSetup.__init__(self, session)
+		ScanSetup.__init__(self, session, 'S')
 		self["introduction"].setText("")
 
 	def createSetup(self):
@@ -439,7 +439,7 @@ class TunerScreen(ScanSetup):
 		self.systemEntry = None
 
 		if tuning.type.value == "manual_transponder":
-			if nim.isCompatible("DVB-S2"):
+			if nim.isEnabled("DVB-S2"):
 				self.systemEntry = getConfigListEntry(_('System'), self.scan_sat.system)
 				self.list.append(self.systemEntry)
 			else:

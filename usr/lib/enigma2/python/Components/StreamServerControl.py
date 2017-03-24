@@ -6,16 +6,69 @@ from urlparse import parse_qs
 
 from Tools import Notifications
 from Screens.MessageBox import MessageBox
+from Tools.HardwareInfo import HardwareInfo
+from collections import OrderedDict
 NOTIFICATION_DOMAIN_STREAMSERVER = "StreamServer"
 Notifications.notificationQueue.registerDomain(NOTIFICATION_DOMAIN_STREAMSERVER, _("Streaming Server"))
 
+
+
 class StreamServerControl(object):
+	FEATURE_SCENE_DETECTION = HardwareInfo().get_device_name() in ["dm900"]
+	FEATURE_SLICES = HardwareInfo().get_device_name() in ["dm900"]
+
 	FRAME_RATE_25 = "25"
 	FRAME_RATE_30 = "30"
 	FRAME_RATE_50 = "50"
 	FRAME_RATE_60 = "60"
+	FRAME_RATE_23_976 = "23.976"
+	FRAME_RATE_24 = "24"
+	FRAME_RATE_29_97 = "29.97"
+	FRAME_RATE_59_94 = "59.94"
 
-	FRAME_RATES = [FRAME_RATE_25, FRAME_RATE_30, FRAME_RATE_50, FRAME_RATE_60]
+	FRAME_RATES = [
+		FRAME_RATE_23_976,
+		FRAME_RATE_24,
+		FRAME_RATE_25,
+		FRAME_RATE_29_97,
+		FRAME_RATE_30,
+		FRAME_RATE_50,
+		FRAME_RATE_59_94,
+		FRAME_RATE_60
+	]
+
+	FRAME_RATE_LUT = {
+		FRAME_RATE_23_976 : "23",
+		FRAME_RATE_24 : "24",
+		FRAME_RATE_25 : "25",
+		FRAME_RATE_29_97 : "29",
+		FRAME_RATE_30 : "30",
+		FRAME_RATE_50 : "50",
+		FRAME_RATE_59_94 : "59",
+		FRAME_RATE_60 : "60"
+	}
+
+	FRAME_RATE_LUT_REVERSE = {v: k for k, v in FRAME_RATE_LUT.iteritems()}
+
+	LEVELS = [
+		(str(eStreamServer.LEVEL1_1) , _("1.1")),
+		(str(eStreamServer.LEVEL1_2) , _("1.2")),
+		(str(eStreamServer.LEVEL1_3) , _("1.3")),
+		(str(eStreamServer.LEVEL2_0) , _("2.0")),
+		(str(eStreamServer.LEVEL2_1) , _("2.1")),
+		(str(eStreamServer.LEVEL2_2) , _("2.2")),
+		(str(eStreamServer.LEVEL3_0) , _("3.0")),
+		(str(eStreamServer.LEVEL3_1) , _("3.1")), #default
+		(str(eStreamServer.LEVEL3_2) , _("3.2")),
+		(str(eStreamServer.LEVEL4_0) , _("4.0")),
+		(str(eStreamServer.LEVEL4_1) , _("4.1")),
+		(str(eStreamServer.LEVEL4_2) , _("4.2")),
+	]
+
+	PROFILES = [
+		(str(eStreamServer.PROFILE_MAIN) , _("main")),
+		(str(eStreamServer.PROFILE_HIGH) , _("high")),
+	]
 
 	RES_1080 = (1920, 1080)
 	RES_720 = (1280, 720)
@@ -38,17 +91,13 @@ class StreamServerControl(object):
 	}
 
 	AUDIO_BITRATE_LIMITS = [32, 448]
-	VIDEO_BITRATE_LIMITS = [256, 10000]
+	VIDEO_BITRATE_LIMITS = [256, 20000]
 	PORT_LIMITS = [1, 65535]
 
-	INPUT_MODE_LIVE = 0
-	INPUT_MODE_HDMI_IN = 1
-	INPUT_MODE_BACKGROUND = 2
-
 	INPUT_MODES = {
-		str(INPUT_MODE_LIVE) : _("Follow Live"),
-		str(INPUT_MODE_HDMI_IN) : _("HDMI Input"),
-		str(INPUT_MODE_BACKGROUND) : _("TV Services")
+		str(eStreamServer.INPUT_MODE_LIVE) : _("Follow Live"),
+		str(eStreamServer.INPUT_MODE_HDMI_IN) : _("HDMI Input"),
+		str(eStreamServer.INPUT_MODE_BACKGROUND) : _("TV Services")
 	}
 
 	ENCODER_TARGET = 2
@@ -114,14 +163,14 @@ class StreamServerControl(object):
 		Log.d()
 		from Screens.Standby import inStandby
 		inStandby.onClose.append(self._onLeaveStandby)
-		if config.streamserver.source.value == str(self.INPUT_MODE_LIVE) and config.streamserver.mediator.enabled.value:
+		if config.streamserver.source.value == str(eStreamServer.INPUT_MODE_LIVE) and config.streamserver.mediator.enabled.value:
 			Log.i("Going into Standby, mode is Follow Live, stopping proxy stream")
 			self._mediatorStateBeforeStandby = config.streamserver.mediator.enabled.value
 			config.streamserver.mediator.enabled.value = False
 
 	def _onLeaveStandby(self):
 		Log.d()
-		if config.streamserver.source.value == str(self.INPUT_MODE_LIVE) and self._mediatorStateBeforeStandby:
+		if config.streamserver.source.value == str(eStreamServer.INPUT_MODE_LIVE) and self._mediatorStateBeforeStandby:
 			Log.i("Leaving Standby, mode is Follow live, recovering upload state=%s" %(self._mediatorStateBeforeStandby,))
 			config.streamserver.mediator.enabled.value = self._mediatorStateBeforeStandby
 
@@ -131,7 +180,7 @@ class StreamServerControl(object):
 
 	def _onSourceStateChanged(self, state):
 		Log.i("state=%s" %state)
-		if state > eStreamServer.SOURCE_STATE_READY and streamServerControl.inputMode == streamServerControl.INPUT_MODE_BACKGROUND:
+		if state > eStreamServer.SOURCE_STATE_READY and streamServerControl.inputMode == eStreamServer.INPUT_MODE_BACKGROUND:
 			self.setEncoderService(eServiceReference(config.streamserver.lastservice.value))
 		else:
 			self.stopEncoderService()
@@ -209,7 +258,7 @@ class StreamServerControl(object):
 
 	def _startEncoderService(self, service):
 		if not self.isAnyEnabled() \
-			or int(config.streamserver.source.value) != self.INPUT_MODE_BACKGROUND \
+			or int(config.streamserver.source.value) != eStreamServer.INPUT_MODE_BACKGROUND \
 			or self.sourceState <= eStreamServer.SOURCE_STATE_READY:
 			self.stopEncoderService()
 			Log.i("Streamserver disabled, not in TV Service mode or no client connected, will not allocate service (%s, %s, %s, %s, %s)" 
@@ -302,11 +351,82 @@ class StreamServerControl(object):
 
 	autoBitrate = property(getAutoBitrate, setAutoBitrate)
 
+	def getGopLength(self):
+		return self._streamServer.gopLength()
+
+	def setGopLength(self, length):
+		self._streamServer.setGopLength(length)
+
+	gopLength = property(getGopLength, setGopLength)
+
+	def getGopOnSceneChange(self):
+		return self._streamServer.gopOnSceneChange()
+
+	def setGopOnSceneChange(self, enabled):
+		if self.FEATURE_SCENE_DETECTION:
+			self._streamServer.setGopOnSceneChange(enabled)
+		else:
+			Log.w("This device's encoder has no support for scene detection!")
+
+	gopOnSceneChange = property(getGopOnSceneChange, setGopOnSceneChange)
+
+	def getOpenGop(self):
+		return self._streamServer.openGop()
+
+	def setOpenGop(self, enabled):
+		self._streamServer.setOpenGop(enabled)
+
+	openGop = property(getOpenGop, setOpenGop)
+
+	def getBFrames(self):
+		return self._streamServer.bFrames()
+
+	def setBFrames(self, bFrames):
+		self._streamServer.setBFrames(bFrames)
+
+	bFrames = property(getBFrames, setBFrames)
+
+	def getPFrames(self):
+		return self._streamServer.pFrames()
+
+	def setPFrames(self, pFrames):
+		self._streamServer.setPFrames(pFrames)
+
+	pFrames = property(getPFrames, setPFrames)
+
+	def getSlices(self):
+		return self._streamServer.slices()
+
+	def setSlices(self, slices):
+		if self.FEATURE_SLICES:
+			self._streamServer.setSlices(slices)
+		else:
+			Log.w("This device's encoder has no support for setting slices")
+
+	slices = property(getSlices, setSlices)
+
+	def getLevel(self):
+		return self._streamServer.level()
+
+	def setLevel(self, level):
+		self._streamServer.setLevel(level)
+
+	level = property(getLevel, setLevel)
+
+	def getProfile(self):
+		return self._streamServer.profile()
+
+	def setProfile(self, profile):
+		self._streamServer.setProfile(profile)
+
+	profile = property(getProfile, setProfile)
+
 	def getFramerate(self):
-		return self._streamServer.framerate()
+		return self.FRAME_RATE_LUT_REVERSE.get(str(self._streamServer.framerate()))
 
 	def setFramerate(self, rate):
-		self._streamServer.setFramerate(rate)
+		Log.w(rate)
+		self._streamServer.setFramerate(int(self.FRAME_RATE_LUT.get(str(rate))))
 
 	framerate = property(getFramerate, setFramerate)
 
@@ -343,11 +463,11 @@ class StreamServerControl(object):
 			Log.i("no infobar")
 			return False
 		input_mode = int(config.streamserver.source.value)
-		if input_mode == self.INPUT_MODE_LIVE:
+		if input_mode == eStreamServer.INPUT_MODE_LIVE:
 			Log.i("zapping to next live service")
 			InfoBar.instance.zapDown()
 			return True
-		elif input_mode == self.INPUT_MODE_BACKGROUND:
+		elif input_mode == eStreamServer.INPUT_MODE_BACKGROUND:
 			Log.i("zapping to next background service")
 			oldservice = self.encoderService
 			if not oldservice:
@@ -365,11 +485,11 @@ class StreamServerControl(object):
 			return False
 		Log.i(config.streamserver.source.value)
 		input_mode = int(config.streamserver.source.value)
-		if input_mode == self.INPUT_MODE_LIVE:
+		if input_mode == eStreamServer.INPUT_MODE_LIVE:
 			Log.i("zapping to previous live service")
 			InfoBar.instance.zapUp()
 			return True
-		elif input_mode == self.INPUT_MODE_BACKGROUND:
+		elif input_mode == eStreamServer.INPUT_MODE_BACKGROUND:
 			Log.i("zapping to previous background service")
 			oldservice = self.encoderService
 			if not oldservice:
@@ -382,12 +502,22 @@ class StreamServerControl(object):
 
 #Streamserver base config
 config.streamserver = ConfigSubsection()
-config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(StreamServerControl.INPUT_MODE_LIVE))
+config.streamserver.source = ConfigSelection(StreamServerControl.INPUT_MODES, default=str(eStreamServer.INPUT_MODE_LIVE))
 config.streamserver.audioBitrate = ConfigInteger(96, StreamServerControl.AUDIO_BITRATE_LIMITS)
 config.streamserver.videoBitrate = ConfigInteger(1500, StreamServerControl.VIDEO_BITRATE_LIMITS)
 config.streamserver.autoBitrate = ConfigOnOff(default=False)
 config.streamserver.resolution = ConfigSelection(StreamServerControl.RESOLUTIONS.keys(), default=StreamServerControl.RES_KEY_PAL)
-config.streamserver.framerate = ConfigSelection(StreamServerControl.FRAME_RATES, default=StreamServerControl.FRAME_RATE_25)
+config.streamserver.framerate = ConfigSelection(StreamServerControl.FRAME_RATES, default=StreamServerControl.FRAME_RATE_23_976)
+# extended encoder settings
+config.streamserver.gopLength = ConfigInteger(default=eStreamServer.GOP_LENGTH_AUTO, limits=[eStreamServer.GOP_LENGTH_MIN, eStreamServer.GOP_LENGTH_MAX])
+config.streamserver.gopOnSceneChange = ConfigOnOff(default=False)
+config.streamserver.openGop = ConfigOnOff(default=False)
+config.streamserver.bFrames = ConfigInteger(default=eStreamServer.BFRAMES_DEFAULT, limits=[eStreamServer.BFRAMES_MIN, eStreamServer.BFRAMES_MAX])
+config.streamserver.pFrames = ConfigInteger(default=eStreamServer.PFRAMES_DEFAULT, limits=[eStreamServer.PFRAMES_MIN, eStreamServer.PFRAMES_MAX])
+config.streamserver.slices = ConfigInteger(default=eStreamServer.SLICES_DEFAULT, limits=[eStreamServer.SLICES_MIN, eStreamServer.SLICES_MAX])
+config.streamserver.level = ConfigSelection(StreamServerControl.LEVELS, default=str(eStreamServer.LEVEL_DEFAULT))
+config.streamserver.profile = ConfigSelection(StreamServerControl.PROFILES, default=str(eStreamServer.PROFILE_DEFAULT))
+#servers
 config.streamserver.rtsp = ConfigSubsection()
 config.streamserver.rtsp.enabled = ConfigOnOff(default=False)
 config.streamserver.rtsp.port = ConfigInteger(554, StreamServerControl.PORT_LIMITS)
@@ -409,5 +539,7 @@ config.streamserver.mediator.streaminggroups.hide_empty = ConfigYesNo(default=Fa
 config.streamserver.client = ConfigSubsection()
 config.streamserver.client.boxid = ConfigText(default="", fixed_size=False)
 config.streamserver.client.boxkey = ConfigText(default="", fixed_size=False)
+
+
 
 streamServerControl = StreamServerControl()

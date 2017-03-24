@@ -238,7 +238,17 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 				  "blend": 2,
 				}[value])
 		elif attrib == "scale":
-			guiObject.setScale(1)
+			value = {
+				"off" :  ePixmap.SCALE_TYPE_NONE,
+				"none" :  ePixmap.SCALE_TYPE_NONE,
+				"on" :  ePixmap.SCALE_TYPE_ASPECT,
+				"aspect" : ePixmap.SCALE_TYPE_ASPECT,
+				"center" : ePixmap.SCALE_TYPE_CENTER,
+				"width" : ePixmap.SCALE_TYPE_WIDTH,
+				"height" : ePixmap.SCALE_TYPE_HEIGHT,
+				"stretch" : ePixmap.SCALE_TYPE_STRETCH,
+			}.get(value, ePixmap.SCALE_TYPE_ASPECT)
+			guiObject.setScale(value)
 		elif attrib == "orientation": # used by eSlider
 			try:
 				guiObject.setOrientation(*
@@ -504,11 +514,16 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			for pixmap in borderset.findall("pixmap"):
 				get_attr = pixmap.attrib.get
 				bpName = get_attr("pos")
-				filename = get_attr("filename")
-				if filename and bpName:
-					png = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix), desktop)
-					style.setPixmap(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], png)
-				#print "  borderset:", bpName, filename
+				if "filename" in pixmap.attrib:
+					filename = get_attr("filename")
+					if filename and bpName:
+						png = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, filename, path_prefix=path_prefix), desktop)
+						style.setPixmap(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], png)
+				elif "color" in pixmap.attrib:
+					color = parseColor(get_attr("color"))
+					size = int(get_attr("size"))
+					Log.w("%s: %s @ %s" %(bpName, color.argb(), size))
+					style.setColorBorder(eWindowStyleSkinned.__dict__[bsName], eWindowStyleSkinned.__dict__[bpName], color, size)
 
 		for color in windowstyle.findall("color"):
 			get_attr = color.attrib.get

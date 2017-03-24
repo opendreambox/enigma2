@@ -489,7 +489,7 @@ class iDVBFrontend_ENUMS
 	~iDVBFrontend_ENUMS();
 #endif
 public:
-	enum { feSatellite, feCable, feTerrestrial, feSatellite2, feTerrestrial2 };
+	enum { feSatellite=1, feCable=2, feTerrestrial=4, feSatellite2=8, feTerrestrial2=16 };
 	enum { stateIdle, stateTuning, stateFailed, stateLock, stateLostLock, statePreClose, statePendingClose, stateClosed };
 	enum { toneOff, toneOn };
 	enum { voltageOff, voltage13, voltage18, voltage13_5, voltage18_5 };
@@ -503,6 +503,7 @@ class iDVBFrontend: public iDVBFrontend_ENUMS, public iObject
 {
 public:
 	virtual RESULT getFrontendType(int &SWIG_OUTPUT)=0;
+	virtual RESULT getTunedType(int &SWIG_OUTPUT)=0;
 	virtual RESULT tune(const iDVBFrontendParameters &where)=0;
 	virtual int closeFrontend(bool force = false, bool no_delayed = false)=0;
 	virtual void reopenFrontend()=0;
@@ -511,7 +512,7 @@ public:
 #endif
 	virtual RESULT getState(int &SWIG_OUTPUT)=0;
 	virtual RESULT setTone(int tone)=0;
-	virtual RESULT setVoltage(int voltage)=0;
+	virtual RESULT setVoltage(int voltage, iDVBFrontend *child_fe=NULL)=0;
 	virtual RESULT sendDiseqc(const eDVBDiseqcCommand &diseqc)=0;
 	virtual RESULT sendToneburst(int burst)=0;
 #ifndef SWIG
@@ -529,7 +530,6 @@ public:
 		/* 0 means: not compatible. other values are a priority. */
 	virtual int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm)=0;
 #endif
-	virtual bool changeType(int type)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iDVBFrontend>, iDVBFrontendPtr);
 
@@ -538,7 +538,7 @@ class iDVBSatelliteEquipmentControl: public iObject
 {
 public:
 	virtual RESULT prepare(iDVBFrontend &frontend, dvb_frontend_parameters &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int timeout)=0;
-	virtual void prepareClose(iDVBFrontend &frontend)=0;
+	virtual void prepareClose(iDVBFrontend &frontend, bool typeChanged=false)=0;
 	virtual int canTune(const eDVBFrontendParametersSatellite &feparm, iDVBFrontend *fe, int frontend_id, int *highest_score_lnb=0)=0;
 	virtual void setRotorMoving(int slotid, bool)=0;
 };

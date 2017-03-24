@@ -394,8 +394,8 @@ class Session:
 
 		# create GUI view of this dialog
 		assert desktop is not None
-
-		dlg.setZPosition(z)
+		if z != None:
+			dlg.setZPosition(z)
 		dlg.setDesktop(desktop)
 		dlg.applySkin()
 

@@ -129,6 +129,9 @@ public:
 	eRect intersect( const eRect &r ) const;
 	bool intersects( const eRect &r ) const;
 	void scaleToCenterOf( const eRect &other );
+	void scaleToWidthOf(const eRect &other);
+	void scaleToHeightOf(const eRect &other);
+	void centerIn(const eRect &other);
 
 	friend bool operator==( const eRect &, const eRect & );
 	friend bool operator!=( const eRect &, const eRect & );

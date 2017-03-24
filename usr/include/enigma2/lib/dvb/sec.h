@@ -32,7 +32,9 @@ public:
 		SET_ROTOR_STOPPED,
 		DELAYED_CLOSE_FRONTEND,
 		IF_ACQUIRE_SEC_LOCK_GOTO,
-		CLEAR_SEC_LOCK
+		CLEAR_SEC_LOCK,
+		IF_LINKED_IN_USE_GOTO,
+		UPDATE_OPARM
 	};
 	int cmd;
 	struct rotor
@@ -333,7 +335,7 @@ public:
 #ifndef SWIG
 	eDVBSatelliteEquipmentControl(eSmartPtrList<eDVBRegisteredFrontend> &avail_frontends, eSmartPtrList<eDVBRegisteredFrontend> &avail_simulate_frontends);
 	RESULT prepare(iDVBFrontend &frontend, dvb_frontend_parameters &parm, const eDVBFrontendParametersSatellite &sat, int frontend_id, unsigned int tunetimeout);
-	void prepareClose(iDVBFrontend &frontend);
+	void prepareClose(iDVBFrontend &frontend, bool typeChanged=false);
 	int canTune(const eDVBFrontendParametersSatellite &feparm, iDVBFrontend *, int frontend_id, int *highest_score_lnb=0);
 	bool currentLNBValid() { return m_lnbidx > -1 && (size_t)m_lnbidx < ARRAY_SIZE(m_lnbs); }
 #endif

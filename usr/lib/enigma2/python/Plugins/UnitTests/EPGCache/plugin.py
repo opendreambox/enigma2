@@ -20,6 +20,7 @@ class TestEpgCache(unittest.TestCase):
 
 	def cleanup_save(self):
 		config.misc.epgcache_filename.value = self.oldfile
+		config.misc.epgcache_filename.save()
 
 	def _remove_db(self):
 		if fileExists(config.misc.epgcache_filename.value):

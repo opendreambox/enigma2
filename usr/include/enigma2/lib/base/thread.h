@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <lib/base/elock.h>
+#include <string>
 
 /* the following states are possible:
  1 thread has not yet started
@@ -60,6 +61,9 @@ public:
 
 	static pid_t gettid();
 	pid_t tid() const;
+
+	void setName(const char *name);
+
 private:
 	pthread_t the_thread;
 	pid_t m_thread_id;
@@ -67,6 +71,7 @@ private:
 	static void *wrapper(void *ptr);
 	int m_alive, m_started;
 	static void thread_completed(void *p);
+	std::string m_name;
 
 	eSemaphore m_state;
 protected:

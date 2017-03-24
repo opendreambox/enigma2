@@ -5,6 +5,9 @@
 
 class gRGBA
 {
+	unsigned int a1() const;
+	unsigned int a2() const;
+	unsigned int a4() const;
 	unsigned int a8() const;
 	unsigned int gray8() const;
 	unsigned int rgba4444() const;

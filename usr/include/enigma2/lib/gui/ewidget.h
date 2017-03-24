@@ -10,7 +10,7 @@ class eWidgetDesktop;
 class eWidgetAnimationSet;
 class eWidgetDesktopCompBuffer;
 
-class eWidget
+class eWidget : public iSyncPaintable
 {
 	friend class eWidgetDesktop;
 public:

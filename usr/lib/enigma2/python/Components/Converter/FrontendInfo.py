@@ -98,8 +98,17 @@ class FrontendInfo(Converter, object):
 			else:
 				return self.range
 		elif self.type == self.TUNER_TYPE:
-			return self.source.frontend_type
-		elif self.type == self.SLOT_NUMBER:
+			# convert for skin compatibility reasons
+			frontend_type = self.source.frontend_type
+			if frontend_type == feSatellite:
+				return 0
+			elif frontend_type == feCable:
+				return 1
+			elif frontend_type == feTerrestrial:
+				return 2
+			print "FIXMEE unknown frontend type in FrontendInfo getValue Converter return 0 (SAT)", frontend_type
+			return 0
+ 		elif self.type == self.SLOT_NUMBER:
 			num = self.source.slot_number
 			return num is None and -1 or num
 

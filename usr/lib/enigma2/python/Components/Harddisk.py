@@ -882,7 +882,7 @@ class HarddiskManager:
 					output.append('\t'.join([src, dst, vfstype, mntops, freq, passno]))
 					# remove possible duplicate entries
 					mode = 'remove'
-				elif realDst == realMountpoint:
+				elif realDst == realMountpoint and realDst != '/':
 					#we cannot mount two sources to the same dest, so we drop the old one
 					continue
 				else:

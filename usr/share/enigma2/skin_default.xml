@@ -867,8 +867,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Plugin browser -->
 	<screen name="PluginBrowser" position="center,120" size="820,520" title="Plugin browser">
-		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on"/>
-		<ePixmap pixmap="skin_default/buttons/green.png" position="270,5" size="260,40" alphatest="on"/>
+		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/green.png" position="270,5" size="260,40" alphatest="on" scale="stretch"/>
 		<widget name="red" position="10,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget name="green" position="270,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
 		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>

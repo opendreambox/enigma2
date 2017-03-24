@@ -19,7 +19,7 @@ class eDVBFrontendParameters: public iDVBFrontendParameters
 		eDVBFrontendParametersCable cable;
 		eDVBFrontendParametersTerrestrial terrestrial;
 	};
-	int m_type;
+	int m_types;
 	int m_flags;
 public:
 	eDVBFrontendParameters();
@@ -69,7 +69,8 @@ public:
 		LINKED_NEXT_PTR,      // next double linked list (for linked FEs)
 		SATPOS_DEPENDS_PTR,   // pointer to FE with configured rotor (with twin/quattro lnb)
 		FREQ_OFFSET,          // frequency offset for tuned transponder
-		CUR_VOLTAGE,          // current voltage
+		CUR_DVBS_VOLTAGE,     // current dvb-s(2) voltage
+		CUR_DVBT_VOLTAGE,     // current dvb-t voltage
 		CUR_TONE,             // current continuous tone
 		SATCR,                // current SatCR
 		NUM_DATA_ENTRIES
@@ -77,9 +78,10 @@ public:
 	eSignal1<void, iDVBFrontend*> m_stateChanged;
 private:
 	DECLARE_REF(eDVBFrontend);
+	bool m_dvbt_5V_via_proc;
 	bool m_simulate;
-	bool m_enabled;
-	int m_type;
+	int m_types_enabled; // set from python
+	int m_types;
 	eDVBFrontend *m_simulate_fe; // only used to set frontend type in dvb.cpp
 	int m_dvbid;
 	int m_slotid;
@@ -87,18 +89,20 @@ private:
 	bool m_forced_timeout;
 	bool m_rotor_mode;
 	bool m_need_rotor_workaround;
-	bool m_can_handle_2g;
 	bool m_seen_first_event;
 	bool m_dvb_t2_auto_delsys;
 	char m_filename[128];
 	char m_description[128];
 	static int dvb_api_minor;
 	dvb_frontend_parameters parm;
-	struct {
+	typedef struct {
 		eDVBFrontendParametersSatellite sat;
 		eDVBFrontendParametersCable cab;
 		eDVBFrontendParametersTerrestrial ter;
-	} oparm;
+		int type;
+	} fe_parm_t;
+
+	fe_parm_t oparm, newparm;
 
 	int m_state;
 	ePtr<iDVBSatelliteEquipmentControl> m_sec;
@@ -137,6 +141,7 @@ public:
 
 	int readInputpower();
 	RESULT getFrontendType(int &type);
+	RESULT getTunedType(int &type);
 	RESULT tune(const iDVBFrontendParameters &where);
 	RESULT prepare_sat(const eDVBFrontendParametersSatellite &, unsigned int timeout);
 	RESULT prepare_cable(const eDVBFrontendParametersCable &);
@@ -144,14 +149,13 @@ public:
 	RESULT connectStateChange(const sigc::slot1<void,iDVBFrontend*> &stateChange, ePtr<eConnection> &connection);
 	RESULT getState(int &state);
 	RESULT setTone(int tone);
-	RESULT setVoltage(int voltage);
+	RESULT setVoltage(int voltage, iDVBFrontend *child_fe=NULL);
 	RESULT sendDiseqc(const eDVBDiseqcCommand &diseqc);
 	RESULT sendToneburst(int burst);
 	RESULT setSEC(iDVBSatelliteEquipmentControl *sec);
 	RESULT setSecSequence(eSecCommandList &list);
 	RESULT getData(int num, long &data);
 	RESULT setData(int num, long val);
-	bool changeType(int type);
 
 	int readFrontendData(int type); // bitErrorRate, signalPower, signalQualitydB, signalQuality, locked, synced
 	RESULT getFrontendStatus(FrontendDataMap &dest);
@@ -162,7 +166,7 @@ public:
 	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm);
 	int getDVBID() { return m_dvbid; }
 	int getSlotID() { return m_slotid; }
-	bool setSlotInfo(std::tuple<int, std::string, bool, int, std::string>&); // get a tuple (slotid, slotdescr, enabled, dvbid, input_name)
+	bool setSlotInfo(std::tuple<int, std::string, int, int, std::string>&); // get a tuple (slotid, slotdescr, enabled, dvbid, input_name)
 	static void setTypePriorityOrder(int val) { PriorityOrder = val; }
 	static int getTypePriorityOrder() { return PriorityOrder; }
 

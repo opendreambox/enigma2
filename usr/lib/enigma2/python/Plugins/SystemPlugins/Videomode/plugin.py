@@ -126,6 +126,7 @@ class VideoSetup(Screen, ConfigListScreen):
 			config.av.videomode[self.last_good[0]].value = self.last_good[1]
 			config.av.videorate[self.last_good[1]].value = self.last_good[2]
 			self.hw.setMode(*self.last_good)
+			self.createSetup()
 		else:
 			self.keySave()
 

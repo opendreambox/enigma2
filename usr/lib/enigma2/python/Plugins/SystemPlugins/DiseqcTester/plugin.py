@@ -661,10 +661,10 @@ class DiseqcTesterNimSelection(NimSelection):
 		
 	def showNim(self, nim):
 		nimConfig = nimmanager.getNimConfig(nim.slot)
-		if nim.isCompatible("DVB-S"):
-			if nimConfig.configMode.value in ("loopthrough", "equal", "satposdepends", "nothing"):
+		if nim.isEnabled("DVB-S"):
+			if nimConfig.sat.configMode.value in ("loopthrough", "equal", "satposdepends", "nothing"):
 				return False
-			if nimConfig.configMode.value == "simple":
+			if nimConfig.sat.configMode.value == "simple":
 				if nimConfig.diseqcMode.value == "positioner":
 					return True
 			return True

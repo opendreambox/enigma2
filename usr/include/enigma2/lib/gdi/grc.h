@@ -26,29 +26,11 @@
 #include <lib/gdi/region.h>
 #include <lib/gdi/gfont.h>
 
-#if defined(DISPLAY_QT)
-#include <QThread>
-#define GRC_THREAD_BASE QThread
-#else
-class QThread;
-#define GRC_THREAD_BASE eThread
-#endif
-
-union eGLThread {
-	eGLThread() : tid(0)
-	{
-	}
-
-	bool operator==(const eGLThread &o) const { return tid == o.tid; }
-	bool operator!=(const eGLThread &o) const { return tid != o.tid; }
-	long tid;
-	QThread *qThread;
-};
-
 class eTextPara;
 class gPalette;
 
 class gDC;
+class iSyncPaintable;
 class gOpcode
 {
 public:
@@ -76,16 +58,16 @@ public:
 		
 		flush,
 		
-		waitVSync,
+		swapBuffers,
 		notify,
 		
 		enableSpinner, disableSpinner, incrementSpinner,
 		
 		shutdown,
 
-		beginNativePainting, endNativePainting,
-		lockGL, unlockGL,
 		setMatrix,
+
+		syncPaint,
 	} opcode;
 
 	gDC *dc;
@@ -169,15 +151,15 @@ public:
 			unsigned int bpp;
 		} *videoMode;
 
-		struct pglThread
-		{
-			eGLThread thread;
-		} *glThread;
-
 		struct psetMatrix
 		{
 			eMatrix4x4 matrix;
 		} *setMatrix;
+
+		struct psyncPaint
+		{
+			iSyncPaintable *target;
+		} *syncPaint;
 
 		para()
 			:fill(NULL)
@@ -195,11 +177,8 @@ private:
 #define MAXSIZE 2048
 
 		/* gRC is the singleton which controls the fifo and dispatches commands */
-class gRC : public GRC_THREAD_BASE, public iObject, public sigc::trackable
+class gRC : public eThread, public iObject, public sigc::trackable
 {
-#if defined(DISPLAY_QT)
-	Q_OBJECT
-#endif
 	DECLARE_REF(gRC);
 	friend class gPainter;
 	friend class gFBDC;
@@ -210,11 +189,7 @@ class gRC : public GRC_THREAD_BASE, public iObject, public sigc::trackable
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 	bool m_locked;
-#if defined(DISPLAY_QT)
-	virtual void run();
-#else
 	virtual void thread();
-#endif
 
 	gOpcode queue[MAXSIZE];
 	int rp, wp;
@@ -233,7 +208,6 @@ class gRC : public GRC_THREAD_BASE, public iObject, public sigc::trackable
 	void lock();
 	void unlock();
 
-	eGLThread threadId();
 public:
 	gRC();
 	virtual ~gRC();
@@ -250,17 +224,20 @@ public:
 	/* gPainter is the user frontend, which in turn sends commands through gRC */
 class gPainter
 {
+	friend class gRC;
+
+protected:
 	ePtr<gDC> m_dc;
 	ePtr<gFont> m_font;
-	friend class gRC;
 
 	void begin(const eRect &rect);
 	void end();
 
-	void submit(const gOpcode::Opcode o, const gOpcode::para &parm = gOpcode::para());
+	virtual void submit(const gOpcode::Opcode o, const gOpcode::para &parm = gOpcode::para());
+
 public:
 	gPainter(gDC *dc);
-	~gPainter();
+	virtual ~gPainter();
 
 	void setBackgroundColor(const gColor &color);
 	void setForegroundColor(const gColor &color);
@@ -322,16 +299,27 @@ public:
 	void clip(const gRegion &clip);
 	void clippop();
 
-	void waitVSync();
+	void swapBuffers();
 	void notify();
 	
 	void flush();
+	virtual void sync();
 
-	void beginNativePainting();
-	void endNativePainting();
+	void requestSyncPaint(iSyncPaintable *target);
 
 	void setMatrix(const eMatrix4x4 &matrix);
 	int flags();
+};
+
+class gSyncPainter : public gPainter
+{
+protected:
+	virtual void submit(const gOpcode::Opcode o, const gOpcode::para &parm = gOpcode::para());
+	virtual void sync();
+
+public:
+	gSyncPainter(gDC *dc);
+	virtual ~gSyncPainter();
 };
 
 class gDC: public iObject
@@ -362,9 +350,6 @@ protected:
 
 	virtual gSurface *surface() const { return m_pixmap ? m_pixmap->surface() : 0; }
 
-	virtual void rcLockGL(eGLThread thread) {}
-	virtual void rcUnlockGL() {}
-
 public:
 	virtual void exec(const gOpcode *opcode);
 	gDC(ePtr<gPixmap> pixmap);
@@ -380,8 +365,15 @@ public:
 	
 	virtual void enableSpinner();
 	virtual void disableSpinner();
-	virtual void incrementSpinner(bool resetBackground = true);
+	virtual void incrementSpinner();
 	virtual void setSpinner(eRect pos, ePtr<gPixmap> *pic, int len);
+};
+
+class iSyncPaintable
+{
+	friend class gDC;
+protected:
+	virtual void doSyncPaint(gSyncPainter *painter) {};
 };
 
 #endif

@@ -60,7 +60,7 @@ class DefaultServicesScannerPlugin(ScanSetup):
 		</screen>"""
 		
 	def __init__(self, session, args = None):
-		ScanSetup.__init__(self, session)
+		ScanSetup.__init__(self, session, 'S')
 		# backup lamedb
 		confdir = resolveFilename(SCOPE_CONFIG)
 		copyfile(confdir + "/lamedb", confdir + "/lamedb.backup")

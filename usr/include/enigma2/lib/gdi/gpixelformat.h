@@ -160,8 +160,16 @@ public:
 	enum Format {
 		ANY = 0,
 
+		A_1 = E_PIXEL_FMT_ALPHA(1),
+		A_2 = E_PIXEL_FMT_ALPHA(2),
+		A_4 = E_PIXEL_FMT_ALPHA(4),
 		A_8 = E_PIXEL_FMT_ALPHA(8),
+
 		GRAY_8 = E_PIXEL_FMT_GRAY(8),
+
+		PALETTE_1 = E_PIXEL_FMT_PALETTE(1),
+		PALETTE_2 = E_PIXEL_FMT_PALETTE(2),
+		PALETTE_4 = E_PIXEL_FMT_PALETTE(4),
 		PALETTE_8 = E_PIXEL_FMT_PALETTE(8),
 
 		RGBX_4444 = E_PIXEL_FMT_RGBX(4, 4, 4, 4, BYTE_ORDER_RGB, ALPHA_LAST),
@@ -224,6 +232,7 @@ public:
 	static Format alphaPixelFormat(Format fmt);
 	static inline Format preferredFormat() { return g_preferredFormat; }
 	static void setPreferredFormat(Format fmt) { g_preferredFormat = fmt; }
+	static unsigned int convertToDRM(Format fmt);
 
 	static std::string name(Format fmt);
 

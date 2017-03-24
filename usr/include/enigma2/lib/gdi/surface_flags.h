@@ -13,6 +13,12 @@
 #define GSURFACE_WINDOW		(1 << 3)
 #define GSURFACE_GL_PIXMAP	(1 << 4)
 #define GSURFACE_GL_FRAMEBUFFER	(1 << 5)
+#define GSURFACE_MAPPABLE	(1 << 6)
+
+/* for map/unmap */
+#define GSURFACE_RDONLY		(1 << 0)
+#define GSURFACE_WRONLY		(1 << 1)
+#define GSURFACE_RDWR		(GSURFACE_RDONLY | GSURFACE_WRONLY)
 
 #endif /* !SWIG */
 

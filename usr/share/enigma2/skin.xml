@@ -1245,9 +1245,9 @@
 	</screen>
 	<!-- Pluginmanager / Softwaremanager -->
 	<screen name="PluginManager" position="center,120" size="820,520" title="Plugin manager">
-		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" alphatest="on" scale="stretch"/>
 		<widget source="key_red" render="Label" position="10,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_green" render="Label" position="280,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_yellow" render="Label" position="550,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
@@ -1387,9 +1387,9 @@
 		<widget source="introduction" render="Label" position="10,488" size="800,25" font="Regular;22" halign="center" />
 	</screen>
 	<screen name="BackupSelection" position="center,120" size="820,520" title="Select files/folders to backup...">
-		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" alphatest="on" scale="stretch"/>
 		<widget source="key_red" render="Label" position="10,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_green" render="Label" position="280,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_yellow" render="Label" position="550,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
@@ -1443,9 +1443,9 @@
 		<eLabel	position="10,480" size="800,1" backgroundColor="grey"/>
 	</screen>
 	<screen name="RestoreMenu" position="center,120" size="820,520" title="Restore Backups">
-		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" alphatest="on" />
-		<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" alphatest="on" />
+		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" alphatest="on" scale="stretch"/>
+		<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" alphatest="on" scale="stretch"/>
 		<widget source="key_red" render="Label" position="10,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_green" render="Label" position="280,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 		<widget source="key_yellow" render="Label" position="550,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />

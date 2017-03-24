@@ -235,7 +235,7 @@ public:
 	unsigned int canMeasureFrontendInputPower();
 	eSignal1<void, int> frontendUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
-	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, bool, int, std::string> >);
+	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, int, int, std::string> >);
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eDVBResourceManager>, eDVBResourceManager);
 SWIG_EXTEND(ePtr<eDVBResourceManager>,

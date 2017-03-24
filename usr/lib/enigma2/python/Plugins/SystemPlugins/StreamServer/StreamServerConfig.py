@@ -9,6 +9,7 @@ from Components.Network import iNetworkInfo
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
+from enigma import eStreamServer
 
 def applyConfig(streamServerControl, initial=False, forceRestart=False):
 		if not streamServerControl.isConnected():
@@ -50,7 +51,41 @@ def applyConfig(streamServerControl, initial=False, forceRestart=False):
 		if resolution != streamServerControl.resolution:
 			streamServerControl.resolution = StreamServerControl.RESOLUTIONS[config.streamserver.resolution.value]
 
-		framerate = int(config.streamserver.framerate.value)
+		gopLength = config.streamserver.gopLength.value
+		if gopLength != streamServerControl.gopLength:
+			streamServerControl.gopLength = gopLength
+
+		if StreamServerControl.FEATURE_SCENE_DETECTION:
+			gopOnSceneChange = config.streamserver.gopOnSceneChange.value
+			if gopOnSceneChange != streamServerControl.gopOnSceneChange:
+				streamServerControl.gopOnSceneChange = gopOnSceneChange
+
+		openGop = config.streamserver.openGop.value
+		if openGop != streamServerControl.openGop:
+			streamServerControl.openGop = openGop
+
+		bFrames = config.streamserver.bFrames.value
+		if bFrames != streamServerControl.bFrames:
+			streamServerControl.bFrames = bFrames
+
+		pFrames = config.streamserver.pFrames.value
+		if pFrames != streamServerControl.pFrames:
+			streamServerControl.pFrames = pFrames
+
+		if StreamServerControl.FEATURE_SLICES:
+			slices = config.streamserver.slices.value
+			if slices != streamServerControl.slices:
+				streamServerControl.slices = slices
+
+		level = int(config.streamserver.level.value)
+		if level != streamServerControl.level:
+			streamServerControl.level = level
+
+		profile = int(config.streamserver.profile.value)
+		if profile != streamServerControl.profile:
+			streamServerControl.profile = profile
+
+		framerate = config.streamserver.framerate.value
 		if framerate != streamServerControl.framerate:
 			streamServerControl.framerate = framerate
 
@@ -75,7 +110,7 @@ class StreamServerConfig(Screen, ConfigListScreen):
 			<widget source="key_blue" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 			<eLabel position="10,50" size="560,1" backgroundColor="grey" />
 			<widget name="config" position="10,55" size="560,450" scrollbarMode="showOnDemand" zPosition="1"/>
-			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1" scale="stretch"/>
 			<!-- details -->
 			<widget name="details_label" position="590,20" zPosition="2" size="300,25" font="Regular;20" backgroundColor="background" halign="center" transparent="1" />
 			<widget name="details" position="590,50" zPosition="2" size="300,320" font="Regular;18" backgroundColor="background" halign="center" transparent="1" />
@@ -90,6 +125,9 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		config.streamserver.source,
 		config.streamserver.resolution,
 		config.streamserver.framerate,
+		config.streamserver.profile,
+		config.streamserver.slices,
+		config.streamserver.level,
 	]
 
 	PRESETS = [
@@ -142,9 +180,14 @@ class StreamServerConfig(Screen, ConfigListScreen):
 
 		config.streamserver.rtsp.enabled.addNotifier(self._onEnabled, initial_call=False)
 		config.streamserver.hls.enabled.addNotifier(self._onEnabled, initial_call=False)
+		config.streamserver.gopLength.addNotifier(self._onGopLengthChanged, initial_call=False)
+		config.streamserver.bFrames.addNotifier(self._onBframesChanged, initial_call=False)
 		#Basic encoder setting change notifier
 		for cfg in self.BASIC_SETTINGS:
 			cfg.addNotifier(self._onBasicEncoderSettingChanged, initial_call=False)
+		self._createSetup()
+
+	def _onBframesChanged(self, element):
 		self._createSetup()
 
 	def _getEncoderRestartRequired(self):
@@ -202,6 +245,8 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		config.streamserver.hls.enabled.removeNotifier(self._onEnabled)
 		for cfg in self.BASIC_SETTINGS:
 			cfg.removeNotifier(self._onBasicEncoderSettingChanged)
+		config.streamserver.gopLength.removeNotifier(self._onGopLengthChanged)
+		config.streamserver.bFrames.removeNotifier(self._onBframesChanged)
 		config.streamserver.save()
 
 		Screen.close(self)
@@ -211,6 +256,9 @@ class StreamServerConfig(Screen, ConfigListScreen):
 			return
 		self.apply()
 		config.streamserver.save()
+		self._createSetup()
+
+	def _onGopLengthChanged(self, element):
 		self._createSetup()
 
 	def _onMediatorEnabled(self, element):
@@ -248,10 +296,7 @@ class StreamServerConfig(Screen, ConfigListScreen):
 				entries.append(getConfigListEntry(_("HLS Port"), config.streamserver.hls.port))
 
 		if config.streamserver.rtsp.enabled.value:
-			entries.extend([
-					getConfigListEntry(_("Authentication")),
-
-			])
+			entries.append( getConfigListEntry(_("Authentication")) )
 
 		if self._streamServerControl.isAnyEnabled():
 			entries.extend([
@@ -262,6 +307,27 @@ class StreamServerConfig(Screen, ConfigListScreen):
 					getConfigListEntry(_("Data Source"), config.streamserver.source),
 					getConfigListEntry(_("Resolution"), config.streamserver.resolution),
 					getConfigListEntry(_("Framerate"), config.streamserver.framerate),
+					getConfigListEntry(_("Expert Encoder Settings")),
+					getConfigListEntry(_("GOP Length (ms, P-Frames auto calculated)"), config.streamserver.gopLength)
+				])
+
+			if config.streamserver.gopLength.value == eStreamServer.GOP_LENGTH_AUTO:
+				entries.append( getConfigListEntry(_("Number of P-Frames"), config.streamserver.pFrames) )
+
+			entries.append( getConfigListEntry(_("Number of B-Frames"), config.streamserver.bFrames) )
+
+			if config.streamserver.bFrames.value:
+				entries.append( getConfigListEntry(_("Open GOP"), config.streamserver.openGop) )
+
+			if StreamServerControl.FEATURE_SCENE_DETECTION and not config.streamserver.bFrames.value and not config.streamserver.gopLength.value:
+				entries.append( getConfigListEntry(_("New GOP On Scene Change"), config.streamserver.gopOnSceneChange) )
+
+			if StreamServerControl.FEATURE_SLICES:
+				entries.append( getConfigListEntry(_("Number of slices"), config.streamserver.slices) )
+
+			entries.extend([
+					getConfigListEntry(_("Level"), config.streamserver.level),
+					getConfigListEntry(_("Profile"), config.streamserver.profile),
 				])
 
 		self["config"].list = entries

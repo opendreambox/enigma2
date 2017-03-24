@@ -190,7 +190,7 @@ unicable (version)
 			<product name="SUM928" positions="2" scr1="1284" scr2="1400" scr3="1516" scr4="1632" scr5="1748" scr6="1864" scr7="1980" scr8="2096"/>
 		</manufacturer>
 		<manufacturer name="Dura-Sat(Dur-Line)">
-			<product name="Dur-DCR5-1-8(L4/K)" format="JESS" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790" scr7="1892" scr8="1994"/>
+			<product name="Dur-DCR5-1-8(L4/K)" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790" scr7="1892" scr8="1994"/>
 			<product name="DCR 5-2-4" scr1="1280" scr2="1382" scr3="1484" scr4="1586"/>
 			<product name="DPC-32 K" format="EN50607" positions="1"
 					scr1 ="1210" scr2 ="1420" scr3 ="1680" scr4 ="2040" scr5 ="984"  scr6 ="1020" scr7 ="1056" scr8 ="1092"

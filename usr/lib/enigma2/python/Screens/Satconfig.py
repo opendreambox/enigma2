@@ -3,7 +3,7 @@ from Screen import Screen
 from Components.SystemInfo import SystemInfo
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.NimManager import nimmanager
+from Components.NimManager import nimmanager, NimManager
 from Components.config import getConfigListEntry, config, ConfigNothing, ConfigSatlist
 from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
@@ -69,7 +69,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				choices.append(getConfigModeTuple("satposdepends"))
 			if len(nimmanager.canConnectTo(self.slotid)) > 0:
 				choices.append(getConfigModeTuple("loopthrough"))
-			self.nimConfig.configMode.setChoices(dict(choices), default = "nothing")
+			self.nimConfig.sat.configMode.setChoices(dict(choices), default = "nothing")
 
 	def createSetup(self, fill_advanced_sat=True):
 		print "Creating setup"
@@ -96,24 +96,25 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.advancedSCR = None
 		self.advancedConnected = None
 		self.unicableUsePinEntry = None
-
-		if self.nim.isMultiType():
-			multiType = self.nimConfig.multiType
-			self.multiType = getConfigListEntry(_("Tuner type"), multiType)
+		
+		multiType = self.nimConfig.multiType
+		self.multiType = getConfigListEntry(_("Tuner type"), multiType)
+		if multiType.enabled:
 			self.list.append(self.multiType)
 
-		if self.nim.isCompatible("DVB-S"):
-			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.configMode)
+		curType = self.nim.types[multiType.value]
+		if curType.startswith("DVB-S"):
+			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.sat.configMode)
 			self.list.append(self.configMode)
-
-			if self.nimConfig.configMode.value == "simple":			#simple setup
+			configMode = self.nimConfig.sat.configMode.value
+			if configMode == "simple":			#simple setup
 				self.diseqcModeEntry = getConfigListEntry(_("Mode"), self.nimConfig.diseqcMode)
 				self.list.append(self.diseqcModeEntry)
 				if self.nimConfig.diseqcMode.value in ("single", "toneburst_a_b", "diseqc_a_b", "diseqc_a_b_c_d"):
 					self.createSimpleSetup(self.list, self.nimConfig.diseqcMode.value)
 				if self.nimConfig.diseqcMode.value == "positioner":
 					self.createPositionerSetup(self.list)
-			elif self.nimConfig.configMode.value == "equal":
+			elif configMode == "equal":
 				choices = []
 				nimlist = nimmanager.canEqualTo(self.nim.slot)
 				for id in nimlist:
@@ -122,7 +123,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				self.nimConfig.connectedTo.setChoices(choices)
 				#self.nimConfig.connectedTo = updateConfigElement(self.nimConfig.connectedTo, ConfigSelection(choices = choices))
 				self.list.append(getConfigListEntry(_("Tuner"), self.nimConfig.connectedTo))
-			elif self.nimConfig.configMode.value == "satposdepends":
+			elif configMode == "satposdepends":
 				choices = []
 				nimlist = nimmanager.canDependOn(self.nim.slot)
 				for id in nimlist:
@@ -131,19 +132,19 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				self.nimConfig.connectedTo.setChoices(choices)
 				#self.nimConfig.connectedTo = updateConfigElement(self.nimConfig.connectedTo, ConfigSelection(choices = choices))
 				self.list.append(getConfigListEntry(_("Tuner"), self.nimConfig.connectedTo))
-			elif self.nimConfig.configMode.value == "loopthrough":
+			elif configMode == "loopthrough":
 				choices = []
 				print "connectable to:", nimmanager.canConnectTo(self.slotid)
 				connectable = nimmanager.canConnectTo(self.slotid)
 				for id in connectable:
 					choices.append((str(id), nimmanager.getNimDescription(id)))
 				self.nimConfig.connectedTo.setChoices(choices)
-				self.nimConfig.configMode.connectedToChanged(self.nimConfig.connectedTo) # call connectedTo Notifier
+				self.nimConfig.sat.configMode.connectedToChanged(self.nimConfig.connectedTo) # call connectedTo Notifier
 				#self.nimConfig.connectedTo = updateConfigElement(self.nimConfig.connectedTo, ConfigSelection(choices = choices))
 				self.list.append(getConfigListEntry(_("Tuner"), self.nimConfig.connectedTo))
-			elif self.nimConfig.configMode.value == "nothing":
+			elif configMode == "nothing":
 				pass
-			elif self.nimConfig.configMode.value == "advanced": # advanced
+			elif configMode == "advanced": # advanced
 				# SATs
 				self.advancedSatsEntry = getConfigListEntry(_("Satellite"), self.nimConfig.advanced.sats)
 				self.list.append(self.advancedSatsEntry)
@@ -162,10 +163,10 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				if self.nimConfig.scpcSearchRange.fe_id is not None:
 					self.list.append(getConfigListEntry(_("SCPC optimized search range"), self.nimConfig.scpcSearchRange))
 
-		elif self.nim.isCompatible("DVB-C"):
-			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.configMode)
+		elif curType.startswith("DVB-C"):
+			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.cable.configMode)
 			self.list.append(self.configMode)
-			if self.nimConfig.configMode.value == "enabled":
+			if self.nimConfig.cable.configMode.value == "enabled":
 				if self.nim.description != "Si2169C":
 					self.cableScanType=getConfigListEntry(_("Used service scan type"), self.nimConfig.cable.scan_type)
 					self.list.append(self.cableScanType)
@@ -200,13 +201,13 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 							self.list.append(getConfigListEntry(_("Scan additional SR"), self.nimConfig.cable.scan_sr_ext1))
 							self.list.append(getConfigListEntry(_("Scan additional SR"), self.nimConfig.cable.scan_sr_ext2))
 			self.have_advanced = False
-		elif self.nim.isCompatible("DVB-T"):
-			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.configMode)
+		elif curType.startswith("DVB-T"):
+			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.terrest.configMode)
 			self.list.append(self.configMode)
 			self.have_advanced = False
-			if self.nimConfig.configMode.value == "enabled":
-				self.list.append(getConfigListEntry(_("Terrestrial provider"), self.nimConfig.terrestrial))
-				self.list.append(getConfigListEntry(_("Enable 5V for active antenna"), self.nimConfig.terrestrial_5V))
+			if self.nimConfig.terrest.configMode.value == "enabled":
+				self.list.append(getConfigListEntry(_("Terrestrial provider"), self.nimConfig.terrest.provider))
+				self.list.append(getConfigListEntry(_("Enable 5V for active antenna"), self.nimConfig.terrest.use5V))
 		else:
 			self.have_advanced = False
 		self["config"].list = self.list
@@ -224,8 +225,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		current = self["config"].getCurrent()
 
 		if current == self.multiType:
-			from Components.NimManager import InitNimManager
-			InitNimManager(nimmanager, self.slotid)
+			self.nimConfig.save()
 			self.nim = nimmanager.nim_slots[self.slotid]
 			self.nimConfig = self.nim.config
 
@@ -244,7 +244,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				x[1].value = int(mktime(dt.timetuple()))
 
 	def refillAdvancedSats(self):
-		if self.have_advanced and self.nim.config_mode == "advanced":
+		if self.have_advanced and self.nim.config.sat.configMode.value == "advanced":
 			self.createSetup(False)
 			satlist = self.nimConfig.advanced.sat.keys()
 			for orb_pos in satlist:
@@ -558,22 +558,36 @@ class NimSelection(Screen):
 		for x in nimmanager.nim_slots:
 			slotid = x.slot
 			nimConfig = nimmanager.getNimConfig(x.slot)
-			text = nimConfig.configMode.value
+			#text = nimConfig.configMode.value
 			if self.showNim(x):
-				configMode = nimConfig.configMode.value
+				text = ""
+				if x.isCompatible("DVB-C"):
+					if x.isMultiType():
+						text += "DVB-C: "
+					text += _(NimManager.config_mode_str[nimConfig.cable.configMode.value]) + "\n"
+				if x.isCompatible("DVB-T"):
+					if nimConfig.terrest.configMode.value == "enabled" and nimConfig.terrest.use5V.value:
+						txt2 = "(+5 Volt)\n"
+					else:
+						txt2 = "\n" 
+					if x.isMultiType():
+						text += x.isCompatible("DVB-T2") and 'DVB-T2: ' or 'DVB-T: ' 
+					text += _(NimManager.config_mode_str[nimConfig.terrest.configMode.value]) + txt2
 				if x.isCompatible("DVB-S"):
+					txt = '' if not x.isMultiType() else x.isCompatible("DVB-S2") and 'DVB-S2: ' or 'DVB-S: '
+					configMode = nimConfig.sat.configMode.value
 					if configMode in ("loopthrough", "equal", "satposdepends"):
 						if configMode == "loopthrough":
-							text = _(nimConfig.configMode.getText())
+							txt += nimConfig.sat.configMode.getText()
 						else:
-							text = _(nimmanager.config_mode_str[configMode])
-						text += " " + _("Tuner") + " " + slot_names[int(nimConfig.connectedTo.value)]
+							txt += _(nimmanager.config_mode_str[configMode])
+						txt += " %s %s" %(_("Tuner"), slot_names[int(nimConfig.connectedTo.value)])
 					elif configMode == "nothing":
-						text = _("not configured")
+						txt += _("not configured")
 					elif configMode == "simple":
 						if nimConfig.diseqcMode.value in ("single", "toneburst_a_b", "diseqc_a_b", "diseqc_a_b_c_d"):
-							text = {"single": _("Single"), "toneburst_a_b": _("Toneburst A/B"), "diseqc_a_b": _("DiSEqC A/B"), "diseqc_a_b_c_d": _("DiSEqC A/B/C/D")}[nimConfig.diseqcMode.value] + "\n"
-							text += _("Sats") + ": " 
+							txt += {"single": _("Single"), "toneburst_a_b": _("Toneburst A/B"), "diseqc_a_b": _("DiSEqC A/B"), "diseqc_a_b_c_d": _("DiSEqC A/B/C/D")}[nimConfig.diseqcMode.value] + "\n"
+							txt += _("Sats") + ": " 
 							satnames = []
 							if nimConfig.diseqcA.orbital_position != 3601:
 								satnames.append(nimmanager.getSatName(int(nimConfig.diseqcA.value)))
@@ -586,31 +600,25 @@ class NimSelection(Screen):
 								if nimConfig.diseqcD.orbital_position != 3601:
 									satnames.append(nimmanager.getSatName(int(nimConfig.diseqcD.value)))
 							if len(satnames) <= 2:
-								text += ", ".join(satnames)
+								txt += ", ".join(satnames)
 							elif len(satnames) > 2:
 								# we need a newline here, since multi content lists don't support automtic line wrapping
-								text += ", ".join(satnames[:2]) + ",\n"
-								text += "         " + ", ".join(satnames[2:])
+								txt += ", ".join(satnames[:2]) + ",\n"
+								txt += "         " + ", ".join(satnames[2:])
 						elif nimConfig.diseqcMode.value == "positioner":
-							text = _("Positioner") + ":"
+							txt += _("Positioner") + ":"
 							if nimConfig.positionerMode.value == "usals":
-								text += _("USALS")
+								txt += _("USALS")
 							elif nimConfig.positionerMode.value == "manual":
-								text += _("manual")
+								txt += _("manual")
 						else:	
-							text = _("simple")
+							txt = _("simple")
 					elif configMode == "advanced":
-						text = _("advanced")
-				elif x.isCompatible("DVB-T") or x.isCompatible("DVB-C"):
-					if nimConfig.configMode.value == "nothing":
-						text = _("nothing connected")
-					elif nimConfig.configMode.value == "enabled":
-						text = _("enabled")
-				if x.isMultiType():
-					text = _("Switchable tuner types:") + "(" + ','.join(x.getMultiTypeList().values()) + ")" + "\n" + text
+						txt += _("advanced")
+					text += txt
 				if not x.isSupported():
 					text = _("tuner is not supported")
-					
+
 				self.list.append((slotid, x.friendly_full_description, text, x))
 		self["nimlist"].setList(self.list)
 		self["nimlist"].updateList(self.list)

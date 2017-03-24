@@ -46,7 +46,7 @@ class Satfinder(ScanSetup):
 					if not self.openFrontend():
 						self.frontend = None # in normal case this should not happen
 
-		ScanSetup.__init__(self, session)
+		ScanSetup.__init__(self, session, 'S')
 		self.tuner = Tuner(self.frontend)
 		self["introduction"].setText("")
 		self["Frontend"] = FrontendStatus(frontend_source = lambda : self.frontend, update_interval = 100)
@@ -260,7 +260,8 @@ def SatfinderMain(session, **kwargs):
 
 	nimList = []
 	for x in nims:
-		if not nimmanager.getNimConfig(x).configMode.value in ("loopthrough", "satposdepends", "nothing"):
+		nim = nimmanager.getNimConfig(x)
+		if not nim.sat.configMode.value in ("loopthrough", "satposdepends", "nothing"):
 			nimList.append(x)
 
 	if len(nimList) == 0:
