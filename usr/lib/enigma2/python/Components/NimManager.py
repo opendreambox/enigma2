@@ -60,7 +60,7 @@ class SecConfigure:
 		sec.setLNBLOFL(9750000)
 		sec.setLNBLOFH(10600000)
 		sec.setLNBThreshold(11700000)
-		sec.setLNBIncreasedVoltage(lnbParam.OFF)
+		sec.setLNBIncreasedVoltage(False)
 		sec.setRepeats(0)
 		sec.setFastDiSEqC(fastDiSEqC)
 		sec.setSeqRepeat(0)
@@ -105,13 +105,13 @@ class SecConfigure:
 					sec.setVoltageMode(switchParam.HV)
 				sec.setToneMode(switchParam.HILO)
 				sec.setRotorPosNum(0) # USALS
-		
+
 		sec.setLNBSlotMask(tunermask)
 
 	def setSatposDepends(self, sec, nim1, nim2):
 		print "tuner", nim1, "depends on satpos of", nim2
 		sec.setTunerDepends(nim1, nim2)
-		
+
 	def linkInternally(self, slotid):
 		nim = self.NimManager.getNim(slotid)
 		nim.setInternalLink()
@@ -123,7 +123,7 @@ class SecConfigure:
 		else:
 			print "external link tuner", nim1, "to tuner", nim2
 		sec.setTunerLinked(nim1, nim2)
-		
+
 	def getRoot(self, slotid, connto):
 		visited = []
 		while (self.NimManager.getNimConfig(connto).sat.configMode.value in ("satposdepends", "equal", "loopthrough")):
@@ -358,9 +358,9 @@ class SecConfigure:
 #					pass # nyi in drivers
 
 				if currLnb.increased_voltage.value:
-					sec.setLNBIncreasedVoltage(lnbParam.ON)
+					sec.setLNBIncreasedVoltage(True)
 				else:
-					sec.setLNBIncreasedVoltage(lnbParam.OFF)
+					sec.setLNBIncreasedVoltage(False)
 
 				dm = currLnb.diseqcMode.value
 				if dm == "none":
@@ -482,7 +482,7 @@ class SecConfigure:
 						sec.setToneMode(switchParam.ON)
 					elif currSat.tonemode.value == "off":
 						sec.setToneMode(switchParam.OFF)
-						
+
 					if not currSat.usals.value and x < 34:
 						sec.setRotorPosNum(currSat.rotorposition.value)
 					else:
@@ -515,7 +515,7 @@ class NIM(object):
 		self.input_name = input_name
 
 		self.can_auto_fec_s2 = self.description != "Alps BSBE2"
-		self.can_modulation_auto = len(multi_type) > 1
+		self.can_modulation_auto = len(multi_type) > 1 or self.description.startswith("Si216")
 
 	def isEnabled(self, what):
 		ret = self.isCompatible(what)
@@ -548,6 +548,17 @@ class NIM(object):
 		return self._types
 	types = property(getTypes)
 
+	def getType(self):
+		if not self._types:
+			return None
+		type = self._types.values()[0]
+		if len(self._types) > 1:
+			import traceback
+			print "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nNIM Slot", self.getSlotInputName(), "supports multiple types", self._types, "\nthis function is deprecated and just for backward compatibility it should not be used anymore\nplease report to plugin author... ", type, "is returned for this nim now"
+			traceback.print_stack(limit = 2)
+		return type
+	type = property(getType)
+
 	def connectableTo(self):
 		connectable = {
 				"DVB-S": ("DVB-S", "DVB-S2"),
@@ -567,7 +578,7 @@ class NIM(object):
 		if name is None:
 			name = chr(ord('A') + self.slot)
 		return name
-	
+
 	slot_input_name = property(getSlotInputName)
 
 	def getSlotName(self):
@@ -581,38 +592,38 @@ class NIM(object):
 
 	def getSlotID(self):
 		return chr(ord('A') + self.slot)
-	
+
 	def getI2C(self):
 		return self.i2c
-	
+
 	def hasOutputs(self):
 		return self.has_outputs
-	
+
 	def internallyConnectableTo(self):
 		return self.internally_connectable
-	
+
 	def setInternalLink(self):
 		if self.internally_connectable is not None:
 			print "setting internal link on frontend id", self.frontend_id
 			with open("/proc/stb/frontend/%d/rf_switch" % self.frontend_id, "w") as f:
 				f.write("internal")
-		
+
 	def removeInternalLink(self):
 		if self.internally_connectable is not None:
 			print "removing internal link on frontend id", self.frontend_id
 			with open("/proc/stb/frontend/%d/rf_switch" % self.frontend_id, "w") as f:
 				f.write("external")
-	
+
 	def isMultiType(self):
 		return (len(self._types) > 1)
-	
+
 	def isEmpty(self):
 		return self.__is_empty
-	
+
 	# empty tuners are supported!
 	def isSupported(self):
 		return (self.frontend_id is not None) or self.__is_empty
-	
+
 	# returns dict {<slotid>: <type>}
 	def getMultiTypeList(self):
 		return self._types
@@ -626,14 +637,14 @@ class NIM(object):
 
 	def getFriendlyFullDescription(self):
 		nim_text = self.slot_name + ": "
-			
+
 		if self.empty:
 			nim_text += _("(empty)")
 		elif not self.isSupported():
 			nim_text += self.description + " (" + _("not supported") + ")"
 		else:
 			nim_text += self.description + " (" + self.friendly_type + ")"
-		
+
 		return nim_text
 
 	friendly_full_description = property(getFriendlyFullDescription)
@@ -642,9 +653,9 @@ class NIM(object):
 
 class NimManager:
 	config_mode_str = {
-		"nothing" : _("nothing connected"),
+		"nothing" : _("inactive"),
 		"multi" : _("multiple"),
-		"enabled" : _("connected"),
+		"enabled" : _("active"),
 		"simple" : _("simple"),
 		"advanced" : _("advanced"),
 		"equal" : _("equal to"),
@@ -675,7 +686,7 @@ class NimManager:
 
 	def getTranspondersTerrestrial(self, region):
 		return self.transpondersterrestrial[region]
-	
+
 	def getCableDescription(self, nim):
 		return self.cablesList[config.Nims[nim].scan_provider.index][0]
 
@@ -683,10 +694,10 @@ class NimManager:
 		return self.cablesList[config.Nims[nim].scan_provider.index][1]
 
 	def getTerrestrialDescription(self, nim):
-		return self.terrestrialsList[config.Nims[nim].terrestrial.index][0]
+		return self.terrestrialsList[config.Nims[nim].terrest.provider.index][0]
 
 	def getTerrestrialFlags(self, nim):
-		return self.terrestrialsList[config.Nims[nim].terrestrial.index][1]
+		return self.terrestrialsList[config.Nims[nim].terrest.provider.index][1]
 
 	def getSatDescription(self, pos):
 		return self.satellites[pos]
@@ -742,7 +753,7 @@ class NimManager:
 		# NIM Socket 3:
 		#          Type: DVB-S
 		#          Name: Alps BSBE1 702A
-		
+
 		#
 		# Type will be either "DVB-S", "DVB-S2", "DVB-T", "DVB-C", "DVB-T2" or None.
 
@@ -797,7 +808,7 @@ class NimManager:
 				entries[current_slot]["name"] = _("N/A")
 				entries[current_slot]["isempty"] = True
 		nimfile.close()
-		
+
 		for id, entry in entries.items():
 			if not (entry.has_key("name") and entry.has_key("type")):
 				entry["name"] =  _("N/A")
@@ -823,26 +834,29 @@ class NimManager:
 				return True
 		return ret
 
+	def getNimType(self, slotid):
+		return self.nim_slots[slotid].type
+
 	def getNimTypes(self, slotid):
 		return self.nim_slots[slotid].types.values()
-	
+
 	def getNimDescription(self, slotid):
 		return self.nim_slots[slotid].friendly_full_description
-	
+
 	def getNimName(self, slotid):
 		return self.nim_slots[slotid].description
-	
+
 	def getNimSlotInputName(self, slotid):
 		# returns just "A", "B", ...
 		return self.nim_slots[slotid].slot_input_name
-	
+
 	def getNimSlotName(self, slotid):
 		# returns a friendly description string ("Tuner A", "Tuner B" etc.)
 		return self.nim_slots[slotid].slot_name
-	
+
 	def getNim(self, slotid):
 		return self.nim_slots[slotid]
-	
+
 	def getI2CDevice(self, slotid):
 		return self.nim_slots[slotid].getI2C()
 
@@ -877,19 +891,19 @@ class NimManager:
 		for slot in self.nim_slots:
 			list.append(slot.friendly_full_description)
 		return list
-	
+
 	def getSlotCount(self):
 		return len(self.nim_slots)
-	
+
 	def hasOutputs(self, slotid):
 		return self.nim_slots[slotid].hasOutputs()
-	
+
 	def nimInternallyConnectableTo(self, slotid):
 		return self.nim_slots[slotid].internallyConnectableTo()
-	
+
 	def nimRemoveInternalLink(self, slotid):
 		self.nim_slots[slotid].removeInternalLink()
-	
+
 	def canConnectTo(self, slotid):
 		slots = []
 		internally_connectable = self.nimInternallyConnectableTo(slotid)
@@ -909,7 +923,7 @@ class NimManager:
 		slots.sort()
 		
 		return slots
-	
+
 	def canEqualTo(self, slotid):
 		nimList = self.getNimListForSlot(slotid)
 		for nim in nimList[:]:
@@ -947,10 +961,10 @@ class NimManager:
 				if not alreadyConnected:
 					positionerList.append(nim)
 		return positionerList
-	
+
 	def getNimConfig(self, slotid):
 		return config.Nims[slotid]
-	
+
 	def getSatName(self, pos):
 		for sat in self.satList:
 			if sat[0] == pos:
@@ -959,7 +973,7 @@ class NimManager:
 
 	def getSatList(self):
 		return self.satList
-	
+
 	# returns True if something is configured to be connected to this nim
 	# if slotid == -1, returns if something is connected to ANY nim
 	def somethingConnected(self, slotid = -1):
@@ -971,10 +985,9 @@ class NimManager:
 			return connected
 		else:
 			nim = config.Nims[slotid]
-			configMode = nim.configMode.value
-		
-			if self.nim_slots[slotid].isCompatible("DVB-S") or self.nim_slots[slotid].isCompatible("DVB-T") or self.nim_slots[slotid].isCompatible("DVB-C"):
-				return not (configMode == "nothing")
+			return (self.nim_slots[slotid].isCompatible("DVB-S") and nim.sat.configMode != "nothing") or \
+				(self.nim_slots[slotid].isCompatible("DVB-C") and nim.cable.configMode != "nothing") or \
+				(self.nim_slots[slotid].isCompatible("DVB-T") and nim.terrest.configMode != "nothing")
 
 	def getSatListForNim(self, slotid):
 		list = []
@@ -1479,11 +1492,11 @@ def InitNimManager(nimmgr, slot_no = None):
 	positioner_mode_choices = [("usals", _("USALS")), ("manual", _("manual"))]
 
 	diseqc_satlist_choices = [(3601, _('nothing connected'), 1)] + nimmgr.satList
-	
+
 	longitude_orientation_choices = [("east", _("East")), ("west", _("West"))]
 	latitude_orientation_choices = [("north", _("North")), ("south", _("South"))]
 	turning_speed_choices = [("fast", _("Fast")), ("slow", _("Slow")), ("fast epoch", _("Fast epoch"))]
-	
+
 	advanced_satlist_choices = nimmgr.satList + [
 		(3601, _('All Satellites')+' 1', 1), (3602, _('All Satellites')+' 2', 1),
 		(3603, _('All Satellites')+' 3', 1), (3604, _('All Satellites')+' 4', 1)]
@@ -1502,8 +1515,6 @@ def InitNimManager(nimmgr, slot_no = None):
 	advanced_lnb_fast_turning_btime = mktime(datetime(1970, 1, 1, 7, 0).timetuple());
 	advanced_lnb_fast_turning_etime = mktime(datetime(1970, 1, 1, 19, 0).timetuple());
 
-
-	
 	def configDiSEqCModeChanged(configElement):
 		section = configElement.section
 		if configElement.value == "1_2" and isinstance(section.longitude, ConfigNothing):
@@ -1721,11 +1732,8 @@ def InitNimManager(nimmgr, slot_no = None):
 			isEmpty = False
 			nim.cable = ConfigSubsection()
 			nim.cable.configMode = ConfigSelection(
-				choices = {
-					"enabled": _("connected"),
-					"nothing": _("nothing connected"),
-					},
-				default = "nothing")
+				choices = [ getConfigModeTuple("enabled"), getConfigModeTuple("nothing") ],
+				default = "enabled" if not slot.isMultiType() or slot.types[nim.multiType.value] == "DVB-C" else "nothing")
 			list = [ ]
 			n = 0
 			for x in nimmgr.cablesList:
@@ -1769,11 +1777,8 @@ def InitNimManager(nimmgr, slot_no = None):
 			isEmpty = False
 			nim.terrest = ConfigSubsection()
 			nim.terrest.configMode = ConfigSelection(
-				choices = {
-					"enabled": NimManager.config_mode_str["enabled"],
-					"nothing": NimManager.config_mode_str["nothing"],
-					},
-				default = "nothing")
+				choices = [ getConfigModeTuple("enabled"), getConfigModeTuple("nothing") ],
+				default = "enabled" if not slot.isMultiType() or slot.types[nim.multiType.value].startswith("DVB-T") else "nothing")
 			provider = []
 			n = 0
 			for x in nimmgr.terrestrialsList:

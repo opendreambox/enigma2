@@ -129,6 +129,8 @@ class ServiceScan:
 		self.run = 0
 		self.lcd_summary = lcd_summary
 		self.show_exec_tsid_onid_valid_error = True
+		self.abort = False
+		self.scan = None
 
 		class eTsidOnidSlot(eSlot3IIIRetI):
 			def __init__(self, func):
@@ -170,36 +172,39 @@ class ServiceScan:
 		return d.get('ret', 1)
 
 	def execBegin(self):
-		self.doRun()
-		self.updatePass()
-		self.scan_StatusChangedConn = self.scan.statusChanged.connect(self.scanStatusChanged)
-		self.scan_newServiceConn = self.scan.newService.connect(self.newService)
-		self.servicelist.clear()
-		self.state = self.Running
-		err = self.scan.start(self.feid, self.flags)
-		self.frontendInfo.updateFrontendData()
-		if err:
-			self.state = self.Error
-			self.errorcode = 0
-		else:
-			fname = resolveFilename(SCOPE_CONFIG, "scan_tp_valid_check.py")
-			if fileExists(fname):
-				try:
-					self.scan_tp_valid_func = compile(file(fname).read(), fname, 'exec')
-				except:
-					print "content of", fname, "is not valid python code!!"
-				else:
-					self.scan.setAdditionalTsidOnidCheckFunc(self.checkTsidOnidValid_slot)
-		self.scanStatusChanged()
+		if not self.scan:
+			self.abort = False
+			self.doRun()
+			self.updatePass()
+			self.scan_StatusChangedConn = self.scan.statusChanged.connect(self.scanStatusChanged)
+			self.scan_newServiceConn = self.scan.newService.connect(self.newService)
+			self.servicelist.clear()
+			self.state = self.Running
+			err = self.scan.start(self.feid, self.flags)
+			self.frontendInfo.updateFrontendData()
+			if err:
+				self.state = self.Error
+				self.errorcode = 0
+			else:
+				fname = resolveFilename(SCOPE_CONFIG, "scan_tp_valid_check.py")
+				if fileExists(fname):
+					try:
+						self.scan_tp_valid_func = compile(file(fname).read(), fname, 'exec')
+					except:
+						print "content of", fname, "is not valid python code!!"
+					else:
+						self.scan.setAdditionalTsidOnidCheckFunc(self.checkTsidOnidValid_slot)
+			self.scanStatusChanged()
 
 	def execEnd(self):
-		# its not implicitely needed to destroy the 'connection objects' here.. 
-		# its just for demonstration...
-		self.scan_StatusChangedConn = None
-		self.scan_newServiceConn = None
-		self.scan = None
-		if not self.isDone():
-			print "*** warning *** scan was not finished!"
+		if self.isDone() or self.abort:
+			# its not implicitely needed to destroy the 'connection objects' here.. 
+			# its just for demonstration...
+			self.scan_StatusChangedConn = None
+			self.scan_newServiceConn = None
+			self.scan = None
+			if not self.isDone():
+				print "*** warning *** scan was not finished!"
 
 	def isDone(self):
 		return self.state == self.Done or self.state == self.Error

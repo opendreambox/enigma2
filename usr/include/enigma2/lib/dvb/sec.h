@@ -246,10 +246,7 @@ class eDVBSatelliteLNBParameters
 	~eDVBSatelliteLNBParameters();
 #endif
 public:
-	enum t_12V_relais_state { OFF=0, ON };
 #ifndef SWIG
-	t_12V_relais_state m_12V_relais_state;	// 12V relais output on/off
-
 	int m_slot_mask; // useable by slot ( 1 | 2 | 4...)
 
 	unsigned int m_lof_hi,	// for 2 band universal lnb 10600 Mhz (high band offset frequency)

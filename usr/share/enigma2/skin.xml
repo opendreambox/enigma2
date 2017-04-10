@@ -510,7 +510,7 @@
 	</screen>
 	<!-- UPnP/DLNA AudioPlayer -->
 	<screen name="AudioGUI" position="center,center" size="650,300" title=" ">
-	<ePixmap position="5,5" size="250,290" pixmap="skin_default/menu.png" zPosition="-1"/>
+	<ePixmap position="5,5" size="250,290" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
 		<widget name="title" font="Regular;20" position="260,10" size="385,25" />
 		<widget name="artist" font="Regular;20" position="260,50" size="385,25" />
 		<widget name="album" font="Regular;20" position="260,90" size="385,25" />

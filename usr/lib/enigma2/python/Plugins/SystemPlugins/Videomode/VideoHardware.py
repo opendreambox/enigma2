@@ -17,8 +17,6 @@ class VideoHardware:
 		if SystemInfo["AnalogOutput"]:
 			self.rates["PAL"] = {
 				"50Hz":		{ 50: "pal" },
-				"60Hz":		{ 60: "pal60" },
-				"multi":	{ 50: "pal", 60: "pal60" }
 			}
 
 			self.rates["NTSC"] =	{
@@ -133,8 +131,6 @@ class VideoHardware:
 		self.__initInternalValues()
 		self.last_modes_preferred =  [ ]
 		self.on_hotplug = CList()
-		self.current_mode = None
-		self.current_port = None
 
 		self.readAvailableModes()
 
@@ -194,11 +190,6 @@ class VideoHardware:
 	def isModeAvailable(self, port, mode, rate):
 		rate = self.rates[mode][rate]
 		for mode in rate.values():
-			# DVI modes must be in "modes_preferred"
-#			if port == "DVI":
-#				if mode not in self.modes_preferred and not config.av.edid_override.value:
-#					print "no, not preferred"
-#					return False
 			if mode not in self.modes_available:
 				return False
 		return True
@@ -206,12 +197,8 @@ class VideoHardware:
 	def isWidescreenMode(self, port, mode):
 		return mode in self.widescreen_modes
 
-	def setMode(self, port, mode, rate, force = None):
+	def setMode(self, port, mode, rate):
 		print "setMode - port:", port, "mode:", mode, "rate:", rate
-		# we can ignore "port"
-		self.current_mode = mode
-		self.current_port = port
-
 		if not mode or not rate:
 			return
 
@@ -219,9 +206,9 @@ class VideoHardware:
 
 		mode_50 = modes.get(50)
 		mode_60 = modes.get(60)
-		if mode_50 is None or force == 60:
+		if mode_50 is None:
 			mode_50 = mode_60
-		if mode_60 is None or force == 50: 
+		if mode_60 is None:
 			mode_60 = mode_50
 
 		try:

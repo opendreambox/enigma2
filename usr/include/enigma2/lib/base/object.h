@@ -20,8 +20,8 @@ typedef int RESULT;
 	Class * const q;
 
 #define E_DISABLE_COPY(Class)			\
-	Class(const Class &);			\
-	Class &operator=(const Class &);
+	Class(const Class &) = delete;		\
+	Class &operator=(const Class &) = delete;
 
 class iObject
 {

@@ -741,10 +741,6 @@ profile("SetupDevices")
 import Components.SetupDevices
 Components.SetupDevices.InitSetupDevices()
 
-profile("RFMod")
-import Components.RFmod
-Components.RFmod.InitRFmod()
-
 profile("Init:CI")
 import Screens.Ci
 Screens.Ci.InitCiConfig()

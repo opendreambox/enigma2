@@ -14,15 +14,10 @@ class LCD:
 		eDBoxLCD.getInstance().setLCDBrightness(value)
 
 	def setContrast(self, value):
-		value *= 63
-		value /= 20
-		if value > 63:
-			value = 63
-		eDBoxLCD.getInstance().setLCDContrast(value)
+		# not implemented
+		pass
 
 	def setInverted(self, value):
-		if value:
-			value = 255
 		eDBoxLCD.getInstance().setInverted(value)
 
 	def isOled(self):
@@ -48,9 +43,6 @@ def InitLcd():
 		def setLCDbright(configElement):
 			ilcd.setBright(configElement.value);
 
-		def setLCDcontrast(configElement):
-			ilcd.setContrast(configElement.value);
-
 		def setLCDinverted(configElement):
 			ilcd.setInverted(configElement.value);
 
@@ -58,11 +50,8 @@ def InitLcd():
 
 		ilcd = LCD()
 
-		if not ilcd.isOled():
-			config.lcd.contrast = ConfigSlider(default=5, limits=(0, 20))
-			config.lcd.contrast.addNotifier(setLCDcontrast);
-		else:
-			config.lcd.contrast = ConfigNothing()
+		config.lcd.contrast = ConfigNothing()
+		if ilcd.isOled():
 			standby_default = 1
 
 		config.lcd.standby = ConfigSlider(default=standby_default, limits=(0, 10))

@@ -14,6 +14,8 @@ class InputBox(Screen):
 
 		self["text"] = Label(title)
 		self["input"] = Input(**kwargs)
+		self["input"].onInputUpdate.append(self._onInputUpdate)
+
 		if useableChars is not None:
 			self["input"].setUseableChars(useableChars)
 
@@ -62,6 +64,10 @@ class InputBox(Screen):
 	def __onClose(self):
 		self._closeHelpWindow()
 
+	def _onInputUpdate(self):
+		if self._help_window:
+			self._help_window.update(self["input"])
+
 	def gotAsciiCode(self):
 		self["input"].handleAscii(getPrevAsciiCode())
 
@@ -104,6 +110,7 @@ class InputBox(Screen):
 			self._help_window = self.session.instantiateDialog(NumericalTextInputHelpDialog, self["input"], zPosition=5000)
 			self._help_window.neverAnimate()
 		self._help_window.show()
+		self._onInputUpdate()
 
 	def _closeHelpWindow(self):
 		if self._help_window is not None:

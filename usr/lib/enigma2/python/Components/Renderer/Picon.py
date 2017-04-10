@@ -7,7 +7,7 @@ from Tools.Directories import fileExists, SCOPE_SKIN_IMAGE, SCOPE_CURRENT_SKIN, 
 from Tools.PiconResolver import PiconResolver
 
 class Picon(Renderer):
-	searchPaths = (eEnv.resolve('${datadir}/enigma2/%s/'),)
+	searchPaths = ("/data/%s/", eEnv.resolve('${datadir}/enigma2/%s/'),)
 
 	def __init__(self):
 		Renderer.__init__(self)

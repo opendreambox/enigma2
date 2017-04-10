@@ -300,10 +300,11 @@ class AudioPlayer(PlaylistPlayer, InfoBarNotifications):
 
 	def stop(self):
 		self.seekState = self.SEEK_STATE_IDLE
-		self.service = None
 		self._playlist.stop()
+		if self.service:
+			mediaCore.stop()
+			self.service = None
 		self._updateMusicInformation()
-		mediaCore.stop()
 
 	def _toggleShuffle(self):
 		if self._playlist.toggleShuffle():

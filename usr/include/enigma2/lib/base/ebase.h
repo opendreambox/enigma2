@@ -16,8 +16,6 @@
 
 #include <lib/base/esignal.h>
 
-extern int get_default_pipe_size(void);
-
 class eMainloop;
 class MainloopList;
 

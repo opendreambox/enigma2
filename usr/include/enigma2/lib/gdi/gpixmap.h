@@ -5,6 +5,7 @@
 
 #include <lib/base/object.h>
 #include <lib/gdi/esize.h>
+#include <lib/gdi/gfx2d.h>
 #include <lib/gdi/gpixelformat.h>
 #include <lib/gdi/matrix.h>
 #include <lib/gdi/rgba.h>
@@ -21,25 +22,19 @@ class gRegion;
 class gSurface;
 
 SWIG_IGNORE(gPixmap);
-class gPixmap: public iObject
+class gPixmap: public iObject, iGfx2d
 {
 	DECLARE_REF(gPixmap);
 	E_DISABLE_COPY(gPixmap)
 
 	gRGBA m_invalidColor;
 	gSurface *m_surface;
-	bool m_glsl;
 
 	void drawPixel8(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
 	void drawPixel16(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
 	void drawPixel24(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
 	void drawPixel32(void *mem, unsigned int stride, const ePoint &pos, unsigned int pixel);
 	void drawLine(const gRegion &clip, const ePoint &start, const ePoint &dst, unsigned int pixel, const eMatrix4x4 &matrix);
-
-	void fillRect8(void *mem, unsigned int stride, const eRect &area, unsigned int pixel);
-	void fillRect16(void *mem, unsigned int stride, const eRect &area, unsigned int pixel);
-	void fillRect32(void *mem, unsigned int stride, const eRect &area, unsigned int pixel);
-	void fillRegion(const gRegion &region, unsigned int pixel, int flags, const eMatrix4x4 &matrix);
 
 public:
 #ifndef SWIG
@@ -101,12 +96,17 @@ public:
 	unsigned int width() const;
 	unsigned int height() const;
 	unsigned int stride() const;
+
+	/* beginNativePainting and endNativePainting may only be called from inside the gRC thread */
+	bool beginNativePainting();
+	void endNativePainting();
 #endif
 
 private:
 	E_DECLARE_PRIVATE(gPixmap)
 
 	friend class gDC;
+	friend class gLCDDC;
 	friend class gSyncPainter;
 	void fill(const gRegion &clip, const gColor &color, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
 	void fill(const gRegion &clip, const gRGBA &color, int flags, const eMatrix4x4 &matrix = eMatrix4x4::identity());
@@ -118,9 +118,6 @@ private:
 	
 	void blit(const gPixmap &src, const eRect &pos, const gRegion &clip, int flags, float alpha = 1.0, const eMatrix4x4 &matrix = eMatrix4x4::identity());
 
-	bool beginNativePainting();
-	void endNativePainting();
-	
 	ePtr<gPixmap> colorScale(ePtr<gPixmap> &dst, const eSize &size) const;
 	ePtr<gPixmap> simpleScale(ePtr<gPixmap> &dst, const eSize &size) const;
 
@@ -128,6 +125,9 @@ private:
 #ifdef SWIG
 	gPixmap();
 #endif
+
+	virtual ePtr<gGfx2dBlitContext> createBlitContext(gSurface *dst, const gSurface::BlitParams &p, unsigned int flags);
+	virtual ePtr<gGfx2dFillContext> createFillContext(gSurface *dst, const gSurface::FillParams &p, unsigned int flags);
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<gPixmap>, gPixmapPtr);
 

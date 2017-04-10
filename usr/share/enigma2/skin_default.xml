@@ -67,7 +67,7 @@
 	</subtitles>
 	<!-- About screen -->
 	<screen name="About" position="center,120" size="820,520" title="About">
-		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
 		<ePixmap pixmap="menu/info_screen.svg" position="65,50" size="192,192" alphatest="on" />
 		<ePixmap pixmap="skin_default/buttons/green.png" position="45,370" size="230,40" alphatest="on"/>
 		<eLabel font="Regular;20" position="45,370" size="230,40" text="Translation" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
@@ -591,7 +591,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Help menu -->
 	<screen name="HelpMenu" position="center,80" size="1200,610" title="help...">
-		<ePixmap position="4,3" size="260,605" pixmap="skin_default/menu.png" zPosition="-1"/>
+		<ePixmap position="4,3" size="260,605" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
 		<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png" position="55,50" zPosition="10" size="160,500" alphatest="on" />
 		<widget name="arrowdown" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
 		<widget name="arrowdown2" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
@@ -614,7 +614,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Language selection -->
 	<screen name="LanguageSelection" position="center,120" size="720,520" title="Language selection">
-		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
 		<ePixmap pixmap="menu/language_setup.svg" position="65,50" size="192,192" alphatest="on" />
 		<widget source="languages" render="Listbox" position="320,10" size="390,500" enableWrapAround="1" scrollbarMode="showOnDemand">
 			<convert type="TemplatedMultiContent">
@@ -696,7 +696,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 	</screen>
 	<!-- Menu -->
 	<screen name="Menu" position="center,120" size="720,520" title="Main menu">
-		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
+		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
 		<widget source="menu" render="Listbox" position="320,15" size="390,480" zPosition="1" enableWrapAround="1" scrollbarMode="showOnDemand" >
 		<convert type="TemplatedMultiContent">
 			{"template": [ MultiContentEntryText(pos=(5,0),size=(380,40),flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER,text=0) ],
@@ -1404,7 +1404,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		</widget>
 		<ePixmap pixmap="skin_default/vkey_text.png" position="20,120" size="780,60" zPosition="-4" alphatest="on" />
 		<widget name="text" position="30,125" size="760,50" font="Regular;42" transparent="1" noWrap="1" halign="right" />
-		<widget name="list" position="20,276" size="780,225" selectionDisabled="1" transparent="1" />
+		<widget name="list" position="20,230" size="780,270" selectionDisabled="1" transparent="1" />
 	</screen>
 	<!-- FileBrowser -->
 	<screen name="FileBrowser" position="center,120" size="820,520" title="DVD File Browser">

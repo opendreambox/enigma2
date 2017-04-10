@@ -94,7 +94,9 @@ class VideoPlayer(PlaylistPlayer):
 
 	def stop(self):
 		self["playlist"].stop()
-		self.session.nav.stopService()
+		if self.service:
+			mediaCore.stop()
+			self.service = None
 		self.show()
 
 	def removeSelectedPlaylistEntry(self):

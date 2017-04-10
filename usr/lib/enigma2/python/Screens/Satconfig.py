@@ -160,7 +160,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				name = self.nim.description
 				if name == "Alps BSBE2":
 					self.list.append(getConfigListEntry(_("Tone Amplitude"), self.nimConfig.toneAmplitude))
-				if self.nimConfig.scpcSearchRange.fe_id is not None:
+				if self.nimConfig.scpcSearchRange.fe_id is not None and configMode != "nothing":
 					self.list.append(getConfigListEntry(_("SCPC optimized search range"), self.nimConfig.scpcSearchRange))
 
 		elif curType.startswith("DVB-C"):
@@ -567,7 +567,7 @@ class NimSelection(Screen):
 					text += _(NimManager.config_mode_str[nimConfig.cable.configMode.value]) + "\n"
 				if x.isCompatible("DVB-T"):
 					if nimConfig.terrest.configMode.value == "enabled" and nimConfig.terrest.use5V.value:
-						txt2 = "(+5 Volt)\n"
+						txt2 = " (+5 Volt)\n"
 					else:
 						txt2 = "\n" 
 					if x.isMultiType():
@@ -583,7 +583,7 @@ class NimSelection(Screen):
 							txt += _(nimmanager.config_mode_str[configMode])
 						txt += " %s %s" %(_("Tuner"), slot_names[int(nimConfig.connectedTo.value)])
 					elif configMode == "nothing":
-						txt += _("not configured")
+						txt += _(NimManager.config_mode_str[configMode])
 					elif configMode == "simple":
 						if nimConfig.diseqcMode.value in ("single", "toneburst_a_b", "diseqc_a_b", "diseqc_a_b_c_d"):
 							txt += {"single": _("Single"), "toneburst_a_b": _("Toneburst A/B"), "diseqc_a_b": _("DiSEqC A/B"), "diseqc_a_b_c_d": _("DiSEqC A/B/C/D")}[nimConfig.diseqcMode.value] + "\n"

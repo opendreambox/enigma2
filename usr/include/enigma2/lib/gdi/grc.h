@@ -15,6 +15,7 @@
 #include <stack>
 #include <list>
 
+#include <queue>
 #include <string>
 #include <lib/base/elock.h>
 #include <lib/base/message.h>
@@ -70,7 +71,7 @@ public:
 		syncPaint,
 	} opcode;
 
-	gDC *dc;
+	ePtr<gDC> dc;
 
 	union para
 	{
@@ -96,7 +97,7 @@ public:
 		struct prenderPara
 		{
 			ePoint offset;
-			eTextPara *textpara;
+			ePtr<eTextPara> textpara;
 		} *renderPara;
 
 		struct psetPalette
@@ -174,8 +175,6 @@ private:
 	std::string parmString() const;
 };
 
-#define MAXSIZE 2048
-
 		/* gRC is the singleton which controls the fifo and dispatches commands */
 class gRC : public eThread, public iObject, public sigc::trackable
 {
@@ -188,11 +187,9 @@ class gRC : public eThread, public iObject, public sigc::trackable
 
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
-	bool m_locked;
 	virtual void thread();
 
-	gOpcode queue[MAXSIZE];
-	int rp, wp;
+	std::queue<gOpcode> queue;
 
 	eFixedMessagePump<int> m_notify_pump;
 	void recv_notify(const int &i);
@@ -205,8 +202,7 @@ class gRC : public eThread, public iObject, public sigc::trackable
 	
 	int m_prev_idle_count;
 
-	void lock();
-	void unlock();
+	void drain();
 
 public:
 	gRC();
@@ -229,9 +225,9 @@ class gPainter
 protected:
 	ePtr<gDC> m_dc;
 	ePtr<gFont> m_font;
+	bool m_needSync;
 
-	void begin(const eRect &rect);
-	void end();
+	gPainter();
 
 	virtual void submit(const gOpcode::Opcode o, const gOpcode::para &parm = gOpcode::para());
 
@@ -264,7 +260,7 @@ public:
 	};
 	void renderText(const eRect &position, const std::string &string, int flags=0);
 	
-	void renderPara(eTextPara *para, const ePoint &offset = ePoint(0, 0));
+	void renderPara(const ePtr<eTextPara> &para, const ePoint &offset = ePoint(0, 0));
 
 	void fill(const eRect &area, int flags = 0);
 	void fill(const gRegion &area, int flags = 0);
@@ -305,7 +301,7 @@ public:
 	void flush();
 	virtual void sync();
 
-	void requestSyncPaint(iSyncPaintable *target);
+	virtual void requestSyncPaint(iSyncPaintable *target);
 
 	void setMatrix(const eMatrix4x4 &matrix);
 	int flags();
@@ -313,11 +309,14 @@ public:
 
 class gSyncPainter : public gPainter
 {
+	friend class gDC;
+
 protected:
 	virtual void submit(const gOpcode::Opcode o, const gOpcode::para &parm = gOpcode::para());
-	virtual void sync();
+	virtual void sync() {}
+	virtual void requestSyncPaint(iSyncPaintable *target) {}
 
-public:
+private:
 	gSyncPainter(gDC *dc);
 	virtual ~gSyncPainter();
 };

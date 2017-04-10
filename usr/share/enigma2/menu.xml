@@ -58,7 +58,6 @@
 				<item weight="20" level="0" entryID="usage_setup" description="Configure Enigma2 interface and usage settings."><setup id="usage" /></item>
 				<item weight="30" level="0" text="Language" entryID="language_setup" description="Set up your Dreambox language."><screen module="LanguageSelection" /></item>
 				<item weight="40" level="0" entryID="timezone_setup" description="Set up your system timezone."><setup id="timezone"/></item>
-				<item weight="70" level="1" entryID="rfmod_setup" requires="RfModulator" description="Set up the the antenna output which you can hook up to old TV sets."><setup id="RFmod"/></item>
 				<item weight="80" level="0" text="Factory reset" entryID="factory_reset" description="Reset your Dreambox to factory defaults.">
 					<code>
 from Screens.FactoryReset import FactoryReset

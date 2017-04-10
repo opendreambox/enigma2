@@ -1,12 +1,14 @@
 from os import system, listdir, statvfs, makedirs, stat, path, access, unlink, getcwd, chdir, W_OK
 from time import time
 
-from Tools.Directories import SCOPE_HDD, resolveFilename
+from Tools.Directories import SCOPE_HDD, resolveFilename, fileExists, createDir
 from Tools.CList import CList
+from Tools.Log import Log
 from Tools.IO import runPipe, saveFile
 from SystemInfo import SystemInfo
 from Components.Console import Console
 from config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
+import subprocess
 
 class Util:
 	@staticmethod
@@ -789,6 +791,7 @@ class HarddiskManager:
 		for x in p:
 			self.__addPartition(mountpoint = x[0], description = x[1], notify = False)
 		self.setupConfigEntries(initial_call = True)
+		self.mountDreamboxData()
 
 	def __isBlacklisted(self, data):
 		major = int(data.get('MAJOR', '0'))
@@ -1832,5 +1835,29 @@ class HarddiskManager:
 			if config.storage_options.default_device.value == "<undefined>" or config.storage_options.default_device.value == uuid:
 				if isInitializedByEnigma2:
 					self.configureUuidAsDefault(uuid, device)
+
+	def _reloadSystemdForData(self):
+		try:
+			subprocess.call(['systemctl', 'daemon-reload'])
+			subprocess.call(['systemctl', '--no-block', 'start', 'data.mount'])
+		except:
+			Log.w("Systemd reload failed!")
+
+	def mountDreamboxData(self):
+		Log.d("Mounting Dreambox Data-Partition")
+		device = "/dev/disk/by-label/dreambox-data"
+		if not fileExists(device):
+			Log.w("dreambox-data partition does not exist!")
+		mountpoint = "/data"
+		if Util.findInFstab(device, mountpoint):
+			Log.i("dreambox-data partition already available")
+			return
+		Log.w("Adding dreambox data partition to fstab")
+		extopts = ["x-systemd.automount", "nofail"]
+		if not fileExists(mountpoint):
+			createDir(mountpoint)
+		if fileExists(device):
+			self.modifyFstabEntry(device, mountpoint, extopts=extopts)
+		self._reloadSystemdForData()
 
 harddiskmanager = HarddiskManager()

@@ -177,53 +177,6 @@ class VideoSetup(Screen, ConfigListScreen):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
 
-# FYI !! the following hotplug stuff is unused.... autostart is never called...
-
-class VideomodeHotplug:
-	def __init__(self, hw):
-		self.hw = hw
-
-	def start(self):
-		self.hw.on_hotplug.append(self.hotplug)
-
-	def stop(self):
-		self.hw.on_hotplug.remove(self.hotplug)
-
-	def hotplug(self, what):
-		print "hotplug detected on port '%s'" % (what)
-		(port, mode, rate) = self._getPortModeRateValues()
-
-		if not self.hw.isModeAvailable(port, mode, rate):
-			print "mode %s/%s/%s went away!" % (port, mode, rate)
-			modelist = self.hw.getModeList(port)
-			if not len(modelist):
-				print "sorry, no other mode is available (unplug?). Doing nothing."
-				return
-			mode = modelist[0][0]
-			rate = modelist[0][1]
-			print "setting %s/%s/%s" % (port, mode, rate)
-			self.hw.setMode(port, mode, rate)
-
-hotplug = None
-
-def startHotplug():
-	global hotplug
-	hotplug = VideomodeHotplug(VideoHardware.video_hw)
-	hotplug.start()
-
-def stopHotplug():
-	global hotplug
-	hotplug.stop()
-
-def autostart(reason, session = None, **kwargs):
-	if session is not None:
-		return
-	if reason == 0:
-		startHotplug()
-	elif reason == 1:
-		stopHotplug()
-
-#unused END....
 
 def createInstance(reason, session = None, **kwargs):
 	if reason == 0:

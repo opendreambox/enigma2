@@ -1,7 +1,7 @@
 from Components.Harddisk import harddiskmanager
 from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, ConfigInteger, ConfigSlider
 from Tools.Directories import resolveFilename, SCOPE_HDD
-from enigma import Misc_Options, setTunerTypePriorityOrder, eEnv
+from enigma import setTunerTypePriorityOrder, eEnv
 from SystemInfo import SystemInfo
 
 def BaseInitUsageConfig():
@@ -84,8 +84,6 @@ def FinalInitUsageConfig():
 		("300", "5 " + _("minutes")), ("600", "10 " + _("minutes")), ("1200", "20 " + _("minutes")),
 		("1800", "30 " + _("minutes")), ("3600", "1 " + _("hour")), ("7200", "2 " + _("hours")),
 		("14400", "4 " + _("hours")) ])
-	config.usage.output_12V = ConfigSelection(default = "do not change", choices = [
-		("do not change", _("do not change")), ("off", _("off")), ("on", _("on")) ])
 
 	config.usage.pip_zero_button = ConfigSelection(default = "standard", choices = [
 		("standard", _("standard")), ("swap", _("swap PiP and main picture")),
@@ -129,8 +127,6 @@ def FinalInitUsageConfig():
 	config.usage.show_message_when_recording_starts = ConfigYesNo(default = True)
 
 	config.usage.load_length_of_movies_in_moviellist = ConfigYesNo(default = True)
-
-	SystemInfo["12V_Output"] = Misc_Options.getInstance().detected_12V_output()
 
 	config.usage.timerlist_finished_timer_position = ConfigSelection(default = "beginning", choices = [("beginning", _("at beginning")), ("end", _("at end"))])
 
@@ -189,14 +185,6 @@ def FinalInitUsageConfig():
 			for hdd in harddiskmanager.HDDList():
 				hdd[1].setIdleTime(int(configElement.value))
 		config.usage.hdd_standby.addNotifier(setHDDStandby, immediate_feedback=False)
-
-	if usage_old.get("output_12V", None) == None:
-		def set12VOutput(configElement):
-			if configElement.value == "on":
-				Misc_Options.getInstance().set_12V_output(1)
-			elif configElement.value == "off":
-				Misc_Options.getInstance().set_12V_output(0)
-		config.usage.output_12V.addNotifier(set12VOutput, immediate_feedback=False)
 
 	config.usage.record_mode = ConfigSelection(default = "direct_io", choices = [
 		("direct_io", _("Direct IO (default)")),

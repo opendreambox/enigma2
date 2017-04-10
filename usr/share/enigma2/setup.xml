@@ -71,19 +71,10 @@
 				<item level="1" text="Alternative radio mode">config.usage.e1like_radio_mode</item>
 			<item level="1" text="Advanced" />
 				<item level="1" text="Show positioner movement">config.usage.showdish</item>
-				<item level="1" text="12V output" requires="12V_Output">config.usage.output_12V</item>
 				<item level="2" text="Alternative services tuner priority">config.usage.alternatives_priority</item>
 		</setup>
 		<setup key="harddisk" title="Harddisk setup" >
 			<item level="0" text="Harddisk standby after">config.usage.hdd_standby</item>
-		</setup>
-		<setup key="RFmod" title="RF output">
-			<item level="1" text="Modulator">config.rfmod.enable</item>
-			<item level="2" text="Test mode">config.rfmod.test</item>
-			<item level="2" text="Sound">config.rfmod.sound</item>
-			<item level="2" text="Soundcarrier">config.rfmod.soundcarrier</item>
-			<item level="1" text="Channel">config.rfmod.channel</item>
-			<item level="1" text="Finetune">config.rfmod.finetune</item>
 		</setup>
 		<setup key="keyboard" title="Keyboard Setup">
 			<item level="0" text="Keyboard Map">config.keyboard.keymap</item>

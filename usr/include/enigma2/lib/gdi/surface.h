@@ -13,6 +13,11 @@
 
 #undef __SURFACE_H_INSIDE__
 
+class eMatrix4x4;
+class gRegion;
+class gSurface;
+class iGfx2d;
+
 class gSurface
 {
 	gPixelFormat m_pixelFormat;
@@ -66,6 +71,37 @@ public:
 	const void *map(unsigned int flags, unsigned int *stride) const;
 	void unmap(void *mem);
 	void unmap(const void *mem) const;
+
+	struct BlitParams {
+		const gSurface *src;
+		const eRect &pos;
+		const gRegion &clip;
+		float alpha;
+		const eMatrix4x4 &matrix;
+		bool flip;
+
+		BlitParams(const gSurface *src, const eRect &pos, const gRegion &clip,
+			float alpha, const eMatrix4x4 &matrix, bool flip = false) :
+			src(src), pos(pos), clip(clip), alpha(alpha), matrix(matrix), flip(flip)
+		{
+		}
+	};
+
+	bool blit(const BlitParams &p, unsigned int flags, iGfx2d *gfx);
+
+	struct FillParams {
+		const gRGBA &color;
+		const gRegion &clip;
+		const eMatrix4x4 &matrix;
+		bool flip;
+
+		FillParams(const gRGBA &color, const gRegion &clip, const eMatrix4x4 &matrix, bool flip = false) :
+			color(color), clip(clip), matrix(matrix), flip(flip)
+		{
+		}
+	};
+
+	bool fill(const FillParams &p, unsigned int flags, iGfx2d *gfx);
 };
 
 #endif /* !SWIG */

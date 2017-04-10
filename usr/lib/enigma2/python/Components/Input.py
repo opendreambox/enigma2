@@ -22,8 +22,9 @@ class Input(VariableText, HTMLComponent, GUIComponent, NumericalTextInput):
 		self.visible_width = visible_width
 		self.offset = 0
 		self.overwrite = maxSize
+		self.onInputUpdate = []
 		self.setText(text)
-		
+
 	def __len__(self):
 		return len(self.text)
 
@@ -56,6 +57,8 @@ class Input(VariableText, HTMLComponent, GUIComponent, NumericalTextInput):
 					self.text += (x==" " and " " or "*")
 			else:
 				self.text = self.Text.encode("utf-8") + " "
+		for fnc in self.onInputUpdate:
+			fnc()
 
 	def setText(self, text):
 		if not len(text):

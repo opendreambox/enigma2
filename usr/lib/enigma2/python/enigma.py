@@ -126,9 +126,6 @@ DISPLAY_FBDEV = _enigma.DISPLAY_FBDEV
 _enigma.ENABLE_EWEBVIEW_swigconstant(_enigma)
 ENABLE_EWEBVIEW = _enigma.ENABLE_EWEBVIEW
 
-_enigma.ENABLE_LCD_swigconstant(_enigma)
-ENABLE_LCD = _enigma.ENABLE_LCD
-
 _enigma.ENABLE_SVG_swigconstant(_enigma)
 ENABLE_SVG = _enigma.ENABLE_SVG
 
@@ -304,10 +301,6 @@ class iObject(object):
 iObject_swigregister = _enigma.iObject_swigregister
 iObject_swigregister(iObject)
 
-
-def get_default_pipe_size():
-    return _enigma.get_default_pipe_size()
-get_default_pipe_size = _enigma.get_default_pipe_size
 class eMainloop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
@@ -3672,8 +3665,6 @@ class eDVBSatelliteLNBParameters(object):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    OFF = _enigma.eDVBSatelliteLNBParameters_OFF
-    ON = _enigma.eDVBSatelliteLNBParameters_ON
     SatCR_positions = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_positions_get, _enigma.eDVBSatelliteLNBParameters_SatCR_positions_set)
     SatCR_idx = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_idx_get, _enigma.eDVBSatelliteLNBParameters_SatCR_idx_set)
     SatCR_mode = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_mode_get, _enigma.eDVBSatelliteLNBParameters_SatCR_mode_set)
@@ -6290,45 +6281,6 @@ def eAVSwitch_getInstance():
     return _enigma.eAVSwitch_getInstance()
 eAVSwitch_getInstance = _enigma.eAVSwitch_getInstance
 
-class eRFmod(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-
-    def __init__(self, *args, **kwargs):
-        raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    getInstance = staticmethod(_enigma.eRFmod_getInstance)
-eRFmod.detected = new_instancemethod(_enigma.eRFmod_detected, None, eRFmod)
-eRFmod.setFunction = new_instancemethod(_enigma.eRFmod_setFunction, None, eRFmod)
-eRFmod.setTestmode = new_instancemethod(_enigma.eRFmod_setTestmode, None, eRFmod)
-eRFmod.setSoundFunction = new_instancemethod(_enigma.eRFmod_setSoundFunction, None, eRFmod)
-eRFmod.setSoundCarrier = new_instancemethod(_enigma.eRFmod_setSoundCarrier, None, eRFmod)
-eRFmod.setChannel = new_instancemethod(_enigma.eRFmod_setChannel, None, eRFmod)
-eRFmod.setFinetune = new_instancemethod(_enigma.eRFmod_setFinetune, None, eRFmod)
-eRFmod_swigregister = _enigma.eRFmod_swigregister
-eRFmod_swigregister(eRFmod)
-
-def eRFmod_getInstance():
-    return _enigma.eRFmod_getInstance()
-eRFmod_getInstance = _enigma.eRFmod_getInstance
-
-class Misc_Options(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-
-    def __init__(self, *args, **kwargs):
-        raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    getInstance = staticmethod(_enigma.Misc_Options_getInstance)
-    __swig_destroy__ = _enigma.delete_Misc_Options
-Misc_Options.set_12V_output = new_instancemethod(_enigma.Misc_Options_set_12V_output, None, Misc_Options)
-Misc_Options.get_12V_output = new_instancemethod(_enigma.Misc_Options_get_12V_output, None, Misc_Options)
-Misc_Options.detected_12V_output = new_instancemethod(_enigma.Misc_Options_detected_12V_output, None, Misc_Options)
-Misc_Options_swigregister = _enigma.Misc_Options_swigregister
-Misc_Options_swigregister(Misc_Options)
-
-def Misc_Options_getInstance():
-    return _enigma.Misc_Options_getInstance()
-Misc_Options_getInstance = _enigma.Misc_Options_getInstance
-
 
 def e_tzset():
     return _enigma.e_tzset()
@@ -6365,7 +6317,6 @@ class eDBoxLCD(eLCD):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     getInstance = staticmethod(_enigma.eDBoxLCD_getInstance)
-eDBoxLCD.setLCDContrast = new_instancemethod(_enigma.eDBoxLCD_setLCDContrast, None, eDBoxLCD)
 eDBoxLCD.setLCDBrightness = new_instancemethod(_enigma.eDBoxLCD_setLCDBrightness, None, eDBoxLCD)
 eDBoxLCD.setInverted = new_instancemethod(_enigma.eDBoxLCD_setInverted, None, eDBoxLCD)
 eDBoxLCD.isOled = new_instancemethod(_enigma.eDBoxLCD_isOled, None, eDBoxLCD)

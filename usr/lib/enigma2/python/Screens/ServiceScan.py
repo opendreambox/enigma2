@@ -31,10 +31,12 @@ class ServiceScan(Screen):
 
 	def ok(self):
 		print "ok"
-		if self["scan"].isDone():
+		if self.scan_running and self["scan"].isDone():
 			self.close()
 
 	def cancel(self):
+		if self.scan_running:
+			self["scan"].abort = True
 		self.close()
 
 	def __init__(self, session, scanList):
@@ -59,10 +61,12 @@ class ServiceScan(Screen):
 				"cancel": self.cancel
 			})
 
+		self.scan_running = False
 		self.onFirstExecBegin.append(self.doServiceScan)
 
 	def doServiceScan(self):
 		self["scan"] = CScan(self["scan_progress"], self["scan_state"], self["servicelist"], self["pass"], self.scanList, self["network"], self["transponder"], self["FrontendInfo"], self.session.summary)
+		self.scan_running = True
 
 	def createSummary(self):
 		print "ServiceScanCreateSummary"
