@@ -133,6 +133,8 @@ public:
 		appendNotFound,
 		appendNoSpace,
 	};
+
+private:
 	DECLARE_REF(eTextPara);
 	ePtr<eFont> current_font, replacement_font;
 	FT_Face current_face, replacement_face;

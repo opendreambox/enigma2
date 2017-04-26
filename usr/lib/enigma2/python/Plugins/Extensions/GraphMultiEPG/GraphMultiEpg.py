@@ -586,7 +586,7 @@ class GraphMultiEPG(Screen):
 		if self.prime_mode == self.TIME_NOW:
 			now = [x for x in localtime()]
 			prime =  [y for y in config.misc.graph_mepg_prime_time.value]
-			date = mktime([now[0], now[1], now[2], prime[0], prime[1], 0, 0, 0, 0])
+			date = mktime([now[0], now[1], now[2], prime[0], prime[1], 0, 0, 0, -1])
 			if now[3] > prime[0] or (now[3] == prime[0] and now[4] > prime[1]):
 				date = date + 60*60*24;
 			self["key_yellow"].setText(_("Now"))
@@ -866,7 +866,15 @@ class GraphMultiEPGMenu(ConfigListScreen, Screen):
 			x[1].addNotifier(self.changedEntry)
 
 	def resetPressed(self):
-		config.misc.graph_mepg_prime_time.value = def_time
+		global def_time
+		now = [x for x in localtime()]
+		now[3] = 20
+		now[4] = 15
+		def_time = mktime(now)
+
+		self["config"].hide()
+		config.misc.graph_mepg_prime_time.value = [20, 15]
+		self["config"].show()
 		self["config"].selectionChanged()
 
 	def okPressed(self):

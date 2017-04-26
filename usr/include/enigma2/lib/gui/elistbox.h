@@ -6,6 +6,7 @@
 
 class eListbox;
 class eSlider;
+class gPixmap;
 
 class iListboxContent: public iObject
 {
@@ -26,6 +27,7 @@ public:
 protected:
 	iListboxContent();
 	friend class eListbox;
+	virtual void prefetch(int top, int count, int selected, bool clear=true){ };
 	virtual void updateClip(gRegion &){ };
 	virtual void cursorHome()=0;
 	virtual void cursorEnd()=0;
@@ -119,7 +121,8 @@ public:
 		moveEnd,
 		pageUp,
 		pageDown,
-		justCheck
+		justCheck,
+		refresh
 	};
 
 	void setItemHeight(int h);

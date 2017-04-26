@@ -6,10 +6,11 @@
 #include <lib/base/thread.h>
 #include <lib/components/file_monitor.h>
 #include <lib/components/media_scanner.h>
-#include <lib/gdi/gpixmap.h>
 
 #include <QSqlQuery>
 #include <QSqlDatabase>
+
+class gPixmap;
 
 #ifndef SWIG
 struct query_data

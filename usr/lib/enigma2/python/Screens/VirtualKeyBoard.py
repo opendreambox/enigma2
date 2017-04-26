@@ -90,6 +90,7 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 
 class VirtualKeyBoard(Screen):
 	IS_DIALOG = True
+	LINESIZE = 12
 
 	def __init__(self, session, title="", text=""):
 		Screen.__init__(self, session)
@@ -174,6 +175,20 @@ class VirtualKeyBoard(Screen):
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"Ö", u"Ä", u"'"],
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"?", u"\\", u"Ĺ", u"OK"]]
+			self.nextLang = 'ru_RU'
+		elif self.lang == 'ru_RU':
+			self.keys_list = [
+				[u"EXIT", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9", u"0", u"BACKSPACE"],
+				[u"й", u"ц", u"у", u"к", u"е", u"н", u"г", u"ш", u"щ", u"з", u"х", u"+"],
+				[u"ф", u"ы", u"в", u"а", u"п", u"р", u"о", u"л", u"д", u"ж", u"э", u"#"],
+				[u"<", u"ё", u"я", u"ч", u"с", u"м", u"и", u"т", u",", ".", u"-", u"CLEAR"],
+				[u"SHIFT", u"SPACE", u"@", u"ь", u"б", u"ю", u"ъ", u"OK"]]
+			self.shiftkeys_list = [
+				[u"EXIT", u"!", u'"', u"§", u"$", u"%", u"&", u"/", u"(", u")", u"=", u"BACKSPACE"],
+				[u"Й", u"Ц", u"У", u"К", u"Е", u"Н", u"Г", u"Ш", u"Щ", u"З", u"Х", u"*"],
+				[u"Ф", u"Ы", u"В", u"А", u"П", u"Р", u"О", u"Л", u"Д", u"Ж", u"Э", u"'"],
+				[u">", u"Ё", u"Я", u"Ч", u"С", u"М", u"И", u"Т", u";", u":", u"_", u"CLEAR"],
+				[u"SHIFT", u"SPACE", u"?", u"\\", u"Ь", u"Б", u"Ю",  u"Ъ", u"OK"]]
 			self.nextLang = 'sv_SE'
 		elif self.lang == 'sv_SE':
 			self.keys_list = [
@@ -234,7 +249,6 @@ class VirtualKeyBoard(Screen):
 			self.lang = 'en_EN'
 			self.nextLang = 'de_DE'		
 		self["country"].setText(self.lang)
-		self.max_key=47+len(self.keys_list[4])
 
 	def buildVirtualKeyBoard(self, selectedKey=0):
 		list = []
@@ -242,20 +256,22 @@ class VirtualKeyBoard(Screen):
 		if self.shiftMode:
 			self.k_list = self.shiftkeys_list
 			for keys in self.k_list:
-				if selectedKey < 12 and selectedKey > -1:
+				if selectedKey < self.LINESIZE and selectedKey > -1:
 					list.append(VirtualKeyBoardEntryComponent(keys, selectedKey,True))
 				else:
 					list.append(VirtualKeyBoardEntryComponent(keys, -1,True))
-				selectedKey -= 12
+				selectedKey -= self.LINESIZE
 		else:
 			self.k_list = self.keys_list
 			for keys in self.k_list:
-				if selectedKey < 12 and selectedKey > -1:
+				if selectedKey < self.LINESIZE and selectedKey > -1:
 					list.append(VirtualKeyBoardEntryComponent(keys, selectedKey))
 				else:
 					list.append(VirtualKeyBoardEntryComponent(keys, -1))
-				selectedKey -= 12
-		
+				selectedKey -= self.LINESIZE
+		self.lines = len(self.k_list)
+		self.max_key = (self.lines - 1) * self.LINESIZE #len of all lines but last (may be shorter)
+		self.max_key += len(self.k_list[-1]) - 1 #len of last line
 		self["list"].setList(list)
 	
 	def backClicked(self):
@@ -273,12 +289,12 @@ class VirtualKeyBoard(Screen):
 		text = None
 
 		for x in list:
-			if selectedKey < 12:
+			if selectedKey < self.LINESIZE:
 				if selectedKey < len(x):
 					text = x[selectedKey]
 				break
 			else:
-				selectedKey -= 12
+				selectedKey -= self.LINESIZE
 
 		if text is None:
 			return
@@ -324,54 +340,41 @@ class VirtualKeyBoard(Screen):
 
 	def left(self):
 		self.selectedKey -= 1
-		
-		if self.selectedKey == -1:
-			self.selectedKey = 11
-		elif self.selectedKey == 11:
-			self.selectedKey = 23
-		elif self.selectedKey == 23:
-			self.selectedKey = 35
-		elif self.selectedKey == 35:
-			self.selectedKey = 47
-		elif self.selectedKey == 47:
-			self.selectedKey = self.max_key
-		
+		for line in range(0,self.LINESIZE):
+			if self.selectedKey == (self.LINESIZE * line) - 1:
+				selectedKey = ((line + 1) * self.LINESIZE) - 1
+				self.selectedKey = min(self.max_key, selectedKey)
+				break
 		self.showActiveKey()
 
 	def right(self):
 		self.selectedKey += 1
-		
-		if self.selectedKey == 12:
-			self.selectedKey = 0
-		elif self.selectedKey == 24:
-			self.selectedKey = 12
-		elif self.selectedKey == 36:
-			self.selectedKey = 24
-		elif self.selectedKey == 48:
-			self.selectedKey = 36
-		elif self.selectedKey > self.max_key:
-			self.selectedKey = 48
-		
+		if self.selectedKey > self.max_key:
+			self.selectedKey = (self.lines - 1) * self.LINESIZE
+		else:
+			for line in range(0,self.LINESIZE):
+				if self.selectedKey == self.LINESIZE * ( line + 1 ):
+					self.selectedKey = line * self.LINESIZE
+					break
 		self.showActiveKey()
 
 	def up(self):
-		self.selectedKey -= 12
-		
-		if (self.selectedKey < 0) and (self.selectedKey > (self.max_key-60)):
-			self.selectedKey += 48
+		lines = self.lines
+		self.selectedKey -= self.LINESIZE
+
+		if (self.selectedKey < 0) and (self.selectedKey >= (self.max_key - lines * self.LINESIZE)):
+			self.selectedKey += self.LINESIZE * (lines -1)
 		elif self.selectedKey < 0:
-			self.selectedKey += 60	
-		
+			self.selectedKey += self.LINESIZE * lines
 		self.showActiveKey()
 
 	def down(self):
-		self.selectedKey += 12
-		
-		if (self.selectedKey > self.max_key) and (self.selectedKey > 59):
-			self.selectedKey -= 60
+		lines = self.lines
+		self.selectedKey += self.LINESIZE
+		if (self.selectedKey > self.max_key) and (self.selectedKey > (lines * self.LINESIZE) - 1):
+			self.selectedKey -= lines * self.LINESIZE
 		elif self.selectedKey > self.max_key:
-			self.selectedKey -= 48
-		
+			self.selectedKey -= (lines - 1) * self.LINESIZE
 		self.showActiveKey()
 
 	def showActiveKey(self):

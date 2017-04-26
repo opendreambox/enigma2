@@ -3051,6 +3051,8 @@ eWidgetDesktop.createScreenshot = new_instancemethod(_enigma.eWidgetDesktop_crea
 eWidgetDesktop.setFrameTime = new_instancemethod(_enigma.eWidgetDesktop_setFrameTime, None, eWidgetDesktop)
 eWidgetDesktop.isAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_isAnimationsEnabled, None, eWidgetDesktop)
 eWidgetDesktop.setAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_setAnimationsEnabled, None, eWidgetDesktop)
+eWidgetDesktop.isWidgetAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_isWidgetAnimationsEnabled, None, eWidgetDesktop)
+eWidgetDesktop.setWidgetAnimationsEnabled = new_instancemethod(_enigma.eWidgetDesktop_setWidgetAnimationsEnabled, None, eWidgetDesktop)
 eWidgetDesktop.flags = new_instancemethod(_enigma.eWidgetDesktop_flags, None, eWidgetDesktop)
 eWidgetDesktop_swigregister = _enigma.eWidgetDesktop_swigregister
 eWidgetDesktop_swigregister(eWidgetDesktop)
@@ -3084,6 +3086,7 @@ class eListbox(eWidget):
     pageUp = _enigma.eListbox_pageUp
     pageDown = _enigma.eListbox_pageDown
     justCheck = _enigma.eListbox_justCheck
+    refresh = _enigma.eListbox_refresh
 eListbox.setScrollbarMode = new_instancemethod(_enigma.eListbox_setScrollbarMode, None, eListbox)
 eListbox.setWrapAround = new_instancemethod(_enigma.eListbox_setWrapAround, None, eListbox)
 eListbox.setBacklogMode = new_instancemethod(_enigma.eListbox_setBacklogMode, None, eListbox)
@@ -3210,6 +3213,7 @@ eListboxPythonMultiContent.setSelectionClip = new_instancemethod(_enigma.eListbo
 eListboxPythonMultiContent.updateClip = new_instancemethod(_enigma.eListboxPythonMultiContent_updateClip, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.entryRemoved = new_instancemethod(_enigma.eListboxPythonMultiContent_entryRemoved, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setTemplate = new_instancemethod(_enigma.eListboxPythonMultiContent_setTemplate, None, eListboxPythonMultiContent)
+eListboxPythonMultiContent.refresh = new_instancemethod(_enigma.eListboxPythonMultiContent_refresh, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent_swigregister = _enigma.eListboxPythonMultiContent_swigregister
 eListboxPythonMultiContent_swigregister(eListboxPythonMultiContent)
 
@@ -3856,19 +3860,27 @@ class eDVBFrontendParametersSatellite(object):
     FEC_3_5 = _enigma.eDVBFrontendParametersSatellite_FEC_3_5
     FEC_4_5 = _enigma.eDVBFrontendParametersSatellite_FEC_4_5
     FEC_9_10 = _enigma.eDVBFrontendParametersSatellite_FEC_9_10
+    FEC_6_7 = _enigma.eDVBFrontendParametersSatellite_FEC_6_7
     FEC_None = _enigma.eDVBFrontendParametersSatellite_FEC_None
     System_DVB_S = _enigma.eDVBFrontendParametersSatellite_System_DVB_S
     System_DVB_S2 = _enigma.eDVBFrontendParametersSatellite_System_DVB_S2
+    System_DVB_S_S2 = _enigma.eDVBFrontendParametersSatellite_System_DVB_S_S2
     Modulation_Auto = _enigma.eDVBFrontendParametersSatellite_Modulation_Auto
     Modulation_QPSK = _enigma.eDVBFrontendParametersSatellite_Modulation_QPSK
     Modulation_8PSK = _enigma.eDVBFrontendParametersSatellite_Modulation_8PSK
     Modulation_QAM16 = _enigma.eDVBFrontendParametersSatellite_Modulation_QAM16
+    Modulation_16APSK = _enigma.eDVBFrontendParametersSatellite_Modulation_16APSK
+    Modulation_32APSK = _enigma.eDVBFrontendParametersSatellite_Modulation_32APSK
     RollOff_alpha_0_35 = _enigma.eDVBFrontendParametersSatellite_RollOff_alpha_0_35
     RollOff_alpha_0_25 = _enigma.eDVBFrontendParametersSatellite_RollOff_alpha_0_25
     RollOff_alpha_0_20 = _enigma.eDVBFrontendParametersSatellite_RollOff_alpha_0_20
     Pilot_Off = _enigma.eDVBFrontendParametersSatellite_Pilot_Off
     Pilot_On = _enigma.eDVBFrontendParametersSatellite_Pilot_On
     Pilot_Unknown = _enigma.eDVBFrontendParametersSatellite_Pilot_Unknown
+    PLS_Root = _enigma.eDVBFrontendParametersSatellite_PLS_Root
+    PLS_Gold = _enigma.eDVBFrontendParametersSatellite_PLS_Gold
+    PLS_Combo = _enigma.eDVBFrontendParametersSatellite_PLS_Combo
+    PLS_Unknown = _enigma.eDVBFrontendParametersSatellite_PLS_Unknown
     no_rotor_command_on_tune = _swig_property(_enigma.eDVBFrontendParametersSatellite_no_rotor_command_on_tune_get, _enigma.eDVBFrontendParametersSatellite_no_rotor_command_on_tune_set)
     frequency = _swig_property(_enigma.eDVBFrontendParametersSatellite_frequency_get, _enigma.eDVBFrontendParametersSatellite_frequency_set)
     symbol_rate = _swig_property(_enigma.eDVBFrontendParametersSatellite_symbol_rate_get, _enigma.eDVBFrontendParametersSatellite_symbol_rate_set)
@@ -3880,6 +3892,9 @@ class eDVBFrontendParametersSatellite(object):
     modulation = _swig_property(_enigma.eDVBFrontendParametersSatellite_modulation_get, _enigma.eDVBFrontendParametersSatellite_modulation_set)
     rolloff = _swig_property(_enigma.eDVBFrontendParametersSatellite_rolloff_get, _enigma.eDVBFrontendParametersSatellite_rolloff_set)
     pilot = _swig_property(_enigma.eDVBFrontendParametersSatellite_pilot_get, _enigma.eDVBFrontendParametersSatellite_pilot_set)
+    is_id = _swig_property(_enigma.eDVBFrontendParametersSatellite_is_id_get, _enigma.eDVBFrontendParametersSatellite_is_id_set)
+    pls_mode = _swig_property(_enigma.eDVBFrontendParametersSatellite_pls_mode_get, _enigma.eDVBFrontendParametersSatellite_pls_mode_set)
+    pls_code = _swig_property(_enigma.eDVBFrontendParametersSatellite_pls_code_get, _enigma.eDVBFrontendParametersSatellite_pls_code_set)
 
     def __init__(self):
         _enigma.eDVBFrontendParametersSatellite_swiginit(self, _enigma.new_eDVBFrontendParametersSatellite())

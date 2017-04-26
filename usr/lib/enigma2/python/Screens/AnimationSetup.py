@@ -111,9 +111,9 @@ class ExtendedAnimationsSetup(Screen, ConfigListScreen):
 
 	def saveAll(self):
 		ConfigListScreen.saveAll(self)
-		self._dsk_osd.setAnimationsEnabled(config.osd.widget_animation.value)
+		self._dsk_osd.setWidgetAnimationsEnabled(config.osd.widget_animation.value)
 		if self._dsk_dsp:
-			self._dsk_dsp.setAnimationsEnabled(config.osd.widget_animation_display.value)
+			self._dsk_dsp.setWidgetAnimationsEnabled(config.osd.widget_animation_display.value)
 		eWindowAnimationManager.setWidgetDefault()
 
 	def _createSetup(self):

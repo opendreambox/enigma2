@@ -45,6 +45,7 @@ def ConvertToHumanReadable(tp, ttype = None):
 			eDVBFrontendParametersSatellite.FEC_2_3 : "2/3",
 			eDVBFrontendParametersSatellite.FEC_3_4 : "3/4",
 			eDVBFrontendParametersSatellite.FEC_5_6 : "5/6",
+			eDVBFrontendParametersSatellite.FEC_6_7 : "6/7",
 			eDVBFrontendParametersSatellite.FEC_7_8 : "7/8",
 			eDVBFrontendParametersSatellite.FEC_3_5 : "3/5",
 			eDVBFrontendParametersSatellite.FEC_4_5 : "4/5",
@@ -54,7 +55,9 @@ def ConvertToHumanReadable(tp, ttype = None):
 			eDVBFrontendParametersSatellite.Modulation_Auto : _("Auto"),
 			eDVBFrontendParametersSatellite.Modulation_QPSK : "QPSK",
 			eDVBFrontendParametersSatellite.Modulation_QAM16 : "QAM16",
-			eDVBFrontendParametersSatellite.Modulation_8PSK : "8PSK"}[tp["modulation"]]
+			eDVBFrontendParametersSatellite.Modulation_8PSK : "8PSK",
+			eDVBFrontendParametersSatellite.Modulation_16APSK : "16APSK",
+			eDVBFrontendParametersSatellite.Modulation_32APSK : "32APSK"}[tp["modulation"]]
 		ret["orbital_position"] = nimmanager.getSatName(int(tp["orbital_position"]))
 		ret["polarization"] = {
 			eDVBFrontendParametersSatellite.Polarisation_Horizontal : _("Horizontal"),
@@ -74,6 +77,14 @@ def ConvertToHumanReadable(tp, ttype = None):
 				eDVBFrontendParametersSatellite.Pilot_Unknown : _("Auto"),
 				eDVBFrontendParametersSatellite.Pilot_On : _("On"),
 				eDVBFrontendParametersSatellite.Pilot_Off : _("Off")}[tp["pilot"]]
+			if tp["is_id"] != -1:
+				ret["is_id"] = '%d' %tp["is_id"]
+			if tp["pls_mode"] != eDVBFrontendParametersSatellite.PLS_Unknown:
+				ret["pls_code"] = '%d' %tp["pls_code"]
+				ret["pls_mode"] = {
+					eDVBFrontendParametersSatellite.PLS_Root : "Root",
+					eDVBFrontendParametersSatellite.PLS_Gold : "Gold",
+					eDVBFrontendParametersSatellite.PLS_Combo : "Combo"}[tp["pls_mode"]]
 	elif ttype == "DVB-C":
 		ret["tuner_type"] = _("Cable")
 		ret["modulation"] = {
@@ -167,11 +178,12 @@ def ConvertToHumanReadable(tp, ttype = None):
 				eDVBFrontendParametersTerrestrial.FEC_3_4 : "3/4",
 				eDVBFrontendParametersTerrestrial.FEC_4_5 : "4/5",
 				eDVBFrontendParametersTerrestrial.FEC_5_6 : "5/6"}[tp["fec_inner"]]
-			ret["plp_id"] = '%d' %tp["plp_id"]
+			if tp["plp_id"] != -1:
+				ret["plp_id"] = '%d' %tp["plp_id"]
 			ret["system"] = "DVB-T2"
 	else:
 		print "ConvertToHumanReadable: no or unknown type in tpdata dict!"
 	for x in tp.keys():
-		if not ret.has_key(x):
+		if not ret.has_key(x) and x not in ("is_id", "pls_code", "pls_mode", "plp_id"):
 			ret[x] = tp[x]
 	return ret

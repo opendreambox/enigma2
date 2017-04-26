@@ -109,7 +109,10 @@ class ServiceInfo(Screen):
 					 "constellation"		: _("Constellation"),
 					 "transmission_mode"		: _("Transmission mode"),
 					 "guard_interval" 		: _("Guard interval"),
-					 "hierarchy_information"	: _("Hierarchy info") }
+					 "hierarchy_information"	: _("Hierarchy info"),
+					 "is_id"			: _("Stream Id"),
+					 "pls_mode"			: _("PLS Mode"),
+					 "pls_code"			: _("PLS Code")}
 				Labels = [(conv[i], tp_info[i], TYPE_VALUE_DEC) for i in tp_info.keys()]
 				self.fillList(Labels)
 
@@ -156,7 +159,10 @@ class ServiceInfo(Screen):
 						(_("Inversion"), frontendData["inversion"], TYPE_TEXT),
 						(_("FEC"), frontendData["fec_inner"], TYPE_TEXT),
 						(_("Pilot"), frontendData.get("pilot", None), TYPE_TEXT),
-						(_("Roll-off"), frontendData.get("rolloff", None), TYPE_TEXT))
+						(_("Roll-off"), frontendData.get("rolloff", None), TYPE_TEXT),
+						(_("Stream Id"), frontendData.get("is_id", None), TYPE_VALUE_DEC),
+						(_("PLS Mode"), frontendData.get("pls_mode", None), TYPE_TEXT),
+						(_("PLS Code"), frontendData.get("pls_code", None), TYPE_VALUE_DEC))
 			elif tunerType == feCable:
 				return ((_("NIM"), inputName, TYPE_TEXT),
 						(_("Type"), frontendData["tuner_type"], TYPE_TEXT),

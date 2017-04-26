@@ -8,6 +8,7 @@
 #include <lib/gdi/erect.h>
 #include <lib/gdi/esize.h>
 #include <lib/gdi/palette.h>
+#include <lib/gdi/scalefilter.h>
 #include <lib/gdi/surface_flags.h>
 #include <map>
 
@@ -36,7 +37,7 @@ class gSurface
 	unsigned long totalLength() const;
 
 public:
-	int scalefilter;
+	scalefilter_t scalefilter;
 
 	unsigned int x, y, bypp, stride;
 	gPalette clut;

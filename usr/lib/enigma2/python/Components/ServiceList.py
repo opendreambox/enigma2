@@ -1,5 +1,5 @@
 from enigma import eLabel, eSize, eServiceReference, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, gFont, eListbox, eServiceCenter, eListboxPythonMultiContent, eListboxServiceContent, eEPGCache,\
-	getDesktop
+	getDesktop, eTimer
 from skin import parseColor, parseFont, TemplatedColors, componentSizes, TemplatedListFonts
 from timer import TimerEntry
 from Components.config import config
@@ -12,6 +12,8 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN, fileExists
 
 from time import time, localtime
 from Tools.PiconResolver import PiconResolver
+
+from datetime import datetime
 
 import NavigationInstance
 
@@ -136,6 +138,24 @@ class ServiceList(HTMLComponent, GUIComponent):
 		config.usage.configselection_showrecordings.addNotifier(self.getRecordingList, initial_call = True)
 		config.usage.configselection_bigpicons.addNotifier(self.setItemHeight, initial_call = True)
 		config.usage.configselection_secondlineinfo.addNotifier(self.setItemHeight, initial_call = False)
+		self._reloadTimer = eTimer()
+		self.__reloadTimerConn = self._reloadTimer.timeout.connect(self._reload)
+
+	def onShow(self):
+		GUIComponent.onShow(self)
+		self._resetTimer()
+
+	def onHide(self):
+		GUIComponent.onHide(self)
+		self._reloadTimer.stop()
+
+	def _reload(self):
+		self.l.refresh()
+		self._resetTimer()
+
+	def _resetTimer(self):
+		secs = 60 - datetime.now().second #next full minute
+		self._reloadTimer.startLongTimer(secs)
 
 	def getRecordingList(self,configElement = None):
 		self.recordingList = {}

@@ -22,13 +22,15 @@
 #include <lib/base/thread.h>
 #include <lib/gdi/color.h>
 #include <lib/gdi/erect.h>
-#include <lib/gdi/gpixmap.h>
 #include <lib/gdi/matrix.h>
 #include <lib/gdi/region.h>
+#include <lib/gdi/rgba.h>
 #include <lib/gdi/gfont.h>
 
 class eTextPara;
 class gPalette;
+class gPixmap;
+class gSurface;
 
 class gDC;
 class iSyncPaintable;
@@ -268,14 +270,13 @@ public:
 	
 	void clear();
 
-	enum
-	{
-		BT_ALPHATEST = gPixmap::blitAlphaTest,
-		BT_ALPHABLEND = gPixmap::blitAlphaBlend,
-		BT_SCALE = gPixmap::blitScale, /* will be automatically set by blitScale */
-		BT_DESTINATION_COLOR_PLUS_ZERO = gPixmap::blitDestinationColorPlusZero,
-		BT_ONE_PLUS_ONE = gPixmap::blitOnePlusOne,
-		BT_SOURCEALPHA_PLUS_ONE = gPixmap::blitSourceAlphaPlusOne,
+	enum {
+		BT_ALPHATEST = (1 << 0),
+		BT_ALPHABLEND = (1 << 1),
+		BT_SCALE = (1 << 2), /* will be automatically set by blitScale */
+		BT_DESTINATION_COLOR_PLUS_ZERO = (1 << 3),
+		BT_ONE_PLUS_ONE = (1 << 4),
+		BT_SOURCEALPHA_PLUS_ONE = (1 << 5),
 	};
 
 	void blit(const ePtr<gPixmap> &pixmap, const ePoint &pos, const eRect &clip=eRect(), int flags=0, float alpha = 1.0);
@@ -347,7 +348,7 @@ protected:
 	const gRegion &dirtyRegion() const { return m_dirtyRegion; }
 	void invalidate(const gRegion &region = gRegion::invalidRegion());
 
-	virtual gSurface *surface() const { return m_pixmap ? m_pixmap->surface() : 0; }
+	virtual gSurface *surface() const;
 
 public:
 	virtual void exec(const gOpcode *opcode);
@@ -355,10 +356,10 @@ public:
 	gDC();
 	virtual ~gDC();
 	gRegion &getClip() { return m_current_clip; }
-	int getPixmap(ePtr<gPixmap> &pm) { pm = m_pixmap; return 0; }
+	int getPixmap(ePtr<gPixmap> &pm);
 	gRGBA getRGB(gColor col);
-	int flags(){ return m_pixmap ? m_pixmap->flags() : 0; }
-	virtual eSize size() { return m_pixmap ? m_pixmap->size() : eSize(0, 0); }
+	int flags();
+	virtual eSize size();
 	virtual gPixelFormat pixelFormat() const;
 	virtual int islocked() { return 0; }
 	

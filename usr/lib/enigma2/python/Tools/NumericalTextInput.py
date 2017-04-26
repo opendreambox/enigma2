@@ -78,6 +78,17 @@ class NumericalTextInput:
 			self.mapping.append (u"pqrs7řŕšPQRSŘŔŠ") # 7
 			self.mapping.append (u"tuv8ťúůüTUVŤÚŮÜ") # 8
 			self.mapping.append (u"wxyz9ýžWXYZÝŽ") # 9
+		elif self.lang == 'ru_RU':
+			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
+			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u"abc2ABCабвгАБВГ") # 2
+			self.mapping.append (u"def3DEFдежзДЕЖЗ") # 3
+			self.mapping.append (u"ghi4GHIийклИЙКЛ") # 4
+			self.mapping.append (u"jkl5JKLмнопМНОП") # 5
+			self.mapping.append (u"mno6MNOрстуРСТУ") # 6
+			self.mapping.append (u"pqrs7PQRSфхцчФХЦЧ") # 7
+			self.mapping.append (u"tuv8TUVшщъыШЩЪЫ") # 8
+			self.mapping.append (u"wxyz9WXYZьэюяЬЭЮЯ") # 9
 		else:
 			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
 			self.mapping.append (u" 1.:/-_") # 1

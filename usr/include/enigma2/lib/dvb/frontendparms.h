@@ -6,12 +6,14 @@
 class SatelliteDeliverySystemDescriptor;
 class CableDeliverySystemDescriptor;
 class TerrestrialDeliverySystemDescriptor;
+class S2SatelliteDeliverySystemDescriptor;
 class T2DeliverySystemDescriptor;
 
 struct eDVBFrontendParametersSatellite
 {
 #ifndef SWIG
-	void set(const SatelliteDeliverySystemDescriptor  &);
+	void set(const SatelliteDeliverySystemDescriptor &);
+	void set(const S2SatelliteDeliverySystemDescriptor &);
 #endif
 	enum {
 		Polarisation_Horizontal, Polarisation_Vertical, Polarisation_CircularLeft, Polarisation_CircularRight
@@ -22,15 +24,15 @@ struct eDVBFrontendParametersSatellite
 	};
 
 	enum {
-		FEC_Auto, FEC_1_2, FEC_2_3, FEC_3_4, FEC_5_6, FEC_7_8, FEC_8_9, FEC_3_5, FEC_4_5, FEC_9_10, FEC_None=15
+		FEC_Auto, FEC_1_2, FEC_2_3, FEC_3_4, FEC_5_6, FEC_7_8, FEC_8_9, FEC_3_5, FEC_4_5, FEC_9_10, FEC_6_7, FEC_None=15
 	};
 
 	enum {
-		System_DVB_S, System_DVB_S2
+		System_DVB_S, System_DVB_S2, System_DVB_S_S2
 	};
 
 	enum {
-		Modulation_Auto, Modulation_QPSK, Modulation_8PSK, Modulation_QAM16
+		Modulation_Auto, Modulation_QPSK, Modulation_8PSK, Modulation_QAM16, Modulation_16APSK, Modulation_32APSK
 	};
 
 	// dvb-s2
@@ -42,9 +44,13 @@ struct eDVBFrontendParametersSatellite
 		Pilot_Off, Pilot_On, Pilot_Unknown
 	};
 
+	enum {
+		PLS_Root, PLS_Gold, PLS_Combo, PLS_Unknown
+	};
+
 	bool no_rotor_command_on_tune;
 	unsigned int frequency, symbol_rate;
-	int polarisation, fec, inversion, orbital_position, system, modulation, rolloff, pilot;
+	int polarisation, fec, inversion, orbital_position, system, modulation, rolloff, pilot, is_id, pls_mode, pls_code;
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(eDVBFrontendParametersSatellite);
 
