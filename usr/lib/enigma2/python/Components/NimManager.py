@@ -1317,6 +1317,15 @@ class UnicableProducts(object):
 
 		configElement.scr = ConfigSelection(scrlist, default = scrlist[0][0])
 
+		# the following is a hack to correctly store dynamically created SCR ConfigElement
+		# needs more investigation in ConfigElement code
+		scr = configElement.scr.value if hasattr(configElement, "scr") else None
+		if scr is not None:
+			scr = (scr, 'SCR '+scr)
+		if scr in scrlist:
+			configElement.scr.value = scr[0]
+			configElement.scr.saved_value = scr[0]
+
 		positions = int(lof_tuple[0])
 		configElement.positions.append(ConfigInteger(default=positions, limits = (positions, positions)))
 
@@ -1391,7 +1400,7 @@ def configLOFChanged(configElement):
 			manufacturer = unicableProducts.getMatrixManufacturers()[0]
 
 			if matrixConfig:
-				manufacturer = section.unicableMatrix.manufacturer.value
+				manufacturer = matrixConfig.manufacturer.value
 			else:
 				matrixConfig = unicableProducts.createProductsConfig(None, True, matrixConfig)
 				section.unicableMatrix = matrixConfig
@@ -1411,7 +1420,7 @@ def configLOFChanged(configElement):
 			manufacturer = unicableProducts.getLnbManufacturers()[0]
 
 			if lnbConfig:
-				manufacturer = section.unicableLnb.manufacturer.value
+				manufacturer = lnbConfig.manufacturer.value
 			else:
 				lnbConfig = unicableProducts.createProductsConfig(None, True, lnbConfig)
 				section.unicableLnb = lnbConfig

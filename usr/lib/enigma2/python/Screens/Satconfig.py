@@ -330,14 +330,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.advancedType = getConfigListEntry(_("Type"), lnbConfig.product)
 					self.list.append(self.advancedManufacturer)
 					self.list.append(self.advancedType)
-					try:
-						idx = lnbConfig.scr.index
-					except ValueError:
-						idx = 0
-						lnbConfig.scr.setChoices(lnbConfig.scr.getChoices())
 					self.advancedSCR = getConfigListEntry(_("Channel"), lnbConfig.scr)
 					self.list.append(self.advancedSCR)
-					self.list.append(getConfigListEntry(_("Frequency"), lnbConfig.vco[idx]))
+					self.list.append(getConfigListEntry(_("Frequency"), lnbConfig.vco[lnbConfig.scr.index]))
 				self.unicableUsePinEntry = getConfigListEntry(_("Use PIN"), currLnb.unicable_use_pin)
 				self.list.append(self.unicableUsePinEntry)
 				if currLnb.unicable_use_pin.value: 

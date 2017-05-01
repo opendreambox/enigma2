@@ -88,7 +88,7 @@ private:
 	eWidget *m_parent;
 
 	void insertIntoParent();
-	void doPaint(gPainter &painter, const gRegion &region);
+	void doPaint(gPainter *painter, const gRegion &region);
 	void recalcClipRegionsWhenVisible();
 
 	void parentRemoved();
@@ -134,6 +134,7 @@ public:
 	enum eWidgetEvent
 	{
 		evtPaint,
+		evtPrefetch,
 		evtKey,
 		evtChangedPosition,
 		evtChangedSize,

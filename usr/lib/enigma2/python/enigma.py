@@ -2757,6 +2757,7 @@ class eWidget(object):
     m_visible_region = _swig_property(_enigma.eWidget_m_visible_region_get, _enigma.eWidget_m_visible_region_set)
     m_visible_with_childs = _swig_property(_enigma.eWidget_m_visible_with_childs_get, _enigma.eWidget_m_visible_with_childs_set)
     evtPaint = _enigma.eWidget_evtPaint
+    evtPrefetch = _enigma.eWidget_evtPrefetch
     evtKey = _enigma.eWidget_evtKey
     evtChangedPosition = _enigma.eWidget_evtChangedPosition
     evtChangedSize = _enigma.eWidget_evtChangedSize

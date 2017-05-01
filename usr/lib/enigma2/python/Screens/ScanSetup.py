@@ -1280,6 +1280,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		self.systemEntry = None
 		self.modulationEntry = None
 		self.satelliteEntry = None
+		self.enableMisEntry = None
 		nim = nimmanager.nim_slots[index_to_scan]
 
 		if self.scan_system.value in ("DVB-S", "DVB-S2"):

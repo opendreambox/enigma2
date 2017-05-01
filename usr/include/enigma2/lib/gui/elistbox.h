@@ -27,7 +27,6 @@ public:
 protected:
 	iListboxContent();
 	friend class eListbox;
-	virtual void prefetch(int top, int count, int selected, bool clear=true){ };
 	virtual void updateClip(gRegion &){ };
 	virtual void cursorHome()=0;
 	virtual void cursorEnd()=0;
