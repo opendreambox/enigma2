@@ -125,7 +125,8 @@ class Satfinder(ScanSetup):
 			self.createSetup()
 		else:
 			ScanSetup.newConfig(self)
-		if self.systemEntry and cur == self.systemEntry:
+		if self.systemEntry and cur == self.systemEntry or \
+			cur == self.tuning_type:
 			self.retune(None)
 
 	def sat_changed(self, config_element):
@@ -143,7 +144,7 @@ class Satfinder(ScanSetup):
 				mod = self.modulationEntry[1].value
 				fec = self.fecEntry[1].value
 			returnvalue = (
-				self.scan_sat.frequency.value,
+				self.scan_sat.frequency.float,
 				self.scan_sat.symbolrate.value,
 				self.scan_sat.polarization.value,
 				fec,
@@ -174,7 +175,7 @@ class Satfinder(ScanSetup):
 
 		self.updateSats()
 
-		for x in (self.tuning_type, self.tuning_sat, self.scan_sat.frequency,
+		for x in (self.tuning_sat, self.scan_sat.frequency,
 			self.scan_sat.inversion, self.scan_sat.symbolrate,
 			self.scan_sat.polarization, self.scan_sat.fec,
 			self.scan_sat.fec_s2_8psk, self.scan_sat.fec_s2_8psk_auto, 

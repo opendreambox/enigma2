@@ -2,7 +2,7 @@ from Screen import Screen
 from Screens.DefaultWizard import DefaultWizard
 from ServiceScan import ServiceScan
 from Components.config import config, ConfigSubsection, ConfigSelection, \
-	ConfigYesNo, ConfigInteger, getConfigListEntry, ConfigSlider, ConfigOnOff, ConfigText
+	ConfigYesNo, ConfigInteger, getConfigListEntry, ConfigSlider, ConfigOnOff, ConfigText, ConfigFloat
 from Components.ActionMap import NumberActionMap, ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.NimManager import nimmanager, getConfigSatlist
@@ -1688,7 +1688,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 			self.scan_ber.enabled = False
 
 			# sat
-			self.scan_sat.frequency = ConfigInteger(default = defaultSat["frequency"], limits = (1, 99999))
+			self.scan_sat.frequency = ConfigFloat(default = [defaultSat["frequency"],0], limits = [(1,99999),(0,9)])
 			self.scan_sat.inversion = ConfigSelection(default = defaultSat["inversion"], choices = [
 				(eDVBFrontendParametersSatellite.Inversion_Off, _("Off")),
 				(eDVBFrontendParametersSatellite.Inversion_On, _("On")),
@@ -1940,7 +1940,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		parm = eDVBFrontendParametersSatellite()
 		parm.modulation = modulation
 		parm.system = system
-		parm.frequency = frequency * 1000
+		parm.frequency = int(frequency * 1000)
 		parm.symbol_rate = symbol_rate * 1000
 		parm.polarisation = polarisation
 		parm.fec = fec
@@ -2002,7 +2002,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 						fec = self.fecEntry[1].value
 
 					print "add sat transponder"
-					self.addSatTransponder(tlist, self.scan_sat.frequency.value,
+					self.addSatTransponder(tlist, self.scan_sat.frequency.float,
 								self.scan_sat.symbolrate.value,
 								self.scan_sat.polarization.value,
 								fec,

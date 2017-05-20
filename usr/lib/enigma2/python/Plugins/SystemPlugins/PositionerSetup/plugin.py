@@ -562,7 +562,7 @@ class TunerScreen(ScanSetup):
 				mod = self.modulationEntry[1].value
 				fec = self.fecEntry[1].value
 			returnvalue = (
-				self.scan_sat.frequency.value,
+				self.scan_sat.frequency.float,
 				self.scan_sat.symbolrate.value,
 				self.scan_sat.polarization.value,
 				fec,

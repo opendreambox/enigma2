@@ -16,7 +16,7 @@ class Tuner:
 		if self.frontend:
 			print "tuning to transponder with data", transponder
 			parm = eDVBFrontendParametersSatellite()
-			parm.frequency = transponder[0] * 1000
+			parm.frequency = int(transponder[0] * 1000)
 			parm.symbol_rate = transponder[1] * 1000
 			parm.polarisation = transponder[2]
 			parm.fec = transponder[3]
