@@ -53,6 +53,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			if nim.powerMeasurement.value:
 				nim.powerMeasurement.value = False
 				nim.powerMeasurement.save()
+		if not nim.powerMeasurement.value:
+			list.append(getConfigListEntry(_("Rotor speed in degree per second"), nim.degreePerSecond))
+
 		if config.usage.setup_level.index >= 2: # expert
 			list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), nim.positionerExclusively))
 
@@ -400,6 +403,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 						if currLnb.powerMeasurement.value:
 							currLnb.powerMeasurement.value = False
 							currLnb.powerMeasurement.save()
+					if not currLnb.powerMeasurement.value:
+						self.list.append(getConfigListEntry(_("Rotor speed in degree per second"), currLnb.degreePerSecond))
 					self.advancedUsalsEntry = getConfigListEntry(_("Use usals for this sat"), Sat.usals)
 					self.list.append(self.advancedUsalsEntry)
 					if not Sat.usals.value:

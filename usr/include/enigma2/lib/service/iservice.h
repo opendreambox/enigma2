@@ -64,7 +64,7 @@ public:
 	std::string path;
 #endif
 	std::string getPath() { return path; }
-	void setPath( const std::string &n ) { path=n; }
+	void setPath( const std::string &n, bool decode_path=false );
 
 	unsigned int getUnsignedData(unsigned int num) const
 	{
@@ -164,10 +164,11 @@ public:
 		return valid();
 	}
 #endif
-	eServiceReference(int type, int flags, const std::string &path)
-		: type(type), flags(flags), path(path)
+	eServiceReference(int type, int flags, const std::string &p)
+		: type(type), flags(flags), path(p)
 	{
 		memset(data, 0, sizeof(data));
+		setPath(path);
 	}
 	eServiceReference(const std::string &string);
 	std::string toString() const;

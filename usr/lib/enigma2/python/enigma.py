@@ -3749,6 +3749,7 @@ eDVBSatelliteEquipmentControl.setLaDirection = new_instancemethod(_enigma.eDVBSa
 eDVBSatelliteEquipmentControl.setUseInputpower = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setUseInputpower, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setInputpowerDelta = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setInputpowerDelta, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setRotorTurningSpeed = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setRotorTurningSpeed, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.setDegreePerSecond = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setDegreePerSecond, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCR = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCR, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRvco = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRvco, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
@@ -5218,12 +5219,12 @@ class eNetworkService(iObject):
 
 
     def setIpv4Config(self, ipv4):
-        """setIpv4Config(eNetworkService self, StringMap ipv4)"""
+        """setIpv4Config(eNetworkService self, PseudoDict ipv4)"""
         return _enigma.eNetworkService_setIpv4Config(self, ipv4)
 
 
     def setIpv6Config(self, ipv6):
-        """setIpv6Config(eNetworkService self, StringMap ipv6)"""
+        """setIpv6Config(eNetworkService self, PseudoDict ipv6)"""
         return _enigma.eNetworkService_setIpv6Config(self, ipv6)
 
 
@@ -5238,7 +5239,7 @@ class eNetworkService(iObject):
 
 
     def setProxyConfig(self, proxy):
-        """setProxyConfig(eNetworkService self, StringMap proxy)"""
+        """setProxyConfig(eNetworkService self, PseudoDict proxy)"""
         return _enigma.eNetworkService_setProxyConfig(self, proxy)
 
 
@@ -5507,12 +5508,12 @@ class eNetworkServicePtr(object):
 
 
     def setIpv4Config(self, ipv4):
-        """setIpv4Config(eNetworkServicePtr self, StringMap ipv4)"""
+        """setIpv4Config(eNetworkServicePtr self, PseudoDict ipv4)"""
         return _enigma.eNetworkServicePtr_setIpv4Config(self, ipv4)
 
 
     def setIpv6Config(self, ipv6):
-        """setIpv6Config(eNetworkServicePtr self, StringMap ipv6)"""
+        """setIpv6Config(eNetworkServicePtr self, PseudoDict ipv6)"""
         return _enigma.eNetworkServicePtr_setIpv6Config(self, ipv6)
 
 
@@ -5527,7 +5528,7 @@ class eNetworkServicePtr(object):
 
 
     def setProxyConfig(self, proxy):
-        """setProxyConfig(eNetworkServicePtr self, StringMap proxy)"""
+        """setProxyConfig(eNetworkServicePtr self, PseudoDict proxy)"""
         return _enigma.eNetworkServicePtr_setProxyConfig(self, proxy)
 
 

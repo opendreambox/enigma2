@@ -909,6 +909,8 @@ class SatelliteTransponderSearchSupport:
 						parm.rolloff = d["rolloff"]
 						parm.pilot = d["pilot"]
 						parm.is_id = -1
+						parm.pls_mode = eDVBFrontendParametersSatellite.PLS_Unknown
+						parm.pls_code = 0
 
 					if self.auto_scan:
 						print "LOCKED at", freq
@@ -1281,6 +1283,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		self.modulationEntry = None
 		self.satelliteEntry = None
 		self.enableMisEntry = None
+		self.plsModeEntry = None
 		nim = nimmanager.nim_slots[index_to_scan]
 
 		if self.scan_system.value in ("DVB-S", "DVB-S2"):
@@ -1330,7 +1333,8 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec))
 				elif self.scan_system.value == "DVB-S2":
 					self.modulationEntry = getConfigListEntry(_('Modulation'), nim.can_modulation_auto and self.scan_sat.modulation_auto or self.scan_sat.modulation)
-					if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_8PSK:
+					mod = self.modulationEntry[1].value
+					if mod == eDVBFrontendParametersSatellite.Modulation_8PSK:
 						self.fecEntry = getConfigListEntry(_("FEC"), nim.can_auto_fec_s2 and self.scan_sat.fec_s2_8psk_auto or self.scan_sat.fec_s2_8psk)
 					else:
 						self.fecEntry = getConfigListEntry(_("FEC"), nim.can_auto_fec_s2 and self.scan_sat.fec_s2_qpsk_auto or self.scan_sat.fec_s2_qpsk)
@@ -1344,8 +1348,10 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 						if self.scan_sat.enable_mis.value:
 							self.list.append(getConfigListEntry(_('Stream ID'), self.scan_sat.is_id))
 					if nim.can_pls_s2:
-						self.list.append(getConfigListEntry(_('PLS Mode'), self.scan_sat.pls_mode))
-						self.list.append(getConfigListEntry(_('PLS Code'), self.scan_sat.pls_code))
+						self.plsModeEntry = getConfigListEntry(_('PLS Mode'), self.scan_sat.pls_mode)
+						self.list.append(self.plsModeEntry)
+						if self.scan_sat.pls_mode.value != eDVBFrontendParametersSatellite.PLS_Unknown:
+							self.list.append(getConfigListEntry(_('PLS Code'), self.scan_sat.pls_code))
 			elif self.scan_type.value == "single_satellite":
 				self.updateSatList()
 				self.list.append(getConfigListEntry(_("Satellite"), self.scan_satselection[index_to_scan]))
@@ -1443,6 +1449,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 			(self.modulationEntry and cur == self.modulationEntry) or \
 			(self.satelliteEntry and cur == self.satelliteEntry) or \
 			(self.enableMisEntry and cur == self.enableMisEntry) or \
+			(self.plsModeEntry and cur == self.plsModeEntry) or \
 			(self.plpidAutoEntry and cur == self.plpidAutoEntry):
 			self.createSetup()
 
@@ -1740,7 +1747,7 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				(eDVBFrontendParametersSatellite.Pilot_On, _("On")),
 				(eDVBFrontendParametersSatellite.Pilot_Unknown, _("Auto"))])
 			self.scan_sat.enable_mis = ConfigYesNo(default = defaultSat["is_id"] != -1)
-			self.scan_sat.is_id = ConfigInteger(default = defaultSat["is_id"] if self.scan_sat.enable_mis.value else 0, limits = (0, 255))
+			self.scan_sat.is_id = ConfigInteger(default = defaultSat["is_id"] if defaultSat["is_id"] != -1 else 0, limits = (0, 255))
 			self.scan_sat.pls_mode = ConfigSelection(default = defaultSat["pls_mode"], choices = [
 				(eDVBFrontendParametersSatellite.PLS_Root, "Root"),
 				(eDVBFrontendParametersSatellite.PLS_Gold, "Gold"),
@@ -1925,7 +1932,9 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 	def addSatTransponder(self, tlist, frequency, symbol_rate, polarisation, fec, inversion, orbital_position, system, modulation, rolloff, pilot, is_id, pls_mode, pls_code):
 		s = "Add Sat: frequ: " + str(frequency) + " symbol: " + str(symbol_rate) + " pol: " + str(polarisation) + " fec: " + str(fec) + " inversion: " + str(inversion) + " modulation: " + str(modulation) + " system: " + str(system) + " rolloff" + str(rolloff) + " pilot" + str(pilot)
 		if is_id != -1:
-			s += " is_id" + str(is_id) + "pls_mode" + str(pls_mode) + " pls_code" + str(pls_code)
+			s += " is_id: " + str(is_id)
+			if pls_mode != eDVBFrontendParametersSatellite.PLS_Unknown:
+				s += "pls_mode: " + str(pls_mode) + " pls_code: " + str(pls_code)
 		s += "\norbpos: " + str(orbital_position)
 		print s
 		parm = eDVBFrontendParametersSatellite()
@@ -2003,9 +2012,9 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 								mod,
 								self.scan_sat.rolloff.value,
 								self.scan_sat.pilot.value,
-								self.scan_sat.is_id.value,
+								self.scan_sat.is_id.value if self.scan_sat.enable_mis.value else -1,
 								self.scan_sat.pls_mode.value,
-								self.scan_sat.pls_code.value)
+								self.scan_sat.pls_code.value if self.scan_sat.pls_mode.value < eDVBFrontendParametersSatellite.PLS_Unknown else 0)
 				removeAll = False
 			elif self.scan_type.value == "single_satellite":
 				sat = self.satList[index_to_scan][self.scan_satselection[index_to_scan].index]

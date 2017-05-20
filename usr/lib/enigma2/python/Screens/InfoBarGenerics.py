@@ -8,6 +8,7 @@ from Components.Label import Label
 from Components.PluginComponent import plugins
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
+from Tools.Log import Log
 
 try:
 	from Components.Sources.HbbtvApplication import HbbtvApplication
@@ -2136,13 +2137,16 @@ class InfoBarCueSheetSupport:
 		self.cut_list = [ ]
 		self.is_closing = False
 		self.length = [0,0]
+		self._tryResume = False
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evStart: self.__serviceStarted,
+				iPlayableService.evSeekableStatusChanged: self.__onSeekableStatusChanged,
 				iPlayableService.evCuesheetChanged: self.__downloadChangedCuesheet
 			})
 
 	def __serviceStarted(self):
+		self._tryResume = False
 		if self.is_closing:
 			return
 		print "new service started! trying to download cuts!"
@@ -2161,6 +2165,9 @@ class InfoBarCueSheetSupport:
 				if (self.length[1] > 0) and abs(self.length[1] - last) < 4*90000: # if last playpos is within 4 seconds span to the length of this recording, assume it has been watched all the way to the end and don't resume
 					return
 				l = last / 90000
+				if l < config.usage.resume_treshold.value:
+					Log.w("Resume treshold not reached, starting from the beginning")
+					return
 				if config.usage.on_movie_start.value == "ask":
 					Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l/3600, l%3600/60, l%60))), timeout=10, domain = "InfoBar")
 				elif config.usage.on_movie_start.value == "resume":
@@ -2171,7 +2178,16 @@ class InfoBarCueSheetSupport:
 # TRANSLATORS: in the middle somewhere and not from the beginning.
 # TRANSLATORS: (Some translators seem to have interpreted it as a
 # TRANSLATORS: question or a choice, but it is a statement.)
-					Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Resuming playback"), timeout=2, type=MessageBox.TYPE_INFO, domain = "InfoBar")
+					self.session.toastManager.showToast(_("Resuming playback"))
+					if self.isSeekable():
+						self.playLastCB(True)
+					else:
+						self._tryResume = True
+
+	def __onSeekableStatusChanged(self):
+		if self._tryResume and self.isSeekable():
+			self._tryResume = False
+			self.playLastCB(True)
 
 	def playLastCB(self, answer):
 		if answer == True:

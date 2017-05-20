@@ -57,13 +57,19 @@ class Satfinder(ScanSetup):
 		self.session.nav.playService(self.oldref)
 
 	def createSetup(self):
-		self.typeOfTuningEntry = None
-		self.satEntry = None
+		self.plpidAutoEntry = None
+		self.fecEntry = None
+		self.systemEntry = None
+		self.modulationEntry = None
+		self.satelliteEntry = None
+		self.enableMisEntry = None
+		self.plsModeEntry = None
+		self.tunerEntry = None
 
 		self.list = []
 
-		self.typeOfTuningEntry = getConfigListEntry(_('Tune'), self.tuning_type)
-		self.list.append(self.typeOfTuningEntry)
+		self.typeOfScanEntry = getConfigListEntry(_('Tune'), self.tuning_type)
+		self.list.append(self.typeOfScanEntry)
 		self.satEntry = getConfigListEntry(_('Satellite'), self.tuning_sat)
 		self.list.append(self.satEntry)
 
@@ -81,17 +87,30 @@ class Satfinder(ScanSetup):
 			self.list.append(getConfigListEntry(_('Inversion'), self.scan_sat.inversion))
 			self.list.append(getConfigListEntry(_('Symbol rate'), self.scan_sat.symbolrate))
 			self.list.append(getConfigListEntry(_('Polarization'), self.scan_sat.polarization))
-			if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
-				self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec))
-			elif self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
-				if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_QPSK:
-					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_qpsk))
+			if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
+				self.modulationEntry = getConfigListEntry(_('Modulation'), nim.can_modulation_auto and self.scan_sat.modulation_auto or self.scan_sat.modulation)
+				mod = self.modulationEntry[1].value
+				if mod == eDVBFrontendParametersSatellite.Modulation_8PSK:
+					self.fecEntry = getConfigListEntry(_("FEC"), nim.can_auto_fec_s2 and self.scan_sat.fec_s2_8psk_auto or self.scan_sat.fec_s2_8psk)
 				else:
-					self.list.append(getConfigListEntry(_("FEC"), self.scan_sat.fec_s2_8psk))
-				self.modulationEntry = getConfigListEntry(_('Modulation'), self.scan_sat.modulation)
+					self.fecEntry = getConfigListEntry(_("FEC"), nim.can_auto_fec_s2 and self.scan_sat.fec_s2_qpsk_auto or self.scan_sat.fec_s2_qpsk)
+				self.list.append(self.fecEntry)
 				self.list.append(self.modulationEntry)
 				self.list.append(getConfigListEntry(_('Roll-off'), self.scan_sat.rolloff))
 				self.list.append(getConfigListEntry(_('Pilot'), self.scan_sat.pilot))
+				if nim.can_multistream_s2:
+					self.enableMisEntry = getConfigListEntry(_('Multistream'), self.scan_sat.enable_mis)
+					self.list.append(self.enableMisEntry)
+					if self.scan_sat.enable_mis.value:
+						self.list.append(getConfigListEntry(_('Stream ID'), self.scan_sat.is_id))
+				if nim.can_pls_s2:
+					self.plsModeEntry = getConfigListEntry(_('PLS Mode'), self.scan_sat.pls_mode)
+					self.list.append(self.plsModeEntry)
+					if self.scan_sat.pls_mode.value != eDVBFrontendParametersSatellite.PLS_Unknown:
+						self.list.append(getConfigListEntry(_('PLS Code'), self.scan_sat.pls_code))
+			else:
+				self.fecEntry = getConfigListEntry(_("FEC"), self.scan_sat.fec)
+				self.list.append(self.fecEntry)
 		elif self.tuning_transponder and self.tuning_type.value == "predefined_transponder":
 			self.list.append(getConfigListEntry(_("Transponder"), self.tuning_transponder))
 		self["config"].list = self.list
@@ -99,11 +118,15 @@ class Satfinder(ScanSetup):
 
 	def newConfig(self):
 		cur = self["config"].getCurrent()
-		if cur in (self.typeOfTuningEntry, self.systemEntry):
-			self.createSetup()
+		if cur is None:
+			pass
 		elif cur == self.satEntry:
 			self.updateSats()
 			self.createSetup()
+		else:
+			ScanSetup.newConfig(self)
+		if self.systemEntry and cur == self.systemEntry:
+			self.retune(None)
 
 	def sat_changed(self, config_element):
 		self.newConfig()
@@ -113,13 +136,12 @@ class Satfinder(ScanSetup):
 		returnvalue = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 		satpos = int(self.tuning_sat.value)
 		if self.tuning_type.value == "manual_transponder":
-			if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S2:
-				if self.scan_sat.modulation.value == eDVBFrontendParametersSatellite.Modulation_QPSK:
-					fec = self.scan_sat.fec_s2_qpsk.value
-				else:
-					fec = self.scan_sat.fec_s2_8psk.value
-			else:
+			if self.scan_sat.system.value == eDVBFrontendParametersSatellite.System_DVB_S:
 				fec = self.scan_sat.fec.value
+				mod = eDVBFrontendParametersSatellite.Modulation_QPSK
+			else:
+				mod = self.modulationEntry[1].value
+				fec = self.fecEntry[1].value
 			returnvalue = (
 				self.scan_sat.frequency.value,
 				self.scan_sat.symbolrate.value,
@@ -128,9 +150,12 @@ class Satfinder(ScanSetup):
 				self.scan_sat.inversion.value,
 				satpos,
 				self.scan_sat.system.value,
-				self.scan_sat.modulation.value,
+				mod,
 				self.scan_sat.rolloff.value,
-				self.scan_sat.pilot.value)
+				self.scan_sat.pilot.value,
+				self.scan_sat.is_id.value if self.scan_sat.enable_mis.value else -1,
+				self.scan_sat.pls_mode.value,
+				self.scan_sat.pls_code.value if self.scan_sat.pls_mode.value < eDVBFrontendParametersSatellite.PLS_Unknown else 0)
 			self.tune(returnvalue)
 		elif self.tuning_type.value == "predefined_transponder":
 			tps = nimmanager.getTransponders(satpos)
@@ -151,9 +176,13 @@ class Satfinder(ScanSetup):
 
 		for x in (self.tuning_type, self.tuning_sat, self.scan_sat.frequency,
 			self.scan_sat.inversion, self.scan_sat.symbolrate,
-			self.scan_sat.polarization, self.scan_sat.fec, self.scan_sat.pilot,
-			self.scan_sat.fec_s2_8psk, self.scan_sat.fec_s2_qpsk, self.scan_sat.fec, self.scan_sat.modulation,
-			self.scan_sat.rolloff, self.scan_sat.system):
+			self.scan_sat.polarization, self.scan_sat.fec,
+			self.scan_sat.fec_s2_8psk, self.scan_sat.fec_s2_8psk_auto, 
+			self.scan_sat.fec_s2_qpsk, self.scan_sat.fec_s2_qpsk_auto,
+			self.scan_sat.modulation, self.scan_sat.modulation_auto,
+			self.scan_sat.enable_mis, self.scan_sat.is_id, 
+			self.scan_sat.pls_mode, self.scan_sat.pls_code,
+			self.scan_sat.pilot, self.scan_sat.rolloff):
 			x.addNotifier(self.retune, initial_call = False)
 
 	def updateSats(self):

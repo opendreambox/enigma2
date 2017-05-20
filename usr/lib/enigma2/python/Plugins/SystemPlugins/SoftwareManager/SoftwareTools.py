@@ -82,7 +82,7 @@ class SoftwareTools(DreamInfoHandler):
 		self.UpdateConsole = Console()
 		self.UpgradeConsole = Console()
 		self.cmdList = []
-		self.unwanted_extensions = ('-dbg', '-dev', '-doc')
+		self.unwanted_extensions = ('-dbg', '-dev', '-doc', '-staticdev')
 		self.reboot_required_packages = ('dreambox-dvb-modules', 'kernel-')
 		self.ipkg = IpkgComponent()
 		self.ipkg.addCallback(self.ipkgCallback)		

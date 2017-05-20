@@ -9,6 +9,8 @@ from enigma import eConsoleAppContainer, eDVBDB, eNetworkManager
 import os
 from Components.Network import NetworkInterface
 
+from Tools.Log import Log
+
 class InfoHandlerParseError(Exception):
 	def __init__(self, value):
 		self.value = value
@@ -16,6 +18,8 @@ class InfoHandlerParseError(Exception):
 		return repr(self.value)
 
 class InfoHandler(xml.sax.ContentHandler):
+	VALID_PACKAGE_ATTRIBS = ("details", "author", "name", "packagename", "needsRestart", "shortdescription", "description")
+
 	def __init__(self, prerequisiteMet, directory):
 		self.attributes = {}
 		self.directory = directory
@@ -25,7 +29,7 @@ class InfoHandler(xml.sax.ContentHandler):
 		self.elements = []
 		self.validFileTypes = ["skin", "config", "services", "favourites", "package"]
 		self.prerequisitesMet = prerequisiteMet
-		self.data = ""
+		self.data = {}
 
 	def printError(self, error):
 		print "Error in defaults xml files:", error
@@ -52,11 +56,7 @@ class InfoHandler(xml.sax.ContentHandler):
 
 		if name == "files":
 			if attrs.has_key("type"):
-				if attrs["type"] == "directories":
-					self.attributes["filestype"] = "directories"
-				elif attrs["type"] == "package":
-					self.attributes["filestype"] = "package"
-				# TODO add a compressed archive type
+				self.attributes["filestype"] = str(attrs["type"])
 
 		if name == "file":
 			self.prerequisites = {}
@@ -66,30 +66,20 @@ class InfoHandler(xml.sax.ContentHandler):
 				if not attrs.has_key("name"):
 					self.printError("file tag with no name attribute")
 				else:	
-					type = attrs["type"]
-					if not type in self.validFileTypes:
-						self.printError("file tag with invalid type attribute")
-					else:
-						self.filetype = type
+					filetype = attrs["type"]
+					if filetype in self.validFileTypes:
+						self.filetype = filetype
 						self.fileattrs = attrs
+					else:
+						self.printError("file tag with invalid type attribute")
 
 		if name == "package":
-			if attrs.has_key("details"):
-				self.attributes["details"] = str(attrs["details"])
-			if attrs.has_key("name"):
-				self.attributes["name"] = str(attrs["name"])
-			if attrs.has_key("packagename"):
-				self.attributes["packagename"] = str(attrs["packagename"])
-			if attrs.has_key("packagetype"):
-				self.attributes["packagetype"] = str(attrs["packagetype"])
-			if attrs.has_key("needsRestart"):
-				self.attributes["needsRestart"] = str(attrs["needsRestart"])
-			if attrs.has_key("shortdescription"):
-				self.attributes["shortdescription"] = str(attrs["shortdescription"])
+			for key in self.VALID_PACKAGE_ATTRIBS:
+				if attrs.has_key(key):
+					self.attributes[key] = str(attrs[key])
 
-		if name == "screenshot":
-			if attrs.has_key("src"):
-				self.attributes["screenshot"] = str(attrs["src"])
+		if name == "screenshot" and attrs.has_key("src"):
+			self.attributes["screenshot"] = str(attrs["src"])
 
 	def endElement(self, name):
 		#print "endElement", name
@@ -114,27 +104,19 @@ class InfoHandler(xml.sax.ContentHandler):
 			self.globalprerequisites = {}
 
 	def characters(self, data):
-		if self.elements[-1] == "author":
-			self.attributes["author"] = str(data)
-		if self.elements[-1] == "name":
-			self.attributes["name"] = str(data)
-		if self.elements[-1] == "packagename":
-			self.attributes["packagename"] = str(data)
-		if self.elements[-1] == "needsRestart":
-			self.attributes["needsRestart"] = str(data)
-		if self.elements[-1] == "shortdescription":
-			self.attributes["shortdescription"] = str(data)
-		if self.elements[-1] == "description":
-			self.data += data.strip()
-			self.attributes["description"] = str(self.data)
-		#print "characters", data
-
+		tag = self.elements[-1]
+		if tag in self.VALID_PACKAGE_ATTRIBS:
+			if not self.attributes.has_key(tag):
+				self.attributes[tag] = ""
+			self.attributes[tag] += str(data.strip())
 
 class DreamInfoHandler:
 	STATUS_WORKING = 0
 	STATUS_DONE = 1
 	STATUS_ERROR = 2
 	STATUS_INIT = 4
+
+	PACKAGES = []
 
 	def __init__(self, statusCallback, blocking = False, neededTag = None, neededFlag = None):
 		self.hardware_info = HardwareInfo()
@@ -157,8 +139,19 @@ class DreamInfoHandler:
 		self.setStatus(self.STATUS_INIT)
 
 		self.packageslist = []
-		self.packagesIndexlist = []
-		self.packageDetails = []
+
+	def _getPackageDetails(self):
+		return DreamInfoHandler.PACKAGES
+	packageDetails = property(_getPackageDetails)
+	packagesIndexlist = property(_getPackageDetails)
+
+	def buildPackageIndex(self):
+		DreamInfoHandler.PACKAGES = []
+		files = crawlDirectory("/usr/share/meta", "(plugin|skin)\_.*\.xml")
+		for d, f in files:
+			d = "%s/" %(d,)
+			f = "%s%s" %(d,f)
+			self.readDetails(d, f)
 
 	def readInfo(self, directory, file):
 		print "Reading .info file", file
@@ -171,25 +164,14 @@ class DreamInfoHandler:
 			print "file", file, "ignored due to errors in the file"
 		#print handler.list
 
-	def readIndex(self, directory, file):
-		print "Reading .xml meta index file", directory, file
-		handler = InfoHandler(self.prerequisiteMet, directory)
-		try:
-			xml.sax.parse(file, handler)
-			for entry in handler.list:
-				self.packagesIndexlist.append((entry,file))
-		except InfoHandlerParseError:
-			print "file", file, "ignored due to errors in the file"
-		#print handler.list
-
 	def readDetails(self, directory, file):
-		self.packageDetails = []
-		print "Reading .xml meta details file", file
+		Log.i("Reading .xml meta details file '%s'" %(file,))
 		handler = InfoHandler(self.prerequisiteMet, directory)
 		try:
 			xml.sax.parse(file, handler)
 			for entry in handler.list:
-				self.packageDetails.append((entry,file))
+				entry["attributes"]["details"] = file
+				DreamInfoHandler.PACKAGES.append((entry,file))
 		except InfoHandlerParseError:
 			print "file", file, "ignored due to errors in the file"
 		#print handler.list
@@ -215,38 +197,21 @@ class DreamInfoHandler:
 
 	# prerequisites = True: give only packages matching the prerequisites
 	def fillPackagesIndexList(self, prerequisites = True):
-		self.packagesIndexlist = []
-		indexfileList = []
-
-		if not isinstance(self.directory, list):
-			self.directory = [self.directory]
-
-		for indexfile in os.listdir(self.directory[0]):
-			if indexfile.startswith("index-"):
-				if indexfile.endswith(".xml"):
-					if indexfile[-7:-6] == "_":
-						continue
-					indexfileList.append(indexfile)
-		if len(indexfileList):
-			for file in indexfileList:
-				neededFile = self.directory[0] + "/" + file
-				if os.path.isfile(neededFile):
-					self.readIndex(self.directory[0] + "/" , neededFile)
-
-		if prerequisites:
-			for package in self.packagesIndexlist[:]:
-				if not self.prerequisiteMet(package[0]["prerequisites"]):
-					self.packagesIndexlist.remove(package)
+		self.buildPackageIndex()
 		return self.packagesIndexlist
 
 	# prerequisites = True: give only packages matching the prerequisites
-	def fillPackageDetails(self, details = None):
-		self.packageDetails = []
-		detailsfile = details
-		if not isinstance(self.directory, list):
-			self.directory = [self.directory]
-		self.readDetails(self.directory[0] + "/", self.directory[0] + "/" + detailsfile)
-		return self.packageDetails
+	def getPackageDetails(self, details = None):
+		if not DreamInfoHandler.PACKAGES:
+			Log.w("Building index first!")
+			self.buildPackageIndex()
+		if details:
+			for p in DreamInfoHandler.PACKAGES:
+				if p[1] == details:
+					Log.i("details=%s, file=%s" %(details, p))
+					return p[0]
+		else:
+			return DreamInfoHandler.PACKAGES
 			
 	def prerequisiteMet(self, prerequisites):
 

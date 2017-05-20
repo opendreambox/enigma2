@@ -48,6 +48,7 @@ struct uniqueEPGKey
 		,tsid( ref.type != eServiceReference::idInvalid ? ((eServiceReferenceDVB&)ref).getTransportStreamID().get() : -1 )
 		,dvbnamespace( ref.type != eServiceReference::idInvalid ? ((eServiceReferenceDVB&)ref).getDVBNamespace().get() : -1 )
 	{
+		filterNamespace();
 	}
 	uniqueEPGKey()
 		:sid(-1), onid(-1), tsid(-1), dvbnamespace(-1)
@@ -56,12 +57,17 @@ struct uniqueEPGKey
 	uniqueEPGKey( int sid, int onid, int tsid, int dvbnamespace )
 		:sid(sid), onid(onid), tsid(tsid), dvbnamespace(dvbnamespace)
 	{
+		filterNamespace();
 	}
 	uniqueEPGKey( const eDVBChannelID &chid)
 		:sid(-1), onid(chid.original_network_id.get()), tsid(chid.transport_stream_id.get()), dvbnamespace(chid.dvbnamespace.get())
 	{
 	}
-
+	void filterNamespace()
+	{
+		if ((dvbnamespace & 0xFFFF0000) == 0xEEEE0000)
+			dvbnamespace &= 0xFFFF0000;
+	}
 	bool operator<(const uniqueEPGKey &a) const
 	{
 		return dvbnamespace < a.dvbnamespace || (dvbnamespace == a.dvbnamespace

@@ -56,7 +56,7 @@ def write_cache(cache_file, cache_data):
 		try:
 			mkdir( os_path.dirname(cache_file) )
 		except OSError:
-			    print os_path.dirname(cache_file), 'is a file'
+			print os_path.dirname(cache_file), 'is a file'
 	fd = open(cache_file, 'w')
 	dump(cache_data, fd, -1)
 	fd.close()
@@ -736,12 +736,8 @@ class PluginManager(Screen, DreamInfoHandler):
 		if current:
 			if self.currList == "packages":
 				if current[7] is not '':
-					detailsfile = iSoftwareTools.directory[0] + "/" + current[1]
-					if (os_path.exists(detailsfile) == True):
-						self.saved_currentSelectedPackage = self.currentSelectedPackage
-						self.session.openWithCallback(self.detailsClosed, PluginDetails, self.skin_path, current)
-					else:
-						self.session.open(MessageBox, _("Sorry, no Details available!"), MessageBox.TYPE_INFO, timeout = 10)
+					self.saved_currentSelectedPackage = self.currentSelectedPackage
+					self.session.openWithCallback(self.detailsClosed, PluginDetails, self.skin_path, current)
 			elif self.currList == "category":
 				self.prepareInstall()
 				if len(self.cmdList):
@@ -874,14 +870,12 @@ class PluginManager(Screen, DreamInfoHandler):
 			self.cmdList.append((IpkgComponent.CMD_UPGRADE, upgrade_args))
 		if self.selectedFiles and len(self.selectedFiles):
 			for plugin in self.selectedFiles:
-				detailsfile = iSoftwareTools.directory[0] + "/" + plugin[0]
-				if (os_path.exists(detailsfile) == True):
-					iSoftwareTools.fillPackageDetails(plugin[0])
-					self.package = iSoftwareTools.packageDetails[0]
-					if self.package[0].has_key("attributes"):
-						self.attributes = self.package[0]["attributes"]
-						if self.attributes.has_key("needsRestart"):
-							self.restartRequired = True
+				detailsfile = plugin[0]
+				if os_path.exists(detailsfile):
+					self.package = iSoftwareTools.getPackageDetails(detailsfile)
+					self.attributes = self.package["attributes"]
+					if self.attributes.has_key("needsRestart"):
+						self.restartRequired = True
 					if self.attributes.has_key("package"):
 						self.packagefiles = self.attributes["package"]
 					if plugin[1] == 'installed':
@@ -1109,7 +1103,7 @@ class PluginManagerHelp(Screen):
 		self.close()
 
 
-class PluginDetails(Screen, DreamInfoHandler):
+class PluginDetails(Screen):
 	skin = """
 		<screen name="PluginDetails" position="center,center" size="600,440" title="Plugin details" >
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
@@ -1126,17 +1120,14 @@ class PluginDetails(Screen, DreamInfoHandler):
 		Screen.__init__(self, session)
 		self.skin_path = plugin_path
 		self.language = language.getLanguage()[:2] # getLanguage returns e.g. "fi_FI" for "language_country"
-		self.attributes = None
-		DreamInfoHandler.__init__(self, self.statusCallback, blocking = False)
 		self.directory = resolveFilename(SCOPE_METADIR)
 		if packagedata:
 			self.pluginname = packagedata[0]
-			self.details = packagedata[1]
 			self.pluginstate = packagedata[4]
 			self.statuspicinstance = packagedata[5]
 			self.divpicinstance = packagedata[6]
-			self.fillPackageDetails(self.details)
-
+			handler = DreamInfoHandler(self.statusCallback)
+			self.attributes = handler.getPackageDetails(packagedata[1])["attributes"]
 		self.thumbnail = ""
 
 		self["shortcuts"] = ActionMap(["ShortcutActions", "WizardActions"],
@@ -1162,9 +1153,6 @@ class PluginDetails(Screen, DreamInfoHandler):
 		self["screenshot"].hide()
 		self["divpic"].hide()
 
-		self.package = self.packageDetails[0]
-		if self.package[0].has_key("attributes"):
-			self.attributes = self.package[0]["attributes"]
 		self.restartRequired = False
 		self.cmdList = []
 		self.oktext = _("\nAfter pressing OK, please wait!")
@@ -1710,7 +1698,7 @@ class PacketManager(Screen, NumericalTextInput):
 		self.cache_ttl = 86400  #600 is default, 0 disables, Seconds cache is considered valid (24h should be ok for caching ipkgs)
 		self.cache_file = eEnv.resolve('${libdir}/enigma2/python/Plugins/SystemPlugins/SoftwareManager/packetmanager.cache') #Path to cache directory
 		self.oktext = _("\nAfter pressing OK, please wait!")
-		self.unwanted_extensions = ('-dbg', '-dev', '-doc', 'busybox')
+		self.unwanted_extensions = ('-dbg', '-dev', '-doc', '-staticdev')
 
 		self.ipkg = IpkgComponent()
 		self.ipkg.addCallback(self.ipkgCallback)

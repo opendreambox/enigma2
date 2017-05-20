@@ -1088,7 +1088,7 @@ class ConfigIP6(ConfigTextBase, NumericalHexInput):
 			self.text = self.default
 
 	def getText(self):
-		return IPAddress(self.text).format().encode("utf-8")
+		return self.text
 
 	def onDeselect(self, session):
 		self.setValue(self.text)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from enigma import eNetworkManager, eNetworkService, eNetworkServicePtr, StringList, StringMap
+from enigma import eNetworkManager, eNetworkService, eNetworkServicePtr, StringList
 
 from Components.Label import Label
 from Components.ActionMap import ActionMap
@@ -617,7 +617,7 @@ class ServiceIPConfiguration(object):
 				ip6 = self._service.ipv6Config()
 			self._config_ip6_method.value = ip6.get(eNetworkService.KEY_METHOD, eNetworkService.METHOD_OFF)
 			self._config_ip6_address.value = ip6.get(eNetworkService.KEY_ADDRESS, "::")
-			self._config_ip6_prefix_length.value = ord( ip6.get(eNetworkService.KEY_PREFIX_LENGTH, chr(1)) )
+			self._config_ip6_prefix_length.value = ord( ip6.get(eNetworkService.KEY_PREFIX_LENGTH, chr(1)) or chr(1) )
 			self._config_ip6_gw.value = ip6.get(eNetworkService.KEY_GATEWAY, "::")
 			self._config_ip6_privacy.value = ip6.get(eNetworkService.KEY_PRIVACY, eNetworkService.IPV6_PRIVACY_DISABLED)
 		self._isReloading = False
@@ -672,7 +672,7 @@ class ServiceIPConfiguration(object):
 			else:
 				ip4_config = { eNetworkService.KEY_METHOD : self._config_ip4_method.value }
 			Log.i(ip4_config)
-			self._service.setIpv4Config(StringMap(ip4_config))
+			self._service.setIpv4Config(ip4_config)
 
 		if self._ipv6Changed:
 			Log.i("IPv6 Changed, saving!")
@@ -694,7 +694,7 @@ class ServiceIPConfiguration(object):
 				if val != eNetworkService.METHOD_OFF:
 					ip6_config[eNetworkService.KEY_PRIVACY] = self._config_ip6_privacy.value
 			Log.i(ip6_config)
-			self._service.setIpv6Config(StringMap(ip6_config))
+			self._service.setIpv6Config(ip6_config)
 
 class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
 	skin = """

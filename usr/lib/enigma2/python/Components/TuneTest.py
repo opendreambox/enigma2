@@ -26,6 +26,9 @@ class Tuner:
 			parm.modulation = transponder[7]
 			parm.rolloff = transponder[8]
 			parm.pilot = transponder[9]
+			parm.is_id = transponder[10] if len(transponder) > 10 else -1
+			parm.pls_mode = transponder[11] if len(transponder) > 11 else eDVBFrontendParametersSatellite.PLS_Unknown
+			parm.pls_code = transponder[12] if len(transponder) > 12 else 0
 			feparm = eDVBFrontendParameters()
 			feparm.setDVBS(parm, self.ignore_rotor)
 			self.lastparm = feparm

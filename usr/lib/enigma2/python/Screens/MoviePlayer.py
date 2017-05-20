@@ -20,7 +20,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 
 	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None, pauseCallback = None, streamMode = False, askBeforeLeaving=True):
 		Screen.__init__(self, session)
-		for x in [InfoBarBase, InfoBarSeek, InfoBarShowHide,
+		for x in [InfoBarBase, InfoBarShowHide, InfoBarSeek,
 			InfoBarAudioSelection, InfoBarCueSheetSupport,
 			InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport,
 			InfoBarExtensions, InfoBarPlugins, InfoBarNotifications,

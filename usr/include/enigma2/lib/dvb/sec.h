@@ -25,6 +25,7 @@ public:
 		CLEAR_ROTOR_PENDING,
 		IF_NOT_ROTOR_PENDING_GOTO,
 		IF_ROTORPOS_VALID_GOTO,
+		IF_BLINDSCAN_GOTO,
 		IF_TUNER_LOCKED_GOTO,
 		IF_TONE_GOTO, IF_NOT_TONE_GOTO,
 		START_TUNE_TIMEOUT,
@@ -217,6 +218,8 @@ public:
 	};
 	eDVBSatelliteRotorInputpowerParameters m_inputpower_parameters;
 
+	unsigned int m_degree_per_second;
+
 	struct eDVBSatelliteRotorGotoxxParameters
 	{
 		__u8 m_lo_direction;	// EAST, WEST
@@ -231,6 +234,7 @@ public:
 		m_inputpower_parameters.m_turning_speed = FAST; // fast turning
 		m_inputpower_parameters.m_use = true;
 		m_inputpower_parameters.m_delta = 60;
+		m_degree_per_second = 5; // 0.5 degree per second for 13V ... + 25% for 18V
 		m_gotoxx_parameters.m_lo_direction = EAST;
 		m_gotoxx_parameters.m_la_direction = NORTH;
 		m_gotoxx_parameters.m_longitude = 0.0;
@@ -365,6 +369,7 @@ public:
 	RESULT setUseInputpower(bool onoff);
 	RESULT setInputpowerDelta(int delta);  // delta between running and stopped rotor
 	RESULT setRotorTurningSpeed(int speed);  // set turning speed..
+	RESULT setDegreePerSecond(int degree); // set motor speed in tenth of degree per second ... used only when inputpower is not used
 /* Unicable Specific Parameters */
 	RESULT setLNBSatCR(int SatCR_idx);
 	RESULT setLNBSatCRvco(int SatCRvco);
