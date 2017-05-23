@@ -102,6 +102,11 @@ public:
 	{
 		return false;
 	}
+
+	virtual int maxDownScaleFactor() const
+	{
+		return 0;
+	}
 };
 
 #endif /* LIB_GDI_GFX2D_H */

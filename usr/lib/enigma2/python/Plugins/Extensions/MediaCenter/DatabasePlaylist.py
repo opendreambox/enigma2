@@ -1,4 +1,4 @@
-from enigma import eMediaDatabase, eServiceReference, StringMap, StringMapVector
+from enigma import eMediaDatabase, eServiceReference, StringMap, StringMapVector, eSize
 from Screens.ChoiceBox import ChoiceBox
 from Screens.InputBox import InputBox
 from Tools.Log import Log
@@ -10,7 +10,7 @@ from os import path as os_path
 
 class DatabasePlaylistEntry(PlayListEntry):
 	@staticmethod
-	def get(ref, state, data):
+	def get(ref, state, data, coverSize=eSize(300,300)):
 		artist = data.get(eMediaDatabase.FIELD_ARTIST, "")
 		title = data.get(eMediaDatabase.FIELD_TITLE, "")
 		album = data.get(eMediaDatabase.FIELD_ALBUM, "")
@@ -19,7 +19,7 @@ class DatabasePlaylistEntry(PlayListEntry):
 		cover_art = DefaultCoverArt
 		cover = None
 		if cover_art_id:
-			cover = eMediaDatabase.getInstance().getCoverArt(cover_art_id)
+			cover = eMediaDatabase.getInstance().getCoverArt(cover_art_id, coverSize)
 		if cover:
 			cover_art = cover
 

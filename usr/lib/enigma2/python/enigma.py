@@ -4663,9 +4663,13 @@ class eMediaDatabase(object):
         return _enigma.eMediaDatabase_getFileAttributeValue(self, file_id, key)
 
 
-    def getCoverArt(self, cover_art_id):
-        """getCoverArt(eMediaDatabase self, int cover_art_id)"""
-        return _enigma.eMediaDatabase_getCoverArt(self, cover_art_id)
+    def getCoverArt(self, *args):
+        """
+        getCoverArt(eMediaDatabase self, int cover_art_id, eSize size, eSize aspect)
+        getCoverArt(eMediaDatabase self, int cover_art_id, eSize size)
+        getCoverArt(eMediaDatabase self, int cover_art_id)
+        """
+        return _enigma.eMediaDatabase_getCoverArt(self, *args)
 
 
     def getCoverArtData(self, *args):
@@ -4676,9 +4680,13 @@ class eMediaDatabase(object):
         return _enigma.eMediaDatabase_getCoverArtData(self, *args)
 
 
-    def getAlbumCoverArt(self, cover_art_id):
-        """getAlbumCoverArt(eMediaDatabase self, int cover_art_id)"""
-        return _enigma.eMediaDatabase_getAlbumCoverArt(self, cover_art_id)
+    def getAlbumCoverArt(self, *args):
+        """
+        getAlbumCoverArt(eMediaDatabase self, int cover_art_id, eSize size, eSize aspect)
+        getAlbumCoverArt(eMediaDatabase self, int cover_art_id, eSize size)
+        getAlbumCoverArt(eMediaDatabase self, int cover_art_id)
+        """
+        return _enigma.eMediaDatabase_getAlbumCoverArt(self, *args)
 
 
     def getAlbumCoverArtData(self, album_id):

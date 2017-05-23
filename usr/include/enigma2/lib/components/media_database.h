@@ -6,6 +6,7 @@
 #include <lib/base/thread.h>
 #include <lib/components/file_monitor.h>
 #include <lib/components/media_scanner.h>
+#include <lib/gdi/esize.h>
 
 #include <QSqlQuery>
 #include <QSqlDatabase>
@@ -202,11 +203,11 @@ public:
 	ePtr<eMediaDatabaseResult> getFileAttribute(int file_id, const std::string &key);
 	SWIG_VOID(int) getFileAttributeValue(int file_id, const std::string &key, std::string &SWIG_OUTPUT);
 
-	SWIG_VOID(int) getCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT);
+	SWIG_VOID(int) getCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT, const eSize &size=eSize(), const eSize &aspect=eSize());
 	ePtr<eMediaDatabaseResult> getCoverArtData(int cover_art_id);
 	ePtr<eMediaDatabaseResult> getCoverArtData(const std::string &cover_art_key);
 
-	SWIG_VOID(int) getAlbumCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT);
+	SWIG_VOID(int) getAlbumCoverArt(int cover_art_id, ePtr<gPixmap> &SWIG_OUTPUT, const eSize &size=eSize(), const eSize &aspect=eSize());
 	ePtr<eMediaDatabaseResult> getAlbumCoverArtData(int album_id);
 	ePtr<eMediaDatabaseResult> getAlbumCoverArtId(int album_id);
 

@@ -166,6 +166,13 @@ class SecConfigure:
 				enabled |= iDVBFrontend.feCable
 
 			used_nim_slots.append((slot.slot, slot.description, enabled, slot.frontend_id is None and -1 or slot.frontend_id, slot.input_name or ""))
+
+		# this have to be called before tuners can be linked to other tuners!!!!!!!!
+		eDVBResourceManager.getInstance().setFrontendSlotInformations(used_nim_slots)
+
+		# please do not mix this loop with the following one...
+		# this code must be run before the next loop
+		for slot in nim_slots:
 			x = slot.slot
 			nim = slot.config
 			if slot.isEnabled("DVB-S"):
@@ -188,7 +195,6 @@ class SecConfigure:
 					if not self.satposdepends.has_key(connto):
 						self.satposdepends[connto] = []
 					self.satposdepends[connto].append(x)
-		eDVBResourceManager.getInstance().setFrontendSlotInformations(used_nim_slots)
 
 		for slot in nim_slots:
 			x = slot.slot
