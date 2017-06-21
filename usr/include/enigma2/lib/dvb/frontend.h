@@ -109,7 +109,7 @@ private:
 	ePtr<iDVBSatelliteEquipmentControl> m_sec;
 	ePtr<eSocketNotifier> m_sn;
 	int m_tuning;
-	ePtr<eTimer> m_timeout, m_tuneTimer, m_lostLockTimer;
+	ePtr<eTimer> m_timeoutTimer, m_tuneTimer, m_lostLockTimer;
 	unsigned int m_sec_lock; // this is a bitmask (1 << m_dvbid)
 
 	eSecCommandList m_sec_sequence;

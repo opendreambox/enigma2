@@ -815,6 +815,10 @@ class SatBlindscanState(Screen):
 		self.tmr.stop()
 		self.close(False)
 
+def freq_round(freq, val):
+	mod = freq % val
+	return freq + val - mod if mod >= (val / 2) else freq - mod
+
 class SatelliteTransponderSearchSupport:
 	def satelliteTransponderSearchSessionClosed(self, *val):
 		if self.frontend:
@@ -869,8 +873,7 @@ class SatelliteTransponderSearchSupport:
 					freq = 5150000 - freq
 
 				parm = eDVBFrontendParametersSatellite()
-				parm.frequency = int(round(float(freq*2) / 1000)) * 1000
-				parm.frequency /= 2
+				parm.frequency = freq_round(freq, 250)
 				fstr = str(parm.frequency / 1000)
 				if self.parm.polarisation == eDVBFrontendParametersSatellite.Polarisation_Horizontal:
 					fstr += "H "
@@ -887,10 +890,9 @@ class SatelliteTransponderSearchSupport:
 					if not self.auto_scan:
 						self.parm.frequency += self.parm.symbol_rate
 				else:
-					sr_rounded = round(float(sr*2L) / 1000) * 1000
-					sr_rounded /= 2
+					sr_rounded = freq_round(sr, 500)
 #					print "SR after round", sr_rounded
-					parm.symbol_rate = int(sr_rounded)
+					parm.symbol_rate = sr_rounded
 					fstr += str(parm.symbol_rate/1000)
 					parm.fec = d["fec_inner"]
 					fstr += " "

@@ -1323,16 +1323,28 @@ class UnicableProducts(object):
 				scrlist.append(("%d" %cnt,"SCR %d" %cnt))
 			configElement.vco.append(NoSave(ConfigInteger(default=vcofreq, limits = (vcofreq, vcofreq))))
 
-		configElement.scr = ConfigSelection(scrlist, default = scrlist[0][0])
+		# we override cancel here because the original cancel does not set the old
+		# value when value is not in choices.. in this case self.default is set
+		# so we temporaray override self.default here for the scr config element
+		def cancel(self):
+			stored_default = self.default
+			self.default = self.saved_value
+			ConfigSelection.cancel(self)
+			self.default = stored_default
 
-		# the following is a hack to correctly store dynamically created SCR ConfigElement
-		# needs more investigation in ConfigElement code
-		scr = configElement.scr.value if hasattr(configElement, "scr") else None
-		if scr is not None:
-			scr = (scr, 'SCR '+scr)
+		sv = configElement.scr.saved_value if hasattr(configElement, "scr") else None
+		save_forced = True if sv is None else configElement.scr.save_forced
+		scr = None if sv is None else (sv, 'SCR '+sv)
+		configElement.scr = ConfigSelection(scrlist, default = scrlist[0][0])
+		configElement.scr.save_forced = save_forced
+		configElement.scr.cancel = boundFunction(cancel, configElement.scr)
+
 		if scr in scrlist:
 			configElement.scr.value = scr[0]
 			configElement.scr.saved_value = scr[0]
+		elif sv is not None:
+			configElement.scr.value = sv
+			configElement.scr.saved_value = sv
 
 		positions = int(lof_tuple[0])
 		configElement.positions.append(ConfigInteger(default=positions, limits = (positions, positions)))

@@ -484,7 +484,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 							gw,
 						)
 				ns = self._textFormatIpList( service.nameservers() )
-				text = _("%sNameserver\n%s\n") %(text, ns) or _("n/a")
+				text = _("%sNameserver\n%s\n") %(text, ns)
 				ts = self._textFormatIpList( service.timeservers() )
 				text = _("%s\nTimeserver\n%s\n") %(text, ts)
 
