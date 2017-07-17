@@ -16,7 +16,7 @@ class PiconResolver(object):
 			if pngname == "":
 				# lookup without path
 				pngname = findPicon('_'.join(x[:10]))
-				if pngname == "" and x[0] == '4097':
+				if pngname == "" and x[0] in ('4097', '8193'):
 					# lookup 1_* instead of 4097_*
 					pngname = findPicon('1_'+'_'.join(x[1:10]))
 					if pngname == "": # no picon for service found

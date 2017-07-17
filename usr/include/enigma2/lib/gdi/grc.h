@@ -367,6 +367,7 @@ public:
 	virtual void disableSpinner();
 	virtual void incrementSpinner();
 	virtual void setSpinner(eRect pos, ePtr<gPixmap> *pic, int len);
+	virtual bool checkSpinner();
 };
 
 class iSyncPaintable

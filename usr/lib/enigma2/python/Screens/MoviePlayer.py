@@ -5,10 +5,11 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarGstreamerErrorPopupSupport
 
 from Components.ActionMap import ActionMap
-from Components.ServiceEventTracker import InfoBarBase
+from Components.ServiceEventTracker import InfoBarBase, ServiceEventTracker
 
 from Tools.Log import Log
 from Screens.SimpleSummary import SimpleSummary
+from enigma import iPlayableService
 
 class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 				InfoBarAudioSelection, InfoBarCueSheetSupport,
@@ -43,6 +44,13 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 		self.nextservice = None
 		self.is_closing = False
 
+		self.__eventTracker = ServiceEventTracker(screen=self, eventmap=
+			{
+				iPlayableService.evPlay: self._onPlay,
+				iPlayableService.evPause: self._onPause,
+				iPlayableService.evStopped: self._onStop,
+			})
+
 		if not restoreService: # lastservice is handled by PlayerBase which is inherited by InfoBarSeek
 			# take care... when a zap timer want to zap to a service the player is closed and lastservice is changed in onClose callback of PlayerBase!
 			self.lastservice = None
@@ -68,6 +76,16 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 	def __onClose(self):
 		if self.stopCB != None:
 			self.stopCB()
+
+	def _onPlay(self):
+		self.setSeekState(self.SEEK_STATE_PLAY, onlyGUI=True)
+
+	def _onPause(self):
+		self.setSeekState(self.SEEK_STATE_PAUSE, onlyGUI=True)
+
+	def _onStop(self):
+		self.setSeekState(self.SEEK_STATE_STOP, onlyGUI=True)
+
 
 	def createSummary(self):
 		return SimpleSummary

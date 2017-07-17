@@ -36,7 +36,6 @@ class SecParameterSetup(Screen, ConfigListScreen):
 			("Delay after change voltage before unicable command", config.sec.delay_after_voltage_change_before_unicable_cmd),
 			("Delay after unicable command", config.sec.delay_after_unicable_cmd),
 			("Delay after unicable final voltage change", config.sec.delay_after_unicable_final_voltage_change),
-			("Delay between switch and motor command", config.sec.delay_between_switch_and_motor_command),
 			("Delay after set voltage before measure motor power", config.sec.delay_after_voltage_change_before_measure_idle_inputpower),
 			("Delay after enable voltage before motor command", config.sec.delay_after_enable_voltage_before_motor_command),
 			("Delay after motor stop command", config.sec.delay_after_motor_stop_command),

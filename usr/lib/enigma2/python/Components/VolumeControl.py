@@ -75,6 +75,20 @@ class VolumeControl:
 		self.volSave()
 		self.hideVolTimer.start(3000, True)
 
+	def setDiscreteVolume(self, vol):
+		self.volctrl.setVolume(vol, vol)
+		is_muted = self.volctrl.isMuted()
+		vol = self.volctrl.getVolume()
+		self.volumeDialog.show()
+		if is_muted or not vol:
+			self.volMute()
+		if self.volctrl.isMuted():
+			self.volumeDialog.setValue(0)
+		else:
+			self.volumeDialog.setValue(vol)
+		self.volSave()
+		self.hideVolTimer.start(3000, True)
+
 	def volHide(self):
 		self.volumeDialog.hide()
 

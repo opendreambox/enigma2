@@ -60,7 +60,10 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			list.append(getConfigListEntry(_("Rotor is exclusively controlled by this dreambox"), nim.positionerExclusively))
 
 	def createConfigMode(self):
-		if self.nim.isCompatible("DVB-S"):
+		# FIXMEE
+		# no support for satpos depends, equal to and loopthough setting for nims with
+		# with multiple inputs and multiple channels
+		if self.nim.isCompatible("DVB-S") and self.nim.inputs is None:
 			getConfigModeTuple = nimmanager.getConfigModeTuple
 			choices = [ getConfigModeTuple("nothing"), getConfigModeTuple("simple"), getConfigModeTuple("advanced") ]
 			#if len(nimmanager.getNimListOfType(nimmanager.getNimType(self.slotid), exception = x)) > 0:
@@ -313,11 +316,14 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					matrixConfig = currLnb.unicableMatrix
 					self.advancedManufacturer = getConfigListEntry(_("Manufacturer"), matrixConfig.manufacturer)
 					self.advancedType = getConfigListEntry(_("Type"), matrixConfig.product)
-					self.advancedSCR = getConfigListEntry(_("Channel"), matrixConfig.scr)
 					self.list.append(self.advancedManufacturer)
 					self.list.append(self.advancedType)
-					self.list.append(self.advancedSCR)
-					self.list.append(getConfigListEntry(_("Frequency"), matrixConfig.vco[matrixConfig.scr.index]))
+					if isinstance(matrixConfig.scrs, ConfigNothing):
+						self.advancedSCR = getConfigListEntry(_("Channel"), matrixConfig.scr)
+						self.list.append(self.advancedSCR)
+						self.list.append(getConfigListEntry(_("Frequency"), matrixConfig.vco[matrixConfig.scr.index]))
+					else:
+						self.list.append(getConfigListEntry(_("Usable SCRs"), matrixConfig.scrs))
 				elif currLnb.unicable.value == "unicable_lnb":
 					try:
 						product_name = currLnb.unicableLnb.product.value
@@ -333,9 +339,12 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.advancedType = getConfigListEntry(_("Type"), lnbConfig.product)
 					self.list.append(self.advancedManufacturer)
 					self.list.append(self.advancedType)
-					self.advancedSCR = getConfigListEntry(_("Channel"), lnbConfig.scr)
-					self.list.append(self.advancedSCR)
-					self.list.append(getConfigListEntry(_("Frequency"), lnbConfig.vco[lnbConfig.scr.index]))
+					if isinstance(lnbConfig.scrs, ConfigNothing):
+						self.advancedSCR = getConfigListEntry(_("Channel"), lnbConfig.scr)
+						self.list.append(self.advancedSCR)
+						self.list.append(getConfigListEntry(_("Frequency"), lnbConfig.vco[lnbConfig.scr.index]))
+					else:
+						self.list.append(getConfigListEntry(_("Usable SCRs"), lnbConfig.scrs))
 				self.unicableUsePinEntry = getConfigListEntry(_("Use PIN"), currLnb.unicable_use_pin)
 				self.list.append(self.unicableUsePinEntry)
 				if currLnb.unicable_use_pin.value: 
@@ -550,7 +559,8 @@ class NimSelection(Screen):
 			self.session.openWithCallback(self.updateList, self.resultclass, nim.slot)
 
 	def showNim(self, nim):
-		return True
+		inputs = nim.inputs is not None and len(nim.inputs) or 0
+		return True if not inputs or nim.channel < inputs else False
 
 	def updateList(self):
 		self.list = [ ]

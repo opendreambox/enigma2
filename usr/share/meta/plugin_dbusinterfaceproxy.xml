@@ -1,0 +1,17 @@
+<default>
+	<prerequisites>
+		<tag type="System" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>DBusInterfaceProxy</name>
+		<packagename>enigma2-plugin-systemplugins-dbusinterfaceproxy</packagename>
+		<packagetype>internal</packagetype> <!-- internal/public , public is default, internal metas are not displayed inside plugin manager -->
+		<shortdescription>Proxy Plugin for DBus commands requiring python</shortdescription>
+		<description>This plugin is used to control your dreambox using DBus.</description>
+	</info>
+
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-dbusinterfaceproxy" />
+	</files>
+</default>

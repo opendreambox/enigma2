@@ -295,6 +295,21 @@
 			<convert type="ValueBitTest">16</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
+		<widget source="session.TunerInfo" render="TunerLabel,5" position="320,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerUseMask</convert>
+			<convert type="ValueBitTest">32</convert>
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="session.TunerInfo" render="TunerLabel,6" position="350,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerUseMask</convert>
+			<convert type="ValueBitTest">64</convert>
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="session.TunerInfo" render="TunerLabel,7" position="380,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerUseMask</convert>
+			<convert type="ValueBitTest">128</convert>
+			<convert type="ConditionalShowHide" />
+		</widget>
 		<widget source="session.FrontendInfo" render="TunerLabel,0" position="170,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
 			<convert type="FrontendInfo">NUMBER</convert>
 			<convert type="ValueRange">0,0</convert>
@@ -318,6 +333,21 @@
 		<widget source="session.FrontendInfo" render="TunerLabel,4" position="290,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
 			<convert type="FrontendInfo">NUMBER</convert>
 			<convert type="ValueRange">4,4</convert>
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="session.FrontendInfo" render="TunerLabel,5" position="320,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">NUMBER</convert>
+			<convert type="ValueRange">5,5</convert>
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="session.FrontendInfo" render="TunerLabel,6" position="350,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">NUMBER</convert>
+			<convert type="ValueRange">6,6</convert>
+			<convert type="ConditionalShowHide" />
+		</widget>
+		<widget source="session.FrontendInfo" render="TunerLabel,7" position="380,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">NUMBER</convert>
+			<convert type="ValueRange">7,7</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
 		<!-- Blinking pixmap (recording in progress?) -->

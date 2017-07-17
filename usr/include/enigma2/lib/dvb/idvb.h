@@ -748,12 +748,14 @@ public:
 	};
 
 	virtual RESULT connectVideoEvent(const sigc::slot1<void, struct videoEvent> &event, ePtr<eConnection> &connection) = 0;
+	virtual RESULT connectStateEvent(const sigc::slot1<void, int> &event, ePtr<eConnection> &connection) = 0;
 
 	virtual int getVideoWidth() = 0;
 	virtual int getVideoHeight() = 0;
 	virtual int getVideoProgressive() = 0;
 	virtual int getVideoFrameRate() = 0;
 	virtual int getVideoAspect() = 0;
+	virtual int getState() = 0;
 };
 
 #endif //SWIG

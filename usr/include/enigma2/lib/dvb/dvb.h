@@ -152,7 +152,7 @@ class eDVBResourceManager: public iObject, public sigc::trackable
 
 	eSmartPtrList<iDVBAdapter> m_adapter;
 	eSmartPtrList<eDVBRegisteredDemux> m_demux;
-	eSmartPtrList<eDVBRegisteredFrontend> m_frontend, m_simulate_frontend;
+	eSmartPtrList<eDVBRegisteredFrontend>m_frontend, m_simulate_frontend;
 	void addAdapter(iDVBAdapter *adapter);
 
 	struct active_channel
@@ -223,6 +223,8 @@ public:
 	RESULT allocateFrontendByIndex(ePtr<eDVBAllocatedFrontend> &fe, int slot_index);
 			/* allocate a demux able to filter on the selected frontend. */
 
+	eDVBRegisteredFrontend *getFrontendBySlotIndex(int slot_index, bool simulate=false); // steals a reference!! not refcounted... just for temporary use
+
 	int canAllocateDemux(const eDVBRegisteredFrontend *fe, int cap);
 
 	RESULT allocateDemux(eDVBRegisteredFrontend *fe, ePtr<eDVBAllocatedDemux> &demux, int &cap);
@@ -235,7 +237,7 @@ public:
 	unsigned int canMeasureFrontendInputPower();
 	eSignal1<void, int> frontendUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
-	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, int, int, std::string> >);
+	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, int, int, std::string, int, int> >);
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eDVBResourceManager>, eDVBResourceManager);
 SWIG_EXTEND(ePtr<eDVBResourceManager>,

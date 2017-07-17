@@ -85,6 +85,13 @@ private:
 	eDVBFrontend *m_simulate_fe; // only used to set frontend type in dvb.cpp
 	int m_dvbid;
 	int m_slotid;
+
+	/* for multi channel frontends with multiple inputs */
+	int m_input; // selected input (-1 for normal tuner)
+	int m_slotid_first_channel;
+	int m_slotid_last_channel; // only valid when m_slotid_first_channel is != -1
+	int m_best_link_slot;
+
 	int m_fd;
 	bool m_forced_timeout;
 	bool m_rotor_mode;
@@ -165,11 +172,18 @@ public:
 	eSignal1<void, iDVBFrontend*> &getStateChangeSignal();
 
 	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm);
-	int getDVBID() { return m_dvbid; }
-	int getSlotID() { return m_slotid; }
-	bool setSlotInfo(std::tuple<int, std::string, int, int, std::string>&); // get a tuple (slotid, slotdescr, enabled, dvbid, input_name)
+	int getDVBID() const { return m_dvbid; }
+	int getSlotID() const { return m_slotid; }
+	bool setSlotInfo(std::tuple<int, std::string, int, int, std::string, int, int>&); // get a tuple (slotid, slotdescr, enabled, dvbid, input_name, slotid_first_channel, slotid_last_channel)
 	static void setTypePriorityOrder(int val) { PriorityOrder = val; }
 	static int getTypePriorityOrder() { return PriorityOrder; }
+
+	/* for multi channel frontends with multiple inputs */
+	int getInput() const { return m_input; }
+	int getFirstChannelSlotID() const { return m_slotid_first_channel; }
+	int getLastChannelSlotID() const { return m_slotid_last_channel; }
+	void setBestLinkSlotID(int slot) { m_best_link_slot = slot; }
+	int getBestLinkSlotID() const { return m_best_link_slot; }
 
 	void reopenFrontend();
 	int openFrontend();

@@ -114,6 +114,7 @@ private:
 	void demux_event(int event);
 	void video_event(struct videoEvent);
 	sigc::signal1<void, struct videoEvent> m_video_event;
+	sigc::signal1<void, int> m_state_event;
 	int m_video_clip_fd;
 	ePtr<eTimer> m_showSinglePicTimer;
 	void finishShowSinglePic(); // called by timer
@@ -163,12 +164,14 @@ public:
 		/* what 0=auto, 1=video, 2=audio. */
 	RESULT getPTS(int what, pts_t &pts);
 	RESULT connectVideoEvent(const sigc::slot1<void, struct videoEvent> &event, ePtr<eConnection> &connection);
+	RESULT connectStateEvent(const sigc::slot1<void, int> &event, ePtr<eConnection> &connection);
 	int getVideoDecoderId();
 	int getVideoWidth();
 	int getVideoHeight();
 	int getVideoProgressive();
 	int getVideoFrameRate();
 	int getVideoAspect();
+	int getState();
 	static RESULT setHwPCMDelay(int delay);
 	static RESULT setHwAC3Delay(int delay);
 };

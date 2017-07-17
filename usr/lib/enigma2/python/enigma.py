@@ -1237,7 +1237,16 @@ class iPlayableService_ENUMS(object):
     evStopped = _enigma.iPlayableService_ENUMS_evStopped
     evSubtitleListChanged = _enigma.iPlayableService_ENUMS_evSubtitleListChanged
     evAudioListChanged = _enigma.iPlayableService_ENUMS_evAudioListChanged
+    evPause = _enigma.iPlayableService_ENUMS_evPause
+    evPlay = _enigma.iPlayableService_ENUMS_evPlay
+    evSeek = _enigma.iPlayableService_ENUMS_evSeek
     evUser = _enigma.iPlayableService_ENUMS_evUser
+    stateIdle = _enigma.iPlayableService_ENUMS_stateIdle
+    stateStop = _enigma.iPlayableService_ENUMS_stateStop
+    statePlay = _enigma.iPlayableService_ENUMS_statePlay
+    statePause = _enigma.iPlayableService_ENUMS_statePause
+    stateBuffering = _enigma.iPlayableService_ENUMS_stateBuffering
+    stateSeek = _enigma.iPlayableService_ENUMS_stateSeek
 iPlayableService_ENUMS_swigregister = _enigma.iPlayableService_ENUMS_swigregister
 iPlayableService_ENUMS_swigregister(iPlayableService_ENUMS)
 
@@ -1254,6 +1263,7 @@ iPlayableServicePtr.getPtrString = new_instancemethod(_enigma.iPlayableServicePt
 iPlayableServicePtr.__deref__ = new_instancemethod(_enigma.iPlayableServicePtr___deref__, None, iPlayableServicePtr)
 iPlayableServicePtr.start = new_instancemethod(_enigma.iPlayableServicePtr_start, None, iPlayableServicePtr)
 iPlayableServicePtr.stop = new_instancemethod(_enigma.iPlayableServicePtr_stop, None, iPlayableServicePtr)
+iPlayableServicePtr.playState = new_instancemethod(_enigma.iPlayableServicePtr_playState, None, iPlayableServicePtr)
 iPlayableServicePtr.setTarget = new_instancemethod(_enigma.iPlayableServicePtr_setTarget, None, iPlayableServicePtr)
 iPlayableServicePtr.seek = new_instancemethod(_enigma.iPlayableServicePtr_seek, None, iPlayableServicePtr)
 iPlayableServicePtr.pause = new_instancemethod(_enigma.iPlayableServicePtr_pause, None, iPlayableServicePtr)
@@ -3491,6 +3501,7 @@ class pNavigation(iObject):
 
     def __init__(self):
         _enigma.pNavigation_swiginit(self, _enigma.new_pNavigation())
+    getInstance = staticmethod(_enigma.pNavigation_getInstance)
     __swig_destroy__ = _enigma.delete_pNavigation
 pNavigation.playService = new_instancemethod(_enigma.pNavigation_playService, None, pNavigation)
 pNavigation.stopService = new_instancemethod(_enigma.pNavigation_stopService, None, pNavigation)
@@ -3501,6 +3512,10 @@ pNavigation.stopRecordService = new_instancemethod(_enigma.pNavigation_stopRecor
 pNavigation.getRecordings = new_instancemethod(_enigma.pNavigation_getRecordings, None, pNavigation)
 pNavigation_swigregister = _enigma.pNavigation_swigregister
 pNavigation_swigregister(pNavigation)
+
+def pNavigation_getInstance():
+    return _enigma.pNavigation_getInstance()
+pNavigation_getInstance = _enigma.pNavigation_getInstance
 
 class eActionSlot(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -3664,37 +3679,6 @@ class eDVBSatelliteRotorParameters(object):
 eDVBSatelliteRotorParameters_swigregister = _enigma.eDVBSatelliteRotorParameters_swigregister
 eDVBSatelliteRotorParameters_swigregister(eDVBSatelliteRotorParameters)
 
-class eDVBSatelliteLNBParameters(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-
-    def __init__(self, *args, **kwargs):
-        raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    SatCR_positions = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_positions_get, _enigma.eDVBSatelliteLNBParameters_SatCR_positions_set)
-    SatCR_idx = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_idx_get, _enigma.eDVBSatelliteLNBParameters_SatCR_idx_set)
-    SatCR_mode = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_mode_get, _enigma.eDVBSatelliteLNBParameters_SatCR_mode_set)
-    SatCR_pin = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCR_pin_get, _enigma.eDVBSatelliteLNBParameters_SatCR_pin_set)
-    SatCRvco = _swig_property(_enigma.eDVBSatelliteLNBParameters_SatCRvco_get, _enigma.eDVBSatelliteLNBParameters_SatCRvco_set)
-    guard_offset = _swig_property(_enigma.eDVBSatelliteLNBParameters_guard_offset_get, _enigma.eDVBSatelliteLNBParameters_guard_offset_set)
-    LNBNum = _swig_property(_enigma.eDVBSatelliteLNBParameters_LNBNum_get, _enigma.eDVBSatelliteLNBParameters_LNBNum_set)
-eDVBSatelliteLNBParameters_swigregister = _enigma.eDVBSatelliteLNBParameters_swigregister
-eDVBSatelliteLNBParameters_swigregister(eDVBSatelliteLNBParameters)
-
-_enigma.guard_offset_min_swigconstant(_enigma)
-guard_offset_min = _enigma.guard_offset_min
-
-_enigma.guard_offset_max_swigconstant(_enigma)
-guard_offset_max = _enigma.guard_offset_max
-
-_enigma.guard_offset_step_swigconstant(_enigma)
-guard_offset_step = _enigma.guard_offset_step
-
-_enigma.MAX_SATCR_swigconstant(_enigma)
-MAX_SATCR = _enigma.MAX_SATCR
-
-_enigma.MAX_LNBNUM_swigconstant(_enigma)
-MAX_LNBNUM = _enigma.MAX_LNBNUM
-
 class eDVBSatelliteEquipmentControl(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
@@ -3708,7 +3692,6 @@ class eDVBSatelliteEquipmentControl(object):
     DELAY_AFTER_LAST_DISEQC_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_LAST_DISEQC_CMD
     DELAY_AFTER_TONEBURST = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_TONEBURST
     DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_SWITCH_CMDS = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_SWITCH_CMDS
-    DELAY_BETWEEN_SWITCH_AND_MOTOR_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_BETWEEN_SWITCH_AND_MOTOR_CMD
     DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_MEASURE_IDLE_INPUTPOWER = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_MEASURE_IDLE_INPUTPOWER
     DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_MOTOR_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_MOTOR_CMD
     DELAY_AFTER_MOTOR_STOP_CMD = _enigma.eDVBSatelliteEquipmentControl_DELAY_AFTER_MOTOR_STOP_CMD
@@ -3755,11 +3738,13 @@ eDVBSatelliteEquipmentControl.setLNBSatCRvco = new_instancemethod(_enigma.eDVBSa
 eDVBSatelliteEquipmentControl.setLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRpositions = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpositions, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRmode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRmode, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.setLNBTunerInput = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBTunerInput, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCR = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCR, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRvco = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRvco, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRpositions = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRpositions, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRmode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRmode, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.getLNBTunerInput = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBTunerInput, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.addSatellite = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_addSatellite, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setVoltageMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setVoltageMode, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setToneMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setToneMode, None, eDVBSatelliteEquipmentControl)
@@ -4214,6 +4199,101 @@ eDVBServicePMTHandler_swigregister(eDVBServicePMTHandler)
 def eDVBServicePMTHandler_setDDPSupport(b):
     return _enigma.eDVBServicePMTHandler_setDDPSupport(b)
 eDVBServicePMTHandler_setDDPSupport = _enigma.eDVBServicePMTHandler_setDDPSupport
+
+class eDBusInterfaceProxy(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        """__init__(eDBusInterfaceProxy self) -> eDBusInterfaceProxy"""
+        if self.__class__ == eDBusInterfaceProxy:
+            _self = None
+        else:
+            _self = self
+        _enigma.eDBusInterfaceProxy_swiginit(self, _enigma.new_eDBusInterfaceProxy(_self, ))
+    __swig_destroy__ = _enigma.delete_eDBusInterfaceProxy
+
+    def isTimerPending(self):
+        """isTimerPending(eDBusInterfaceProxy self) -> bool"""
+        return _enigma.eDBusInterfaceProxy_isTimerPending(self)
+
+
+    def play(self, val, isUri):
+        """play(eDBusInterfaceProxy self, std::string const & val, bool isUri) -> bool"""
+        return _enigma.eDBusInterfaceProxy_play(self, val, isUri)
+
+
+    def pause(self):
+        """pause(eDBusInterfaceProxy self) -> bool"""
+        return _enigma.eDBusInterfaceProxy_pause(self)
+
+
+    def resume(self):
+        """resume(eDBusInterfaceProxy self) -> bool"""
+        return _enigma.eDBusInterfaceProxy_resume(self)
+
+
+    def stop(self):
+        """stop(eDBusInterfaceProxy self) -> bool"""
+        return _enigma.eDBusInterfaceProxy_stop(self)
+
+
+    def setVolume(self, to):
+        """setVolume(eDBusInterfaceProxy self, int to) -> bool"""
+        return _enigma.eDBusInterfaceProxy_setVolume(self, to)
+
+
+    def getVolume(self):
+        """getVolume(eDBusInterfaceProxy self) -> int"""
+        return _enigma.eDBusInterfaceProxy_getVolume(self)
+
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eDBusInterfaceProxy(self)
+        return weakref_proxy(self)
+eDBusInterfaceProxy.isTimerPending = new_instancemethod(_enigma.eDBusInterfaceProxy_isTimerPending, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy.play = new_instancemethod(_enigma.eDBusInterfaceProxy_play, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy.pause = new_instancemethod(_enigma.eDBusInterfaceProxy_pause, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy.resume = new_instancemethod(_enigma.eDBusInterfaceProxy_resume, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy.stop = new_instancemethod(_enigma.eDBusInterfaceProxy_stop, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy.setVolume = new_instancemethod(_enigma.eDBusInterfaceProxy_setVolume, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy.getVolume = new_instancemethod(_enigma.eDBusInterfaceProxy_getVolume, None, eDBusInterfaceProxy)
+eDBusInterfaceProxy_swigregister = _enigma.eDBusInterfaceProxy_swigregister
+eDBusInterfaceProxy_swigregister(eDBusInterfaceProxy)
+
+class eDBusInterface(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    STREAM_STATE_STOPPED = _enigma.eDBusInterface_STREAM_STATE_STOPPED
+    STREAM_STATE_PLAYING = _enigma.eDBusInterface_STREAM_STATE_PLAYING
+    STREAM_STATE_PAUSED = _enigma.eDBusInterface_STREAM_STATE_PAUSED
+    STREAM_STATE_BUFFERING = _enigma.eDBusInterface_STREAM_STATE_BUFFERING
+    STREAM_STATE_SEEKING = _enigma.eDBusInterface_STREAM_STATE_SEEKING
+
+    def setProxy(proxy):
+        """setProxy(eDBusInterfaceProxy proxy) -> bool"""
+        return _enigma.eDBusInterface_setProxy(proxy)
+
+    setProxy = staticmethod(setProxy)
+
+    def sendEvent(id):
+        """sendEvent(int id)"""
+        return _enigma.eDBusInterface_sendEvent(id)
+
+    sendEvent = staticmethod(sendEvent)
+eDBusInterface_swigregister = _enigma.eDBusInterface_swigregister
+eDBusInterface_swigregister(eDBusInterface)
+
+def eDBusInterface_setProxy(proxy):
+    """eDBusInterface_setProxy(eDBusInterfaceProxy proxy) -> bool"""
+    return _enigma.eDBusInterface_setProxy(proxy)
+
+def eDBusInterface_sendEvent(id):
+    """eDBusInterface_sendEvent(int id)"""
+    return _enigma.eDBusInterface_sendEvent(id)
 
 class eDeviceEventManager(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

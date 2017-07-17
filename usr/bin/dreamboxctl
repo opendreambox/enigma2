@@ -1,0 +1,251 @@
+#!/usr/bin/python
+
+import dbus, argparse, os
+
+class DreamboxDBus(object):
+	INTERFACE = "com.dreambox.ctl"
+	OBJECT = "/com/dreambox/ctl"
+	PROPERTY_VERSION = "version"
+
+	EXIT_CODE_REBOOT = 2
+	EXIT_CODE_RESTART = 3
+	EXIT_CODE_SHUTDOWN = 8
+	EXIT_CODE_RECOVERY = 16
+
+	def __init__(self):
+		self._bus = dbus.SystemBus()
+		self._proxy = self._bus.get_object(DreamboxDBus.INTERFACE, DreamboxDBus.OBJECT)
+		self._interface = dbus.Interface(self._proxy, DreamboxDBus.INTERFACE)
+		#print "Connected to '%s' v%s" % (self.INTERFACE, self.version())
+
+	def version(self):
+		return self._getProperty(DreamboxDBus.PROPERTY_VERSION)
+
+	def _getProperty(self, name):
+		return self._proxy.Get(self.INTERFACE, name, dbus_interface=dbus.PROPERTIES_IFACE)
+
+	def screenshot(self, filename="/tmp/screenshot.png", width=0, height=0, desktop=0, osd=True, video=False):
+		fmt = filename.split(".")[-1]
+		return self._interface.screenshot(str(filename), str(fmt), width, height, desktop, osd, video)
+
+	def recordCount(self):
+		return self._interface.recordCount()
+
+	def isTimerPending(self):
+		return self._interface.isTimerPending()
+
+	def currentService(self):
+		return self._interface.currentService()
+
+	def play(self, val, isUri):
+		return self._interface.play(val, isUri)
+
+	def pause(self):
+		return self._interface.pause()
+
+	def resume(self):
+		return self._interface.resume()
+
+	def stop(self):
+		return self._interface.stop()
+
+	def getPosition(self):
+		return self._interface.getPosition()
+
+	def setPosition(self, seconds):
+		return self._interface.setPosition(seconds)
+
+	def getVolume(self):
+		return self._interface.getVolume()
+
+	def setVolume(self, to):
+		return self._interface.setVolume(to)
+
+	def quit(self, code):
+		return self._interface.quit(code)
+
+def getArgs():
+	parser = argparse.ArgumentParser(
+		description='Dreambox CLI Control',
+		formatter_class=argparse.ArgumentDefaultsHelpFormatter
+	)
+	parser._positionals.title = 'commands'
+	subparsers = parser.add_subparsers(dest='cmd')
+	#screenshots
+	pshot = subparsers.add_parser('screenshot', help='take a screenshot of the OSD and save it to a file', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	pshot.add_argument('-f', '--filename', type=str, default='/tmp/screenshot.png', required=True, help='filename for the screenshot (requires full path)')
+	pshot.add_argument('-iw', '--width', type=int, default=0, help='image width. 0 for original size')
+	pshot.add_argument('-ih', '--height', type=int, default=0, help='image height. 0 for original size')
+	pshot.add_argument('-d', '--desktop', type=int, default=0, help='desktop to take a screenshot of. 0 for TV, 1 for display')
+	#recordings
+	prec = subparsers.add_parser('recordings', help='recordings related functions', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	prec.add_argument('-c', '--count', action='store_true', help='print the number of currently active recordings')
+	#current service
+	subparsers.add_parser('currentService', help='currently running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	#play / pause / resume / stop
+	pplay = subparsers.add_parser('play', help='play service')
+	pgroup = pplay.add_mutually_exclusive_group(required=True)
+	pgroup.add_argument('-u', '--uri', help='uri to play')
+	pgroup.add_argument('-r', '--ref', help='ref to play')
+	pgroup.add_argument('-f', '--file', help='local file to play')
+	subparsers.add_parser('pause', help='pause running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	subparsers.add_parser('resume', help='resume paused service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	subparsers.add_parser('stop', help='stop running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	#position
+	ppos = subparsers.add_parser('position', help='get/set position of running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	posgroup = ppos.add_mutually_exclusive_group(required=False)
+	posgroup.add_argument('-g', '--get', action="store_true", help='get current playback position')
+	posgroup.add_argument('-s', '--set', type=int, help='jump to playback position (in seconds)')
+	#volume
+	pvol = subparsers.add_parser('volume', help='get/set volume')
+	vgroup = pvol.add_mutually_exclusive_group(required=False)
+	vgroup.add_argument('-g', '--get', action="store_true", help='get current volume')
+	vgroup.add_argument('-s', '--set', type=int, help='set volume to value (0..100)')
+	#power
+	force_text = 'execute with (the) force (ignore recordings and other potential blockers)'
+	pshut = subparsers.add_parser('shutdown', help='shut down the system')
+	pshut.add_argument('-f', '--force', action='store_true', help=force_text)
+	prebt = subparsers.add_parser('reboot', help='reboot the system')
+	prebt.add_argument('-f', '--force', action='store_true', help=force_text)
+	precv = subparsers.add_parser('recovery', help='reboot into the recovery system')
+	precv.add_argument('-f', '--force', action='store_true', help=force_text)
+	prest = subparsers.add_parser('restart', help='restart the graphical user interface')
+	prest.add_argument('-f', '--force', action='store_true', help=force_text)
+
+	return parser.parse_args()
+
+def dbus_to_python(obj, expected_type=None):
+	if obj is None:
+		python_obj = obj
+	elif isinstance(obj, dbus.Boolean):
+		python_obj = bool(obj)
+	elif isinstance(obj, dbus.String):
+		python_obj = obj.encode('utf-8')
+	elif isinstance(obj, dbus.UTF8String):  # Python3 has no UTF8String
+		python_obj = str(obj)
+	elif isinstance(obj, dbus.ObjectPath):
+		python_obj = str(obj)
+	elif isinstance(obj, dbus.Byte) or \
+		 isinstance(obj, dbus.Int16) or \
+		 isinstance(obj, dbus.Int32) or \
+		 isinstance(obj, dbus.Int64) or \
+		 isinstance(obj, dbus.UInt16) or \
+		 isinstance(obj, dbus.UInt32) or \
+		 isinstance(obj, dbus.UInt64):
+		python_obj = int(obj)
+	elif isinstance(obj, dbus.Double):
+		python_obj = float(obj)
+	elif isinstance(obj, dbus.Array):
+		python_obj = [dbus_to_python(x) for x in obj]
+	elif isinstance(obj, dbus.Struct):
+		python_obj = tuple([dbus_to_python(x) for x in obj])
+	elif isinstance(obj, dbus.Dictionary):
+		python_obj = {dbus_to_python(k): dbus_to_python(v) for k, v in obj.items()}
+	elif isinstance(obj, bool) or \
+		 isinstance(obj, str) or isinstance(obj, bytes) or \
+		 isinstance(obj, int) or isinstance(obj, float) or \
+		 isinstance(obj, list) or isinstance(obj, tuple) or \
+		 isinstance(obj, dict):
+		python_obj = obj
+	else:
+		raise TypeError("Unhandled %s" % obj)
+
+	if expected_type is not None:
+		if (expected_type == bool and not isinstance(python_obj, bool)) or \
+			 (expected_type == str and not isinstance(python_obj, str)) or \
+			 (expected_type == int and not isinstance(python_obj, int)) or \
+			 (expected_type == float and not isinstance(python_obj, float)) or \
+			 (expected_type == list and not isinstance(python_obj, list)) or \
+			 (expected_type == tuple and not isinstance(python_obj, tuple)) or \
+			 (expected_type == dict and not isinstance(python_obj, dict)):
+			raise TypeError("%s is %s, expected %s" % (python_obj, type(python_obj), expected_type))
+
+	return python_obj
+
+def main():
+	ddbus = DreamboxDBus()
+	args = getArgs()
+	if args:
+		if args.cmd == "screenshot":
+			kwargs = vars(args)
+			del kwargs["cmd"]
+			if ddbus.screenshot(**kwargs):
+				print "ok:screenshot %s" %args.filename
+				exit(0)
+			else:
+				print "error:screenshot failed"
+				exit(1)
+		elif args.cmd == "recordings":
+			print ddbus.recordCount()
+		elif args.cmd == "currentService":
+			res = dbus_to_python(ddbus.currentService(), dict)
+			for k, v in res.iteritems():
+				print"%s:%s" %(k,v)
+			print "postion:%s" %(ddbus.getPosition())
+		elif args.cmd == "play":
+			res = False
+			if args.uri:
+				args = str(args.uri), True
+			elif args.file:
+				f = args.file
+				if not f.startswith("file://") and not f.startswith("/"):
+					f = "%s/%s" %(os.getcwd(), f)
+				args = f, True
+			else:
+				args = str(args.ref), False
+			res = ddbus.play(*args)
+			if res:
+				print "ok:play %s" %(args,)
+			else:
+				print "error:play failed!"
+		elif args.cmd == "pause":
+			if ddbus.pause():
+				print "ok:pause"
+			else:
+				print "error:pause"
+		elif args.cmd == "resume":
+			if ddbus.resume():
+				print "ok:resume"
+			else:
+				print "error:resume"
+		elif args.cmd == "stop":
+			if ddbus.stop():
+				print "ok:stop"
+			else:
+				print "error:stop"
+		elif args.cmd == "position":
+			if args.set:
+				if ddbus.setPosition(args.set):
+					print "ok:position %s" %(args.set,)
+				else:
+					print "error:position can't jump to %s" %(args.set)
+			else:
+				print ddbus.getPosition()
+		elif args.cmd == "volume":
+			if args.set:
+				if ddbus.setVolume(args.set):
+					print "ok:volume %s" %(args.set,)
+				else:
+					print "error:volume %s may be invalid!" %(args.set,)
+			else:
+				print ddbus.getVolume()
+		elif args.cmd in ["shutdown", "reboot", "recovery", "restart"]:
+			if ddbus.recordCount() and not args.force:
+				print "error:recordings active, use (the) --force if you have to!"
+				exit(1)
+				return
+			if ddbus.isTimerPending() and not args.force:
+				print "error:timer pending, use (the) --force if you have to!"
+				exit(1)
+				return
+			code = {
+				"shutdown" : DreamboxDBus.EXIT_CODE_SHUTDOWN,
+				"reboot" : DreamboxDBus.EXIT_CODE_REBOOT,
+				"restart" : DreamboxDBus.EXIT_CODE_RESTART,
+				"recovery" : DreamboxDBus.EXIT_CODE_RECOVERY
+			}.get(args.cmd)
+			ddbus.quit(code)
+			print "OK"
+
+if __name__ == "__main__":
+	main()

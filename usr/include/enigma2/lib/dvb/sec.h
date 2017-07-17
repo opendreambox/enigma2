@@ -35,7 +35,8 @@ public:
 		IF_ACQUIRE_SEC_LOCK_GOTO,
 		CLEAR_SEC_LOCK,
 		IF_LINKED_IN_USE_GOTO,
-		UPDATE_OPARM
+		UPDATE_OPARM,
+		SET_TUNER_INPUT
 	};
 	int cmd;
 	struct rotor
@@ -243,14 +244,9 @@ public:
 #endif
 };
 
-class eDVBSatelliteLNBParameters
-{
-#ifdef SWIG
-	eDVBSatelliteLNBParameters();
-	~eDVBSatelliteLNBParameters();
-#endif
-public:
 #ifndef SWIG
+struct eDVBSatelliteLNBParameters
+{
 	int m_slot_mask; // useable by slot ( 1 | 2 | 4...)
 
 	unsigned int m_lof_hi,	// for 2 band universal lnb 10600 Mhz (high band offset frequency)
@@ -264,8 +260,7 @@ public:
 	eDVBSatelliteRotorParameters m_rotor_parameters;
 
 	int m_prio; // to override automatic tuner management ... -1 is Auto
-#endif
-public:
+
 #define guard_offset_min -8000
 #define guard_offset_max 8000
 #define guard_offset_step 8000
@@ -285,7 +280,9 @@ public:
 */
 	int guard_offset;
 	int LNBNum;
+	int TunerInput; /* -1 when unused */
 };
+#endif
 
 class eDVBRegisteredFrontend;
 
@@ -301,7 +298,6 @@ public:
 		DELAY_AFTER_LAST_DISEQC_CMD, // delay after last diseqc command
 		DELAY_AFTER_TONEBURST, // delay after toneburst
 		DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_SWITCH_CMDS, // delay after enable voltage before transmit toneburst/diseqc
-		DELAY_BETWEEN_SWITCH_AND_MOTOR_CMD, // delay after transmit toneburst / diseqc and before transmit motor command
 		DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_MEASURE_IDLE_INPUTPOWER, // delay after voltage change before measure idle input power
 		DELAY_AFTER_ENABLE_VOLTAGE_BEFORE_MOTOR_CMD, // delay after enable voltage before transmit motor command
 		DELAY_AFTER_MOTOR_STOP_CMD, // delay after transmit motor stop
@@ -376,18 +372,20 @@ public:
 	RESULT setLNBSatCRpin(int SatCRpin);
 	RESULT setLNBSatCRpositions(int SatCR_positions);
 	RESULT setLNBSatCRmode(int mode);
+	RESULT setLNBTunerInput(int index);
 	RESULT getLNBSatCR();
 	RESULT getLNBSatCRvco();
 	RESULT getLNBSatCRpin();
 	RESULT getLNBSatCRpositions();
 	RESULT getLNBSatCRmode();
+	RESULT getLNBTunerInput();
 /* Satellite Specific Parameters */
 	RESULT addSatellite(int orbital_position);
 	RESULT setVoltageMode(int mode);
 	RESULT setToneMode(int mode);
 	RESULT setRotorPosNum(int rotor_pos_num);
 /* Tuner Specific Parameters */
-	RESULT setTunerLinked(int from, int to);
+	RESULT setTunerLinked(int from, int to, int which=3); // bitmask of 1 = normal, 2 = simulate
 	RESULT setTunerDepends(int from, int to);
 	void setSlotNotLinked(int tuner_no);
 

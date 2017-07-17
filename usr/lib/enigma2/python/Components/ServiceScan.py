@@ -101,7 +101,8 @@ class ServiceScan:
 				self.transponder.setText(tp_text)
 
 		if self.state == self.Done:
-			if self.scan.getNumServices() == 0:
+			foundServices = self.scan and self.scan.getNumServices() or 0
+			if foundServices == 0:
 				self.text.setText(_("scan done!") + ' ' + _("%d services found!") % 0 )
 			else:
 				self.text.setText(_("scan done!") + ' ' + _("%d services found!") % (self.foundServices + self.scan.getNumServices()))
@@ -110,7 +111,7 @@ class ServiceScan:
 			self.text.setText(_("ERROR - failed to scan (%s)!") % (self.Errors[self.errorcode]) )
 
 		if self.state == self.Done or self.state == self.Error:
-			foundServices = self.scan.getNumServices()
+			foundServices = self.scan and self.scan.getNumServices() or 0
 			self.execEnd()
 			if self.run != len(self.scanList) - 1:
 				self.foundServices += foundServices
@@ -142,7 +143,7 @@ class ServiceScan:
 
 	def doRun(self):
 		self.scan = eComponentScan()
-		self.frontendInfo.frontend_source = lambda : self.scan.getFrontend()
+		self.frontendInfo.frontend_source = lambda : self.scan and self.scan.getFrontend() or None
 		self.feid = self.scanList[self.run]["feid"]
 		self.flags = self.scanList[self.run]["flags"]
 		self.state = self.Idle

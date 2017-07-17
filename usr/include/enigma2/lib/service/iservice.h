@@ -1037,7 +1037,19 @@ public:
 		evSubtitleListChanged,
 		evAudioListChanged,
 
+		evPause,
+		evPlay,
+		evSeek,
+
 		evUser = 0x100
+	};
+	enum {
+		stateIdle = -1,
+		stateStop = 0,
+		statePlay,
+		statePause,
+		stateBuffering,
+		stateSeek,
 	};
 };
 
@@ -1055,6 +1067,7 @@ public:
 #endif
 	virtual RESULT start()=0;
 	virtual RESULT stop()=0;
+	virtual int playState(){ return -1; };
 			/* might have to be changed... */
 	virtual RESULT setTarget(int target)=0;
 	virtual SWIG_VOID(RESULT) seek(ePtr<iSeekableService> &SWIG_NAMED_OUTPUT(ptr)) { ptr = 0; return -1; }
