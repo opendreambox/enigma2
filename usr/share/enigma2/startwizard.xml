@@ -79,7 +79,8 @@ self.selectKey("DOWN")
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
-self.condition = len(nimmanager.nim_slots) > 0 and not nimmanager.nim_slots[0].empty and config.misc.startwizard.shownimconfig.value
+slot = len(nimmanager.nim_slots) &gt; 0 and nimmanager.nim_slots[0]
+self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner A" />
@@ -94,7 +95,8 @@ self.selectKey("RIGHT")
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
-self.condition = len(nimmanager.nim_slots) > 1 and not nimmanager.nim_slots[1].empty and config.misc.startwizard.shownimconfig.value
+slot = len(nimmanager.nim_slots) &gt; 1 and nimmanager.nim_slots[1]
+self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner B" />
@@ -109,7 +111,8 @@ self.selectKey("RIGHT")
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
-self.condition = len(nimmanager.nim_slots) > 2 and not nimmanager.nim_slots[2].empty and config.misc.startwizard.shownimconfig.value
+slot = len(nimmanager.nim_slots) &gt; 2 and nimmanager.nim_slots[2]
+self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner C" />
@@ -124,7 +127,8 @@ self.selectKey("RIGHT")
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
-self.condition = len(nimmanager.nim_slots) > 3 and not nimmanager.nim_slots[3].empty and config.misc.startwizard.shownimconfig.value
+slot = len(nimmanager.nim_slots) &gt; 3 and nimmanager.nim_slots[3]
+self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner D" />

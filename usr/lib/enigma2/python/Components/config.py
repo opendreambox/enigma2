@@ -134,7 +134,11 @@ class ConfigElement(object):
 			notifier(self)
 
 	def removeNotifier(self, notifier):
-		del self.__notifiers[str(notifier)]
+		n = str(notifier)
+		if n in self.__notifiers:
+			del self.__notifiers[n]
+		if n in self.__notifiers_final:
+			del self.__notifiers_final[n]
 
 	def clearNotifiers(self):
 		self.__notifiers = { }

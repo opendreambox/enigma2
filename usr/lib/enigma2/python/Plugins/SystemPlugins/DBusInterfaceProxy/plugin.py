@@ -47,6 +47,12 @@ class DBusInterfaceProxy(eDBusInterfaceProxy):
 			self._player.playService(ref)
 		return True
 
+	def stop(self):
+		if self._player:
+			self._player.handleLeave(ask=False)
+			return True
+		return False
+
 	def isTimerPending(self):
 		next_rec_time = self._session.nav.RecordTimer.getNextRecordingTime()
 		return next_rec_time > 0 and (next_rec_time - time()) < 360

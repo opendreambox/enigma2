@@ -171,7 +171,12 @@ class SecConfigure:
 					multi_tuner_slot_channel = 0
 				else:
 					multi_tuner_slot_channel += 1
-				enabledFunc = nim_slots[multi_tuner_slot_base].isEnabled
+				def isEnabled(type):
+					for inp in xrange(len(slot.inputs)):
+						if nim_slots[multi_tuner_slot_base+inp].isEnabled(type):
+							return True
+					return False
+				enabledFunc = isEnabled
 			else:
 				multi_tuner_slot_base = -1
 				multi_tuner_slot_channel = 0
