@@ -215,3 +215,38 @@ def InitAVSwitch():
 		config.av.scaler_sharpness.addNotifier(setScaler_sharpness)
 	else:
 		config.av.scaler_sharpness = NoSave(ConfigNothing())
+
+	try:
+		hlg_choices = open("/proc/stb/hdmi/hlg_support_choices", "r").read()
+		def setHlgSupport(configElement):
+			open("/proc/stb/hdmi/hlg_support", "w").write(configElement.value)
+		config.av.hlg_support = ConfigSelection(default = "auto(EDID)", 
+			choices = [ ("auto(EDID)", _("controlled by HDMI")), ("yes", _("force enabled")), ("no", _("force disabled")) ])
+		config.av.hlg_support.addNotifier(setHlgSupport)
+
+		def setHdr10Support(configElement):
+			open("/proc/stb/hdmi/hdr10_support", "w").write(configElement.value)
+		config.av.hdr10_support = ConfigSelection(default = "auto(EDID)", 
+			choices = [ ("auto(EDID)", _("controlled by HDMI")), ("yes", _("force enabled")), ("no", _("force disabled")) ])
+		config.av.hdr10_support.addNotifier(setHdr10Support)
+
+		def setDisable12Bit(configElement):
+			open("/proc/stb/video/disable_12bit", "w").write(configElement.value)
+		config.av.allow_12bit = ConfigSelection(default = "0", choices = [ ("0", _("yes")), ("1", _("no")) ]);
+		config.av.allow_12bit.addNotifier(setDisable12Bit)
+
+		def setDisable10Bit(configElement):
+			open("/proc/stb/video/disable_10bit", "w").write(configElement.value)
+		config.av.allow_10bit = ConfigSelection(default = "0", choices = [ ("0", _("yes")), ("1", _("no")) ]);
+		config.av.allow_10bit.addNotifier(setDisable10Bit)
+		SystemInfo["HDRSupport"] = True
+	except:
+		SystemInfo["HDRSupport"] = False
+
+	SystemInfo["SupportsAC3PlusTranscode"] = ac3plus_support
+	if ac3plus_support:
+		def setAC3PlusConvert(configElement):
+			open("/proc/stb/audio/ac3plus", "w").write(configElement.value)
+		config.av.convert_ac3plus = ConfigSelection(choices = [ ("use_hdmi_caps",  _("controlled by HDMI")), ("force_ac3", _("always")) ], default = "use_hdmi_caps")
+		config.av.convert_ac3plus.addNotifier(setAC3PlusConvert)
+

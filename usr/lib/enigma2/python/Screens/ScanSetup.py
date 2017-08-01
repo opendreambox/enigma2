@@ -1100,7 +1100,7 @@ class SatelliteTransponderSearchSupport:
 		self.driver_wa = False
 
 		self.auto_scan = tunername.startswith('Si216')
-		if self.auto_scan or tunername in ("BCM4505", "BCM4506 (internal)", "BCM4506", "Alps BSBE1 C01A/D01A."):
+		if self.auto_scan or tunername == "Alps BSBE1 C01A/D01A." or (tunername.startswith("BCM45") and tunername != "BCM4501"):
 			(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 			if not self.frontend:
 				self.session.nav.stopService()
@@ -1378,8 +1378,12 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 				self.list.append(getConfigListEntry(_("Frequency start"), self.scan_sat.bs_freq_start))
 				self.list.append(getConfigListEntry(_("Frequency stop"), self.scan_sat.bs_freq_stop))
 				tunername = nimmanager.getNimName(index_to_scan)
-				if nim.isCompatible("DVB-S2") and not tunername.startswith('Si216'):
+				if tunername.startswith('BCM450'):
 					self.list.append(getConfigListEntry(_("Accuracy (higher is better)"), self.scan_sat.bs_accuracy))
+				else:
+					# some frontends only support a low accuracy blindscan with SR > 10KSyms..
+					# but better than nothing
+					self.scan_sat.bs_accuracy.value = 1
 				self.list.append(getConfigListEntry(_("Horizontal"), self.scan_sat.bs_horizontal))
 				self.list.append(getConfigListEntry(_("Vertical"), self.scan_sat.bs_vertical))
 			elif self.scan_type.value.find("multisat") != -1:

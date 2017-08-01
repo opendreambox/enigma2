@@ -290,6 +290,7 @@ public:
 		sFrameRate,			/* frame rate */
 		sProgressive,		/* 0 = interlaced, 1 = progressive */
 		sIsMultichannel, 	/* multichannel *available* (probably not selected) */
+		sEotf,				/* Electro Optical Transfer Function */
 
 			/* "user serviceable info" - they are not reliable. Don't use them for anything except the service menu!
 			   that's also the reason why they are so globally defined.

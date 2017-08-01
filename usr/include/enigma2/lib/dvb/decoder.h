@@ -36,6 +36,7 @@ private:
 	void video_event(int what);
 	sigc::signal1<void, struct iTSMPEGDecoder::videoEvent> m_event;
 	int m_width, m_height, m_framerate, m_aspect, m_progressive;
+	std::string m_eotf;
 public:
 	enum { MPEG2, MPEG4_H264, MPEG1, MPEG4_Part2, VC1, VC1_SM, H265 };
 	eDVBVideo(eDVBDemux *demux, int dev);
@@ -54,6 +55,7 @@ public:
 	int getProgressive();
 	int getFrameRate();
 	int getAspect();
+	const char* getEotf();
 };
 
 class eDVBPCR: public iObject
@@ -172,6 +174,7 @@ public:
 	int getVideoFrameRate();
 	int getVideoAspect();
 	int getState();
+	const char* getEotf();
 	static RESULT setHwPCMDelay(int delay);
 	static RESULT setHwAC3Delay(int delay);
 };

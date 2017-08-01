@@ -98,6 +98,11 @@ class VideoSetup(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Scaler sharpness"), config.av.scaler_sharpness))
 
 		if level >= 1:
+			if SystemInfo["HDRSupport"]:
+				self.list.append(getConfigListEntry(_("HLG Support"), config.av.hlg_support))
+				self.list.append(getConfigListEntry(_("HDR10 Support"), config.av.hdr10_support))
+				self.list.append(getConfigListEntry(_("Allow 12bit"), config.av.allow_12bit))
+				self.list.append(getConfigListEntry(_("Allow 10bit"), config.av.allow_10bit))
 			self.list.append(getConfigListEntry(_("Audio")))
 			self.list.append(getConfigListEntry(_("AC3 default"), config.av.defaultac3))
 			if SystemInfo["CanDownmixAC3"]:

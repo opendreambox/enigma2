@@ -21,6 +21,7 @@ class ServiceInfo(Converter, object):
 	FRAMERATE = 15
 	TRANSFERBPS = 16
 	HAS_SUBTITLES = 17
+	IS_HDR = 18
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -29,6 +30,7 @@ class ServiceInfo(Converter, object):
 				"IsMultichannel": (self.IS_MULTICHANNEL, (iPlayableService.evUpdatedInfo,)),
 				"IsCrypted": (self.IS_CRYPTED, (iPlayableService.evUpdatedInfo,)),
 				"IsWidescreen": (self.IS_WIDESCREEN, (iPlayableService.evVideoSizeChanged,)),
+				"IsHdr": (self.IS_HDR, (iPlayableService.evVideoSizeChanged,)),
 				"SubservicesAvailable": (self.SUBSERVICES_AVAILABLE, (iPlayableService.evUpdatedEventInfo,)),
 				"VideoWidth": (self.XRES, (iPlayableService.evVideoSizeChanged,)),
 				"VideoHeight": (self.YRES, (iPlayableService.evVideoSizeChanged,)),
@@ -85,6 +87,8 @@ class ServiceInfo(Converter, object):
 			return False
 		elif self.type == self.IS_CRYPTED:
 			return info.getInfo(iServiceInformation.sIsCrypted) == 1
+		elif self.type == self.IS_HDR:
+			return info.getInfoString(iServiceInformation.sEotf) in ('SMPTE ST 2084 (HDR10)', 'ARIB STD-B67 (HLG)')
 		elif self.type == self.IS_WIDESCREEN:
 			return info.getInfo(iServiceInformation.sAspect) in (3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10)
 		elif self.type == self.SUBSERVICES_AVAILABLE:

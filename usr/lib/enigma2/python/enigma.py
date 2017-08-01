@@ -586,6 +586,7 @@ class iServiceInformation_ENUMS(object):
     sFrameRate = _enigma.iServiceInformation_ENUMS_sFrameRate
     sProgressive = _enigma.iServiceInformation_ENUMS_sProgressive
     sIsMultichannel = _enigma.iServiceInformation_ENUMS_sIsMultichannel
+    sEotf = _enigma.iServiceInformation_ENUMS_sEotf
     sVideoPID = _enigma.iServiceInformation_ENUMS_sVideoPID
     sAudioPID = _enigma.iServiceInformation_ENUMS_sAudioPID
     sPCRPID = _enigma.iServiceInformation_ENUMS_sPCRPID

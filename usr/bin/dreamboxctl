@@ -3,8 +3,8 @@
 import dbus, argparse, os
 
 class DreamboxDBus(object):
-	INTERFACE = "com.dreambox.ctl"
-	OBJECT = "/com/dreambox/ctl"
+	INTERFACE = "de.dreambox.ctl"
+	OBJECT = "/de/dreambox/ctl"
 	PROPERTY_VERSION = "version"
 
 	EXIT_CODE_REBOOT = 2
@@ -24,7 +24,7 @@ class DreamboxDBus(object):
 	def _getProperty(self, name):
 		return self._proxy.Get(self.INTERFACE, name, dbus_interface=dbus.PROPERTIES_IFACE)
 
-	def screenshot(self, filename="/tmp/screenshot.png", width=0, height=0, desktop=0, osd=True, video=False):
+	def screenshot(self, filename, width=0, height=0, desktop=0, osd=True, video=False):
 		fmt = filename.split(".")[-1]
 		return self._interface.screenshot(str(filename), str(fmt), width, height, desktop, osd, video)
 
