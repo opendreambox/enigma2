@@ -1757,7 +1757,6 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 			self.scan_sat.pls_mode = ConfigSelection(default = defaultSat["pls_mode"], choices = [
 				(eDVBFrontendParametersSatellite.PLS_Root, "Root"),
 				(eDVBFrontendParametersSatellite.PLS_Gold, "Gold"),
-				(eDVBFrontendParametersSatellite.PLS_Combo, "Combo"),
 				(eDVBFrontendParametersSatellite.PLS_Unknown, "Auto")])
 			self.scan_sat.pls_code = ConfigInteger(default = defaultSat["pls_code"], limits = (0, 262143))
 

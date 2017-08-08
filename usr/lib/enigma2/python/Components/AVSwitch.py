@@ -242,11 +242,3 @@ def InitAVSwitch():
 		SystemInfo["HDRSupport"] = True
 	except:
 		SystemInfo["HDRSupport"] = False
-
-	SystemInfo["SupportsAC3PlusTranscode"] = ac3plus_support
-	if ac3plus_support:
-		def setAC3PlusConvert(configElement):
-			open("/proc/stb/audio/ac3plus", "w").write(configElement.value)
-		config.av.convert_ac3plus = ConfigSelection(choices = [ ("use_hdmi_caps",  _("controlled by HDMI")), ("force_ac3", _("always")) ], default = "use_hdmi_caps")
-		config.av.convert_ac3plus.addNotifier(setAC3PlusConvert)
-
