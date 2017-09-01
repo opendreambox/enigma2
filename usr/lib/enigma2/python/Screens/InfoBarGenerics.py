@@ -40,7 +40,7 @@ from Tools import Notifications
 from Tools.Directories import fileExists
 
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, \
-	iPlayableService, eServiceReference, eEPGCache, eActionMap, eServiceMP3
+	iPlayableService, eServiceReference, eEPGCache, eActionMap, eServiceMP3, eSize
 
 from time import time, localtime, strftime
 from bisect import insort
@@ -2494,19 +2494,116 @@ class InfoBarSubtitleSupport(object):
 	subtitles_enabled = property(lambda self: self.__subtitles_enabled, setSubtitlesEnable)
 	selected_subtitle = property(lambda self: self.__selected_subtitle, setSelectedSubtitle)
 
+class InfoBarStateInfo(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self["state"] = Label()
+		self["message"] = Label()
+		self.onFirstExecBegin.append(self.__onFirstExecBegin)
+		self._stateSizeDefault = eSize(590,40)
+		self._stateSizeFull = eSize(590,130)
+		self._stateOnly = False
+
+	def __onFirstExecBegin(self):
+		self._stateSizeDefault = self["state"].getSize()
+		self._stateSizeFull = eSize( self._stateSizeDefault.width(), self.instance.size().height() - (2 * self["state"].position.x()) )
+		self._resizeBoxes()
+
+	def _resizeBoxes(self):
+		if self._stateOnly:
+			self["state"].resize(self._stateSizeFull)
+			self["message"].hide();
+		else:
+			self["state"].resize(self._stateSizeDefault)
+			self["message"].show();
+
+	def setPlaybackState(self, state, message=""):
+		self["state"].text = state
+		self["message"].text = message
+		self._stateOnly = False if message else True
+		#self._resizeBoxes()
+
 class InfoBarServiceErrorPopupSupport:
+	STATE_TUNING = _("tuning...")
+	STATE_CONNECTING = _("connecting...")
+	MESSAGE_WAIT = _("Please wait!")
+	STATE_RECONNECTING = _("reconnecting...")
+
 	def __init__(self):
 		Notifications.notificationQueue.registerDomain("ZapError", _("ZapError"), Notifications.ICON_DEFAULT)
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
+				iPlayableService.evServiceChanged: self.__serviceChanged,
 				iPlayableService.evTuneFailed: self.__tuneFailed,
-				iPlayableService.evStart: self.__serviceStarted
+				iPlayableService.evStart: self.__serviceStarted,
+				iPlayableService.evPlay: self.__servicePlaying,
+				iPlayableService.evNotFound: self.__notFound,
+				iPlayableService.evUpdatedEventInfo: self.__servicePlaying #just to be sure we're not staying on screen forever
 			})
-		self.__serviceStarted()
+		self._isStream = False
+		self._isLiveStream = False
+		self._isReconnect = False
+		self._currentRef = None
+		self.last_error = None
+		self._stateInfo = self.session.instantiateDialog(InfoBarStateInfo,zPosition=-5)
+		self._stateInfo.neverAnimate()
+		self._reconnTimer = eTimer()
+		self._reconnTimer_conn = self._reconnTimer.timeout.connect(self._doReconnect)
+		self.__servicePlaying()
+
+	def setPlaybackState(self, state=None, message=None):
+		Log.w("%s %s %s" %(state, message, time()))
+		if state or message:
+			Log.w("show")
+			self._stateInfo.setPlaybackState(state, message)
+			self._stateInfo.show()
+		else:
+			self._stateInfo.hide()
+			Log.w("hide")
 
 	def __serviceStarted(self):
+		if not self._isStream:
+			self.__servicePlaying()
 		self.last_error = None
-		Notifications.RemovePopup(id = "ZapError")
+
+	def __serviceChanged(self):
+		ref = self.session.nav.getCurrentServiceReference()
+		if not ref:
+			self.setPlaybackState()
+			return
+		path = ref and ref.getPath()
+		self._isReconnect = self._currentRef and ref.toCompareString() == self._currentRef.toCompareString()
+		if not self._isReconnect:
+			self._reconnTimer.stop()
+		self._isStream = path and not path.startswith("/")
+		self._isLiveStream = self._isStream and (ref and ref.flags & eServiceReference.isLive)
+		self._currentRef = ref
+		if self._isStream:
+			self._pendingState = self.STATE_RECONNECTING if self._isReconnect else self.STATE_CONNECTING
+			self.setPlaybackState(self._pendingState, self.MESSAGE_WAIT)
+
+	def __servicePlaying(self):
+		Log.w()
+		self.setPlaybackState()
+
+	def __notFound(self):
+		state = self.STATE_TUNING
+		if self._isStream:
+			state = self.STATE_RECONNECTING if self._isReconnect else self.STATE_CONNECTING
+		self.setPlaybackState(state, _("Service not found!"))
+		self._checkReconnect()
+
+	def _doReconnect(self):
+		if self._isReconnect:
+			Log.w("Let's go!")
+			self.setPlaybackState(self.STATE_RECONNECTING)
+			self.session.nav.playService(self._currentRef, forceRestart=True)
+
+	def _checkReconnect(self):
+		Log.w("%s / %s" %(str(self._isReconnect), str(self._isLiveStream)))
+		self._isReconnect = self._isLiveStream
+		if self._isReconnect:
+			self._reconnTimer.startLongTimer(3)
 
 	def __tuneFailed(self):
 		service = self.session.nav.getCurrentService()
@@ -2531,11 +2628,10 @@ class InfoBarServiceErrorPopupSupport:
 			eDVBServicePMTHandler.eventMisconfiguration: _("Service unavailable!\nCheck tuner configuration!"),
 		}.get(error) #this returns None when the key not exist in the dict
 
-		if error is not None:
-			actions = self.get("ChannelSelectActions", None)
-			Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError", domain = "ZapError", additionalActionMap=actions)
+		if error:
+			self.setPlaybackState(self.STATE_TUNING, error)
 		else:
-			Notifications.RemovePopup(id = "ZapError")
+			self.setPlaybackState()
 
 class InfoBarGstreamerErrorPopupSupport(object):
 	def __init__(self):
@@ -2560,12 +2656,11 @@ class InfoBarGstreamerErrorPopupSupport(object):
 			}
 
 	def __notify(self, key, hasMessage=True):
-		actions = self.get("ChannelSelectActions", None)
 		error = self.__messages.get(key)
 		if hasMessage:
 			currPlay = self.session.nav.getCurrentService()
 			error = error %(currPlay.info().getInfoString(iServiceInformation.sErrorText),)
-		Notifications.AddPopup(text = error, type = MessageBox.TYPE_ERROR, timeout = 5, id = "ZapError", domain = "ZapError", additionalActionMap=actions)
+		self.setPlaybackState(self.STATE_CONNECTING, error)
 
 	def __evAudioDecodeError(self):
 		self.__notify(eServiceMP3.evAudioDecodeError)
@@ -2578,12 +2673,15 @@ class InfoBarGstreamerErrorPopupSupport(object):
 
 	def __evStreamingSrcError(self):
 		self.__notify(eServiceMP3.evStreamingSrcError)
+		self._checkReconnect()
 
 	def __evFileReadError(self):
 		self.__notify(eServiceMP3.evFileReadError)
+		self._checkReconnect()
 
 	def __evTypeNotFoundError(self):
 		self.__notify(eServiceMP3.evTypeNotFoundError, hasMessage=False)
 
 	def __evGeneralGstError(self):
 		self.__notify(eServiceMP3.evGeneralGstError)
+		self._checkReconnect()

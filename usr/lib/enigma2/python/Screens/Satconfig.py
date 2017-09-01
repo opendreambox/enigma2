@@ -71,9 +71,11 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			#	choices.append(getConfigModeTuple("satposdepends"))
 			if len(nimmanager.canEqualTo(self.slotid)) > 0:
 				choices.append(getConfigModeTuple("equal"))
-			if len(nimmanager.canDependOn(self.slotid)) > 0:
+			canDepend = nimmanager.canDependOn(self.slotid)
+			if len([ val for val in canDepend if val[1] == 0 ]):
 				choices.append(getConfigModeTuple("satposdepends"))
-			if len(nimmanager.canConnectTo(self.slotid)) > 0:
+			canConnect = nimmanager.canConnectTo(self.slotid)
+			if len([ val for val in canConnect if val[1] == 0 ]):
 				choices.append(getConfigModeTuple("loopthrough"))
 			self.nimConfig.sat.configMode.setChoices(dict(choices), default = "nothing")
 
@@ -101,6 +103,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.advancedManufacturer = None
 		self.advancedSCR = None
 		self.advancedConnected = None
+		self.advancedDepends = None
 		self.unicableUsePinEntry = None
 		
 		multiType = self.nimConfig.multiType
@@ -132,18 +135,20 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			elif configMode == "satposdepends":
 				choices = []
 				nimlist = nimmanager.canDependOn(self.nim.slot)
-				for id in nimlist:
+				for id, type in nimlist:
 					#choices.append((str(id), str(chr(65 + id))))
-					choices.append((str(id), nimmanager.getNimDescription(id)))
+					if type == 0:
+						choices.append((str(id), nimmanager.getNimDescription(id)))
 				self.nimConfig.connectedTo.setChoices(choices)
 				#self.nimConfig.connectedTo = updateConfigElement(self.nimConfig.connectedTo, ConfigSelection(choices = choices))
 				self.list.append(getConfigListEntry(_("Tuner"), self.nimConfig.connectedTo))
 			elif configMode == "loopthrough":
 				choices = []
-				print "connectable to:", nimmanager.canConnectTo(self.slotid)
 				connectable = nimmanager.canConnectTo(self.slotid)
-				for id in connectable:
-					choices.append((str(id), nimmanager.getNimDescription(id)))
+				print "connectable to:", connectable
+				for id, type in connectable:
+					if type == 0:
+						choices.append((str(id), nimmanager.getNimDescription(id)))
 				self.nimConfig.connectedTo.setChoices(choices)
 				self.nimConfig.sat.configMode.connectedToChanged(self.nimConfig.connectedTo) # call connectedTo Notifier
 				#self.nimConfig.connectedTo = updateConfigElement(self.nimConfig.connectedTo, ConfigSelection(choices = choices))
@@ -225,7 +230,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.advancedLof, self.advancedPowerMeasurement, self.turningSpeed, \
 			self.advancedType, self.advancedSCR, self.advancedManufacturer, self.advancedUnicable, \
 			self.advancedConnected, self.uncommittedDiseqcCommand, self.cableScanType, self.multiType, \
-			self.unicableUsePinEntry
+			self.unicableUsePinEntry, self.advancedDepends
 		)
 
 		current = self["config"].getCurrent()
@@ -352,7 +357,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 
 				choices = []
 				connectable = nimmanager.canConnectTo(self.slotid)
-				for id in connectable:
+				for id, type in connectable:
 					choices.append((str(id), nimmanager.getNimDescription(id)))
 				if len(choices):
 					self.advancedConnected = getConfigListEntry(_("connected"), self.nimConfig.advanced.unicableconnected)
@@ -360,6 +365,17 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					if self.nimConfig.advanced.unicableconnected.value == True:
 						self.nimConfig.advanced.unicableconnectedTo.setChoices(choices)
 						self.list.append(getConfigListEntry(_("Connected to"),self.nimConfig.advanced.unicableconnectedTo))
+				if lnbnum >= 33:
+					choices = []
+					dependable = nimmanager.canDependOn(self.slotid)
+					for id, type in dependable:
+						choices.append((str(id), nimmanager.getNimDescription(id)))
+					if len(choices):
+						self.advancedDepends = getConfigListEntry(_("Positioner depends"), self.nimConfig.advanced.unicabledepends)
+						self.list.append(self.advancedDepends)
+						if self.nimConfig.advanced.unicabledepends.value == True:
+							self.nimConfig.advanced.unicabledependsOn.setChoices(choices)
+							self.list.append(getConfigListEntry(_("Depends on"),self.nimConfig.advanced.unicabledependsOn))
 			else:	#kein Unicable
 				self.list.append(getConfigListEntry(_("Voltage mode"), Sat.voltage))
 				self.list.append(getConfigListEntry(_("Tone mode"), Sat.tonemode))
@@ -391,7 +407,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 					self.uncommittedDiseqcCommand = getConfigListEntry(_("Uncommitted DiSEqC command"), currLnb.uncommittedDiseqcCommand)
 					self.list.append(self.uncommittedDiseqcCommand)
 					self.list.append(getConfigListEntry(_("DiSEqC repeats"), currLnb.diseqcRepeats))
-				if currLnb.diseqcMode.value == "1_2":
+				if currLnb.diseqcMode.value == "1_2" and (not self.advancedDepends or not self.nimConfig.advanced.unicabledepends.value):
 					self.list.append(getConfigListEntry(_("Longitude"), currLnb.longitude))
 					self.list.append(getConfigListEntry(" ", currLnb.longitudeOrientation))
 					self.list.append(getConfigListEntry(_("Latitude"), currLnb.latitude))

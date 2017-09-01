@@ -52,6 +52,7 @@ public:
 		sort1=32,					// sort key is 1 instead of 0
 		isMarker=64,			// Marker
 		isGroup=128,			// is a group of services
+		isLive=256,				// is live (streams for example)
 		isMulticast=0x10000,		// multicast marker for streaming services
 		mustJoinMulticastGroup=0x20000	// must join multicast group
 	};
@@ -1041,6 +1042,9 @@ public:
 		evPause,
 		evPlay,
 		evSeek,
+
+		evNotFound,
+		evServiceChanged,
 
 		evUser = 0x100
 	};

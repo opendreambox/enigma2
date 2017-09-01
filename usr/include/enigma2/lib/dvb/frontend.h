@@ -67,7 +67,7 @@ public:
 		ROTOR_PENDING,        // rotor cmd pending
 		LINKED_PREV_PTR,      // prev double linked list (for linked FEs)
 		LINKED_NEXT_PTR,      // next double linked list (for linked FEs)
-		SATPOS_DEPENDS_PTR,   // pointer to FE with configured rotor (with twin/quattro lnb)
+		SATPOS_DEPENDS_IDX,   // pointer to FE with configured rotor (with twin/quattro lnb)
 		FREQ_OFFSET,          // frequency offset for tuned transponder
 		CUR_DVBS_VOLTAGE,     // current dvb-s(2) voltage
 		CUR_DVBT_VOLTAGE,     // current dvb-t voltage

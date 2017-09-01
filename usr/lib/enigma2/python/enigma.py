@@ -517,6 +517,7 @@ class eServiceReference(object):
     sort1 = _enigma.eServiceReference_sort1
     isMarker = _enigma.eServiceReference_isMarker
     isGroup = _enigma.eServiceReference_isGroup
+    isLive = _enigma.eServiceReference_isLive
     isMulticast = _enigma.eServiceReference_isMulticast
     mustJoinMulticastGroup = _enigma.eServiceReference_mustJoinMulticastGroup
     flags = _swig_property(_enigma.eServiceReference_flags_get, _enigma.eServiceReference_flags_set)
@@ -1241,6 +1242,8 @@ class iPlayableService_ENUMS(object):
     evPause = _enigma.iPlayableService_ENUMS_evPause
     evPlay = _enigma.iPlayableService_ENUMS_evPlay
     evSeek = _enigma.iPlayableService_ENUMS_evSeek
+    evNotFound = _enigma.iPlayableService_ENUMS_evNotFound
+    evServiceChanged = _enigma.iPlayableService_ENUMS_evServiceChanged
     evUser = _enigma.iPlayableService_ENUMS_evUser
     stateIdle = _enigma.iPlayableService_ENUMS_stateIdle
     stateStop = _enigma.iPlayableService_ENUMS_stateStop
@@ -3508,6 +3511,7 @@ pNavigation.playService = new_instancemethod(_enigma.pNavigation_playService, No
 pNavigation.stopService = new_instancemethod(_enigma.pNavigation_stopService, None, pNavigation)
 pNavigation.pause = new_instancemethod(_enigma.pNavigation_pause, None, pNavigation)
 pNavigation.getCurrentService = new_instancemethod(_enigma.pNavigation_getCurrentService, None, pNavigation)
+pNavigation.getCurrentServiceReference = new_instancemethod(_enigma.pNavigation_getCurrentServiceReference, None, pNavigation)
 pNavigation.recordService = new_instancemethod(_enigma.pNavigation_recordService, None, pNavigation)
 pNavigation.stopRecordService = new_instancemethod(_enigma.pNavigation_stopRecordService, None, pNavigation)
 pNavigation.getRecordings = new_instancemethod(_enigma.pNavigation_getRecordings, None, pNavigation)

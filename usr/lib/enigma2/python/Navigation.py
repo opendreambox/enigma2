@@ -97,14 +97,19 @@ class Navigation:
 			else:
 				playref = ref
 			if self.pnav and not self.pnav.playService(playref):
-				self.currentlyPlayingServiceReference = playref
+				self.currentlyPlayingServiceReference = self.pnav.getCurrentServiceReference();
 				return 0
 		else:
 			self.stopService()
 		return 1
 
+	# You'll break ServiceEventTracker if you ever change this, keep your hand's of it!
+	# It HAS to be set after evStart
 	def getCurrentlyPlayingServiceReference(self):
 		return self.currentlyPlayingServiceReference
+
+	def getCurrentServiceReference(self):
+		return self.pnav.getCurrentServiceReference()
 
 	def recordService(self, ref, simulate=False):
 		service = None

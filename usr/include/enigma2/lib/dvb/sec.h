@@ -321,7 +321,7 @@ private:
 	std::map<int, eDVBSatelliteSwitchParameters>::iterator m_curSat;
 	eSmartPtrList<eDVBRegisteredFrontend> &m_avail_frontends, &m_avail_simulate_frontends;
 	int m_rotorMoving;
-	int m_not_linked_slot_mask;
+	int m_unused; // was m_not_linked_slot_mask
 #endif
 #ifdef SWIG
 	eDVBSatelliteEquipmentControl();
@@ -387,7 +387,7 @@ public:
 /* Tuner Specific Parameters */
 	RESULT setTunerLinked(int from, int to, int which=3); // bitmask of 1 = normal, 2 = simulate
 	RESULT setTunerDepends(int from, int to);
-	void setSlotNotLinked(int tuner_no);
+	void setSlotNotLinked(int tuner_no); // not used anymore... is a NOP
 
 	intPairList getFrequencyRangeList(int slot_no, int orb_pos);
 	intList getBandCutOffFrequency(int slot_no, int orb_pos);

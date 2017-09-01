@@ -44,7 +44,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 		self.nextservice = None
 		self.is_closing = False
 
-		self.__eventTracker = ServiceEventTracker(screen=self, eventmap=
+		self.__serviceEventTracker = ServiceEventTracker(screen=self, eventmap=
 			{
 				iPlayableService.evPlay: self._onPlay,
 				iPlayableService.evPause: self._onPause,
