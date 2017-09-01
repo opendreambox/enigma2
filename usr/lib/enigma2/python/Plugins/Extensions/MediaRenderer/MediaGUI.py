@@ -100,7 +100,6 @@ class MediaGUI(Screen):
 				if album:
 					self.summaries.setText(album, 3)
 				return
-		self.summaries.setText(self.master.getServiceName(), 1)
 
 	def playpause(self):
 		if self._playpause(self.seekstate == self.SEEK_STATE_PLAY):

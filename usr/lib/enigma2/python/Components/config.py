@@ -671,7 +671,10 @@ class ConfigSequence(ConfigElement):
 		return str(v)
 
 	def fromstring(self, value):
-		return [int(x) for x in value.split(self.seperator)]
+		try:
+			return [int(x) for x in value.split(self.seperator)]
+		except:
+			return self.default
 
 ip_limits = [(0,255),(0,255),(0,255),(0,255)]
 class ConfigIP(ConfigSequence):
@@ -1358,7 +1361,10 @@ class ConfigSet(ConfigElement):
 		return str(value)
 
 	def fromstring(self, val):
-		return literal_eval(val)
+		try:
+			return literal_eval(val)
+		except:
+			return self.default
 
 	description = property(lambda self: descriptionList(self.choices.choices, choicesList.LIST_TYPE_LIST))
 

@@ -256,6 +256,9 @@ class AudioSelection(Screen, ConfigListScreen):
 					flags.append(_("Saved"))
 				s_flags = (", ").join(flags)
 
+				if s_codec == "TTX":
+					s_codec += " %x%x" %(trackinfo.getMagazineNumber(), trackinfo.getPageNumber())
+
 				stream = (SelectionTrackinfoEntry(idx, trackinfo), s_number, s_language, s_codec, s_flags, selected and selectionpng or None)
 				streams.append(stream)
 

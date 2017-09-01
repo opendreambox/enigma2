@@ -644,11 +644,13 @@ class NIM(object):
 	def isEnabled(self, what):
 		ret = self.isCompatible(what)
 		if ret:
-			if what in ('DVB-S', 'DVB-S2'): 
+			if self.inputs is not None and self.channel >= len(self.inputs):
+				return False
+			elif what in ('DVB-S', 'DVB-S2'):
 				return self.config.sat.configMode.value != "nothing"
-			elif what in ('DVB-T', 'DVB-T2'): 
+			elif what in ('DVB-T', 'DVB-T2'):
 				return self.config.terrest.configMode.value != "nothing"
-			elif what in ('DVB-C'): 
+			elif what in ('DVB-C'):
 				return self.config.cable.configMode.value != "nothing"
 		return ret
 
@@ -1472,6 +1474,8 @@ class UnicableProducts(object):
 			self.default = stored_default
 
 		sv = configElement.scr.saved_value if hasattr(configElement, "scr") else None
+		if not sv:
+			sv = None
 		save_forced = True if sv is None else configElement.scr.save_forced
 		configElement.scr = ConfigSelection(scrlist, default = scrlist[0][0])
 		configElement.scr.save_forced = save_forced
@@ -1482,6 +1486,8 @@ class UnicableProducts(object):
 
 		if create_scrs:
 			sv = configElement.scrs.saved_value if hasattr(configElement, "scrs") else None
+			if not sv:
+				sv = None
 			save_forced = True if sv is None else configElement.scrs.save_forced
 			scrs = None if sv is None else literal_eval(sv)
 			choices = [ int(x) for x in vcolist[:-1] ]
@@ -1903,8 +1909,7 @@ def InitNimManager(nimmgr, slot_no = None):
 					if len(nimmgr.getNimListOfType(val, exception = x)) > 0:
 						config_mode_choices.append(getConfigModeTuple("equal"))
 						config_mode_choices.append(getConfigModeTuple("satposdepends"))
-				if len(nimmgr.canConnectTo(x)) > 0:
-					config_mode_choices.append(getConfigModeTuple("loopthrough"))
+						config_mode_choices.append(getConfigModeTuple("loopthrough"))
 			nim.advanced = ConfigNothing()
 			nim.sat = ConfigSubsection()
 			nim.sat.configMode = ConfigSelection(config_mode_choices, "nothing")
