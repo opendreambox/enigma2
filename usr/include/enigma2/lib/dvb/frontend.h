@@ -184,6 +184,7 @@ public:
 	int getLastChannelSlotID() const { return m_slotid_last_channel; }
 	void setBestLinkSlotID(int slot) { m_best_link_slot = slot; }
 	int getBestLinkSlotID() const { return m_best_link_slot; }
+	void dynamicUnlink();
 
 	void reopenFrontend();
 	int openFrontend();

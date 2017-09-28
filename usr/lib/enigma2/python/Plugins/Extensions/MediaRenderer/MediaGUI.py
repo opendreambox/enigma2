@@ -6,7 +6,7 @@ from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 
 from Tools.Log import Log
-from LCDScreen import SimpleLCDScreen
+from LCDScreen import MediaRendererLCDScreen
 
 class MediaGUI(Screen):
 	ENABLE_RESUME_SUPPORT = True
@@ -58,7 +58,7 @@ class MediaGUI(Screen):
 		self.showInfo()
 
 	def createSummary(self):
-		return SimpleLCDScreen
+		return MediaRendererLCDScreen
 
 	def delayedClose(self):
 		Log.i()

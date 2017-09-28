@@ -366,11 +366,14 @@ class SecConfigure:
 						manufacturer = currLnb.unicableMatrix
 
 					vcos = manufacturer.scrs.value
-					if len(vcos) <= channel:
+					num_vco = len(vcos)
+					if num_vco < 1:
 						Log.i("warning Slot " + str(slotid) + " Channel " + str(channel) + " LNB " + str(x) + " not enough SCRs configured... no unicable possible with this channel... skip")
 						continue
+					elif num_vco <= channel:
+						Log.i("warning Slot " + str(slotid) + " Channel " + str(channel) + " LNB " + str(x) + " not enough SCRs configured... maybe no unicable possible with this channel!")
 
-					vco = vcos[channel]
+					vco = vcos[channel % num_vco]
 
 					cnt = 0
 					for v in manufacturer.vco:

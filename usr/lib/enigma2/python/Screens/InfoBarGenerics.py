@@ -2523,11 +2523,16 @@ class InfoBarStateInfo(Screen):
 		self._stateOnly = False if message else True
 		#self._resizeBoxes()
 
+	def current(self):
+		return (self["state"].text, self["message"].text)
+
 class InfoBarServiceErrorPopupSupport:
 	STATE_TUNING = _("tuning...")
 	STATE_CONNECTING = _("connecting...")
 	MESSAGE_WAIT = _("Please wait!")
 	STATE_RECONNECTING = _("reconnecting...")
+
+	_stateInfo = None
 
 	def __init__(self):
 		Notifications.notificationQueue.registerDomain("ZapError", _("ZapError"), Notifications.ICON_DEFAULT)
@@ -2545,21 +2550,41 @@ class InfoBarServiceErrorPopupSupport:
 		self._isReconnect = False
 		self._currentRef = None
 		self.last_error = None
-		self._stateInfo = self.session.instantiateDialog(InfoBarStateInfo,zPosition=-5)
-		self._stateInfo.neverAnimate()
+		if not InfoBarServiceErrorPopupSupport._stateInfo:
+			InfoBarServiceErrorPopupSupport._stateInfo = self.session.instantiateDialog(InfoBarStateInfo,zPosition=-5)
+			InfoBarServiceErrorPopupSupport._stateInfo.neverAnimate()
 		self._reconnTimer = eTimer()
 		self._reconnTimer_conn = self._reconnTimer.timeout.connect(self._doReconnect)
+		self._restoreInfo = None
+
+		self.onShown.append(self.__restoreState)
+		self.onExecEnd.append(self.__hideState)
+		self.onClose.append(self.__hideState)
+
 		self.__servicePlaying()
 
+	def __restoreState(self):
+		Log.i()
+		if self.execing and self._restoreInfo:
+			self.setPlaybackState(*self._restoreInfo)
+
+	def __hideState(self):
+		if InfoBarServiceErrorPopupSupport._stateInfo.shown:
+			self._restoreInfo = InfoBarServiceErrorPopupSupport._stateInfo.current()
+		InfoBarServiceErrorPopupSupport._stateInfo.hide()
+
 	def setPlaybackState(self, state=None, message=None):
-		Log.w("%s %s %s" %(state, message, time()))
+		Log.i("%s %s %s" %(state, message, time()))
 		if state or message:
-			Log.w("show")
-			self._stateInfo.setPlaybackState(state, message)
-			self._stateInfo.show()
+			if self.execing:
+				InfoBarServiceErrorPopupSupport._stateInfo.setPlaybackState(state, message)
+				InfoBarServiceErrorPopupSupport._stateInfo.show()
+				self._restoreInfo = None
+			else:
+				self._restoreInfo = (state, message)
 		else:
-			self._stateInfo.hide()
-			Log.w("hide")
+			self._restoreInfo = None
+			InfoBarServiceErrorPopupSupport._stateInfo.hide()
 
 	def __serviceStarted(self):
 		if not self._isStream:
@@ -2595,7 +2620,6 @@ class InfoBarServiceErrorPopupSupport:
 
 	def _doReconnect(self):
 		if self._isReconnect:
-			Log.w("Let's go!")
 			self.setPlaybackState(self.STATE_RECONNECTING)
 			self.session.nav.playService(self._currentRef, forceRestart=True)
 

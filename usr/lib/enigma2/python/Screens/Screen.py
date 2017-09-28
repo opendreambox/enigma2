@@ -30,6 +30,7 @@ class Screen(dict, GUISkin):
 
 		self.onShow = [ ]
 		self.onHide = [ ]
+		self.onExecEnd = [ ]
 		self.onHideFinished = [ ]
 
 		self.execing = False
@@ -106,6 +107,8 @@ class Screen(dict, GUISkin):
 #		assert self.session != None, "execEnd on non-execing screen!"
 #		self.session = None
 		self.execing = False
+		for x in self.onExecEnd:
+			x()
 
 	def doClose(self, immediate=True):
 		print "WARNING: NEVER call Screen.doClose directly!!! You have to use Session.deleteDialog(screen)\nThis function is deprecated and will be removed in the future\nPlease report!"

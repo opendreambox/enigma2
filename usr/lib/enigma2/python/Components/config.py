@@ -1294,6 +1294,7 @@ class ConfigSet(ConfigElement):
 		if resort:
 			default.sort()
 		self.default = default
+		self.help_window = None
 		self.value = default[:]
 
 	def toggleChoice(self, choice):
@@ -1353,8 +1354,19 @@ class ConfigSet(ConfigElement):
 			len_val1 = len(val1)
 			return ("mtext", val1+chstr+val2, range(len_val1, len_val1 + len(chstr)))
 
+
+	def onSelect(self, session):
+		if session is not None:
+			from Screens.ConfigSetHelpDialog import ConfigSetHelpDialog
+			self.help_window = session.instantiateDialog(ConfigSetHelpDialog, self, zPosition=5000)
+			self.help_window.neverAnimate()
+			self.help_window.show()
+
 	def onDeselect(self, session):
 		self.pos = -1
+		if self.help_window:
+			session.deleteDialog(self.help_window)
+			self.help_window = None
 		ConfigElement.onDeselect(self, session)
 
 	def tostring(self, value):
