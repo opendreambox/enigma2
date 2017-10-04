@@ -4081,6 +4081,7 @@ class iDVBFrontend_ENUMS(object):
     stateClosed = _enigma.iDVBFrontend_ENUMS_stateClosed
     toneOff = _enigma.iDVBFrontend_ENUMS_toneOff
     toneOn = _enigma.iDVBFrontend_ENUMS_toneOn
+    toneUnknown = _enigma.iDVBFrontend_ENUMS_toneUnknown
     voltageOff = _enigma.iDVBFrontend_ENUMS_voltageOff
     voltage13 = _enigma.iDVBFrontend_ENUMS_voltage13
     voltage18 = _enigma.iDVBFrontend_ENUMS_voltage18

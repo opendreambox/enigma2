@@ -1040,6 +1040,8 @@ class ConfigTextBase(ConfigElement):
 			self.help_window = session.instantiateDialog(NumericalTextInputHelpDialog, self, zPosition=5000)
 			self.help_window.neverAnimate()
 			self.help_window.show()
+		else:
+			Log.w("Help dialog skipped - session is None!")
 
 	def onDeselect(self, session):
 		self.selected = False
@@ -1361,6 +1363,8 @@ class ConfigSet(ConfigElement):
 			self.help_window = session.instantiateDialog(ConfigSetHelpDialog, self, zPosition=5000)
 			self.help_window.neverAnimate()
 			self.help_window.show()
+		else:
+			Log.w("Help dialog skipped - session is None!")
 
 	def onDeselect(self, session):
 		self.pos = -1

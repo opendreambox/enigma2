@@ -487,7 +487,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		ServiceStopScreen.__init__(self)
 		self.stopService()
 
-		ConfigListScreen.__init__(self, self.list)
+		ConfigListScreen.__init__(self, self.list, session=session)
 
 		self["actions"] = ActionMap(["SetupActions", "SatlistShortcutAction"],
 		{
