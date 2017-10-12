@@ -82,7 +82,7 @@ class AnimationSetup(Screen):
 		self.session.open(ExtendedAnimationsSetup)
 
 class ExtendedAnimationsSetup(Screen, ConfigListScreen):
-	DEVICES_TO_ANIMATE = ["dm900"]
+	DEVICES_TO_ANIMATE = ["dm900", "dm920"]
 
 	def __init__(self, session, windowTitle=_("Extend Animations Configuration")):
 		Screen.__init__(self, session, windowTitle=windowTitle)

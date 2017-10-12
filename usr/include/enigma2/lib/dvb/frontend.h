@@ -76,6 +76,8 @@ public:
 		NUM_DATA_ENTRIES
 	};
 	eSignal1<void, iDVBFrontend*> m_stateChanged;
+	sigc::signal0<void> m_inputChanged;
+	friend eDVBRegisteredFrontend;
 private:
 	DECLARE_REF(eDVBFrontend);
 	bool m_dvbt_5V_via_proc;
@@ -87,6 +89,7 @@ private:
 	int m_slotid;
 
 	/* for multi channel frontends with multiple inputs */
+	int m_num_inputs; // number of inputs (-1 for normal tuner)
 	int m_input; // selected input (-1 for normal tuner)
 	int m_slotid_first_channel;
 	int m_slotid_last_channel; // only valid when m_slotid_first_channel is != -1
@@ -179,6 +182,7 @@ public:
 	static int getTypePriorityOrder() { return PriorityOrder; }
 
 	/* for multi channel frontends with multiple inputs */
+	int getNumInputs();
 	int getInput() const { return m_input; }
 	int getFirstChannelSlotID() const { return m_slotid_first_channel; }
 	int getLastChannelSlotID() const { return m_slotid_last_channel; }

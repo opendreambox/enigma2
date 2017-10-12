@@ -89,12 +89,24 @@ class StartWizard(NetworkWizardNew, VideoWizard, DefaultSatLists, LanguageSelect
 		self.updateTexts()
 
 	def setTunerText(self, step):
-		index = {"nima": 0, "nimb": 1, "nimc": 2, "nimd": 3}.get(step, None)
+		dest_slot = {"nima": 0, "nimb": 1, "nimc": 2, "nimd": 3}.get(step, None)
 		text = ""
-		if index == 0:
+		if dest_slot == 0:
 			text += _("Use the left and right buttons to change an option.") + "\n\n"
-		text += _("Please set up tuner %s") % nimmanager.getNimSlotInputName(index)
-		
+
+		# convert dest_slot to visible slotid
+		index = -1
+		slotid = 0
+		slots = len(nimmanager.nim_slots)
+		while slotid < slots:
+			slot = nimmanager.nim_slots[slotid]
+			if slot.inputs is None or slot.channel < len(slot.inputs):
+				index += 1
+			if index >= dest_slot:
+				break
+			slotid += 1
+
+		text += _("Please set up tuner %s") % nimmanager.getNimSlotInputName(slotid)
 		return text
 
 	def showHideButtons(self, green = False, yellow = False, blue = False):

@@ -14,8 +14,8 @@ Notifications.notificationQueue.registerDomain(NOTIFICATION_DOMAIN_STREAMSERVER,
 
 
 class StreamServerControl(object):
-	FEATURE_SCENE_DETECTION = HardwareInfo().get_device_name() in ["dm900"]
-	FEATURE_SLICES = HardwareInfo().get_device_name() in ["dm900"]
+	FEATURE_SCENE_DETECTION = HardwareInfo().get_device_name() in ["dm900", "dm920"]
+	FEATURE_SLICES = HardwareInfo().get_device_name() in ["dm900", "dm920"]
 
 	FRAME_RATE_25 = "25"
 	FRAME_RATE_30 = "30"

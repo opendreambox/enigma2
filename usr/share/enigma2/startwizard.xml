@@ -80,11 +80,11 @@ self.selectKey("DOWN")
 from Components.config import config
 from Components.NimManager import nimmanager
 slot = len(nimmanager.nim_slots) &gt; 0 and nimmanager.nim_slots[0]
-self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
+self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; len(slot.inputs))
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner A" />
-			<config screen="NimSetup" module="Satconfig" args="0" type="ConfigList" />
+			<config screen="NimSetup" module="Satconfig" args="64" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
 self.selectKey("LEFT")
@@ -96,11 +96,11 @@ self.selectKey("RIGHT")
 from Components.config import config
 from Components.NimManager import nimmanager
 slot = len(nimmanager.nim_slots) &gt; 1 and nimmanager.nim_slots[1]
-self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
+self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; len(slot.inputs))
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner B" />
-			<config screen="NimSetup" module="Satconfig" args="1" type="ConfigList" />
+			<config screen="NimSetup" module="Satconfig" args="65" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
 self.selectKey("LEFT")
@@ -111,12 +111,19 @@ self.selectKey("RIGHT")
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
-slot = len(nimmanager.nim_slots) &gt; 2 and nimmanager.nim_slots[2]
-self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
+visible_slot = -1
+sl = 0
+slots = len(nimmanager.nim_slots)
+while sl &lt; slots and visible_slot &lt; 2:
+	slot = nimmanager.nim_slots[sl]
+	if slot.inputs is None or slot.channel &lt; len(slot.inputs):
+		visible_slot += 1
+	sl += 1
+self.condition = visible_slot == 2 and not slot.empty
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner C" />
-			<config screen="NimSetup" module="Satconfig" args="2" type="ConfigList" />
+			<config screen="NimSetup" module="Satconfig" args="66" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
 self.selectKey("LEFT")
@@ -127,12 +134,19 @@ self.selectKey("RIGHT")
 			<condition>
 from Components.config import config
 from Components.NimManager import nimmanager
-slot = len(nimmanager.nim_slots) &gt; 3 and nimmanager.nim_slots[3]
-self.condition = slot and not slot.empty and config.misc.startwizard.shownimconfig.value and (slot.inputs is None or slot.channel &lt; 2)
+visible_slot = -1
+sl = 0
+slots = len(nimmanager.nim_slots)
+while sl &lt; slots and visible_slot &lt; 3:
+	slot = nimmanager.nim_slots[sl]
+	if slot.inputs is None or slot.channel &lt; len(slot.inputs):
+		visible_slot += 1
+	sl += 1
+self.condition = visible_slot == 3 and not slot.empty
 			</condition>
 			<text dynamictext="setTunerText" />
 			<short_title value="Tuner D" />
-			<config screen="NimSetup" module="Satconfig" args="3" type="ConfigList" />
+			<config screen="NimSetup" module="Satconfig" args="67" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
 self.selectKey("LEFT")

@@ -19,15 +19,16 @@ class FrontendInfo(Source, PerServiceBase):
 	def serviceEnd(self):
 #		import pdb
 #		pdb.set_trace()
-		self.slot_number = self.frontend_type = None
+		self.input_number = self.slot_number = self.frontend_type = None
 		self.changed((self.CHANGED_CLEAR, ))
 
 	def updateFrontendData(self):
 		data = self.getFrontendData()
 		if not data:
-			self.slot_number = self.frontend_type = None
+			self.input_number = self.slot_number = self.frontend_type = None
 		else:
 			self.slot_number = data.get("slot_number")
+			self.input_number = data.get("input_number")
 			self.frontend_type = data.get("tuner_type")
 		self.changed((self.CHANGED_ALL, ))
 

@@ -483,7 +483,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 	def __init__(self, session, slotid):
 		Screen.__init__(self, session)
 		self.list = [ ]
-		
 		ServiceStopScreen.__init__(self)
 		self.stopService()
 
@@ -495,6 +494,20 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			"cancel": self.keyCancel,
 			"nothingconnected": self.nothingConnectedShortcut
 		}, -2)
+
+		# hack for wizard and multi channel / multi input tuners
+		if slotid >= 64:
+			dest_slot = slotid - 64
+			sl = -1
+			slotid = 0
+			slots = len(nimmanager.nim_slots)
+			while slotid < slots:
+				slot = nimmanager.nim_slots[slotid]
+				if slot.inputs is None or slot.channel < len(slot.inputs):
+					sl += 1
+				if sl >= dest_slot:
+					break
+				slotid += 1
 
 		self.slotid = slotid
 		self.nim = nimmanager.nim_slots[slotid]

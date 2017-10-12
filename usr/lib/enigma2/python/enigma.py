@@ -4150,6 +4150,7 @@ class eDVBResourceManager(object):
     __swig_destroy__ = _enigma.delete_eDVBResourceManager
     getInstance = staticmethod(_enigma.eDVBResourceManager_getInstance)
     frontendUseMaskChanged = _swig_property(_enigma.eDVBResourceManager_frontendUseMaskChanged_get, _enigma.eDVBResourceManager_frontendUseMaskChanged_set)
+    frontendInputUseMaskChanged = _swig_property(_enigma.eDVBResourceManager_frontendInputUseMaskChanged_get, _enigma.eDVBResourceManager_frontendInputUseMaskChanged_set)
 eDVBResourceManager.__ref__ = new_instancemethod(_enigma.eDVBResourceManager___ref__, None, eDVBResourceManager)
 eDVBResourceManager.getPtrString = new_instancemethod(_enigma.eDVBResourceManager_getPtrString, None, eDVBResourceManager)
 eDVBResourceManager.__deref__ = new_instancemethod(_enigma.eDVBResourceManager___deref__, None, eDVBResourceManager)

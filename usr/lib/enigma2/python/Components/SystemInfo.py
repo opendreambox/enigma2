@@ -35,5 +35,5 @@ except:
 	SystemInfo["NetworkManager"] = False
 
 device_name = HardwareInfo().device_name
-SystemInfo["HaveTouchSensor"] = device_name in ('dm520', 'dm525', 'dm900')
-SystemInfo["DefaultDisplayBrightness"] = device_name == 'dm900' and 8 or 5
+SystemInfo["HaveTouchSensor"] = device_name in ('dm520', 'dm525', 'dm900', 'dm920')
+SystemInfo["DefaultDisplayBrightness"] = device_name in ('dm900', 'dm920') and 8 or 5

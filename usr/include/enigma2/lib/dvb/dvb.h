@@ -37,6 +37,7 @@ public:
 		:disable(eTimer::create(eApp)), m_adapter(adap), m_frontend(fe), m_inuse(0)
 	{
 		CONNECT(disable->timeout, eDVBRegisteredFrontend::closeFrontend);
+		fe->m_inputChanged.connect(stateChanged.make_slot());
 	}
 	void dec_use()
 	{
@@ -236,6 +237,7 @@ public:
 	int canAllocateFrontend(ePtr<iDVBFrontendParameters> &feparm, bool simulate=false);
 	unsigned int canMeasureFrontendInputPower();
 	eSignal1<void, int> frontendUseMaskChanged;
+	eSignal1<void, int> frontendInputUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
 	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, int, int, std::string, int, int> >);
 };

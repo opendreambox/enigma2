@@ -14,6 +14,7 @@ class FrontendInfo(Converter, object):
 	SNRdB = 4
 	SLOT_NUMBER = 5
 	TUNER_TYPE = 6
+	INPUT_NUMBER = 7
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -28,6 +29,8 @@ class FrontendInfo(Converter, object):
 			self.type = self.AGC
 		elif type == "NUMBER":
 			self.type = self.SLOT_NUMBER
+		elif type == "INPUT":
+			self.type = self.INPUT_NUMBER
 		elif type == "TYPE":
 			self.type = self.TUNER_TYPE
 		else:
@@ -35,7 +38,7 @@ class FrontendInfo(Converter, object):
 
 	@cached
 	def getText(self):
-		assert self.type not in (self.LOCK, self.SLOT_NUMBER), "the text output of FrontendInfo cannot be used for lock info"
+		assert self.type not in (self.LOCK, self.SLOT_NUMBER, self.INPUT_NUMBER), "the text output of FrontendInfo cannot be used for lock info"
 		percent = None
 		if self.type == self.BER: # as count
 			count = self.source.ber
@@ -110,6 +113,9 @@ class FrontendInfo(Converter, object):
 			return 0
  		elif self.type == self.SLOT_NUMBER:
 			num = self.source.slot_number
+			return num is None and -1 or num
+		elif self.type == self.INPUT_NUMBER:
+			num = self.source.input_number
 			return num is None and -1 or num
 
 	range = 65536

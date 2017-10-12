@@ -270,83 +270,83 @@
 			<convert type="ServiceName">Reference</convert>
 		</widget>
 		<!-- tuners in use? -->
-		<widget source="session.TunerInfo" render="TunerLabel,0" position="170,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,0,input" position="170,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">1</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,1" position="200,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,1,input" position="200,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">2</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,2" position="230,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,2,input" position="230,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">4</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,3" position="260,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,3,input" position="260,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">8</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,4" position="290,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,4,input" position="290,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">16</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,5" position="320,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,5,input" position="320,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">32</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,6" position="350,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,6,input" position="350,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">64</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.TunerInfo" render="TunerLabel,7" position="380,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
-			<convert type="TunerInfo">TunerUseMask</convert>
+		<widget source="session.TunerInfo" render="TunerLabel,7,input" position="380,127" size="30,20" zPosition="2" font="Regular;16" foregroundColor="yellow" backgroundColor="#4e5a74" transparent="1">
+			<convert type="TunerInfo">TunerInputUseMask</convert>
 			<convert type="ValueBitTest">128</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,0" position="170,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,0,input" position="170,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">0,0</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,1" position="200,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,1,input" position="200,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">1,1</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,2" position="230,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,2,input" position="230,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">2,2</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,3" position="260,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,3,input" position="260,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">3,3</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,4" position="290,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,4,input" position="290,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">4,4</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,5" position="320,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,5,input" position="320,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">5,5</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,6" position="350,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,6,input" position="350,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">6,6</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="session.FrontendInfo" render="TunerLabel,7" position="380,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
-			<convert type="FrontendInfo">NUMBER</convert>
+		<widget source="session.FrontendInfo" render="TunerLabel,7,input" position="380,127" size="30,20" zPosition="3" font="Regular;16" foregroundColor="green" backgroundColor="#4e5a74" transparent="1">
+			<convert type="FrontendInfo">INPUT</convert>
 			<convert type="ValueRange">7,7</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
