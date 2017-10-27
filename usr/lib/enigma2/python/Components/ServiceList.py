@@ -366,8 +366,8 @@ class ServiceList(HTMLComponent, GUIComponent):
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, 0, 0, width , height, 1, RT_HALIGN_RIGHT, "", forgroundColor, forgroundColorSel, backgroundColor, backgroundColorSel))
 
 		info = self.service_center.info(service)
-		serviceName = info.getName(service) or "<n/a>"
-		event = info.getEvent(service)
+		serviceName = info and info.getName(service) or "<n/a>"
+		event = info and info.getEvent(service)
 		index = self.getCurrentIndex()
 		xoffset = self._componentSizes.get(self.KEY_BEGIN_MARGIN, 5)
 		pixmap = self._buildOptionEntryServicePixmap(service)

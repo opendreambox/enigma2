@@ -640,8 +640,8 @@ class NIM(object):
 		except:
 			self.channel = 0
 		self.can_auto_fec_s2 = self.description != "Alps BSBE2"
-		self.can_modulation_auto = len(multi_type) > 1 or self.description.startswith("Si216") or self.description in ('BCM45208', 'BCM73625 (G3)') 
-		self.can_pls_s2 = self.description == "Si2166D"
+		self.can_modulation_auto = len(multi_type) > 1 or self.description.startswith("Si216") or self.description in ('BCM45308X', 'BCM45208', 'BCM73625 (G3)') 
+		self.can_pls_s2 = self.description == "Si2166D" or self.description == "Si2169D"
 		self.can_multistream_s2 = self.can_pls_s2
 		self.can_s_s2_auto_delsys = self.description.startswith("Si216")
 		self.inputs = inputs
