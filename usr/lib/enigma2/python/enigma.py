@@ -4094,6 +4094,7 @@ class iDVBFrontend_ENUMS(object):
     synced = _enigma.iDVBFrontend_ENUMS_synced
     frontendNumber = _enigma.iDVBFrontend_ENUMS_frontendNumber
     signalQualitydB = _enigma.iDVBFrontend_ENUMS_signalQualitydB
+    canDVBS2Multistream = _enigma.iDVBFrontend_ENUMS_canDVBS2Multistream
 iDVBFrontend_ENUMS_swigregister = _enigma.iDVBFrontend_ENUMS_swigregister
 iDVBFrontend_ENUMS_swigregister(iDVBFrontend_ENUMS)
 
@@ -4123,6 +4124,7 @@ iDVBFrontendPtr.getFrontendStatus = new_instancemethod(_enigma.iDVBFrontendPtr_g
 iDVBFrontendPtr.getTransponderData = new_instancemethod(_enigma.iDVBFrontendPtr_getTransponderData, None, iDVBFrontendPtr)
 iDVBFrontendPtr.getFrontendData = new_instancemethod(_enigma.iDVBFrontendPtr_getFrontendData, None, iDVBFrontendPtr)
 iDVBFrontendPtr.getStateChangeSignal = new_instancemethod(_enigma.iDVBFrontendPtr_getStateChangeSignal, None, iDVBFrontendPtr)
+iDVBFrontendPtr.getCapabilities = new_instancemethod(_enigma.iDVBFrontendPtr_getCapabilities, None, iDVBFrontendPtr)
 iDVBFrontendPtr_swigregister = _enigma.iDVBFrontendPtr_swigregister
 iDVBFrontendPtr_swigregister(iDVBFrontendPtr)
 
@@ -4158,6 +4160,7 @@ eDVBResourceManager.canAllocateFrontend = new_instancemethod(_enigma.eDVBResourc
 eDVBResourceManager.canMeasureFrontendInputPower = new_instancemethod(_enigma.eDVBResourceManager_canMeasureFrontendInputPower, None, eDVBResourceManager)
 eDVBResourceManager.allocateRawChannel = new_instancemethod(_enigma.eDVBResourceManager_allocateRawChannel, None, eDVBResourceManager)
 eDVBResourceManager.setFrontendSlotInformations = new_instancemethod(_enigma.eDVBResourceManager_setFrontendSlotInformations, None, eDVBResourceManager)
+eDVBResourceManager.getFrontendCapabilities = new_instancemethod(_enigma.eDVBResourceManager_getFrontendCapabilities, None, eDVBResourceManager)
 eDVBResourceManager_swigregister = _enigma.eDVBResourceManager_swigregister
 eDVBResourceManager_swigregister(eDVBResourceManager)
 

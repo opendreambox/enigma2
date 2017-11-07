@@ -240,6 +240,7 @@ public:
 	eSignal1<void, int> frontendInputUseMaskChanged;
 	SWIG_VOID(RESULT) allocateRawChannel(eUsePtr<iDVBChannel> &SWIG_OUTPUT, int slot_index);
 	void setFrontendSlotInformations(std::list<std::tuple<int, std::string, int, int, std::string, int, int> >);
+	int getFrontendCapabilities(int frontend) const;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eDVBResourceManager>, eDVBResourceManager);
 SWIG_EXTEND(ePtr<eDVBResourceManager>,

@@ -23,7 +23,7 @@ stateLock = iDVBFrontend.stateLock
 stateFailed = iDVBFrontend.stateFailed
 stateTuning = iDVBFrontend.stateTuning
 
-can_t_t2_auto_delsys = [ 'Si2169C', 'ATBM781x' ]
+can_t_t2_auto_delsys = [ 'Si2169C', 'Si2169D', 'ATBM781x' ]
 
 def buildTerTransponder(frequency,
 		system = eDVBFrontendParametersTerrestrial.System_DVB_T,
@@ -290,7 +290,7 @@ class CableTransponderSearchSupport:
 	def startCableTransponderSearch(self, nim_idx):
 		tunername = nimmanager.getNimName(nim_idx)
 		self.cable_search_container = None
-		if tunername == "Si2169C":
+		if tunername.startswith("Si2169"):
 			(self.channel, self.frontend) = self.tryGetRawFrontend(nim_idx, False, False)
 			if not self.frontend:
 				self.session.nav.stopService()

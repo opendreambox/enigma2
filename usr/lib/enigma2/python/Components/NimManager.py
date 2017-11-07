@@ -639,11 +639,13 @@ class NIM(object):
 			self.channel = int(input_name[1]) - 1
 		except:
 			self.channel = 0
+
+		caps = eDVBResourceManager.getInstance().getFrontendCapabilities(self.frontend_id)
 		self.can_auto_fec_s2 = self.description != "Alps BSBE2"
-		self.can_modulation_auto = len(multi_type) > 1 or self.description.startswith("Si216") or self.description in ('BCM45308X', 'BCM45208', 'BCM73625 (G3)') 
-		self.can_pls_s2 = self.description == "Si2166D" or self.description == "Si2169D"
-		self.can_multistream_s2 = self.can_pls_s2
+		self.can_modulation_auto = len(multi_type) > 1 or self.description.startswith("Si216") or self.description in ('BCM45308X', 'BCM45208', 'BCM73625 (G3)')
 		self.can_s_s2_auto_delsys = self.description.startswith("Si216")
+		self.can_pls_s2 = self.can_multistream_s2 = (caps & iDVBFrontend.canDVBS2Multistream) or self.description in ('Si2166D', 'Si2169D')
+
 		self.inputs = inputs
 
 	def isEnabled(self, what):

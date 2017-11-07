@@ -102,6 +102,7 @@ private:
 	bool m_seen_first_event;
 	bool m_dvb_t2_auto_delsys;
 	bool m_dvb_s2_auto_delsys;
+	bool m_can_s2_multistream;
 	char m_filename[128];
 	char m_description[128];
 	static int dvb_api_minor;
@@ -196,6 +197,8 @@ public:
 	void preClose();
 	const char *getDescription() const { return m_description; }
 	bool is_simulate() const { return m_simulate; }
+
+	int getCapabilities() const;
 };
 
 #endif // SWIG

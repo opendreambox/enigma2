@@ -494,6 +494,7 @@ public:
 	enum { toneOff, toneOn, toneUnknown };
 	enum { voltageOff, voltage13, voltage18, voltage13_5, voltage18_5 };
 	enum { bitErrorRate, signalPower, signalQuality, locked, synced, frontendNumber, signalQualitydB };
+	enum { canDVBS2Multistream = 1 };
 };
 
 typedef std::map<std::string, int> FrontendDataMap;
@@ -530,6 +531,7 @@ public:
 		/* 0 means: not compatible. other values are a priority. */
 	virtual int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm)=0;
 #endif
+	virtual int getCapabilities() const = 0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iDVBFrontend>, iDVBFrontendPtr);
 
