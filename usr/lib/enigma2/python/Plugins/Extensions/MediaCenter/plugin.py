@@ -243,12 +243,6 @@ def Plugins(**kwargs):
 	return [
 			PluginDescriptor(name="MediaCenter",
 							  description="Play and watch all your media",
-							  icon="plugin.png",
-							  where=[ PluginDescriptor.WHERE_EXTENSIONSMENU, PluginDescriptor.WHERE_PLUGINMENU ],
-							  fnc=main),
-
-			PluginDescriptor(name="MediaCenter",
-							  description="Play and watch all your media",
 							  where=PluginDescriptor.WHERE_MENU,
 							  fnc=menu),
 

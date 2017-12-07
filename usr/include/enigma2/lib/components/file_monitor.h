@@ -4,6 +4,7 @@
 #include <lib/base/message.h>
 #include <lib/base/ebase.h>
 #include <lib/base/elock.h>
+#include <lib/base/esignal.h>
 
 #include <queue>
 #include <future>
@@ -17,7 +18,9 @@ class eFileEvent {
 	std::string m_path;
 	std::string m_movedFrom;
 	std::string m_movedTo;
-
+#ifdef SWIG
+	eFileEvent();
+#endif
 public:
 	enum {
 		ACCESS = IN_ACCESS,
@@ -36,8 +39,9 @@ public:
 		MOVE_SELF = IN_MOVE_SELF,
 		ISDIR = IN_ISDIR,
 	};
-
+#ifndef SWIG
 	eFileEvent(struct inotify_event *event, std::string path=std::string(""));
+#endif
 	int getWd() const { return m_wd; };
 	uint32_t getMask() const { return m_mask; };
 	uint32_t getCookie() const { return m_cookie; };
@@ -47,6 +51,7 @@ public:
 	const std::string getMovedFrom() const { return m_movedFrom; };
 	const std::string getMovedTo() const { return m_movedTo; };
 
+#ifndef SWIG
 	void setWd(int wd){ m_wd = wd; };
 	void setMask(uint32_t mask){ m_mask = mask; };
 	void setCookie(uint32_t cookie){ m_cookie = cookie; };
@@ -54,7 +59,7 @@ public:
 	void setPath(const std::string &path){ m_path = path; };
 	void setMovedFrom(const std::string &movedFrom){ m_movedFrom = movedFrom; };
 	void setMovedTo(const std::string &movedTo){ m_movedTo = movedTo; };
-
+#endif
 };
 
 /**
@@ -66,10 +71,12 @@ class eFileWatch : public sigc::trackable
 {
 	pthread_mutex_t m_startstop_mutex;
 	pthread_mutex_t m_child_mutex;
+	friend class eFileMonitor;
 
 	int m_wd;
 	uint32_t m_mask;
 	bool m_recursive; //recursivley watch the given directory, all events of siblings will bubble to the very parent eFileWatch and be signalled from there
+	bool m_destroyed;
 	std::string m_directory;
 
 	std::map<std::string, eFileWatch*> m_child_lut;
@@ -112,6 +119,7 @@ public:
 
 	bool isWatching() const;
 
+#ifndef SWIG
 	/**
 	 * This should only be called for inotify events valid for this eFileWatch.
 	 * If the current instance has a non-zero parent no signal will be raised but the event will bubble to the parent.
@@ -120,6 +128,7 @@ public:
 	 */
 	void event(eFileEvent event, bool bubbled=false);
 	void removeChild(eFileWatch* child);
+#endif
 
 	const int getWd() const { return m_wd; };
 	const std::string getDirectory() const { return m_directory; };
@@ -127,8 +136,13 @@ public:
 
 	void setDirectory(const std::string &dir){ m_directory = dir; };
 
-	Signal2<void, eFileWatch*, eFileEvent> fileChanged;
+	eSignal2<void, eFileWatch*, eFileEvent> fileChanged;
 };
+SWIG_EXTEND(eFileWatch,
+	bool operator==(const eFileWatch &fw) const { return &fw == self; }
+);
+
+#ifndef SWIG
 
 /**
  * Monitors the Filesystem for changes (based on inotify).
@@ -187,5 +201,7 @@ public:
 	 */
 	Signal1<void, bool> processEvents;
 };
+
+#endif
 
 #endif

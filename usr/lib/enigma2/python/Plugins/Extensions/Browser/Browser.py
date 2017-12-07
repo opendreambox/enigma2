@@ -1,6 +1,6 @@
 import _webview
 from webview import eWebView
-from enigma import getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint
+from enigma import getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint, eRect, cvar
 import enigma
 enigma.eWebView = eWebView
 
@@ -24,9 +24,12 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import SCOPE_PLUGINS, resolveFilename
+from Tools.Log import Log
 
 from BrowserDB import BrowserDB, HistoryItem, Certificate, Cookie
 from BrowserMenu import BrowserMenu
+from BrowserVideoWindow import BrowserVideoWindow
+from WebMediaPlayerProxy import WebMediaPlayerProxy
 from Downloads import downloadManager, DownloadJob
 from EnhancedInput import EnhancedInput
 from MoviePlayer import MoviePlayer
@@ -175,6 +178,7 @@ class Browser(Screen, HelpableScreen):
 			isTransparent = fullscreen = True
 
 		self.__hbbtvMenu = hbbtvMenu
+		self._videoWindow = None
 
 		self.__isTransparent = isTransparent
 		self.__fullscreen = fullscreen
@@ -314,6 +318,32 @@ class Browser(Screen, HelpableScreen):
 			"9": self.keyNumberGlobal,
 			"0": self.keyNumberGlobal
 		})
+
+		self._mediaProxy = WebMediaPlayerProxy.register(self)
+		Log.w(self._mediaProxy)
+		self._startService = self.session.nav.getCurrentServiceReference()
+		self._serviceRestoreTimer = eTimer()
+		self._serviceRestoreTimer_conn = self._serviceRestoreTimer.timeout.connect(self._onRestoreService)
+		self.onClose.append(self.__onClose)
+
+#	WebMediaPlayerProxy APIs
+	def playStream(self, ref):
+		self._serviceRestoreTimer.stop()
+		ref.setUserAgent(cvar.hbbtvUserAgent)
+		self.session.nav.playService(ref)
+
+	def stopStream(self):
+		self.session.nav.stopService()
+		self._serviceRestoreTimer.startLongTimer(1)
+
+	def _onRestoreService(self):
+		if self._startService:
+			self.session.nav.playService(self._startService)
+
+	def __onClose(self):
+		self._onRestoreService()
+		WebMediaPlayerProxy.unregister(self)
+		self.resetVideoWindow()
 
 	def ignoreSource(self, source):
 		# its not needed to create the canvas when this is a Hbbtv Browser
@@ -1077,6 +1107,50 @@ class Browser(Screen, HelpableScreen):
 			self.__db.persistCookies(cookies)
 		else:
 			print "[Browser].__persistCookies ::: NO cookies to be persisted"
+
+#VIDEO 
+	def showVideo(self):
+		if self._videoWindow != None:
+			self._videoWindow.show()
+
+	def hideVideo(self):
+		if self._videoWindow != None:
+			self._videoWindow.hide()
+
+	def _adjustVideoLimits(self, var, lower, upper):
+		var = int(var)
+		var = max(var, lower)
+		var = min(var, upper)
+		return var
+
+	def setVideoWindow(self, x, y, w, h):
+		w = self._adjustVideoLimits(w, 128, 1280)
+		h = self._adjustVideoLimits(h, 72, 720)
+		x = self._adjustVideoLimits(x, 0, 1280)
+		y = self._adjustVideoLimits(y, 0, 720)
+
+		Log.i("x=%s, y=%s, w=%s, h=%s" % (x, y, w, h))
+		self.scaleRect(eRect(x, y, w, h), self._doSetVideoWindow)
+
+	def _doSetVideoWindow(self, rect):
+		Log.w("x=%s, y=%s, w=%s, h=%s" % (rect.x(), rect.y(), rect.width(), rect.height()))
+		if self._videoWindow == None:
+			self._videoWindow = self.session.instantiateDialog(BrowserVideoWindow, point=rect.topLeft(), size=rect.size(), zPosition=-1)
+		self._videoWindow.setRect(rect.topLeft(), rect.size())
+		self._videoWindow.show()
+
+	def resetVideoWindow(self):
+		if self._videoWindow:
+			self.session.deleteDialog(self._videoWindow)
+			self._videoWindow = None
+
+	def toggleVideoFullscreen(self):
+		if self._videoWindow:
+			if self._videoWindow.toggleFullscreen():
+				self.hide()
+			else:
+				self.show()
+			return True
 
 class HttpAuthenticationDialog(Screen):
 	skin = """

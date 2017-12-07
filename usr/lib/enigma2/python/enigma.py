@@ -538,6 +538,8 @@ eServiceReference.setUserAgent = new_instancemethod(_enigma.eServiceReference_se
 eServiceReference.getUserAgent = new_instancemethod(_enigma.eServiceReference_getUserAgent, None, eServiceReference)
 eServiceReference.setTransportHeaders = new_instancemethod(_enigma.eServiceReference_setTransportHeaders, None, eServiceReference)
 eServiceReference.getTransportHeaders = new_instancemethod(_enigma.eServiceReference_getTransportHeaders, None, eServiceReference)
+eServiceReference.getSuburi = new_instancemethod(_enigma.eServiceReference_getSuburi, None, eServiceReference)
+eServiceReference.setSuburi = new_instancemethod(_enigma.eServiceReference_setSuburi, None, eServiceReference)
 eServiceReference.toString = new_instancemethod(_enigma.eServiceReference_toString, None, eServiceReference)
 eServiceReference.toCompareString = new_instancemethod(_enigma.eServiceReference_toCompareString, None, eServiceReference)
 eServiceReference.__eq__ = new_instancemethod(_enigma.eServiceReference___eq__, None, eServiceReference)
@@ -4305,6 +4307,115 @@ def eDBusInterface_sendEvent(id):
     """eDBusInterface_sendEvent(int id)"""
     return _enigma.eDBusInterface_sendEvent(id)
 
+class eWebMediaPlayerProxy(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        """__init__(eWebMediaPlayerProxy self) -> eWebMediaPlayerProxy"""
+        if self.__class__ == eWebMediaPlayerProxy:
+            _self = None
+        else:
+            _self = self
+        _enigma.eWebMediaPlayerProxy_swiginit(self, _enigma.new_eWebMediaPlayerProxy(_self, ))
+    __swig_destroy__ = _enigma.delete_eWebMediaPlayerProxy
+
+    def setVideoWindow(self, x, y, width, height):
+        """setVideoWindow(eWebMediaPlayerProxy self, int x, int y, int width, int height)"""
+        return _enigma.eWebMediaPlayerProxy_setVideoWindow(self, x, y, width, height)
+
+
+    def play(self, val, isUri):
+        """play(eWebMediaPlayerProxy self, std::string const & val, bool isUri) -> bool"""
+        return _enigma.eWebMediaPlayerProxy_play(self, val, isUri)
+
+
+    def pause(self):
+        """pause(eWebMediaPlayerProxy self) -> bool"""
+        return _enigma.eWebMediaPlayerProxy_pause(self)
+
+
+    def resume(self):
+        """resume(eWebMediaPlayerProxy self) -> bool"""
+        return _enigma.eWebMediaPlayerProxy_resume(self)
+
+
+    def stop(self):
+        """stop(eWebMediaPlayerProxy self) -> bool"""
+        return _enigma.eWebMediaPlayerProxy_stop(self)
+
+
+    def setVolume(self, to):
+        """setVolume(eWebMediaPlayerProxy self, int to) -> bool"""
+        return _enigma.eWebMediaPlayerProxy_setVolume(self, to)
+
+
+    def getVolume(self):
+        """getVolume(eWebMediaPlayerProxy self) -> int"""
+        return _enigma.eWebMediaPlayerProxy_getVolume(self)
+
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eWebMediaPlayerProxy(self)
+        return weakref_proxy(self)
+eWebMediaPlayerProxy.setVideoWindow = new_instancemethod(_enigma.eWebMediaPlayerProxy_setVideoWindow, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy.play = new_instancemethod(_enigma.eWebMediaPlayerProxy_play, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy.pause = new_instancemethod(_enigma.eWebMediaPlayerProxy_pause, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy.resume = new_instancemethod(_enigma.eWebMediaPlayerProxy_resume, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy.stop = new_instancemethod(_enigma.eWebMediaPlayerProxy_stop, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy.setVolume = new_instancemethod(_enigma.eWebMediaPlayerProxy_setVolume, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy.getVolume = new_instancemethod(_enigma.eWebMediaPlayerProxy_getVolume, None, eWebMediaPlayerProxy)
+eWebMediaPlayerProxy_swigregister = _enigma.eWebMediaPlayerProxy_swigregister
+eWebMediaPlayerProxy_swigregister(eWebMediaPlayerProxy)
+
+class eWebMediaPlayer(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    STREAM_STATE_STOPPED = _enigma.eWebMediaPlayer_STREAM_STATE_STOPPED
+    STREAM_STATE_PLAYING = _enigma.eWebMediaPlayer_STREAM_STATE_PLAYING
+    STREAM_STATE_PAUSED = _enigma.eWebMediaPlayer_STREAM_STATE_PAUSED
+    STREAM_STATE_BUFFERING = _enigma.eWebMediaPlayer_STREAM_STATE_BUFFERING
+    STREAM_STATE_SEEKING = _enigma.eWebMediaPlayer_STREAM_STATE_SEEKING
+    STREAM_STATE_ERROR = _enigma.eWebMediaPlayer_STREAM_STATE_ERROR
+    STREAM_STATE_CANCELLED = _enigma.eWebMediaPlayer_STREAM_STATE_CANCELLED
+    STREAM_POSITION_CHANGED = _enigma.eWebMediaPlayer_STREAM_POSITION_CHANGED
+    STREAM_RESOLUTION_CHANGED = _enigma.eWebMediaPlayer_STREAM_RESOLUTION_CHANGED
+
+    def setProxy(proxy):
+        """setProxy(eWebMediaPlayerProxy proxy) -> bool"""
+        return _enigma.eWebMediaPlayer_setProxy(proxy)
+
+    setProxy = staticmethod(setProxy)
+
+    def resetProxy():
+        """resetProxy()"""
+        return _enigma.eWebMediaPlayer_resetProxy()
+
+    resetProxy = staticmethod(resetProxy)
+
+    def sendEvent(id):
+        """sendEvent(int id)"""
+        return _enigma.eWebMediaPlayer_sendEvent(id)
+
+    sendEvent = staticmethod(sendEvent)
+eWebMediaPlayer_swigregister = _enigma.eWebMediaPlayer_swigregister
+eWebMediaPlayer_swigregister(eWebMediaPlayer)
+
+def eWebMediaPlayer_setProxy(proxy):
+    """eWebMediaPlayer_setProxy(eWebMediaPlayerProxy proxy) -> bool"""
+    return _enigma.eWebMediaPlayer_setProxy(proxy)
+
+def eWebMediaPlayer_resetProxy():
+    """eWebMediaPlayer_resetProxy()"""
+    return _enigma.eWebMediaPlayer_resetProxy()
+
+def eWebMediaPlayer_sendEvent(id):
+    """eWebMediaPlayer_sendEvent(int id)"""
+    return _enigma.eWebMediaPlayer_sendEvent(id)
+
 class eDeviceEventManager(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -4365,6 +4476,58 @@ eBackgroundFileEraser_swigregister(eBackgroundFileEraser)
 def eBackgroundFileEraser_getInstance():
     return _enigma.eBackgroundFileEraser_getInstance()
 eBackgroundFileEraser_getInstance = _enigma.eBackgroundFileEraser_getInstance
+
+class eFileEvent(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    ACCESS = _enigma.eFileEvent_ACCESS
+    MODIFY = _enigma.eFileEvent_MODIFY
+    ATTRIB = _enigma.eFileEvent_ATTRIB
+    CLOSE_WRITE = _enigma.eFileEvent_CLOSE_WRITE
+    CLOSE_NOWRITE = _enigma.eFileEvent_CLOSE_NOWRITE
+    CLOSE = _enigma.eFileEvent_CLOSE
+    OPEN = _enigma.eFileEvent_OPEN
+    MOVED_FROM = _enigma.eFileEvent_MOVED_FROM
+    MOVED_TO = _enigma.eFileEvent_MOVED_TO
+    MOVE = _enigma.eFileEvent_MOVE
+    CREATE = _enigma.eFileEvent_CREATE
+    DELETE = _enigma.eFileEvent_DELETE
+    DELETE_SELF = _enigma.eFileEvent_DELETE_SELF
+    MOVE_SELF = _enigma.eFileEvent_MOVE_SELF
+    ISDIR = _enigma.eFileEvent_ISDIR
+    __swig_destroy__ = _enigma.delete_eFileEvent
+eFileEvent.getWd = new_instancemethod(_enigma.eFileEvent_getWd, None, eFileEvent)
+eFileEvent.getMask = new_instancemethod(_enigma.eFileEvent_getMask, None, eFileEvent)
+eFileEvent.getCookie = new_instancemethod(_enigma.eFileEvent_getCookie, None, eFileEvent)
+eFileEvent.getName = new_instancemethod(_enigma.eFileEvent_getName, None, eFileEvent)
+eFileEvent.getPath = new_instancemethod(_enigma.eFileEvent_getPath, None, eFileEvent)
+eFileEvent.getFullPath = new_instancemethod(_enigma.eFileEvent_getFullPath, None, eFileEvent)
+eFileEvent.getMovedFrom = new_instancemethod(_enigma.eFileEvent_getMovedFrom, None, eFileEvent)
+eFileEvent.getMovedTo = new_instancemethod(_enigma.eFileEvent_getMovedTo, None, eFileEvent)
+eFileEvent_swigregister = _enigma.eFileEvent_swigregister
+eFileEvent_swigregister(eFileEvent)
+
+class eFileWatch(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        _enigma.eFileWatch_swiginit(self, _enigma.new_eFileWatch(*args))
+    __swig_destroy__ = _enigma.delete_eFileWatch
+    fileChanged = _swig_property(_enigma.eFileWatch_fileChanged_get, _enigma.eFileWatch_fileChanged_set)
+eFileWatch.startWatching = new_instancemethod(_enigma.eFileWatch_startWatching, None, eFileWatch)
+eFileWatch.stopWatching = new_instancemethod(_enigma.eFileWatch_stopWatching, None, eFileWatch)
+eFileWatch.isWatching = new_instancemethod(_enigma.eFileWatch_isWatching, None, eFileWatch)
+eFileWatch.getWd = new_instancemethod(_enigma.eFileWatch_getWd, None, eFileWatch)
+eFileWatch.getDirectory = new_instancemethod(_enigma.eFileWatch_getDirectory, None, eFileWatch)
+eFileWatch.getMask = new_instancemethod(_enigma.eFileWatch_getMask, None, eFileWatch)
+eFileWatch.setDirectory = new_instancemethod(_enigma.eFileWatch_setDirectory, None, eFileWatch)
+eFileWatch.__eq__ = new_instancemethod(_enigma.eFileWatch___eq__, None, eFileWatch)
+eFileWatch_swigregister = _enigma.eFileWatch_swigregister
+eFileWatch_swigregister(eFileWatch)
 
 class eMusicPlayer(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -7083,11 +7246,14 @@ class eHbbtv(object):
     STREAM_ERROR_UNSUPPORTED = _enigma.eHbbtv_STREAM_ERROR_UNSUPPORTED
     STREAM_ERROR_CONNECTING = _enigma.eHbbtv_STREAM_ERROR_CONNECTING
     STREAM_ERROR_UNKNOWN = _enigma.eHbbtv_STREAM_ERROR_UNKNOWN
+    STREAM_ERROR_NO_RESOURCES = _enigma.eHbbtv_STREAM_ERROR_NO_RESOURCES
+    STREAM_ERROR_CORRUPT = _enigma.eHbbtv_STREAM_ERROR_CORRUPT
+    STREAM_ERROR_UNAVAILABLE = _enigma.eHbbtv_STREAM_ERROR_UNAVAILABLE
+    STREAM_ERROR_UNAVAILABLE_POS = _enigma.eHbbtv_STREAM_ERROR_UNAVAILABLE_POS
     getInstance = staticmethod(_enigma.eHbbtv_getInstance)
     playServiceRequest = _swig_property(_enigma.eHbbtv_playServiceRequest_get, _enigma.eHbbtv_playServiceRequest_set)
     playStreamRequest = _swig_property(_enigma.eHbbtv_playStreamRequest_get, _enigma.eHbbtv_playStreamRequest_set)
     pauseStreamRequest = _swig_property(_enigma.eHbbtv_pauseStreamRequest_get, _enigma.eHbbtv_pauseStreamRequest_set)
-    seekStreamRequest = _swig_property(_enigma.eHbbtv_seekStreamRequest_get, _enigma.eHbbtv_seekStreamRequest_set)
     stopStreamRequest = _swig_property(_enigma.eHbbtv_stopStreamRequest_get, _enigma.eHbbtv_stopStreamRequest_set)
     nextServiceRequest = _swig_property(_enigma.eHbbtv_nextServiceRequest_get, _enigma.eHbbtv_nextServiceRequest_set)
     prevServiceRequest = _swig_property(_enigma.eHbbtv_prevServiceRequest_get, _enigma.eHbbtv_prevServiceRequest_set)
@@ -8917,6 +9083,45 @@ class eSignal2IntString(object):
 eSignal2IntString.connect2 = new_instancemethod(_enigma.eSignal2IntString_connect2, None, eSignal2IntString)
 eSignal2IntString_swigregister = _enigma.eSignal2IntString_swigregister
 eSignal2IntString_swigregister(eSignal2IntString)
+
+class eSlot2FileWatchEvent(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        if self.__class__ == eSlot2FileWatchEvent:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2FileWatchEvent_swiginit(self, _enigma.new_eSlot2FileWatchEvent(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2FileWatchEvent
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2FileWatchEvent(self)
+        return weakref_proxy(self)
+eSlot2FileWatchEvent.cb_func = new_instancemethod(_enigma.eSlot2FileWatchEvent_cb_func, None, eSlot2FileWatchEvent)
+eSlot2FileWatchEvent_swigregister = _enigma.eSlot2FileWatchEvent_swigregister
+eSlot2FileWatchEvent_swigregister(eSlot2FileWatchEvent)
+
+class eSignal2FileWatchEvent(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def connect(self, func):
+        class ePythonSlot2FileWatchEvent(eSlot2FileWatchEvent):
+            def __init__(self, func):
+                eSlot2FileWatchEvent.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2FileWatchEvent(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+
+    def __init__(self):
+        _enigma.eSignal2FileWatchEvent_swiginit(self, _enigma.new_eSignal2FileWatchEvent())
+    __swig_destroy__ = _enigma.delete_eSignal2FileWatchEvent
+eSignal2FileWatchEvent.connect2 = new_instancemethod(_enigma.eSignal2FileWatchEvent_connect2, None, eSignal2FileWatchEvent)
+eSignal2FileWatchEvent_swigregister = _enigma.eSignal2FileWatchEvent_swigregister
+eSignal2FileWatchEvent_swigregister(eSignal2FileWatchEvent)
 
 class eSlot4UIntUIntUIntUInt(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

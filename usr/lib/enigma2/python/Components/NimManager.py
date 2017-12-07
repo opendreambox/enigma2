@@ -640,7 +640,7 @@ class NIM(object):
 		except:
 			self.channel = 0
 
-		caps = eDVBResourceManager.getInstance().getFrontendCapabilities(self.frontend_id)
+		caps = 0 if self.frontend_id is None else eDVBResourceManager.getInstance().getFrontendCapabilities(self.frontend_id)
 		self.can_auto_fec_s2 = self.description != "Alps BSBE2"
 		self.can_modulation_auto = len(multi_type) > 1 or self.description.startswith("Si216") or self.description in ('BCM45308X', 'BCM45208', 'BCM73625 (G3)')
 		self.can_s_s2_auto_delsys = self.description.startswith("Si216")
@@ -1614,8 +1614,10 @@ def configLOFChanged(configElement):
 		if isinstance(section.unicable, ConfigNothing):
 			unicable_choices = {
 				"unicable_lnb": _("Unicable LNB"),
-				"unicable_matrix": _("Unicable Matrix"),
-				"unicable_user": "Unicable "+_("User defined")}
+				"unicable_matrix": _("Unicable Matrix")}
+			# FIXMEE user defined unicable is not usable with multi channel / multi input tuners (aka FBC tuners yet)
+			if not create_scrs:
+				unicable_choices["unicable_user"] = "Unicable "+_("User defined")
 			unicable_choices_default = "unicable_lnb"
 			section.unicable = ConfigSelection(unicable_choices, unicable_choices_default)
 			section.unicable.slot_id = x

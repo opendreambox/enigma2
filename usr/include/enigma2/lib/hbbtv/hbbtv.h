@@ -7,11 +7,7 @@
 #include <lib/service/iservice.h>
 #include <lib/service/event.h>
 
-#if QT_VERSION >= 0x050000
-#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;1.1;1.0;) CE-HTML/1.0; en) AppleWebKit/538.1 compatible/Volksbox compatible/iCord QtWebkit OIPF/1.1"
-#else
-#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.1.1 (+RTSP;Dream Property GmbH;Dreambox;1.1;1.0;) CE-HTML/1.0; en) AppleWebKit/535.19 compatible/Volksbox compatible/iCord QtWebkit/2.2 OIPF/1.1"
-#endif
+#define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mips; U;HbbTV/1.2.1 (+RTSP;Dream Property GmbH;Dreambox;1.5;1.0;) CE-HTML/1.0; en) WebKit QtWebkit OIPF/1.1 "
 
 extern std::string hbbtvUserAgent;
 
@@ -19,17 +15,8 @@ class eDVBServiceAITHandler;
 
 class eHbbtv : public sigc::trackable
 {
+	E_DECLARE_PRIVATE(eHbbtv)
 	static eHbbtv *instance;
-	bool m_aitSignalsEnabled;
-	int m_streamState;
-	ePtr<eConnection> m_serviceEventConnection;
-	std::list<eServiceReference> m_serviceList;
-	eServiceReference m_currentBouquet;
-	eServiceReference m_currentService;
-	ePtr<iPlayableService> m_playableService;
-	ePtr<eConnection> m_serviceEventConn;
-	eDVBServiceAITHandler *m_aitHandler;
-	std::map< std::string, std::map<std::string, eOipfApplication> >m_applications;
 
 	void aitChanged(int pid);
 	std::vector<std::string> split(const std::string &s, char delim, int limit = 0);
@@ -87,17 +74,21 @@ public:
 	};
 
 	enum StreamErrors {
-		STREAM_ERROR_NONE = 0,
-		STREAM_ERROR_UNSUPPORTED,
+		STREAM_ERROR_NONE = -1,
+		STREAM_ERROR_UNSUPPORTED = 0,
 		STREAM_ERROR_CONNECTING,
 		STREAM_ERROR_UNKNOWN,
+		STREAM_ERROR_NO_RESOURCES,
+		STREAM_ERROR_CORRUPT,
+		STREAM_ERROR_UNAVAILABLE,
+		STREAM_ERROR_UNAVAILABLE_POS,
 	};
 
 	//python accessible
 	static eHbbtv *getInstance();
-	void setAitSignalsEnabled(bool enabled){ m_aitSignalsEnabled = enabled; };
+	void setAitSignalsEnabled(bool enabled);
 	void setServiceList(std::string sref);
-	void setStreamState(int state);
+	void setStreamState(int state, int error=STREAM_ERROR_UNKNOWN);
 	const eOipfApplication getApplication(const std::string &id);
 	const std::string resolveApplicationLocator(const std::string &dvbUrl);
 	std::list<std::pair<std::string, std::string> > getApplicationIdsAndName();
@@ -131,7 +122,7 @@ public:
 
 	Signal0<void> currentServiceChanged;
 	Signal1<void, int> serviceChangeError;
-	Signal1<void, int> streamPlayStateChanged;
+	Signal2<void, int, int> streamPlayStateChanged;
 	Signal0<void> serviceListChanged;
 	Signal0<void> loadFinished;
 #endif
@@ -142,8 +133,6 @@ public:
 	eSignal1<void, const char *> playStreamRequest;
 	/* void pauseStreamRequest(); */
 	eSignal0<void> pauseStreamRequest;
-	/* void seekStreamRequest(pts_t); */
-	eSignal1<void, pts_t> seekStreamRequest;
 	/* void stopStreamRequest(); */
 	eSignal0<void> stopStreamRequest;
 	/* void nextServiceRequest(); */

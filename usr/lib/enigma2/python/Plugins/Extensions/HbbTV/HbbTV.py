@@ -1,13 +1,11 @@
-from enigma import eHbbtv, eServiceReference, ePoint, eSize, eRect, getDesktop, eTimer, eDVBVolumecontrol, cvar
+from enigma import eHbbtv, eServiceReference, eTimer, eDVBVolumecontrol, cvar
 from Plugins.Plugin import PluginDescriptor
-from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.LocationBox import MovieLocationBox
 from Components.config import config, ConfigSubsection, ConfigOnOff, ConfigSelection
 from Components.PluginComponent import plugins
 from Components.UsageConfig import preferredPath
-from Components.VideoWindow import VideoWindow
 
 from Plugins.Extensions.Browser.Browser import Browser
 from Plugins.Extensions.Browser.Downloads import downloadManager, DownloadJob
@@ -20,52 +18,6 @@ config.plugins.hbbtv.text = ConfigOnOff(default=True)
 from datetime import datetime
 from urlparse import urlparse
 
-class HbbTVVideoWindow(Screen):
-	skin = """
-		<screen name="HbbTVVideoWindow" flags="wfNoBorder" zPosition="-1" position="0,0" size="1280,720" title="HbbTVVideoWindow" backgroundColor="transparent" transparent="1" >
-			<widget name="video" position="0,0" zPosition="0" size="0,0" backgroundColor="transparent" />
-		</screen>
-	"""
-
-	def __init__(self, session, point=ePoint(0, 0), size=eSize(0, 0)):
-		Screen.__init__(self, session)
-		desktopSize = getDesktop(0).size()
-		self["video"] = VideoWindow(decoder=0, fb_width=desktopSize.width(), fb_height=desktopSize.height())
-
-		self.__point = point
-		self.__size = size
-		self.__retainedPoint = point
-		self.__retainedSize = size
-
-		self.__isFullscreen = False
-		self.onLayoutFinish.append(self._onLayoutFinished)
-
-	def _onLayoutFinished(self):
-		self.setRect(self.__point, self.__size, force=True)
-
-	def setRect(self, point, size, retain=True, force=False):
-		if point.x() != self.__point.x() or point.y() != self.__point.y() or force:
-			self.instance.move(point)
-			self.__point = point
-		if size.width() != self.__size.width() or size.height() != self.__size.height() or force:
-			self.instance.resize(size)
-			self.__size = size
-			self["video"].instance.resize(size)
-
-		if retain:
-			self.__retainedPoint = point
-			self.__retainedSize = size
-
-	def toggleFullscreen(self):
-		if self.__isFullscreen:
-			self.setRect(self.__retainedPoint, self.__retainedSize)
-			self.__isFullscreen = False
-		else:
-			point = ePoint(0, 0)
-			size = getDesktop(0).size()
-			self.setRect(point, size, retain=False)
-			self.__isFullscreen = True
-		return self.__isFullscreen
 
 class HbbTV(object):
 	instance = None
@@ -90,7 +42,6 @@ class HbbTV(object):
 
 		self.onClose = []
 
-		self.__videoWindow = None
 		self.__currentStreamRef = None
 		self.__browser = None
 		self.__lastService = None
@@ -103,7 +54,6 @@ class HbbTV(object):
 		self.conns.append(self.eHbbtv.playServiceRequest.connect(self.zap))
 		self.conns.append(self.eHbbtv.playStreamRequest.connect(self.playStream))
 		self.conns.append(self.eHbbtv.pauseStreamRequest.connect(self.pauseStream))
-		self.conns.append(self.eHbbtv.seekStreamRequest.connect(self.seekStream))
 		self.conns.append(self.eHbbtv.stopStreamRequest.connect(self.stopStream))
 		self.conns.append(self.eHbbtv.nextServiceRequest.connect(self.nextService))
 		self.conns.append(self.eHbbtv.prevServiceRequest.connect(self.prevService))
@@ -125,51 +75,26 @@ class HbbTV(object):
 			fnc()
 
 	def _showVideoIfAvail(self):
-		if self.__videoWindow != None:
-			self.__videoWindow.show()
+		if self.__browser:
+			self.__browser.showVideo()
 
 	def _hideVideoIfAvail(self):
-		if self.__videoWindow != None:
-			self.__videoWindow.hide()
+		if self.__browser != None:
+			self.__browser.hideVideo()
 
-	def _adjustLimits(self, var, lower, upper):
-		var = int(var)
-		var = max(var, lower)
-		var = min(var, upper)
-		return var
 
 	def setVideoWindow(self, x, y, w, h):
-		w = self._adjustLimits(w, 128, 1280)
-		h = self._adjustLimits(h, 72, 720)
-		x = self._adjustLimits(x, 0, 1280)
-		y = self._adjustLimits(y, 0, 720)
-
-		print "[Hbbtv].setVideoWindow x=%s, y=%s, w=%s, h=%s" % (x, y, w, h)
 		if self.__browser:
-			self.__browser.scaleRect(eRect(x, y, w, h), self._doSetVideoWindow)
-
-	def _doSetVideoWindow(self, rect):
-		print "[Hbbtv]._doSetVideoWindow x=%s, y=%s, w=%s, h=%s" % (rect.x(), rect.y(), rect.width(), rect.height())
-		if self.__videoWindow == None:
-			self.__videoWindow = self.session.instantiateDialog(HbbTVVideoWindow, point=rect.topLeft(), size=rect.size())
-		self.__videoWindow.setRect(rect.topLeft(), rect.size())
-		self.__videoWindow.show()
+			self.__browser.setVideoWindow(x, y, w, h)
 
 	def _unsetVideoWindow(self):
-		if self.__videoWindow != None:
-			self.session.deleteDialog(self.__videoWindow)
-			self.__videoWindow = None
+		if self.__browser:
+			self.__browser.resetVideoWindow()
 
 	def _toggleVideoFullscreen(self):
-		if self.__videoWindow:
-			if self.__videoWindow.toggleFullscreen():
-				if self.__browser:
-					self.__browser.hide()
-			else:
-				if self.__browser:
-					self.__browser.show()
-
-			return True
+		if self.__browser:
+			return self.__browser.toggleVideoFullscreen()
+		return False
 
 	def _saveStreamToDisk(self):
 		if self.isStreaming():
@@ -218,25 +143,26 @@ class HbbTV(object):
 		return False
 
 	def playStream(self, sref):
-		self.__restoreTimer.stop()
-		self.__currentStreamRef = eServiceReference(sref)
+		streamRef = eServiceReference(sref)
 		currentService = self.session.nav.getCurrentlyPlayingServiceReference()
 		if currentService and currentService.valid():
-			if currentService.toCompareString() != self.__currentStreamRef.toCompareString() and currentService.type == eServiceReference.idDVB:
-				self.__lastService = currentService
+			if currentService.toCompareString() != streamRef.toCompareString():
+				if not self.__lastService:
+					self.__lastService = currentService
 				self._playStream(sref)
 			else:
 				self._unpauseStream()
 		else:
 			self._playStream(sref)
-
 		self._showVideoIfAvail()
 
 	def _playStream(self, sref):
+		self.__restoreTimer.stop()
 		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_CONNECTING)
 		self.session.nav.stopService()
 		ref = eServiceReference(sref)
 		ref.setUserAgent(cvar.hbbtvUserAgent)
+		self.__currentStreamRef = ref
 		self.session.nav.playService(ref)
 
 	def actionPause(self):
@@ -245,7 +171,8 @@ class HbbTV(object):
 
 	def _unpauseStream(self):
 		pausable = self.session.nav.getCurrentService().pause()
-		pausable.unpause()
+		if pausable:
+			pausable.unpause()
 		self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PLAYING)
 
 	def pauseStream(self):
@@ -256,19 +183,6 @@ class HbbTV(object):
 			else:
 				pausable.pause()
 				self.eHbbtv.setStreamState(eHbbtv.STREAM_STATE_PAUSED)
-
-	def seekStream(self, to):
-		if not self.isStreaming():
-			return
-
-		s = self.session.nav.getCurrentService()
-		if not s:
-			return
-
-		seekable = s.seek()
-		if seekable is None or not seekable.isCurrentlySeekable():
-			return
-		seekable.seekTo(to)
 
 	def actionStop(self):
 		if self.__browser:

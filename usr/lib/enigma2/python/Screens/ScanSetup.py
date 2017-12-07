@@ -891,6 +891,8 @@ class SatelliteTransponderSearchSupport:
 						self.parm.frequency += self.parm.symbol_rate
 				else:
 					sr_rounded = freq_round(sr, 500)
+					if sr_rounded > 45000000:
+						sr_rounded = 45000000
 #					print "SR after round", sr_rounded
 					parm.symbol_rate = sr_rounded
 					fstr += str(parm.symbol_rate/1000)
@@ -907,12 +909,12 @@ class SatelliteTransponderSearchSupport:
 					fstr += " "
 					fstr += r["modulation"]
 
+					parm.is_id = -1
+					parm.pls_mode = eDVBFrontendParametersSatellite.PLS_Unknown
+					parm.pls_code = 0
 					if parm.system == eDVBFrontendParametersSatellite.System_DVB_S2:
 						parm.rolloff = d["rolloff"]
 						parm.pilot = d["pilot"]
-						parm.is_id = -1
-						parm.pls_mode = eDVBFrontendParametersSatellite.PLS_Unknown
-						parm.pls_code = 0
 
 					if self.auto_scan:
 						print "LOCKED at", freq

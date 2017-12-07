@@ -424,6 +424,7 @@ public:
 	eEPGCache();
 	~eEPGCache();
 
+	std::vector< ePtr<eServiceEvent> > lookupEvents(const eServiceReference &sref, int startTime, int minutes=-1);
 #ifdef ENABLE_PRIVATE_EPG
 	void PMTready(eDVBServicePMTHandler *pmthandler);
 #else
