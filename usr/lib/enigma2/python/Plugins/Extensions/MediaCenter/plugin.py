@@ -26,6 +26,13 @@ class MediaCenterMenuSummary(Screen):
 		<widget source="parent.menulist" render="Label" position="0,32" size="96,32" font="Display;16" halign="center" valign="center">
 			<convert type="StringListSelection" />
 		</widget>
+	</screen>""",
+	"""<screen name="MediaCenterMenuSummary" position="0,0" size="400,240" id="3">
+		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
+		<widget source="Title" render="Label" position="0,5" size="400,48" font="Display;48" halign="center" valign="top" transparent="1"/>
+		<widget source="parent.menulist" render="Label" position="0,12" size="400,220" font="Display;60" halign="center" valign="center" transparent="1">
+			<convert type="StringListSelection" />
+		</widget>
 	</screen>
 	""")
 
@@ -36,25 +43,25 @@ class MainMenu(Screen):
 	icon_path = resolveFilename(SCOPE_PLUGINS, "Extensions/MediaCenter/icons/")
 
 	skin = """
-			<screen name="MainMenu" position="center,120" size="720,520" title="MediaCenter Menu">
-				<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" zPosition="-1"/>
-				<widget name="header" position="320,10" size="390,50" halign="center" font="Regular;45" transparent="1"/>
-				<eLabel position="330,65" size="370,2" backgroundColor="grey" />
-				<widget name="subheader" position="30,350" size="260,70" halign="center" valign="center" font="Regular;26" backgroundColor="background" transparent="1"/>
-				<widget source="menulist" render="Listbox" position="320,100" size="390,450" enableWrapAround="1" scrollbarMode="showOnDemand">
-					<convert type="TemplatedMultiContent">
-						{"template": [
-								MultiContentEntryText(pos = (5,0), size = (640,45), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the name
-							],
-						"fonts": [gFont("Regular", 30)],
-						"itemHeight": 45
-						}
-					</convert>
-				</widget>
-				<widget name="menuIcon" position="65,50" size="192,192" alphatest="on" />
-				<ePixmap pixmap="skin_default/icons/dmm_logo.png" position="20,470" size="280,17" alphatest="on" />
-			</screen>
-		"""
+		<screen name="MainMenu" position="center,120" size="720,520" title="MediaCenter Menu">
+			<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
+			<widget name="header" position="320,10" size="390,50" halign="center" font="Regular;45" transparent="1"/>
+			<eLabel position="330,65" size="370,2" backgroundColor="grey" />
+			<widget name="subheader" position="30,350" size="260,70" halign="center" valign="center" font="Regular;26" backgroundColor="background" transparent="1"/>
+			<widget source="menulist" render="Listbox" position="320,100" size="390,450" enableWrapAround="1" scrollbarMode="showOnDemand">
+				<convert type="TemplatedMultiContent">
+				{"template": [
+				MultiContentEntryText(pos = (5,0), size = (640,45), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the name
+				],
+				"fonts": [gFont("Regular", 30)],
+				"itemHeight": 45
+				}
+				</convert>
+			</widget>
+			<widget name="menuIcon" position="65,50" size="192,192" />
+			<ePixmap pixmap="skin_default/icons/dmm_logo.png" position="20,470" size="280,17" />
+			<ePixmap pixmap="skin_default/buttons/key_menu.png" position="665,490" size="50,25" />
+		</screen>"""
 
 	def __init__(self, session, type=None, playlist=None):
 		Screen.__init__(self, session)

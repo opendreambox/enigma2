@@ -12,6 +12,7 @@ from Components.AVSwitch import AVSwitch
 from Components.Sources.List import List
 from Components.ConfigList import ConfigListScreen
 from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSelection, ConfigText, ConfigOnOff, getConfigListEntry
+from Components.Label import Label
 
 from skin import componentSizes, TemplatedListFonts
 
@@ -27,8 +28,8 @@ config.pic.cache = ConfigOnOff(default=True)
 config.pic.lastDir = ConfigText(default=resolveFilename(SCOPE_MEDIA))
 config.pic.infoline = ConfigOnOff(default=True)
 config.pic.loop = ConfigOnOff(default=True)
-config.pic.bgcolor = ConfigSelection(default="#00000000", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
-config.pic.textcolor = ConfigSelection(default="#0038FF48", choices = [("#00000000", _("black")),("#009eb9ff", _("blue")),("#00ff5a51", _("red")), ("#00ffe875", _("yellow")), ("#0038FF48", _("green"))])
+config.pic.bgcolor = ConfigSelection(default="#000000", choices = [("#ffffff", _("white")),("#000000", _("black")),("#18188b", _("blue")),("#9f1313", _("red")), ("#a08500", _("yellow")), ("#1f771f", _("green"))])
+config.pic.textcolor = ConfigSelection(default="#38FF48", choices = [("#ffffff", _("white")),("#000000", _("black")),("#18188b", _("blue")),("#9f1313", _("red")), ("#a08500", _("yellow")), ("#38FF48", _("green"))])
 config.pic.thumbDelay = ConfigInteger(default=500, limits=(0,999))
 
 def setPixmap(dest, ptr, scaleSize, aspectRatio):
@@ -62,25 +63,27 @@ def setPixmap(dest, ptr, scaleSize, aspectRatio):
 class picshow(Screen):
 	skin = """
 		<screen name="picshow" position="center,80" size="1200,610" title="PicturePlayer">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="global.CurrentTime" render="Label" position="1130,12" size="60,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"  />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"  />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40"  />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40"  />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="global.CurrentTime" render="Label" position="1130,12" size="60,25" font="Regular;22" halign="right">
 				<convert type="ClockToText">Default</convert>
 			</widget>
-			<widget source="global.CurrentTime" render="Label" position="820,12" size="300,25" font="Regular;22" halign="right" backgroundColor="background" shadowColor="black" shadowOffset="-2,-2" transparent="1">
+			<widget source="global.CurrentTime" render="Label" position="820,12" size="300,25" font="Regular;22" halign="right">
 				<convert type="ClockToText">Format:%A %d. %B</convert>
 			</widget>
 			<eLabel position="10,50" size="1180,1" backgroundColor="grey" />
 			<eLabel position="380,50" size="1,585" backgroundColor="grey" />
+			<widget name="path" position="400,60" size="790,30" font="Regular;24"/>
+			<eLabel position="380,90" size="810,1" backgroundColor="grey" />
 			<widget source="label" render="Label" position="20,370" size="330,140" font="Regular;19"/>
 			<widget name="thn" position="40,60" size="300,300" />
-			<widget name="filelist" position="400,60" size="790,540" scrollbarMode="showOnDemand" />
+			<widget name="filelist" position="400,95" size="790,510" scrollbarMode="showOnDemand" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -103,9 +106,12 @@ class picshow(Screen):
 		self["label"] = StaticText("")
 		self["thn"] = Pixmap()
 
+
 		currDir = config.pic.lastDir.value
 		if not pathExists(currDir):
 			currDir = "/"
+
+		self["path"] = Label(currDir)
 
 		self.filelist = FileList(currDir, matchingPattern = "(?i)^.*\.(jpeg|jpg|jpe|png|bmp|gif)")
 		self["filelist"] = self.filelist
@@ -157,6 +163,7 @@ class picshow(Screen):
 	def KeyOk(self):
 		if self.filelist.canDescent():
 			self.filelist.descent()
+			self["path"].setText(self.filelist.getCurrentDirectory())
 		else:
 			self.session.openWithCallback(self.callbackView, Pic_Full_View, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
 
@@ -255,15 +262,15 @@ class Pic_Setup(Screen, ConfigListScreen):
 class Pic_Exif(Screen):
 	skin = """
 		<screen name="Pic_Exif" position="center,120" size="820,520" title="Info">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" alphatest="on"/>
-			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 			<eLabel	position="10,50"   size="800,1" backgroundColor="grey"/>
 			<widget source="menu" render="Listbox" position="10,55" size="800,455" zPosition="1" enableWrapAround="1" scrollbarMode="showOnDemand" selectionDisabled="1">
 				<convert type="TemplatedMultiContent">
-				{"template": [  MultiContentEntryText(pos=(10,6),size=(280,30),flags=RT_HALIGN_LEFT,text=0),
-				MultiContentEntryText(pos=(300,6),size=(490,30),flags=RT_HALIGN_LEFT,text=1)],
-				"fonts": [gFont("Regular",22)],
-				"itemHeight": 35 }
+					{"template": [  MultiContentEntryText(pos=(10,6),size=(280,30),flags=RT_HALIGN_LEFT,text=0),
+					MultiContentEntryText(pos=(300,6),size=(490,30),flags=RT_HALIGN_LEFT,text=1)],
+					"fonts": [gFont("Regular",22)],
+					"itemHeight": 35 }
 				</convert>
 			</widget>
 		</screen>"""
@@ -514,11 +521,12 @@ class Pic_Full_View(Screen):
 		size_h = getDesktop(0).size().height()
 
 		self.skin = "<screen position=\"0,0\" size=\"" + str(size_w) + "," + str(size_h) + "\" flags=\"wfNoBorder\" > \
-			<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\""+ self.bgcolor +"\" /> \
-			<widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w-(space*2)) + "," + str(size_h-(space*2)) + "\" zPosition=\"1\" /> \
-			<widget name=\"point\" position=\""+ str(space+5) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\" alphatest=\"on\" /> \
-			<widget name=\"play_icon\" position=\""+ str(space+25) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/ico_mp_play.png\"  alphatest=\"on\" /> \
-			<widget source=\"file\" render=\"Label\" position=\""+ str(space+45) + "," + str(space) + "\" size=\""+ str(size_w-(space*2)-50) + ",25\" font=\"Regular;20\" halign=\"left\" foregroundColor=\"" + self.textcolor + "\" zPosition=\"2\" noWrap=\"1\" transparent=\"1\" /></screen>"
+				<eLabel position=\"0,0\" zPosition=\"0\" size=\""+ str(size_w) + "," + str(size_h) + "\" backgroundColor=\""+ self.bgcolor +"\" /> \
+				<widget name=\"pic\" position=\"" + str(space) + "," + str(space) + "\" size=\"" + str(size_w-(space*2)) + "," + str(size_h-(space*2)) + "\" zPosition=\"1\" /> \
+				<widget name=\"point\" position=\""+ str(space+5) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/record.png\"/> \
+				<widget name=\"play_icon\" position=\""+ str(space+10) + "," + str(space+2) + "\" size=\"20,20\" zPosition=\"2\" pixmap=\"skin_default/icons/ico_mp_play.png\" /> \
+				<widget source=\"file\" render=\"Label\" position=\""+ str(space+40) + "," + str(space) + "\" size=\""+ str(size_w-(space*2)-40) + ",45\" font=\"Regular;20\" valign=\"center\" foregroundColor=\"" + self.textcolor + "\" zPosition=\"2\" noWrap=\"1\" transparent=\"1\" /> \
+			</screen>"
 
 		Screen.__init__(self, session)
 

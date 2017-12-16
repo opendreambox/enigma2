@@ -13,9 +13,9 @@ class FileBrowser(Screen):
 	select = _("Select")
 
 	skin = """
-		<screen name="FileBrowser_Generic" position="center,120" size="820,520"  title="%s" >
-			<widget name="green" position="10,5" size="200,40" pixmap="skin_default/buttons/green.png" alphatest="on"/>
-			<widget name="key_green" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		<screen name="FileBrowser_Generic" position="center,120" size="820,520" title="%s">
+			<widget name="green" position="10,5" size="200,40" pixmap="skin_default/buttons/green.png" />
+			<widget name="key_green" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
 			<widget name="filelist" position="10,60" size="800,420" scrollbarMode="showOnDemand"/>
 			<widget name="status" position="10,490" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#00DD00,#DD0000"/>
@@ -143,6 +143,14 @@ class Simple4LineLCDScreen(Screen):
 		<widget name="text2" position="0,19" size="96,14" font="Regular;10"/>
 		<widget name="text3" position="0,34" size="96,14" font="Regular;10"/>
 		<widget name="text4" position="0,49" size="96,14" font="Regular;10"/>
+	</screen>""",
+	"""<screen name="Simple4LineLCDScreen" position="0,0" size="400,240" id="3">
+		<ePixmap pixmap="skin_default/display_bg.png" position="0,0" size="400,240" zPosition="-1" />
+		<widget font="Display;48" halign="center" name="text1" position="0,5" size="400,48" transparent="1" />
+		<eLabel backgroundColor="yellow" position="0,52" size="400,2" />
+		<widget font="Display;40" halign="center" name="text2" position="0,60" size="400,45" transparent="1" valign="center" />
+		<widget font="Display;40" halign="center" name="text3" position="0,115" size="400,45" transparent="1" valign="center" />
+		<widget font="Display;40" halign="center" name="text4" position="0,170" size="400,45" transparent="1" valign="center" />
 	</screen>""")
 
 	def __init__(self, session, parent):

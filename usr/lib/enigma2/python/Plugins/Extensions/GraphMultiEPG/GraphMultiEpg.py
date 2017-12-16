@@ -1,5 +1,5 @@
 from skin import parseColor, componentSizes
-from Components.config import config, ConfigClock, ConfigInteger, getConfigListEntry, configfile
+from Components.config import config, ConfigClock, ConfigInteger, ConfigSelection, ConfigYesNo, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.Pixmap import Pixmap
 from Components.Button import Button
@@ -401,6 +401,7 @@ class EPGList(HTMLComponent, GUIComponent):
 	def rebuild(self):
 		self.l.setList(self.list)
 
+
 class TimelineText(HTMLComponent, GUIComponent):
 	def __init__(self):
 		GUIComponent.__init__(self)
@@ -448,6 +449,10 @@ now[3] = 20
 now[4] = 15
 def_time = mktime(now)
 config.misc.graph_mepg_prime_time=ConfigClock(default=def_time)
+config.misc.graph_mepg_current_service=ConfigYesNo(default=True)
+
+okChoices = [ ("zap", _("Zap")), ("info", _("Info")) ]
+config.misc.graph_mepg_ok_button=ConfigSelection(okChoices, default = "zap")
 
 class GraphMultiEPG(Screen):
 	EMPTY = 0
@@ -489,7 +494,7 @@ class GraphMultiEPG(Screen):
 		self["actions"] = ActionMap(["EPGSelectActions", "OkCancelActions"],
 			{
 				"cancel": self.closeScreen,
-				"ok": self.eventSelected,
+				"ok": self.okKeyPressed,
 				"timerAdd": self.timerAdd,
 				"info": self.infoKeyPressed,
 				"red": self.zapTo,
@@ -561,10 +566,12 @@ class GraphMultiEPG(Screen):
 	def nextBouquet(self):
 		if self.bouquetChangeCB:
 			self.bouquetChangeCB(1, self)
+			self["list"].setCurrentIndex(0)
 
 	def prevBouquet(self):
 		if self.bouquetChangeCB:
 			self.bouquetChangeCB(-1, self)
+			self["list"].setCurrentIndex(0)
 
 	def configMenu(self):
 		self.session.open(GraphMultiEPGMenu)
@@ -623,7 +630,8 @@ class GraphMultiEPG(Screen):
 	#just used in multipeg
 	def onCreate(self):
 		self["list"].fillMultiEPG(self.services, self.ask_time)
-		self["list"].moveToService(self.session.nav.getCurrentlyPlayingServiceReference())
+		if config.misc.graph_mepg_current_service.value:
+			self["list"].moveToService(self.session.nav.getCurrentlyPlayingServiceReference())
 		self.moveTimeLines()
 
 	def eventViewCallback(self, setEvent, setService, val):
@@ -647,8 +655,15 @@ class GraphMultiEPG(Screen):
 			if ref:
 				self.zapFunc(ref.ref)
 
+	#for backwardscompat in (maybe someone derived his stuff from this?!)
 	def eventSelected(self):
-		self.infoKeyPressed()
+		self.okKeyPressed()
+
+	def okKeyPressed(self):
+		if config.misc.graph_mepg_ok_button.value == "zap":
+			self.zapTo()
+		elif config.misc.graph_mepg_ok_button.value == "info":
+			self.infoKeyPressed()
 
 	def removeTimer(self, timer):
 		timer.afterEvent = AFTEREVENT.NONE
@@ -792,7 +807,9 @@ class GraphMultiEPG(Screen):
 
 # ----------------------------------------
 
-HELP_TEXT_PRIME_TIME = _("Time to jump to by pressing the yellow key.")
+HELP_TEXT_PRIME_TIME      = _("Time to jump to by pressing the yellow key.")
+HELP_TEXT_CURRENT_SERVICE = _("Start with current service instead of first service.")
+HELP_TEXT_OK_BUTTON       = _("Select your favorite mapping.")
 
 class GraphMultiEPGMenu(ConfigListScreen, Screen):
 	IS_DIALOG = True
@@ -850,6 +867,10 @@ class GraphMultiEPGMenu(ConfigListScreen, Screen):
 		elem = self["config"].getCurrent()[1]
 		if elem == config.misc.graph_mepg_prime_time:
 			self["label"].setText(HELP_TEXT_PRIME_TIME)
+		elif elem == config.misc.graph_mepg_current_service:
+			self["label"].setText(HELP_TEXT_CURRENT_SERVICE)
+		elif elem == config.misc.graph_mepg_ok_button:
+			self["label"].setText(HELP_TEXT_OK_BUTTON)
 
 	def createConfigList(self):
 		# remove notifiers
@@ -857,7 +878,9 @@ class GraphMultiEPGMenu(ConfigListScreen, Screen):
 			x[1].clearNotifiers()
 
 		self.list = [
-			getConfigListEntry(_("Prime time"), config.misc.graph_mepg_prime_time)
+			getConfigListEntry(_("Prime time"),                 config.misc.graph_mepg_prime_time),
+			getConfigListEntry(_("Start with current service"), config.misc.graph_mepg_current_service),
+			getConfigListEntry(_("OK button mapping"),          config.misc.graph_mepg_ok_button)
 		]
 		self["config"].list = self.list
 
@@ -871,16 +894,14 @@ class GraphMultiEPGMenu(ConfigListScreen, Screen):
 		now[3] = 20
 		now[4] = 15
 		def_time = mktime(now)
-
-		self["config"].hide()
 		config.misc.graph_mepg_prime_time.value = [20, 15]
-		self["config"].show()
-		self["config"].selectionChanged()
+		config.misc.graph_mepg_current_service.value = True
+		config.misc.graph_mepg_ok_button.value = "zap"
+		self.createConfigList()
 
 	def okPressed(self):
 		for x in self["config"].list:
 			x[1].save()
-		configfile.save()
 		self.close(None)
 
 	def cancelPressed(self):

@@ -11,12 +11,13 @@ from Tools.Log import Log
 class ConfigScreen(ConfigListScreen, Screen):
 	IS_DIALOG = True
 	skin = """
-		<screen name="ConfigScreen" position="center,center" size="560,400" title="MediaCenter: Main Settings">
-			<widget name="config" position="5,5" size="550,360" scrollbarMode="showOnDemand" zPosition="1"/>
-			<ePixmap pixmap="skin_default/buttons/button_red.png" position="5,370" size="15,16" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/button_green.png" position="195,370" size="15,16" alphatest="on" />
-			<widget source="key_red" render="Label" position="25,370" zPosition="1" size="140,20" font="Regular;18" halign="left" valign="top" transparent="1" foregroundColor="white" backgroundColor="background"/>
-			<widget source="key_green" render="Label" position="215,370" zPosition="1" size="140,20" font="Regular;18" halign="left" valign="top" transparent="1" foregroundColor="white" backgroundColor="background"/>
+		<screen name="ConfigScreen" position="center,120" size="820,520" title="MediaCenter: Main Settings">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"  />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"  />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="config" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
 		</screen>"""
 
 	def __init__(self, session, args=0):

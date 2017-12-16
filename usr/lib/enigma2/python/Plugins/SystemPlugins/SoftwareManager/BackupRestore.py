@@ -93,14 +93,15 @@ class BackupScreen(Screen, ConfigListScreen):
 
 class BackupSelection(Screen):
 	skin = """
-		<screen name="BackupSelection" position="center,center" size="560,400" title="Select files/folders to backup">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />
-			<widget name="checkList" position="5,50" size="550,250" transparent="1" scrollbarMode="showOnDemand" />
+		<screen name="BackupSelection" position="center,120" size="820,520" title="Select files/folders to backup">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" scale="stretch"/>
+			<widget source="key_red" render="Label" position="10,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="280,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="550,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="checkList" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
 		</screen>"""
 
 	def __init__(self, session):
@@ -180,14 +181,15 @@ class BackupSelection(Screen):
 
 class RestoreMenu(Screen):
 	skin = """
-		<screen name="RestoreMenu" position="center,center" size="560,400" title="Restore backups" >
-			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="280,0" size="140,40" alphatest="on" />
-			<widget source="key_red" render="Label" position="0,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-			<widget source="key_green" render="Label" position="140,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_yellow" render="Label" position="280,0" zPosition="1" size="140,40" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" />
-			<widget name="filelist" position="5,50" size="550,230" scrollbarMode="showOnDemand" />
+		<screen name="RestoreMenu" position="center,120" size="820,520" title="Restore Backups">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="260,40" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/green.png" position="280,5" size="260,40" scale="stretch"/>
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="550,5" size="260,40" scale="stretch"/>
+			<widget source="key_red" render="Label" position="10,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="280,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="550,5" size="260,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="filelist" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
 		</screen>"""
 
 	def __init__(self, session, plugin_path):
@@ -273,10 +275,10 @@ class RestoreMenu(Screen):
 
 class RestoreScreen(Screen, ConfigListScreen):
 	skin = """
-		<screen position="135,144" size="350,310" title="Restore is running..." >
-		<widget name="config" position="10,10" size="330,250" transparent="1" scrollbarMode="showOnDemand" />
+		<screen position="center,center" size="620,320" title="Restore is running..." >
+			<widget name="config" position="10,10" size="600,300" transparent="1" scrollbarMode="showOnDemand" />
 		</screen>"""
-		
+
 	def __init__(self, session, runRestore = False):
 		Screen.__init__(self, session)
 		self.session = session

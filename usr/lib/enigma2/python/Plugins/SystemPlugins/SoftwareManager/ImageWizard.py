@@ -58,20 +58,25 @@ def checkBackupFile():
 
 class ImageWizard(WizardLanguage, Rc):
 	skin = """
-		<screen name="ImageWizard" position="0,0" size="720,576" title="Welcome..." flags="wfNoBorder" >
-			<widget name="text" position="153,40" size="340,330" font="Regular;22" />
-			<widget source="list" render="Listbox" position="43,340" size="490,180" scrollbarMode="showOnDemand" >
-				<convert type="StringList" />
+		<screen name="ImageWizard" position="center,80" size="1200,610" title="Welcome...">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="270,15" size="200,40"  />
+			<widget name="languagetext" position="270,15" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget name="wizard" position="0,3" size="240,605" pixmap="skin_default/wizard.png" />
+			<widget name="rc" position="40,60" size="160,500" zPosition="1" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png"  />
+			<widget name="arrowdown" position="-100,-100" size="37,70" pixmap="skin_default/arrowdown.png" zPosition="2"  />
+			<widget name="arrowdown2" position="-100,-100" size="37,70" pixmap="skin_default/arrowdown.png" zPosition="2"  />
+			<widget name="arrowup" position="-100,-100" size="37,70" pixmap="skin_default/arrowup.png" zPosition="2"  />
+			<widget name="arrowup2" position="-100,-100" size="37,70" pixmap="skin_default/arrowup.png" zPosition="2"  />
+			<widget name="text" position="280,70" size="880,240" font="Regular;23"  />
+			<widget source="list" render="Listbox" position="280,330" size="880,270" zPosition="1" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1">
+				<convert type="TemplatedMultiContent">
+					{"template": [ MultiContentEntryText(pos=(10,4),size=(580,22),flags=RT_HALIGN_LEFT,text=0) ],
+					"fonts": [gFont("Regular",20)],
+					"itemHeight": 30
+					}
+				</convert>
 			</widget>
-			<widget name="config" position="53,340" zPosition="1" size="440,180" transparent="1" scrollbarMode="showOnDemand" />
-			<ePixmap pixmap="skin_default/buttons/button_red.png" position="40,225" zPosition="0" size="15,16" transparent="1" alphatest="on" />
-			<widget name="languagetext" position="55,225" size="95,30" font="Regular;18" />
-			<widget name="wizard" pixmap="skin_default/wizard.png" position="40,50" zPosition="10" size="110,174" alphatest="on" />
-			<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png" position="530,50" zPosition="10" size="154,500" alphatest="on" />
-			<widget name="arrowdown" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
-			<widget name="arrowdown2" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
-			<widget name="arrowup" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
-			<widget name="arrowup2" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70" alphatest="on" />
+			<widget name="config" position="280,330" size="880,270" zPosition="2" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1"/>
 		</screen>"""
 	def __init__(self, session):
 		self.xmlfile = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/SoftwareManager/imagewizard.xml")

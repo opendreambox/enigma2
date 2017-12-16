@@ -10,21 +10,22 @@ from Screens.Screen import Screen
 from FileBrowser import FileBrowser
 
 class MediaDatabaseManager(Screen):
-	skin = """<screen name="MediaDatabaseManager" position="center,120" size="820,520" title="Database Manager">
-				<widget name="red" position="10,5" size="200,40" pixmap="skin_default/buttons/red.png" alphatest="on"/>
-				<widget name="green" position="210,5" size="200,40" pixmap="skin_default/buttons/green.png" alphatest="on"/>
-				<widget name="yellow" position="410,5" size="200,40" pixmap="skin_default/buttons/yellow.png" alphatest="on"/>
-				<widget name="blue" position="610,5" size="200,40" pixmap="skin_default/buttons/blue.png" alphatest="on"/>
-				<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-				<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-				<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-				<widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-                <eLabel position="10,50" size="800,1" backgroundColor="grey" />
-				<widget source="list" render="Listbox" position="10,60" size="800,390">
-					<convert type="StringList" />
-				</widget>
-				<widget name="status" position="10,465" size="800,45" zPosition="2" font="Regular;20" halign="center" valign="top" backgroundColor="background" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
-			</screen>"""
+	skin = """
+		<screen name="MediaDatabaseManager" position="center,120" size="820,520" title="Database Manager">
+			<widget name="red" position="10,5" size="200,40" pixmap="skin_default/buttons/red.png" />
+			<widget name="green" position="210,5" size="200,40" pixmap="skin_default/buttons/green.png" />
+			<widget name="yellow" position="410,5" size="200,40" pixmap="skin_default/buttons/yellow.png" />
+			<widget name="blue" position="610,5" size="200,40" pixmap="skin_default/buttons/blue.png" />
+			<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget source="list" render="Listbox" position="10,60" size="800,390">
+				<convert type="StringList" />
+			</widget>
+			<widget name="status" position="10,465" size="800,45" zPosition="2" font="Regular;20" halign="center" valign="top" backgroundColor="background" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
+		</screen>"""
 
 	def __init__(self, session):
 		Screen.__init__(self, session)

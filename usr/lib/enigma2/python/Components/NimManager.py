@@ -1213,7 +1213,9 @@ class NimManager:
 				slotid = int(nim.connectedTo.value)
 				nim = config.Nims[slotid]
 				configMode = nim.sat.configMode.value
-			elif configMode == "loopthrough":
+
+			elif configMode in ("loopthrough", "satposdepends"): 
+				# satposdepends is not completely correct, but better than crashing in the channel search configuration
 				slotid = self.sec.getRoot(slotid, int(nim.connectedTo.value))
 				nim = config.Nims[slotid]
 				configMode = nim.sat.configMode.value

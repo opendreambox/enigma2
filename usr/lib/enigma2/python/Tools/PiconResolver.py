@@ -5,8 +5,8 @@ class PiconResolver(object):
 		if len(x) < 11: # skip invalid service references
 			return ""
 		# DVB-T(2)
-		if x[0] == 1 and (x[6] & 0xFFFF0000) == 0xEEEE0000:
-			x[6] = 0xEEEE0000
+		if int(x[0]) == 1 and (int(x[6], 16) & 0xFFFF0000) == 0xEEEE0000:
+			x[6] = '{:02X}'.format(0xEEEE0000)
 		del x[x[10] and 11 or 10:] # remove name and empty path
 		x[1]='0' #replace flags field
 		name = '_'.join(x).strip('_')

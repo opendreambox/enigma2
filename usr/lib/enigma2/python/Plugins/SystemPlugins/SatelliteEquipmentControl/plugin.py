@@ -9,9 +9,10 @@ from Components.NimManager import nimmanager as nimmgr
 
 class SecParameterSetup(Screen, ConfigListScreen):
 	skin = """
-		<screen position="100,100" size="1460,940" title="Satellite Equipment Setup" >
-			<widget name="config" position="10,10" size="1440,930" />
+		<screen position="center,120" size="820,520" title="Satellite Equipment Setup">
+			<widget enableWrapAround="1" name="config" position="10,5" scrollbarMode="showOnDemand" size="800,510" />
 		</screen>"""
+
 	def __init__(self, session):
 		self.skin = SecParameterSetup.skin
 

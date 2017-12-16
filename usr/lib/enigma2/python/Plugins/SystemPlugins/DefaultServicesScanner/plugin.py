@@ -16,28 +16,28 @@ from enigma import eTimer, eDVBDB
 
 class DefaultServiceScan(ServiceScan):
 	skin = """
-		<screen position="150,115" size="420,390" title="Service Scan">
-		<widget source="FrontendInfo" render="Pixmap" pixmap="skin_default/icons/scan-s.png" position="5,5" size="64,64" transparent="1" alphatest="on">
+	<screen position="center,120" size="720,520" title="Service Scan">
+		<widget source="FrontendInfo" render="Pixmap" pixmap="skin_default/icons/scan-s.png" position="30,20" size="64,64" alphatest="on">
 			<convert type="FrontendInfo">TYPE</convert>
 			<convert type="ValueRange">0,0</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="FrontendInfo" render="Pixmap" pixmap="skin_default/icons/scan-c.png" position="5,5" size="64,64" transparent="1" alphatest="on">
+		<widget source="FrontendInfo" render="Pixmap" pixmap="skin_default/icons/scan-c.png" position="30,20" size="64,64" alphatest="on">
 			<convert type="FrontendInfo">TYPE</convert>
 			<convert type="ValueRange">1,1</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget source="FrontendInfo" render="Pixmap" pixmap="skin_default/icons/scan-t.png" position="5,5" size="64,64" transparent="1" alphatest="on">
+		<widget source="FrontendInfo" render="Pixmap" pixmap="skin_default/icons/scan-t.png" position="30,20" size="64,64" alphatest="on">
 			<convert type="FrontendInfo">TYPE</convert>
 			<convert type="ValueRange">2,2</convert>
 			<convert type="ConditionalShowHide" />
 		</widget>
-		<widget name="network" position="80,15" size="330,20" font="Regular;20" />
-		<widget name="transponder" position="80,40" size="330,20" font="Regular;20" />
-		<widget name="scan_state" position="10,80" zPosition="2" size="400,20" font="Regular;18" />
-		<widget name="pass" position="10,80" size="400,20" font="Regular;18" />
-		<widget name="scan_progress" position="10,105" size="400,15" pixmap="skin_default/progress_big.png" borderWidth="2" borderColor="#cccccc" />
-		<widget name="servicelist" position="10,135" size="400,265" selectionDisabled="1" />
+		<widget name="network" position="180,30" size="470,26" font="Regular;22"/>
+		<widget name="transponder" position="180,60" size="470,26" font="Regular;22"/>
+		<widget name="scan_state" position="80,110" zPosition="2" size="560,24" font="Regular;20"/>
+		<widget name="pass" position="80,110" size="560,24" font="Regular;20"/>
+		<widget name="scan_progress" position="80,160" size="560,15" pixmap="skin_default/progress.png" borderWidth="2" borderColor="#cccccc"/>
+		<widget name="servicelist" position="80,200" size="560,300" selectionDisabled="1"/>
 	</screen>"""
 
 	def __init__(self, session, scanList):
@@ -54,9 +54,10 @@ class DefaultServiceScan(ServiceScan):
 
 class DefaultServicesScannerPlugin(ScanSetup):
 	skin = """
-		<screen position="100,115" size="520,390" title="Service scan">
-			<widget name="config" position="10,10" size="500,350" scrollbarMode="showOnDemand" />
-			<widget name="introduction" position="10,365" size="500,25" font="Regular;20" halign="center" />
+		<screen position="center,120" size="720,520" title="Service scan">
+			<widget name="config" position="10,10" size="700,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
+			<eLabel	position="10,480" size="700,1" backgroundColor="grey"/>
+			<widget name="introduction" position="10,488" size="700,25" font="Regular;22" halign="center" />
 		</screen>"""
 		
 	def __init__(self, session, args = None):

@@ -40,19 +40,21 @@ class MediaBrowser(Screen):
 
 	skin = """
 		<screen name="MediaBrowser" position="center,120" size="820,520" title="Browser">
-			<widget name="list" position="10,5" size="800,420" scrollbarMode="showOnDemand"/>
-			<widget name="status" position="10,450" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#1f771f,#9f1313"/>
-			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="10,490" size="20,20" alphatest="on"/>
-			<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="10,490" size="20,20" alphatest="on">
+			<widget name="list" position="10,5" size="800,420" enableWrapAround="1" scrollbarMode="showOnDemand"/>
+			<eLabel backgroundColor="grey" position="10,430" size="800,1" />
+			<widget name="status" position="10,440" size="800,20" font="Regular;18" halign="left" foregroundColors="white,white,white" backgroundColors="background,#1f771f,#9f1313"/>
+			<eLabel backgroundColor="grey" position="10,470" size="800,1" />
+			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="10,490" size="20,20" />
+			<widget source="button_green" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_green.png" position="10,490" size="20,20">
 				<convert type="ConditionalShowHide" />
 			</widget>
-			<widget name="add" position="40, 480" size="200, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center">
+			<widget name="add" position="40,480" size="200,40" font="Regular;18" halign="left" valign="center">
 			</widget>
-			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="240,490" size="20,20" alphatest="on" />
-			<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="240,490" size="20,20" alphatest="on">
+			<ePixmap pixmap="skin_default/buttons/button_off.png" zPosition="1" position="240,490" size="20,20"  />
+			<widget source="button_blue" zPosition="2" render="Pixmap" pixmap="skin_default/buttons/button_blue.png" position="240,490" size="20,20">
 				<convert type="ConditionalShowHide" />
 			</widget>
-			<widget name="add_and_play" position="270, 480" size="400, 40" foregroundColor="white" backgroundColor="background" font="Regular;18" transparent="1" halign="left" valign="center"/>
+			<widget name="add_and_play" position="270,480" size="400,40" font="Regular;18" halign="left" valign="center"/>
 		</screen>"""
 
 	def __init__(self, session, type=MediaCore.TYPE_AUDIO, player=None):

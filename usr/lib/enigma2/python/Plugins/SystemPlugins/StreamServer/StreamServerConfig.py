@@ -104,10 +104,10 @@ class EncoderPreset(object):
 class StreamServerConfig(Screen, ConfigListScreen):
 	skin = """
 		<screen name="StreamServerConfig" position="center,120" size="920,520" title="Stream Server configuration">
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="10,5" size="200,40" alphatest="on" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="210,5" size="200,40" alphatest="on" />
-			<widget source="key_yellow" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_blue" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="10,5" size="200,40" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="210,5" size="200,40" />
+			<widget source="key_yellow" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_blue" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
 			<eLabel position="10,50" size="560,1" backgroundColor="grey" />
 			<widget name="config" position="10,55" size="560,450" scrollbarMode="showOnDemand" zPosition="1"/>
 			<ePixmap position="580,5" size="330,500" pixmap="skin_default/menu.png" zPosition="-1" scale="stretch"/>
