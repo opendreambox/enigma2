@@ -81,6 +81,24 @@ class VideoEnhancement:
 		else:
 			config.pep.brightness = NoSave(ConfigNothing())
 
+		if os_path.exists("/proc/stb/vmpeg/0/pep_colortemp"):
+			def setColorTemp(config):
+				myval = int(config.value*256)
+				try:
+					print "--> setting colortemp to: %0.8X" % myval
+					open("/proc/stb/vmpeg/0/pep_colortemp", "w").write("%0.8X" % myval)
+				except IOError:
+					print "couldn't write pep_colortemp."
+
+				if not VideoEnhancement.firstRun:
+					self.setConfiguredValues()
+
+			config.pep.color_temp = ConfigSlider(default=128, limits=(0,256))
+			config.pep.color_temp.addNotifier(setColorTemp)
+		else:
+			config.pep.colortemp = NoSave(ConfigNothing())
+
+
 		if os_path.exists("/proc/stb/vmpeg/0/pep_block_noise_reduction"):
 			def setBlock_noise_reduction(config):
 				myval = int(config.value)

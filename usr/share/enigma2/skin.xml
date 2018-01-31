@@ -539,26 +539,29 @@
 		</widget>
 	</screen>
 	<!-- UPnP/DLNA AudioPlayer -->
-	<screen name="AudioGUI" position="center,center" size="650,300" title=" ">
-	<ePixmap position="5,5" size="250,290" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
-		<widget name="title" font="Regular;20" position="260,10" size="385,25"/>
-		<widget name="artist" font="Regular;20" position="260,50" size="385,25"/>
-		<widget name="album" font="Regular;20" position="260,90" size="385,25"/>
-		<eLabel position="265,144" size="365,2" backgroundColor="grey"/>
-		<widget source="session.CurrentService" render="Progress" position="265,141" size="365,8" zPosition="1" pixmap="skin_default/progress.png" transparent="1">
+	<screen name="AudioGUI" position="0,0" size="1280,720" flags="wfNoBorder">
+		<widget name="coverArt" pixmap="Default-FHD/skin_default/no_coverArt.svg" position="120,300" size="300,300" zPosition="2"/>
+		<ePixmap pixmap="Default-FHD/skin_default/icons/dmm_logo.svg" position="30,630" size="480,30" zPosition="2"/>
+		<widget name="coverBack" position="center,center" size="1300,1300" zPosition="1"/>
+		<ePixmap pixmap="skin_default/display_bg.png" position="0,0" size="1280,768" />
+		<ePixmap pixmap="Default-FHD/skin_default/back.png" position="0,0" size="1280,720" zPosition="1"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" source="global.CurrentTime" render="Label" position="1040,40" size="200,55" font="Regular;50" halign="right" zPosition="2" transparent="1">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;50" name="artist" position="640,210" size="540,110" valign="bottom" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;30" name="album" position="640,340" size="540,70" valign="top" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;30" name="genre" position="640,410" size="540,35" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;30" name="year" position="640,450" size="540,35" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;26" name="title" position="640,530" valign="bottom" size="540,62" transparent="1" zPosition="2" />
+		<widget pixmap="skin_default/progress.png" borderWidth="1" position="640,610" render="Progress" size="540,10" source="session.CurrentService" transparent="1" zPosition="2">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
-		<widget source="session.CurrentService" render="Label" position="255,160" size="70,22" font="Regular;20" halign="right" noWrap="1">
-			<convert type="ServicePosition">Position</convert>
-		</widget>
-		<eLabel text="/" position="325,160" size="20,20" font="Regular;20" halign="center"/>
-		<widget source="session.CurrentService" render="Label" position="345,160" size="70,20" font="Regular;20" halign="left" noWrap="1">
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;28" position="640,630" render="Label" size="120,35" source="session.CurrentService" transparent="1" zPosition="2">
 			<convert type="ServicePosition">Length</convert>
 		</widget>
-		<widget font="Regular;20" position="560,160" render="Label" size="80,22" source="session.CurrentService">
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;28" position="1060,630" halign="right" render="Label" size="120,35" source="session.CurrentService" transparent="1" zPosition="2">
 			<convert type="ServicePosition">Remaining,Negate</convert>
 		</widget>
-		<widget  name="coverArt" pixmap="skin_default/no_coverArt.png" position="15,35" size="230,230"/>
 	</screen>
 	<!-- Notification Queue Viewer -->
 	<screen name="NotificationQueueViewer" position="center,120" size="820,520" title="Notification Queue Viewer">

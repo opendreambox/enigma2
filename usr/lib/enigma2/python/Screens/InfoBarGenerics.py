@@ -505,15 +505,38 @@ class InfoBarMenu:
 class InfoBarSimpleEventView:
 	""" Opens the Eventview for now/next """
 	def __init__(self):
-		if config.misc.rcused.value == 0:
-			self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+		self.first_call = True
+		config.misc.rcused.addNotifier(self.__rcUsedChanged, True, False, True)
+		self.onClose.append(self.__onClose)
+
+	def __onClose(self):
+		config.misc.rcused.removeNotifier(self.__rcUsedChanged)
+
+	def __rcUsedChanged(self, configElement):
+		if self.first_call:
+			if configElement.value == 0:
+				self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+					{
+						"showEventInfo": (self.openEventView, _("show event details")),
+						"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+						"showEventList": (self.audioSelection, _("Audio Options...")),
+					})
+			else:
+				self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+					{
+						"showEventInfo": (self.openEventView, _("show event details")),
+						"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+					})
+			self.first_call = False
+		elif configElement.value == 0:
+			self["EPGActions"].update(self, "InfobarEPGActions",
 				{
 					"showEventInfo": (self.openEventView, _("show event details")),
 					"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
 					"showEventList": (self.audioSelection, _("Audio Options...")),
 				})
 		else:
-			self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+			self["EPGActions"].update(self, "InfobarEPGActions",
 				{
 					"showEventInfo": (self.openEventView, _("show event details")),
 					"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
@@ -600,20 +623,37 @@ class InfoBarEPG:
 		self.dlg_stack = [ ]
 		self.bouquetSel = None
 		self.eventView = None
+		self.first_call = True
+		config.misc.rcused.addNotifier(self.__rcUsedChanged, True, False, True)
+		self.onClose.append(self.__onClose)
 
+	def __onClose(self):
+		config.misc.rcused.removeNotifier(self.__rcUsedChanged)
+
+	def __rcUsedChanged(self, configElement):
 		yellow = (self.openSingleServiceEPG, _("show single service EPG..."))
-		if config.misc.rcused.value == 0:
+		if configElement.value == 0:
 			yellow = (self.audioSelection, _("Audio Options..."))
-		elif config.misc.rcused.value == 1:
+		elif configElement.value == 1:
 			yellow = (self.startTimeshift, _("start timeshift"))
 
-		self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
-			{
-				"showEventInfo": (self.openEventView, _("show EPG...")),
-				"showEventInfoPlugin": (self.showEventInfoPlugins, _("list of EPG views...")),
-				"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
-				"showEventList": yellow
-			})
+		if self.first_call:
+			self["EPGActions"] = HelpableActionMap(self, "InfobarEPGActions",
+				{
+					"showEventInfo": (self.openEventView, _("show EPG...")),
+					"showEventInfoPlugin": (self.showEventInfoPlugins, _("list of EPG views...")),
+					"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+					"showEventList": yellow
+				})
+			self.first_call = False
+		else:
+			self["EPGActions"].update(self, "InfobarEPGActions",
+				{
+					"showEventInfo": (self.openEventView, _("show EPG...")),
+					"showEventInfoPlugin": (self.showEventInfoPlugins, _("list of EPG views...")),
+					"showInfobarOrEpgWhenInfobarAlreadyVisible": self.showEventInfoWhenNotVisible,
+					"showEventList": yellow
+				})
 
 	def showEventInfoWhenNotVisible(self):
 		if self.shown:
@@ -1703,6 +1743,21 @@ class InfoBarInstantRecord:
 		self.session.nav.RecordTimer.on_state_change.append(self.timerentryOnStateChange)
 		self.recording = []
 
+		self.stopOptionList = ((_("stop recording"), "stop"), \
+			(_("add recording (stop after current event)"), "event"), \
+			(_("add recording (indefinitely)"), "indefinitely"), \
+			(_("add recording (enter recording duration)"), "manualduration"), \
+			(_("add recording (enter recording endtime)"), "manualendtime"), \
+			(_("change recording (duration)"), "changeduration"), \
+			(_("change recording (endtime)"), "changeendtime"), \
+			(_("do nothing"), "no"))
+
+		self.startOptionList = ((_("add recording (stop after current event)"), "event"), \
+			(_("add recording (indefinitely)"), "indefinitely"), \
+			(_("add recording (enter recording duration)"), "manualduration"), \
+			(_("add recording (enter recording endtime)"), "manualendtime"), \
+			(_("don't record"), "no"))
+
 	def timerentryOnStateChange(self, timer):
 		# timer recording has been started, append to self.recording list
 		if hasattr(self, "recording") and timer.isRunning():
@@ -1890,22 +1945,11 @@ class InfoBarInstantRecord:
 		if self.isInstantRecordRunning():
 			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox, \
 				title=_("A recording is currently running.\nWhat do you want to do?"), \
-				list=((_("stop recording"), "stop"), \
-				(_("add recording (stop after current event)"), "event"), \
-				(_("add recording (indefinitely)"), "indefinitely"), \
-				(_("add recording (enter recording duration)"), "manualduration"), \
-				(_("add recording (enter recording endtime)"), "manualendtime"), \
-				(_("change recording (duration)"), "changeduration"), \
-				(_("change recording (endtime)"), "changeendtime"), \
-				(_("do nothing"), "no")))
+				list=self.stopOptionList)
 		else:
 			self.session.openWithCallback(self.recordQuestionCallback, ChoiceBox, \
 				title=_("Start recording?"), \
-				list=((_("add recording (stop after current event)"), "event"), \
-				(_("add recording (indefinitely)"), "indefinitely"), \
-				(_("add recording (enter recording duration)"), "manualduration"), \
-				(_("add recording (enter recording endtime)"), "manualendtime"), \
-				(_("don't record"), "no")))
+				list=self.startOptionList)
 
 class InfoBarAudioSelection:
 	def __init__(self):
@@ -2057,22 +2101,44 @@ class InfoBarSubserviceSelection:
 
 class InfoBarAdditionalInfo:
 	def __init__(self):
-		self["RecordingPossible"] = Boolean(fixed=harddiskmanager.HDDCount() > 0 and config.misc.rcused.value == 1)
-		self["TimeshiftPossible"] = self["RecordingPossible"]
-		self["ShowAudioOnYellow"] = Boolean(fixed=config.misc.rcused.value == 0)
-		self["ShowTimeshiftOnYellow"] = Boolean(fixed=config.misc.rcused.value == 1)
-		self["ShowEventListOnYellow"] = Boolean(fixed=config.misc.rcused.value == 2)
-		self["ShowRecordOnRed"] = Boolean(fixed=config.misc.rcused.value == 1)
+		self.first_call = True
+		config.misc.rcused.addNotifier(self.__rcUsedChanged, True, False, True)
+		harddiskmanager.delayed_device_Notifier.append(self.__HDDDetectedCB)
 		self["ExtensionsAvailable"] = Boolean(fixed=1)
 		self["PendingNotification"] = Boolean(fixed=0)
+		self.onClose.append(self.__onClose)
+
+	def __onClose(self):
+		config.misc.rcused.removeNotifier(self.__rcUsedChanged)
+		harddiskmanager.delayed_device_Notifier.remove(self.__HDDDetectedCB)
+
+	def __HDDDetectedCB(self, dev, media_state):
+		self["RecordingPossible"].boolean = harddiskmanager.HDDCount() > 0 and config.misc.rcused.value == 1
+
+	def __rcUsedChanged(self, configElement):
+		if self.first_call:
+			self["RecordingPossible"] = Boolean(fixed=harddiskmanager.HDDCount() > 0 and configElement.value == 1)
+			self["TimeshiftPossible"] = self["RecordingPossible"]
+			self["ShowAudioOnYellow"] = Boolean(fixed=configElement.value == 0)
+			self["ShowTimeshiftOnYellow"] = Boolean(fixed=configElement.value == 1)
+			self["ShowEventListOnYellow"] = Boolean(fixed=configElement.value == 2)
+			self["ShowRecordOnRed"] = Boolean(fixed=configElement.value == 1)
+			self.first_call = False
+		else:
+			self["RecordingPossible"].boolean = harddiskmanager.HDDCount() > 0 and configElement.value == 1
+			self["TimeshiftPossible"].boolean = self["RecordingPossible"].boolean
+			self["ShowAudioOnYellow"].boolean = configElement.value == 0
+			self["ShowTimeshiftOnYellow"].boolean = configElement.value == 1
+			self["ShowEventListOnYellow"].boolean = configElement.value == 2
+			self["ShowRecordOnRed"].boolean = configElement.value == 1
 
 class InfoBarNotifications:
 	def __init__(self):
 		self.onExecBegin.append(self.checkNotifications)
 		Notifications.notificationQueue.addedCB.append(self.checkNotificationsIfExecing)
 		self.onClose.append(self.__removeNotification)
-		if isinstance(self, InfoBarExtensions):
-			self.addExtension((self.getEntryText, self.showNotificationQueueViewer, lambda: True), key = "text")
+#		if isinstance(self, InfoBarExtensions):
+#			self.addExtension((self.getEntryText, self.showNotificationQueueViewer, lambda: True), key = "text")
 
 	def __removeNotification(self):
 		Notifications.notificationQueue.addedCB.remove(self.checkNotificationsIfExecing)
@@ -2419,16 +2485,27 @@ class InfoBarTeletextPlugin:
 
 class InfobarHbbtvPlugin:
 	def __init__(self):
+		self["HbbtvActions"] = HelpableActionMap(self, "InfobarHbbtvActions",
+			{
+				"hbbtvAutostart" : (self.startHbbtv, _("Start HbbTV..."))
+			})
+		self["HbbtvApplication"] = HbbtvApplication()
+		config.misc.rcused.addNotifier(self.__rcUsedChanged, True, False, True)
+		self.onClose.append(self.__onClose)
+
+	def __onClose(self):
+		config.misc.rcused.removeNotifier(self.__rcUsedChanged)
+
+	def __rcUsedChanged(self, configElement):
+		app = self["HbbtvApplication"]
 		if not self["ShowRecordOnRed"].boolean and haveHbbtvApplication:
-			self["HbbtvActions"] = HelpableActionMap(self, "InfobarHbbtvActions",
-				{
-					"hbbtvAutostart" : (self.startHbbtv, _("Start HbbTV..."))
-				}
-			)
-			self["HbbtvApplication"] = HbbtvApplication()
+			self["HbbtvActions"].setEnabled(True)
+			app.disabled = False
+			app.changed((app.CHANGED_ALL,))
 		else:
-			self["HbbtvApplication"] = Boolean(fixed=0)
-			self["HbbtvApplication"].name = "" #is this a hack?
+			self["HbbtvActions"].setEnabled(False)
+			app.disabled = True
+			app.changed((app.CHANGED_ALL,))
 
 	def startHbbtv(self):
 		hbbtv_plugin = None

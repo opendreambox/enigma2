@@ -1,0 +1,16 @@
+<default>
+	<prerequisites>
+		<tag type="System" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>DevShell</name>
+		<packagename>enigma2-plugin-systemplugins-devshell</packagename>
+		<shortdescription>Python devshell fro dreambox OS</shortdescription>
+		<description>Test python code with dreambox OS imports in a shell
+		</description>
+	</info>
+	<files type="package"> <!-- without version, without ending -->
+		<file type="package" name="enigma2-plugin-systemplugins-devshell" />
+	</files>
+</default>

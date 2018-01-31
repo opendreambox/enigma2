@@ -22,6 +22,9 @@ from Tools.Directories import fileExists, resolveFilename, SCOPE_HDD
 from Tools.BoundFunction import boundFunction
 
 from enigma import eServiceReference, eServiceCenter, eTimer, eSize
+from timer import TimerEntry
+
+from os import path as os_path
 
 config.movielist = ConfigSubsection()
 config.movielist.moviesort = ConfigInteger(default=MovieList.SORT_RECORDED)
@@ -140,13 +143,36 @@ class MovieContextMenu(Screen):
 			# really delete!
 			if not offline.deleteFromDisk(0):
 				result = True
-		
+
 		if result == False:
 			self.session.openWithCallback(self.close, MessageBox, _("Delete failed!"), MessageBox.TYPE_ERROR)
 		else:
+			ref = self.session.nav.getCurrentlyPlayingServiceReference()
+			if ref and (ref.getPath() == self.service.getPath()): # stop playing before deleting
+				self.session.nav.stopService()
+			self.stopRecording(self.service)
 			self.csel["list"].removeService(self.service)
 			self.csel["freeDiskSpace"].update()
 			self.close()
+
+	def stopRecording(self, service):
+		from NavigationInstance import instance as navigationInstance
+		servicepath = service.getPath()
+		t = None
+		if navigationInstance.getRecordings():
+			for timer in navigationInstance.RecordTimer.timer_list:
+				if timer.state == TimerEntry.StateRunning and timer.Filename and os_path.realpath(timer.Filename) == os_path.realpath(servicepath):
+					t = timer
+					break
+		if not t:
+			return
+		elif t.repeated:  # do not delete repeated timer, just stop it for the current event
+			t.enable()
+			t.processRepeated(findRunningEvent = False)
+			self.session.nav.RecordTimer.doActivate(t)
+			self.session.nav.RecordTimer.timeChanged(t)
+		else:
+			self.session.nav.RecordTimer.removeEntry(t)
 
 class SelectionEventInfo:
 	def __init__(self):

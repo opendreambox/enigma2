@@ -203,9 +203,16 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 	ENABLE_RESUME_SUPPORT = True
 	ALLOW_SUSPEND = True
 
+	_answerQuit = "quit"
+	_answerList = "movielist"
+	_answerDeleteReturn = "deleteReturn"
+	_answerDeleteQuit = "deleteQuit"
+	_answerRestart = "restart"
+	_answerContinue = "continue"
+	_answerDeleteConfirmed = "deleteConfirmed"
+
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
-
 		self["actions"] = HelpableActionMap(self, "MoviePlayerActions",
 			{
 				"leavePlayer": (self.leavePlayer, _("leave movie player..."))
@@ -221,29 +228,39 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, \
 				InfoBarPlugins, InfoBarPiP, InfoBarGstreamerErrorPopupSupport:
 			x.__init__(self)
-
 		session.nav.playService(service)
+
+		svc = session.nav.getCurrentService()
+		info = svc and svc.info()
+		self._serviceName = info and info.getName() or _("this recording")
 		self.returning = False
 
 	def handleLeave(self, how):
 		self.is_closing = True
 		if how == "ask":
-			if config.usage.setup_level.index < 2: # -expert
-				list = (
-					(_("Yes"), "quit"),
-					(_("No"), "continue")
+			if config.usage.setup_level.index < 1: # beginner
+				lst = (
+					(_("Quit"), self._answerQuit),
+					(_("None"), self._answerContinue)
 				)
-			else:
-				list = (
-					(_("Yes"), "quit"),
-					(_("Yes, returning to movie list"), "movielist"),
-					(_("Yes, and delete this movie"), "quitanddelete"),
-					(_("No"), "continue"),
-					(_("No, but restart from begin"), "restart")
+			elif config.usage.setup_level.index < 2: # intermediate
+				lst = (
+					(_("Quit"), self._answerQuit),
+					(_("Return to movie list"), self._answerList),
+					(_("None"), self._answerContinue)
+				)
+			else: # expert
+				lst = (
+					(_("Quit"), self._answerQuit),
+					(_("Return to movie list"), self._answerList),
+					(_("Delete and return to movie list"), self._answerDeleteReturn),
+					(_("Delete and quit "), self._answerDeleteQuit),
+					(_("Restart from the beginning"), self._answerRestart),
+					(_("None"),self._answerContinue),
 				)
 
 			from Screens.ChoiceBox import ChoiceBox
-			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Stop playing this movie?"), list = list)
+			self.session.openWithCallback(self.leavePlayerConfirmed, ChoiceBox, title=_("Action") , list = lst, windowTitle=self._serviceName)
 		else:
 			self.leavePlayerConfirmed([True, how])
 
@@ -252,38 +269,39 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 
 	def deleteConfirmed(self, answer):
 		if answer:
-			self.leavePlayerConfirmed((True, "quitanddeleteconfirmed"))
+			self.leavePlayerConfirmed((True, self._answerDeleteConfirmed))
 
 	def leavePlayerConfirmed(self, answer):
 		answer = answer and answer[1]
 
-		if answer in ("quitanddelete", "quitanddeleteconfirmed"):
+		if answer in (self._answerDeleteReturn, self._answerDeleteQuit, self._answerDeleteConfirmed):
 			ref = self.session.nav.getCurrentlyPlayingServiceReference()
-			from enigma import eServiceCenter
-			serviceHandler = eServiceCenter.getInstance()
-			info = serviceHandler.info(ref)
-			name = info and info.getName(ref) or _("this recording")
+			name = self._serviceName
 
-			if answer == "quitanddelete":
+			if answer in (self._answerDeleteReturn, self._answerDeleteQuit):
 				from Screens.MessageBox import MessageBox
+				self.returning = answer == self._answerDeleteReturn
 				self.session.openWithCallback(self.deleteConfirmed, MessageBox, _("Do you really want to delete %s?") % name)
 				return
 
-			elif answer == "quitanddeleteconfirmed":
+			elif answer == self._answerDeleteConfirmed:
+				from enigma import eServiceCenter
+				serviceHandler = eServiceCenter.getInstance()
 				offline = serviceHandler.offlineOperations(ref)
 				if offline.deleteFromDisk(0):
 					from Screens.MessageBox import MessageBox
 					self.session.openWithCallback(self.close, MessageBox, _("You cannot delete this!"), MessageBox.TYPE_ERROR)
 					return
-
-		if answer in ("quit", "quitanddeleteconfirmed"):
+		if self.returning and answer == self._answerDeleteConfirmed:
+			answer = self._answerList
+		if answer in (self._answerQuit, self._answerDeleteConfirmed):
 			self.close()
-		elif answer == "movielist":
+		elif answer == self._answerList:
 			ref = self.session.nav.getCurrentlyPlayingServiceReference()
 			self.returning = True
 			self.session.openWithCallback(self.movieSelected, MovieSelection, ref)
 			self.session.nav.stopService()
-		elif answer == "restart":
+		elif answer == self._answerRestart:
 			self.doSeek(0)
 			self.setSeekState(self.SEEK_STATE_PLAY)
 

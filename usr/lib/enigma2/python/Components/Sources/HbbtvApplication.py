@@ -5,6 +5,7 @@ from Components.Element import cached
 class HbbtvApplication(Source):
 	def __init__(self):
 		Source.__init__(self)
+		self.disabled = False
 		self._available = False
 		self._appname = ""
 		self.redButtonAppplicationReady_conn = eHbbtv.getInstance().redButtonAppplicationReady.connect(self._redButtonApplicationReady)
@@ -31,12 +32,12 @@ class HbbtvApplication(Source):
 
 	@cached
 	def getBoolean(self):
-		return self._available
+		return False if self.disabled else self._available
 
 	boolean = property(getBoolean)
 
 	@cached
 	def getName(self):
-		return self._appname
+		return "" if self.disabled else self._appname
 
 	name = property(getName) 

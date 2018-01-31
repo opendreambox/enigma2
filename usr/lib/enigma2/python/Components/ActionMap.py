@@ -12,6 +12,18 @@ class ActionMap:
 		self.exec_active = False
 		self.enabled = True
 
+	def update(self, contexts, actions, prio):
+		wasEnabled = self.enabled
+		wasExeced = self.exec_active
+		self.enabled = self.exec_active = False
+		self.checkBind()
+		self.actions = actions
+		self.contexts = contexts
+		self.prio = prio
+		self.enabled = wasEnabled
+		if wasExeced and self.enabled:
+			self.execBegin()
+
 	def setEnabled(self, enabled):
 		self.enabled = enabled
 		self.checkBind()
@@ -95,5 +107,19 @@ class HelpableActionMap(ActionMap):
 				adict[action] = funchelp
 
 		ActionMap.__init__(self, [context], adict, prio)
+		parent.helpList.append((self, context, alist))
 
+	def update(self, parent, context, actions = { }, prio=0):
+		alist = [ ]
+		adict = { }
+		for (action, funchelp) in actions.iteritems():
+			# check if this is a tuple
+			if isinstance(funchelp, tuple):
+				alist.append((action, funchelp[1]))
+				adict[action] = funchelp[0]
+			else:
+				adict[action] = funchelp
+
+		ActionMap.update(self, [context], adict, prio)
+		del parent.helpList[:]
 		parent.helpList.append((self, context, alist))

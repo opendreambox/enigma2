@@ -22,9 +22,9 @@ class Pixmap(GUIComponent):
 	def resetShowHideAnimation(self):
 		self.instance.setShowHideAnimation("")
 
-	def execBegin(self):
-		GUIComponent.execBegin(self)
-		self.instance.setDefaultAnimationEnabled(True)
+	def postWidgetCreate(self, instance):
+		GUIComponent.postWidgetCreate(self, instance)
+		self.setDefaultAnimationEnabled(True)
 
 class PixmapConditional(ConditionalWidget, Pixmap):
 	def __init__(self, withTimer = True):

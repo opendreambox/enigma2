@@ -79,11 +79,11 @@ class About(Screen):
 		if service.state() == eNetworkManager.STATE_ONLINE:
 			ipv4 = service.ipv4()
 			ip = ipv4.get("Address", "0.0.0.0")
-		if ip == "0.0.0.0:":
-			ipv6 = self._service.ipv6()
-			ip6 = ipv6.get("Address", "::")
-			if ip6 != "::":
-				ip = ip6
+			if ip == "0.0.0.0":
+				ipv6 = self._service.ipv6()
+				ip6 = ipv6.get("Address", "::")
+				if ip6 != "::":
+					ip = ip6
 		return ip
 
 	def showTranslationInfo(self):

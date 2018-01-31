@@ -79,7 +79,7 @@ profile("LoadSkinDefaultDone")
 
 
 def parsePercent(val, base):
-	return int(val.replace("%", "")) / 100 * base
+	return int(float(val.replace("%", "")) / 100.0 * base)
 
 def evalPos(pos, wsize, ssize, scale):
 	if pos == "center":
@@ -87,7 +87,7 @@ def evalPos(pos, wsize, ssize, scale):
 	elif pos == "max":
 		pos = ssize - wsize
 	elif pos.endswith("%"):
-		pos = parsePercent(pos, ssize - wsize)
+		pos = parsePercent(pos, ssize)
 	else:
 		pos = int(pos) * scale[0] / scale[1]
 	return int(pos)
@@ -231,7 +231,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			elif attrib == "scrollbarValuePicture":
 				guiObject.setScrollbarValuePicture(ptr)
 			# guiObject.setPixmapFromFile(value)
-		elif attrib == "alphatest": # used by ePixmap
+		elif attrib in ("alphatest", "blend"): # used by ePixmap
 			guiObject.setAlphatest(
 				{ "on": 1,
 				  "off": 0,
@@ -290,6 +290,19 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 					guiObject.setFlag(fv)
 				except KeyError:
 					print "illegal flag %s!" % f
+		elif attrib == "padding":
+			guiObject.setPadding(parsePosition(value, scale))
+		elif attrib in ("radius", "cornerRadius"):
+			guiObject.setCornerRadius(int(value))
+		elif attrib == "gradient":
+			values = value.split(',')
+			direction = {
+				"horizontal" : ePixmap.GRADIENT_HORIZONTAL,
+				"vertical" : ePixmap.GRADIENT_VERTICAL,
+				"horizontalCentered" : ePixmap.GRADIENT_HORIZONTAL_CENTERED,
+				"verticalCentered" : ePixmap.GRADIENT_VERTICAL_CENTERED,
+			}.get(values[2], ePixmap.GRADIENT_VERTICAL)
+			guiObject.setGradient(parseColor(values[0]), parseColor(values[1]), direction)
 		elif attrib == "backgroundColor":
 			guiObject.setBackgroundColor(parseColor(value))
 		elif attrib == "backgroundColorSelected":
@@ -352,22 +365,30 @@ def applyAllAttributes(guiObject, desktop, attributes, scale, skipZPosition=Fals
 	pos_key = 'position'
 	zpos_key = 'zPosition'
 	pixmap_key = 'pixmap'
-	size_val = pos_val = pixmap_val = None
+	background_key = 'backgroundColor'
+	roundedlabel_key = 'roundedlabelColor'
+
+	size_val = pos_val = pixmap_val = background_val = None
 	for (attrib, value) in attributes:
 		if attrib == pos_key:
 			pos_val = value
-			continue
 		elif attrib == size_key:
 			size_val = value
-			continue
 		#SVG's really should be scaled at load-time and not by the GPU, so we handle that exception
 		elif attrib == pixmap_key and value.endswith("svg"):
 			pixmap_val = value
-			continue
+		elif attrib == background_key:
+			if not background_val: #prioritize roundedlabelColor so merlin stuff keeps working
+				background_val = value
+		elif attrib == roundedlabel_key:
+			background_val = value
 		elif skipZPosition and attrib == zpos_key:
-			continue
-		applySingleAttribute(guiObject, desktop, attrib, value, scale)
+			pass
+		else:
+			applySingleAttribute(guiObject, desktop, attrib, value, scale)
 
+	if background_val is not None:
+		applySingleAttribute(guiObject, desktop, background_key, background_val, scale)
 	#relative positioning only works if we have the sized the widget before positioning
 	if size_val is not None:
 		applySingleAttribute(guiObject, desktop, size_key, size_val, scale)
@@ -591,6 +612,10 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			for template in component.findall("template"):
 				componentSizes.addTemplate(component.attrib, template.text)
 
+	for l in skin.findall("layouts"):
+		for layout in l.findall("layout"):
+			layouts.apply(layout)
+
 def loadSkinData(desktop):
 	skins = dom_skins[:]
 	skins.reverse()
@@ -649,6 +674,24 @@ class WidgetGroup():
 
 class additionalWidget:
 	pass
+
+class Layouts():
+	def __init__(self):
+		self.layouts = {}
+
+	def __getitem__(self, key):
+		return key in self.layouts and self.layouts[key] or {}
+
+	def apply(self, node):
+		get_attr = node.attrib.get
+		key = get_attr("name")
+		filename = get_attr("filename")
+		if filename:
+			xml_filename = resolveFilename(SCOPE_SKIN_IMAGE, filename)
+			node = xml.etree.cElementTree.parse(xml_filename).getroot()
+		self.layouts[key] = node.getchildren()
+
+layouts = Layouts()
 
 class ComponentSizes():
 	CONFIG_LIST = "ConfigList"
@@ -751,6 +794,13 @@ def readSkin(screen, skin, names, desktop):
 	screen.skinAttributes = [ ]
 
 	skin_path_prefix = getattr(screen, "skin_path", path)
+
+	for widget in myscreen.getchildren():
+		if widget.tag == "layout":
+			get_attr = widget.attrib.get
+			for layout in layouts[get_attr('name')]:
+				myscreen.append(layout)
+			myscreen.remove(widget)
 
 	collectAttributes(screen.skinAttributes, myscreen, skin_path_prefix, ignore=["name"])
 

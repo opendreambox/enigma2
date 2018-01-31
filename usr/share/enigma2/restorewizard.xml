@@ -1,0 +1,29 @@
+<wizard nextstepanimation="wizard_next" previousstepanimation="wizard_previous">
+		<step id="start">
+			<short_title value="Restore software?"/>
+			<text dynamictext="introduction" />
+			<list>
+				<listentry caption="Yes, all" step="restore" />
+				<listentry caption="Yes, but only some" step="restoreSome" />
+				<listentry caption="No" step="end" />
+			</list>
+		</step>
+		<step id="restoreSome" nextstep="restore">
+			<short_title value="Package Selection"/>
+			<text value="Please select the packages to be restored from the list below" />
+			<config type="dynamic" source="packageList" evaluation="packagesAvailable" />
+		</step>
+		<step id="restore" nextstep="end">
+			<condition>
+self.condition = self.haveCommands()
+			</condition>
+			<short_title value="Restoring software" />
+			<text value="Restoring previously installed software" />
+			<code async="yes">
+self.restoreSelectedPackages()
+			</code>
+		</step>
+		<step id="end" laststep="true">
+			<text dynamictext="restorationSummary" />
+		</step>
+</wizard>

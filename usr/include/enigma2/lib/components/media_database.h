@@ -129,6 +129,7 @@ public:
 	static const char FIELD_SAVED_SUBTITLE_TRACK[];
 	static const char FIELD_TAG_ID[];
 	static const char FIELD_TAG[];
+	static const char FIELD_CREATED[];
 
 	static eMediaDatabase *getInstance();
 
@@ -187,7 +188,7 @@ public:
 	ePtr<eMediaDatabaseResult> getAllRecordings(int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getRecordings(const std::string &dir, const std::list<std::string> &tags = std::list<std::string>(), int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> getRecordMeta(int file_id);
-	ePtr<eMediaDatabaseResult> setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
+	ePtr<eMediaDatabaseResult> setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified, int created);
 	ePtr<eMediaDatabaseResult> getRecordEit(int file_id);
 	ePtr<eMediaDatabaseResult> setRecordEit(int file_id, uint8_t eit_raw[], bool update=false);
 	ePtr<eMediaDatabaseResult> getRecordTags(int file_id);
@@ -250,7 +251,7 @@ protected:
 
 class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
 {
-	int SCHEMA_VERSION = 6;
+	int SCHEMA_VERSION = 7;
 
 	std::string normalizePath(const std::string &path);
 	bool upgradeSchema(int from);
@@ -260,6 +261,7 @@ class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native
 	bool upgradeSchema3_to_4();
 	bool upgradeSchema4_to_5();
 	bool upgradeSchema5_to_6();
+	bool upgradeSchema6_to_7();
 
 public:
 	eMediaDatabaseHandler();
@@ -309,7 +311,7 @@ public:
 	QSqlQuery getAllRecordings(int limit = -1, int offset = 0);
 	QSqlQuery getRecordings(const std::string &dir, const std::list<std::string> &tags = std::list<std::string>(), int limit = -1, int offset = 0);
 	QSqlQuery getRecordMeta(int file_id);
-	QSqlQuery setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified);
+	QSqlQuery setRecordMeta(int file_id, const std::string & ref, const std::string &name, const std::string &description, const std::string &service_data, int64_t duration, int64_t filesize, int lastmodified, int created);
 	QSqlQuery getRecordEit(int file_id);
 	QSqlQuery setRecordEit(int file_id, const uint8_t eit_raw[], bool update=false);
 	QSqlQuery getRecordTags(int file_id);

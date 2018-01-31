@@ -37,9 +37,10 @@ class ConfigElement(object):
 		self.__notifiers = { }
 		self.__notifiers_final = { }
 		self.enabled = True
+		self.key = 0
 
 	def getNotifiers(self):
-		return [func for (func, val, call_on_save_and_cancel) in self.__notifiers.itervalues()]
+		return [func for (key, func, val, call_on_save_and_cancel) in self.__notifiers.itervalues()]
 
 	def setNotifiers(self, val):
 		print "just readonly access to notifiers is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers"
@@ -47,7 +48,7 @@ class ConfigElement(object):
 	notifiers = property(getNotifiers, setNotifiers)
 
 	def getNotifiersFinal(self):
-		return [func for (func, val, call_on_save_and_cancel) in self.__notifiers_final.itervalues()]
+		return [func for (key, func, val, call_on_save_and_cancel) in self.__notifiers_final.itervalues()]
 
 	def setNotifiersFinal(self, val):
 		print "just readonly access to notifiers_final is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers"
@@ -100,28 +101,34 @@ class ConfigElement(object):
 		return self.tostring(self.value) != sv
 
 	def changed(self, save_or_cancel=False):
-		for (func, val) in self.__notifiers.iteritems():
+		for (func, val) in sorted(self.__notifiers.iteritems()):
 			strval = str(self.value)
-			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != strval):
-				self.__notifiers[func] = (val[0], strval, val[2])
-				val[0](self)
+			if (val[3] and save_or_cancel) or (save_or_cancel == False and val[2] != strval):
+				self.__notifiers[func] = (val[0], val[1], strval, val[3])
+				val[1](self)
 
 	def changedFinal(self, save_or_cancel=False):
-		for (func, val) in self.__notifiers_final.iteritems():
+		for (func, val) in sorted(self.__notifiers_final.iteritems()):
 			strval = str(self.value)
-			if (val[2] and save_or_cancel) or (save_or_cancel == False and val[1] != strval):
-				self.__notifiers_final[func] = (val[0], strval, val[2])
-				val[0](self)
+			if (val[3] and save_or_cancel) or (save_or_cancel == False and val[2] != strval):
+				self.__notifiers_final[func] = (val[0], val[1], strval, val[3])
+				val[1](self)
 
 	# immediate_feedback = True means call notifier on every value CHANGE
 	# immediate_feedback = False means call notifier on leave the config element (up/down) when value have CHANGED
 	# call_on_save_or_cancel = True means call notifier always on save/cancel.. even when value have not changed
 	def addNotifier(self, notifier, initial_call = True, immediate_feedback = True, call_on_save_or_cancel = False):
 		assert callable(notifier), "notifiers must be callable"
+		try:
+			# repr(notifier) is useless for private functions starting with __ 
+			key = 'addNotifier {1} <{0} instance at {2}>'.format(notifier.__module__, notifier.__func__, hex(id(notifier.__self__)))
+		except:
+			key = repr(notifier)
 		if immediate_feedback:
-			self.__notifiers[str(notifier)] = (notifier, str(self.value), call_on_save_or_cancel)
+			self.__notifiers[key] = (self.key, notifier, str(self.value), call_on_save_or_cancel)
 		else:
-			self.__notifiers_final[str(notifier)] = (notifier, str(self.value), call_on_save_or_cancel)
+			self.__notifiers_final[key] = (self.key, notifier, str(self.value), call_on_save_or_cancel)
+		self.key += 1
 		# CHECKME:
 		# do we want to call the notifier
 		#  - at all when adding it? (yes, though optional)
@@ -134,7 +141,10 @@ class ConfigElement(object):
 			notifier(self)
 
 	def removeNotifier(self, notifier):
-		n = str(notifier)
+		try:
+			n = 'addNotifier {1} <{0} instance at {2}>'.format(notifier.__module__, notifier.__func__, hex(id(notifier.__self__)))
+		except:
+			n = repr(notifier)
 		if n in self.__notifiers:
 			del self.__notifiers[n]
 		if n in self.__notifiers_final:

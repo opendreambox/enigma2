@@ -15,10 +15,10 @@ class MediaRendererLCDScreen(Screen):
 	</screen>""",
 	"""<screen name="MediaRendererLCDScreen" position="0,0" size="400,240" id="3">
 		<ePixmap position="0,0" size="400,240" pixmap="skin_default/display_bg.png" zPosition="-1"/>
-		<widget name="text1" font="Display;48" halign="center" position="0,5" size="400,48" transparent="1"/>
-		<eLabel backgroundColor="yellow" position="0,52" size="400,2" />
-		<widget name="text2" font="Display;36" halign="center" valign="center" position="0,56" size="400,72" transparent="1"/>
-		<widget name="text3" font="Display;36" halign="center" valign="center" position="0,130" size="400,112" transparent="1"/>
+		<widget name="text1" font="Display;48" halign="center" position="0,3" size="400,48" transparent="1"/>
+		<eLabel backgroundColor="yellow" position="0,60" size="400,2" />
+		<widget name="text2" font="Display;36" halign="center" valign="center" position="0,65" size="400,72" transparent="1"/>
+		<widget name="text3" font="Display;36" halign="center" valign="center" position="0,150" size="400,72" transparent="1"/>
 	</screen>"""
 	)
 

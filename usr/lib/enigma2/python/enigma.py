@@ -162,6 +162,18 @@ HAVE_GLES2_GL2EXT_H = _enigma.HAVE_GLES2_GL2EXT_H
 _enigma.HAVE_GLES2_GL2_H_swigconstant(_enigma)
 HAVE_GLES2_GL2_H = _enigma.HAVE_GLES2_GL2_H
 
+_enigma.HAVE_GLES3_GL31_H_swigconstant(_enigma)
+HAVE_GLES3_GL31_H = _enigma.HAVE_GLES3_GL31_H
+
+_enigma.HAVE_GLES3_GL32_H_swigconstant(_enigma)
+HAVE_GLES3_GL32_H = _enigma.HAVE_GLES3_GL32_H
+
+_enigma.HAVE_GLES3_GL3EXT_H_swigconstant(_enigma)
+HAVE_GLES3_GL3EXT_H = _enigma.HAVE_GLES3_GL3EXT_H
+
+_enigma.HAVE_GLES3_GL3_H_swigconstant(_enigma)
+HAVE_GLES3_GL3_H = _enigma.HAVE_GLES3_GL3_H
+
 _enigma.HAVE_GST_1_swigconstant(_enigma)
 HAVE_GST_1 = _enigma.HAVE_GST_1
 
@@ -170,6 +182,9 @@ HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 
 _enigma.HAVE_LIBSYSTEMD_swigconstant(_enigma)
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
+
+_enigma.HAVE_LIBUNWIND_H_swigconstant(_enigma)
+HAVE_LIBUNWIND_H = _enigma.HAVE_LIBUNWIND_H
 
 _enigma.HAVE_MEMORY_H_swigconstant(_enigma)
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
@@ -2838,6 +2853,7 @@ class eAnimatedWidget(eWidget):
     def __init__(self, parent):
         _enigma.eAnimatedWidget_swiginit(self, _enigma.new_eAnimatedWidget(parent))
     __swig_destroy__ = _enigma.delete_eAnimatedWidget
+eAnimatedWidget.setAlphatest = new_instancemethod(_enigma.eAnimatedWidget_setAlphatest, None, eAnimatedWidget)
 eAnimatedWidget.doBlit = new_instancemethod(_enigma.eAnimatedWidget_doBlit, None, eAnimatedWidget)
 eAnimatedWidget.prepareForChangeAnimation = new_instancemethod(_enigma.eAnimatedWidget_prepareForChangeAnimation, None, eAnimatedWidget)
 eAnimatedWidget.setDefaultAnimationEnabled = new_instancemethod(_enigma.eAnimatedWidget_setDefaultAnimationEnabled, None, eAnimatedWidget)
@@ -2870,6 +2886,8 @@ eLabel.setShadowColor = new_instancemethod(_enigma.eLabel_setShadowColor, None, 
 eLabel.setShadowOffset = new_instancemethod(_enigma.eLabel_setShadowOffset, None, eLabel)
 eLabel.setNoWrap = new_instancemethod(_enigma.eLabel_setNoWrap, None, eLabel)
 eLabel.clearForegroundColor = new_instancemethod(_enigma.eLabel_clearForegroundColor, None, eLabel)
+eLabel.setCornerRadius = new_instancemethod(_enigma.eLabel_setCornerRadius, None, eLabel)
+eLabel.setPadding = new_instancemethod(_enigma.eLabel_setPadding, None, eLabel)
 eLabel.calculateSize = new_instancemethod(_enigma.eLabel_calculateSize, None, eLabel)
 eLabel_swigregister = _enigma.eLabel_swigregister
 eLabel_swigregister(eLabel)
@@ -2880,6 +2898,10 @@ class ePixmap(eAnimatedWidget):
 
     def __init__(self, parent):
         _enigma.ePixmap_swiginit(self, _enigma.new_ePixmap(parent))
+    GRADIENT_HORIZONTAL = _enigma.ePixmap_GRADIENT_HORIZONTAL
+    GRADIENT_VERTICAL = _enigma.ePixmap_GRADIENT_VERTICAL
+    GRADIENT_HORIZONTAL_CENTERED = _enigma.ePixmap_GRADIENT_HORIZONTAL_CENTERED
+    GRADIENT_VERTICAL_CENTERED = _enigma.ePixmap_GRADIENT_VERTICAL_CENTERED
     FMT_GIF = _enigma.ePixmap_FMT_GIF
     FMT_JPEG = _enigma.ePixmap_FMT_JPEG
     FMT_PNG = _enigma.ePixmap_FMT_PNG
@@ -2895,11 +2917,11 @@ ePixmap.setPixmapFromFile = new_instancemethod(_enigma.ePixmap_setPixmapFromFile
 ePixmap.setPixmapFromUI = new_instancemethod(_enigma.ePixmap_setPixmapFromUI, None, ePixmap)
 ePixmap.setPixmapFromScreen = new_instancemethod(_enigma.ePixmap_setPixmapFromScreen, None, ePixmap)
 ePixmap.setPixmapFromVideo = new_instancemethod(_enigma.ePixmap_setPixmapFromVideo, None, ePixmap)
-ePixmap.setAlphatest = new_instancemethod(_enigma.ePixmap_setAlphatest, None, ePixmap)
 ePixmap.setScale = new_instancemethod(_enigma.ePixmap_setScale, None, ePixmap)
 ePixmap.setScaleDest = new_instancemethod(_enigma.ePixmap_setScaleDest, None, ePixmap)
 ePixmap.setBorderWidth = new_instancemethod(_enigma.ePixmap_setBorderWidth, None, ePixmap)
 ePixmap.setBorderColor = new_instancemethod(_enigma.ePixmap_setBorderColor, None, ePixmap)
+ePixmap.setGradient = new_instancemethod(_enigma.ePixmap_setGradient, None, ePixmap)
 ePixmap.save = new_instancemethod(_enigma.ePixmap_save, None, ePixmap)
 ePixmap_swigregister = _enigma.ePixmap_swigregister
 ePixmap_swigregister(ePixmap)
@@ -4848,9 +4870,9 @@ class eMediaDatabase(object):
         return _enigma.eMediaDatabase_getRecordMeta(self, file_id)
 
 
-    def setRecordMeta(self, file_id, ref, name, description, service_data, duration, filesize, lastmodified):
-        """setRecordMeta(eMediaDatabase self, int file_id, std::string const & ref, std::string const & name, std::string const & description, std::string const & service_data, int64_t duration, int64_t filesize, int lastmodified) -> eMediaDatabaseResultPtr"""
-        return _enigma.eMediaDatabase_setRecordMeta(self, file_id, ref, name, description, service_data, duration, filesize, lastmodified)
+    def setRecordMeta(self, file_id, ref, name, description, service_data, duration, filesize, lastmodified, created):
+        """setRecordMeta(eMediaDatabase self, int file_id, std::string const & ref, std::string const & name, std::string const & description, std::string const & service_data, int64_t duration, int64_t filesize, int lastmodified, int created) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_setRecordMeta(self, file_id, ref, name, description, service_data, duration, filesize, lastmodified, created)
 
 
     def getRecordEit(self, file_id):
@@ -5140,6 +5162,7 @@ eMediaDatabase.FIELD_SAVED_AUDIO_TRACK = _enigma.cvar.eMediaDatabase_FIELD_SAVED
 eMediaDatabase.FIELD_SAVED_SUBTITLE_TRACK = _enigma.cvar.eMediaDatabase_FIELD_SAVED_SUBTITLE_TRACK
 eMediaDatabase.FIELD_TAG_ID = _enigma.cvar.eMediaDatabase_FIELD_TAG_ID
 eMediaDatabase.FIELD_TAG = _enigma.cvar.eMediaDatabase_FIELD_TAG
+eMediaDatabase.FIELD_CREATED = _enigma.cvar.eMediaDatabase_FIELD_CREATED
 
 def eMediaDatabase_getInstance():
     """eMediaDatabase_getInstance() -> eMediaDatabase"""

@@ -602,6 +602,9 @@ def runScreenTest():
 
 	CiHandler.setSession(session)
 
+	from Screens.PackageRestoreWizard import PackageRestoreCheck
+	PackageRestoreCheck(session)
+
 	screensToRun = [ p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD) ]
 
 	profile("wizards")

@@ -61,6 +61,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		self.oldContrast = config.pep.contrast.value
 		self.oldSaturation = config.pep.saturation.value
 		self.oldHue = config.pep.hue.value
+		self.oldColor_temp = config.pep.color_temp.value
 		self.oldBrightness = config.pep.brightness.value
 		self.oldBlock_noise = config.pep.block_noise_reduction.value
 		self.oldMosquito_noise = config.pep.mosquito_noise_reduction.value
@@ -90,6 +91,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		self.saturationEntry = addToConfigList(_("Saturation"), config.pep.saturation)
 		self.hueEntry = addToConfigList(_("Hue"), config.pep.hue)
 		self.brightnessEntry = addToConfigList(_("Brightness"), config.pep.brightness)
+		self.color_tempEntry = addToConfigList(_("Color temp"), config.pep.color_temp)
 		self.scaler_sharpnessEntry = addToConfigList(_("Scaler sharpness"), config.av.scaler_sharpness)
 		self.splitEntry = addToConfigList(_("Split preview mode"), config.pep.split, True)
 		add_to_xtdlist = self.splitEntry is not None
@@ -179,6 +181,8 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		if not confirmed:
 			print "not confirmed"
 		else:
+			if self.color_tempEntry is not None:
+				config.pep.color_temp.setValue(self.oldColor_temp)
 			if self.contrastEntry is not None:
 				config.pep.contrast.setValue(self.oldContrast)
 			if self.saturationEntry is not None:
@@ -216,6 +220,8 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		if not confirmed:
 			print "not confirmed"
 		else:
+			if self.color_tempEntry is not None:
+				config.pep.color_temp.setValue(128)
 			if self.contrastEntry is not None:
 				config.pep.contrast.setValue(128)
 			if self.saturationEntry is not None:

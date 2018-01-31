@@ -13,18 +13,29 @@ class AudioGUI(MediaGUI, InfoBarNotifications, InfoBarSeek):
 	ALLOW_SUSPEND = True
 
 	skin = """
-		<screen name="AudioGUI" position="center,center" size="700,265" title="UPnP Audio Player">
-			<widget name="coverArt" position="10,10" size="250,250" pixmap="skin_default/no_coverArt.png" zPosition="1" transparent="1" alphatest="blend" />
-
-			<widget name="title" position="280,10" size="300, 35" zPosition="1" font="Regular;27" valign="top" backgroundColor="background" transparent="1" />
-			<widget name="artist" position="280,55" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="album" position="280,85" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="year" position="280,135" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-			<widget name="genre" position="280,175" size="300, 25" zPosition="1" font="Regular;22" valign="top" foregroundColor="foreground" backgroundColor="background" transparent="1" />
-
-			<widget source="session.CurrentService" render="Progress" zPosition="-1" position="0,258" size="700,7" pixmap="skin_default/progress_small.png" transparent="1">
-				<convert type="ServicePosition">Position</convert>
-			</widget>
+		<screen name="AudioGUI" position="0,0" size="1280,720" flags="wfNoBorder">
+		<widget name="coverArt" pixmap="Default-FHD/skin_default/no_coverArt.svg" position="120,300" size="300,300" zPosition="2"/>
+		<ePixmap pixmap="Default-FHD/skin_default/icons/dmm_logo.svg" position="30,630" size="480,30" zPosition="2"/>
+		<widget name="coverBack" position="center,center" size="1300,1300" zPosition="1"/>
+		<ePixmap pixmap="skin_default/display_bg.png" position="0,0" size="1280,768" />
+		<ePixmap pixmap="Default-FHD/skin_default/back.png" position="0,0" size="1280,720" zPosition="1"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" source="global.CurrentTime" render="Label" position="1040,40" size="200,55" font="Regular;50" halign="right" zPosition="2" transparent="1">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;50" name="artist" position="640,210" size="540,110" valign="bottom" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;30" name="album" position="640,340" size="540,70" valign="top" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;30" name="genre" position="640,410" size="540,35" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;30" name="year" position="640,450" size="540,35" transparent="1" zPosition="2"/>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;26" name="title" position="640,530" valign="bottom" size="540,62" transparent="1" zPosition="2" />
+		<widget pixmap="skin_default/progress.png" borderWidth="1" position="640,610" render="Progress" size="540,10" source="session.CurrentService" transparent="1" zPosition="2">
+			<convert type="ServicePosition">Position</convert>
+		</widget>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;28" position="640,630" render="Label" size="120,35" source="session.CurrentService" transparent="1" zPosition="2">
+			<convert type="ServicePosition">Length</convert>
+		</widget>
+		<widget backgroundColor="#200d1940" foregroundColor="white" font="Regular;28" position="1060,630" halign="right" render="Label" size="120,35" source="session.CurrentService" transparent="1" zPosition="2">
+			<convert type="ServicePosition">Remaining,Negate</convert>
+		</widget>
 		</screen>
 		"""
 
@@ -40,11 +51,17 @@ class AudioGUI(MediaGUI, InfoBarNotifications, InfoBarSeek):
 		self["year"] = Label("")
 		self["genre"] = Label("")
 		self["coverArt"] = MediaPixmap()
+		self["coverBack"] = MediaPixmap()
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 			{
-				iPlayableService.evUser + 13: self["coverArt"].embeddedCoverArt
+				iPlayableService.evUser + 13: self._embeddedCoverArt
 			})
+
+	def _embeddedCoverArt(self):
+		self["coverBack"].embeddedCoverArt()
+		self["coverArt"].embeddedCoverArt()
+
 
 	def _actionOk(self):
 		self.playpause()

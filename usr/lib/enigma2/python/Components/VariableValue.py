@@ -9,7 +9,7 @@ class VariableValue(object):
 		if self.instance:
 			try:
 				self.instance.setValue(self.__value)
-			except TypeError:
+			except (TypeError, OverflowError):
 				self.instance.setValue(0)
 
 	def getValue(self):

@@ -4,9 +4,6 @@ class PiconResolver(object):
 		x = ref.split(':')
 		if len(x) < 11: # skip invalid service references
 			return ""
-		# DVB-T(2)
-		if int(x[0]) == 1 and (int(x[6], 16) & 0xFFFF0000) == 0xEEEE0000:
-			x[6] = '{:02X}'.format(0xEEEE0000)
 		del x[x[10] and 11 or 10:] # remove name and empty path
 		x[1]='0' #replace flags field
 		name = '_'.join(x).strip('_')
@@ -16,9 +13,14 @@ class PiconResolver(object):
 			if pngname == "":
 				# lookup without path
 				pngname = findPicon('_'.join(x[:10]))
-				if pngname == "" and x[0] in ('4097', '8193'):
-					# lookup 1_* instead of 4097_*
-					pngname = findPicon('1_'+'_'.join(x[1:10]))
+				if pngname == "":
+					if x[0] in ('4097', '8193'): 
+						# lookup 1_* instead of 4097_*
+						pngname = findPicon('1_'+'_'.join(x[1:10]))
+					# DVB-T(2)
+					elif int(x[0]) == 1 and (int(x[6], 16) & 0xFFFF0000) == 0xEEEE0000:
+						x[6] = '{:02X}'.format(0xEEEE0000)
+						pngname = findPicon('1_'+'_'.join(x[1:10]))
 					if pngname == "": # no picon for service found
 						pngname = nameCache.get("default", "")
 						if pngname == "": # no default yet in cache..

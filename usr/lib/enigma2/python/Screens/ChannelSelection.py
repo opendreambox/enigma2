@@ -1402,10 +1402,15 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 				self.close(ref)
 
 	#called from infoBar and channelSelected
-	def zap(self):
+	def zap(self, nref=None, root=None):
 		self.revertMode=None
 		ref = self.session.nav.getCurrentlyPlayingServiceReference()
-		nref = self.getCurrentSelection()
+		if not nref:
+			nref = self.getCurrentSelection()
+		if root:
+			if not self.preEnterPath(root):
+				self.clearPath()
+				self.enterPath(eServiceReference(root))
 		if ref is None or ref != nref:
 			self.new_service_played = True
 			self.session.nav.playService(nref)

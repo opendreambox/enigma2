@@ -9,10 +9,12 @@
 class eWidgetDesktop;
 class eWidgetAnimationSet;
 class eWidgetDesktopCompBuffer;
+class eLabel;
 
 class eWidget : public iSyncPaintable
 {
 	friend class eWidgetDesktop;
+	friend class eLabel;
 public:
 	eWidget(eWidget *parent);
 	virtual ~eWidget();
@@ -69,14 +71,14 @@ public:
 	bool setShowHideAnimation(const std::string &key);
 	void setPulsate(bool enabled, int64_t duration=1000, float from=0.3, float to=1.0);
 
-	int isTransparent() { return m_vis & wVisTransparent; }
+	virtual int isTransparent() { return m_vis & wVisTransparent; }
 
 	ePoint getAbsolutePosition();
 
 	eSignal0<void> hideAnimationFinished;
 	eSignal0<void> showAnimationFinished;
 
-private:
+protected:
 	eWidgetDesktop *m_desktop;
 
 	int m_vis;
@@ -101,7 +103,7 @@ private:
 	int m_notify_child_on_position_change;
 
 	ePtr<eTimer> m_haftimer;
-protected:
+
 	void mayKillFocus();
 
 	enum {

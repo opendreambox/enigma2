@@ -464,17 +464,23 @@ class Wizard(Screen):
 				# for this. If there is one, please do a more specific check
 				# and/or a comment in which situation there is no run()
 				if callable(getattr(self.configInstance, "runAsync", None)):
-					if self.updateValues in self.onShown:
-						self.onShown.remove(self.updateValues)
-
-					# we need to remove the callback so it doesn't show the wizard screen after hiding it. the onHideFinished is
-					# fired glpbally, not just for our own Screen
-					self.onHideFinished.remove(self.__hideFinished)
+					self._foreignScreenInstancePrepare()
 					self.configInstance.runAsync(self.__foreignScreenInstanceFinished)
 					return
 				else:
 					self.configInstance.run()
 		self.finished()
+
+	def _foreignScreenInstancePrepare(self):
+		if self.updateValues in self.onShown:
+			self.onShown.remove(self.updateValues)
+		# we need to remove the callback so it doesn't show the wizard screen after hiding it. the onHideFinished is
+		# fired glpbally, not just for our own Screen
+		if self.__hideFinished in self.onHideFinished:
+			self.onHideFinished.remove(self.__hideFinished)
+
+	def _foreignScreenInstanceFinished(self, *args, **kwargs):
+		self.__foreignScreenInstanceFinished()
 
 	def __foreignScreenInstanceFinished(self, *args, **kwargs):
 		# re-register the callback for the next wizard steps

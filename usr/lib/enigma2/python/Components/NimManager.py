@@ -1195,9 +1195,10 @@ class NimManager:
 			return connected
 		else:
 			nim = config.Nims[slotid]
-			return (self.nim_slots[slotid].isCompatible("DVB-S") and nim.sat.configMode != "nothing") or \
-				(self.nim_slots[slotid].isCompatible("DVB-C") and nim.cable.configMode != "nothing") or \
-				(self.nim_slots[slotid].isCompatible("DVB-T") and nim.terrest.configMode != "nothing")
+
+			return (self.nim_slots[slotid].isCompatible("DVB-S") and nim.sat.configMode.value != "nothing") or \
+				(self.nim_slots[slotid].isCompatible("DVB-C") and nim.cable.configMode.value != "nothing") or \
+				(self.nim_slots[slotid].isCompatible("DVB-T") and nim.terrest.configMode.value != "nothing")
 
 	def getSatListForNim(self, slotid):
 		list = []

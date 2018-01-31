@@ -45,6 +45,7 @@
 				<item level="2" text="Show infobar on skip forward/backward">config.usage.show_infobar_on_skip</item>
 				<item level="2" text="Show infobar on event change">config.usage.show_infobar_on_event_change</item>
 			<item level="2" text="Movielist" />
+				<item level="2" text="Load metadata from database">config.media_database.readmeta</item>
 				<item level="2" text="Load Length of Movies in Movielist">config.usage.load_length_of_movies_in_moviellist</item>
 				<item level="2" text="Behavior when a movie is started">config.usage.on_movie_start</item>
 				<item level="2" text="Behavior when a movie is stopped">config.usage.on_movie_stop</item>

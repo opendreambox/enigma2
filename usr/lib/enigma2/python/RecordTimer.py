@@ -124,7 +124,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 		self.autoincreasetime = 3600 * 24 # 1 day
 		self.tags = tags or []
 		self.plugins = plugins or {}
-
+		self.Filename = ""
 		self.log_entries = []
 		self.resetState()
 	

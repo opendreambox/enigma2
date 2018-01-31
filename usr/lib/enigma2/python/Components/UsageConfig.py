@@ -193,6 +193,9 @@ def FinalInitUsageConfig():
 
 	config.usage.max_stream_resolution = ConfigSelection(default = "1080", choices = ["480", "720", "1080", "1440", "2160"])
 
+	config.media_database = ConfigSubsection()
+	config.media_database.readmeta = ConfigYesNo(default=False)
+
 def updateChoices(sel, choices):
 	if choices:
 		defval = None

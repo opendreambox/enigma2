@@ -110,6 +110,7 @@ class ServiceInfo(Screen):
 					 "transmission_mode"		: _("Transmission mode"),
 					 "guard_interval" 		: _("Guard interval"),
 					 "hierarchy_information"	: _("Hierarchy info"),
+					 "plp_id"			: _("Stream Id"),
 					 "is_id"			: _("Stream Id"),
 					 "pls_mode"			: _("PLS Mode"),
 					 "pls_code"			: _("PLS Code")}
