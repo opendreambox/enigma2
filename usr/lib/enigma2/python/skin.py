@@ -32,6 +32,20 @@ class SkinError(Exception):
 	def __str__(self):
 		return "{%s}: %s" % (config.skin.primary_skin.value, self.msg)
 
+def getSkinYRes(dom):
+	yres = 0
+	for c in dom.findall("output"):
+		id = c.attrib.get('id')
+		if id:
+			id = int(id)
+		else:
+			id = 0
+		if id == 0: # framebuffer
+			for res in c.findall("resolution"):
+				yres = int(res.get("yres", "576"))
+				break
+	return yres
+
 dom_skins = [ ]
 
 def loadSkin(name, scope = SCOPE_SKIN):
@@ -72,6 +86,15 @@ except (SkinError, IOError, AssertionError), err:
 	print "defaulting to standard skin..."
 	config.skin.primary_skin.value = 'skin.xml'
 	loadSkin('skin.xml')
+
+yres = getSkinYRes(dom_skins[-1][1])
+Log.i("Skin resultion is %s" %(yres,))
+if yres > 0:
+	skin_default_specific = 'skin_default_%s.xml' %yres
+	try:
+		loadSkin(skin_default_specific)
+	except (SkinError, IOError, AssertionError), err:
+		Log.w("Not loading %s %s" %(skin_default_specific,err))
 
 profile("LoadSkinDefault")
 loadSkin('skin_default.xml')

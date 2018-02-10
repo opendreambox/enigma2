@@ -162,18 +162,6 @@ HAVE_GLES2_GL2EXT_H = _enigma.HAVE_GLES2_GL2EXT_H
 _enigma.HAVE_GLES2_GL2_H_swigconstant(_enigma)
 HAVE_GLES2_GL2_H = _enigma.HAVE_GLES2_GL2_H
 
-_enigma.HAVE_GLES3_GL31_H_swigconstant(_enigma)
-HAVE_GLES3_GL31_H = _enigma.HAVE_GLES3_GL31_H
-
-_enigma.HAVE_GLES3_GL32_H_swigconstant(_enigma)
-HAVE_GLES3_GL32_H = _enigma.HAVE_GLES3_GL32_H
-
-_enigma.HAVE_GLES3_GL3EXT_H_swigconstant(_enigma)
-HAVE_GLES3_GL3EXT_H = _enigma.HAVE_GLES3_GL3EXT_H
-
-_enigma.HAVE_GLES3_GL3_H_swigconstant(_enigma)
-HAVE_GLES3_GL3_H = _enigma.HAVE_GLES3_GL3_H
-
 _enigma.HAVE_GST_1_swigconstant(_enigma)
 HAVE_GST_1 = _enigma.HAVE_GST_1
 
@@ -182,9 +170,6 @@ HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 
 _enigma.HAVE_LIBSYSTEMD_swigconstant(_enigma)
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
-
-_enigma.HAVE_LIBUNWIND_H_swigconstant(_enigma)
-HAVE_LIBUNWIND_H = _enigma.HAVE_LIBUNWIND_H
 
 _enigma.HAVE_MEMORY_H_swigconstant(_enigma)
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
@@ -3826,9 +3811,11 @@ class eEPGCache(iObject):
     getInstance = staticmethod(_enigma.eEPGCache_getInstance)
     getStringHash = staticmethod(_enigma.eEPGCache_getStringHash)
     SIMILAR_BROADCASTINGS_SEARCH = _enigma.eEPGCache_SIMILAR_BROADCASTINGS_SEARCH
+    EXACT_TITLE_SEARCH = _enigma.eEPGCache_EXACT_TITLE_SEARCH
     EXAKT_TITLE_SEARCH = _enigma.eEPGCache_EXAKT_TITLE_SEARCH
     PARTIAL_TITLE_SEARCH = _enigma.eEPGCache_PARTIAL_TITLE_SEARCH
     PARTIAL_DESCRIPTION_SEARCH = _enigma.eEPGCache_PARTIAL_DESCRIPTION_SEARCH
+    PARTIAL_EXTENDED_DESCRIPTION_SEARCH = _enigma.eEPGCache_PARTIAL_EXTENDED_DESCRIPTION_SEARCH
     CASE_CHECK = _enigma.eEPGCache_CASE_CHECK
     NO_CASE_CHECK = _enigma.eEPGCache_NO_CASE_CHECK
     cacheState = _swig_property(_enigma.eEPGCache_cacheState_get, _enigma.eEPGCache_cacheState_set)

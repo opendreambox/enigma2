@@ -76,6 +76,8 @@
 				<item level="2" text="Alternative services tuner priority">config.usage.alternatives_priority</item>
 			<item level="1" text = "Streaming" />
 				<item level="1" text="Maximum stream resolution">config.usage.max_stream_resolution</item>
+			<item level="2" text = "Debug" />
+				<item level="2" text="Debug accel memory usage">config.misc.debug_accel_memory_usage</item>
 		</setup>
 		<setup key="harddisk" title="Harddisk setup" >
 			<item level="0" text="Harddisk standby after">config.usage.hdd_standby</item>

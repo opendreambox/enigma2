@@ -22,6 +22,7 @@ class ServiceInfo(Converter, object):
 	TRANSFERBPS = 16
 	HAS_SUBTITLES = 17
 	IS_HDR = 18
+	VIDEO_PARAMS = 19
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -34,6 +35,7 @@ class ServiceInfo(Converter, object):
 				"SubservicesAvailable": (self.SUBSERVICES_AVAILABLE, (iPlayableService.evUpdatedEventInfo,)),
 				"VideoWidth": (self.XRES, (iPlayableService.evVideoSizeChanged,)),
 				"VideoHeight": (self.YRES, (iPlayableService.evVideoSizeChanged,)),
+				"VideoParams": (self.VIDEO_PARAMS, (iPlayableService.evVideoSizeChanged, iPlayableService.evVideoProgressiveChanged, iPlayableService.evVideoFramerateChanged)),
 				"AudioPid": (self.APID, (iPlayableService.evUpdatedInfo,)),
 				"VideoPid": (self.VPID, (iPlayableService.evUpdatedInfo,)),
 				"PcrPid": (self.PCRPID, (iPlayableService.evUpdatedInfo,)),
@@ -42,7 +44,7 @@ class ServiceInfo(Converter, object):
 				"TsId": (self.TSID, (iPlayableService.evUpdatedInfo,)),
 				"OnId": (self.ONID, (iPlayableService.evUpdatedInfo,)),
 				"Sid": (self.SID, (iPlayableService.evUpdatedInfo,)),
-				"Framerate": (self.FRAMERATE, (iPlayableService.evVideoSizeChanged,iPlayableService.evUpdatedInfo,)),
+				"Framerate": (self.FRAMERATE, (iPlayableService.evVideoFramerateChanged,)),
 				"TransferBPS": (self.TRANSFERBPS, (iPlayableService.evUpdatedInfo,)),
 				"HasSubtitles": (self.HAS_SUBTITLES, (iPlayableService.evUpdatedInfo,)),
 			}[type]
@@ -128,6 +130,15 @@ class ServiceInfo(Converter, object):
 			return self.getServiceInfoString(info, iServiceInformation.sFrameRate, lambda x: "%d fps" % ((x+500)/1000))
 		elif self.type == self.TRANSFERBPS:
 			return self.getServiceInfoString(info, iServiceInformation.sTransferBPS, lambda x: "%d kB/s" % (x/1024))
+		elif self.type == self.VIDEO_PARAMS:
+			yres = info.getInfo(iServiceInformation.sVideoHeight)
+			frame_rate = info.getInfo(iServiceInformation.sFrameRate)
+			progressive = info.getInfo(iServiceInformation.sProgressive)
+			print "yres", yres, "frame_rate", frame_rate, "progressive", progressive
+			if not progressive:
+				frame_rate *= 2
+			frame_rate = (frame_rate+500)/1000
+			return "%d%s%d" % (yres, 'p' if progressive else 'i', frame_rate)
 		return ""
 
 	text = property(getText)
@@ -141,13 +152,17 @@ class ServiceInfo(Converter, object):
 
 		if self.type == self.XRES:
 			return info.getInfo(iServiceInformation.sVideoWidth)
-		if self.type == self.YRES:
+		elif self.type == self.YRES:
 			return info.getInfo(iServiceInformation.sVideoHeight)
-		if self.type == self.FRAMERATE:
+		elif self.type == self.FRAMERATE:
 			return info.getInfo(iServiceInformation.sFrameRate)
-		if self.type == self.IS_WIDESCREEN:
+		elif self.type == self.IS_WIDESCREEN:
 			return info.getInfo(iServiceInformation.sAspect)
-
+		elif self.type == self.VIDEO_PARAMS:
+			return -1 if info.getInfo(iServiceInformation.sVideoHeight) < 0 \
+				or info.getInfo(iServiceInformation.sFrameRate) < 0 \
+				or info.getInfo(iServiceInformation.sProgressive) < 0 \
+				else -2
 		return -1
 
 	value = property(getValue)

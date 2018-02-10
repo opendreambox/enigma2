@@ -2,13 +2,14 @@
 from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_CENTER, RT_VALIGN_CENTER, getPrevAsciiCode
 from Screen import Screen
 from Components.Language import language
-from Components.ActionMap import ActionMap
+from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Sources.StaticText import StaticText
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
+from Tools.NumericalTextInput import NumericalTextInput
 
 from skin import TemplatedListFonts, componentSizes
 
@@ -88,12 +89,13 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 	return res
 
 
-class VirtualKeyBoard(Screen):
+class VirtualKeyBoard(Screen, NumericalTextInput):
 	IS_DIALOG = True
 	LINESIZE = 12
 
 	def __init__(self, session, title="", text=""):
 		Screen.__init__(self, session)
+		NumericalTextInput.__init__(self, nextFunc = self.nextFunc)
 		self.setZPosition(10000)
 		self.keys_list = []
 		self.shiftkeys_list = []
@@ -102,7 +104,8 @@ class VirtualKeyBoard(Screen):
 		self.shiftMode = False
 		self.text = text
 		self.selectedKey = 0
-		
+		self.editing = False
+
 		self["country"] = StaticText("")
 		self["header"] = Label(title)
 		self["text"] = Label(self.text)
@@ -123,6 +126,19 @@ class VirtualKeyBoard(Screen):
 				"deleteBackward": self.backClicked,
 				"back": self.exit				
 			}, -2)
+		self["numberActions"] = NumberActionMap(["NumberActions"],
+		{
+			"1": self.keyNumberGlobal,
+			"2": self.keyNumberGlobal,
+			"3": self.keyNumberGlobal,
+			"4": self.keyNumberGlobal,
+			"5": self.keyNumberGlobal,
+			"6": self.keyNumberGlobal,
+			"7": self.keyNumberGlobal,
+			"8": self.keyNumberGlobal,
+			"9": self.keyNumberGlobal,
+			"0": self.keyNumberGlobal
+		})
 		self.setLang()
 		self.onExecBegin.append(self.setKeyboardModeAscii)
 		self.onLayoutFinish.append(self.buildVirtualKeyBoard)
@@ -275,10 +291,16 @@ class VirtualKeyBoard(Screen):
 		self["list"].setList(list)
 	
 	def backClicked(self):
+		self.nextKey()
+		self.editing = False
+		self["text"].setMarkedPos(-1)
 		self.text = self["text"].getText()[:-1]
 		self["text"].setText(self.text)
 			
 	def okClicked(self):
+		self.nextKey()
+		self.editing = False
+		self["text"].setMarkedPos(-1)
 		if self.shiftMode:
 			list = self.shiftkeys_list
 		else:
@@ -409,3 +431,16 @@ class VirtualKeyBoard(Screen):
 					return
 				else:
 					selkey += 1
+
+	def keyNumberGlobal(self, number):
+		unichar = self.getKey(number)
+		if not self.editing:
+			self.text = self["text"].getText()
+			self.editing = True
+			self["text"].setMarkedPos(len(self.text))
+		self["text"].setText(self.text + unichar.encode('utf-8', 'ignore'))
+
+	def nextFunc(self):
+		self.text = self["text"].getText()
+		self.editing = False
+		self["text"].setMarkedPos(-1)

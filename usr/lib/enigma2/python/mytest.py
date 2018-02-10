@@ -168,6 +168,19 @@ def useTransponderTimeChanged(configElement):
 	enigma.eDVBLocalTimeHandler.getInstance().setUseDVBTime(configElement.value)
 config.misc.useTransponderTime.addNotifier(useTransponderTimeChanged)
 
+def debugAccelMemoryUsageChanged(configElement):
+	if configElement.value == 'nothing':
+		enigma.cvar.debug_accel_memory_usage = 0
+	elif configElement.value == 'all':
+		enigma.cvar.debug_accel_memory_usage = 3
+	elif configElement.value == 'alloc':
+		enigma.cvar.debug_accel_memory_usage = 1
+	elif configElement.value == 'dealloc':
+		enigma.cvar.debug_accel_memory_usage = 2
+config.misc.debug_accel_memory_usage = ConfigSelection(default = "nothing", 
+	choices = [("nothing", _("nothing")), ("alloc", _("allocations")), ("dealloc", _("deallocations")), ("all", _("all"))])
+config.misc.debug_accel_memory_usage.addNotifier(debugAccelMemoryUsageChanged) 
+
 profile("Twisted")
 try:
 	import twisted.python.runtime

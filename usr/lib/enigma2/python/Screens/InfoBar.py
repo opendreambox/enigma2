@@ -228,12 +228,11 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 				InfoBarTeletextPlugin, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, \
 				InfoBarPlugins, InfoBarPiP, InfoBarGstreamerErrorPopupSupport:
 			x.__init__(self)
-		session.nav.playService(service)
 
-		svc = session.nav.getCurrentService()
-		info = svc and svc.info()
-		self._serviceName = info and info.getName() or _("this recording")
+		self.is_closing = False
 		self.returning = False
+		self._serviceName = _("this recording")
+		self.movieSelected(service)
 
 	def handleLeave(self, how):
 		self.is_closing = True
@@ -319,7 +318,10 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 	def movieSelected(self, service):
 		if service is not None:
 			self.is_closing = False
-			self.session.nav.playService(service)
 			self.returning = False
+			self.session.nav.playService(service)
+			svc = self.session.nav.getCurrentService()
+			info = svc and svc.info()
+			self._serviceName = info and info.getName() or _("this recording")
 		elif self.returning:
 			self.close()
