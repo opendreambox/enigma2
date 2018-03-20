@@ -24,19 +24,11 @@ class TimerEditList(Screen):
 	
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		
-		list = [ ]
-		self.list = list
+		self.list = []
+		self._timerlist = TimerList(self.list)
+		self["timerlist"] = self._timerlist
 		self.fillTimerList()
-		
-		print "EMPTY:",self.EMPTY
-		print "ENABLE:",self.ENABLE
-		print "DISABLE:",self.DISABLE
-		print "CLEANUP:",self.CLEANUP
-		print "DELETE:",self.DELETE
 
-		self["timerlist"] = TimerList(list)
-		
 		self.key_red_choice = self.EMPTY
 		self.key_yellow_choice = self.EMPTY
 		self.key_blue_choice = self.EMPTY
@@ -181,14 +173,14 @@ class TimerEditList(Screen):
 				return cmp(x[0].state, y[0].state)
 			return cmp(x[0].begin, y[0].begin)
 
-		list = self.list
-		del list[:]
-		list.extend([(timer, False) for timer in self.session.nav.RecordTimer.timer_list])
-		list.extend([(timer, True) for timer in self.session.nav.RecordTimer.processed_timers])
+		timers = [(timer, False) for timer in self.session.nav.RecordTimer.timer_list]
+		timers.extend([(timer, True) for timer in self.session.nav.RecordTimer.processed_timers])
 		if config.usage.timerlist_finished_timer_position.index: #end of list
-			list.sort(cmp = eol_compare)
+			timers.sort(cmp = eol_compare)
 		else:
-			list.sort(key = lambda x: x[0].begin)
+			timers.sort(key = lambda x: x[0].begin)
+		self.list = timers
+		self._timerlist.list = self.list
 
 	def showLog(self):
 		cur=self["timerlist"].getCurrent()
@@ -228,18 +220,9 @@ class TimerEditList(Screen):
 			self.refill()
 			self.updateState()
 
-	
 	def refill(self):
-		oldsize = len(self.list)
 		self.fillTimerList()
-		lst = self["timerlist"]
-		newsize = len(self.list)
-		if oldsize and oldsize != newsize:
-			idx = lst.getCurrentIndex()
-			lst.entryRemoved(idx)
-		else:
-			lst.invalidate()
-	
+
 	def addCurrentTimer(self):
 		event = None
 		service = self.session.nav.getCurrentService()

@@ -960,6 +960,14 @@ class SatelliteTransponderSearchSupport:
 
 				print "CURRENT freq", freq, "%d/%d" %(mhz_done, mhz_complete)
 
+				if not self.driver_wa and tuner_state == stateTuning \
+					and x["tuner_signal_quality_db"] != 0x12345678 \
+					and not x["tuner_synced"]:
+					print "driver stuck workaround!!"
+					self.updateStateTimer.start(1000, True)
+					self.tuneNext()
+					return
+
 				check_finished = self.parm is None
 			else:
 				print "NEXT freq", self.parm.frequency
@@ -1019,6 +1027,7 @@ class SatelliteTransponderSearchSupport:
 				if self.driver_wa:
 					self.driver_wa = self.parm.symbol_rate
 					self.parm.symbol_rate = 12345000
+					self.parm.is_id = -1
 					tparm = eDVBFrontendParameters()
 					tparm.setDVBS(self.parm, False)
 					self.frontend.tune(tparm)
@@ -1156,6 +1165,13 @@ class SatelliteTransponderSearchSupport:
 			self.parm = self.setNextRange()
 			if self.parm is not None:
 				tparm = eDVBFrontendParameters()
+				if self.auto_scan:
+					# we always do a fake tune on blindscan start to
+					# interrupt a maybe running blindscan with same parameters
+					self.driver_wa = self.parm.symbol_rate
+					self.parm.symbol_rate = 12345000
+					self.parm.is_id = -1
+					tparm = eDVBFrontendParameters()
 				tparm.setDVBS(self.parm, False)
 				self.frontend.tune(tparm)
 				self.start_time = time()

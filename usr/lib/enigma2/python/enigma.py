@@ -6218,17 +6218,6 @@ class eStreamServer(object):
     UPSTREAM_STATE_TRANSMITTING = _enigma.eStreamServer_UPSTREAM_STATE_TRANSMITTING
     UPSTREAM_STATE_OVERLOAD = _enigma.eStreamServer_UPSTREAM_STATE_OVERLOAD
     UPSTREAM_STATE_ADJUSTING = _enigma.eStreamServer_UPSTREAM_STATE_ADJUSTING
-    RTSP_STATE_DISABLED = _enigma.eStreamServer_RTSP_STATE_DISABLED
-    RTSP_STATE_IDLE = _enigma.eStreamServer_RTSP_STATE_IDLE
-    RTSP_STATE_RUNNING = _enigma.eStreamServer_RTSP_STATE_RUNNING
-    HLS_STATE_DISABLED = _enigma.eStreamServer_HLS_STATE_DISABLED
-    HLS_STATE_IDLE = _enigma.eStreamServer_HLS_STATE_IDLE
-    HLS_STATE_RUNNING = _enigma.eStreamServer_HLS_STATE_RUNNING
-    SOURCE_STATE_VOID_PENDING = _enigma.eStreamServer_SOURCE_STATE_VOID_PENDING
-    SOURCE_STATE_NULL = _enigma.eStreamServer_SOURCE_STATE_NULL
-    SOURCE_STATE_READY = _enigma.eStreamServer_SOURCE_STATE_READY
-    SOURCE_STATE_PAUSED = _enigma.eStreamServer_SOURCE_STATE_PAUSED
-    SOURCE_STATE_PLAYING = _enigma.eStreamServer_SOURCE_STATE_PLAYING
     INPUT_MODE_LIVE = _enigma.eStreamServer_INPUT_MODE_LIVE
     INPUT_MODE_HDMI_IN = _enigma.eStreamServer_INPUT_MODE_HDMI_IN
     INPUT_MODE_BACKGROUND = _enigma.eStreamServer_INPUT_MODE_BACKGROUND
@@ -6263,11 +6252,6 @@ class eStreamServer(object):
     LEVEL_DEFAULT = _enigma.eStreamServer_LEVEL_DEFAULT
     LEVEL_MAX = _enigma.eStreamServer_LEVEL_MAX
 
-    def isAvailable(self):
-        """isAvailable(eStreamServer self) -> bool"""
-        return _enigma.eStreamServer_isAvailable(self)
-
-
     def isRTSPEnabled(self):
         """isRTSPEnabled(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_isRTSPEnabled(self)
@@ -6289,7 +6273,7 @@ class eStreamServer(object):
 
 
     def sourceState(self):
-        """sourceState(eStreamServer self) -> int"""
+        """sourceState(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_sourceState(self)
 
 
@@ -6299,12 +6283,12 @@ class eStreamServer(object):
 
 
     def rtspState(self):
-        """rtspState(eStreamServer self) -> int"""
+        """rtspState(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_rtspState(self)
 
 
     def hlsState(self):
-        """hlsState(eStreamServer self) -> int"""
+        """hlsState(eStreamServer self) -> bool"""
         return _enigma.eStreamServer_hlsState(self)
 
 
@@ -6318,9 +6302,34 @@ class eStreamServer(object):
         return _enigma.eStreamServer_height(self)
 
 
-    def path(self):
-        """path(eStreamServer self) -> std::string"""
-        return _enigma.eStreamServer_path(self)
+    def rtspUsername(self):
+        """rtspUsername(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_rtspUsername(self)
+
+
+    def rtspPassword(self):
+        """rtspPassword(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_rtspPassword(self)
+
+
+    def rtspPath(self):
+        """rtspPath(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_rtspPath(self)
+
+
+    def hlsUsername(self):
+        """hlsUsername(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_hlsUsername(self)
+
+
+    def hlsPassword(self):
+        """hlsPassword(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_hlsPassword(self)
+
+
+    def hlsPath(self):
+        """hlsPath(eStreamServer self) -> std::string"""
+        return _enigma.eStreamServer_hlsPath(self)
 
 
     def uriParameters(self):
@@ -6471,9 +6480,11 @@ class eStreamServer(object):
 
     def enableHLS(self, *args):
         """
-        enableHLS(eStreamServer self, bool state, uint32_t port, std::string const & user, std::string const & arg5) -> bool
-        enableHLS(eStreamServer self, bool state, uint32_t port, std::string const & user) -> bool
-        enableHLS(eStreamServer self, bool state, uint32_t port) -> bool
+        enableHLS(eStreamServer self, bool state, std::string const & path, uint32_t port=8080, std::string const & user, std::string const & arg6) -> bool
+        enableHLS(eStreamServer self, bool state, std::string const & path, uint32_t port=8080, std::string const & user) -> bool
+        enableHLS(eStreamServer self, bool state, std::string const & path, uint32_t port=8080) -> bool
+        enableHLS(eStreamServer self, bool state, std::string const & path) -> bool
+        enableHLS(eStreamServer self, bool state) -> bool
         """
         return _enigma.eStreamServer_enableHLS(self, *args)
 
@@ -6497,7 +6508,6 @@ class eStreamServer(object):
     uriParametersChanged = _swig_property(_enigma.eStreamServer_uriParametersChanged_get, _enigma.eStreamServer_uriParametersChanged_set)
     dbusError = _swig_property(_enigma.eStreamServer_dbusError_get, _enigma.eStreamServer_dbusError_set)
     ping = _swig_property(_enigma.eStreamServer_ping_get, _enigma.eStreamServer_ping_set)
-eStreamServer.isAvailable = new_instancemethod(_enigma.eStreamServer_isAvailable, None, eStreamServer)
 eStreamServer.isRTSPEnabled = new_instancemethod(_enigma.eStreamServer_isRTSPEnabled, None, eStreamServer)
 eStreamServer.isHLSEnabled = new_instancemethod(_enigma.eStreamServer_isHLSEnabled, None, eStreamServer)
 eStreamServer.isUpstreamEnabled = new_instancemethod(_enigma.eStreamServer_isUpstreamEnabled, None, eStreamServer)
@@ -6508,7 +6518,12 @@ eStreamServer.rtspState = new_instancemethod(_enigma.eStreamServer_rtspState, No
 eStreamServer.hlsState = new_instancemethod(_enigma.eStreamServer_hlsState, None, eStreamServer)
 eStreamServer.width = new_instancemethod(_enigma.eStreamServer_width, None, eStreamServer)
 eStreamServer.height = new_instancemethod(_enigma.eStreamServer_height, None, eStreamServer)
-eStreamServer.path = new_instancemethod(_enigma.eStreamServer_path, None, eStreamServer)
+eStreamServer.rtspUsername = new_instancemethod(_enigma.eStreamServer_rtspUsername, None, eStreamServer)
+eStreamServer.rtspPassword = new_instancemethod(_enigma.eStreamServer_rtspPassword, None, eStreamServer)
+eStreamServer.rtspPath = new_instancemethod(_enigma.eStreamServer_rtspPath, None, eStreamServer)
+eStreamServer.hlsUsername = new_instancemethod(_enigma.eStreamServer_hlsUsername, None, eStreamServer)
+eStreamServer.hlsPassword = new_instancemethod(_enigma.eStreamServer_hlsPassword, None, eStreamServer)
+eStreamServer.hlsPath = new_instancemethod(_enigma.eStreamServer_hlsPath, None, eStreamServer)
 eStreamServer.uriParameters = new_instancemethod(_enigma.eStreamServer_uriParameters, None, eStreamServer)
 eStreamServer.inputMode = new_instancemethod(_enigma.eStreamServer_inputMode, None, eStreamServer)
 eStreamServer.setInputMode = new_instancemethod(_enigma.eStreamServer_setInputMode, None, eStreamServer)
@@ -6729,18 +6744,30 @@ ePicLoad_swigregister(ePicLoad)
 def loadPic(*args):
     return _enigma.loadPic(*args)
 loadPic = _enigma.loadPic
-class cmd_hdmi_cec_tx(object):
+class cecAddr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    dest = _swig_property(_enigma.cmd_hdmi_cec_tx_dest_get, _enigma.cmd_hdmi_cec_tx_dest_set)
-    msg = _swig_property(_enigma.cmd_hdmi_cec_tx_msg_get, _enigma.cmd_hdmi_cec_tx_msg_set)
-    len = _swig_property(_enigma.cmd_hdmi_cec_tx_len_get, _enigma.cmd_hdmi_cec_tx_len_set)
+    phys = _swig_property(_enigma.cecAddr_phys_get, _enigma.cecAddr_phys_set)
+    log = _swig_property(_enigma.cecAddr_log_get, _enigma.cecAddr_log_set)
 
     def __init__(self):
-        _enigma.cmd_hdmi_cec_tx_swiginit(self, _enigma.new_cmd_hdmi_cec_tx())
-    __swig_destroy__ = _enigma.delete_cmd_hdmi_cec_tx
-cmd_hdmi_cec_tx_swigregister = _enigma.cmd_hdmi_cec_tx_swigregister
-cmd_hdmi_cec_tx_swigregister(cmd_hdmi_cec_tx)
+        _enigma.cecAddr_swiginit(self, _enigma.new_cecAddr())
+    __swig_destroy__ = _enigma.delete_cecAddr
+cecAddr_swigregister = _enigma.cecAddr_swigregister
+cecAddr_swigregister(cecAddr)
+
+class cecMessage(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    dest = _swig_property(_enigma.cecMessage_dest_get, _enigma.cecMessage_dest_set)
+    data = _swig_property(_enigma.cecMessage_data_get, _enigma.cecMessage_data_set)
+    len = _swig_property(_enigma.cecMessage_len_get, _enigma.cecMessage_len_set)
+
+    def __init__(self):
+        _enigma.cecMessage_swiginit(self, _enigma.new_cecMessage())
+    __swig_destroy__ = _enigma.delete_cecMessage
+cecMessage_swigregister = _enigma.cecMessage_swigregister
+cecMessage_swigregister(cecMessage)
 
 class eCec(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -6887,8 +6914,14 @@ class eCec(object):
     RC_RED = _enigma.eCec_RC_RED
     RC_GREEN = _enigma.eCec_RC_GREEN
     RC_YELLOW = _enigma.eCec_RC_YELLOW
-    IOCTL_DEVICE_TYPE_TUNER = _enigma.eCec_IOCTL_DEVICE_TYPE_TUNER
-    IOCTL_DEVICE_TYPE_PLAYBACK = _enigma.eCec_IOCTL_DEVICE_TYPE_PLAYBACK
+    DEVICE_TYPE_TV = _enigma.eCec_DEVICE_TYPE_TV
+    DEVICE_TYPE_RECORDING = _enigma.eCec_DEVICE_TYPE_RECORDING
+    DEVICE_TYPE_RESERVED = _enigma.eCec_DEVICE_TYPE_RESERVED
+    DEVICE_TYPE_TUNER = _enigma.eCec_DEVICE_TYPE_TUNER
+    DEVICE_TYPE_PLAYBACK = _enigma.eCec_DEVICE_TYPE_PLAYBACK
+    DEVICE_TYPE_AUDIO_SYSTEM = _enigma.eCec_DEVICE_TYPE_AUDIO_SYSTEM
+    DEVICE_TYPE_PURE_SWITCH = _enigma.eCec_DEVICE_TYPE_PURE_SWITCH
+    DEVICE_TYPE_VIDEO_PROCESSOR = _enigma.eCec_DEVICE_TYPE_VIDEO_PROCESSOR
     POWER_STATE_ON = _enigma.eCec_POWER_STATE_ON
     POWER_STATE_STANDBY = _enigma.eCec_POWER_STATE_STANDBY
     POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.eCec_POWER_STATE_TRANSITION_STANDBY_TO_ON

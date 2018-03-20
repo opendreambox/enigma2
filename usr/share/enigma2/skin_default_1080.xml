@@ -86,7 +86,7 @@
 		<value name="config_item_height" value="45" />
 	</listboxcontent>
 	<subtitles>
-		<sub font="Regular;45" name="Subtitle_TTX" shadowColor="#40101010" shadowOffset="3,3" />
+		<sub font="Regular;45" name="Subtitle_TTX" foregroundColor="#E5E500" shadowColor="#40101010" shadowOffset="3,3" />
 		<sub font="Regular;45" foregroundColor="#DCDCDC" name="Subtitle_Regular" shadowColor="#40101010" shadowOffset="3,3" />
 		<sub font="Replacement;45" foregroundColor="#DCDCDC" name="Subtitle_Bold" shadowColor="#40101010" shadowOffset="3,3" />
 		<sub font="Regular;45" foregroundColor="#DCAAAA" name="Subtitle_Italic" shadowColor="#40101010" shadowOffset="3,3" />
@@ -103,12 +103,11 @@
 		<component iconHeight="30" iconWidth="50" type="MultiEPGList" />
 		<component itemHeight="35" itemWidth="100" type="TimelineText" />
 		<component dividerHeight="2" seperation="600" type="ConfigList" />
-		<component colums="6" iconbarNumber="10" number="24" type="gDesktop" />
 		<component iconHPos="2" iconHeight="40" iconWidth="40" itemMargin="20" type="EPGList" />
 		<component iconHeight="30" iconWidth="30" itemMargin="160" textHeight="65" type="MerlinEPGList" />
 		<component iconHeight="40" iconWidth="60" itemHeight="45" itemWidth="1300" type="ConfigManagerList" />
 		<component itemHeight="40" itemMargin="20" nameHeight="40" nameWidth="560" type="ServiceRelationList" />
-		<component dirWidth="600" infoWidth="280" itemHeight="45" statusWidth="280" type="MerlinSkinThemesList" />
+		<component dirWidth="400" infoWidth="250" itemHeight="45" statusWidth="250" type="MerlinSkinThemesList" />
 		<component itemHeight="45" itemWidth="850" textHeight="45" textWidth="570" type="AutomaticVolumeAdjustmentList" />
 		<component iconHPos="8" iconHeight="24" iconWidth="60" itemHeight="40" itemWidth="1300" type="MediaplayerPlayList" />
 		<component descriptionHeight="35" itemHeight="90" itemWidth="1160" lineSpacing="5" titleHeight="40" type="YTTrailerList" />
@@ -382,22 +381,6 @@
 		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="key_green" position="285,220" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="280,70" transparent="1" valign="center" zPosition="1" />
 		<widget backgroundColor="#18188b" font="Regular;29" halign="center" name="key_blue" position="565,220" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
 		<ePixmap pixmap="Default-FHD/skin_default/icons/help.svg" position="780,10" size="80,40" />
-	</screen>
-	<screen name="AdvancedMovieListSkinExtension">
-		<MovieList color1="foreground" color2="#a0a0a0" colorFinished="green" colorMark="grey" colorRecording="red" colorSel1="foreground" colorSel2="foreground" colorWatching="yellow" icon_size="32" list1Pos="5" list1_Font1="Regular;28" list1_Font2="Regular;26" list1_ListHeight="45" list1_Progress="70,16,1,13" list2Pos="0,31" list2_Font1="Regular;28" list2_Font2="Regular;24" list2_ListHeight="60" list2_Progress="50,10,1,39" list3Pos="0,34,63" list3_Font1="Regular;28" list3_Font2="Regular;24" list3_ListHeight="90" list3_Progress="100,10,1,72" list3_TextPos="100" renderer_extend="25">
-	</MovieList>
-		<Wastebasket font0="Regular;30" font1="Regular;24" font2="Regular;24" line1Pos="5,5" line1Split="200" line2Pos="5,45" line2Split="350" line3Pos="5,78" line3Split="350" listHeight="116">
-	</Wastebasket>
-		<TMDb font0="Regular;32" font1="Regular;26" line1Pos="210,2" line2Pos="210,42" listHeight="256" picPos="0,3" picSize="200,250">
-	</TMDb>
-		<TVDbSerie font0="Regular;32" font1="Regular;26" line1Pos="210,2" line2Pos="210,42" listHeight="256" picPos="0,3" picSize="200,250">
-	</TVDbSerie>
-		<TVDbEpisode font0="Regular;30" font1="Regular;26" line1Pos="5,6" line2Pos="5,50" line3Pos="5,102" listHeight="256">
-	</TVDbEpisode>
-		<MoveCopyProgress font0="Regular;28" font1="Regular;26" line1Pos="5,2" line2Pos="5,38" line3Pos="5,68" line4Pos="5,98" line5Pos="5,128" line6Pos="5,158" line7Pos="5,188" lineSplit="225" listHeight="245" progressHeight="10" progressPos="5,230">
-	</MoveCopyProgress>
-		<AboutVersionList font="Regular;30" listHeight="40">
-	</AboutVersionList>
 	</screen>
 	<screen name="Browser" position="center,110" size="1800,930" title=" ">
 		<eLabel backgroundColor="grey" position="10,80" size="1780,1" />
@@ -4383,6 +4366,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget name="config" position="10,10" size="820,360" enableWrapAround="1" scrollbarMode="showOnDemand" />
 	</screen>
 	<screen name="Merlin_PGII" position="center,110" size="1800,930" title="Merlin Program Guide">
+		<!-- DO NOT CHANGE THIS LINE !!!!!!!!!!!!!!! --><widget enableWrapAround="0" itemHeight="25" name="prg_list" position="-200,-200" size="50,125"/>
 		<eLabel backgroundColor="grey" position="10,80" size="1780,1" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="310,5" size="300,70" />

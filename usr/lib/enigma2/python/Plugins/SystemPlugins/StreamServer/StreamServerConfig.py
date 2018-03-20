@@ -7,91 +7,90 @@ from Components.config import config, getConfigListEntry
 from Components.Network import iNetworkInfo
 
 from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
 from enigma import eStreamServer
 
 def applyConfig(streamServerControl, initial=False, forceRestart=False):
-		if not streamServerControl.isConnected():
-			return
-
-		isMediatorEnabled = config.streamserver.mediator.enabled.value
+		isMediatorEnabled = streamServerControl.config.streamserver.mediator.enabled.value
 		if initial:
-			config.streamserver.mediator.enabled.value = False
+			streamServerControl.config.streamserver.mediator.enabled.value = False
 
-		rtsp_enabled = config.streamserver.rtsp.enabled.value
-		rtsp_path = config.streamserver.rtsp.path.value
-		rtsp_port = config.streamserver.rtsp.port.value
-		hls_enabled = config.streamserver.hls.enabled.value
-		hls_port = config.streamserver.hls.port.value
-		user = config.streamserver.user.value
-		password = config.streamserver.password.value
+		rtsp_enabled = streamServerControl.config.streamserver.rtsp.enabled.value
+		rtsp_path = streamServerControl.config.streamserver.rtsp.path.value
+		rtsp_user = streamServerControl.config.streamserver.rtsp.user.value
+		rtsp_password = streamServerControl.config.streamserver.rtsp.password.value
+		#rtsp_port = streamServerControl.config.streamserver.rtsp.port.value
+		hls_enabled = streamServerControl.config.streamserver.hls.enabled.value
+		hls_path = streamServerControl.config.streamserver.hls.path.value
+		#hls_port = streamServerControl.config.streamserver.hls.port.value
+		hls_user = streamServerControl.config.streamserver.hls.user.value
+		hls_password = streamServerControl.config.streamserver.hls.password.value
 
 		if forceRestart:
-			streamServerControl.enableRTSP(False, rtsp_path, rtsp_port, user, password)
-			streamServerControl.enableHLS(False, hls_port, user, password)
-			config.streamserver.mediator.enabled.value = False
+			streamServerControl.enableRTSP(False, rtsp_path, 554, rtsp_user, rtsp_password)
+			streamServerControl.enableHLS(False, hls_path, 8080, hls_user, hls_password)
+			streamServerControl.config.streamserver.mediator.enabled.value = False
 
-		inputMode = int(config.streamserver.source.value)
+		inputMode = int(streamServerControl.config.streamserver.source.value)
 		streamServerControl.setInputMode(inputMode)
 
-		audioBitrate = config.streamserver.audioBitrate.value
+		audioBitrate = streamServerControl.config.streamserver.audioBitrate.value
 		if audioBitrate != streamServerControl.audioBitrate:
-			streamServerControl.audioBitrate = config.streamserver.audioBitrate.value
+			streamServerControl.audioBitrate = streamServerControl.config.streamserver.audioBitrate.value
 
-		videoBitrate = config.streamserver.videoBitrate.value
+		videoBitrate = streamServerControl.config.streamserver.videoBitrate.value
 		if videoBitrate != streamServerControl.videoBitrate:
-			streamServerControl.videoBitrate = config.streamserver.videoBitrate.value
+			streamServerControl.videoBitrate = streamServerControl.config.streamserver.videoBitrate.value
 
-		autoBitrate = config.streamserver.autoBitrate.value
+		autoBitrate = streamServerControl.config.streamserver.autoBitrate.value
 		if autoBitrate != streamServerControl.autoBitrate:
 			streamServerControl.autoBitrate = autoBitrate
 
-		resolution = StreamServerControl.RESOLUTIONS[config.streamserver.resolution.value]
+		resolution = StreamServerControl.RESOLUTIONS[streamServerControl.config.streamserver.resolution.value]
 		if resolution != streamServerControl.resolution:
-			streamServerControl.resolution = StreamServerControl.RESOLUTIONS[config.streamserver.resolution.value]
+			streamServerControl.resolution = StreamServerControl.RESOLUTIONS[streamServerControl.config.streamserver.resolution.value]
 
-		gopLength = config.streamserver.gopLength.value
+		gopLength = streamServerControl.config.streamserver.gopLength.value
 		if gopLength != streamServerControl.gopLength:
 			streamServerControl.gopLength = gopLength
 
 		if StreamServerControl.FEATURE_SCENE_DETECTION:
-			gopOnSceneChange = config.streamserver.gopOnSceneChange.value
+			gopOnSceneChange = streamServerControl.config.streamserver.gopOnSceneChange.value
 			if gopOnSceneChange != streamServerControl.gopOnSceneChange:
 				streamServerControl.gopOnSceneChange = gopOnSceneChange
 
-		openGop = config.streamserver.openGop.value
+		openGop = streamServerControl.config.streamserver.openGop.value
 		if openGop != streamServerControl.openGop:
 			streamServerControl.openGop = openGop
 
-		bFrames = config.streamserver.bFrames.value
+		bFrames = streamServerControl.config.streamserver.bFrames.value
 		if bFrames != streamServerControl.bFrames:
 			streamServerControl.bFrames = bFrames
 
-		pFrames = config.streamserver.pFrames.value
+		pFrames = streamServerControl.config.streamserver.pFrames.value
 		if pFrames != streamServerControl.pFrames:
 			streamServerControl.pFrames = pFrames
 
 		if StreamServerControl.FEATURE_SLICES:
-			slices = config.streamserver.slices.value
+			slices = streamServerControl.config.streamserver.slices.value
 			if slices != streamServerControl.slices:
 				streamServerControl.slices = slices
 
-		level = int(config.streamserver.level.value)
+		level = int(streamServerControl.config.streamserver.level.value)
 		if level != streamServerControl.level:
 			streamServerControl.level = level
 
-		profile = int(config.streamserver.profile.value)
+		profile = int(streamServerControl.config.streamserver.profile.value)
 		if profile != streamServerControl.profile:
 			streamServerControl.profile = profile
 
-		framerate = config.streamserver.framerate.value
+		framerate = streamServerControl.config.streamserver.framerate.value
 		if framerate != streamServerControl.framerate:
 			streamServerControl.framerate = framerate
 
-		streamServerControl.enableRTSP(rtsp_enabled, rtsp_path, rtsp_port, user, password)
-		streamServerControl.enableHLS(hls_enabled, hls_port, user, password)
-		config.streamserver.mediator.enabled.value = isMediatorEnabled
+		streamServerControl.enableRTSP(rtsp_enabled, rtsp_path, 554, rtsp_user, rtsp_password)
+		streamServerControl.enableHLS(hls_enabled, hls_path, 8080, hls_user, hls_password)
+		streamServerControl.config.streamserver.mediator.enabled.value = isMediatorEnabled
 
 class EncoderPreset(object):
 	def __init__(self, name, videoBitrate, audioBitrate, resolution, fps=StreamServerControl.FRAME_RATE_25):
@@ -118,17 +117,6 @@ class StreamServerConfig(Screen, ConfigListScreen):
 			<!-- info -->
 			<widget name="info" position="590,450" zPosition="2" size="310,45" font="Regular;17" halign="center" valign="bottom" backgroundColor="background" transparent="1" />
 		</screen>"""
-
-	BASIC_SETTINGS = [
-		config.streamserver.user,
-		config.streamserver.password,
-		config.streamserver.source,
-		config.streamserver.resolution,
-		config.streamserver.framerate,
-		config.streamserver.profile,
-		config.streamserver.slices,
-		config.streamserver.level,
-	]
 
 	PRESETS = [
 		EncoderPreset(_("Very Low"), 800, 64, StreamServerControl.RES_KEY_PAL),
@@ -162,7 +150,6 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		if not self._setInfoText in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self._setInfoText)
 
-		self.__encoderRestartRequired = False
 		self._closeAfterApply = False
 		self._presetChoiceBox = None
 
@@ -178,29 +165,14 @@ class StreamServerConfig(Screen, ConfigListScreen):
 
 		streamServerControl.onRtspClientCountChanged.append(self._onRtspClientCountChanged)
 
-		config.streamserver.rtsp.enabled.addNotifier(self._onEnabled, initial_call=False)
-		config.streamserver.hls.enabled.addNotifier(self._onEnabled, initial_call=False)
-		config.streamserver.gopLength.addNotifier(self._onGopLengthChanged, initial_call=False)
-		config.streamserver.bFrames.addNotifier(self._onBframesChanged, initial_call=False)
-		#Basic encoder setting change notifier
-		for cfg in self.BASIC_SETTINGS:
-			cfg.addNotifier(self._onBasicEncoderSettingChanged, initial_call=False)
+		self._streamServerControl.config.streamserver.rtsp.enabled.addNotifier(self._onEnabled, initial_call=False)
+		self._streamServerControl.config.streamserver.hls.enabled.addNotifier(self._onEnabled, initial_call=False)
+		self._streamServerControl.config.streamserver.gopLength.addNotifier(self._onGopLengthChanged, initial_call=False)
+		self._streamServerControl.config.streamserver.bFrames.addNotifier(self._onBframesChanged, initial_call=False)
 		self._createSetup()
 
 	def _onBframesChanged(self, element):
 		self._createSetup()
-
-	def _getEncoderRestartRequired(self):
-		return self.__encoderRestartRequired
-
-	def _setEncoderRestartRequired(self, value):
-		self.__encoderRestartRequired = value
-		if self.__encoderRestartRequired:
-			self._key_blue.setText(_("Apply"))
-		else:
-			self._key_blue.setText("")
-
-	_encoderRestartRequired = property(_getEncoderRestartRequired, _setEncoderRestartRequired)
 
 	def _onRtspClientCountChanged(self, count, client):
 		self._clientCount = count
@@ -213,24 +185,7 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		self._setInfoText()
 
 	def apply(self):
-		if self._encoderRestartRequired:
-			self.session.openWithCallback(
-				self._onEncoderRestartResponse,
-				MessageBox,
-				text= _("You have changed basic encoder settings.\nTo apply these changes all streams have to be stopped.\nDo you want to stop and restart all streams now to apply these settings immediately?"),
-				title=_("Stream restart required"))
-			return
-		else:
-			applyConfig(self._streamServerControl)
-			if self._closeAfterApply:
-				self.close()
-
-	def _onEncoderRestartResponse(self, response):
-		self._encoderRestartRequired = False
-		if response:
-			applyConfig(self._streamServerControl, forceRestart=True)
-		else:
-			applyConfig(self._streamServerControl)
+		applyConfig(self._streamServerControl)
 		if self._closeAfterApply:
 			self.close()
 
@@ -241,117 +196,104 @@ class StreamServerConfig(Screen, ConfigListScreen):
 	def close(self):
 		streamServerControl.onRtspClientCountChanged.remove(self._onRtspClientCountChanged)
 
-		config.streamserver.rtsp.enabled.removeNotifier(self._onEnabled)
-		config.streamserver.hls.enabled.removeNotifier(self._onEnabled)
-		for cfg in self.BASIC_SETTINGS:
-			cfg.removeNotifier(self._onBasicEncoderSettingChanged)
-		config.streamserver.gopLength.removeNotifier(self._onGopLengthChanged)
-		config.streamserver.bFrames.removeNotifier(self._onBframesChanged)
-		config.streamserver.save()
+		self._streamServerControl.config.streamserver.rtsp.enabled.removeNotifier(self._onEnabled)
+		self._streamServerControl.config.streamserver.hls.enabled.removeNotifier(self._onEnabled)
+		self._streamServerControl.config.streamserver.gopLength.removeNotifier(self._onGopLengthChanged)
+		self._streamServerControl.config.streamserver.bFrames.removeNotifier(self._onBframesChanged)
+		self._streamServerControl.config.streamserver.save()
 
 		Screen.close(self)
 
 	def _onEnabled(self, element):
-		if not self._streamServerControl.isConnected():
-			return
 		self.apply()
-		config.streamserver.save()
+		self._streamServerControl.config.streamserver.save()
 		self._createSetup()
 
 	def _onGopLengthChanged(self, element):
 		self._createSetup()
 
 	def _onMediatorEnabled(self, element):
-		if not self._streamServerControl.isConnected():
-			return
 		self._createSetup()
-
-	def _onBasicEncoderSettingChanged(self, element):
-		self._encoderRestartRequired = True
 
 	def _createSetup(self):
 		self._setInfoText()
-		if not self._streamServerControl.isConnected():
-			return
 
 		entries = [ getConfigListEntry(_("RTSP")),
-					getConfigListEntry(_("RTSP Server"), config.streamserver.rtsp.enabled),]
+					getConfigListEntry(_("RTSP Server"), self._streamServerControl.config.streamserver.rtsp.enabled),]
 
-		if config.streamserver.rtsp.enabled.value:
+		if self._streamServerControl.config.streamserver.rtsp.enabled.value:
 			entries.extend([
-					getConfigListEntry(_("User"), config.streamserver.user),
-					getConfigListEntry(_("Password"), config.streamserver.password),
-				])
+				getConfigListEntry(_("User"), self._streamServerControl.config.streamserver.rtsp.user),
+				getConfigListEntry(_("Password"), self._streamServerControl.config.streamserver.rtsp.password),
+			])
 			if config.usage.setup_level.index > 0:
 				entries.extend([
-					getConfigListEntry(_("RTSP Port"), config.streamserver.rtsp.port),
-					getConfigListEntry(_("RTSP Path"), config.streamserver.rtsp.path),
+					#getConfigListEntry(_("RTSP Port"), self._streamServerControl.config.streamserver.rtsp.port),
+					getConfigListEntry(_("RTSP Path"), self._streamServerControl.config.streamserver.rtsp.path),
 				])
 
 		entries.extend([
 			getConfigListEntry(_("HLS")),
-			getConfigListEntry(_("HLS Server"), config.streamserver.hls.enabled)
+			getConfigListEntry(_("HLS Server"), self._streamServerControl.config.streamserver.hls.enabled)
 		])
-		if config.streamserver.hls.enabled.value and config.usage.setup_level.index > 0:
-				entries.append(getConfigListEntry(_("HLS Port"), config.streamserver.hls.port))
-
-		if config.streamserver.rtsp.enabled.value:
-			entries.append( getConfigListEntry(_("Authentication")) )
+		if self._streamServerControl.config.streamserver.hls.enabled.value:
+			entries.extend([
+				getConfigListEntry(_("User"), self._streamServerControl.config.streamserver.hls.user),
+				getConfigListEntry(_("Password"), self._streamServerControl.config.streamserver.hls.password)
+			])
+			if config.usage.setup_level.index > 0:
+				entries.append(getConfigListEntry(_("Path"), self._streamServerControl.config.streamserver.hls.path))
 
 		if self._streamServerControl.isAnyEnabled():
 			entries.extend([
 					getConfigListEntry(_("Bitrates")),
-					getConfigListEntry(_("Audio Bitrate"), config.streamserver.audioBitrate),
-					getConfigListEntry(_("Video Bitrate"), config.streamserver.videoBitrate),
+					getConfigListEntry(_("Audio Bitrate"),self. _streamServerControl.config.streamserver.audioBitrate),
+					getConfigListEntry(_("Video Bitrate"), self._streamServerControl.config.streamserver.videoBitrate),
 					getConfigListEntry(_("Basic Encoder Settings")),
-					getConfigListEntry(_("Data Source"), config.streamserver.source),
-					getConfigListEntry(_("Resolution"), config.streamserver.resolution),
-					getConfigListEntry(_("Framerate"), config.streamserver.framerate),
+					getConfigListEntry(_("Data Source"), self._streamServerControl.config.streamserver.source),
+					getConfigListEntry(_("Resolution"), self._streamServerControl.config.streamserver.resolution),
+					getConfigListEntry(_("Framerate"), self._streamServerControl.config.streamserver.framerate),
 					getConfigListEntry(_("Expert Encoder Settings")),
-					getConfigListEntry(_("GOP Length (ms, P-Frames auto calculated)"), config.streamserver.gopLength)
+					getConfigListEntry(_("GOP Length (ms, P-Frames auto calculated)"), self._streamServerControl.config.streamserver.gopLength)
 				])
 
-			if config.streamserver.gopLength.value == eStreamServer.GOP_LENGTH_AUTO:
-				entries.append( getConfigListEntry(_("Number of P-Frames"), config.streamserver.pFrames) )
+			if self._streamServerControl.config.streamserver.gopLength.value == eStreamServer.GOP_LENGTH_AUTO:
+				entries.append( getConfigListEntry(_("Number of P-Frames"), self._streamServerControl.config.streamserver.pFrames) )
 
-			entries.append( getConfigListEntry(_("Number of B-Frames"), config.streamserver.bFrames) )
+			entries.append( getConfigListEntry(_("Number of B-Frames"), self._streamServerControl.config.streamserver.bFrames) )
 
-			if config.streamserver.bFrames.value:
-				entries.append( getConfigListEntry(_("Open GOP"), config.streamserver.openGop) )
+			if self._streamServerControl.config.streamserver.bFrames.value:
+				entries.append( getConfigListEntry(_("Open GOP"), self._streamServerControl.config.streamserver.openGop) )
 
-			if StreamServerControl.FEATURE_SCENE_DETECTION and not config.streamserver.bFrames.value and not config.streamserver.gopLength.value:
-				entries.append( getConfigListEntry(_("New GOP On Scene Change"), config.streamserver.gopOnSceneChange) )
+			if StreamServerControl.FEATURE_SCENE_DETECTION and not self._streamServerControl.config.streamserver.bFrames.value and not self._streamServerControl.config.streamserver.gopLength.value:
+				entries.append( getConfigListEntry(_("New GOP On Scene Change"), self._streamServerControl.config.streamserver.gopOnSceneChange) )
 
 			if StreamServerControl.FEATURE_SLICES:
-				entries.append( getConfigListEntry(_("Number of slices"), config.streamserver.slices) )
+				entries.append( getConfigListEntry(_("Number of slices"), self._streamServerControl.config.streamserver.slices) )
 
 			entries.extend([
-					getConfigListEntry(_("Level"), config.streamserver.level),
-					getConfigListEntry(_("Profile"), config.streamserver.profile),
+					getConfigListEntry(_("Level"), self._streamServerControl.config.streamserver.level),
+					getConfigListEntry(_("Profile"), self._streamServerControl.config.streamserver.profile),
 				])
 
 		self["config"].list = entries
 
 	def _setInfoText(self):
-		if not self._streamServerControl.isConnected():
-			self._info.setText(_("ERROR: Streaming Server not available!"))
-			return
-
 		detailtext =_("Local client(s):\n    %s") %(self._clientCount)
 		self._details.setText(detailtext)
 
 		localstreams = []
-		if config.streamserver.rtsp.enabled.value or config.streamserver.hls.enabled.value:
+		if self._streamServerControl.config.streamserver.rtsp.enabled.value or self._streamServerControl.config.streamserver.hls.enabled.value:
 			ifaces = iNetworkInfo.getConfiguredInterfaces()
 			for iface in ifaces.itervalues():
 				ip = iface.getIpv4()
 				if not ip:
 					ip = iface.getIpv6()
 				if ip:
-					if config.streamserver.rtsp.enabled.value:
-						localstreams.append("rtsp://%s:%s/%s" %(ip.getAddress(), config.streamserver.rtsp.port.value, config.streamserver.rtsp.path.value))
-					if config.streamserver.hls.enabled.value:
-						localstreams.append("http://%s:%s/dream.m3u8" %(ip.getAddress(), config.streamserver.hls.port.value))
+					if self._streamServerControl.config.streamserver.rtsp.enabled.value:
+						localstreams.append("rtsp://%s:%s/%s" %(ip.getAddress(), self._streamServerControl.config.streamserver.rtsp.port.value, self._streamServerControl.config.streamserver.rtsp.path.value))
+					if self._streamServerControl.config.streamserver.hls.enabled.value:
+						localstreams.append("http://%s:%s/%s.m3u8" %(ip.getAddress(), self._streamServerControl.config.streamserver.hls.port.value, self._streamServerControl.config.streamserver.hls.path.value))
 					break
 
 		infotext = ""
@@ -385,8 +327,8 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		self._presetChoiceBox = None
 		if choice:
 			preset = choice[1]
-			config.streamserver.videoBitrate.value = preset.videoBitrate
-			config.streamserver.audioBitrate.value = preset.audioBitrate
-			if preset.resolution != config.streamserver.resolution.value:
-				config.streamserver.resolution.value = preset.resolution
+			self._streamServerControl.config.streamserver.videoBitrate.value = preset.videoBitrate
+			self._streamServerControl.config.streamserver.audioBitrate.value = preset.audioBitrate
+			if preset.resolution != self._streamServerControl.config.streamserver.resolution.value:
+				self._streamServerControl.config.streamserver.resolution.value = preset.resolution
 			self._createSetup()

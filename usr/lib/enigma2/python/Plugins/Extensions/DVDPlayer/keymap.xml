@@ -1,5 +1,21 @@
 <keymap>
 	<map context="DVDPlayerActions">
+		<device name="compatible: pcKeyboard">
+			<key id="KEY_F5" mapto="toggleInfo" flags="m" />
+			<key id="KEY_F6" mapto="dvdMenu" flags="m" />
+			<key id="KEY_F9" mapto="tv" flags="m" />
+			<key id="KEY_F4" mapto="useServiceTime" flags="m" />
+			<key id="KEY_F7" mapto="AudioSelection" flags="m" />
+			<key id="KEY_F7" mapto="dvdAudioMenu" flags="l" />
+			<key id="KEY_F10" mapto="nextAudioTrack" flags="m" />
+			<key id="KEY_F11" mapto="nextSubtitleTrack" flags="m" />
+			<key id="KEY_F8" mapto="nextAngle" flags="m" />
+			<key id="KEY_PLAYPAUSE" mapto="play" flags="b" />
+			<key id="KEY_PLAYPAUSE" mapto="stop" flags="l" />
+			<key id="KEY_F12" mapto="shift_record" flags="l" />
+			<key id="KEY_PREVIOUSSONG" mapto="previous" flags="m" />
+			<key id="KEY_NEXTSONG" mapto="next" flags="m" />
+		</device>
 		<key id="KEY_MENU" mapto="dvdMenu" flags="m" />
 		<key id="KEY_INFO" mapto="toggleInfo" flags="m" />
 		<key id="KEY_CHANNELUP" mapto="nextTitle" flags="m" />

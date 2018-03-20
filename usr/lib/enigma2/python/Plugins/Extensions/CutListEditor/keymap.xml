@@ -1,5 +1,14 @@
 <keymap>
 	<map context="CutlistSeekActions">
+		<device name="compatible: pcKeyboard">
+			<key id="KEY_F1" mapto="seekBack" flags="b" />
+			<key id="KEY_F2" mapto="unPauseService" flags="m" />
+			<key id="KEY_F3" mapto="pauseService" flags="m" />
+			<key id="KEY_F4" mapto="seekFwd" flags="b" />
+			<key id="KEY_F1" mapto="seekBackManual" flags="l" />
+			<key id="KEY_F4" mapto="seekFwdManual" flags="l" />
+			<key id="KEY_PLAYPAUSE" mapto="playpauseService" flags="m" />
+		</device>
 		<device name="dreambox remote control (native)">
 			<key id="KEY_YELLOW" mapto="pauseService" flags="m" />
 			<key id="KEY_GREEN" mapto="unPauseService" flags="m" />
@@ -40,5 +49,9 @@
 		<key id="KEY_ESC" mapto="leave" flags="m" />
 		<key id="KEY_OK" mapto="showMenu" flags="m" />
 		<key id="KEY_ENTER" mapto="showMenu" flags="m" />
+		<device name="compatible: pcKeyboard">
+			<key id="KEY_ESC" mapto="leave" flags="m" />
+			<key id="KEY_ENTER" mapto="showMenu" flags="m" />
+		</device>
 	</map>
 </keymap>

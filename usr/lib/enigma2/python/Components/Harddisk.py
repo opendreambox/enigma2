@@ -1860,6 +1860,7 @@ class HarddiskManager:
 		device = "/dev/disk/by-label/dreambox-data"
 		if not fileExists(device):
 			Log.w("dreambox-data partition does not exist!")
+			return
 		mountpoint = "/data"
 		if Util.findInFstab(device, mountpoint):
 			Log.i("dreambox-data partition already available")

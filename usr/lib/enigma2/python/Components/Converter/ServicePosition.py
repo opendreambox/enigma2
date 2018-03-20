@@ -22,6 +22,7 @@ class ServicePosition(Poll, Converter, object):
 		self.detailed = 'Detailed' in args
 		self.showHours = 'ShowHours' in args
 		self.showNoSeconds = 'ShowNoSeconds' in args
+		self.hideZero = 'HideZero' in args
 
 		if type == "Length":
 			self.type = self.TYPE_LENGTH
@@ -34,7 +35,7 @@ class ServicePosition(Poll, Converter, object):
 		elif type == "EndTime":
 			self.type = self.TYPE_ENDTIME
 		else:
-			raise ElementError("type must be {Length|Position|Remaining|Gauge|EndTime} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for ServicePosition converter")
+			raise ElementError("type must be {Length|Position|Remaining|Gauge|EndTime} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds|HideZero} for ServicePosition converter")
 
 		if self.detailed:
 			self.poll_interval = 100
@@ -97,6 +98,9 @@ class ServicePosition(Poll, Converter, object):
 					return "%02d:%02d" % (t.tm_hour, t.tm_min)
 				else:
 					return "%02d:%02d:%02d" % (t.tm_hour, t.tm_min, t.tm_sec)
+
+			if self.hideZero and l == 0:
+				return ""
 
 			if not self.detailed:
 				l /= 90000

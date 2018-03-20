@@ -11,7 +11,7 @@ class TemplatedMultiContentComponent(GUIComponent):
 	def __init__(self):
 		GUIComponent.__init__(self)
 
-		self.list = []
+		self._list = []
 		self.active_style = None
 		self.selectionEnabled = True
 		self._template = self._getTemplate()
@@ -19,6 +19,15 @@ class TemplatedMultiContentComponent(GUIComponent):
 
 		self.buildfunc = None
 		self.l = eListboxPythonMultiContent()
+
+	def getList(self):
+		return self._list
+
+	def setList(self, lst):
+		self._list = lst
+		self.l.setList(self._list)
+
+	list = property(getList, setList)
 
 	def applySkin(self, desktop, parent):
 		GUIComponent.applySkin(self, desktop, parent)
