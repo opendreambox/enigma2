@@ -62,13 +62,11 @@ class MovieList(TemplatedMultiContentComponent):
 	}"""
 
 	def __init__(self, root, list_type=None, sort_type=None, descr_state=None):
+		TemplatedMultiContentComponent.__init__(self)
 		self.list = []
 
 		self.descr_state = descr_state or self.HIDE_DESCRIPTION
 		self.sort_type = sort_type or self.SORT_RECORDED
-
-		TemplatedMultiContentComponent.__init__(self)
-
 		self.setListType(list_type or self.LISTTYPE_ORIGINAL)
 		self.tags = set()
 		if root is not None:
