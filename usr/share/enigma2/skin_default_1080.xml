@@ -546,7 +546,7 @@
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
 		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
 	</screen>
-	<screen name="ChannelSelection" position="center,110" size="1800,930" title="Channel Selection" zPosition="1000">
+	<screen name="ChannelSelection" position="center,110" size="1800,930" title="Channel Selection" >
 		<eLabel backgroundColor="grey" position="10,80" size="1780,1" />
 		<eLabel backgroundColor="grey" position="1285,80" size="1,840" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
@@ -4232,6 +4232,47 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 	<screen name="BonjourScreen" position="center,170" size="1200,820" title="Bonjour">
 		<widget enableWrapAround="1" name="menuList" position="10,5" size="1180,810" scrollbarMode="showOnDemand" />
 	</screen>
+<!-- dreamIRC -->
+    <screen name="dreamIRCSetupScreen" position="center,170" size="1200,820" title="dreamIRC - edit settings" >
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="310,5" size="300,70" />
+        <widget backgroundColor="#9f1313" font="Regular;30" halign="center" source="key_red" render="Label" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#1f771f" font="Regular;30" halign="center" source="key_green" render="Label" position="310,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+        <widget font="Regular;34" halign="right" position="1050,25" render="Label" size="120,40" source="global.CurrentTime">
+            <convert type="ClockToText">Default</convert>
+        </widget>
+        <widget font="Regular;34" halign="right" position="800,25" render="Label" size="240,40" source="global.CurrentTime">
+            <convert type="ClockToText">Date</convert>
+        </widget>
+        <eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+        <widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
+    <screen name="dreamIRCMainMenu" position="center,110" size="1800,930" title="dreamIRC" >
+        <eLabel backgroundColor="grey" position="10,80" size="1780,1" />
+        <eLabel backgroundColor="grey" position="1285,80" size="1,840" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
+        <widget name="green.pic" pixmap="Default-FHD/skin_default/buttons/green.svg" position="310,5" size="300,70" />
+        <widget name="yellow.pic" pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="610,5" size="300,70" />
+        <widget name="blue.pic" pixmap="Default-FHD/skin_default/buttons/blue.svg" position="910,5" size="300,70" />
+        <widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="disconnect.desc" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="connect.desc" position="310,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#a08500" font="Regular;30" halign="center" name="settings.desc" position="610,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#18188b" font="Regular;30" halign="center" name="blue.desc" position="910,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+        <widget font="Regular;34" halign="right" position="1650,25" render="Label" size="120,40" source="global.CurrentTime">
+            <convert type="ClockToText">Default</convert>
+        </widget>
+        <widget font="Regular;34" halign="right" position="1240,25" render="Label" size="400,40" source="global.CurrentTime">
+            <convert type="ClockToText">Date</convert>
+        </widget>
+        <widget name="buddy.desc" foregroundColor="yellow" position="1300,90" size="490,40" font="Regular;32"/>
+        <widget name="buddy" position="1300,140" size="490,720" font="Regular;28"/>
+		<widget name="chat.desc" foregroundColor="yellow" position="10,90" size="1260,40" font="Regular;32"/>
+		<widget name="chat" position="10,140" size="1260,680" font="Regular;28"/>
+        <eLabel backgroundColor="grey" position="10,830" size="1260,1"/>
+		<widget name="input.desc" foregroundColor="yellow" position="10,840" size="1260,40" font="Regular;30"/>
+		<widget name="input" position="10,890" size="1260,35" font="Regular;28" />
+        <ePixmap pixmap="Default-FHD/skin_default/icons/dmm_logo.svg" position="1300,870" size="480,30"/>
+	</screen>
 <!-- EPGSearch -->
 	<screen name="EPGSearchSetup" position="center,170" size="1200,820" title=" ">
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
@@ -4349,6 +4390,27 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
 		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
+    <screen name="FTPServerManager" position="center,170" size="1200,820" title="FTP Server Manager" >
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+        <widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_red" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_green" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_yellow" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
+        <eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" source="list" render="Listbox" position="10,90" scrollbarMode="showOnDemand" size="1180,720">
+			<convert type="TemplatedMultiContent">
+			{"template": [
+			MultiContentEntryText(pos=(5,0), size=(1170,45), text = 0, font = 0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER),
+			],
+			"fonts": [gFont("Regular", 30)],
+			"itemHeight": 45
+			}
+			</convert>
+		</widget>
 	</screen>
 <!-- MenuSort -->
 	<screen name="SortableMenu" position="center,170" size="1200,820" title="Menu Sort">
@@ -4799,6 +4861,18 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<eLabel backgroundColor="grey" position="10,140" size="1180,1" />
 		<widget enableWrapAround="1" name="entrylist" position="10,150" scrollbarMode="showOnDemand" size="1180,630" />
 	</screen>
+<!-- PluginHider -->
+    <screen name="PluginHiderSetup" position="center,170" size="1200,820" title="PluginHider Setup">
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="350,70" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="360,5" scale="stretch" size="350,70" />
+        <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="710,5" scale="stretch" size="350,70" />
+        <widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_red" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="360,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_green" transparent="1" valign="center" zPosition="1" />
+        <widget backgroundColor="#18188b" font="Regular;30" halign="center" position="710,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
+        <ePixmap pixmap="Default-FHD/skin_default/icons/help.svg" position="1110,30" size="80,40" />
+        <eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+        <widget enableWrapAround="1" name="list" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
 <!-- Summaries -->
 	<screen id="1" name="MyTubePlayer_summary" position="0,0" size="132,64">
 		<widget font="Display;16" halign="center" position="6,0" render="Label" size="120,32" source="session.CurrentService">
@@ -5184,6 +5258,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 		<widget pixmap="Default-FHD/skin_default/icons/record.svg" position="350,190" render="Pixmap" size="35,35" source="session.RecordState">
+            <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 	</screen>
@@ -5278,6 +5353,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 			<convert type="ClockToText">Format:%H:%M</convert>
 		</widget>
 		<widget pixmap="Default-FHD/skin_default/icons/record.svg" position="350,190" render="Pixmap" size="35,35" source="session.RecordState">
+            <convert type="ConfigEntryTest">config.usage.blinking_display_clock_during_recording,True,CheckSourceBoolean</convert>
 			<convert type="ConditionalShowHide">Blink</convert>
 		</widget>
 	</screen>

@@ -39,7 +39,7 @@ class MediaPixmap(Pixmap):
 		self.coverArtFileName = ""
 		self.picload = ePicLoad()
 		self.picload_conn = self.picload.PictureData.connect(self.paintCoverArtPixmapCB)
-		self.coverFileNames = ["folder.png", "folder.jpg"]
+		self.coverFileNames = ["cover.jpg", "folder.png", "folder.jpg"]
 
 	def applySkin(self, desktop, screen):
 		from Tools.LoadPixmap import LoadPixmap

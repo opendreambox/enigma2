@@ -4579,12 +4579,12 @@ class eMediaDatabaseResult(iObject):
 
 
     def errorDriverText(self):
-        """errorDriverText(eMediaDatabaseResult self) -> std::string"""
+        """errorDriverText(eMediaDatabaseResult self) -> std::string const &"""
         return _enigma.eMediaDatabaseResult_errorDriverText(self)
 
 
     def errorDatabaseText(self):
-        """errorDatabaseText(eMediaDatabaseResult self) -> std::string"""
+        """errorDatabaseText(eMediaDatabaseResult self) -> std::string const &"""
         return _enigma.eMediaDatabaseResult_errorDatabaseText(self)
 
 
@@ -4615,13 +4615,13 @@ class eMediaDatabase(object):
     getInstance = staticmethod(getInstance)
 
     def getCurrentScanPath(self):
-        """getCurrentScanPath(eMediaDatabase self) -> std::string"""
+        """getCurrentScanPath(eMediaDatabase self)"""
         return _enigma.eMediaDatabase_getCurrentScanPath(self)
 
 
-    def getEnqueuedPaths(self):
-        """getEnqueuedPaths(eMediaDatabase self) -> StringVector"""
-        return _enigma.eMediaDatabase_getEnqueuedPaths(self)
+    def getEnqueuedPaths(self, OUTPUT):
+        """getEnqueuedPaths(eMediaDatabase self, StringList OUTPUT)"""
+        return _enigma.eMediaDatabase_getEnqueuedPaths(self, OUTPUT)
 
 
     def addPath(self, path, watch=False):
@@ -4658,6 +4658,11 @@ class eMediaDatabase(object):
     def getParentDirectories(self):
         """getParentDirectories(eMediaDatabase self) -> eMediaDatabaseResultPtr"""
         return _enigma.eMediaDatabase_getParentDirectories(self)
+
+
+    def getAllDirectories(self):
+        """getAllDirectories(eMediaDatabase self) -> eMediaDatabaseResultPtr"""
+        return _enigma.eMediaDatabase_getAllDirectories(self)
 
 
     def filterAudio(self, needle, limit=-1, offset=0):
@@ -5047,6 +5052,7 @@ eMediaDatabase.requestScanStatistics = new_instancemethod(_enigma.eMediaDatabase
 eMediaDatabase.setParentDirectoryWatched = new_instancemethod(_enigma.eMediaDatabase_setParentDirectoryWatched, None, eMediaDatabase)
 eMediaDatabase.deleteParentDirectory = new_instancemethod(_enigma.eMediaDatabase_deleteParentDirectory, None, eMediaDatabase)
 eMediaDatabase.getParentDirectories = new_instancemethod(_enigma.eMediaDatabase_getParentDirectories, None, eMediaDatabase)
+eMediaDatabase.getAllDirectories = new_instancemethod(_enigma.eMediaDatabase_getAllDirectories, None, eMediaDatabase)
 eMediaDatabase.filterAudio = new_instancemethod(_enigma.eMediaDatabase_filterAudio, None, eMediaDatabase)
 eMediaDatabase.filterByAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByAlbum, None, eMediaDatabase)
 eMediaDatabase.filterByArtistAlbum = new_instancemethod(_enigma.eMediaDatabase_filterByArtistAlbum, None, eMediaDatabase)
@@ -5179,12 +5185,12 @@ class eMediaDatabaseResultPtr(object):
 
 
     def errorDriverText(self):
-        """errorDriverText(eMediaDatabaseResultPtr self) -> std::string"""
+        """errorDriverText(eMediaDatabaseResultPtr self) -> std::string const &"""
         return _enigma.eMediaDatabaseResultPtr_errorDriverText(self)
 
 
     def errorDatabaseText(self):
-        """errorDatabaseText(eMediaDatabaseResultPtr self) -> std::string"""
+        """errorDatabaseText(eMediaDatabaseResultPtr self) -> std::string const &"""
         return _enigma.eMediaDatabaseResultPtr_errorDatabaseText(self)
 
 

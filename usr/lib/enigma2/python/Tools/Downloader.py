@@ -1,5 +1,6 @@
 from twisted.web import client
 from twisted.internet import reactor, defer, ssl
+from twisted.internet._sslverify import ClientTLSOptions
 
 class HTTPProgressDownloader(client.HTTPDownloader):
 	def __init__(self, url, outfile, headers=None, agent="Dreambox HTTP Downloader"):
@@ -56,8 +57,14 @@ class downloadWithProgress:
 		self.factory = HTTPProgressDownloader(url, outputfile, *args, **kwargs)
 		if scheme == 'https':
 			if contextFactory is None:
-				contextFactory = ssl.ClientContextFactory()
+				class TLSSNIContextFactory(ssl.ClientContextFactory):
+					def getContext(self, hostname=None, port=None):
+						ctx = ssl.ClientContextFactory.getContext(self)
+						ClientTLSOptions(host, ctx)
+						return ctx
+				contextFactory = TLSSNIContextFactory()
 				self.connection = reactor.connectSSL(host, port, self.factory, contextFactory)
+
 		else:
 			self.connection = reactor.connectTCP(host, port, self.factory)
 

@@ -204,13 +204,16 @@ class gRC : public eThread, public iObject, public sigc::trackable
 	
 	int m_prev_idle_count;
 
-	void drain();
+	void drain(bool lock_empty=false);
 
 public:
 	gRC();
 	virtual ~gRC();
 
 	void submit(const gOpcode &o);
+
+	void lockAndDrain();
+	void unlock();
 
 	sigc::signal0<void> notify;
 	

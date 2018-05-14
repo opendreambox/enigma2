@@ -355,7 +355,7 @@ class StreamServerControl(object):
 			or self.sourceState == False:
 			self.stopEncoderService()
 			Log.i("Streamserver disabled, not in TV Service mode or source not ready, will not allocate service: (isAnyEnabled, source!=TV_MODE, sourceState) (%s, %s, %s)"
-				% (str(self.isAnyEnabled), str(self.config.streamserver.source.value), str(self.sourceState)))
+				% (str(self.isAnyEnabled()), str(self.config.streamserver.source.value), str(self.sourceState)))
 			return self.ENCODER_SERVICE_INVALID_MODE
 		ref = self._getRef(service)
 		if ref:
@@ -412,7 +412,7 @@ class StreamServerControl(object):
 		return self._streamServer.audioBitrate()
 
 	def setAudioBitrate(self, bitrate):
-		if bitrate > self.AUDIO_BITRATE_LIMITS[0] and bitrate < self.AUDIO_BITRATE_LIMITS[1]:
+		if bitrate >= self.AUDIO_BITRATE_LIMITS[0] and bitrate <= self.AUDIO_BITRATE_LIMITS[1]:
 			self._streamServer.setAudioBitrate(bitrate)
 			self.config.streamserver.audioBitrate.value = bitrate
 		else:
@@ -424,7 +424,7 @@ class StreamServerControl(object):
 		return self._streamServer.videoBitrate()
 
 	def setVideoBitrate(self, bitrate):
-		if bitrate > self.VIDEO_BITRATE_LIMITS[0] and bitrate < self.VIDEO_BITRATE_LIMITS[1]:
+		if bitrate >= self.VIDEO_BITRATE_LIMITS[0] and bitrate <= self.VIDEO_BITRATE_LIMITS[1]:
 			self._streamServer.setVideoBitrate(bitrate)
 			self.config.streamserver.videoBitrate.value = bitrate
 		else:

@@ -352,7 +352,7 @@ class InfoBarChannelSelection:
 	channelChange actions which open the channelSelection dialog """
 	def __init__(self):
 		#instantiate forever
-		self.servicelist = self.session.instantiateDialog(ChannelSelection)
+		self.servicelist = self.session.instantiateDialog(ChannelSelection, zPosition=0)
 		self.servicelist.onRootChanged.append(self.__onServiceListRootChanged)
 
 		if config.misc.initialchannelselection.value:
@@ -2517,7 +2517,7 @@ class InfobarHbbtvPlugin:
 class InfoBarSubtitleSupport(object):
 	def __init__(self):
 		object.__init__(self)
-		self.subtitle_window = self.session.instantiateDialog(SubtitleDisplay)
+		self.subtitle_window = self.session.instantiateDialog(SubtitleDisplay, zPosition=-1)
 		self.__subtitles_enabled = False
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=

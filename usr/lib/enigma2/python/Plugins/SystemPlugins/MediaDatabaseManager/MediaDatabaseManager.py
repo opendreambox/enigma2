@@ -80,7 +80,8 @@ class MediaDatabaseManager(Screen):
 	def _reload(self):
 		result = self._db.getParentDirectories();
 		currentDir = self._db.getCurrentScanPath()
-		enqued = self._db.getEnqueuedPaths()
+		enqueued = StringList()
+		self._db.getEnqueuedPaths(enqueued)
 		l = []
 
 		for dir in result.data():
@@ -88,7 +89,7 @@ class MediaDatabaseManager(Screen):
 			if path == currentDir:
 				count = _("scanning...")
 			else:
-				if path in enqued:
+				if path in enqueued:
 					count = _("enqueued for future scan...")
 				else:
 					dir_id = str(dir["id"])

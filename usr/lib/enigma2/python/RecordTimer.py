@@ -161,6 +161,7 @@ class RecordTimerEntry(timer.TimerEntry, object):
 			if self.dirname:
 				self.dirnameHadToFallback = True
 			dirname = defaultMoviePath()
+			self.log(0, "Directory '%s' doesn't seem to exist or isn't writable. Falling back to default movie path '%s'." % (self.dirname, dirname))
 		else:
 			dirname = self.dirname
 		self.Filename = Directories.getRecordingFilename(filename, dirname) + (".ts" if record_service is None else record_service.getFileExtension())

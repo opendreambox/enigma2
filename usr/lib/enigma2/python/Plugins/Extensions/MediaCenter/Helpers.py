@@ -14,7 +14,7 @@ class EasyPixmap(Pixmap):
 		self._cached = cached
 		self.picload = ePicLoad()
 		self.picload_conn = self.picload.PictureData.connect(self.paintPixmapCB)
-		self.pictureFileNames = ["folder.png", "folder.jpg"]
+		self.pictureFileNames = ["cover.jpg", "folder.png", "folder.jpg"]
 
 	def applySkin(self, desktop, screen):
 		from Tools.LoadPixmap import LoadPixmap

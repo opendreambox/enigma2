@@ -13,7 +13,7 @@ class MediaPixmap(Pixmap):
 
 		self.picload = ePicLoad()
 		self.picload_conn = self.picload.PictureData.connect(self.paintPixmapCB)
-		self.pictureFileNames = ["folder.png", "folder.jpg"]
+		self.pictureFileNames = ["cover.jpg", "folder.png", "folder.jpg"]
 
 	def embeddedCoverArt(self):
 		Log.i("found")

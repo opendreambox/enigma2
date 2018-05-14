@@ -102,6 +102,7 @@ def append_when_level(menu, args, level = 0, key = ""):
 
 class ChannelContextMenu(Screen):
 	ALLOW_SUSPEND = True
+	IS_DIALOG = True
 
 	def __init__(self, session, csel):
 

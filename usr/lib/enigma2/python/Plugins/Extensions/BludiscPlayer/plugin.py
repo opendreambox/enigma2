@@ -128,9 +128,6 @@ class BludiscPlayer(MoviePlayer):
 	def showMovies(self):
 		pass
 
-	def movieSelected(self, service):
-		pass
-
 def main(session, **kwargs):
 	session.open(BludiscMenu)
 

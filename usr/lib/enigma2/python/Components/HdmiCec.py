@@ -66,7 +66,7 @@ class HdmiCec:
 
 	def sendSystemAudioKey(self, keyid, test=False):
 		ret = False
-		if config.cec.volume_forward.value:
+		if config.cec.enabled.value and config.cec.volume_forward.value:
 			target = self.instance.getVolumeTarget()
 			config_target = config.cec.volume_target.value
 			if config_target == self.VOLUME_TARGET_DYNAMIC:

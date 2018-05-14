@@ -53,9 +53,9 @@ public:
 	bool error(){ return m_error; };
 	int rowsAffected(){ return m_rowsAffected; };
 	int lastInsertId(){ return m_lastInsertId; };
-	std::string errorDriverText(){ return m_errorDriverText; };
-	std::string errorDatabaseText(){ return m_errorDatabaseText; };
-	stringMapVector data(){ return m_data; };
+	const std::string &errorDriverText(){ return m_errorDriverText; };
+	const std::string &errorDatabaseText(){ return m_errorDatabaseText; };
+	const stringMapVector &data(){ return m_data; };
 #ifndef SWIG
 	void setError(bool error){ m_error = error; };
 	void setRowsAffected(int rowsAffected){ m_rowsAffected = rowsAffected; };
@@ -73,8 +73,8 @@ class eMediaDatabase : public sigc::trackable
 	static eMediaDatabase *instance;
 	eMediaScanner *m_scanner;
 	eMediaDatabaseHandler *m_db;
-	std::vector<eFileWatch*> m_watches;
-	std::map<std::string, sigc::connection> m_watchconns;
+	std::list<eFileWatch*> m_watches;
+	std::map<eFileWatch*, sigc::connection> m_watchconns;
 	typedef void (eMediaDatabase::*table_line_extension_func)(stringMap *item, QSqlQuery*);
 
 #ifdef SWIG
@@ -143,9 +143,9 @@ public:
 	bool _dbAddAudio(const file_data &fmd, const audio_track &at, const audio_metadata &amd);
 	bool _dbAddVideo(const file_data &fmd, const video_data &vt);
 
-	void onScanStatistics(std::string dir, uint64_t total, uint64_t successful, uint64_t skipped);
-	void onScanFinished(std::string dir, uint64_t total, uint64_t successful, uint64_t skipped);
-	void onInsertFinished(uint64_t success, uint64_t skipped, uint64_t errors, std::list<int> ids);
+	void onScanStatistics(const std::string &dir, uint64_t total, uint64_t successful, uint64_t skipped);
+	void onScanFinished(const std::string &dir, uint64_t total, uint64_t successful, uint64_t skipped);
+	void onInsertFinished(uint64_t success, uint64_t skipped, uint64_t errors, const std::list<int> &ids);
 
 	ePtr<eMediaDatabaseResult> resultFromQuery(QSqlQuery* qry, table_line_extension_func extendItem=0);
 	void extendPlaylistItemAttributes(stringMap *item, QSqlQuery *qry);
@@ -154,8 +154,8 @@ public:
 	void onFileChanged(eFileWatch *watch, eFileEvent event);
 
 #endif
-	std::string getCurrentScanPath();
-	std::vector<std::string> *getEnqueuedPaths();
+	void getCurrentScanPath(std::string &SWIG_OUTPUT);
+	void getEnqueuedPaths(std::list<std::string> &SWIG_OUTPUT);
 
 	void addPath(const std::string &path, bool watch=false);
 	void rescanPath(const std::string &path, bool isRecording=false);
@@ -163,6 +163,7 @@ public:
 	ePtr<eMediaDatabaseResult> setParentDirectoryWatched(int dir_id, bool watched);
 	ePtr<eMediaDatabaseResult> deleteParentDirectory(int dir_id);
 	ePtr<eMediaDatabaseResult> getParentDirectories();
+	ePtr<eMediaDatabaseResult> getAllDirectories();
 
 	ePtr<eMediaDatabaseResult> filterAudio(const std::string &needle, int limit = -1, int offset = 0);
 	ePtr<eMediaDatabaseResult> filterByAlbum(const std::string &album, int limit = -1, int offset = 0);
@@ -269,7 +270,7 @@ public:
 
 	static pthread_mutex_t priority_files_lock, files_lock;
 
-	void insertList(const std::string &dir, std::list<file_metadata> files, std::map< uint32_t, ePtr<cover_art> > covers);
+	void insertList(const std::string &dir, std::list<file_metadata> &files, std::map< uint32_t, ePtr<cover_art> > &covers);
 	void priorityInsert(const file_metadata &file);
 	void thread();
 
@@ -283,6 +284,7 @@ public:
 	QSqlQuery deleteDirectory(const std::string &dir);
 	QSqlQuery moveDirectory(const std::string &from, const std::string &to);
 	QSqlQuery getParentDirectories();
+	QSqlQuery getAllDirectories();
 
 	QSqlQuery filterAudio(const std::string &needle, int limit = -1, int offset = 0);
 	QSqlQuery filterByAlbum(const std::string &album, int limit = -1, int offset = 0);

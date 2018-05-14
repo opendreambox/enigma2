@@ -75,7 +75,7 @@ SWIG_IGNORE(eServiceEvent);
 class eServiceEvent: public iObject
 {
 	DECLARE_REF(eServiceEvent);
-	bool loadLanguage(Event *event, const std::string &lang, int tsidonid);
+	bool m_rtl_wa_applied;
 	std::list<eComponentData> m_component_data;
 	std::list<eServiceReference> m_linkage_services;
 	time_t m_begin;
@@ -85,6 +85,7 @@ class eServiceEvent: public iObject
 	static std::string m_language;
 	// .. additional info
 	int applyData(const eventData &d);
+	bool loadLanguage(Event *event, const std::string &lang, int tsidonid);
 public:
 #ifndef SWIG
 	RESULT parseFrom(Event *evt, int tsidonid=0);
@@ -98,7 +99,7 @@ public:
 	int getEventId() const { return m_event_id; }
 	std::string getEventName() const { return m_event_name; }
 	std::string getShortDescription() const { return m_short_description; }
-	std::string getExtendedDescription() const { return m_extended_description; }
+	std::string getExtendedDescription(bool original=false);
 	std::string getBeginTimeString() const;
 	int getNumComponent() { return m_component_data.size(); }
 	eComponentData *getComponentData(int tagnum) const;

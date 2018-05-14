@@ -58,6 +58,8 @@ def getPreferredTagEditor():
 setPreferredTagEditor(None)
 
 class MovieContextMenu(Screen):
+	IS_DIALOG=True
+
 	def __init__(self, session, csel, service):
 		Screen.__init__(self, session)
 		self.csel = csel
