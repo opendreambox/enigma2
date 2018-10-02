@@ -183,6 +183,10 @@ unicable (version)
 			<product name="SES 996-09" format="EN50494" positions="2" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790"/>
 			<product name="SES 46-00" format="EN50494" positions="1" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790"/>
 			<product name="SES 86-00" format="EN50494" positions="2" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790"/>
+			<product name="SES 5532-19" format="EN50607" positions="1" scr1="1280" scr2="1382" scr3="1484" scr4="1586" scr5="1688" scr6="1790" scr7="1892" scr8="1994"
+				scr9="974" scr10="1008" scr11="1042" scr12="1076" scr13="1110" scr14="1144" scr15="1178" scr16="1212"
+				scr17="1246" scr18="1314" scr19="1348" scr20="1416" scr21="1450" scr22="1518" scr23="1552" scr24="1620"
+				scr25="1654" scr26="1722" scr27="1756" scr28="1824" scr29="1858" scr30="1926" scr31="1960" scr32="2028" />
 		</manufacturer>
 		<manufacturer name="DCT Delta">
 			<product name="MSU 401/2-16K (SCR1-4)" scr1="1210" scr2="1420" scr3="1680" scr4="2040"/>
@@ -390,6 +394,7 @@ unicable (version)
 			<product name="SUS 21 F" format="EN50494" positions="2" scr1="1076" scr2="1178"/>
 			<product name="SUS 21 FI" format="EN50494" positions="2" scr1="1210" scr2="1420"/>
 			<product name="SUS 4441 F" format="EN50494" scr1="1210" scr2="1420" scr3="1680" scr4="2040"/>
+			<product name="SUS 41 FX" format="UniSEqC" positions="4" scr1="1076" scr2="1178" scr3="1280" scr4="1382"/>
 			<product name="SUS 5541 F-NFA" format="EN 50494" scr1="0974" scr2="1076" scr3="1178" scr4="1280"/>
 			<product name="SUS 5581 F-NFA" format="UniSEqC" scr1="0974" scr2="1076" scr3="1178" scr4="1280" scr5="1382" scr6="1484" scr7="1586" scr8="1688"/>
 			<product name="SUS 5581 NF 1x8" format="UniSEqC" scr1="1068" scr2="1284" scr3="1400" scr4="1516" scr5="1632" scr6="1748" scr7="1864" scr8="1980"/>

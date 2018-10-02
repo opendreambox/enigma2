@@ -12,13 +12,13 @@ from os import system as os_system, path as os_path, mkdir
 config.misc.defaultchosen = ConfigBoolean(default = True)
 
 class DefaultWizard(WizardLanguage, DreamInfoHandler):
-	def __init__(self, session, silent = True, showSteps = False, neededTag = None, default = False):
+	def __init__(self, session, silent = True, showSteps = False, neededTag = None, default = False, showMulticontentList = False):
 		DreamInfoHandler.__init__(self, self.statusCallback, neededTag = neededTag)
 		self.silent = silent
 		self.setDirectory()
 		self.default = default
 
-		WizardLanguage.__init__(self, session, showSteps = False)
+		WizardLanguage.__init__(self, session, showSteps = False, showMulticontentList = showMulticontentList)
 		self["wizard"] = Pixmap()
 		self["rc"] = MovingPixmap()
 		self["arrowdown"] = MovingPixmap()

@@ -93,13 +93,8 @@ class SoftwareTools(DreamInfoHandler):
 	def startSoftwareTools(self, callback = None):
 		if callback is not None:
 			self.NotifierCallback = callback
-
-		if eNetworkManager.getInstance().online():
-			self.NetworkConnectionAvailable = True
-			self.getUpdates()
-		else:
-			self.NetworkConnectionAvailable = False
-			self.getUpdates()
+		self.NetworkConnectionAvailable = eNetworkManager.getInstance().online()
+		self.getUpdates()
 
 	def getUpdates(self, callback = None):
 		if self.lastDownloadDate is None:
@@ -346,6 +341,9 @@ class SoftwareTools(DreamInfoHandler):
 					self.NotifierCallback = None
 
 	def cleanupSoftwareTools(self):
+		self.cleanup()
+
+	def cleanup(self):
 		self.list_updating = False
 		if self.NotifierCallback is not None:
 			self.NotifierCallback = None

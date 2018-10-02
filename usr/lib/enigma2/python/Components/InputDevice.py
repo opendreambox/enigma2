@@ -5,45 +5,47 @@ import struct
 from ioctl import ioctl
 from ioctl.linux import IOC
 from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY, O_RDWR
+from Components.config import ConfigOnOff, ConfigSelection,	ConfigBoolean
+from enigma import eInputDeviceManager
+
 O_CLOEXEC = 02000000
 
 def EVIOCGNAME(length):
-    return IOC('r', 'E', 0x06, length)
+	return IOC('r', 'E', 0x06, length)
 
 class inputDevices:
-
 	def __init__(self):
 		self.Devices = {}
 		self.currentDevice = ""
 		self.getInputDevices()
 	
 	def getInputDevices(self):
-            for evdev in sorted(listdir("/dev/input")):
-                try:
-                    fd = os_open("/dev/input/%s" % evdev, O_RDONLY | O_CLOEXEC)
-                except:
-                    continue
+		for evdev in sorted(listdir("/dev/input")):
+			try:
+				fd = os_open("/dev/input/%s" % evdev, O_RDONLY | O_CLOEXEC)
+			except:
+				continue
 
-                buf = "\0"*256
-                try:
-                    size = ioctl(fd, EVIOCGNAME(len(buf)), buf)
-                except:
-                    os_close(fd)
-                    continue
+			buf = "\0"*256
+			try:
+				size = ioctl(fd, EVIOCGNAME(len(buf)), buf)
+			except:
+				os_close(fd)
+				continue
 
-                os_close(fd)
-                if size <= 0:
-                    continue
+			os_close(fd)
+			if size <= 0:
+				continue
 
-                name = buf[:size - 1]
-                if name:
-                    if name == "dreambox advanced remote control (native)" and config.misc.rcused.value not in (0, 2):
-                        continue
-                    if name == "dreambox remote control (native)" and config.misc.rcused.value in (0, 2):
-                        continue
-                    if name == "dreambox front panel":
-                        continue
-                    self.Devices[evdev] = {'name': name, 'type': self.getInputDeviceType(name),'enabled': False, 'configuredName': None }
+			name = buf[:size - 1]
+			if name:
+				if name == "dreambox advanced remote control (native)" and config.misc.rcused.value not in (0, 2):
+					continue
+				if name == "dreambox remote control (native)" and config.misc.rcused.value in (0, 2):
+					continue
+				if name == "dreambox front panel":
+					continue
+				self.Devices[evdev] = {'name': name, 'type': self.getInputDeviceType(name),'enabled': False, 'configuredName': None }
 
 	def getInputDeviceType(self,name):
 		if name.find("remote control") != -1:
@@ -98,10 +100,10 @@ class inputDevices:
 		self.setDeviceAttribute(device, 'configuredName', value)
 		
 	#struct input_event {
-	#	struct timeval time;    -> ignored
-	#	__u16 type;             -> EV_REP (0x14)
-	#	__u16 code;             -> REP_DELAY (0x00) or REP_PERIOD (0x01)
-	#	__s32 value;            -> DEFAULTS: 700(REP_DELAY) or 100(REP_PERIOD)
+	#	struct timeval time;	-> ignored
+	#	__u16 type;				-> EV_REP (0x14)
+	#	__u16 code;				-> REP_DELAY (0x00) or REP_PERIOD (0x01)
+	#	__s32 value;			-> DEFAULTS: 700(REP_DELAY) or 100(REP_PERIOD)
 	#}; -> size = 16
 
 	def setDefaults(self, device):
@@ -139,11 +141,34 @@ class InitInputDevices:
 	
 	def createConfig(self, *args):
 		config.inputDevices = ConfigSubsection()
+		config.inputDevices.settings = ConfigSubsection()
+		config.inputDevices.settings.firstDevice = ConfigBoolean(default=True)
+		config.inputDevices.settings.listboxFeedback = ConfigOnOff(default=True)
+		colors = [
+			("0xFF0000",_("red")),
+			("0xFF3333", _("rose")),
+			("0xFF5500", _("orange")),
+			("0xDD9900", _("yellow")),
+			("0x99DD00", _("lime")),
+			("0x00FF00", _("green")),
+			("0x00FF99", _("aqua")),
+			("0x00BBFF", _("olympic blue")),
+			("0x0000FF", _("blue")),
+			("0x6666FF", _("azure")),
+			("0x9900FF", _("purple")),
+			("0xFF0066", _("pink")),
+		]
+		config.inputDevices.settings.connectedColor = ConfigSelection(colors, default="0xFF0066")
+		config.inputDevices.settings.connectedColor.addNotifier(self._onConnectedRcuColorChanged, initial_call=False)
+
 		for device in sorted(iInputDevices.Devices.iterkeys()):
 			self.currentDevice = device
 			#print "[InitInputDevices] -> creating config entry for device: %s -> %s  " % (self.currentDevice, iInputDevices.Devices[device]["name"])
 			self.setupConfigEntries(self.currentDevice)
 			self.currentDevice = ""
+
+	def _onConnectedRcuColorChanged(self, *args):
+		eInputDeviceManager.getInstance().setLedColor(int(config.inputDevices.settings.connectedColor.value, 0))
 
 	def inputDevicesEnabledChanged(self,configElement):
 		if self.currentDevice != "" and iInputDevices.currentDevice == "":
@@ -157,10 +182,8 @@ class InitInputDevices:
 			if configElement.value != "":
 				devname = iInputDevices.getDeviceAttribute(self.currentDevice, 'name')
 				if devname != configElement.value:
-					cmd = "config.inputDevices." + self.currentDevice + ".enabled.value = False"
-					exec (cmd)
-					cmd = "config.inputDevices." + self.currentDevice + ".enabled.save()"
-					exec (cmd)
+					exec("config.inputDevices." + self.currentDevice + ".enabled.value = False")
+					exec("config.inputDevices." + self.currentDevice + ".enabled.save()")
 		elif iInputDevices.currentDevice != "":
 			iInputDevices.setName(iInputDevices.currentDevice, configElement.value)
 
@@ -177,24 +200,18 @@ class InitInputDevices:
 			iInputDevices.setDelay(iInputDevices.currentDevice, configElement.value)
 
 	def setupConfigEntries(self,device):
-		cmd = "config.inputDevices." + device + " = ConfigSubsection()"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".enabled = ConfigYesNo(default = False)"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".enabled.addNotifier(self.inputDevicesEnabledChanged,config.inputDevices." + device + ".enabled)"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + '.name = ConfigText(default="")'
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".name.addNotifier(self.inputDevicesNameChanged,config.inputDevices." + device + ".name)"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".repeat = ConfigSlider(default=100, increment = 10, limits=(0, 500))"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".repeat.addNotifier(self.inputDevicesRepeatChanged,config.inputDevices." + device + ".repeat)"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".delay = ConfigSlider(default=700, increment = 100, limits=(0, 5000))"
-		exec (cmd)
-		cmd = "config.inputDevices." + device + ".delay.addNotifier(self.inputDevicesDelayChanged,config.inputDevices." + device + ".delay)"
-		exec (cmd)
-
+		cmds = [
+			"config.inputDevices." + device + " = ConfigSubsection()",
+			"config.inputDevices." + device + ".enabled = ConfigYesNo(default = False)",
+			"config.inputDevices." + device + ".enabled.addNotifier(self.inputDevicesEnabledChanged,config.inputDevices." + device + ".enabled)",
+			"config.inputDevices." + device + ".name = ConfigText(default=\"\")",
+			"config.inputDevices." + device + ".name.addNotifier(self.inputDevicesNameChanged,config.inputDevices." + device + ".name)",
+			"config.inputDevices." + device + ".repeat = ConfigSlider(default=100, increment = 10, limits=(0, 500))",
+			"config.inputDevices." + device + ".repeat.addNotifier(self.inputDevicesRepeatChanged,config.inputDevices." + device + ".repeat)",
+			"config.inputDevices." + device + ".delay = ConfigSlider(default=700, increment = 100, limits=(0, 5000))",
+			"config.inputDevices." + device + ".delay.addNotifier(self.inputDevicesDelayChanged,config.inputDevices." + device + ".delay)",
+		]
+		for cmd in cmds:
+			exec(cmd)
 
 iInputDevices = inputDevices()

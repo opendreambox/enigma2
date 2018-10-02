@@ -244,6 +244,7 @@ class eEPGCache: public iObject, public eMainloop_native, private eThread, publi
 		int prevChannelState;
 		int state;
 		__u8 isRunning, haveData;
+		bool m_mustSendCacheStopped;
 		ePtr<eDVBChannel> channel;
 		ePtr<eConnection> m_stateChangedConn, m_NowNextConn, m_ScheduleConn, m_ScheduleOtherConn, m_ViasatConn;
 		ePtr<iDVBSectionReader> m_NowNextReader, m_ScheduleReader, m_ScheduleOtherReader, m_ViasatReader;

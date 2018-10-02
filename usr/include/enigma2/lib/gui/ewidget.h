@@ -15,6 +15,7 @@ class eWidget : public iSyncPaintable
 {
 	friend class eWidgetDesktop;
 	friend class eLabel;
+	friend class eWidgetAnimationSet;
 public:
 	eWidget(eWidget *parent);
 	virtual ~eWidget();
@@ -125,7 +126,7 @@ protected:
 	ePtr<eTimer> m_invalidationTimer;
 	std::string m_parent_title;
 
-	eWidgetDesktop *desktop(eWidget **root=NULL, bool die=false) const;
+	virtual eWidgetDesktop *desktop(eWidget **root=NULL, bool die=false) const;
 	gPixelFormat pixelFormat() const;
 
 public:

@@ -88,11 +88,19 @@ public:
 	eSignal0<void> selectionChanged;
 
 	enum {
+		layoutVertical,
+		layoutHorizontal,
+		layoutGrid,
+	};
+
+	enum {
 		showOnDemand,
 		showAlways,
 		showNever
 	};
+
 	void setScrollbarMode(int mode);
+	void setupScrollbar();
 	void setWrapAround(bool);
 	void setBacklogMode(bool);
 
@@ -121,10 +129,14 @@ public:
 		pageUp,
 		pageDown,
 		justCheck,
-		refresh
+		refresh,
+		moveLeft,
+		moveRight
 	};
 
+	void setMode(int mode);
 	void setItemHeight(int h);
+	void setItemWidth(int w);
 	void setSelectionEnable(int en);
 
 	void setBackgroundColor(gRGB &col);
@@ -147,6 +159,9 @@ public:
 
 	void resetScrollbarProperties();
 
+	int getEntryTop();
+	int getVisibleItemCount();
+
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
 
@@ -159,14 +174,20 @@ public:
 		/* the complete list changed. you should not attemp to keep the current index. */
 	void entryReset(bool cursorHome=true);
 
-	int getEntryTop();
 	void invalidate(const gRegion &region = gRegion::invalidRegion());
 
 protected:
 	int event(int event, void *data=0, void *data2=0);
 	void recalcSize();
+	int itemHeight();
+	int itemWidth();
+	const ePoint calculatePosition(int at);
+	const ePoint calculatePositionInGrid(int at);
+	const eRect entryRect(int position);
 
+	void hapticFeedback();
 private:
+	int m_mode;
 	int m_scrollbar_mode, m_prev_scrollbar_page;
 	bool m_content_changed;
 	bool m_enabled_wrap_around;
@@ -174,6 +195,7 @@ private:
 
 	int m_top, m_selected;
 	int m_itemheight;
+	int m_itemwidth;
 	int m_items_per_page;
 	int m_selection_enabled;
 	ePtr<iListboxContent> m_content;

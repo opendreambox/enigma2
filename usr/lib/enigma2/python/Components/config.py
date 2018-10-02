@@ -1074,6 +1074,11 @@ class ConfigText(ConfigTextBase, NumericalTextInput):
 		ConfigTextBase.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width, censor_char = censor_char)
 		NumericalTextInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
 
+class ConfigHexSequence(ConfigTextBase, NumericalHexInput):
+	def __init__(self, default="000000", fixed_size = True, visible_width = False, censor_char = ''):
+		ConfigTextBase.__init__(self, default = default, fixed_size = fixed_size, visible_width = visible_width)
+		NumericalHexInput.__init__(self, nextFunc = self.nextFunc, handleTimeout = False)
+
 #IPv6 Address with validation and autoformatting
 class ConfigIP6(ConfigTextBase, NumericalHexInput):
 	def __init__(self, default = "::", fixed_size=False, visible_width=False):
@@ -1308,6 +1313,7 @@ class ConfigSet(ConfigElement):
 		self.default = default
 		self.help_window = None
 		self.value = default[:]
+		self.onSelectedIndexChanged = []
 
 	def toggleChoice(self, choice):
 		value = self.value
@@ -1320,7 +1326,7 @@ class ConfigSet(ConfigElement):
 		self.changed()
 
 	def handleKey(self, key):
-		if key in KEY_NUMBERS + [KEY_DELETE, KEY_BACKSPACE]:
+		if key in KEY_NUMBERS + [KEY_DELETE, KEY_BACKSPACE, KEY_OK]:
 			if self.pos != -1:
 				self.toggleChoice(self.choices[self.pos])
 		elif key == KEY_LEFT:
@@ -1335,6 +1341,8 @@ class ConfigSet(ConfigElement):
 				self.pos += 1
 		elif key in (KEY_HOME, KEY_END):
 			self.pos = -1
+		for fnc in self.onSelectedIndexChanged:
+			fnc(self.pos)
 
 	def genString(self, lst):
 		res = ""

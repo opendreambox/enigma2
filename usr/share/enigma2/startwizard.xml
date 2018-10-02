@@ -50,7 +50,7 @@ configfile.save()
 		</code>
 		<text value="You have successfully finished the video setup. If you want to change the settings later, you can do this in the settings menu."/>
 		<short_title value="No picture on TV? Press EXIT and retry." />
-		</step>
+	</step>
 
 		<step id="languageselection" nextstep="introduction">
 			<short_title value="Language selection" />
@@ -66,7 +66,7 @@ self.selectKey("DOWN")
 			<short_title value="Startwizard" />
 			<text value="Welcome.\n\nThis start wizard will guide you through the basic setup of your Dreambox.\n\nUse the up/down keys on your remote control to select an option. After that, press OK." />
 			<list>
-				<listentry caption="Use wizard to set up basic features" step="nima" />
+				<listentry caption="Use wizard to set up basic features" step="inputdevicesfirmware" />
 				<listentry caption="Exit wizard" step="final" />
 			</list>
 			<code>
@@ -75,6 +75,58 @@ self.selectKey("UP")
 self.selectKey("DOWN")
 			</code>
 		</step>
+		<step id="inputdevicesfirmware">
+			<condition>
+self.condition = self.inputDeviceFirmwareMissing
+			</condition>
+			<short_title value="Flash Bluetooth Receiver Firmware?" />
+			<text value="Your Dreambox bluetooth receiver has no firmware installed.\nDo you want to install latest firmware now?" />
+			<list>
+				<listentry caption="Yes, install the latest receiver firmware"  step="inputdevicesflashadapter"/>
+				<listentry caption="No, continue without bluetooth remote setup" step="nima"/>
+			</list>
+			<code>
+self.showState()
+self.showHideButtons()
+self.clearSelectedKeys()
+self.selectKey("UP")
+self.selectKey("DOWN")
+			</code>
+			<code pos="after">
+self.showState()
+self.showHideButtons()
+			</code>
+		</step>
+		<step id="inputdevicesflashadapter" nextstep="inputdevices">
+			<condition>
+self.condition = self.inputDeviceFirmwareMissing
+			</condition>
+			<short_title value="Flashing Bluetooth Receiver" />
+			<text value="Flashing Bluetooth Receiver" />
+			<code async="yes">
+self.flashInputDeviceAdapterFirmware()
+			</code>
+		</step>
+		<step id="inputdevices" nextstep="nima">
+			<condition>
+self.condition = self.inputDeviceWizardAvailable
+			</condition>
+			<short_title value="Input Devices" />
+			<text value="Please pickup the device you want to connect and press any key on it to select it in the list.\nEnter the assigned PIN code to connect it." />
+			<list type="dynamic" source="_getInputDevices" buildfunction="_inputDeviceBuildFunc" style="inputdevice"/>
+			<code>
+self.showState(True)
+self.showHideButtons(False, True)
+self.clearSelectedKeys()
+self.selectKey("UP")
+self.selectKey("DOWN")
+			</code>
+			<code pos="after">
+self.showState()
+self.showHideButtons()
+			</code>
+		</step>
+
 		<step id="nima">
 			<condition>
 from Components.config import config
@@ -312,7 +364,7 @@ self.condition = self.networkWizardAvailable and not self.isNetworkConnected()
 		<text value="Your Dreambox is already connected to the Internet.\nThere is no network configuration required." />
 		<short_title value="Connected" />
 		<list>
-			<listentry caption="Skip network configuration" step="final" />
+			<listentry caption="Skip network configuration" step="automaticupdatecheck" />
 			<listentry caption="Adjust network settings" step="technologies" />
 		</list>
 		<condition>
@@ -384,12 +436,17 @@ self.condition = self.networkWizardAvailable and self.ipConfigurationRequired()
 self.condition = self.networkWizardAvailable and not self.isOnline()
 		</condition>
 	</step>
-	<step id="networkend" laststep="true">
+	<step id="networkend" nextstep="automaticupdatecheck">
 		<condition>
 self.condition = self.networkWizardAvailable and not self.isNetworkConnected()
 		</condition>
 		<text value="Your Network connection is NOT set up!\nPlease go back to reconfigure or press OK to continue anyways." />
 		<short_title value="No network" />
+	</step>
+	<step id="automaticupdatecheck" laststep="true">
+		<text value="Automatically check for new updates.\nPlease select the interval for automated update checks." />
+		<short_title value="Automatic Update Check" />
+		<list type="config" configelement="config.plugins.updatechecker.interval" />
 	</step>
 	<step id="final" laststep="true">
 		<condition>

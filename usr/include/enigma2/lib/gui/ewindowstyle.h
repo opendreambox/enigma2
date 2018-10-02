@@ -15,6 +15,15 @@ class eWindowStyle_ENUMS
 #endif
 public:
 	enum {
+		idTV=0,
+		idDisplay,
+		idDisplaySmall,
+		idDisplayMedium,
+		idScrollbarVertical,
+		idScrollbarHorizontal,
+	};
+
+	enum {
 		styleLabel,
 		styleListboxSelected,
 		styleListboxNormal,

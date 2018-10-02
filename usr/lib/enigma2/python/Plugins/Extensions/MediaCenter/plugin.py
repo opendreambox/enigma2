@@ -249,7 +249,7 @@ from Plugins.Plugin import PluginDescriptor
 def Plugins(**kwargs):
 	return [
 			PluginDescriptor(name="MediaCenter",
-							  description="Play and watch all your media",
+							  description=_("Play and watch all your media."),
 							  where=PluginDescriptor.WHERE_MENU,
 							  fnc=menu),
 

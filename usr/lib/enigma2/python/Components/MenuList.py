@@ -4,13 +4,17 @@ from GUIComponent import GUIComponent
 from enigma import eListboxPythonStringContent, eListbox
 
 class MenuList(HTMLComponent, GUIComponent):
-	def __init__(self, list, enableWrapAround=False, content=eListboxPythonStringContent):
+	def __init__(self, list, enableWrapAround=False, content=eListboxPythonStringContent, mode=eListbox.layoutVertical, itemSize=0, itemWidth=0, itemHeight=0):
 		GUIComponent.__init__(self)
 		self.list = list
 		self.l = content()
 		self.l.setList(self.list)
 		self.onSelectionChanged = [ ]
 		self.enableWrapAround = enableWrapAround
+		self._mode = mode
+		self._itemSize = itemSize
+		self._itemWidth = itemWidth
+		self._itemHeight = itemHeight
 
 	def getCurrent(self):
 		return self.l.getCurrentSelection()
@@ -19,9 +23,18 @@ class MenuList(HTMLComponent, GUIComponent):
 
 	def postWidgetCreate(self, instance):
 		instance.setContent(self.l)
+		instance.setMode(self._mode)
+		if self._itemSize:
+			if self._mode == eListbox.layoutVertical:
+				instance.setItemHeight(self._itemSize)
+			else:
+				instance.setItemWidth(self._itemSize)
+		if self._itemHeight and self._itemWidth and self._mode == eListbox.layoutGrid:
+			instance.setItemHeight(self._itemHeight)
+			instance.setItemWidth(self._itemWidth)
+
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
-		if self.enableWrapAround:
-			self.instance.setWrapAround(True)
+		self.instance.setWrapAround(self.enableWrapAround)
 
 	def preWidgetRemove(self, instance):
 		instance.setContent(None)

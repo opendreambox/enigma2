@@ -14,6 +14,7 @@
 		"exec"s code
 -->
 
+		<item weight="0" level="0" text="Radio" entryID="radio_mode" description="Listen to radio stations."><screen module="ChannelSelection" screen="ChannelSelectionRadio" /></item>
 		<item weight="10" level="0" text="Timer" entryID="timer_edit" description="Manage and edit timers."><screen module="TimerEdit" screen="TimerEditList" /></item>
 		<item weight="20" level="1" text="VCR scart" entryID="scart_switch" requires="ScartSwitch"><code>self.session.scart.VCRSbChanged(3)</code></item>
 
@@ -50,7 +51,6 @@
 				<item weight="10" level="0" text="Storage devices" entryID="hardisk_selection" description="Set up your storage devices like harddisks and flash memory cards."><screen module="HarddiskSetup" screen="HarddiskDriveSelection" /></item>
 				<item weight="20" level="1" text="Common Interface" entryID="ci_setup" requires="CommonInterface" description="Configure your common interface."><screen module="Ci" screen="CiSelection" /></item>
 				<item weight="30" level="1" text="Input devices" entryID="input_device_setup" description="Configure your input devices."><screen module="InputDeviceSetup" screen="InputDeviceSelection" /></item>
-				<item weight="31" text="Keyboard" entryID="keyboard_setup" description="Set up your keyboard."><setup id="keyboard" /></item>
 			</menu>
 
 			<menu weight="50" level="0" text="System" entryID="system_selection" description="Advanced setup options">

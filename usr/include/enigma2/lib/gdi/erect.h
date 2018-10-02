@@ -131,6 +131,7 @@ public:
 	void scaleToCenterOf( const eRect &other );
 	void scaleToWidthOf(const eRect &other);
 	void scaleToHeightOf(const eRect &other);
+	void scaleToFill(const eRect& other);
 	void centerIn(const eRect &other);
 
 	friend bool operator==( const eRect &, const eRect & );

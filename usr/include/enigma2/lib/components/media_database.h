@@ -154,6 +154,8 @@ public:
 	void onFileChanged(eFileWatch *watch, eFileEvent event);
 
 #endif
+	bool resetDatabase();
+
 	void getCurrentScanPath(std::string &SWIG_OUTPUT);
 	void getEnqueuedPaths(std::list<std::string> &SWIG_OUTPUT);
 
@@ -252,7 +254,7 @@ protected:
 
 class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
 {
-	int SCHEMA_VERSION = 7;
+	int SCHEMA_VERSION = 8;
 
 	std::string normalizePath(const std::string &path);
 	bool upgradeSchema(int from);
@@ -263,6 +265,7 @@ class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native
 	bool upgradeSchema4_to_5();
 	bool upgradeSchema5_to_6();
 	bool upgradeSchema6_to_7();
+	bool upgradeSchema7_to_8();
 
 public:
 	eMediaDatabaseHandler();
@@ -329,6 +332,8 @@ public:
 	QSqlQuery getAudioById(int id);
 	QSqlQuery getVideoById(int id);
 
+	QSqlQuery getByParentDirectoryId(int id, int limit=-1, int offset=0);
+
 	QSqlQuery setFileAttribute(int file_id, const std::string &key, const std::string &value);
 	QSqlQuery deleteFileAttribute(int file_id, const std::string &key);
 	QSqlQuery getFileAttributes(int file_id);
@@ -359,6 +364,8 @@ public:
 	QSqlQuery removeFile(int file_id);
 
 	QSqlQuery query(const std::string &sql, const stringList &values=stringList(), bool rw = false);
+
+	void addRescanPath(const std::string &path);
 
 	Signal4<void, uint64_t, uint64_t, uint64_t, std::list<int> > insertFinished;
 	Signal5<void, char*, uint64_t, uint64_t, uint64_t, int> priorityInsertFinished;
@@ -396,9 +403,11 @@ private:
 	bool m_immediate_cancel;
 
 	std::list<file_metadata> m_priority_files;
+	std::map<std::string, std::list<file_metadata> > m_dirFiles;
 	std::list<file_metadata> m_files;
 	std::list<int> m_inserted_ids;
 	std::list<std::string> m_directories;
+	std::list<std::string> m_rescanPaths;
 	std::map<uint32_t, ePtr<cover_art> > m_covers;
 	std::string m_parent_dir;
 	int m_parent_dir_id;
@@ -453,6 +462,8 @@ private:
 	QSqlQuery m_qry_check_cover;
 	QSqlQuery m_qry_check_tag;
 
+	void checkDeletedFiles(int parent_id, const std::list<file_metadata> files);
+	bool haveFiles();
 	void processFileLists();
 	insert_result processSingleFile(const file_metadata &fmd, bool has_parent=false);
 	void gotMessage(const DbMessage &message);

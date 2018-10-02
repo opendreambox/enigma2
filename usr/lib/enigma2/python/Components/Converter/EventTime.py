@@ -1,9 +1,8 @@
-from Converter import Converter
-from Poll import Poll
+from Poll import PollConverter
 from time import time
 from Components.Element import cached, ElementError
 
-class EventTime(Poll, Converter, object):
+class EventTime(PollConverter, object):
 	STARTTIME = 0
 	ENDTIME = 1
 	REMAINING = 2
@@ -11,8 +10,7 @@ class EventTime(Poll, Converter, object):
 	DURATION = 4
 
 	def __init__(self, type):
-		Converter.__init__(self, type)
-		Poll.__init__(self)
+		PollConverter.__init__(self, type)
 		if type == "EndTime":
 			self.type = self.ENDTIME
 		elif type == "Remaining":
@@ -75,7 +73,7 @@ class EventTime(Poll, Converter, object):
 	range = 1000
 
 	def changed(self, what):
-		Converter.changed(self, what)
+		PollConverter.changed(self, what)
 		if self.type == self.PROGRESS and len(self.downstream_elements):
 			if not self.source.event and self.downstream_elements[0].visible:
 				self.downstream_elements[0].visible = False

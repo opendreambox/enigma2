@@ -90,12 +90,10 @@ class Element(object):
 
 	def setSuspend(self, suspended):
 		changed = self.__suspended != suspended
-		if not self.__suspended and suspended:
-			self.doSuspend(1)
-		elif self.__suspended and not suspended:
-			self.doSuspend(0)
-			
 		self.__suspended = suspended
+		if changed:
+			self.doSuspend(self.__suspended)
+
 		if changed:
 			for s in self.sources:
 				s.checkSuspend()

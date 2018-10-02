@@ -86,6 +86,8 @@ class eServiceEvent: public iObject
 	// .. additional info
 	int applyData(const eventData &d);
 	bool loadLanguage(Event *event, const std::string &lang, int tsidonid);
+	int parseFromTxt(const std::string &_filename);
+	std::string getFileExtension(const std::string &filename);
 public:
 #ifndef SWIG
 	RESULT parseFrom(Event *evt, int tsidonid=0);

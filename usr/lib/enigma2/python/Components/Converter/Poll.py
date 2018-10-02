@@ -1,4 +1,5 @@
 from enigma import eTimer
+from Components.Converter.Converter import Converter
 
 class Poll(object):
 	def __init__(self):
@@ -9,7 +10,8 @@ class Poll(object):
 
 	def __setInterval(self, interval):
 		self.__interval = interval
-		if self.__enabled:
+		suspended = getattr(self, "suspended", False) #won't exist whenever Converter.__init__ is called after Poll.__init__
+		if self.__enabled and not suspended:
 			self.__poll_timer.start(self.__interval)
 		else:
 			self.__poll_timer.stop()
@@ -34,3 +36,8 @@ class Poll(object):
 
 	def destroy(self):
 		self.__poll_timer_conn = None
+
+class PollConverter(Poll, Converter):
+	def __init__(self, converterType):
+		Converter.__init__(self, converterType)
+		Poll.__init__(self)

@@ -208,12 +208,13 @@ public:
 		BGRA_8888 = E_PIXEL_FMT_RGBA(8, 8, 8, 8, BYTE_ORDER_BGR, ALPHA_LAST),
 		ABGR_8888 = E_PIXEL_FMT_RGBA(8, 8, 8, 8, BYTE_ORDER_BGR, ALPHA_FIRST),
 
-		YUV_NV12 = E_PIXEL_FMT_YUV(8, 8, 8, BYTE_ORDER_YUV, PLANAR),
-		YUV_NV21 = E_PIXEL_FMT_YUV(8, 8, 8, BYTE_ORDER_YVU, PLANAR),
+		YUV_NV12 = E_PIXEL_FMT_YUV(8, 2, 2, BYTE_ORDER_YUV, PLANAR),
+		YUV_NV21 = E_PIXEL_FMT_YUV(8, 2, 2, BYTE_ORDER_YVU, PLANAR),
 	};
 
 	static unsigned long bitsPerPixel(Format fmt);
 	static unsigned long bytesPerPixel(Format fmt);
+	static unsigned long bytesPerLine(Format fmt, unsigned long width);
 	static unsigned long size(Format fmt, Channel c);
 
 	static unsigned long byteOffset(Format fmt, Channel c);

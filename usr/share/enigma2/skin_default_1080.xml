@@ -114,7 +114,7 @@
 		<component dirWidth="400" itemHeight="100" itemWidth="810" lineSpacing="30" textHeight="35" type="MerlinServiceRecordingList" />
 		<component eventNameHeight="30" itemHeight="72" itemWidth="1160" lineSpacing="1" serviceNameHeight="35" type="ZapHistoryBrowserList" />
 		<component itemHeight="45" pixmapHeight="40" pixmapWidth="40" textHeight="45" textWidth="1300" textX="60" textY="0" type="FileList" />
-		<component itemHeight="40" itemMargin="10" lineSpacing="0" text2Width="100" textHeight="35" textWidth="900" type="WeatherPluginList" />
+		<component itemHeight="40" itemMargin="10" lineSpacing="-10" text2Width="100" textHeight="40" textWidth="900" type="WeatherPluginList" />
 		<component thumbDescriptionSize="55" thumbSpaceX="39" thumbSpaceY="16" thumbX="330" thumbY="330" thumpMargin="12" type="PicturePlayer" />
 		<component itemHeight="45" rcheight="650" rcheighthalf="325" textHeight="45" textWidth="1300" textX="10" textY="45" type="HelpMenuList" />
 		<component itemHeight="45" listbigHeight="109" text2Width="300" textHeight="35" text2Height="45" textWidth="160" type="MerliniDreamList" />
@@ -126,11 +126,8 @@
 		<component fileWidth="400" itemHeight="135" itemMargin="20" nameWidth="700" portWidth="350" protWidth="350" textHeight="50" textWidth="1150" type="BonjourList" typeWidth="400" />
 		<component itemHeight="45" pixmap2Height="40" pixmap2Width="40" pixmapHeight="40" pixmapWidth="55" textHeight="45" textWidth="1300" textX="110" textY="0" type="MultiFileSelectList" />
 		<component clockHPos="5" clockHeight="35" clockWidth="35" ipWidth="260" itemHeight="45" itemMargin="20" listbigHeight="103" listsmallHeight="45" nameHeight="30" nameWidth="560" portWidth="260" servicenameHeight="37" stateWidth="350" type="PartnerboxList" weekdayMargin="80" />
-		<component infoBarMargin="25" thumbDescriptionSelSize="60" thumbDescriptionSize="60" thumbSelX="250" thumbSelY="250" thumbSpaceX="33" thumbSpaceY="44" thumbX="200" thumbY="200" thumpMargin="12" tileMargin="5" tileSelMargin="30" tileSelShadowMargin="50" type="gPicPlayerThumb" />
-		<component infoBarMargin="20" thumbDescriptionSelSize="60" thumbDescriptionSize="60" thumbSelX="270" thumbSelY="270" thumbSpaceX="33" thumbSpaceY="43" thumbX="200" thumbY="200" thumpMargin="12" tileMargin="5" tileSelMargin="40" tileSelShadowMargin="60" type="gMoviePlayerThumb" />
 		<component beginMargin="2" endMargin="8" piconOffset="10" piconWidth="70" piconWidthBig="120" progressBarHeight="14" progressBarMargin="10" progressBarWidth="90" serviceInfoHeightAdd="10" serviceItemHeight="50" serviceItemHeightLarge="80" serviceNumberWidth="80" textOffset="10" type="ServiceList" />
 		<component icon2Height="40" icon2Width="40" icon2Y="30" icon3Height="124" icon3Width="177" iconHeight="80" iconWidth="80" iconY="5" itemHeight="150" tempWidth="140" tempX="280" tempY="15" tex2tWidth="800" text2Height="144" text2X="210" textHeight="35" textWidth="500" textX="650" textY="40" timeHeight="90" timeWidth="120" timeX="37" type="ForecaList" windWidth="200" windX="480" windY="15" />
-		<component infoBarMargin="30" infoStringHeight="100" infoStringLength="1600" infoStringMargin="20" progressHeight="12" progressLength="1660" progressMargin="35" statusPixmapMargin="10" statusPixmapSize="25" thumbDescriptionSelSize="60" thumbDescriptionSize="60" thumbSelX="260" thumbSelY="260" thumbSpaceX="33" thumbSpaceY="50" thumbX="200" thumbY="200" thumpMargin="12" tileMargin="5" tileSelMargin="35" tileSelShadowMargin="55" timeStringHeight="30" timeStringLength="90" timeStringMargin="70" type="gMusicPlayerThumb" />
 		<component type="TimerList">
 			<template>
 			{"template": [
@@ -651,11 +648,6 @@ self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
 	<screen name="Console" position="center,170" size="1200,820" title="Command execution...">
 		<widget font="Regular;30" name="text" position="10,10" size="1180,800" />
 	</screen>
-	<screen name="CiSelection" position="center,center" size="840,400" title="Common Interface">
-		<widget font="Regular;30" name="text" position="10,10" size="820,40" />
-		<eLabel backgroundColor="grey" position="10,50" size="820,1" />
-		<widget enableWrapAround="1" name="entries" position="10,60" scrollbarMode="showOnDemand" size="820,330" />
-	</screen>
 	<screen name="CDInfo" position="center,170" size="1200,820" title="CDInfo">
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="390,70" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="405,5" scale="stretch" size="390,70" />
@@ -713,6 +705,11 @@ self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
 		<widget enableWrapAround="1" name="list" position="10,90" scrollbarMode="showOnDemand" size="1180,630" />
 		<eLabel backgroundColor="grey" position="10,730" size="1180,1" />
 		<widget font="Regular;32" halign="center" position="10,740" render="Label" size="1180,70" source="introduction" valign="center" />
+	</screen>
+	<screen name="CiSelection" position="center,center" size="840,300" title="Common Interface">
+		<widget font="Regular;30" name="text" position="10,10" size="820,40" />
+		<eLabel backgroundColor="grey" position="10,50" size="820,1" />
+		<widget enableWrapAround="1" name="entries" position="10,65" scrollbarMode="showOnDemand" size="820,225" />
 	</screen>
 	<screen name="CIselectMainMenu" position="center,170" size="1200,820" title="CI Assignment">
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
@@ -2366,8 +2363,22 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
 		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
 	</screen>
-	<screen name="NetworkConfigGlobal" position="center,center" size="840,65" title=" ">
-		<widget name="config" position="10,10" size="820,45" />
+	<screen name="NetworkServiceNTPConfig" position="center,170" size="1200,820" title=" ">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_red" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_green" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_yellow" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,630" />
+		<eLabel backgroundColor="grey" position="10,730" size="1180,1" />
+		<widget font="Regular;32" halign="center" position="10,740" render="Label" size="1180,70" source="activets" valign="center" />
+	</screen>
+	<screen name="NetworkConfigGlobal" position="center,center" size="840,110" title=" ">
+		<widget enableWrapAround="1" name="config" position="10,10" size="820,90" />
 	</screen>
 	<screen name="NotificationQueueViewer" position="center,170" size="1200,820" title="Notification Queue Viewer">
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
@@ -4861,17 +4872,31 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<eLabel backgroundColor="grey" position="10,140" size="1180,1" />
 		<widget enableWrapAround="1" name="entrylist" position="10,150" scrollbarMode="showOnDemand" size="1180,630" />
 	</screen>
-<!-- PluginHider -->
-    <screen name="PluginHiderSetup" position="center,170" size="1200,820" title="PluginHider Setup">
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="350,70" />
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="360,5" scale="stretch" size="350,70" />
-        <ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="710,5" scale="stretch" size="350,70" />
-        <widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_red" transparent="1" valign="center" zPosition="1" />
-        <widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="360,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_green" transparent="1" valign="center" zPosition="1" />
-        <widget backgroundColor="#18188b" font="Regular;30" halign="center" position="710,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
-        <ePixmap pixmap="Default-FHD/skin_default/icons/help.svg" position="1110,30" size="80,40" />
-        <eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-        <widget enableWrapAround="1" name="list" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	<screen name="MSNWeatherPluginEntryConfigScreen" position="center,170" size="1200,820" title=" ">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_red" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_green" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_yellow" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
+	<screen name="MSNWeatherPluginSearch" position="center,170" size="1200,820" title=" ">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="350,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="360,5" scale="stretch" size="350,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_red" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="360,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" source="key_green" transparent="1" valign="center" zPosition="1" />
+		<widget font="Regular;34" halign="right" position="1050,25" render="Label" size="120,40" source="global.CurrentTime">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget font="Regular;34" halign="right" position="800,25" render="Label" size="240,40" source="global.CurrentTime">
+			<convert type="ClockToText">Date</convert>
+		</widget>
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" itemHeight="70" name="entrylist" position="10,100" scrollbarMode="showOnDemand" size="1180,700" />
 	</screen>
 <!-- Summaries -->
 	<screen id="1" name="MyTubePlayer_summary" position="0,0" size="132,64">

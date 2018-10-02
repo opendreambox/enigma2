@@ -193,11 +193,11 @@ class DatabasePlaylist(Playlist):
 		error = res.error()
 		if error:
 			Log.w("Error saving playlist %s\n%s\n%s" % (self._id, res.errorDatabaseText(), res.errorDriverText()))
-			return not error
+			return False
 		#if self._id <= 0:
 		data = res.data()
 		self._id = -1
-		if data and len(data) > 0:
+		if data and len(data) and data[0]:
 			self._id = int(res.data()[0].get(eMediaDatabase.FIELD_ID, -1))
 		if self._id == -1:
 			error = True

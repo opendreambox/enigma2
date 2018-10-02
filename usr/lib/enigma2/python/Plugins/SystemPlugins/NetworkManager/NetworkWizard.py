@@ -9,6 +9,8 @@ class NetworkWizardNew(NetworkConfigGeneral):
 
 		self._services = self["list"]
 
+		self["state_label"].setText("")
+		self["state"].setText("")
 		self.__updateStateText()
 		self.showState(False)
 
@@ -22,6 +24,8 @@ class NetworkWizardNew(NetworkConfigGeneral):
 		self.checkButtons()
 
 	def __updateStateText(self):
+		if not self.isCurrentStepID("services"):
+			return
 		self["state_label"].setText(_("Connection State:"))
 		self["state"].setText(NetworkConfigGeneral.translateState(self._nm.state()))
 
@@ -29,6 +33,8 @@ class NetworkWizardNew(NetworkConfigGeneral):
 		return (args[1], args[0])
 
 	def green(self):
+		if not self.isCurrentStepID("services"):
+			return
 		service = self["list"].getCurrent()
 		if service:
 			service = service[1]
@@ -45,14 +51,15 @@ class NetworkWizardNew(NetworkConfigGeneral):
 			self._rescan()
 
 	def checkButtons(self):
-		if self.isCurrentStepID("services"):
-			self["button_yellow_text"].setText(_("Rescan"))
-			service = self._currentService
-			if service:
-				if not service.state() in (eNetworkManager.STATE_IDLE, eNetworkManager.STATE_FAILURE):
-					self["button_green_text"].setText(_("Disconnect"))
-				else:
-					self["button_green_text"].setText(_("Connect"))
+		if not self.isCurrentStepID("services"):
+			return
+		self["button_yellow_text"].setText(_("Rescan"))
+		service = self._currentService
+		if service:
+			if not service.state() in (eNetworkManager.STATE_IDLE, eNetworkManager.STATE_FAILURE):
+				self["button_green_text"].setText(_("Disconnect"))
+			else:
+				self["button_green_text"].setText(_("Connect"))
 
 	def selChanged(self):
 		WizardLanguage.selChanged(self)
@@ -70,10 +77,11 @@ class NetworkWizardNew(NetworkConfigGeneral):
 		pass
 
 	def _servicesChanged(self, *args):
-		self["state"].setText( NetworkConfigGeneral.translateState( self._nm.state() ) )
-		if self.isCurrentStepID("services"):
-			self["list"].updateList( self.getServiceList() )
-			self.checkButtons()
+		if not self.isCurrentStepID("services"):
+			return
+		self["list"].updateList( self.getServiceList() )
+		self.__updateStateText()
+		self.checkButtons()
 
 	def ipConfigurationRequired(self):
 		return not self.isOnline()

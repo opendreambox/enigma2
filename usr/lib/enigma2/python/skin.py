@@ -270,6 +270,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 				"width" : ePixmap.SCALE_TYPE_WIDTH,
 				"height" : ePixmap.SCALE_TYPE_HEIGHT,
 				"stretch" : ePixmap.SCALE_TYPE_STRETCH,
+				"fill" : ePixmap.SCALE_TYPE_FILL,
 			}.get(value, ePixmap.SCALE_TYPE_ASPECT)
 			guiObject.setScale(value)
 		elif attrib == "orientation": # used by eSlider
@@ -603,13 +604,13 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 			get_attr = value.attrib.get
 			vType = get_attr("name")
 			v = get_attr("value")
-			if vType == "BackgroundPixmapTopHeight":
+			if vType in ("BackgroundPixmapTopHeight", "BackgroundPixmapBeginSize"):
 				style.setBackgroundPixmapTopHeight(int(v))
-			elif vType == "BackgroundPixmapBottomHeight":
+			elif vType in ("BackgroundPixmapBottomHeight", "BackgroundPixmapEndSize"):
 				style.setBackgroundPixmapBottomHeight(int(v))
-			elif vType == "ValuePixmapTopHeight":
+			elif vType in ("ValuePixmapTopHeight", "ValuePixmapBeginSize"):
 				style.setValuePixmapTopHeight(int(v))
-			elif vType == "ValuePixmapBottomHeight":
+			elif vType in ("ValuePixmapBottomHeight", "ValuePixmapEndSize"):
 				style.setValuePixmapBottomHeight(int(v))
 			elif vType == "ScrollbarWidth":
 				style.setScrollbarWidth(int(v))

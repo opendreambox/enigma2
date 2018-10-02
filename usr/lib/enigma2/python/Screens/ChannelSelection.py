@@ -102,7 +102,6 @@ def append_when_level(menu, args, level = 0, key = ""):
 
 class ChannelContextMenu(Screen):
 	ALLOW_SUSPEND = True
-	IS_DIALOG = True
 
 	def __init__(self, session, csel):
 
@@ -1557,12 +1556,16 @@ class RadioInfoBar(Screen):
 
 class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelectionEPG, InfoBarBase):
 
-	def __init__(self, session, infobar):
+	def __init__(self, session, infobar=None):
 		ChannelSelectionBase.__init__(self, session)
 		ChannelSelectionEdit.__init__(self)
 		ChannelSelectionEPG.__init__(self)
 		InfoBarBase.__init__(self)
+		if not infobar:
+			from InfoBar import InfoBar
+			infobar = InfoBar.instance
 		self.infobar = infobar
+
 		self.onLayoutFinish.append(self.onCreate)
 
 		self.info = session.instantiateDialog(RadioInfoBar) # our simple infobar
@@ -1582,14 +1585,14 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 			})
 
 ########## RDS Radiotext / Rass Support BEGIN
-		self.infobar = infobar # reference to real infobar (the one and only)
 		self["RdsDecoder"] = self.info["RdsDecoder"]
 		self["RdsActions"] = HelpableActionMap(self, "InfobarRdsActions",
 		{
 			"startRassInteractive": (self.startRassInteractive, _("View Rass interactive..."))
 		},-1)
 		self["RdsActions"].setEnabled(False)
-		infobar.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
+		self.infobar.rds_display.hide()
+		self.infobar.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
 		self.onClose.append(self.__onClose)
 		self.onShow.append(self.info.show)
 		self.onHide.append(self.info.hide)
@@ -1617,7 +1620,7 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 	def cancel(self):
 		self.info.hide()
 		#set previous tv service
-		self.close(None)
+		self.close(True)
 
 	def __evServiceStart(self):
 		service = self.session.nav.getCurrentService()

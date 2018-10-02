@@ -6,6 +6,7 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from Tools.Log import Log
 
 from FileBrowser import FileBrowser
 
@@ -32,7 +33,7 @@ class MediaDatabaseManager(Screen):
 		self["list"] = List([], enableWrapAround=True)
 		self["key_red"] = Button(_("Remove"))
 		self["key_green"] = Button(_("Add"))
-		self["key_yellow"] = Button("")
+		self["key_yellow"] = Button(_("Reset"))
 		self["key_blue"] = Button(_("Rescan"))
 		self["status"] = Label(_("waiting for statistics..."))
 
@@ -127,7 +128,7 @@ class MediaDatabaseManager(Screen):
 		self.session.openWithCallback(self._onDirectorySelected, FileBrowser, showFiles=False, closeOnSelection=True)
 
 	def _yellow(self):
-		pass
+		self.session.openWithCallback(self._onResetAcknowledged, MessageBox, _("Do you really want to remove ALL content (including playlists) from the database?"), type=MessageBox.TYPE_YESNO)
 
 	def _blue(self):
 		dir = self._getSelectedDir()
@@ -135,6 +136,16 @@ class MediaDatabaseManager(Screen):
 			self._db.rescanPath(dir)
 			#self.session.toaster.toast(Toast, _("Rescanning %s") % (dir))
 			self._reload()
+
+	def _onResetAcknowledged(self, confirmed):
+		if confirmed:
+			if self._db.resetDatabase():
+				self.session.toastManager.showToast(_("Database has been reset successfully!"))
+				Log.w(_("MediaDatabase RESET!"))
+				self._reload()
+			else:
+				self.session.toastManager.showToast(_("Database reset FAILED!"))
+				Log.w(_("MediaDatabase was NOT reset!"))
 
 	def _getSelectedDir(self):
 		dir = self["list"].getCurrent()

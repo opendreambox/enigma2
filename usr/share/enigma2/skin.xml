@@ -65,6 +65,16 @@
 		<pixmap filename="skin_default/scrollbar.png" name="BackgroundPixmap"/>
 		<pixmap filename="skin_default/slider.png" name="ValuePixmap"/>
 	</windowstylescrollbar>
+	<windowstylescrollbar id="5">
+		<value name="BackgroundPixmapBeginSize" value="0"/>
+		<value name="BackgroundPixmapEndSize" value="0"/>
+		<value name="ValuePixmapBeginSize" value="2"/>
+		<value name="ValuePixmapEndSize" value="2"/>
+		<value name="ScrollbarWidth" value="5"/>
+		<value name="ScrollbarBorderWidth" value="0"/>
+		<pixmap filename="skin_default/scrollbar_horizontal.png" name="BackgroundPixmap"/>
+		<pixmap filename="skin_default/slider_horizontal.png" name="ValuePixmap"/>
+	</windowstylescrollbar>
 	<!-- Main screen colors (id=1 LCD) -->
 	<windowstyle type="skinned" id="1">
 		<color name="Background" color="#000000"/>

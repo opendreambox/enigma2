@@ -1,10 +1,9 @@
 import time
-from Converter import Converter
-from Poll import Poll
+from Poll import PollConverter
 from enigma import iPlayableService
 from Components.Element import cached, ElementError
 
-class ServicePosition(Poll, Converter, object):
+class ServicePosition(PollConverter, object):
 	TYPE_LENGTH = 0
 	TYPE_POSITION = 1
 	TYPE_REMAINING = 2
@@ -12,8 +11,7 @@ class ServicePosition(Poll, Converter, object):
 	TYPE_ENDTIME = 4
 
 	def __init__(self, type):
-		Poll.__init__(self)
-		Converter.__init__(self, type)
+		PollConverter.__init__(self, type)
 		self.isAnimated = False
 		args = type.split(',')
 		type = args.pop(0)

@@ -52,7 +52,7 @@ class EPGList(HTMLComponent, GUIComponent):
 		GUIComponent.__init__(self)
 		self.type=type
 		self.l = eListboxPythonMultiContent()
-
+		self.list = []
 		tlf = TemplatedListFonts()
 		self._font0 = gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG))
 		self._font1 = gFont(tlf.face(tlf.SMALL), tlf.size(tlf.SMALL))
@@ -347,9 +347,9 @@ class EPGList(HTMLComponent, GUIComponent):
 	 # search similar broadcastings
 		if event_id is None:
 			return
-		l = self.epgcache.search(('RIBDN', 1024, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, refstr, event_id))
-		if l and len(l):
-			l.sort(key=lambda x: x[2])
-		self.l.setList(l)
+		self.list = self.epgcache.search(('RIBDN', 1024, eEPGCache.SIMILAR_BROADCASTINGS_SEARCH, refstr, event_id))
+		if self.list and len(self.list):
+			self.list.sort(key=lambda x: x[2])
+		self.l.setList(self.list)
 		self.selectionChanged()
 		print time() - t

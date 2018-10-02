@@ -1750,6 +1750,7 @@ eRect.intersects = new_instancemethod(_enigma.eRect_intersects, None, eRect)
 eRect.scaleToCenterOf = new_instancemethod(_enigma.eRect_scaleToCenterOf, None, eRect)
 eRect.scaleToWidthOf = new_instancemethod(_enigma.eRect_scaleToWidthOf, None, eRect)
 eRect.scaleToHeightOf = new_instancemethod(_enigma.eRect_scaleToHeightOf, None, eRect)
+eRect.scaleToFill = new_instancemethod(_enigma.eRect_scaleToFill, None, eRect)
 eRect.centerIn = new_instancemethod(_enigma.eRect_centerIn, None, eRect)
 eRect.scale = new_instancemethod(_enigma.eRect_scale, None, eRect)
 eRect_swigregister = _enigma.eRect_swigregister
@@ -2896,6 +2897,7 @@ class ePixmap(eAnimatedWidget):
     SCALE_TYPE_WIDTH = _enigma.ePixmap_SCALE_TYPE_WIDTH
     SCALE_TYPE_HEIGHT = _enigma.ePixmap_SCALE_TYPE_HEIGHT
     SCALE_TYPE_STRETCH = _enigma.ePixmap_SCALE_TYPE_STRETCH
+    SCALE_TYPE_FILL = _enigma.ePixmap_SCALE_TYPE_FILL
     __swig_destroy__ = _enigma.delete_ePixmap
 ePixmap.setPixmap = new_instancemethod(_enigma.ePixmap_setPixmap, None, ePixmap)
 ePixmap.setPixmapFromFile = new_instancemethod(_enigma.ePixmap_setPixmapFromFile, None, ePixmap)
@@ -3054,6 +3056,7 @@ eWidgetDesktop.removeRootWidget = new_instancemethod(_enigma.eWidgetDesktop_remo
 eWidgetDesktop.movedWidget = new_instancemethod(_enigma.eWidgetDesktop_movedWidget, None, eWidgetDesktop)
 eWidgetDesktop.recalcClipRegions = new_instancemethod(_enigma.eWidgetDesktop_recalcClipRegions, None, eWidgetDesktop)
 eWidgetDesktop.invalidate = new_instancemethod(_enigma.eWidgetDesktop_invalidate, None, eWidgetDesktop)
+eWidgetDesktop.requireNotify = new_instancemethod(_enigma.eWidgetDesktop_requireNotify, None, eWidgetDesktop)
 eWidgetDesktop.paint = new_instancemethod(_enigma.eWidgetDesktop_paint, None, eWidgetDesktop)
 eWidgetDesktop.setDC = new_instancemethod(_enigma.eWidgetDesktop_setDC, None, eWidgetDesktop)
 eWidgetDesktop.setBackgroundColor = new_instancemethod(_enigma.eWidgetDesktop_setBackgroundColor, None, eWidgetDesktop)
@@ -3100,6 +3103,9 @@ class eListbox(eWidget):
     __swig_destroy__ = _enigma.delete_eListbox
     setWrapAroundDefault = staticmethod(_enigma.eListbox_setWrapAroundDefault)
     selectionChanged = _swig_property(_enigma.eListbox_selectionChanged_get, _enigma.eListbox_selectionChanged_set)
+    layoutVertical = _enigma.eListbox_layoutVertical
+    layoutHorizontal = _enigma.eListbox_layoutHorizontal
+    layoutGrid = _enigma.eListbox_layoutGrid
     showOnDemand = _enigma.eListbox_showOnDemand
     showAlways = _enigma.eListbox_showAlways
     showNever = _enigma.eListbox_showNever
@@ -3111,7 +3117,10 @@ class eListbox(eWidget):
     pageDown = _enigma.eListbox_pageDown
     justCheck = _enigma.eListbox_justCheck
     refresh = _enigma.eListbox_refresh
+    moveLeft = _enigma.eListbox_moveLeft
+    moveRight = _enigma.eListbox_moveRight
 eListbox.setScrollbarMode = new_instancemethod(_enigma.eListbox_setScrollbarMode, None, eListbox)
+eListbox.setupScrollbar = new_instancemethod(_enigma.eListbox_setupScrollbar, None, eListbox)
 eListbox.setWrapAround = new_instancemethod(_enigma.eListbox_setWrapAround, None, eListbox)
 eListbox.setBacklogMode = new_instancemethod(_enigma.eListbox_setBacklogMode, None, eListbox)
 eListbox.setContent = new_instancemethod(_enigma.eListbox_setContent, None, eListbox)
@@ -3121,7 +3130,9 @@ eListbox.moveSelectionTo = new_instancemethod(_enigma.eListbox_moveSelectionTo, 
 eListbox.moveToEnd = new_instancemethod(_enigma.eListbox_moveToEnd, None, eListbox)
 eListbox.atBegin = new_instancemethod(_enigma.eListbox_atBegin, None, eListbox)
 eListbox.atEnd = new_instancemethod(_enigma.eListbox_atEnd, None, eListbox)
+eListbox.setMode = new_instancemethod(_enigma.eListbox_setMode, None, eListbox)
 eListbox.setItemHeight = new_instancemethod(_enigma.eListbox_setItemHeight, None, eListbox)
+eListbox.setItemWidth = new_instancemethod(_enigma.eListbox_setItemWidth, None, eListbox)
 eListbox.setSelectionEnable = new_instancemethod(_enigma.eListbox_setSelectionEnable, None, eListbox)
 eListbox.setBackgroundColor = new_instancemethod(_enigma.eListbox_setBackgroundColor, None, eListbox)
 eListbox.setBackgroundColorSelected = new_instancemethod(_enigma.eListbox_setBackgroundColorSelected, None, eListbox)
@@ -3139,6 +3150,8 @@ eListbox.setScrollbarBackgroundPixmapBottomHeight = new_instancemethod(_enigma.e
 eListbox.setScrollbarValuePixmapTopHeight = new_instancemethod(_enigma.eListbox_setScrollbarValuePixmapTopHeight, None, eListbox)
 eListbox.setScrollbarValuePixmapBottomHeight = new_instancemethod(_enigma.eListbox_setScrollbarValuePixmapBottomHeight, None, eListbox)
 eListbox.resetScrollbarProperties = new_instancemethod(_enigma.eListbox_resetScrollbarProperties, None, eListbox)
+eListbox.getEntryTop = new_instancemethod(_enigma.eListbox_getEntryTop, None, eListbox)
+eListbox.getVisibleItemCount = new_instancemethod(_enigma.eListbox_getVisibleItemCount, None, eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 
@@ -3224,6 +3237,7 @@ class eListboxPythonMultiContent(eListboxPythonStringContent):
     TYPE_PIXMAP_ALPHATEST = _enigma.eListboxPythonMultiContent_TYPE_PIXMAP_ALPHATEST
     TYPE_PIXMAP_ALPHABLEND = _enigma.eListboxPythonMultiContent_TYPE_PIXMAP_ALPHABLEND
     TYPE_PROGRESS_PIXMAP = _enigma.eListboxPythonMultiContent_TYPE_PROGRESS_PIXMAP
+    TYPE_TEXT_ALPHABLEND = _enigma.eListboxPythonMultiContent_TYPE_TEXT_ALPHABLEND
 eListboxPythonMultiContent.paint = new_instancemethod(_enigma.eListboxPythonMultiContent_paint, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.currentCursorSelectable = new_instancemethod(_enigma.eListboxPythonMultiContent_currentCursorSelectable, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setList = new_instancemethod(_enigma.eListboxPythonMultiContent_setList, None, eListboxPythonMultiContent)
@@ -3286,6 +3300,12 @@ class eWindowStyle_ENUMS(object):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
+    idTV = _enigma.eWindowStyle_ENUMS_idTV
+    idDisplay = _enigma.eWindowStyle_ENUMS_idDisplay
+    idDisplaySmall = _enigma.eWindowStyle_ENUMS_idDisplaySmall
+    idDisplayMedium = _enigma.eWindowStyle_ENUMS_idDisplayMedium
+    idScrollbarVertical = _enigma.eWindowStyle_ENUMS_idScrollbarVertical
+    idScrollbarHorizontal = _enigma.eWindowStyle_ENUMS_idScrollbarHorizontal
     styleLabel = _enigma.eWindowStyle_ENUMS_styleLabel
     styleListboxSelected = _enigma.eWindowStyle_ENUMS_styleListboxSelected
     styleListboxNormal = _enigma.eWindowStyle_ENUMS_styleListboxNormal
@@ -4425,6 +4445,351 @@ def eWebMediaPlayer_sendEvent(id):
     """eWebMediaPlayer_sendEvent(int id)"""
     return _enigma.eWebMediaPlayer_sendEvent(id)
 
+class eInputDeviceManager(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+
+    def getInstance():
+        """getInstance() -> eInputDeviceManager"""
+        return _enigma.eInputDeviceManager_getInstance()
+
+    getInstance = staticmethod(getInstance)
+
+    def start(self):
+        """start(eInputDeviceManager self)"""
+        return _enigma.eInputDeviceManager_start(self)
+
+
+    def stop(self):
+        """stop(eInputDeviceManager self)"""
+        return _enigma.eInputDeviceManager_stop(self)
+
+
+    def available(self):
+        """available(eInputDeviceManager self) -> bool"""
+        return _enigma.eInputDeviceManager_available(self)
+
+
+    def responding(self):
+        """responding(eInputDeviceManager self) -> bool"""
+        return _enigma.eInputDeviceManager_responding(self)
+
+
+    def version(self):
+        """version(eInputDeviceManager self) -> std::string"""
+        return _enigma.eInputDeviceManager_version(self)
+
+
+    def getDevice(self, address):
+        """getDevice(eInputDeviceManager self, std::string const address) -> eManagedInputDevicePtr"""
+        return _enigma.eInputDeviceManager_getDevice(self, address)
+
+
+    def getConnectedDevices(self):
+        """getConnectedDevices(eInputDeviceManager self) -> eManagedInputDevicePtrList"""
+        return _enigma.eInputDeviceManager_getConnectedDevices(self)
+
+
+    def getAvailableDevices(self):
+        """getAvailableDevices(eInputDeviceManager self) -> eManagedInputDevicePtrList"""
+        return _enigma.eInputDeviceManager_getAvailableDevices(self)
+
+
+    def rescan(self):
+        """rescan(eInputDeviceManager self)"""
+        return _enigma.eInputDeviceManager_rescan(self)
+
+
+    def connectDevice(self, device):
+        """connectDevice(eInputDeviceManager self, eManagedInputDevicePtr device)"""
+        return _enigma.eInputDeviceManager_connectDevice(self, device)
+
+
+    def disconnectDevice(self, device):
+        """disconnectDevice(eInputDeviceManager self, eManagedInputDevicePtr device)"""
+        return _enigma.eInputDeviceManager_disconnectDevice(self, device)
+
+
+    def vibrate(self, device=0):
+        """
+        vibrate(eInputDeviceManager self, eManagedInputDevicePtr device=0)
+        vibrate(eInputDeviceManager self)
+        """
+        return _enigma.eInputDeviceManager_vibrate(self, device)
+
+
+    def setLedColor(self, *args):
+        """
+        setLedColor(eInputDeviceManager self, uint32_t rgb)
+        setLedColor(eInputDeviceManager self, eManagedInputDevicePtr device, uint32_t rgb)
+        """
+        return _enigma.eInputDeviceManager_setLedColor(self, *args)
+
+    deviceStateChanged = _swig_property(_enigma.eInputDeviceManager_deviceStateChanged_get, _enigma.eInputDeviceManager_deviceStateChanged_set)
+    unboundRemoteKeyPressed = _swig_property(_enigma.eInputDeviceManager_unboundRemoteKeyPressed_get, _enigma.eInputDeviceManager_unboundRemoteKeyPressed_set)
+    deviceListChanged = _swig_property(_enigma.eInputDeviceManager_deviceListChanged_get, _enigma.eInputDeviceManager_deviceListChanged_set)
+eInputDeviceManager.start = new_instancemethod(_enigma.eInputDeviceManager_start, None, eInputDeviceManager)
+eInputDeviceManager.stop = new_instancemethod(_enigma.eInputDeviceManager_stop, None, eInputDeviceManager)
+eInputDeviceManager.available = new_instancemethod(_enigma.eInputDeviceManager_available, None, eInputDeviceManager)
+eInputDeviceManager.responding = new_instancemethod(_enigma.eInputDeviceManager_responding, None, eInputDeviceManager)
+eInputDeviceManager.version = new_instancemethod(_enigma.eInputDeviceManager_version, None, eInputDeviceManager)
+eInputDeviceManager.getDevice = new_instancemethod(_enigma.eInputDeviceManager_getDevice, None, eInputDeviceManager)
+eInputDeviceManager.getConnectedDevices = new_instancemethod(_enigma.eInputDeviceManager_getConnectedDevices, None, eInputDeviceManager)
+eInputDeviceManager.getAvailableDevices = new_instancemethod(_enigma.eInputDeviceManager_getAvailableDevices, None, eInputDeviceManager)
+eInputDeviceManager.rescan = new_instancemethod(_enigma.eInputDeviceManager_rescan, None, eInputDeviceManager)
+eInputDeviceManager.connectDevice = new_instancemethod(_enigma.eInputDeviceManager_connectDevice, None, eInputDeviceManager)
+eInputDeviceManager.disconnectDevice = new_instancemethod(_enigma.eInputDeviceManager_disconnectDevice, None, eInputDeviceManager)
+eInputDeviceManager.vibrate = new_instancemethod(_enigma.eInputDeviceManager_vibrate, None, eInputDeviceManager)
+eInputDeviceManager.setLedColor = new_instancemethod(_enigma.eInputDeviceManager_setLedColor, None, eInputDeviceManager)
+eInputDeviceManager_swigregister = _enigma.eInputDeviceManager_swigregister
+eInputDeviceManager_swigregister(eInputDeviceManager)
+
+def eInputDeviceManager_getInstance():
+    """eInputDeviceManager_getInstance() -> eInputDeviceManager"""
+    return _enigma.eInputDeviceManager_getInstance()
+
+class eManagedInputDevicePtrList(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    def __iter__(self):
+        return self.iterator()
+
+    def __init__(self, *args):
+        _enigma.eManagedInputDevicePtrList_swiginit(self, _enigma.new_eManagedInputDevicePtrList(*args))
+    __swig_destroy__ = _enigma.delete_eManagedInputDevicePtrList
+eManagedInputDevicePtrList.iterator = new_instancemethod(_enigma.eManagedInputDevicePtrList_iterator, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__nonzero__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___nonzero__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__bool__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___bool__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__len__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___len__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__getslice__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___getslice__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__setslice__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___setslice__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__delslice__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___delslice__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__delitem__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___delitem__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__getitem__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___getitem__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.__setitem__ = new_instancemethod(_enigma.eManagedInputDevicePtrList___setitem__, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.pop = new_instancemethod(_enigma.eManagedInputDevicePtrList_pop, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.append = new_instancemethod(_enigma.eManagedInputDevicePtrList_append, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.empty = new_instancemethod(_enigma.eManagedInputDevicePtrList_empty, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.size = new_instancemethod(_enigma.eManagedInputDevicePtrList_size, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.swap = new_instancemethod(_enigma.eManagedInputDevicePtrList_swap, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.begin = new_instancemethod(_enigma.eManagedInputDevicePtrList_begin, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.end = new_instancemethod(_enigma.eManagedInputDevicePtrList_end, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.rbegin = new_instancemethod(_enigma.eManagedInputDevicePtrList_rbegin, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.rend = new_instancemethod(_enigma.eManagedInputDevicePtrList_rend, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.clear = new_instancemethod(_enigma.eManagedInputDevicePtrList_clear, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.get_allocator = new_instancemethod(_enigma.eManagedInputDevicePtrList_get_allocator, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.pop_back = new_instancemethod(_enigma.eManagedInputDevicePtrList_pop_back, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.erase = new_instancemethod(_enigma.eManagedInputDevicePtrList_erase, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.push_back = new_instancemethod(_enigma.eManagedInputDevicePtrList_push_back, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.front = new_instancemethod(_enigma.eManagedInputDevicePtrList_front, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.back = new_instancemethod(_enigma.eManagedInputDevicePtrList_back, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.assign = new_instancemethod(_enigma.eManagedInputDevicePtrList_assign, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.resize = new_instancemethod(_enigma.eManagedInputDevicePtrList_resize, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.insert = new_instancemethod(_enigma.eManagedInputDevicePtrList_insert, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.pop_front = new_instancemethod(_enigma.eManagedInputDevicePtrList_pop_front, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.push_front = new_instancemethod(_enigma.eManagedInputDevicePtrList_push_front, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList.reverse = new_instancemethod(_enigma.eManagedInputDevicePtrList_reverse, None, eManagedInputDevicePtrList)
+eManagedInputDevicePtrList_swigregister = _enigma.eManagedInputDevicePtrList_swigregister
+eManagedInputDevicePtrList_swigregister(eManagedInputDevicePtrList)
+
+class eManagedInputDevice(iObject):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    TYPE_UNDEF = _enigma.eManagedInputDevice_TYPE_UNDEF
+    TYPE_DREAMBLE = _enigma.eManagedInputDevice_TYPE_DREAMBLE
+    STATE_DISCONNECTED = _enigma.eManagedInputDevice_STATE_DISCONNECTED
+    STATE_CONNECTING = _enigma.eManagedInputDevice_STATE_CONNECTING
+    STATE_CONNECTED = _enigma.eManagedInputDevice_STATE_CONNECTED
+
+    def address(self):
+        """address(eManagedInputDevice self) -> std::string const"""
+        return _enigma.eManagedInputDevice_address(self)
+
+
+    def name(self):
+        """name(eManagedInputDevice self) -> std::string const"""
+        return _enigma.eManagedInputDevice_name(self)
+
+
+    def shortName(self):
+        """shortName(eManagedInputDevice self) -> std::string const"""
+        return _enigma.eManagedInputDevice_shortName(self)
+
+
+    def batteryLevel(self):
+        """batteryLevel(eManagedInputDevice self) -> int"""
+        return _enigma.eManagedInputDevice_batteryLevel(self)
+
+
+    def rssi(self):
+        """rssi(eManagedInputDevice self) -> int"""
+        return _enigma.eManagedInputDevice_rssi(self)
+
+
+    def encrypted(self):
+        """encrypted(eManagedInputDevice self) -> bool"""
+        return _enigma.eManagedInputDevice_encrypted(self)
+
+
+    def state(self):
+        """state(eManagedInputDevice self) -> int"""
+        return _enigma.eManagedInputDevice_state(self)
+
+
+    def connected(self):
+        """connected(eManagedInputDevice self) -> bool"""
+        return _enigma.eManagedInputDevice_connected(self)
+
+
+    def bound(self):
+        """bound(eManagedInputDevice self) -> bool"""
+        return _enigma.eManagedInputDevice_bound(self)
+
+
+    def ready(self):
+        """ready(eManagedInputDevice self) -> bool"""
+        return _enigma.eManagedInputDevice_ready(self)
+
+
+    def connect(self):
+        """connect(eManagedInputDevice self)"""
+        return _enigma.eManagedInputDevice_connect(self)
+
+
+    def disconnect(self):
+        """disconnect(eManagedInputDevice self)"""
+        return _enigma.eManagedInputDevice_disconnect(self)
+
+
+    def vibrate(self):
+        """vibrate(eManagedInputDevice self)"""
+        return _enigma.eManagedInputDevice_vibrate(self)
+
+
+    def setLedColor(self, color):
+        """setLedColor(eManagedInputDevice self, uint32_t color)"""
+        return _enigma.eManagedInputDevice_setLedColor(self, color)
+
+eManagedInputDevice.address = new_instancemethod(_enigma.eManagedInputDevice_address, None, eManagedInputDevice)
+eManagedInputDevice.name = new_instancemethod(_enigma.eManagedInputDevice_name, None, eManagedInputDevice)
+eManagedInputDevice.shortName = new_instancemethod(_enigma.eManagedInputDevice_shortName, None, eManagedInputDevice)
+eManagedInputDevice.batteryLevel = new_instancemethod(_enigma.eManagedInputDevice_batteryLevel, None, eManagedInputDevice)
+eManagedInputDevice.rssi = new_instancemethod(_enigma.eManagedInputDevice_rssi, None, eManagedInputDevice)
+eManagedInputDevice.encrypted = new_instancemethod(_enigma.eManagedInputDevice_encrypted, None, eManagedInputDevice)
+eManagedInputDevice.state = new_instancemethod(_enigma.eManagedInputDevice_state, None, eManagedInputDevice)
+eManagedInputDevice.connected = new_instancemethod(_enigma.eManagedInputDevice_connected, None, eManagedInputDevice)
+eManagedInputDevice.bound = new_instancemethod(_enigma.eManagedInputDevice_bound, None, eManagedInputDevice)
+eManagedInputDevice.ready = new_instancemethod(_enigma.eManagedInputDevice_ready, None, eManagedInputDevice)
+eManagedInputDevice.connect = new_instancemethod(_enigma.eManagedInputDevice_connect, None, eManagedInputDevice)
+eManagedInputDevice.disconnect = new_instancemethod(_enigma.eManagedInputDevice_disconnect, None, eManagedInputDevice)
+eManagedInputDevice.vibrate = new_instancemethod(_enigma.eManagedInputDevice_vibrate, None, eManagedInputDevice)
+eManagedInputDevice.setLedColor = new_instancemethod(_enigma.eManagedInputDevice_setLedColor, None, eManagedInputDevice)
+eManagedInputDevice_swigregister = _enigma.eManagedInputDevice_swigregister
+eManagedInputDevice_swigregister(eManagedInputDevice)
+
+class eManagedInputDevicePtr(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        _enigma.eManagedInputDevicePtr_swiginit(self, _enigma.new_eManagedInputDevicePtr(*args))
+    __swig_destroy__ = _enigma.delete_eManagedInputDevicePtr
+
+    def address(self):
+        """address(eManagedInputDevicePtr self) -> std::string const"""
+        return _enigma.eManagedInputDevicePtr_address(self)
+
+
+    def name(self):
+        """name(eManagedInputDevicePtr self) -> std::string const"""
+        return _enigma.eManagedInputDevicePtr_name(self)
+
+
+    def shortName(self):
+        """shortName(eManagedInputDevicePtr self) -> std::string const"""
+        return _enigma.eManagedInputDevicePtr_shortName(self)
+
+
+    def batteryLevel(self):
+        """batteryLevel(eManagedInputDevicePtr self) -> int"""
+        return _enigma.eManagedInputDevicePtr_batteryLevel(self)
+
+
+    def rssi(self):
+        """rssi(eManagedInputDevicePtr self) -> int"""
+        return _enigma.eManagedInputDevicePtr_rssi(self)
+
+
+    def encrypted(self):
+        """encrypted(eManagedInputDevicePtr self) -> bool"""
+        return _enigma.eManagedInputDevicePtr_encrypted(self)
+
+
+    def state(self):
+        """state(eManagedInputDevicePtr self) -> int"""
+        return _enigma.eManagedInputDevicePtr_state(self)
+
+
+    def connected(self):
+        """connected(eManagedInputDevicePtr self) -> bool"""
+        return _enigma.eManagedInputDevicePtr_connected(self)
+
+
+    def bound(self):
+        """bound(eManagedInputDevicePtr self) -> bool"""
+        return _enigma.eManagedInputDevicePtr_bound(self)
+
+
+    def ready(self):
+        """ready(eManagedInputDevicePtr self) -> bool"""
+        return _enigma.eManagedInputDevicePtr_ready(self)
+
+
+    def connect(self):
+        """connect(eManagedInputDevicePtr self)"""
+        return _enigma.eManagedInputDevicePtr_connect(self)
+
+
+    def disconnect(self):
+        """disconnect(eManagedInputDevicePtr self)"""
+        return _enigma.eManagedInputDevicePtr_disconnect(self)
+
+
+    def vibrate(self):
+        """vibrate(eManagedInputDevicePtr self)"""
+        return _enigma.eManagedInputDevicePtr_vibrate(self)
+
+
+    def setLedColor(self, color):
+        """setLedColor(eManagedInputDevicePtr self, uint32_t color)"""
+        return _enigma.eManagedInputDevicePtr_setLedColor(self, color)
+
+eManagedInputDevicePtr.__ref__ = new_instancemethod(_enigma.eManagedInputDevicePtr___ref__, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.getPtrString = new_instancemethod(_enigma.eManagedInputDevicePtr_getPtrString, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.__deref__ = new_instancemethod(_enigma.eManagedInputDevicePtr___deref__, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.address = new_instancemethod(_enigma.eManagedInputDevicePtr_address, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.name = new_instancemethod(_enigma.eManagedInputDevicePtr_name, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.shortName = new_instancemethod(_enigma.eManagedInputDevicePtr_shortName, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.batteryLevel = new_instancemethod(_enigma.eManagedInputDevicePtr_batteryLevel, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.rssi = new_instancemethod(_enigma.eManagedInputDevicePtr_rssi, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.encrypted = new_instancemethod(_enigma.eManagedInputDevicePtr_encrypted, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.state = new_instancemethod(_enigma.eManagedInputDevicePtr_state, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.connected = new_instancemethod(_enigma.eManagedInputDevicePtr_connected, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.bound = new_instancemethod(_enigma.eManagedInputDevicePtr_bound, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.ready = new_instancemethod(_enigma.eManagedInputDevicePtr_ready, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.connect = new_instancemethod(_enigma.eManagedInputDevicePtr_connect, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.disconnect = new_instancemethod(_enigma.eManagedInputDevicePtr_disconnect, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.vibrate = new_instancemethod(_enigma.eManagedInputDevicePtr_vibrate, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.setLedColor = new_instancemethod(_enigma.eManagedInputDevicePtr_setLedColor, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr_swigregister = _enigma.eManagedInputDevicePtr_swigregister
+eManagedInputDevicePtr_swigregister(eManagedInputDevicePtr)
+
 class eDeviceEventManager(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -4613,6 +4978,11 @@ class eMediaDatabase(object):
         return _enigma.eMediaDatabase_getInstance()
 
     getInstance = staticmethod(getInstance)
+
+    def resetDatabase(self):
+        """resetDatabase(eMediaDatabase self) -> bool"""
+        return _enigma.eMediaDatabase_resetDatabase(self)
+
 
     def getCurrentScanPath(self):
         """getCurrentScanPath(eMediaDatabase self)"""
@@ -5044,6 +5414,7 @@ class eMediaDatabase(object):
     scanFinished = _swig_property(_enigma.eMediaDatabase_scanFinished_get, _enigma.eMediaDatabase_scanFinished_set)
     insertFinished = _swig_property(_enigma.eMediaDatabase_insertFinished_get, _enigma.eMediaDatabase_insertFinished_set)
     priorityInsertFinished = _swig_property(_enigma.eMediaDatabase_priorityInsertFinished_get, _enigma.eMediaDatabase_priorityInsertFinished_set)
+eMediaDatabase.resetDatabase = new_instancemethod(_enigma.eMediaDatabase_resetDatabase, None, eMediaDatabase)
 eMediaDatabase.getCurrentScanPath = new_instancemethod(_enigma.eMediaDatabase_getCurrentScanPath, None, eMediaDatabase)
 eMediaDatabase.getEnqueuedPaths = new_instancemethod(_enigma.eMediaDatabase_getEnqueuedPaths, None, eMediaDatabase)
 eMediaDatabase.addPath = new_instancemethod(_enigma.eMediaDatabase_addPath, None, eMediaDatabase)
@@ -9172,6 +9543,84 @@ class eSignal2FileWatchEvent(object):
 eSignal2FileWatchEvent.connect2 = new_instancemethod(_enigma.eSignal2FileWatchEvent_connect2, None, eSignal2FileWatchEvent)
 eSignal2FileWatchEvent_swigregister = _enigma.eSignal2FileWatchEvent_swigregister
 eSignal2FileWatchEvent_swigregister(eSignal2FileWatchEvent)
+
+class eSlot2ConstStrBool(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        if self.__class__ == eSlot2ConstStrBool:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2ConstStrBool_swiginit(self, _enigma.new_eSlot2ConstStrBool(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2ConstStrBool
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2ConstStrBool(self)
+        return weakref_proxy(self)
+eSlot2ConstStrBool.cb_func = new_instancemethod(_enigma.eSlot2ConstStrBool_cb_func, None, eSlot2ConstStrBool)
+eSlot2ConstStrBool_swigregister = _enigma.eSlot2ConstStrBool_swigregister
+eSlot2ConstStrBool_swigregister(eSlot2ConstStrBool)
+
+class eSignal2ConstStrBool(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def connect(self, func):
+        class ePythonSlot2ConstStrBool(eSlot2ConstStrBool):
+            def __init__(self, func):
+                eSlot2ConstStrBool.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2ConstStrBool(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+
+    def __init__(self):
+        _enigma.eSignal2ConstStrBool_swiginit(self, _enigma.new_eSignal2ConstStrBool())
+    __swig_destroy__ = _enigma.delete_eSignal2ConstStrBool
+eSignal2ConstStrBool.connect2 = new_instancemethod(_enigma.eSignal2ConstStrBool_connect2, None, eSignal2ConstStrBool)
+eSignal2ConstStrBool_swigregister = _enigma.eSignal2ConstStrBool_swigregister
+eSignal2ConstStrBool_swigregister(eSignal2ConstStrBool)
+
+class eSlot2ConstStrInt(eSlot):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        if self.__class__ == eSlot2ConstStrInt:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot2ConstStrInt_swiginit(self, _enigma.new_eSlot2ConstStrInt(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot2ConstStrInt
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot2ConstStrInt(self)
+        return weakref_proxy(self)
+eSlot2ConstStrInt.cb_func = new_instancemethod(_enigma.eSlot2ConstStrInt_cb_func, None, eSlot2ConstStrInt)
+eSlot2ConstStrInt_swigregister = _enigma.eSlot2ConstStrInt_swigregister
+eSlot2ConstStrInt_swigregister(eSlot2ConstStrInt)
+
+class eSignal2ConstStrInt(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def connect(self, func):
+        class ePythonSlot2ConstStrInt(eSlot2ConstStrInt):
+            def __init__(self, func):
+                eSlot2ConstStrInt.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot2ConstStrInt(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+
+    def __init__(self):
+        _enigma.eSignal2ConstStrInt_swiginit(self, _enigma.new_eSignal2ConstStrInt())
+    __swig_destroy__ = _enigma.delete_eSignal2ConstStrInt
+eSignal2ConstStrInt.connect2 = new_instancemethod(_enigma.eSignal2ConstStrInt_connect2, None, eSignal2ConstStrInt)
+eSignal2ConstStrInt_swigregister = _enigma.eSignal2ConstStrInt_swigregister
+eSignal2ConstStrInt_swigregister(eSignal2ConstStrInt)
 
 class eSlot4UIntUIntUIntUInt(eSlot):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

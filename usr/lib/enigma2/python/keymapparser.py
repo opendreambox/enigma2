@@ -5,13 +5,14 @@ from keyids import KEYIDS
 
 # these are only informational (for help)...
 from Tools.KeyBindings import addKeyBinding
+from Tools.Log import Log
 
 class KeymapError(Exception):
-    def __init__(self, message):
-        self.msg = message
+	def __init__(self, message):
+		self.msg = message
 
-    def __str__(self):
-        return self.msg
+	def __str__(self):
+		return self.msg
 
 def parseKeys(context, filename, actionmap, device, keys):
 	devices = filter(None, map(lambda x: x.strip(), device.split(";")))
@@ -64,8 +65,18 @@ def readKeymap(filename):
 		context = cmap.attrib.get("context")
 		assert context, "map must have context"
 
+		advanced = None
+		hasBle = False
 		for device in cmap.findall("device"):
-			parseKeys(context, filename, p, device.attrib.get("name"), device)
+			devices = device.attrib.get("name")
+			parseKeys(context, filename, p, devices, device)
+			if devices.find("dreambox advanced remote control (native)") >= 0:
+				advanced = device
+			if devices.find("dreambox remote control (bluetooth le)") >= 0:
+				hasBle = True
+		if not hasBle and advanced:
+			Log.w("BLE Keymap fallback to advanced remote  for context %s" %(context,))
+			parseKeys(context, filename, p, "dreambox remote control (bluetooth le)", advanced)
 
 		parseKeys(context, filename, p, "generic", cmap)
 

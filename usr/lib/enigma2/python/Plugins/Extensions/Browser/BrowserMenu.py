@@ -765,8 +765,12 @@ class BrowserMenu(Screen):
 		self.detailList.setList(cookies)
 
 	def __ckGetEntryComponent(self, cookie):
-		date = strftime("%Y-%m-%d", localtime(cookie.expires))
-		time = strftime("%H:%M:%S", localtime(cookie.expires))
+		try:
+			date = strftime("%Y-%m-%d", localtime(cookie.expires))
+			time = strftime("%H:%M:%S", localtime(cookie.expires))
+		except:
+			date = _("never")
+			time = _("never")
 		return ( cookie, date, time, cookie.domain, cookie.path, cookie.raw )
 
 	def __ckDelete(self):

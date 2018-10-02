@@ -31,12 +31,12 @@ def makeEmptyWizard():
 
 NetworkWizardNew = resourcemanager.getResource("NetworkWizard.NetworkWizardNew", makeEmptyWizard())
 VideoWizard = resourcemanager.getResource("videomode.videowizard", makeEmptyWizard())
+InputDeviceWizardBase = resourcemanager.getResource("InputDeviceWizard.InputDeviceWizardBase", makeEmptyWizard())
 
-class StartWizard(NetworkWizardNew, VideoWizard, DefaultSatLists, LanguageSelection, Rc):
+class StartWizard(InputDeviceWizardBase, NetworkWizardNew, VideoWizard, DefaultSatLists, LanguageSelection, Rc):
 	def __init__(self, session, silent = True, showSteps = False, neededTag = None):
 		self.xmlfile = ["startwizard.xml", "defaultsatlists.xml"]
-		DefaultWizard.__init__(self, session, silent, showSteps, neededTag = "services", default = True)
-		WizardLanguage.__init__(self, session, showSteps = False, showMulticontentList = True)
+		DefaultWizard.__init__(self, session, silent, showSteps, neededTag = "services", default = True, showMulticontentList = True)
 		Rc.__init__(self)
 
 		self["wizard"] = Pixmap()
@@ -64,6 +64,15 @@ class StartWizard(NetworkWizardNew, VideoWizard, DefaultSatLists, LanguageSelect
 		self["portpic"] = Pixmap()
 		VideoWizard.__init__(self)
 		self.videoWizardAvailable = VideoWizard not in emptyWizardList
+		InputDeviceWizardBase.__init__(self)
+
+	def _isInputDeviceWizardAvailable(self):
+		return InputDeviceWizardBase not in emptyWizardList and self._dm.available()
+	inputDeviceWizardAvailable = property(_isInputDeviceWizardAvailable)
+
+	def _isInputDeviceFirmwareMissing(self):
+		return self.inputDeviceWizardAvailable and not self._dm.responding()
+	inputDeviceFirmwareMissing = property(_isInputDeviceFirmwareMissing)
 
 	def _buildListEntry(self, *args, **kwargs):
 		return (args[1], args[0])

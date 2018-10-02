@@ -27,7 +27,7 @@ class UPnPConfig(ConfigListScreen, Screen):
 	def __init__(self, session, args=0):
 		Screen.__init__(self, session)
 		ConfigListScreen.__init__(self, [], session=session)
-		self.setTitle("UPnP/DLNA Setup")
+		self.setTitle(_("UPnP/DLNA Setup"))
 
 		self["key_green"] = StaticText(_("OK"))
 		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],

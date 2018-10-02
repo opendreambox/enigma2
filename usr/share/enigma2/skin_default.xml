@@ -171,7 +171,7 @@
 		<widget source="global.CurrentTime" render="Label" position="820,12" size="300,25" font="Regular;22" halign="right">
 			<convert type="ClockToText">Format:%A %d. %B</convert>
 		</widget>
-		<widget name="list" position="10,58" size="840,544" enableWrapAround="1" scrollbarMode="showOnDemand" backgroundColor="background" serviceInfoFont="Regular;20" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" foregroundColorServiceNotAvail="grey" picServiceEventProgressbar="skin_default/progcl.png" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white"/>
+		<widget name="list" position="10,58" size="840,544" enableWrapAround="1" scrollbarMode="showOnDemand" backgroundColor="background" serviceInfoFont="Regular;20" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" foregroundColorServiceNotAvail="#777777" picServiceEventProgressbar="skin_default/progcl.png" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white"/>
 		<eLabel position="10,50" size="1180,1" backgroundColor="grey"/>
 		<eLabel position="860,50" size="1,555" backgroundColor="grey"/>
 		<widget source="ServiceEvent" render="Label" position="870,60" size="320,45" font="Regular;20" foregroundColor="yellow">
@@ -851,10 +851,9 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget name="key0" position="203,95" size="200,30" font="Regular;17" halign="center" valign="center"/>
 		<widget name="help2" position="404,95" size="200,30" font="Regular;20" halign="center" valign="center"/>
 	</screen>
-	<screen name="ConfigSetHelpDialog" position="338,550" zPosition="2" size="607,128" backgroundColor="grey" flags="wfNoBorder">
-		<eLabel position="2,2" size="605,126" backgroundColor="#404040" zPosition="-1"/>
-		<widget name="help1" position="2,2" size="605,60" font="Regular;22" halign="center" valign="center"/>
-		<widget name="help2" position="2,64" size="605,60" font="Regular;18" halign="center" valign="center"/>
+	<screen name="ConfigSetHelpDialog" position="center,550" zPosition="2" size="820,113" backgroundColor="#FFFFFF" flags="wfNoBorder">
+		<widget name="help1" position="1,1" size="818,60" font="Regular;22" halign="center" valign="center"/>
+		<widget name="list" position="1,62" size="818,50" scrollbarMode="showOnDemand" />
 	</screen>
 	<!-- Parental control - editor -->
 	<screen name="ParentalControlEditor" position="center,center" size="520,400" title="Parental control services Editor">
@@ -1140,10 +1139,17 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 								MultiContentEntryText(pos=(55,30),size=(220,18),font=1,flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER,text=4),#ip
 								MultiContentEntryText(pos=(605,30),size=(150,18),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_CENTER,text=5),#state
 								MultiContentEntryText(pos=(5,0),size=(490,50),font=0,flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER,text=6),#technology name
-							])
-				},
-				"fonts": [gFont("Regular",20),gFont("Regular",16)],
-				"itemHeight": 30
+							]),
+						"inputdevice":(50, [
+							MultiContentEntryText(pos = (5, 0), size = (200, 24), font=0, flags = RT_HALIGN_LEFT, text = 0), #device name
+							MultiContentEntryText(pos = (430, 0), size = (110, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 4), #pairing state
+							MultiContentEntryText(pos = (210, 0), size = (210, 50), font=0, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 3), #pairing state
+							MultiContentEntryText(pos = (5, 30), size = (200, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), #device address
+							MultiContentEntryText(pos = (430, 30), size = (110, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 1), #rssi
+							]),
+					},
+					"fonts": [gFont("Regular",20),gFont("Regular",16)],
+					"itemHeight": 30
 				}
 			</convert>
 		</widget>

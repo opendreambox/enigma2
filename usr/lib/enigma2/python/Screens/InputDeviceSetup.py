@@ -9,7 +9,12 @@ from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
+from Screens.Setup import Setup
 
+try:
+	from Plugins.SystemPlugins.InputDeviceManager.InputDeviceManagement import InputDeviceManagement
+except:
+	InputDeviceManagement = None
 class InputDeviceSelection(Screen,HelpableScreen):
 	skin = """
 	<screen name="InputDeviceSelection" position="center,center" size="560,400" title="Select input device">
@@ -45,10 +50,13 @@ class InputDeviceSelection(Screen,HelpableScreen):
 		
 		self.edittext = _("Press OK to edit the settings.")
 		
-		self["key_red"] = StaticText(_("Close"))
-		self["key_green"] = StaticText(_("Select"))
-		self["key_yellow"] = StaticText("")
-		self["key_blue"] = StaticText("")
+		self["key_red"] = StaticText()
+		self["key_green"] = StaticText(_("Keyboard"))
+		txt = ""
+		if InputDeviceManagement:
+			txt = _("Connect")
+			self["key_yellow"] = StaticText(txt)
+		self["key_blue"] = StaticText(_("Avanced"))
 		self["introduction"] = StaticText(self.edittext)
 		
 		self.devices = [(iInputDevices.getDeviceName(x),x) for x in iInputDevices.getDeviceList()]
@@ -62,16 +70,27 @@ class InputDeviceSelection(Screen,HelpableScreen):
 
 		self["ColorActions"] = HelpableActionMap(self, "ColorActions",
 			{
-			"red": (self.close, _("Exit input device selection.")),
-			"green": (self.okbuttonClick, _("Select input device.")),
+			"green": (self._keyboardSetup, _("Set up your keyboard.")),
+			"yellow" : (self._openManager, _("Open Device Connection Manager")),
+			"blue" : (self._advanced, _("Setup Advanced Features")),
 			}, -2)
-		
+
 		self.currentIndex = 0
 		self.list = []
 		self["list"] = List(self.list)
 		self.updateList()
 		self.onLayoutFinish.append(self.layoutFinished)
 		self.onClose.append(self.cleanup)
+
+	def _keyboardSetup(self):
+		self.session.open(Setup, "keyboard")
+
+	def _openManager(self):
+		if InputDeviceManagement:
+			self.session.open(InputDeviceManagement)
+
+	def _advanced(self):
+		self.session.open(AdvancedInputDeviceSetup)
 
 	def layoutFinished(self):
 		self.setTitle(_("Select input device"))
@@ -269,3 +288,32 @@ class InputDeviceSetup(Screen, ConfigListScreen):
 	def createSummary(self):
 		from Screens.Setup import SetupSummary
 		return SetupSummary
+
+class AdvancedInputDeviceSetup(Screen, ConfigListScreen):
+	def __init__(self, session, *args):
+		Screen.__init__(self, session, windowTitle=_("Advanced input device features"))
+		self.skinName = "InputDeviceSetup"
+		ConfigListScreen.__init__(self, [], session = session, on_change = self.__changedEntry)
+
+		self["actions"] = ActionMap(["SetupActions"],
+			{
+				"cancel": self.keyCancel,
+				"save": self.keySave,
+			}, -2)
+
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("OK"))
+		self["key_yellow"] = StaticText()
+		self["key_blue"] = StaticText()
+		self["introduction"] = StaticText(_("These options require a bluetooth enabled and connected remote!"))
+		self.createSetup()
+
+	def __changedEntry(self):
+		self.createSetup()
+
+	def createSetup(self):
+		cfg = [
+			getConfigListEntry(_("LED color when connected to this dreambox"), config.inputDevices.settings.connectedColor),
+			getConfigListEntry(_("Haptic feedback in lists"), config.inputDevices.settings.listboxFeedback),
+		]
+		self["config"].list = cfg
