@@ -4,16 +4,42 @@ from Tools.Notifications import AddNotificationWithCallback
 from Screens.MessageBox import MessageBox
 from Components.config import config
 from InputDeviceManagement import InputDeviceManagement
+from Tools.Directories import createDir
 from Tools.Log import Log
+import time
 
 global inputDeviceWatcher
 inputDeviceWatcher = None
+
 class InputDeviceWatcher(object):
+	BATTERY_LOG_DIR = "/var/lib/enigma2"
+
 	def __init__(self, session):
 		self.session = session
 		self._dm = eInputDeviceManager.getInstance()
 		self.__deviceListChanged_conn = self._dm.deviceListChanged.connect(self._onDeviceListChanged)
+		self.__deviceStateChanged_conn = self._dm.deviceStateChanged.connect(self._onDeviceStateChanged)
+		self._batteryStates = {}
+		logdir = "/tmp"
+		if createDir(self.BATTERY_LOG_DIR):
+			logdir = self.BATTERY_LOG_DIR
+		self._batteryLogFile = "%s/battery.dat" %(logdir,)
 		self._onDeviceListChanged()
+
+	def _onDeviceStateChanged(self, address, state):
+		old = self._batteryStates.get(address, 0)
+		device = self._dm.getDevice(address)
+		if device.ready():
+			new = device.batteryLevel()
+			if old != device.batteryLevel():
+				if config.inputDevices.settings.logBattery.value:
+					Log.i("%s\t%s%% Battery" %(address, device.batteryLevel()))
+					try:
+						with open(self._batteryLogFile, "a") as f:
+							f.write("%s %s %s\n" %(address, int(time.time()), new ))
+					except Exception as e:
+						Log.w(e)
+				self._batteryStates[address] = device.batteryLevel()
 
 	def _onDeviceListChanged(self):
 		if config.misc.firstrun.value: #Wizard will run!

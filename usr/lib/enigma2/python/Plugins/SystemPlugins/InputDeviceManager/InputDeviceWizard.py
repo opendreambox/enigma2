@@ -1,5 +1,5 @@
 from InputDeviceManagement import InputDeviceManagementBase
-from enigma import eManagedInputDevicePtr
+from enigma import eManagedInputDevicePtr, eInputDeviceManager
 
 from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher
 from Tools.Log import Log
@@ -29,15 +29,18 @@ class InputDeviceWizardBase(InputDeviceManagementBase):
 		self._reload()
 
 	def _devicesChanged(self, *args):
-		Log.w("%s" %(self.__isCurrentStep(),))
 		if self.__isCurrentStep():
 			self._reload()
 
 	def yellow(self):
 		if self.__isCurrentStep():
 			device = self._currentInputDevice
-			if device:
-				self._dm.disconnectDevice(device)
+			if not device:
+				return
+			if device.connected():
+				self._disconnectDevice(device)
+			else:
+				self._connectDevice(device)
 
 	def __selChanged(self):
 		self.__updateStates()
@@ -45,16 +48,22 @@ class InputDeviceWizardBase(InputDeviceManagementBase):
 	def __updateStates(self):
 		if not self.__isCurrentStep():
 			return
-		self["state_label"].setText(_("PIN:"))
+		self["state_label"].setText("")
 		device = self._currentInputDevice
 		if isinstance(device, eManagedInputDevicePtr) and device.connected():
 			self["button_yellow_text"].setText(_("Disconnect"))
-			self["text"].setText(_("Please pickup the device you want to connect and press any key on it to select it in the list.\nEnter the assigned PIN code to connect it."))
+			text = _("Press Yellow to disconnect the selected remote control.")
+			if self._dm.hasFeature(eInputDeviceManager.FEATURE_UNCONNECTED_KEYPRESS) and len(self._devices) > 1:
+				text = "%s\n%s" %(_("Please pickup the remote control you want to connect and press any number key on it to select it in the list.\n"), text)
+			self["text"].setText(text)
 		else:
 			self["button_yellow_text"].setText("")
 			if isinstance(device, eManagedInputDevicePtr):
-				pin = self._getPin(device)
-				self["text"].setText(_("Please pickup the device you want to connect and press any key on it to select it in the list.\n\nEnter %s on the currently selected remote to connect it.") %(pin,))
+				self["button_yellow_text"].setText(_("Connect"))
+				text = _("Press Yellow to connect the selected remote control.")
+				if self._dm.hasFeature(eInputDeviceManager.FEATURE_UNCONNECTED_KEYPRESS) and len(self._devices) > 1:
+					text = "%s\n%s" %(_("Please pickup the remote control you want to connect and press any number key on it to select it in the list.\n"), text)
+				self["text"].setText(text)
 
 
 	def _onUnboundRemoteKeyPressed(self, address, key):

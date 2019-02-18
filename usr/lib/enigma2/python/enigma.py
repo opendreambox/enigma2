@@ -1237,6 +1237,7 @@ class iPlayableService_ENUMS(object):
     evVideoSizeChanged = _enigma.iPlayableService_ENUMS_evVideoSizeChanged
     evVideoFramerateChanged = _enigma.iPlayableService_ENUMS_evVideoFramerateChanged
     evVideoProgressiveChanged = _enigma.iPlayableService_ENUMS_evVideoProgressiveChanged
+    evVideoPtsValid = _enigma.iPlayableService_ENUMS_evVideoPtsValid
     evBuffering = _enigma.iPlayableService_ENUMS_evBuffering
     evStopped = _enigma.iPlayableService_ENUMS_evStopped
     evSubtitleListChanged = _enigma.iPlayableService_ENUMS_evSubtitleListChanged
@@ -4451,6 +4452,7 @@ class eInputDeviceManager(iObject):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
+    FEATURE_UNCONNECTED_KEYPRESS = _enigma.eInputDeviceManager_FEATURE_UNCONNECTED_KEYPRESS
 
     def getInstance():
         """getInstance() -> eInputDeviceManager"""
@@ -4466,6 +4468,11 @@ class eInputDeviceManager(iObject):
     def stop(self):
         """stop(eInputDeviceManager self)"""
         return _enigma.eInputDeviceManager_stop(self)
+
+
+    def hasFeature(self, feature):
+        """hasFeature(eInputDeviceManager self, int feature) -> bool"""
+        return _enigma.eInputDeviceManager_hasFeature(self, feature)
 
 
     def available(self):
@@ -4484,7 +4491,7 @@ class eInputDeviceManager(iObject):
 
 
     def getDevice(self, address):
-        """getDevice(eInputDeviceManager self, std::string const address) -> eManagedInputDevicePtr"""
+        """getDevice(eInputDeviceManager self, std::string const & address) -> eManagedInputDevicePtr"""
         return _enigma.eInputDeviceManager_getDevice(self, address)
 
 
@@ -4530,9 +4537,11 @@ class eInputDeviceManager(iObject):
 
     deviceStateChanged = _swig_property(_enigma.eInputDeviceManager_deviceStateChanged_get, _enigma.eInputDeviceManager_deviceStateChanged_set)
     unboundRemoteKeyPressed = _swig_property(_enigma.eInputDeviceManager_unboundRemoteKeyPressed_get, _enigma.eInputDeviceManager_unboundRemoteKeyPressed_set)
+    batteryLow = _swig_property(_enigma.eInputDeviceManager_batteryLow_get, _enigma.eInputDeviceManager_batteryLow_set)
     deviceListChanged = _swig_property(_enigma.eInputDeviceManager_deviceListChanged_get, _enigma.eInputDeviceManager_deviceListChanged_set)
 eInputDeviceManager.start = new_instancemethod(_enigma.eInputDeviceManager_start, None, eInputDeviceManager)
 eInputDeviceManager.stop = new_instancemethod(_enigma.eInputDeviceManager_stop, None, eInputDeviceManager)
+eInputDeviceManager.hasFeature = new_instancemethod(_enigma.eInputDeviceManager_hasFeature, None, eInputDeviceManager)
 eInputDeviceManager.available = new_instancemethod(_enigma.eInputDeviceManager_available, None, eInputDeviceManager)
 eInputDeviceManager.responding = new_instancemethod(_enigma.eInputDeviceManager_responding, None, eInputDeviceManager)
 eInputDeviceManager.version = new_instancemethod(_enigma.eInputDeviceManager_version, None, eInputDeviceManager)
@@ -5663,6 +5672,16 @@ class eNetworkManager(object):
         """setTimeUpdates(eNetworkManager self, std::string const & type)"""
         return _enigma.eNetworkManager_setTimeUpdates(self, type)
 
+
+    def getTimeservers(self):
+        """getTimeservers(eNetworkManager self) -> StringList"""
+        return _enigma.eNetworkManager_getTimeservers(self)
+
+
+    def setTimeservers(self, servers):
+        """setTimeservers(eNetworkManager self, StringList servers)"""
+        return _enigma.eNetworkManager_setTimeservers(self, servers)
+
     availabilityChanged = _swig_property(_enigma.eNetworkManager_availabilityChanged_get, _enigma.eNetworkManager_availabilityChanged_set)
     stateChanged = _swig_property(_enigma.eNetworkManager_stateChanged_get, _enigma.eNetworkManager_stateChanged_set)
     onlineChanged = _swig_property(_enigma.eNetworkManager_onlineChanged_get, _enigma.eNetworkManager_onlineChanged_set)
@@ -5681,6 +5700,7 @@ class eNetworkManager(object):
     browserRequested = _swig_property(_enigma.eNetworkManager_browserRequested_get, _enigma.eNetworkManager_browserRequested_set)
     userConnectRequested = _swig_property(_enigma.eNetworkManager_userConnectRequested_get, _enigma.eNetworkManager_userConnectRequested_set)
     connectionRequest = _swig_property(_enigma.eNetworkManager_connectionRequest_get, _enigma.eNetworkManager_connectionRequest_set)
+    timeserversChanged = _swig_property(_enigma.eNetworkManager_timeserversChanged_get, _enigma.eNetworkManager_timeserversChanged_set)
 eNetworkManager.state = new_instancemethod(_enigma.eNetworkManager_state, None, eNetworkManager)
 eNetworkManager.offlineMode = new_instancemethod(_enigma.eNetworkManager_offlineMode, None, eNetworkManager)
 eNetworkManager.defaultRoute = new_instancemethod(_enigma.eNetworkManager_defaultRoute, None, eNetworkManager)
@@ -5695,6 +5715,8 @@ eNetworkManager.online = new_instancemethod(_enigma.eNetworkManager_online, None
 eNetworkManager.getUserInputRequestFields = new_instancemethod(_enigma.eNetworkManager_getUserInputRequestFields, None, eNetworkManager)
 eNetworkManager.timeUpdates = new_instancemethod(_enigma.eNetworkManager_timeUpdates, None, eNetworkManager)
 eNetworkManager.setTimeUpdates = new_instancemethod(_enigma.eNetworkManager_setTimeUpdates, None, eNetworkManager)
+eNetworkManager.getTimeservers = new_instancemethod(_enigma.eNetworkManager_getTimeservers, None, eNetworkManager)
+eNetworkManager.setTimeservers = new_instancemethod(_enigma.eNetworkManager_setTimeservers, None, eNetworkManager)
 eNetworkManager_swigregister = _enigma.eNetworkManager_swigregister
 eNetworkManager_swigregister(eNetworkManager)
 eNetworkManager.STATE_IDLE = _enigma.cvar.eNetworkManager_STATE_IDLE
@@ -7210,6 +7232,7 @@ class eCec(object):
     ADDR_UNREGISTERED_BROADCAST = _enigma.eCec_ADDR_UNREGISTERED_BROADCAST
     VENDOR_DREAM = _enigma.eCec_VENDOR_DREAM
     VENDOR_AKAI = _enigma.eCec_VENDOR_AKAI
+    VENDOR_AMAZON = _enigma.eCec_VENDOR_AMAZON
     VENDOR_AOC = _enigma.eCec_VENDOR_AOC
     VENDOR_BENQ = _enigma.eCec_VENDOR_BENQ
     VENDOR_BROADCOM = _enigma.eCec_VENDOR_BROADCOM

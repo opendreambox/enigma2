@@ -1,5 +1,4 @@
 from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
 from Components.ActionMap import NumberActionMap
 from Components.Input import Input
 from Components.Label import Label
@@ -9,7 +8,9 @@ from Components.SystemInfo import SystemInfo
 from enigma import eEPGCache
 from time import time
 
-config.SleepTimer.defaulttime = ConfigInteger(default = 30)
+import math
+
+config.SleepTimer.defaulttime = ConfigInteger(default = 30, limits=(0,9999))
 
 class SleepTimerEdit(Screen):
 	def __init__(self, session):
@@ -67,7 +68,9 @@ class SleepTimerEdit(Screen):
 			"disableTimer": self.disableTimer,
 			"toggleAction": self.toggleAction,
 			"toggleAsk": self.toggleAsk,
-			"useServiceTime": self.useServiceTime
+			"useServiceTime": self.useServiceTime,
+			"up": self.incrementTime,
+			"down": self.decrementTime,
 		}, -1)
 
 	def updateColors(self):
@@ -97,20 +100,52 @@ class SleepTimerEdit(Screen):
 		self.close()
 
 	def select(self):
-		if self.status:
-			time = int(self["input"].getText())
+		time = self._intValue()
+		if self.status and time:
 			config.SleepTimer.defaulttime.setValue(time)
 			config.SleepTimer.defaulttime.save()
 			config.SleepTimer.action.save()
 			config.SleepTimer.ask.save()
 			self.session.nav.SleepTimer.setSleepTime(time)
-			self.session.openWithCallback(self.close, MessageBox, _("The sleep timer has been activated."), MessageBox.TYPE_INFO)
+			self.session.toastManager.showToast(_("The sleep timer has been activated.") + "\n%s minutes" %(self["input"].getText(),))
 		else:
+			self.status = False
 			self.session.nav.SleepTimer.clear()
-			self.session.openWithCallback(self.close, MessageBox, _("The sleep timer has been disabled."), MessageBox.TYPE_INFO)
+			self.session.toastManager.showToast(_("The sleep timer has been disabled."))
+		self.close(True)
 
 	def keyNumberGlobal(self, number):
 		self["input"].number(number)
+
+	def _intValue(self):
+		return int(self["input"].getText() or self._min())
+
+	def _min(self):
+		return config.SleepTimer.defaulttime.limits[0][0]
+
+	def _max(self):
+		return config.SleepTimer.defaulttime.limits[0][1]
+
+	def incrementTime(self):
+		val = self._intValue()
+		value = int(math.ceil(val / 10.0)) * 10 #round up
+		if val >= 10 or val == 0:
+			time = str(min(value + 10, self._max()))
+		else:
+			time = str(value)
+		self.setTime(time)
+
+	def decrementTime(self):
+		value = self._intValue()
+		decrement = 10 if value > 10 else 1
+		if value >= 10:
+			value = int(math.floor(value / 10.0)) * 10
+		time = str(max(value - decrement, self._min()))
+		self.setTime(time)
+
+	def setTime(self, time):
+		self["input"].allmarked=True
+		self["input"].setText(time)
 
 	def selectLeft(self):
 		self["input"].left()

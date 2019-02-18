@@ -78,7 +78,7 @@ class UpdateCheck(object):
 			self.recalcNext()
 
 	def check(self):
-		if config.plugins.updatechecker.interval.value != UPDATE_CHECK_NEVER:
+		if config.plugins.updatechecker.interval.value != UPDATE_CHECK_NEVER or config.plugins.updatechecker.checkonboot.value:
 			iSoftwareTools.startSoftwareTools(self._onSoftwareToolsReady)
 
 	def _onSoftwareToolsReady(self, retval = None):
@@ -94,7 +94,7 @@ class UpdateCheck(object):
 				for fnc in self.onUpdatesAvailable:
 					fnc(iSoftwareTools.available_updates)
 			else:
-				self._session.toastManager.showToast(_("Your Dreambox software is update to date!"))
+				self._session.toastManager.showToast(_("Your Dreambox software is up to date!"))
 				Log.i("There are no updates available.")
 		else:
 			if iSoftwareTools.NetworkConnectionAvailable:

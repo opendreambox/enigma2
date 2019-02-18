@@ -1,7 +1,12 @@
+from Components.config import config
+from Screens.Setup import Setup
+from Tools.Log import Log
+from Tools import Notifications
+
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 
-from os import environ, unlink, symlink
+from os import environ, unlink, symlink, path
 import time
 
 class Timezones:
@@ -16,8 +21,23 @@ class Timezones:
 	
 	def __init__(self):
 		self.timezones = []
-		
+		self._defaultZone = "(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Vienna"
+
 		self.readTimezonesFromFile()
+
+	def checkUpgrade(self):
+		if config.timezone.version.value == 0:
+			try:
+				currentZone = path.realpath('/etc/localtime')
+				Log.w(currentZone)
+				if currentZone.endswith('Istanbul'):
+					Log.w("Current timezone is Europe/Istanbul. User needs to verify!")
+					self._defaultZone = "(GMT+03:00) Istanbul"
+					Notifications.AddNotification(Setup, "timezone")
+			except:
+				pass
+			config.timezone.version.value = 1
+			config.timezone.version.save()
 
 	def readTimezonesFromFile(self):
 		parser = make_parser()
@@ -35,7 +55,7 @@ class Timezones:
 	def activateTimezone(self, index):
 		if len(self.timezones) <= index:
 			return
-		
+
 		environ['TZ'] = self.timezones[index][1]
 		try:
 			unlink("/etc/localtime")
@@ -56,9 +76,8 @@ class Timezones:
 
 	def getDefaultTimezone(self):
 		# TODO return something more useful - depending on country-settings?
-		t = "(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Vienna"
 		for (a,b) in self.timezones:
-			if a == t:
+			if a ==  self._defaultZone:
 				return a
 		return self.timezones[0][0]
 

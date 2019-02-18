@@ -55,8 +55,8 @@ class InputDeviceSelection(Screen,HelpableScreen):
 		txt = ""
 		if InputDeviceManagement:
 			txt = _("Connect")
-			self["key_yellow"] = StaticText(txt)
-		self["key_blue"] = StaticText(_("Avanced"))
+		self["key_yellow"] = StaticText(txt)
+		self["key_blue"] = StaticText(_("Advanced"))
 		self["introduction"] = StaticText(self.edittext)
 		
 		self.devices = [(iInputDevices.getDeviceName(x),x) for x in iInputDevices.getDeviceList()]

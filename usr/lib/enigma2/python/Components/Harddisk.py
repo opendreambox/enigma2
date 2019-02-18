@@ -807,7 +807,7 @@ class HarddiskManager:
 
 	def __isBlacklisted(self, data):
 		major = int(data.get('MAJOR', '0'))
-		return major in (1, 7, 31, 179) # ram, loop, mtdblock, mmcblk
+		return major in (1, 7, 9, 31, 179) # ram, loop, md, mtdblock, mmcblk
 
 	def __callDeviceNotifier(self, device, reason):
 		if not device:

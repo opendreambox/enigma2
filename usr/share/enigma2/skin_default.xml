@@ -55,6 +55,7 @@
 		<color name="WindowTitleBackground" color="#000000"/>
 	</windowstyle>
 	<windowstylescrollbar id="4"/>
+	<windowstylescrollbar id="5"/>
 	<fonts>
 		<font filename="nmsbd.ttf" name="Display" scale="90"/>
 	</fonts>
@@ -1142,10 +1143,10 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 							]),
 						"inputdevice":(50, [
 							MultiContentEntryText(pos = (5, 0), size = (200, 24), font=0, flags = RT_HALIGN_LEFT, text = 0), #device name
-							MultiContentEntryText(pos = (430, 0), size = (110, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 4), #pairing state
-							MultiContentEntryText(pos = (210, 0), size = (210, 50), font=0, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 3), #pairing state
+							MultiContentEntryText(pos = (210, 0), size = (310, 50), font=0, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 3), #pairing state
+							MultiContentEntryText(pos = (670, 0), size = (200, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 4), #connection state
 							MultiContentEntryText(pos = (5, 30), size = (200, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), #device address
-							MultiContentEntryText(pos = (430, 30), size = (110, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 1), #rssi
+							MultiContentEntryText(pos = (670, 30), size = (200, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 1), #rssi
 							]),
 					},
 					"fonts": [gFont("Regular",20),gFont("Regular",16)],

@@ -51,6 +51,16 @@
 		<pixmap filename="Default-FHD/skin_default/scrollbar.svg" name="BackgroundPixmap" />
 		<pixmap filename="Default-FHD/skin_default/slider.svg" name="ValuePixmap" />
 	</windowstylescrollbar>
+	<windowstylescrollbar id="5">
+		<value name="BackgroundPixmapTopHeight" value="0" />
+		<value name="BackgroundPixmapBottomHeight" value="0" />
+		<value name="ValuePixmapTopHeight" value="2" />
+		<value name="ValuePixmapBottomHeight" value="2" />
+		<value name="ScrollbarWidth" value="6" />
+		<value name="ScrollbarBorderWidth" value="0" />
+		<pixmap filename="Default-FHD/skin_default/scrollbar-h.svg" name="BackgroundPixmap" />
+		<pixmap filename="Default-FHD/skin_default/slider.svg" name="ValuePixmap" />
+	</windowstylescrollbar>
 	<windowstyle id="1" type="skinned">
 		<color color="#000000" name="Background" />
 		<color color="#ffffff" name="LabelForeground" />

@@ -34,7 +34,8 @@ class MenuList(HTMLComponent, GUIComponent):
 			instance.setItemWidth(self._itemWidth)
 
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
-		self.instance.setWrapAround(self.enableWrapAround)
+		if self.enableWrapAround:
+			self.instance.setWrapAround(self.enableWrapAround)
 
 	def preWidgetRemove(self, instance):
 		instance.setContent(None)

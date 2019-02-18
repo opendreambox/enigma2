@@ -143,6 +143,7 @@ class InitInputDevices:
 		config.inputDevices = ConfigSubsection()
 		config.inputDevices.settings = ConfigSubsection()
 		config.inputDevices.settings.firstDevice = ConfigBoolean(default=True)
+		config.inputDevices.settings.logBattery = ConfigBoolean(default=False)
 		config.inputDevices.settings.listboxFeedback = ConfigOnOff(default=True)
 		colors = [
 			("0xFF0000",_("red")),

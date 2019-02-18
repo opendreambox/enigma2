@@ -12,8 +12,7 @@ from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher
 
 class InputDeviceManagementBase(object):
 	def __init__(self):
-		self._pendingPin = StaticText("----")
-		self["pin"] = self._pendingPin
+		self["pin"] = StaticText() #unused dummy
 
 		self._devices = []
 		self._list = List([], enableWrapAround=True, buildfunc=self._inputDeviceBuildFunc)
@@ -23,8 +22,6 @@ class InputDeviceManagementBase(object):
 		self.__deviceListChanged_conn = self._dm.deviceListChanged.connect(self._devicesChanged)
 		self.__deviceStateChanged_conn = self._dm.deviceStateChanged.connect(self._devicesChanged)
 		self.__unboundRemoteKeyPressed_conn = self._dm.unboundRemoteKeyPressed.connect(self._onUnboundRemoteKeyPressed)
-		self._pins = {}
-		self._lastUnboundKey = -1
 		self._dm.rescan()
 
 	def responding(self):
@@ -51,12 +48,11 @@ class InputDeviceManagementBase(object):
 		items = self._dm.getAvailableDevices()
 		devices = []
 		for d in items:
-			self._getPin(d)
 			devices.append((d.address(),d))
 		return devices
 
 	def _inputDeviceBuildFunc(self, title, device):
-		bound = str(self._getPin(device))
+		bound = ""
 		if device.bound():
 			bound = _("bound")
 		# A device may be connected but not yet bound right after binding has started!
@@ -69,14 +65,6 @@ class InputDeviceManagementBase(object):
 			bound,
 			_("connected") if device.connected() else _("disconnected")
 		)
-
-	def _getPin(self, device):
-		addr = device.address()
-		pin = self._pins.get(addr, None)
-		if not pin and not device.connected():
-			pin = self._genPin()
-			self._pins[addr] = pin
-		return pin
 
 	def _devicesChanged(self, *args):
 		pass
@@ -91,49 +79,8 @@ class InputDeviceManagementBase(object):
 		if device and device.connected():
 			self._dm.disconnectDevice(device)
 
-	def _genPin(self):
-		import random
-		digits = set(range(10))
-		first = random.randint(1, 9)
-		last = random.sample(digits - {first}, 3)
-		pin = "%s%s" %(first, ''.join(map(str, last)))
-		return pin
-
-	def _setPendingPin(self, value):
-		txt = value
-		while len(txt) < 4:
-			txt += "-"
-		self._pendingPin.text = txt
-
 	def _onUnboundRemoteKeyPressed(self, address, key):
-		if key < 2 or key > 11 or key == self._lastUnboundKey:
-			return
-		self._lastUnboundKey = key
-		Log.i("pressed %s on %s" %(key, address))
-
-		# compare device addresses
-		device = self._currentInputDevice
-		if not device or (address != device.address()):
-			self._setPendingPin("")
-			Log.w("wrong address! %s" %(address))
-			return
-
-		pin = self._pins.get(address, None)
-		if pin is None:
-			self._setPendingPin("")
-			return
-
-		value = { 2 : 1, 3 : 2, 4 : 3, 5 : 4, 6 : 5, 7 : 6, 8 : 7, 9 : 8, 10 : 9, 11: 0 }.get(key, -1)
-		pending = self._pendingPin.text.replace("-", "")
-
-		if not pin.startswith(pending):
-			self._setPendingPin(str(value))
-		else:
-			self._setPendingPin("%s%s" %(pending, value))
-		if self._pendingPin.text == pin:
-			self._pendingPin.text = _("PIN MATCH!")
-			self._pins[device.address()] = self._genPin()
-			self._connectDevice(device)
+		pass
 
 class InputDeviceManagement(Screen, InputDeviceManagementBase):
 	skin = """
@@ -146,7 +93,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 		<widget name="key_green" position="210,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget name="key_yellow" position="410,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget name="key_blue" position="610,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="list" render="Listbox" position="10,60" size="800,370" scrollbarMode="showOnDemand">
+		<widget source="list" render="Listbox" position="10,60" size="800,340" scrollbarMode="showOnDemand">
 			<convert type="TemplatedMultiContent">
 				{"template":[
 						MultiContentEntryText(pos = (5, 0), size = (590, 24), font=0, flags = RT_HALIGN_LEFT, text = 0), #device name
@@ -160,8 +107,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 				}
 			</convert>
 		</widget>
-		<widget source="description" render="Label" position="10,340" size="800,100" font="Regular;22" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-		<widget source="pin" render="Label" position="10,450" size="800,30" font="Regular;26" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+		<widget source="description" render="Label" position="10,410" size="800,100" font="Regular;22" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
 	</screen>"""
 
 	def __init__(self, session):
@@ -192,7 +138,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 			self.session.openWithCallback(
 				self._flashInputDeviceAdapterFirmware,
 				MessageBox,
-				_("Your Dreambox bluetooth receiver has no firmware installed.\nInstall latest firmware now?"),
+				_("Your Dreambox bluetooth receiver has no firmware installed.\nInstall the latest firmware now?"),
 				type=MessageBox.TYPE_YESNO,
 				windowTitle=_("Flash Bluetooth Receiver Firmware?"))
 			return
@@ -201,14 +147,15 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 		if not self.available():
 			self["description"].text = _("No dreambox bluetooth receiver detected! Sorry!")
 			return
-		txt = _("Enter the assigned PIN code to connect the selected remote.\nPress OK to enforce connecting to the currently selected remote.")
+		text = ""
 		if self._currentInputDevice and self._currentInputDevice.connected():
-			txt = _("Press OK to disconnect")
+			text = _("Press OK to disconnect")
 		elif self._currentInputDevice:
-			pin = self._getPin(self._currentInputDevice)
-			txt = _("Press OK or enter %s on the currently selected remote to connect.") %(pin,)
-		if txt != self["description"].text:
-			self["description"].text = txt
+			text = _("Press OK to connect the selected remote control.")
+			if self._dm.hasFeature(eInputDeviceManager.FEATURE_UNCONNECTED_KEYPRESS) and len(self._devices) > 1:
+				text = "%s\n%s" %(("Please pickup the remote control you want to connect and press any number key on it to select it in the list.\n"), text)
+		if text != self["description"].text:
+			self["description"].text = text
 
 	def _devicesChanged(self, *args):
 		self._reload()
@@ -219,9 +166,9 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 			return
 		name = device.shortName() or "Dream RCU"
 		if device.connected():
-			self.session.openWithCallback(self._onDisconnectResult, MessageBox, _("Really disconnect %s (%s)?" %(name, device.address())), windowTitle=_("Disconnect paired remote?"))
+			self.session.openWithCallback(self._onDisconnectResult, MessageBox, _("Really disconnect %s (%s)?") %(name, device.address()), windowTitle=_("Disconnect paired remote?"))
 		else:
-			self.session.openWithCallback(self._onConnectResult, MessageBox, _("Do you really want to bind to %s (%s) "%(name, device.address())), windowTitle=_("Bind new remote?"))
+			self.session.openWithCallback(self._onConnectResult, MessageBox, _("Do you really want to connect %s (%s) ") %(name, device.address()), windowTitle=_("Connect new remote?"))
 
 	def _onDisconnectResult(self, result):
 		if result:
@@ -238,7 +185,6 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 				self._list.index = index
 				break
 			index += 1
-		return InputDeviceManagementBase._onUnboundRemoteKeyPressed(self, address, key)
 
 	def _flashInputDeviceAdapterFirmware(self, answer):
 		if answer:

@@ -10,6 +10,7 @@ from Components.Sources.Boolean import Boolean
 from Components.Sources.RecordState import RecordState
 from Components.Converter.Combine import Combine
 from Components.Renderer.FrontpanelLed import FrontpanelLed
+from Components.Sources.InputDevice import InputDevice
 
 class SessionGlobals(Screen):
 	def __init__(self, session):
@@ -24,6 +25,7 @@ class SessionGlobals(Screen):
 		self["TunerInfo"] = TunerInfo()
 		self["RecordState"] = RecordState(session)
 		self["Standby"] = Boolean(fixed = False)
+		self["InputDevice"] = InputDevice()
 		
 		from Components.SystemInfo import SystemInfo
 		

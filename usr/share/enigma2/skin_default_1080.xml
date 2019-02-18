@@ -48,6 +48,16 @@
 		<pixmap filename="Default-FHD/skin_default/scrollbar.svg" name="BackgroundPixmap" />
 		<pixmap filename="Default-FHD/skin_default/slider.svg" name="ValuePixmap" />
 	</windowstylescrollbar>
+	<windowstylescrollbar id="5">
+		<value name="BackgroundPixmapTopHeight" value="0" />
+		<value name="BackgroundPixmapBottomHeight" value="0" />
+		<value name="ValuePixmapTopHeight" value="2" />
+		<value name="ValuePixmapBottomHeight" value="2" />
+		<value name="ScrollbarWidth" value="6" />
+		<value name="ScrollbarBorderWidth" value="0" />
+		<pixmap filename="Default-FHD/skin_default/scrollbar-h.svg" name="BackgroundPixmap" />
+		<pixmap filename="Default-FHD/skin_default/slider.svg" name="ValuePixmap" />
+	</windowstylescrollbar>
 	<windowstyle id="1" type="skinned">
 		<color color="#000000" name="Background" />
 		<color color="#ffffff" name="LabelForeground" />
@@ -643,7 +653,7 @@ self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
 		<eLabel backgroundColor="grey" position="0,0" size="1200,2" />
 		<widget backgroundColor="background" font="Regular;30" foregroundColor="yellow" halign="center" name="help1" position="10,5" size="1180,70" valign="center" />
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-		<widget backgroundColor="background" font="Regular;26" foregroundColor="white" halign="center" name="help2" position="10,90" size="1180,90" />
+		<widget name="list" scrollbarMode="showOnDemand" position="10,90" size="1180,50" />
 	</screen>
 	<screen name="Console" position="center,170" size="1200,820" title="Command execution...">
 		<widget font="Regular;30" name="text" position="10,10" size="1180,800" />
@@ -1799,6 +1809,32 @@ self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
 		<eLabel backgroundColor="grey" position="10,730" size="1180,1" />
 		<widget font="Regular;32" halign="center" position="10,740" render="Label" size="1180,75" source="introduction" valign="center" />
 	</screen>
+	<screen name="InputDeviceManagement" position="center,170" size="1200,820" title="Input Devices">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_red" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_green" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_yellow" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" name="key_blue" transparent="1" valign="center" zPosition="1" />
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" position="10,90" render="Listbox" scrollbarMode="showOnDemand" size="1180,560" source="list">
+			<convert type="TemplatedMultiContent">
+				{"template":[
+				MultiContentEntryText(pos=(5,8),size=(800,35),font=0,flags=RT_HALIGN_LEFT,text=0),#device name
+				MultiContentEntryText(pos=(815,0),size=(360,18),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_CENTER,text=4),#connection state
+				MultiContentEntryText(pos=(430,0),size=(300,70),font=0,flags=RT_HALIGN_CENTER|RT_VALIGN_CENTER,text=3),#pairing state
+				MultiContentEntryText(pos=(5,43),size=(400,30),font=1,flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER,text=2),#device address
+				MultiContentEntryText(pos=(760,43),size=(400,30),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_TOP,text=1),#rssi
+				],
+				"fonts": [gFont("Regular",30),gFont("Regular",24)],"itemHeight":70}
+			</convert>
+		</widget>
+		<eLabel backgroundColor="grey" position="10,660" size="1180,1" />
+		<widget font="Regular;30" halign="center" position="10,670" render="Label" size="1180,70" source="description" valign="center" />
+		<widget font="Regular;32" halign="center" position="10,760" render="Label" size="1180,35" source="pin" valign="center" />
+	</screen>
 	<screen name="InputDeviceSetup" position="center,170" size="1200,820" title="Input device setup">
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
@@ -2255,7 +2291,7 @@ self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
 		<widget name="ErrorPixmap" pixmap="Default-FHD/skin_default/icons/input_error.svg" position="20,20" size="100,100" />
 		<widget name="QuestionPixmap" pixmap="Default-FHD/skin_default/icons/input_question.svg" position="20,20" size="100,100" />
 		<widget name="InfoPixmap" pixmap="Default-FHD/skin_default/icons/input_info.svg" position="20,20" size="100,100" />
-		<widget enableWrapAround="1" name="list" position="20,160" size="560,300" />
+		<widget enableWrapAround="1" name="list" position="20,160" size="860,300" />
 		<applet type="onLayoutFinish">
 # this should be factored out into some helper code,but currently demonstrates applets.
 from enigma import eSize,ePoint
@@ -2271,8 +2307,8 @@ if self.type == self.TYPE_YESNO:
 	offset=100
 wsizex=textsize[0] + 180
 wsizey=textsize[1] + offset
-if (600 &gt; wsizex):
-	wsizex=600
+if (800 &gt; wsizex):
+	wsizex=800
 wsize=(wsizex,wsizey)
 
 # resize
@@ -2952,19 +2988,19 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<eLabel backgroundColor="grey" position="10,650" size="1180,1" />
 		<widget font="Regular;32" halign="center" position="10,655" render="Label" size="1180,145" source="help" valign="center" />
 	</screen>
-	<screen backgroundColor="transparent" flags="wfNoBorder" name="ShowClock" size="620,175">
-		<widget backgroundColor="background" font="Regular;95" foregroundColor="yellow" halign="center" position="0,-5" render="Label" size="620,100" source="global.CurrentTime" valign="center">
+	<screen flags="wfNoBorder" name="ShowClock" size="420,110">
+		<widget backgroundColor="background" font="Regular;55" foregroundColor="yellow" halign="center" position="0,2" render="Label" size="420,60" source="global.CurrentTime" valign="center">
 			<convert type="ClockToText">WithSeconds</convert>
 		</widget>
-		<widget backgroundColor="background" font="Regular;50" halign="center" position="0,105" render="Label" size="620,70" source="global.CurrentTime" valign="center">
+		<widget backgroundColor="background" font="Regular;30" halign="center" position="0,65" render="Label" size="420,35" source="global.CurrentTime" valign="center">
 			<convert type="ClockToText">Format:%A,%d.%m.%Y</convert>
 		</widget>
 	</screen>
-	<screen backgroundColor="transparent" flags="wfNoBorder" name="ShowClockPositioner" size="620,175">
-		<widget backgroundColor="background" font="Regular;95" foregroundColor="yellow" halign="center" position="0,-5" render="Label" size="620,100" source="global.CurrentTime" valign="center">
+	<screen flags="wfNoBorder" name="ShowClockPositioner" size="420,110">
+		<widget backgroundColor="background" font="Regular;55" foregroundColor="yellow" halign="center" position="0,2" render="Label" size="420,60" source="global.CurrentTime" valign="center">
 			<convert type="ClockToText">WithSeconds</convert>
 		</widget>
-		<widget backgroundColor="background" font="Regular;50" halign="center" position="0,105" render="Label" size="620,70" source="global.CurrentTime" valign="center">
+		<widget backgroundColor="background" font="Regular;30" halign="center" position="0,65" render="Label" size="420,35" source="global.CurrentTime" valign="center">
 			<convert type="ClockToText">Format:%A,%d.%m.%Y</convert>
 		</widget>
 	</screen>
@@ -3254,7 +3290,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<ePixmap pixmap="Default-FHD/menu/software_manager.svg" position="78,80" size="300,300" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="78,600" size="300,70" />
 		<widget backgroundColor="#9f1313" font="Regular;32" halign="center" position="78,600" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" source="key_red" transparent="1" valign="center" zPosition="1" />
-		<widget enableWrapAround="1" position="470,20" render="Listbox" scrollbarMode="showOnDemand" size="710,420" source="menu">
+		<widget enableWrapAround="1" position="470,20" render="Listbox" scrollbarMode="showOnDemand" size="710,480" source="menu">
 			<convert type="TemplatedMultiContent">
 				{"template": [
 				MultiContentEntryText(pos=(5,5),size=(700,50),flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER,text=1),# index 0 is the MenuText,
@@ -3263,7 +3299,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 				"itemHeight": 60}
 			</convert>
 		</widget>
-		<widget position="470,520" render="Listbox" scrollbarMode="showNever" selectionDisabled="1" size="710,180" source="menu">
+		<widget position="470,540" render="Listbox" scrollbarMode="showNever" selectionDisabled="1" size="710,180" source="menu">
 			<convert type="TemplatedMultiContent">
 				{"template": [
 				MultiContentEntryText(pos=(0,0),size=(710,180),flags=RT_HALIGN_LEFT|RT_WRAP,text=2,color=0xa0a0a0),# index 2 is the Description,
@@ -4380,11 +4416,11 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget enableWrapAround="1" source="list" render="Listbox" position="10,90" scrollbarMode="showOnDemand" size="1180,720">
 			<convert type="TemplatedMultiContent">
 				{"template": [
-				MultiContentEntryText(pos=(75,1), size=(1100,35), text = 0, font = 0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER),
-				MultiContentEntryText(pos=(75,37), size=(1100,35), text = 1, font = 0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER),
-				MultiContentEntryPixmapAlphaTest(pos=(5,11), size=(60,60), png = 2),
+				MultiContentEntryText(pos=(75,1),size=(1100,35),text=0,font=0,flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER),
+				MultiContentEntryText(pos=(75,37),size=(1100,35),text=1,font=0,flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER),
+				MultiContentEntryPixmapAlphaTest(pos=(5,11),size=(60,60),png=2),
 				],
-				"fonts": [gFont("Regular", 30)],
+				"fonts": [gFont("Regular",30)],
 				"itemHeight": 72
 				}
 			</convert>
@@ -4415,9 +4451,9 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget enableWrapAround="1" source="list" render="Listbox" position="10,90" scrollbarMode="showOnDemand" size="1180,720">
 			<convert type="TemplatedMultiContent">
 			{"template": [
-			MultiContentEntryText(pos=(5,0), size=(1170,45), text = 0, font = 0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER),
+			MultiContentEntryText(pos=(5,0),size=(1170,45),text=0,font=0,flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER),
 			],
-			"fonts": [gFont("Regular", 30)],
+			"fonts": [gFont("Regular",30)],
 			"itemHeight": 45
 			}
 			</convert>

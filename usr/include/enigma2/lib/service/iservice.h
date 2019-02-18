@@ -1035,6 +1035,7 @@ public:
 		evVideoSizeChanged,
 		evVideoFramerateChanged,
 		evVideoProgressiveChanged,
+		evVideoPtsValid,
 
 		evBuffering,
 

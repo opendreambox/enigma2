@@ -49,6 +49,9 @@ class DreamboxDBus(object):
 	def stop(self):
 		return self._interface.stop()
 
+	def getDuration(self):
+		return self._interface.getDuration()
+
 	def getPosition(self):
 		return self._interface.getPosition()
 
@@ -91,6 +94,8 @@ def getArgs():
 	subparsers.add_parser('pause', help='pause running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	subparsers.add_parser('resume', help='resume paused service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	subparsers.add_parser('stop', help='stop running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+	#duration
+	subparsers.add_parser('duration', help='get duration of running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	#position
 	ppos = subparsers.add_parser('position', help='get/set position of running service', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	posgroup = ppos.add_mutually_exclusive_group(required=False)
@@ -213,6 +218,8 @@ def main():
 				print "ok:stop"
 			else:
 				print "error:stop"
+		elif args.cmd == "duration":
+			print ddbus.getDuration()
 		elif args.cmd == "position":
 			if args.set:
 				if ddbus.setPosition(args.set):

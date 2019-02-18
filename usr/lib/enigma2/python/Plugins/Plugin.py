@@ -1,5 +1,7 @@
 from Components.config import ConfigSubsection, config
+from Tools.Directories import resolveFilename, SCOPE_SKIN
 from Tools.LoadPixmap import LoadPixmap
+from os import path as os_path
 
 config.plugins = ConfigSubsection()
 
@@ -103,7 +105,11 @@ class PluginDescriptor:
 
 	def updateIcon(self, path):
 		if isinstance(self.iconstr, str):
-			self.icon = LoadPixmap('/'.join((path, self.iconstr)))
+			skin_plugin_icon = os_path.join(os_path.dirname(resolveFilename(SCOPE_SKIN, config.skin.primary_skin.value)), "plugin_icons", os_path.basename(path), self.iconstr)
+			if os_path.exists(skin_plugin_icon):
+				self.icon = LoadPixmap(skin_plugin_icon)
+			else:
+				self.icon = LoadPixmap('/'.join((path, self.iconstr)))
 		else:
 			self.icon = None
 

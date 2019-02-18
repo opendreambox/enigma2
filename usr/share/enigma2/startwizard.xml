@@ -80,9 +80,9 @@ self.selectKey("DOWN")
 self.condition = self.inputDeviceFirmwareMissing
 			</condition>
 			<short_title value="Flash Bluetooth Receiver Firmware?" />
-			<text value="Your Dreambox bluetooth receiver has no firmware installed.\nDo you want to install latest firmware now?" />
+			<text value="Your Dreambox bluetooth receiver has no firmware installed.\nInstall the latest firmware now?" />
 			<list>
-				<listentry caption="Yes, install the latest receiver firmware"  step="inputdevicesflashadapter"/>
+				<listentry caption="Yes, install the latest bluetooth receiver firmware"  step="inputdevicesflashadapter"/>
 				<listentry caption="No, continue without bluetooth remote setup" step="nima"/>
 			</list>
 			<code>
@@ -112,7 +112,7 @@ self.flashInputDeviceAdapterFirmware()
 self.condition = self.inputDeviceWizardAvailable
 			</condition>
 			<short_title value="Input Devices" />
-			<text value="Please pickup the device you want to connect and press any key on it to select it in the list.\nEnter the assigned PIN code to connect it." />
+			<text value="Press Yellow to connect the selected remote control." />
 			<list type="dynamic" source="_getInputDevices" buildfunction="_inputDeviceBuildFunc" style="inputdevice"/>
 			<code>
 self.showState(True)
@@ -429,7 +429,7 @@ self.condition = self.networkWizardAvailable and self.ipConfigurationRequired()
 		</condition>
 	</step>
 	<step id="dnsconfig" nextstep="networkend">
-		<text value="Please configure at least one valid Nameserver (DNS)." />
+		<text value="Please configure at least one valid name server (DNS)." />
 		<short_title value="DNS Addresses" />
 		<config type="dynamic" source="getNameserverConfig" evaluation="saveNameserverConfig" />
 		<condition>

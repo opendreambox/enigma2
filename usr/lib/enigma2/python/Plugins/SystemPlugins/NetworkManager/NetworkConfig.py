@@ -3,7 +3,8 @@ from enigma import eNetworkManager, eNetworkService, eNetworkServicePtr, StringL
 
 from Components.Label import Label
 from Components.ActionMap import ActionMap
-from Components.config import getConfigListEntry, ConfigIP, ConfigOnOff, ConfigIP6, ConfigSelection, ConfigInteger
+from Components.config import getConfigListEntry, ConfigIP, ConfigOnOff, ConfigIP6, ConfigSelection, ConfigInteger,\
+	ConfigText
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
@@ -196,42 +197,6 @@ class NetworkConfigGeneral(object):
 
 		return (service.path(), interfacepng, strength, service.name(), ip, NetworkConfigGeneral.translateState(service.state()), None, security)
 
-class NetworkConfigGlobal(Screen, ConfigListScreen):
-	skin = """
-	<screen name="NetworkConfigGlobal" position="center,center" size="520,50" title="Network: General configuration">
-		<widget name="config" position="10,10" size="500,30" scrollbarMode="showOnDemand"/>
-	</screen>"""
-
-	def __init__(self, session):
-		Screen.__init__(self, session)
-		ConfigListScreen.__init__(self, [], session=session)
-
-		self["setupActions"] = ActionMap(["SetupActions", "ColorActions"],
-		{
-			"save": self.close,
-			"cancel": self.close,
-			"ok" : self.close,
-		}, -2)
-
-		self._nm = eNetworkManager.getInstance();
-
-		choices_timeupdates = { eNetworkManager.TIME_UPDATES_AUTO : _("auto"), eNetworkManager.TIME_UPDATES_MANUAL : _("manual") }
-		self._config_timeupdates = ConfigSelection(choices_timeupdates, default=self._nm.timeUpdates())
-		self._config_timeupdates.addNotifier(self._config_changed, initial_call=False)
-		self._createSetup()
-		self.onLayoutFinish.append(self._layoutFinished)
-
-	def _layoutFinished(self):
-		self.setTitle(_("Network: General configuration"))
-
-	def _config_changed(self, element):
-		self._nm.setTimeUpdates(self._config_timeupdates.value)
-		self._createSetup()
-
-	def _createSetup(self):
-		lst = [getConfigListEntry(_("NTP Time Updates"), self._config_timeupdates)]
-		self["config"].list = lst
-
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	skin = """
 		<screen name="NetworkServiceConfig" position="center,120" size="920,520" title="Network Configuration">
@@ -276,7 +241,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self["key_yellow"] = Label(_("IP"))
 		self["key_blue"] = Label(_("DNS"))
 		self["hint"] = Label(_("Press OK to connect"))
-		self["details_label"] = Label(_("Active Connection"))
+		self["details_label"] = Label(_("Active connection"))
 		self["details"] = Label("")
 		self["OkCancelActions"] = ActionMap(["OkCancelActions", "ColorActions", "MenuActions"],
 		{
@@ -306,7 +271,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 		self.onLayoutFinish.append(self.layoutFinished)
 
 	def _menu(self):
-		self.session.open(NetworkConfigGlobal)
+		self.session.open(NetworkTimeserverConfig)
 
 	def _rescan(self):
 		if not self._currentService or isinstance(self._currentService, eNetworkServicePtr):
@@ -484,9 +449,9 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 							gw,
 						)
 				ns = self._textFormatIpList( service.nameservers() )
-				text = _("%sNameserver\n%s\n") %(text, ns)
+				text = _("%sName server\n%s\n") %(text, ns)
 				ts = self._textFormatIpList( service.timeservers() )
-				text = _("%s\nTimeserver\n%s\n") %(text, ts)
+				text = _("%s\nTime server\n%s\n") %(text, ts)
 
 				mac = ni.ethernet.mac
 				text = ("%s\n" + _("Hardware address") + "\n%s\n") %(text, mac)
@@ -772,7 +737,7 @@ class ServiceNSConfiguration(object):
 				self._nameservers.append(cfg)
 
 	def getList(self):
-		return [ getConfigListEntry("Nameserver", ns) for ns in self._nameservers ]
+		return [ getConfigListEntry("Name server", ns) for ns in self._nameservers ]
 
 	def add4(self):
 		self._nameservers.append(ConfigIP([0,0,0,0]))
@@ -794,7 +759,7 @@ class ServiceNSConfiguration(object):
 
 class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
 	skin = """
-		<screen name="NetworkServiceNSConfig" position="center,120" size="820,520" title="Service: Nameserver configuration">
+		<screen name="NetworkServiceNSConfig" position="center,120" size="820,520" title="Service: Name server configuration">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
 			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
@@ -839,12 +804,12 @@ class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 		nameservers = list(self._service.nameservers())
 		text = ""
 		if nameservers:
-			text = _("Active Nameservers:\n%s") %(", ".join(nameservers))
+			text = _("Active name servers:\n%s") %(", ".join(nameservers))
 			Log.i(text)
 		return text
 
 	def _layoutFinished(self):
-		self.setTitle(_("%s Network - Nameservers" %self._service.name()))
+		self.setTitle(_("%s Network - Name servers" %self._service.name()))
 
 	def _remove(self):
 		cfg = self["config"].getCurrent()
@@ -871,3 +836,116 @@ class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 
 	def _createSetup(self):
 		self["config"].setList( self._nsconfig.getList() )
+
+class NetworkTimeserverConfiguration(object):
+	def __init__(self, nm):
+		self._nm = nm
+		self._timeservers = []
+
+	def reload(self):
+		self._timeservers = []
+		timeservers = list(self._nm.getTimeservers())
+		for timeserver in timeservers:
+			self._timeservers.append(ConfigText(default=timeserver))
+
+	def getList(self):
+		return [ getConfigListEntry("Time server", ts) for ts in self._timeservers ]
+
+	def add(self):
+		self._timeservers.append(ConfigText(default="0.pool.ntp.org"))
+
+	def remove(self, cfg):
+		self._timeservers.remove(cfg)
+
+	def save(self):
+		servers = [x.value for x in self._timeservers]
+		self._nm.setTimeservers(StringList(servers))
+
+class NetworkTimeserverConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
+	skin = """
+		<screen name="NetworkServiceNSConfig" position="center,120" size="820,520" title="Time server configuration">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" />
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
+			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
+			<widget name="config" position="10,60" size="800,360" enableWrapAround="1" scrollbarMode="showOnDemand" />
+			<eLabel position="10,430" size="800,1" backgroundColor="grey" />
+			<widget source="activedns" render="Label" position="10,440" size="800,75" font="Regular;20" valign="bottom"/>
+		</screen>"""
+	def __init__(self, session):
+		Screen.__init__(self, session, windowTitle=_("Time server configuration"))
+		ConfigListScreen.__init__(self, [], session=session)
+		self.skinName = "NetworkServiceNSConfig"
+
+		self._nm = eNetworkManager.getInstance()
+		self._tsconfig = NetworkTimeserverConfiguration(self._nm)
+
+		self["key_red"] = StaticText(_("Delete"))
+		self["key_green"] = StaticText(_("New"))
+		self["key_yellow"] = StaticText("")
+		self["key_blue"] = StaticText(_("Reset"))
+		self["activedns"] = StaticText(self.getActiveTimeserversText())
+		self["setupActions"] = ActionMap(["OkCancelActions", "ColorActions"],
+		{
+			"red": self._remove,
+			"green": self._add,
+			"blue": self._reload,
+			"save": self.close,
+			"cancel": self.close,
+			"ok" : self.close,
+		}, -2)
+
+		self["config"].onSelectionChanged.append(self._checkButtons)
+
+		choices_timeupdates = { eNetworkManager.TIME_UPDATES_AUTO : _("auto"), eNetworkManager.TIME_UPDATES_MANUAL : _("manual") }
+		self._config_timeupdates = ConfigSelection(choices_timeupdates, default=self._nm.timeUpdates())
+		self._config_timeupdates.addNotifier(self._onConfigChange, initial_call=False)
+		self.__timeservers_changed_conn = self._nm.timeserversChanged.connect(self._reload)
+
+		self.onClose.append(self.__onClose)
+		self._reload()
+
+	def _checkButtons(self):
+		cfg = self["config"].getCurrent() and  self["config"].getCurrent()[1]
+		self["key_red"].text = _("Delete") if cfg != self._config_timeupdates else ""
+
+	def _onConfigChange(self, element=None):
+		self._nm.setTimeUpdates(self._config_timeupdates.value)
+		self._createSetup()
+
+	def getActiveTimeserversText(self):
+		timeservers = list(self._nm.getTimeservers())
+		text = ""
+		if timeservers:
+			text = _("Active time servers:\n%s") %(", ".join(timeservers))
+			Log.i(text)
+		return text
+
+	def _remove(self):
+		cfg = self["config"].getCurrent()
+		if cfg and cfg[1] != self._config_timeupdates:
+			self._tsconfig.remove(cfg[1])
+			self._createSetup()
+
+	def _add(self):
+		self._tsconfig.add()
+		self._createSetup()
+
+	def __onClose(self):
+		self._tsconfig.save()
+
+	def _reload(self):
+		self._tsconfig.reload()
+		self._createSetup()
+
+	def _createSetup(self):
+		self["activedns"].text = self.getActiveTimeserversText()
+		lst = [getConfigListEntry(_("NTP Time Updates"), self._config_timeupdates)]
+		lst.extend(self._tsconfig.getList())
+		self["config"].list = lst
+

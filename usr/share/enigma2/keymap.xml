@@ -821,6 +821,8 @@
 		<key id="KEY_0" mapto="0" flags="m" />
 		<key id="KEY_LEFT" mapto="selectLeft" flags="mr" />
 		<key id="KEY_RIGHT" mapto="selectRight" flags="mr" />
+		<key id="KEY_UP" mapto="up" flags="mr" />
+		<key id="KEY_DOWN" mapto="down" flags="mr" />
 		<key id="KEY_RED" mapto="disableTimer" flags="mr" />
 		<key id="KEY_GREEN" mapto="toggleAction" flags="mr" />
 		<key id="KEY_YELLOW" mapto="toggleAsk" flags="mr" />
