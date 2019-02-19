@@ -713,6 +713,7 @@ class iFrontendInformation_ENUMS(object):
     syncState = _enigma.iFrontendInformation_ENUMS_syncState
     frontendNumber = _enigma.iFrontendInformation_ENUMS_frontendNumber
     signalQualitydB = _enigma.iFrontendInformation_ENUMS_signalQualitydB
+    uncorrBlocks = _enigma.iFrontendInformation_ENUMS_uncorrBlocks
 iFrontendInformation_ENUMS_swigregister = _enigma.iFrontendInformation_ENUMS_swigregister
 iFrontendInformation_ENUMS_swigregister(iFrontendInformation_ENUMS)
 
@@ -4126,6 +4127,7 @@ class iDVBFrontend_ENUMS(object):
     synced = _enigma.iDVBFrontend_ENUMS_synced
     frontendNumber = _enigma.iDVBFrontend_ENUMS_frontendNumber
     signalQualitydB = _enigma.iDVBFrontend_ENUMS_signalQualitydB
+    uncorrBlocks = _enigma.iDVBFrontend_ENUMS_uncorrBlocks
     canDVBS2Multistream = _enigma.iDVBFrontend_ENUMS_canDVBS2Multistream
 iDVBFrontend_ENUMS_swigregister = _enigma.iDVBFrontend_ENUMS_swigregister
 iDVBFrontend_ENUMS_swigregister(iDVBFrontend_ENUMS)

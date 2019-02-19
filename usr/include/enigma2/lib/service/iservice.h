@@ -451,6 +451,7 @@ public:
 		syncState,
 		frontendNumber,
 		signalQualitydB,
+		uncorrBlocks,
 	};
 };
 

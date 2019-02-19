@@ -18,6 +18,8 @@ class TunerInfo(GUIComponent):
 	BER_BAR = 6
 	LOCK_STATE = 7
 	SYNC_STATE = 8
+	UNCORR = 9
+	UNCORR_VALUE = 10
 
 	def __init__(self, type, servicefkt = None, frontendfkt = None, statusDict = None):
 		GUIComponent.__init__(self)
@@ -58,6 +60,8 @@ class TunerInfo(GUIComponent):
 			value = self.getValue(self.BER)
 		elif self.type == self.LOCK_STATE:
 			value = self.getValue(self.LOCK)
+		elif self.type == self.UNCORR_VALUE:
+			value = self.getValue(self.UNCORR)
 
 		if self.type == self.SNR_DB:
 			if value != 0x12345678:
@@ -67,6 +71,8 @@ class TunerInfo(GUIComponent):
 		elif self.type == self.SNR_PERCENTAGE or self.type == self.AGC_PERCENTAGE:
 			self.setText("%d%%" % (value))
 		elif self.type == self.BER_VALUE:
+			self.setText("%d" % (value))
+		elif self.type == self.UNCORR_VALUE:
 			self.setText("%d" % (value))
 		elif self.type == self.SNR_BAR or self.type == self.AGC_BAR:
 			self.setValue(value)
@@ -88,6 +94,8 @@ class TunerInfo(GUIComponent):
 				return self.statusDict.get("tuner_signal_power", 0)
 			elif what == self.BER:
 				return self.statusDict.get("tuner_bit_error_rate", 0)
+			elif what == self.UNCORR:
+				return self.statusDict.get("tuner_uncorrected_blocks", 0)
 			elif what == self.LOCK:
 				return self.statusDict.get("tuner_locked", 0)
 		elif self.servicefkt:
@@ -103,6 +111,8 @@ class TunerInfo(GUIComponent):
 						return feinfo.getFrontendInfo(iFrontendInformation.signalPower)
 					elif what == self.BER:
 						return feinfo.getFrontendInfo(iFrontendInformation.bitErrorRate)
+					elif what == self.UNCORR:
+						return feinfo.getFrontendInfo(iFrontendInformation.uncorrBlocks)
 					elif what == self.LOCK:
 						return feinfo.getFrontendInfo(iFrontendInformation.lockState)
 		elif self.frontendfkt:
@@ -116,6 +126,8 @@ class TunerInfo(GUIComponent):
 					return frontend.readFrontendData(iFrontendInformation.signalPower)
 				elif what == self.BER:
 					return frontend.readFrontendData(iFrontendInformation.bitErrorRate)
+				elif what == self.UNCORR:
+					return frontend.readFrontendData(iFrontendInformation.uncorrBlocks)
 				elif what == self.LOCK:
 					return frontend.readFrontendData(iFrontendInformation.lockState)
 		return 0

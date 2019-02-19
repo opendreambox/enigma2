@@ -169,7 +169,7 @@ public:
 	RESULT getData(int num, long &data);
 	RESULT setData(int num, long val);
 
-	int readFrontendData(int type); // bitErrorRate, signalPower, signalQualitydB, signalQuality, locked, synced
+	int readFrontendData(int type); // uncorrBlocks, bitErrorRate, signalPower, signalQualitydB, signalQuality, locked, synced
 	RESULT getFrontendStatus(FrontendDataMap &dest);
 	RESULT getTransponderData(FrontendDataMap &dest, bool original);
 	RESULT getFrontendData(FrontendDataMap &dest);

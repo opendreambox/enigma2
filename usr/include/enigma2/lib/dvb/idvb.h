@@ -493,7 +493,7 @@ public:
 	enum { stateIdle, stateTuning, stateFailed, stateLock, stateLostLock, statePreClose, statePendingClose, stateClosed };
 	enum { toneOff, toneOn, toneUnknown };
 	enum { voltageOff, voltage13, voltage18, voltage13_5, voltage18_5 };
-	enum { bitErrorRate, signalPower, signalQuality, locked, synced, frontendNumber, signalQualitydB };
+	enum { bitErrorRate, signalPower, signalQuality, locked, synced, frontendNumber, signalQualitydB, uncorrBlocks };
 	enum { canDVBS2Multistream = 1 };
 };
 
