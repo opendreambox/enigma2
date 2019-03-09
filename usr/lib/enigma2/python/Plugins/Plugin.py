@@ -75,9 +75,20 @@ class PluginDescriptor:
 
 	# start as channellist context menu plugin. arguments: session, serviceref
 	WHERE_CHANNEL_CONTEXT_MENU = 19
+	WHERE_CHANNEL_SELECTION_MENU = WHERE_CHANNEL_CONTEXT_MENU
 
 	#Managed ControlPoint start. arguments: reason, session [0=start,1=shutdown]
 	WHERE_UPNP = 20
+
+	#Event View - Blue Button - arguments: session, event, reference
+	WHERE_EVENTVIEW = 21
+
+	#EpgSeleciton - Blue/Red Button - arguments: session, event, reference
+	WHERE_EPG_SELECTION_SINGLE_RED = 22
+	WHERE_EPG_SELECTION_SINGLE_BLUE = 23
+
+	#ChannelSelection - Red Button - arguments: session, event, reference
+	WHERE_CHANNEL_SELECTION_RED = 24
 
 	def __init__(self, name = "Plugin", where = [ ], description = "", icon = None, fnc = None, wakeupfnc = None, needsRestart = None, internal = False, weight = 0, helperfnc = None):
 		self.name = name

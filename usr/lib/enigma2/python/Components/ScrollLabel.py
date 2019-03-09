@@ -40,7 +40,7 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 
 		self.scrollbar.move(ePoint(s.width()-scrollbarwidth,0))
 		self.scrollbar.resize(eSize(scrollbarwidth,self.pageHeight+(int)(lineheight/6)))
-		self.scrollbar.setOrientation(eSlider.orVertical);
+		self.scrollbar.setOrientation(eSlider.orVertical, False, True);
 		self.scrollbar.setRange(0,100)
 		self.scrollbar.setBorderWidth(scrollbarborderwidth)
 		self.long_text.move(ePoint(0,0))

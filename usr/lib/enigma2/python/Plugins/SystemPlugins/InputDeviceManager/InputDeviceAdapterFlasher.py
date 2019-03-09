@@ -57,3 +57,26 @@ class InputDeviceAdapterFlasher(MessageBox):
 		self._dm.stop()
 		res = self._console.execute("%s --program --force --verify --start" %(self.FLASHER_BINARY))
 		Log.w("%s" %(res,))
+
+class InputDeviceUpdateChecker(object):
+	def __init__(self):
+		self._console = eConsoleAppContainer()
+		self.__onDataConn = self._console.dataAvail.connect(self._onData)
+		self.__onAppClosedConn = self._console.appClosed.connect(self._onAppClosed)
+		self._flasherMissing = not fileExists(InputDeviceAdapterFlasher.FLASHER_BINARY)
+		self.onUpdateAvailable = []
+
+	def check(self):
+		if self._flasherMissing:
+			return
+		res = self._console.execute("%s --check" %(InputDeviceAdapterFlasher.FLASHER_BINARY))
+		Log.d("%s" %(res,))
+
+	def _onData(self, data):
+		Log.d(data)
+
+	def _onAppClosed(self, returncode):
+		Log.w("%s" %(returncode,))
+		if returncode == 1: #0 == no update, 1 == update, everything else would be some kind of error
+			for callback in self.onUpdateAvailable:
+				callback()

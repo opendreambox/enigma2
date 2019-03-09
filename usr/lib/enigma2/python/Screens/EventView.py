@@ -12,16 +12,20 @@ from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from TimerEntry import TimerEntry
 from time import localtime
 
+from Plugins.Plugin import PluginDescriptor
+from Components.PluginComponent import plugins
+from Screens.ChoiceBox import ChoiceBox
+
 class EventViewBase:
 	ADD_TIMER = 0
 	REMOVE_TIMER = 1
 	
-	def __init__(self, Event, Ref, callback=None, similarEPGCB=None):
+	def __init__(self, event, ref, callback=None, similarEPGCB=None):
 		self.similarEPGCB = similarEPGCB
 		self.cbFunc = callback
-		self.currentService=Ref
-		self.isRecording = (not Ref.ref.flags & eServiceReference.isGroup) and Ref.ref.getPath() and Ref.ref.getPath()[0] == '/'
-		self.event = Event
+		self.currentService=ref
+		self.isRecording = (not ref.ref.flags & eServiceReference.isGroup) and ref.ref.getPath() and ref.ref.getPath()[0] == '/'
+		self.event = event
 		self["Service"] = ServiceEvent()
 		self["epg_description"] = ScrollLabel()
 		self["datetime"] = Label()
@@ -49,9 +53,39 @@ class EventViewBase:
 				"prevEvent": self.prevEvent,
 				"nextEvent": self.nextEvent,
 				"timerAdd": self.timerAdd,
-				"openSimilarList": self.openSimilarList
+				"openSimilarList": self.openSimilarList,
+				"openPlugins" : self._openPlugins
 			})
 		self.onShown.append(self.onCreate)
+		self._pluginList = []
+		self._checkPlugins()
+
+	def _checkPlugins(self, additionalPlugins =[]):
+		self._pluginList = additionalPlugins
+		self._pluginList.extend([(p.name, p, False) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EVENTVIEW)])
+		if self._pluginList:
+			if len(self._pluginList) > 1:
+				self["key_blue"].setText(_("More ..."))
+			else:
+				self["key_blue"].setText(self._pluginList[0][0])
+		else:
+			self["key_blue"].setText("")
+
+	def _openPlugins(self):
+		if self._pluginList:
+			if len(self._pluginList) > 1:
+				self.session.openWithCallback(self._onPluginSelected, ChoiceBox, list=self._pluginList, windowTitle=_("More ..."))
+			else:
+				self._onPluginSelected(self._pluginList[0])
+
+	def _onPluginSelected(self, p=None):
+		noargs = p and p[2]
+		fnc = p and p[1]
+		if fnc:
+			if noargs: #noarg for multiepgcallback backwards compat
+				fnc()
+			else:
+				fnc(self.session, self.event, self.currentService)
 
 	def onCreate(self):
 		self.setService(self.currentService)
@@ -206,14 +240,14 @@ class EventViewSimple(Screen, EventViewBase):
 		EventViewBase.__init__(self, Event, Ref, callback, similarEPGCB)
 
 class EventViewEPGSelect(Screen, EventViewBase):
-	def __init__(self, session, Event, Ref, callback=None, singleEPGCB=None, multiEPGCB=None, similarEPGCB=None):
+	def __init__(self, session, event, ref, callback=None, singleEPGCB=None, multiEPGCB=None, similarEPGCB=None):
 		Screen.__init__(self, session)
 		self.skinName = "EventView"
-		EventViewBase.__init__(self, Event, Ref, callback, similarEPGCB)
+		EventViewBase.__init__(self, event, ref, callback, similarEPGCB)
 		self["key_yellow"].setText(_("Single EPG"))
-		self["key_blue"].setText(_("Multi EPG"))
 		self["epgactions"] = ActionMap(["EventViewEPGActions"],
 			{
 				"openSingleServiceEPG": singleEPGCB,
-				"openMultiServiceEPG": multiEPGCB,
 			})
+		if multiEPGCB:
+			self._checkPlugins(additionalPlugins=[(_("Multi EPG"), multiEPGCB, True)])

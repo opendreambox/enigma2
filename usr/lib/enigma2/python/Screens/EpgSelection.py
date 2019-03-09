@@ -17,6 +17,9 @@ from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
 from TimerEntry import TimerEntry
 from ServiceReference import ServiceReference
 from time import localtime, time
+from Components.PluginComponent import plugins
+from Plugins.Plugin import PluginDescriptor
+from Screens.ChoiceBox import ChoiceBox
 
 mepg_config_initialized = False
 
@@ -84,7 +87,7 @@ class EPGSelection(Screen):
 				"yellow": self.yellowButtonPressed,
 				"blue": self.blueButtonPressed,
 				"info": self.infoKeyPressed,
-				"red": self.zapTo,
+				"red": self.redButtonPressed,
 				"input_date_time": self.enterDateTime,
 				"nextBouquet": self.nextBouquet, # just used in multi epg yet
 				"prevBouquet": self.prevBouquet, # just used in multi epg yet
@@ -93,6 +96,65 @@ class EPGSelection(Screen):
 			})
 		self["actions"].csel = self
 		self.onLayoutFinish.append(self.onCreate)
+		self._pluginListRed = []
+		self._pluginListBlue = []
+		if self.type == EPG_TYPE_SINGLE:
+			self._checkPlugins()
+
+	def _checkPluginsRed(self):
+		if self.type != EPG_TYPE_SINGLE:
+			return
+		self._pluginListRed = [(p.name, p) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EPG_SELECTION_SINGLE_RED)]
+		if self._pluginListRed:
+			if len(self._pluginListRed) > 1:
+				self["key_red"].setText(_("More ..."))
+			else:
+				self["key_red"].setText(self._pluginListRed[0][0])
+		else:
+			self["key_red"].setText("")
+
+
+	def _checkPluginsBlue(self):
+		if self.type != EPG_TYPE_SINGLE:
+			return
+		self._pluginListBlue = [(p.name, p) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EPG_SELECTION_SINGLE_BLUE)]
+		if self._pluginListBlue:
+			if len(self._pluginListBlue) > 1:
+				self["key_blue"].setText(_("More ..."))
+			else:
+				self["key_blue"].setText(self._pluginListBlue[0][0])
+		else:
+			self["key_blue"].setText("")
+
+	def _checkPlugins(self):
+		self._checkPluginsRed()
+		self._checkPluginsBlue()
+
+	def _openPluginsRed(self):
+		self._openPlugins(self._pluginListRed)
+
+	def _openPluginsBlue(self):
+		self._openPlugins(self._pluginListBlue)
+
+	def _openPlugins(self, pluginList):
+		if pluginList:
+			cur = self["list"].getCurrent()
+			event = cur and cur[0]
+			if not event:
+				self.session.toastManager.showToast(_("This feature requires valid EPG!"))
+				return
+			if len(pluginList) > 1:
+				self.session.openWithCallback(self._onPluginSelected, ChoiceBox, list=pluginList, windowTitle=_("More ..."))
+			else:
+				self._onPluginSelected(pluginList[0])
+
+	def _onPluginSelected(self, p=None):
+		fnc = p and p[1]
+		if fnc:
+			cur = self["list"].getCurrent()
+			event = cur and cur[0]
+			if event:
+				fnc(self.session, event, self.currentService)
 
 	def nextBouquet(self):
 		if self.bouquetChangeCB:
@@ -183,6 +245,12 @@ class EPGSelection(Screen):
 			setService(cur[1])
 			setEvent(cur[0])
 
+	def redButtonPressed(self):
+		if self.type == EPG_TYPE_MULTI:
+			self.zapTo()
+		elif self.type == EPG_TYPE_SINGLE:
+			self._openPluginsRed()
+
 	def zapTo(self): # just used in multiepg
 		if self.zapFunc and self.key_red_choice == self.ZAP:
 			lst = self["list"]
@@ -217,6 +285,8 @@ class EPGSelection(Screen):
 	def blueButtonPressed(self):
 		if self.type == EPG_TYPE_MULTI:
 			self["list"].updateMultiEPG(1)
+		elif self.type == EPG_TYPE_SINGLE:
+			self._openPluginsBlue()
 
 	def removeTimer(self, timer):
 		timer.afterEvent = AFTEREVENT.NONE

@@ -6,9 +6,10 @@ from Components.ServiceList import ServiceList
 from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
 from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Screens.ChoiceBox import ChoiceBox
 profile("ChannelSelection.py 1")
 from EpgSelection import EPGSelection
-from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv
+from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv, eEPGCache
 from Components.config import config, ConfigSubsection, ConfigText, NoSave, ConfigBoolean
 from Tools.NumericalTextInput import NumericalTextInput
 profile("ChannelSelection.py 2")
@@ -815,7 +816,7 @@ class ChannelSelectionBase(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 
-		self["key_red"] = Button(_("All"))
+		self["key_red"] = Button("")
 		self["key_green"] = Button(_("Satellites"))
 		self["key_yellow"] = Button(_("Providers"))
 		self["key_blue"] = Button(_("Favourites"))
@@ -842,7 +843,7 @@ class ChannelSelectionBase(Screen):
 		self["ChannelSelectBaseActions"] = NumberActionMap(["ChannelSelectBaseActions", "NumberActions", "InputAsciiActions"],
 			{
 				"showFavourites": self.showFavourites,
-				"showAllServices": self.showAllServices,
+				"showAllServices": self._openPlugins,
 				"showProviders": self.showProviders,
 				"showSatellites": self.showSatellites,
 				"nextBouquet": self.nextBouquet,
@@ -862,7 +863,55 @@ class ChannelSelectionBase(Screen):
 				"0": self.keyNumber0
 			})
 		self.setTitle(_("Channel Selection"))
+		self._pluginList = []
+		self._checkPlugins()
 		self.recallBouquetMode()
+
+	def getCurrentEventNow(self):
+		serviceref = self.servicelist.getCurrent()
+		event = None
+		try:
+			epg = eEPGCache.getInstance()
+			event = epg.lookupEventTime(serviceref, -1, 0)
+			if event is None:
+				info = eServiceCenter.getInstance().info(serviceref)
+				event = info.getEvent(0)
+		except:
+			pass
+		return event
+
+	def _checkPlugins(self):
+		self._pluginList = [(p.name, p, False) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_CHANNEL_SELECTION_RED)]
+		self._pluginList.append((_("All"), self.showAllServices, True))
+		if self._pluginList:
+			if len(self._pluginList) > 1:
+				self["key_red"].setText(_("More ..."))
+			else:
+				self["key_red"].setText(self._pluginList[0][0])
+		else:
+			self["key_red"].setText("")
+
+	def _openPlugins(self):
+		if self._pluginList:
+			if len(self._pluginList) > 1:
+				self.session.openWithCallback(self._onPluginSelected, ChoiceBox, list=self._pluginList, windowTitle=_("More ..."))
+			else:
+				self._onPluginSelected(self._pluginList[0])
+
+	def _onPluginSelected(self, p=None):
+		noargs = p and p[2]
+		fnc = p and p[1]
+		if not fnc:
+			return
+		if noargs: #noarg for multiepgcallback backwards compat
+			fnc()
+			return
+
+		event = self.getCurrentEventNow()
+		if not event:
+			self.session.toastManager.showToast(_("This feature requires valid EPG!"))
+			return
+		fnc(self.session, event, self.servicelist.getCurrent())
 
 	def getBouquetNumOffset(self, bouquet):
 		if not config.usage.multibouquet.value:

@@ -7,7 +7,7 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Log import Log
 
-from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher
+from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpdateChecker
 
 
 class InputDeviceManagementBase(object):
@@ -126,12 +126,23 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 		self["key_green"] = Label()
 		self["key_yellow"] = Label()
 		self["key_blue"] = Label(_("Rescan"))
-
+		self._updateChecker = InputDeviceUpdateChecker()
+		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
+		self._updateChecker.check()
 		self._list.onSelectionChanged.append(self.__onSelectionChanged)
 		self._devices = []
 		self.__onSelectionChanged()
 		self._reload()
 		self.onFirstExecBegin.append(self._checkAdapter)
+
+	def _onUpdateAvailable(self):
+		self.session.openWithCallback(
+			self._flashInputDeviceAdapterFirmware,
+			MessageBox,
+			_("There is a new firmware for your bluetooth remote reciver available. Update now?"),
+			type=MessageBox.TYPE_YESNO,
+			windowTitle=_("Update Bluetooth Receiver Firmware?"))
+
 
 	def _checkAdapter(self):
 		if self.available() and not self.responding():

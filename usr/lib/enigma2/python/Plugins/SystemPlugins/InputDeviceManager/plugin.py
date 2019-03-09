@@ -3,10 +3,12 @@ from Plugins.Plugin import PluginDescriptor
 from Tools.Notifications import AddNotificationWithCallback
 from Screens.MessageBox import MessageBox
 from Components.config import config
-from InputDeviceManagement import InputDeviceManagement
 from Tools.Directories import createDir
 from Tools.Log import Log
 import time
+
+from InputDeviceManagement import InputDeviceManagement
+from InputDeviceAdapterFlasher import InputDeviceUpdateChecker, InputDeviceAdapterFlasher
 
 global inputDeviceWatcher
 inputDeviceWatcher = None
@@ -16,6 +18,9 @@ class InputDeviceWatcher(object):
 
 	def __init__(self, session):
 		self.session = session
+		self._updateChecker = InputDeviceUpdateChecker()
+		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
+		self._updateChecker.check()
 		self._dm = eInputDeviceManager.getInstance()
 		self.__deviceListChanged_conn = self._dm.deviceListChanged.connect(self._onDeviceListChanged)
 		self.__deviceStateChanged_conn = self._dm.deviceStateChanged.connect(self._onDeviceStateChanged)
@@ -54,11 +59,18 @@ class InputDeviceWatcher(object):
 			for device in devices:
 				if device.ready():
 					return
-			AddNotificationWithCallback(self._onDiscoveryAnswered, MessageBox, _("A new bluetooth remote has been discovered. Connect now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Bluetooth Remote"))
+			AddNotificationWithCallback(self._onDiscoveryAnswer, MessageBox, _("A new bluetooth remote has been discovered. Connect now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Bluetooth Remote"))
 
-	def _onDiscoveryAnswered(self, answer):
+	def _onDiscoveryAnswer(self, answer):
 		if answer:
 			self.session.open(InputDeviceManagement)
+
+	def _onUpdateAvailable(self):
+		AddNotificationWithCallback(self._onUpdateAnswer, MessageBox, _("There is a new firmware for your bluetooth remote reciver available. Update now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Bluetooth Remote"))
+
+	def _onUpdateAnswer(self, answer):
+		if answer:
+			self.session.open(InputDeviceAdapterFlasher)
 
 def sessionStart(reason, session, *args, **kwargs):
 	global inputDeviceWatcher
