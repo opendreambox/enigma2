@@ -851,6 +851,10 @@ class ChannelSelectionBase(Screen):
 				"nextMarker": self.nextMarker,
 				"prevMarker": self.prevMarker,
 				"gotAsciiCode": self.keyAsciiCode,
+				"selectServiceDown": None, #avoid debug output warning
+				"selectServiceUp": None, #avoid debug output warning
+				"selectServicePageDown": None, #avoid debug output warning
+				"selectServicePageUp": None, #avoid debug output warning
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
 				"3": self.keyNumberGlobal,
@@ -1309,9 +1313,9 @@ config.servicelist.lastmode = ConfigText(default = "tv")
 from Components.StreamServerControl import streamServerControl
 class ChannelSelectionEncoderService(object):
 	def __init__(self):
-		self["EncoderActions"] = ActionMap(["WizardActions"],
+		self["EncoderActions"] = ActionMap(["ChannelSelectionEncoderActions"],
 			{
-				"video" : self._setEncoderService
+				"setEncoderService" : self._setEncoderService
 			})
 
 	def _setEncoderService(self):

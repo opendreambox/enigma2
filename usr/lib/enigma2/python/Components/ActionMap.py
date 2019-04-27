@@ -55,18 +55,22 @@ class ActionMap:
 		self.checkBind()
 
 	def action(self, context, action):
+		actions = self.actions
+		if not actions.has_key(action):
+			print "unknown action %s/%s! typo in keymap?" % (context, action)
+			return 0
+		act = actions[action]
+		if act is None:
+			# explicitly ignored
+			return 0
 		print " ".join(("action -> ", context, action))
 		if action in ('instantRecord', 'timeshiftStart') and not config.misc.recording_allowed.value:
 			print "recording / timeshift not allowed with this dreambox!"
 			return 0
-		elif self.actions.has_key(action):
-			res = self.actions[action]()
-			if res is not None:
-				return res
-			return 1
-		else:
-			print "unknown action %s/%s! typo in keymap?" % (context, action)
-			return 0
+		res = act()
+		if res is not None:
+			return res
+		return 1
 
 	def destroy(self):
 		pass

@@ -1152,6 +1152,7 @@ class iUriService(iObject):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+iUriService.setResolvedName = new_instancemethod(_enigma.iUriService_setResolvedName, None, iUriService)
 iUriService.setResolvedUri = new_instancemethod(_enigma.iUriService_setResolvedUri, None, iUriService)
 iUriService.failedToResolveUri = new_instancemethod(_enigma.iUriService_failedToResolveUri, None, iUriService)
 iUriService_swigregister = _enigma.iUriService_swigregister
@@ -1167,6 +1168,7 @@ class iUriServicePtr(object):
 iUriServicePtr.__ref__ = new_instancemethod(_enigma.iUriServicePtr___ref__, None, iUriServicePtr)
 iUriServicePtr.getPtrString = new_instancemethod(_enigma.iUriServicePtr_getPtrString, None, iUriServicePtr)
 iUriServicePtr.__deref__ = new_instancemethod(_enigma.iUriServicePtr___deref__, None, iUriServicePtr)
+iUriServicePtr.setResolvedName = new_instancemethod(_enigma.iUriServicePtr_setResolvedName, None, iUriServicePtr)
 iUriServicePtr.setResolvedUri = new_instancemethod(_enigma.iUriServicePtr_setResolvedUri, None, iUriServicePtr)
 iUriServicePtr.failedToResolveUri = new_instancemethod(_enigma.iUriServicePtr_failedToResolveUri, None, iUriServicePtr)
 iUriServicePtr_swigregister = _enigma.iUriServicePtr_swigregister

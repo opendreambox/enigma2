@@ -264,6 +264,13 @@
 		<key id="KEY_TV" mapto="showTv" flags="m" />
 	</map>
 
+	<map context="ChannelSelectionEncoderActions">
+		<device name="compatible: pcKeyboard; dreambox ir keyboard">
+			<key id="KEY_F8" mapto="setEncoderService" flags="m" />
+		</device>
+		<key id="KEY_VIDEO" mapto="setEncoderService" flags="m" />
+	</map>
+
 	<map context="InfobarAudioSelectionActions">
 		<device name="compatible: pcKeyboard">
 			<key id="KEY_F7" mapto="audioSelection" flags="m" />

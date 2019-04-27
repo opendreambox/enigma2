@@ -138,14 +138,14 @@ class UpdatePluginMenu(Screen):
 			self.list.append(("update-checker", _("Automatic update checks"),  _("\nCheck software updates periodically." ) + self.oktext, None))
 			for p in plugins.getPlugins(PluginDescriptor.WHERE_SOFTWAREMANAGER):
 				if p.__call__.has_key("SoftwareSupported"):
-					callFnc = p.__call__["SoftwareSupported"](None)
+					callFnc = p.__call__["SoftwareSupported"]
 					if callFnc is not None:
 						if p.__call__.has_key("menuEntryName"):
-							menuEntryName = p.__call__["menuEntryName"](None)
+							menuEntryName = p.__call__["menuEntryName"]
 						else:
 							menuEntryName = _('Extended Software')
 						if p.__call__.has_key("menuEntryDescription"):
-							menuEntryDescription = p.__call__["menuEntryDescription"](None)
+							menuEntryDescription = p.__call__["menuEntryDescription"]
 						else:
 							menuEntryDescription = _('Extended Software Plugin')
 						self.list.append(('default-plugin', menuEntryName, menuEntryDescription + self.oktext, callFnc))
@@ -160,14 +160,14 @@ class UpdatePluginMenu(Screen):
 			self.list.append(("ipkg-source",_("Choose upgrade source"), _("\nEdit the upgrade source address." ) + self.oktext, None))
 			for p in plugins.getPlugins(PluginDescriptor.WHERE_SOFTWAREMANAGER):
 				if p.__call__.has_key("AdvancedSoftwareSupported"):
-					callFnc = p.__call__["AdvancedSoftwareSupported"](None)
+					callFnc = p.__call__["AdvancedSoftwareSupported"]
 					if callFnc is not None:
 						if p.__call__.has_key("menuEntryName"):
-							menuEntryName = p.__call__["menuEntryName"](None)
+							menuEntryName = p.__call__["menuEntryName"]
 						else:
 							menuEntryName = _('Advanced Software')
 						if p.__call__.has_key("menuEntryDescription"):
-							menuEntryDescription = p.__call__["menuEntryDescription"](None)
+							menuEntryDescription = p.__call__["menuEntryDescription"]
 						else:
 							menuEntryDescription = _('Advanced Software Plugin')
 						self.list.append(('advanced-plugin', menuEntryName, menuEntryDescription + self.oktext, callFnc))

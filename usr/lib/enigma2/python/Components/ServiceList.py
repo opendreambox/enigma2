@@ -271,7 +271,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 			remain =  int((event.getBeginTime() + event.getDuration() - now) / 60)
 			duration = int(event.getDuration() / 60)
 			addtimedisplay = "%d/+%d/%d min"  % (elapsed, remain, duration)
-			textTpl = "%d/+%d/%d mwidthin"  % (maxTimeValue, maxTimeValue, maxTimeValue)
+			textTpl = "%d/+%d/%d min"  % (maxTimeValue, maxTimeValue, maxTimeValue)
 		elif config.usage.configselection_showadditionaltimedisplay.value == "7": #  begin - end time
 			beginTime = localtime(event.getBeginTime())
 			endTime = localtime(event.getBeginTime()+event.getDuration())

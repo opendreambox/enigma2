@@ -63,6 +63,8 @@ class UpdateCheck(object):
 		distance = days * 24 * 60 * 60
 		now = time()
 		self._nextCheck = config.plugins.updatechecker.lastcheck.value + distance
+		if self._nextCheck < now: #next check would be in the past?
+			self._nextCheck = now + 300 #5 Minutes from now
 		nextDistance = int(self._nextCheck - now)
 		Log.w("Next update check on %s (%s seconds)" %(strftime("%a, %d %b %Y %H:%M:%S", localtime(self._nextCheck)), nextDistance))
 		if nextDistance < 0:

@@ -49,10 +49,10 @@ def FinalInitUsageConfig():
 		seek_old = { }
 
 	#We have do it again to ensure tranlsations are applied after language load has finished
-	config.usage.setup_level = ConfigSelection(default = "intermediate", choices = [
+	config.usage.setup_level.setChoices([
 		("simple", _("Simple")),
 		("intermediate", _("Intermediate")),
-		("expert", _("Expert")) ])
+		("expert", _("Expert")) ], default = "intermediate")
 
 	config.seek.on_pause = ConfigSelection(default = "play", choices = [
 		("play", _("Play")),

@@ -229,6 +229,8 @@ private:
 	}
 };
 
+class QSqlQuery;
+
 class eEPGCache: public iObject, public eMainloop_native, private eThread, public Object
 {
 	E_DECLARE_PRIVATE(eEPGCache)
@@ -354,6 +356,8 @@ private:
 	friend class EPGDBThread;
 	static eEPGCache *instance;
 
+	bool execStmt(QSqlQuery &stmt);
+
 	ePtr<eTimer> cleanTimer;
 	ePtr<eTimer> stopTransaktionTimer;
 
@@ -372,7 +376,7 @@ private:
 
 	int m_running;
 	int m_outdated_epg_timespan;
-	char m_filename[1024];
+	std::string m_filename;
 
 	EPGDBThread m_db_thread;
 	__u8 *m_next_section_buffer;
@@ -382,7 +386,7 @@ private:
 	void saveInternal(bool do_cleanup=false);
 
 	void thread();  // thread function
-	bool copyDatabase(void *memorydb, char* filename, bool save, bool do_cleanup=false);
+	bool copyDatabase(void *memorydb, const std::string &filename, bool save, bool do_cleanup=false);
 #ifdef ENABLE_PRIVATE_EPG
 	void privateSectionRead(const uniqueEPGKey &, const __u8 *);
 #endif

@@ -60,8 +60,8 @@ class EventViewBase:
 		self._pluginList = []
 		self._checkPlugins()
 
-	def _checkPlugins(self, additionalPlugins =[]):
-		self._pluginList = additionalPlugins
+	def _checkPlugins(self, additionalPlugins = []):
+		self._pluginList = additionalPlugins[:]
 		self._pluginList.extend([(p.name, p, False) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EVENTVIEW)])
 		if self._pluginList:
 			if len(self._pluginList) > 1:
@@ -249,5 +249,7 @@ class EventViewEPGSelect(Screen, EventViewBase):
 			{
 				"openSingleServiceEPG": singleEPGCB,
 			})
+		additionalPlugins=[]
 		if multiEPGCB:
-			self._checkPlugins(additionalPlugins=[(_("Multi EPG"), multiEPGCB, True)])
+			additionalPlugins=[(_("Multi EPG"), multiEPGCB, True)]
+		self._checkPlugins(additionalPlugins=additionalPlugins)

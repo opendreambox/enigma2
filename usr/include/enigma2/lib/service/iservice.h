@@ -946,6 +946,7 @@ class iUriService: public iObject
 	~iUriService();
 #endif
 public:
+	virtual SWIG_VOID(RESULT) setResolvedName(const std::string &name)=0;
 	virtual SWIG_VOID(RESULT) setResolvedUri(const std::string &resolvedUri, int serviceType, const std::string &suburi=std::string())=0;
 	virtual SWIG_VOID(RESULT) failedToResolveUri()=0;
 };

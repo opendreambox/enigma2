@@ -59,7 +59,7 @@ class ChannelSelectionDisplaySettings(Screen, ConfigListScreen):
 			self.createSetup("config")
 		if cur and (cur == self.piconPathEntry or cur == self.showPiconsEntry):
 			if self.showpicons.value:
-				if self.piconpath.getIndex() > 0:
+				if self.piconpath.getIndex() in (1,3):
 					config.usage.configselection_bigpicons.value = True
 				else:
 					config.usage.configselection_bigpicons.value = False

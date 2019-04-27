@@ -1,3 +1,12 @@
+try:
+	import twisted.python.runtime
+	twisted.python.runtime.platform.supportsThreads = lambda: True
+
+	import e2reactor
+	e2reactor.install()
+except:
+	pass
+
 import enigma
 
 def gPixmapPtr_deref(self):
@@ -183,14 +192,7 @@ config.misc.debug_accel_memory_usage.addNotifier(debugAccelMemoryUsageChanged)
 
 profile("Twisted")
 try:
-	import twisted.python.runtime
-	twisted.python.runtime.platform.supportsThreads = lambda: True
-
-	import e2reactor
-	e2reactor.install()
-
 	from twisted.internet import reactor
-
 	def runReactor():
 		reactor.run(installSignalHandlers=False)
 		reactor.stop()
@@ -271,7 +273,13 @@ profile("Screen")
 # * destroy screen
 
 class Session:
+	instance = None
+	@staticmethod
+	def get():
+		return Session.instance
+
 	def __init__(self, desktop = None, summary_desktop = None, navigation = None):
+		Session.instance = self
 		self.desktop = desktop
 		self.summary_desktop = summary_desktop
 		self.nav = navigation
@@ -615,8 +623,11 @@ def runScreenTest():
 
 	CiHandler.setSession(session)
 
-	from Screens.PackageRestoreWizard import PackageRestoreCheck
-	PackageRestoreCheck(session)
+	try:
+		from Screens.PackageRestoreWizard import PackageRestoreCheck
+		PackageRestoreCheck(session)
+	except:
+		pass
 
 	screensToRun = [ p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD) ]
 
