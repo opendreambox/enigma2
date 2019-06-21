@@ -8,6 +8,7 @@ from enigma import eEnv
 
 from Components.config import config, ConfigSubsection, ConfigText, ConfigLocations, ConfigBoolean
 from Components.Harddisk import harddiskmanager
+from Tools.Log import Log
 
 config.misc.firstrun = ConfigBoolean(default = True)
 config.plugins.configurationbackup = ConfigSubsection()
@@ -21,40 +22,26 @@ def checkConfigBackup():
 	parts = [ (p.description, p.mountpoint) for p in harddiskmanager.getMountedPartitions() if p.mountpoint != "/"]
 	parts.extend([ ( hd.model(), harddiskmanager.getAutofsMountpoint(hd.device + str(hd.numPartitions())) ) for hd in harddiskmanager.hdd if harddiskmanager.getAutofsMountpoint(hd.device + str(hd.numPartitions())) not in parts ])
 
-
-	if len(parts):
-		for x in parts:
-			if x[1].endswith('/'):
-				fullbackupfile =  x[1] + 'backup/' + backupfile
-				if fileExists(fullbackupfile):
-					config.plugins.configurationbackup.backuplocation.value = str(x[1])
-					config.plugins.configurationbackup.backuplocation.save()
-					config.plugins.configurationbackup.save()
-					return x
-			else:
-				fullbackupfile =  x[1] + '/backup/' + backupfile
-				if fileExists(fullbackupfile):
-					config.plugins.configurationbackup.backuplocation.value = str(x[1])
-					config.plugins.configurationbackup.backuplocation.save()
-					config.plugins.configurationbackup.save()
-					return x
-		return None
-	return None		
+	for x in parts:
+		path = x[1]
+		path = path[:-1] if path.endswith('/') else path
+		fullbackupfile =  "%s/backup/%s" %(path,backupfile)
+		if fileExists(fullbackupfile):
+			Log.i("Found backup at '%s'" %(fullbackupfile,))
+			config.plugins.configurationbackup.backuplocation.value = str(x[1])
+			config.plugins.configurationbackup.backuplocation.save()
+			config.plugins.configurationbackup.save()
+			return x
+	return None
 
 def checkBackupFile():
 	backuplocation = config.plugins.configurationbackup.backuplocation.value
-	if backuplocation.endswith('/'):
-		fullbackupfile =  backuplocation + 'backup/' + backupfile
-		if fileExists(fullbackupfile):
-			return True
-		else:
-			return False
-	else:
-		fullbackupfile =  backuplocation + '/backup/' + backupfile
-		if fileExists(fullbackupfile):
-			return True
-		else:
-			return False
+	backuplocation = backuplocation[:-1] if backuplocation.endswith('/') else backuplocation
+	fullbackupfile =  backuplocation + 'backup/' + backupfile
+	if fileExists(fullbackupfile):
+		Log.i("Found backup at '%s'" %(fullbackupfile,))
+		return True
+	return False
 
 class ImageWizard(WizardLanguage, Rc):
 	skin = """

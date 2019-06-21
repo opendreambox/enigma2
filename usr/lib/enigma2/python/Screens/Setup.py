@@ -4,27 +4,25 @@ from Components.config import config, ConfigNothing
 from Components.SystemInfo import SystemInfo
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.StaticText import StaticText
-from enigma import eEnv
+from Tools.Directories import resolveFilename, SCOPE_DATADIR
 
 import xml.etree.cElementTree
 
-# FIXME: use resolveFile!
-# read the setupmenu
 try:
 	# first we search in the current path
 	setupfile = file('data/setup.xml', 'r')
 except:
 	# if not found in the current path, we use the global datadir-path
-	setupfile = file(eEnv.resolve('${datadir}/enigma2/setup.xml'), 'r')
+	setupfile = file(resolveFilename(SCOPE_DATADIR, "setup.xml"), 'r')
 setupdom = xml.etree.cElementTree.parse(setupfile)
 setupfile.close()
 
 class SetupError(Exception):
-    def __init__(self, message):
-        self.msg = message
+	def __init__(self, message):
+		self.msg = message
 
-    def __str__(self):
-        return self.msg
+	def __str__(self):
+		return self.msg
 
 class SetupSummary(Screen):
 
@@ -56,17 +54,22 @@ class Setup(ConfigListScreen, Screen):
 	def removeNotifier(self):
 		config.usage.setup_level.removeNotifier(self.levelChanged)
 
-	def levelChanged(self, configElement):
-		list = []
-		self.refill(list)
-		self["config"].setList(list)
+	def _detachNotifiers(self):
+		for elem in self._notifiers:
+			elem.removeNotifier(self.levelChanged)
+		self._notifiers = []
 
-	def refill(self, list):
+	def levelChanged(self, configElement):
+		listItems = []
+		self.refill(listItems)
+		self["config"].setList(listItems)
+
+	def refill(self, listItems):
 		xmldata = setupdom.getroot()
 		for x in xmldata.findall("setup"):
 			if x.get("key") != self.setup:
 				continue
-			self.addItems(list, x);
+			self.addItems(listItems, x);
 			self.setup_title = x.get("title", "").encode("UTF-8")
 
 	def __init__(self, session, setup):
@@ -74,6 +77,7 @@ class Setup(ConfigListScreen, Screen):
 		# for the skin: first try a setup_<setupID>, then Setup
 		self.skinName = ["setup_" + setup, "Setup" ]
 		ConfigListScreen.__init__(self, [], session = session)
+		self._notifiers = []
 		self.setup = setup
 		self.levelChanged(None)
 
@@ -89,6 +93,7 @@ class Setup(ConfigListScreen, Screen):
 
 		self._changedEntry()
 		self.onLayoutFinish.append(self.layoutFinished)
+		self.onClose.append(self._detachNotifiers)
 
 	def layoutFinished(self):
 		self.setTitle(_(self.setup_title))
@@ -102,7 +107,8 @@ class Setup(ConfigListScreen, Screen):
 	def createSummary(self):
 		return SetupSummary
 
-	def addItems(self, list, parentNode):
+	def addItems(self, listItems, parentNode):
+		self._detachNotifiers()
 		for x in parentNode:
 			if x.tag == 'item':
 				item_level = int(x.get("level", 0))
@@ -124,16 +130,21 @@ class Setup(ConfigListScreen, Screen):
 				item = b
 				# the first b is the item itself, ignored by the configList.
 				# the second one is converted to string.
-				if not isinstance(item, ConfigNothing):
-					if item:
-						entry = (item_text, item)
-					else:
-						entry = (item_text,)
-					list.append(entry)
+				if isinstance(item, ConfigNothing):
+					continue
+				if item:
+					entry = (item_text, item)
+					notify = x.get("notify")
+					if notify and notify == "true":
+						item.addNotifier(self.levelChanged, initial_call = False)
+						self._notifiers.append(item)
+				else:
+					entry = (item_text,)
+				listItems.append(entry)
 
-def getSetupTitle(id):
+def getSetupTitle(setupId):
 	xmldata = setupdom.getroot()
 	for x in xmldata.findall("setup"):
-		if x.get("key") == id:
+		if x.get("key") == setupId:
 			return x.get("title", "").encode("UTF-8")
-	raise SetupError("unknown setup id '%s'!" % repr(id))
+	raise SetupError("unknown setup id '%s'!" % repr(setupId))

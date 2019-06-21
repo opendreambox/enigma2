@@ -26,11 +26,14 @@ class ValueToPixmap(Converter, object):
 		if self.type == self.PATH:
 			return LoadPixmap(val)
 		if self.type == self.LANGUAGE_CODE:
-			png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + val[3:].lower() + ".png"))
-			if png == None:
-				png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_SKIN_IMAGE, "countries/missing.png"))
-			return png
-		return None			
+			code = val[3:].lower()
+			flag = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + code + ".svg"))
+			if flag == None:
+				flag = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + code + ".png"))
+			if flag == None:
+				flag = LoadPixmap(cached=True, path=resolveFilename(SCOPE_SKIN_IMAGE, "countries/missing.png"))
+			return flag
+		return None
 	
 	pixmap = property(getPixmap)
 

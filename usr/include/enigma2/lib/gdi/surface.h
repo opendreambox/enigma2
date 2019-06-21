@@ -60,7 +60,7 @@ public:
 	void setData(const eSize &size, unsigned int stride, void *data, unsigned long phys_addr = 0, int fd = -1, size_t offset = 0);
 	bool valid() const { return m_valid; }
 	unsigned int alignment() const;
-	bool glTexture(unsigned int *glHandle, unsigned int *glTarget) const;
+	bool glTexture(unsigned int *glHandle = nullptr, unsigned int *glTarget = nullptr) const;
 	void flushCache(const eRect &rect=eRect());
 	int fd() const;
 	unsigned long offset() const;

@@ -1,3 +1,5 @@
+from enigma import eSize
+
 from Screen import Screen
 
 from Components.ActionMap import ActionMap
@@ -7,6 +9,8 @@ from Components.Sources.List import List
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.language_cache import LANG_TEXT
+from Components.Timezones import timezones
+from Tools.Log import Log
 
 def _cached(x, lang=None):
 	return LANG_TEXT.get(lang or config.osd.language.value, {}).get(x, "")
@@ -17,11 +21,14 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 
 from Tools.LoadPixmap import LoadPixmap
 
-def LanguageEntryComponent(file, name, index, png_cache):
-	png = png_cache.get(file, None)
+def LanguageEntryComponent(fileName, name, index, png_cache):
+	png = png_cache.get(fileName, None)
 	if png is None:
-		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + file + ".png"))
-		png_cache[file] = png
+		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + fileName + ".svg"), size=eSize(210,140))
+		png_cache[fileName] = png
+	if png is None:
+		png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "countries/" + fileName + ".png"))
+		png_cache[fileName] = png
 	if png is None:
 		png = png_cache.get("missing", None)
 		if png is None:
@@ -29,15 +36,39 @@ def LanguageEntryComponent(file, name, index, png_cache):
 			png_cache["missing"] = png
 	return (index, name, png)
 
-class LanguageSelection(Screen):
+class LanguageSelectionBase(object):
+	def __init__(self):
+		self._png_cache = {}
+
+	def _getLanguageList(self, lang):
+		languageList = language.getLanguageList()
+		if not languageList: # no language available => display only english
+			langList = [ LanguageEntryComponent("en", _cached("en_EN", lang), "en_EN", self._png_cache) ]
+		else:
+			langList = []
+			defaultCountry = timezones.defaultCountry
+			for x in languageList:
+				entry = LanguageEntryComponent(fileName = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3], lang), index = x[0], png_cache = self._png_cache)
+				defaults = []
+				if x[1][2] == defaultCountry:
+					defaults.append(entry)
+					continue
+				if x[1][2] == "en":
+					defaults.insert(0, entry)
+					continue
+				langList.append(entry)
+			defaults.extend(langList)
+			langList = defaults
+		return langList
+
+class LanguageSelection(Screen, LanguageSelectionBase):
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		LanguageSelectionBase.__init__(self)
 
 		self.multicontentlist = []
 		self["languages"] = List(self.multicontentlist)
 		self["languages"].onSelectionChanged.append(self.changed)
-
-		self.png_cache = { }
 
 		self.updateList()
 		self.onLayoutFinish.append(self.selectActiveLanguage)
@@ -48,7 +79,7 @@ class LanguageSelection(Screen):
 			"cancel": self.cancel,
 		}, -1)
 
-	 # called from external Components/SetupDevices.py!!
+	# called from external Components/SetupDevices.py!!
 	def selectActiveLanguage(self, listname = "languages"):
 		activeLanguage = language.getActiveLanguage()
 		pos = 0
@@ -74,27 +105,17 @@ class LanguageSelection(Screen):
 		pass
 
 	def updateList(self, listname = "languages"):
-		print "update list"
+		Log.i("update list")
 		first_time = not self.multicontentlist
+		lang = config.osd.language.value if first_time else self[listname].getCurrent()[0]
+
+		langList = self._getLanguageList(lang)
+		self.multicontentlist = langList
 
 		if first_time:
-			lang = config.osd.language.value
+			self[listname].list = langList
 		else:
-			lang = self[listname].getCurrent()[0]
-
-		languageList = language.getLanguageList()
-		if not languageList: # no language available => display only english
-			list = [ LanguageEntryComponent("en", _cached("en_EN", lang), "en_EN", self.png_cache) ]
-		else:
-			list = [ LanguageEntryComponent(file = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3], lang), index = x[0], png_cache = self.png_cache) for x in languageList]
-		self.multicontentlist = list
-
-		if first_time:
-			self[listname].list = list
-		else:
-			self[listname].updateList(list)
-		print "done"
-
+			self[listname].updateList(langList)
 		return lang
 
 	def changed(self):

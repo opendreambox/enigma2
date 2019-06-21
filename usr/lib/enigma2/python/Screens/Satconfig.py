@@ -13,7 +13,32 @@ from Screens.ServiceStopScreen import ServiceStopScreen
 from time import mktime, localtime
 from datetime import datetime
 
-class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
+class NimSetupBase(object):
+	def __init__(self, slotid):
+		# hack for wizard and multi channel / multi input tuners
+		if slotid >= 64:
+			dest_slot = slotid - 64
+			sl = -1
+			slotid = 0
+			slots = len(nimmanager.nim_slots)
+			while slotid < slots:
+				slot = nimmanager.nim_slots[slotid]
+				if slot.inputs is None or slot.channel < len(slot.inputs):
+					sl += 1
+				if sl >= dest_slot:
+					break
+				slotid += 1
+
+		self.slotid = slotid
+		self.nim = nimmanager.nim_slots[slotid]
+		self.nimConfig = self.nim.config
+
+		self._lastUnicableManufacturerName = None
+		self._lastUnicableProductName = None
+
+	def _getConfig(self):
+		raise NotImplementedError
+
 	def createSimpleSetup(self, list, mode):
 		nim = self.nimConfig
 		if mode == "single":
@@ -221,8 +246,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				self.list.append(getConfigListEntry(_("Enable 5V for active antenna"), self.nimConfig.terrest.use5V))
 		else:
 			self.have_advanced = False
-		self["config"].list = self.list
-		self["config"].l.setList(self.list)
+
+		self._getConfig().list = self.list
+		self._getConfig().l.setList(self.list)
 
 	def newConfig(self):
 		checkList = (self.configMode, self.diseqcModeEntry, self.advancedSatsEntry, \
@@ -233,7 +259,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.unicableUsePinEntry, self.advancedDepends
 		)
 
-		current = self["config"].getCurrent()
+		current = self._getConfig().getCurrent()
 
 		if current == self.multiType:
 			self.nimConfig.save()
@@ -262,7 +288,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				curSat = self.nimConfig.advanced.sat[orb_pos]
 				self.fillListWithAdvancedSatEntrys(curSat)
 				self.fixTurnFastEpochTime()
-			self["config"].list = self.list
+			self._getConfig().list = self.list
 		else:
 			self.fixTurnFastEpochTime()
 
@@ -442,6 +468,41 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		if self._lastUnicableManufacturerName != manufacturer or self._lastUnicableProductName != product_name:
 			configLOFChanged(currLnb.lof)
 
+
+	def saveAll(self):
+		if self.nim.isCompatible("DVB-S"):
+			# reset connectedTo to all choices to properly store the default value
+			choices = []
+			nimlist = nimmanager.getNimListOfType("DVB-S", self.slotid)
+			for id in nimlist:
+				choices.append((str(id), nimmanager.getNimDescription(id)))
+			self.nimConfig.connectedTo.setChoices(choices)
+		for x in self._getConfig().list:
+			x[1].save()
+
+class NimSetup(NimSetupBase, Screen, ConfigListScreen, ServiceStopScreen):
+	def __init__(self, session, slotid):
+		NimSetupBase.__init__(self, slotid)
+		Screen.__init__(self, session)
+		self.list = [ ]
+		ServiceStopScreen.__init__(self)
+		self.stopService()
+
+		ConfigListScreen.__init__(self, self.list, session=session)
+
+		self["actions"] = ActionMap(["SetupActions", "SatlistShortcutAction"],
+		{
+			"ok": self.keySave,
+			"cancel": self.keyCancel,
+			"nothingconnected": self.nothingConnectedShortcut
+		}, -2)
+
+		self.createConfigMode()
+		self.createSetup()
+
+	def _getConfig(self):
+		return self["config"]
+
 	def keySave(self):
 		old_configured_sats = nimmanager.getConfiguredSats()
 		self.run()
@@ -480,45 +541,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		else:
 			self.restoreService(_("Zap back to service before tuner setup?"))
 
-	def __init__(self, session, slotid):
-		Screen.__init__(self, session)
-		self.list = [ ]
-		ServiceStopScreen.__init__(self)
-		self.stopService()
-
-		ConfigListScreen.__init__(self, self.list, session=session)
-
-		self["actions"] = ActionMap(["SetupActions", "SatlistShortcutAction"],
-		{
-			"ok": self.keySave,
-			"cancel": self.keyCancel,
-			"nothingconnected": self.nothingConnectedShortcut
-		}, -2)
-
-		# hack for wizard and multi channel / multi input tuners
-		if slotid >= 64:
-			dest_slot = slotid - 64
-			sl = -1
-			slotid = 0
-			slots = len(nimmanager.nim_slots)
-			while slotid < slots:
-				slot = nimmanager.nim_slots[slotid]
-				if slot.inputs is None or slot.channel < len(slot.inputs):
-					sl += 1
-				if sl >= dest_slot:
-					break
-				slotid += 1
-
-		self.slotid = slotid
-		self.nim = nimmanager.nim_slots[slotid]
-		self.nimConfig = self.nim.config
-
-		self._lastUnicableManufacturerName = None
-		self._lastUnicableProductName = None
-
-		self.createConfigMode()
-		self.createSetup()
-
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)
 		self.newConfig()
@@ -532,17 +554,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
 		else:
 			self.restoreService(_("Zap back to service before tuner setup?"))
-
-	def saveAll(self):
-		if self.nim.isCompatible("DVB-S"):
-			# reset connectedTo to all choices to properly store the default value
-			choices = []
-			nimlist = nimmanager.getNimListOfType("DVB-S", self.slotid)
-			for id in nimlist:
-				choices.append((str(id), nimmanager.getNimDescription(id)))
-			self.nimConfig.connectedTo.setChoices(choices)
-		for x in self["config"].list:
-			x[1].save()
 
 	def cancelConfirm(self, result):
 		if not result:

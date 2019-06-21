@@ -35,6 +35,7 @@ AUDIO_FORMATS = {
 	iAt.atWMA:    ("WMA",   _("WMA"),  11),
 	iAt.atFLAC:   ("FLAC",  _("FLAC"), -1),
 	iAt.atOGG:    ("OGG",   _("OGG"),  -1),
+	iAt.atTRUEHD: ("TrueHD",_("TrueHD"), -1),
 	iAt.atUnknown:("unknown",_("<unknown>"), -1)
 }
 

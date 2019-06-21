@@ -39,14 +39,14 @@ class Language:
 		self.addLanguage(_("Polish"), "pl", "PL")
 		self.addLanguage(_("Portuguese"), "pt", "PT")
 		self.addLanguage(_("Russian"), "ru", "RU")
-		self.addLanguage(_("Serbian"), "sr", "YU", "sr_RS")
+		self.addLanguage(_("Serbian"), "sr", "RS", "sr_RS")
 		self.addLanguage(_("Slovakian"), "sk", "SK")
 		self.addLanguage(_("Slovenian"), "sl", "SI")
 		self.addLanguage(_("Spanish"), "es", "ES")
 		self.addLanguage(_("Swedish"), "sv", "SE")
 		self.addLanguage(_("Turkish"), "tr", "TR", "tr_CY")
 		self.addLanguage(_("Ukrainian"), "uk", "UA")
-		self.addLanguage(_("Frisian"), "fy", "x-FY", "fy_NL") # there is no separate country for frisian
+		self.addLanguage(_("Frisian"), "fy", "NL", "fy_NL") # there is no separate country for frisian
 
 		self.callbacks = []
 
@@ -60,6 +60,11 @@ class Language:
 			print "Language " + str(name) + " not found"
 
 	def activateLanguage(self, index):
+		#map old keys to new ones
+		index = {
+			"fy_x-FY" : "fy_NL",
+			"sr_YU" : "sr_RS",
+		}.get(index, index)
 		try:
 			lang = self.lang[index]
 			print "Activating language " + lang[0]

@@ -14,6 +14,7 @@ def EVIOCGNAME(length):
 	return IOC('r', 'E', 0x06, length)
 
 class inputDevices:
+	BLACKLIST = ("dreambox front panel", "cec_input")
 	def __init__(self):
 		self.Devices = {}
 		self.currentDevice = ""
@@ -39,11 +40,13 @@ class inputDevices:
 
 			name = buf[:size - 1]
 			if name:
+				if name == "aml_keypad":
+					name = "dreambox advanced remote control (native)"
 				if name == "dreambox advanced remote control (native)" and config.misc.rcused.value not in (0, 2):
 					continue
 				if name == "dreambox remote control (native)" and config.misc.rcused.value in (0, 2):
 					continue
-				if name == "dreambox front panel":
+				if name in self.BLACKLIST:
 					continue
 				self.Devices[evdev] = {'name': name, 'type': self.getInputDeviceType(name),'enabled': False, 'configuredName': None }
 

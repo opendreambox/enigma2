@@ -12,8 +12,10 @@ from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpda
 
 class InputDeviceManagementBase(object):
 	def __init__(self):
-		self["pin"] = StaticText() #unused dummy
-
+		try:
+			self["pin"] = StaticText() #unused dummy
+		except:
+			pass
 		self._devices = []
 		self._list = List([], enableWrapAround=True, buildfunc=self._inputDeviceBuildFunc)
 

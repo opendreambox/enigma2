@@ -1,12 +1,14 @@
 <default>
 	<prerequisites>
 		<!-- hardware can occur more than once -->
+		<hardware type="one" />
 		<hardware type="dm820" />
 		<hardware type="dm7080" />
 		<hardware type="dm520" />
 		<hardware type="dm525" />
 		<hardware type="dm900" />
 		<hardware type="dm920" />
+		<hardware type="one" />
 	</prerequisites>
 
 	<info>
@@ -30,6 +32,7 @@
 				<hardware type="dm525" />
 				<hardware type="dm900" />
 				<hardware type="dm920" />
+				<hardware type="one" />
 			</prerequisites>
 		</file>
 		<file type="config" name="settings.anim_off">

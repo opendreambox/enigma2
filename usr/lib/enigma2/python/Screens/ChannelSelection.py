@@ -1315,8 +1315,14 @@ class ChannelSelectionEncoderService(object):
 	def __init__(self):
 		self["EncoderActions"] = ActionMap(["ChannelSelectionEncoderActions"],
 			{
-				"setEncoderService" : self._setEncoderService
+				"setEncoderService" : self._handleEncoder
 			})
+
+	def _handleEncoder(self):
+		if self.bouquet_mark_edit != OFF:
+			self.zap()
+		else:
+			self._setEncoderService()
 
 	def _setEncoderService(self):
 		ref = self.getCurrentSelection()

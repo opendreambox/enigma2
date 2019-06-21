@@ -530,7 +530,7 @@ class iAudioType_ENUMS
 	~iAudioType_ENUMS();
 #endif
 public:
-	enum { atMPEG, atAC3, atDTS, atAAC, atAACHE, atLPCM, atDTSHD, atDDP, atMP3, atPCM, atOGG, atFLAC, atWMA, atUnknown=-1};
+	enum { atMPEG, atAC3, atDTS, atAAC, atAACHE, atLPCM, atDTSHD, atDDP, atMP3, atPCM, atOGG, atFLAC, atWMA, atTRUEHD, atUnknown=-1};
 };
 
 class iAudioTrackInfo: public iAudioType_ENUMS

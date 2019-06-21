@@ -9,6 +9,11 @@ except:
 
 import enigma
 
+from enigma import ePythonConfigQuery
+from Components.config import configfile
+from Screens.SetupGuide import SetupGuide
+queryFunc_conn = ePythonConfigQuery.getQueryFuncSignal().connect(configfile.getResolvedKey)
+
 def gPixmapPtr_deref(self):
 	print "gPixmapPtr.__deref__() is deprecated please completely remove the \".__deref__()\" call!"
 	import traceback
@@ -78,7 +83,7 @@ from Tools.Profile import profile, profile_final
 profile("PYTHON_START")
 
 from enigma import runMainloop, eDVBDB, eTimer, quitMainloop, \
-	getDesktop, ePythonConfigQuery, eAVSwitch, eServiceEvent, \
+	getDesktop, eAVSwitch, eServiceEvent, \
 	eEPGCache
 
 profile("LOAD:resourcemanager")
@@ -631,14 +636,12 @@ def runScreenTest():
 
 	screensToRun = [ p.__call__ for p in plugins.getPlugins(PluginDescriptor.WHERE_WIZARD) ]
 
-	profile("wizards")
-	screensToRun += wizardManager.getWizards()
-
+	profile("SetupGuide")
+	if config.misc.firstrun.value:
+		screensToRun.append((20,SetupGuide))
 	screensToRun.append((100, Screens.InfoBar.InfoBar))
 
 	screensToRun.sort()
-
-	queryFunc_conn = ePythonConfigQuery.getQueryFuncSignal().connect(configfile.getResolvedKey)
 
 #	eDVBCIInterfaces.getInstance().setDescrambleRules(0 # Slot Number
 #		,(	["1:0:1:24:4:85:C00000:0:0:0:"], #service_list
@@ -654,7 +657,7 @@ def runScreenTest():
 		if screensToRun:
 			screen = screensToRun[0][1]
 			args = screensToRun[0][2:]
-	
+
 			if screensToRun:
 				session.openWithCallback(boundFunction(runNextScreen, session, screensToRun[1:]), screen, *args)
 			else:

@@ -15,6 +15,7 @@ class eTPM
 
 public:
 	enum data_type {
+		DT_PROTOCOL_VERSION	= 0x01,
 		DT_TPM_VERSION		= 0x02,
 		DT_SERIAL		= 0x03,
 		DT_LEVEL2_CERT		= 0x04,

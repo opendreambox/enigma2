@@ -153,10 +153,15 @@ class eSemaphore
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 public:
-	eSemaphore();
+	eSemaphore(int val=1);
 	~eSemaphore();
 	
-	int down();
+	/*
+	 * with timeout 0 it waits until internal
+	 * value is > 0 else until timeout expired
+	 * or value changed
+	 */
+	int down(int timeout_msec=0);
 	int decrement();
 	int up();
 	int value();

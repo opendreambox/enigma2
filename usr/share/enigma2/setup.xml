@@ -5,7 +5,8 @@
 			<item level="0" text="Keymap">config.rc.map</item>
 		</setup>
 		<setup key="timezone" title="Timezone">
-			<item level="0" text="Timezone">config.timezone.val</item>
+			<item level="0" text="Region" notify="true">config.timezone.region</item>
+			<item level="0" text="Zone">config.timezone.zone</item>
 		</setup>
 		<setup key="avsetup" title="A/V Settings">
 			<item level="0" text="Color Format">config.av.colorformat</item>

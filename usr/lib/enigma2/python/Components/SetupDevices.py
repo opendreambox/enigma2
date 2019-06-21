@@ -5,15 +5,35 @@ from Components.Keyboard import keyboard
 from Components.config import ConfigInteger
 
 def InitSetupDevices():
-	
-	def timezoneNotifier(configElement):
-		timezones.activateTimezone(configElement.index)
+	def initTimezoneSettings():
+		def getZoneChoices():
+			zones = [(zone.key, zone.name) for zone in timezones.regionalZones(config.timezone.region.value)]
+			if timezones.defaultRegion != config.timezone.region.value:
+				defaultZone = zones[0][0]
+			else:
+				defaultZone = timezones.defaultZone
+			return zones, defaultZone
 
-	config.timezone = ConfigSubsection();
-	config.timezone.version = ConfigInteger(default=0)
-	timezones.checkUpgrade()
-	config.timezone.val = ConfigSelection(default = timezones.getDefaultTimezone(), choices = timezones.getTimezoneList())
-	config.timezone.val.addNotifier(timezoneNotifier)
+		def timezoneNotifier(configElement):
+			timezones.activateTimezone(configElement.value)
+
+		def timezoneRegionNotifier(configElement):
+			zones, defaultZone = getZoneChoices()
+			config.timezone.zone.setChoices(default=defaultZone, choices=zones)
+
+		#region
+		config.timezone = ConfigSubsection();
+		config.timezone.region = ConfigSelection(default = timezones.defaultRegion, choices = timezones.regions)
+		config.timezone.region.save_disabled = True
+		zones, defaultZone = getZoneChoices()
+		config.timezone.zone = ConfigSelection(default = defaultZone, choices = zones)
+
+		config.timezone.region.addNotifier(timezoneRegionNotifier)
+		config.timezone.zone.addNotifier(timezoneNotifier)
+		config.timezone.version = ConfigInteger(default=0)
+		timezones.checkUpgrade()
+		timezones.onReady.remove(initTimezoneSettings)
+	timezones.onReady.append(initTimezoneSettings)
 
 	def keyboardNotifier(configElement):
 		keyboard.activateKeyboardMap(configElement.index)

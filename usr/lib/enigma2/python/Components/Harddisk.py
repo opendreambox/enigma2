@@ -605,7 +605,12 @@ DEVICEDB_SR = \
 	}
 
 DEVICEDB = \
-	{"dm8000":
+	{"one":
+		{
+			"/devices/platform/ff500000.dwc3/xhci-hcd.0.auto/usb1": _("USB 2.0 (Back, inner)"),
+			"/devices/platform/ff500000.dwc3/xhci-hcd.0.auto/usb2": _("USB 3.0 (Back, outer)"),
+		},
+	"dm8000":
 		{
 			"/devices/pci0000:01/0000:01:00.0/host1/target1:0:0/1:0:0:0": _("SATA"),
 			"/devices/platform/brcm-ehci.0/usb1/1-1/1-1.1/1-1.1:1.0": _("Front USB"),
@@ -805,9 +810,10 @@ class HarddiskManager:
 		self.setupConfigEntries(initial_call = True)
 		self.mountDreamboxData()
 
-	def __isBlacklisted(self, data):
+	def __isBlacklisted(self, blkdev, data):
+		name = blkdev.name().rstrip('0123456789')
 		major = int(data.get('MAJOR', '0'))
-		return major in (1, 7, 9, 31, 179) # ram, loop, md, mtdblock, mmcblk
+		return name in ['zram'] or major in (1, 7, 9, 31, 179) # ram, loop, md, mtdblock, mmcblk
 
 	def __callDeviceNotifier(self, device, reason):
 		if not device:
@@ -990,7 +996,7 @@ class HarddiskManager:
 			return
 
 		blkdev = BlockDevice(devname)
-		if self.__isBlacklisted(data):
+		if self.__isBlacklisted(blkdev, data):
 			print "ignoring event for %s (blacklisted)" % devpath
 			return
 
@@ -1857,8 +1863,12 @@ class HarddiskManager:
 
 	def mountDreamboxData(self):
 		Log.d("Mounting Dreambox Data-Partition")
-		device = "/dev/disk/by-label/dreambox-data"
-		if not fileExists(device):
+		device = None
+		for d in [ "/dev/disk/by-label/dreambox-data", "/dev/dreambox-data"]:
+			if fileExists(d):
+				device = d
+				break
+		if not device:
 			Log.w("dreambox-data partition does not exist!")
 			return
 		mountpoint = "/data"

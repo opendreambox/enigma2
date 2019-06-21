@@ -738,8 +738,12 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			currentSREF = self.session.nav.getCurrentlyPlayingServiceReference()
 			stype = currentSREF and currentSREF.valid() and currentSREF.type or None
 			if (stype == eServiceReference.idDVD) and (not hasTrackAutoselect or (hasTrackAutoselect and not "servicedvd" in config.plugins.TrackAutoselect.handle_services.value)):
-				self.selected_subtitle = subtitle.getCurrentSubtitleTrack()
-				self.subtitles_enabled = True
+				cur_sub = subtitle.getCurrentSubtitleTrack()
+				if cur_sub != -1:
+					self.selected_subtitle = cur_sub
+					self.subtitles_enabled = True
+				else:
+					self.subtitles_enabled = False
 				return
 
 			if not hasTrackAutoselect or config.plugins.TrackAutoselect.subtitle_autoselect_enable.value:

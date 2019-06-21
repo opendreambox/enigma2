@@ -1,13 +1,15 @@
 #ifndef __decoder_h
 #define __decoder_h
 
+class eSocketNotifier;
+
 #include <lib/base/object.h>
 #include <lib/dvb/demux.h>
 
-class eSocketNotifier;
-
 class eDVBAudio: public iObject
 {
+	E_DECLARE_PRIVATE(eDVBAudio)
+
 	DECLARE_REF(eDVBAudio);
 private:
 	ePtr<eDVBDemux> m_demux;
@@ -24,7 +26,10 @@ public:
 	void unfreeze();
 	int getPTS(pts_t &now);
 	virtual ~eDVBAudio();
+	void setSTCValidState(int state);
 };
+
+class eDeviceEventManager;
 
 class eDVBVideo: public iObject, public sigc::trackable
 {
@@ -34,6 +39,14 @@ private:
 	int m_fd, m_fd_demux, m_dev;
 	ePtr<eSocketNotifier> m_sn;
 	void video_event(int what);
+#if defined(__aarch64__)
+	int m_fd_amvideoPoll;
+	ePtr<eSocketNotifier> m_sn_amvideoPoll;
+	void amvideo_event(int);
+
+	eDeviceEventManager *m_evtMgr;
+	void udev_event(stringMap msg);
+#endif
 	sigc::signal1<void, struct iTSMPEGDecoder::videoEvent> m_event;
 	int m_width, m_height, m_framerate, m_aspect, m_progressive;
 	std::string m_eotf;
@@ -68,6 +81,7 @@ public:
 	eDVBPCR(eDVBDemux *demux, int dev);
 	int startPid(int pid);
 	void stop();
+	void restart();
 	virtual ~eDVBPCR();
 };
 
@@ -100,8 +114,8 @@ private:
 	int m_vpid, m_vtype, m_apid, m_atype, m_pcrpid, m_textpid;
 	enum
 	{
-		changeVideo = 1, 
-		changeAudio = 2, 
+		changeVideo = 1,
+		changeAudio = 2,
 		changePCR   = 4,
 		changeText  = 8,
 		changeState = 16,
@@ -112,7 +126,7 @@ private:
 	int setState();
 	ePtr<eConnection> m_demux_event_conn;
 	ePtr<eConnection> m_video_event_conn;
-	
+
 	void demux_event(int event);
 	void video_event(struct videoEvent);
 	sigc::signal1<void, struct videoEvent> m_video_event;
@@ -134,10 +148,10 @@ public:
 	int getAC3Delay() { return m_ac3_delay; }
 	RESULT setSyncPCR(int pcrpid);
 	RESULT setTextPID(int textpid);
-	
+
 		/*
 		The following states exist:
-		
+
 		 - stop: data source closed, no playback
 		 - pause: data source active, decoder paused
 		 - play: data source active, decoder consuming

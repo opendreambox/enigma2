@@ -1,12 +1,14 @@
+from enigma import eVideoManager
 from Plugins.Plugin import PluginDescriptor
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, config, ConfigNothing
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
+from Components.SystemInfo import SystemInfo
+from Components.VideoEnhancement import VideoEnhancement
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
-import VideoEnhancement
-from os import path as os_path
+
 
 class VideoEnhancementSetup(Screen, ConfigListScreen):
 
@@ -31,6 +33,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		self.session = session
 		self.onChangedEntry = [ ]
 		self.setup_title = "Videoenhancement"
+		self.video_hw = VideoEnhancement.instance
 
 		self.list = [ ]
 		self.xtdlist = [ ]
@@ -66,7 +69,8 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		self.oldBlock_noise = config.pep.block_noise_reduction.value
 		self.oldMosquito_noise = config.pep.mosquito_noise_reduction.value
 		self.oldDigital_contour = config.pep.digital_contour_removal.value
-		self.oldScaler_sharpness = config.av.scaler_sharpness.value
+		if SystemInfo["CanChangeScalerSharpness"]:
+			self.oldScaler_sharpness = config.av.scaler_sharpness.value
 		self.oldSplit = config.pep.split.value
 		self.oldSharpness = config.pep.sharpness.value
 		self.oldAuto_flesh = config.pep.auto_flesh.value
@@ -78,7 +82,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		if isinstance(configEntry, ConfigNothing):
 			return None
 		entry = getConfigListEntry(description, configEntry)
-		self.list.append(entry);
+		self.list.append(entry)
 		if add_to_xtdlist:
 			self.xtdlist.append(entry)
 		return entry
@@ -92,7 +96,8 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		self.hueEntry = addToConfigList(_("Hue"), config.pep.hue)
 		self.brightnessEntry = addToConfigList(_("Brightness"), config.pep.brightness)
 		self.color_tempEntry = addToConfigList(_("Color temp"), config.pep.color_temp)
-		self.scaler_sharpnessEntry = addToConfigList(_("Scaler sharpness"), config.av.scaler_sharpness)
+		if SystemInfo["CanChangeScalerSharpness"]:
+			self.scaler_sharpnessEntry = addToConfigList(_("Scaler sharpness"), config.av.scaler_sharpness)
 		self.splitEntry = addToConfigList(_("Split preview mode"), config.pep.split, True)
 		add_to_xtdlist = self.splitEntry is not None
 		self.sharpnessEntry = addToConfigList(_("Sharpness"), config.pep.sharpness, add_to_xtdlist)
@@ -128,7 +133,8 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 				self.splitEntry
 			]
 			maxvalue = current[1].max
-			self.session.openWithCallback(self.PreviewClosed, VideoEnhancementPreview, configEntry = self.previewlist, oldSplitMode = config.pep.split.value, maxValue = maxvalue)
+			self.splitEntry[1].save()
+			self.session.openWithCallback(self.PreviewClosed, VideoEnhancementPreview, configEntry = self.previewlist, oldSplitMode = int(config.pep.split.value), maxValue = maxvalue)
 		else:
 			self.previewlist = [
 				current
@@ -146,7 +152,8 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 				self.splitEntry
 			]
 			maxvalue = current[1].max
-			self.session.openWithCallback(self.PreviewClosed, VideoEnhancementPreview, configEntry = self.previewlist, oldSplitMode = config.pep.split.value, maxValue = maxvalue )
+			self.splitEntry[1].save()
+			self.session.openWithCallback(self.PreviewClosed, VideoEnhancementPreview, configEntry = self.previewlist, oldSplitMode = int(config.pep.split.value), maxValue = maxvalue )
 		else:
 			self.previewlist = [
 				current
@@ -159,7 +166,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 			print "not confirmed"
 		else:
 			if self.splitEntry is not None:
-				config.pep.split.setValue('off')
+				config.pep.split.setValue(eVideoManager.SM_OFF)
 			self.keySave()
 
 	def apply(self):
@@ -200,7 +207,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 			if self.scaler_sharpnessEntry is not None:
 				config.av.scaler_sharpness.setValue(self.oldScaler_sharpness)
 			if self.splitEntry is not None:
-				config.pep.split.setValue('off')
+				config.pep.split.setValue(eVideoManager.SM_OFF)
 			if self.sharpnessEntry is not None:
 				config.pep.sharpness.setValue(self.oldSharpness)
 			if self.auto_fleshEntry is not None:
@@ -220,36 +227,37 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		if not confirmed:
 			print "not confirmed"
 		else:
-			if self.color_tempEntry is not None:
-				config.pep.color_temp.setValue(128)
+			videoManager = eVideoManager.getInstance()
 			if self.contrastEntry is not None:
-				config.pep.contrast.setValue(128)
+				config.pep.contrast.setValue(videoManager.getContrastRange().defaultValue)
 			if self.saturationEntry is not None:
-				config.pep.saturation.setValue(128)
+				config.pep.saturation.setValue(videoManager.getSaturationRange().defaultValue)
 			if self.hueEntry is not None:
-				config.pep.hue.setValue(128)
+				config.pep.hue.setValue(videoManager.getSaturationRange().defaultValue)
 			if self.brightnessEntry is not None:
-				config.pep.brightness.setValue(128)
+				config.pep.brightness.setValue(videoManager.getBrightnessRange().defaultValue)
 			if self.block_noise_reductionEntry is not None:
-				config.pep.block_noise_reduction.setValue(0)
+				config.pep.block_noise_reduction.setValue(videoManager.getBlockNoiseReductionRange().defaultValue)
 			if self.mosquito_noise_reductionEntry is not None:
-				config.pep.mosquito_noise_reduction.setValue(0)
+				config.pep.mosquito_noise_reduction.setValue(videoManager.getMosquitoNoiseReductionRange().defaultValue)
 			if self.digital_contour_removalEntry is not None:
-				config.pep.digital_contour_removal.setValue(0)
+				config.pep.digital_contour_removal.setValue(videoManager.getDigitalContourRemovalRange().defaultValue)
 			if self.scaler_sharpnessEntry is not None:
-				config.av.scaler_sharpness.setValue(13)
+				config.av.scaler_sharpness.setValue(videoManager.getScalerSharpnessRange().defaultValue)
 			if self.splitEntry is not None:
-				config.pep.split.setValue('off')
+				config.pep.split.setValue(videoManager.getSplitModeDefault())
 			if self.sharpnessEntry is not None:
-				config.pep.sharpness.setValue(0)
+				config.pep.sharpness.setValue(videoManager.getSharpnessRange().defaultValue)
 			if self.auto_fleshEntry is not None:
-				config.pep.auto_flesh.setValue(0)
+				config.pep.auto_flesh.setValue(videoManager.getAutoFleshRange().defaultValue)
 			if self.green_boostEntry is not None:
-				config.pep.green_boost.setValue(0)
+				config.pep.green_boost.setValue(videoManager.getGreenBoostRange().defaultValue)
 			if self.blue_boostEntry is not None:
-				config.pep.blue_boost.setValue(0)
+				config.pep.blue_boost.setValue(videoManager.getBlueBoostRange().defaultValue)
+			if self.color_tempEntry is not None:
+				config.pep.color_temp.setValue(videoManager.getColorTempRange().defaultValue)
 			if self.dynamic_contrastEntry is not None:
-				config.pep.dynamic_contrast.setValue(0)
+				config.pep.dynamic_contrast.setValue(videoManager.getDynamicContrastRange().defaultValue)
 			self.keySave()
 
 	def keyBlue(self):
@@ -355,9 +363,9 @@ class VideoEnhancementPreview(Screen, ConfigListScreen):
 
 	def keySave(self):
 		if self.oldSplitMode is not None:
-			currentSplitMode = config.pep.split.value
-			if self.oldSplitMode == 'off' and currentSplitMode != 'off':
-				config.pep.split.setValue('off')
+			currentSplitMode = int(config.pep.split.value)
+			if self.oldSplitMode == eVideoManager.SM_OFF and currentSplitMode != eVideoManager.SM_OFF:
+				config.pep.split.setValue(eVideoManager.SM_OFF)
 			else:
 				pass
 		self.close()
@@ -365,10 +373,11 @@ class VideoEnhancementPreview(Screen, ConfigListScreen):
 	def keyCancel(self):
 		for x in self["config"].list:
 			x[1].cancel()
+
 		if self.oldSplitMode is not None:
-			currentSplitMode = config.pep.split.value
-			if self.oldSplitMode == 'off' and currentSplitMode != 'off':
-				config.pep.split.setValue('off')
+			currentSplitMode = int(config.pep.split.value)
+			if self.oldSplitMode == eVideoManager.SM_OFF and currentSplitMode != eVideoManager.SM_OFF:
+				config.pep.split.setValue(eVideoManager.SM_OFF)
 			else:
 				pass
 		self.close()
@@ -399,6 +408,6 @@ def startSetup(menuid):
 
 def Plugins(**kwargs):
 	list = []
-	if config.usage.setup_level.index >= 2 and os_path.exists("/proc/stb/vmpeg/0/pep_apply"):
+	if config.usage.setup_level.index >= 2 and eVideoManager.getInstance().hasApplyChanges():
 		list.append(PluginDescriptor(name=_("Videoenhancement Setup"), description=_("Advanced Video Enhancement Setup"), where = PluginDescriptor.WHERE_MENU, needsRestart = False, fnc=startSetup))
 	return list

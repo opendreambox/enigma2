@@ -1,12 +1,12 @@
+from enigma import eDisplayManager
 from Screens.Wizard import WizardSummary
-from Screens.WizardLanguage import WizardLanguage
-import VideoHardware
+from Components.DisplayHardware import DisplayHardware
 
 from Components.config import config, configfile
 
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 from Tools.HardwareInfo import HardwareInfo
-from Components.SystemInfo import SystemInfo
+
 
 class VideoWizardSummary(WizardSummary):
 	skin = (
@@ -36,7 +36,7 @@ class VideoWizardSummary(WizardSummary):
 
 class VideoWizard():
 	def __init__(self):
-		self.hw = VideoHardware.video_hw
+		self.hw = DisplayHardware.instance
 
 		self.port = None
 		self.mode = None
@@ -50,56 +50,60 @@ class VideoWizard():
 		config.misc.videowizardenabled.save()
 		configfile.save()
 
-	def listInputChannels(self):
+	def listPorts(self):
 		hw_type = HardwareInfo().get_device_name()
-		list = []
+		list_ports = list(config.av.videoport.getChoices())
+		print "listPorts:", list_ports
 
-		for port in self.hw.getPortList():
-			if self.hw.isPortUsed(port):
-				descr = port
-				if descr == 'DVI' and hw_type != 'dm8000':
-					descr = 'HDMI'
-				if port != "DVI-PC":
-					list.append((descr,port))
-		list.sort(key = lambda x: x[0])
-		print "listInputChannels:", list
-		return list
-
-	def selectDVI(self):
-		self.selection = 'DVI'
-		self.inputSelectionMade(self.selection)
-
-	def inputSelectionMade(self, index):
-		print "inputSelectionMade:", index
-		self.port = index
-		self.inputSelect(index)
+		try:
+			list_ports.remove(("HDMI-PC", "HDMI-PC"))
+		except ValueError:
+			pass
 		
-	def inputSelectionMoved(self):
-		print "input selection moved:", self.selection
-		self.inputSelect(self.selection)
+		list_ports.sort(key = lambda x: x[0])
+
+		return list_ports
+
+	def selectHDMI(self):
+		self.selection = "HDMI"
+		self.portSelectionMade(self.selection)
+
+	def portSelectionMade(self, index):
+		print "portSelectionMade:", index
+		self.port = index
+		self.portSelect(index)
+		
+	def portSelectionMoved(self):
+		print "portSelectionMoved:", self.selection
+		self.portSelect(self.selection)
 		if self["portpic"].instance is not None:
 			picname = self.selection
 			if picname == "DVI" and HardwareInfo().get_device_name() != "dm8000":
 				picname = "HDMI"
 			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/" + picname + ".png"))
 		
-	def inputSelect(self, port):
+	def portSelect(self, port):
 		print "inputSelect:", port
-		modeList = self.hw.getModeList(self.selection)
-		print "modeList:", modeList
 		self.port = port
-		if (len(modeList) > 0):
-			ratesList = self.listRates(modeList[0][0])
-			self.hw.setMode(port = port, mode = modeList[0][0], rate = ratesList[0][0])
+
+		modeList = self.listModes()
+		if(len(modeList) > 0):
+			mode = modeList[0][0]
+			rateList = config.av.videorate[mode].getChoices()
+			self.mode = mode
+			self.rate = rateList[0][0]
+			self.hw.setMode(self.port, self.mode, self.rate)
 		
 	def listModes(self):
-		list = []
 		print "modes for port", self.port
-		for mode in self.hw.getModeList(self.port):
-			#if mode[0] != "PC":
-				list.append((mode[0], mode[0]))
-		print "modeslist:", list
-		return list
+
+		try:
+			list = config.av.videomode[self.port].getChoices()
+			print "modeslist:", list
+			return list
+		except KeyError:
+			print "modeslist: empty"
+			return []
 	
 	def modeSelectionMade(self, index):
 		print "modeSelectionMade:", index
@@ -111,54 +115,28 @@ class VideoWizard():
 		self.modeSelect(self.selection)
 		
 	def modeSelect(self, mode):
-		ratesList = self.listRates(mode)
-		print "ratesList:", ratesList
-		if self.port == "DVI" and mode in ("720p", "1080p", "1080i", "2160p"):
-			self.rate = "multi"
-			self.hw.setMode(port = self.port, mode = mode, rate = "multi")
-		else:
-			self.hw.setMode(port = self.port, mode = mode, rate = ratesList[0][0])
-	
-	def listRates(self, querymode = None):
-		if querymode is None:
-			querymode = self.mode
-		list = []
-		print "modes for port", self.port, "and mode", querymode
-		for mode in self.hw.getModeList(self.port):
-			print mode
-			if mode[0] == querymode:
-				for rate in mode[1]:
-					if self.port == "DVI-PC":
-						print "rate:", rate
-						if rate == "640x480":
-							list.insert(0, (rate, rate))
-							continue
-					list.append((rate, rate))
+		print "modeSelect"
+		print "Mode: ", mode
+		self.mode = mode
+		ratesList = self.listRates()
+
+		self.rate = ratesList[0][0]
+
+		self.hw.setMode(self.port, mode, self.rate)
+
+	def listRates(self):
+		list = sorted(config.av.videorate[self.mode].getChoices(), key=lambda rate: rate[0], reverse=True)
+		print list
 		return list
-	
+
 	def rateSelectionMade(self, index):
 		print "rateSelectionMade:", index
 		self.rate = index
 		self.rateSelect(index)
-		
+
 	def rateSelectionMoved(self):
 		print "rate selection moved:", self.selection
 		self.rateSelect(self.selection)
 
 	def rateSelect(self, rate):
-		self.hw.setMode(port = self.port, mode = self.mode, rate = rate)
-
-	def keyNumberGlobal(self, number):
-		if number in (1,2,3,4) and self.isCurrentStepID("modeselection"):
-			if number == 1:
-				self.hw.saveMode("DVI", "720p", "multi")
-			elif number == 2:
-				self.hw.saveMode("DVI", "1080i", "multi")
-			elif SystemInfo["AnalogOutput"] and number == 3:
-				self.hw.saveMode("Scart", "Multi", "multi")
-			elif number == 4:
-				self.hw.saveMode("DVI", "1080p", "multi")
-			self.hw.setConfiguredMode()
-			self.close()
-
-		WizardLanguage.keyNumberGlobal(self, number)
+		self.hw.setMode(self.port,self.mode, self.rate)

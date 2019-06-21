@@ -9,6 +9,7 @@ import time
 
 from InputDeviceManagement import InputDeviceManagement
 from InputDeviceAdapterFlasher import InputDeviceUpdateChecker, InputDeviceAdapterFlasher
+from twisted.internet import reactor
 
 global inputDeviceWatcher
 inputDeviceWatcher = None
@@ -22,13 +23,18 @@ class InputDeviceWatcher(object):
 		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
 		self._updateChecker.check()
 		self._dm = eInputDeviceManager.getInstance()
-		self.__deviceListChanged_conn = self._dm.deviceListChanged.connect(self._onDeviceListChanged)
 		self.__deviceStateChanged_conn = self._dm.deviceStateChanged.connect(self._onDeviceStateChanged)
+		self.__deviceListChanged_conn = None
 		self._batteryStates = {}
 		logdir = "/tmp"
 		if createDir(self.BATTERY_LOG_DIR):
 			logdir = self.BATTERY_LOG_DIR
 		self._batteryLogFile = "%s/battery.dat" %(logdir,)
+		# Wait 10 seconds before looking for connected devices
+		reactor.callLater(10, self._start)
+
+	def _start(self):
+		self.__deviceListChanged_conn = self._dm.deviceListChanged.connect(self._onDeviceListChanged)
 		self._onDeviceListChanged()
 
 	def _onDeviceStateChanged(self, address, state):
@@ -57,6 +63,7 @@ class InputDeviceWatcher(object):
 			config.inputDevices.settings.save()
 
 			for device in devices:
+				Log.i("%s :: %s" %(device.address(), device.ready()))
 				if device.ready():
 					return
 			AddNotificationWithCallback(self._onDiscoveryAnswer, MessageBox, _("A new bluetooth remote has been discovered. Connect now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Bluetooth Remote"))

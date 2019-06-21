@@ -66,7 +66,10 @@ class AVSwitch:
 		eAVSwitch.getInstance().setWSS(value)
 
 def InitAVSwitch():
-	config.av = ConfigSubsection()
+	try:
+		x = config.av
+	except KeyError:
+		config.av = ConfigSubsection()
 	config.av.yuvenabled = ConfigBoolean(default=False)
 	colorformat_choices = {"cvbs": _("CVBS"), "rgb": _("RGB"), "svideo": _("S-Video")}
 
@@ -92,35 +95,8 @@ def InitAVSwitch():
 			"16_9_letterbox": _("16:9 Letterbox")}, 
 			default = "4_3_letterbox")
 
-	config.av.aspect = ConfigSelection(choices={
-			"4_3": _("4:3"),
-			"16_9": _("16:9"), 
-			"16_10": _("16:10"),
-			"auto": _("Automatic")},
-			default = "auto")
-	config.av.policy_169 = ConfigSelection(choices={
-				# TRANSLATORS: (aspect ratio policy: black bars on top/bottom) in doubt, keep english term.
-			"letterbox": _("Letterbox"), 
-				# TRANSLATORS: (aspect ratio policy: cropped content on left/right) in doubt, keep english term
-			"panscan": _("Pan&Scan"),  
-				# TRANSLATORS: (aspect ratio policy: display as fullscreen, even if this breaks the aspect)
-			"scale": _("Just Scale")},
-			default = "letterbox")
-	config.av.policy_43 = ConfigSelection(choices={
-				# TRANSLATORS: (aspect ratio policy: black bars on left/right) in doubt, keep english term.
-			"pillarbox": _("Pillarbox"), 
-				# TRANSLATORS: (aspect ratio policy: cropped content on left/right) in doubt, keep english term
-			"panscan": _("Pan&Scan"),  
-				# TRANSLATORS: (aspect ratio policy: display as fullscreen, with stretching the left/right)
-			"nonlinear": _("Nonlinear"),  
-				# TRANSLATORS: (aspect ratio policy: display as fullscreen, even if this breaks the aspect)
-			"scale": _("Just Scale")},
-			default = "pillarbox")
 	config.av.tvsystem = ConfigSelection(choices = {"pal": _("PAL"), "ntsc": _("NTSC"), "multinorm": _("multinorm")}, default="pal")
 	config.av.wss = ConfigOnOff(default = True)
-	config.av.defaultac3 = ConfigYesNo(default = False)
-	config.av.generalAC3delay = ConfigSelectionNumber(-1000, 1000, 25, default = 0)
-	config.av.generalPCMdelay = ConfigSelectionNumber(-1000, 1000, 25, default = 0)
 	config.av.vcrswitch = ConfigOnOff(default = False)
 
 	iAVSwitch = AVSwitch()
@@ -156,89 +132,3 @@ def InitAVSwitch():
 
 	iAVSwitch.setInput("ENCODER") # init on startup
 	SystemInfo["ScartSwitch"] = eAVSwitch.getInstance().haveScartSwitch()
-
-	try:
-		can_downmix = open("/proc/stb/audio/ac3_choices", "r").read()[:-1].find("downmix") != -1
-	except:
-		can_downmix = False
-
-	SystemInfo["CanDownmixAC3"] = can_downmix
-	if can_downmix:
-		def setAC3Downmix(configElement):
-			open("/proc/stb/audio/ac3", "w").write(configElement.value and "downmix" or "passthrough")
-		config.av.downmix_ac3 = ConfigYesNo(default = True)
-		config.av.downmix_ac3.addNotifier(setAC3Downmix)
-
-	try:
-		can_osd_alpha = open("/proc/stb/video/alpha", "r") and True or False
-	except:
-		can_osd_alpha = False
-
-	ac3plus_support = False
-
-	try:
-		ac3plus_choices = open("/proc/stb/audio/ac3plus_choices", "r").read()
-		if ac3plus_choices.find("use_hdmi_caps") != -1:
-			eDVBServicePMTHandler.setDDPSupport(True)
-		if ac3plus_choices.find("force_ac3") != -1:
-			ac3plus_support = True
-	except:
-		pass
-
-	SystemInfo["SupportsAC3PlusTranscode"] = ac3plus_support
-	if ac3plus_support:
-		def setAC3PlusConvert(configElement):
-			open("/proc/stb/audio/ac3plus", "w").write(configElement.value)
-		config.av.convert_ac3plus = ConfigSelection(choices = [ ("use_hdmi_caps",  _("controlled by HDMI")), ("force_ac3", _("always")) ], default = "use_hdmi_caps")
-		config.av.convert_ac3plus.addNotifier(setAC3PlusConvert)
-
-	SystemInfo["CanChangeOsdAlpha"] = can_osd_alpha
-
-	def setAlpha(config):
-		open("/proc/stb/video/alpha", "w").write(str(config.value))
-
-	if can_osd_alpha:
-		config.av.osd_alpha = ConfigSlider(default=255, limits=(0,255))
-		config.av.osd_alpha.addNotifier(setAlpha)
-
-	if os_path.exists("/proc/stb/vmpeg/0/pep_scaler_sharpness"):
-		def setScaler_sharpness(config):
-			myval = int(config.value)
-			try:
-				print "--> setting scaler_sharpness to: %0.8X" % myval
-				open("/proc/stb/vmpeg/0/pep_scaler_sharpness", "w").write("%0.8X" % myval)
-				open("/proc/stb/vmpeg/0/pep_apply", "w").write("1")
-			except IOError:
-				print "couldn't write pep_scaler_sharpness"
-
-		config.av.scaler_sharpness = ConfigSlider(default=13, limits=(0,26))
-		config.av.scaler_sharpness.addNotifier(setScaler_sharpness)
-	else:
-		config.av.scaler_sharpness = NoSave(ConfigNothing())
-
-	try:
-		hlg_choices = open("/proc/stb/hdmi/hlg_support_choices", "r").read()
-		def setHlgSupport(configElement):
-			open("/proc/stb/hdmi/hlg_support", "w").write(configElement.value)
-		config.av.hlg_support = ConfigSelection(default = "auto(EDID)", 
-			choices = [ ("auto(EDID)", _("controlled by HDMI")), ("yes", _("force enabled")), ("no", _("force disabled")) ])
-		config.av.hlg_support.addNotifier(setHlgSupport)
-
-		def setHdr10Support(configElement):
-			open("/proc/stb/hdmi/hdr10_support", "w").write(configElement.value)
-		config.av.hdr10_support = ConfigSelection(default = "auto(EDID)", 
-			choices = [ ("auto(EDID)", _("controlled by HDMI")), ("yes", _("force enabled")), ("no", _("force disabled")) ])
-		config.av.hdr10_support.addNotifier(setHdr10Support)
-
-		def setDisable12Bit(configElement):
-			open("/proc/stb/video/disable_12bit", "w").write(configElement.value)
-		config.av.allow_12bit = ConfigSelection(default = "0", choices = [ ("0", _("yes")), ("1", _("no")) ]);
-		config.av.allow_12bit.addNotifier(setDisable12Bit)
-
-		def setDisable10Bit(configElement):
-			open("/proc/stb/video/disable_10bit", "w").write(configElement.value)
-		config.av.allow_10bit = ConfigSelection(default = "0", choices = [ ("0", _("yes")), ("1", _("no")) ]);
-		config.av.allow_10bit.addNotifier(setDisable10Bit)
-		SystemInfo["HDRSupport"] = True
-	except:
-		SystemInfo["HDRSupport"] = False
