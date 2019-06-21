@@ -124,7 +124,8 @@
 	<!-- Components -->
 	<components>
 		<component type="MenuPixmap" itemHeight="192" itemWidth="192"/>
-		<component type="ConfigList" seperation="400" dividerHeight="1"/>
+		<component type="ConfigList" seperation="550" dividerHeight="1"/>
+		<component type="NimSetup" seperation="450" />
 		<component type="ChoiceList" itemHeight="30" textX="50" textY="0" textWidth="800" textHeight="30" pixmapWidth="40" pixmapHeight="30" fillerCount="200"/>
 		<component type="FileList" itemHeight="30" textX="50" textY="0" textWidth="1000" textHeight="30" pixmapWidth="30" pixmapHeight="30"/>
 		<component type="MultiFileSelectList" itemHeight="30" textX="70" textY="0" textWidth="1000" textHeight="30" pixmapWidth="30" pixmapHeight="30" pixmap2Width="30" pixmap2Height="30"/>

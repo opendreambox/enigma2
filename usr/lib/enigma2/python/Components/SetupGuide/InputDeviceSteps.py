@@ -34,7 +34,7 @@ class InputDeviceCheckFirmwareStep(SetupListStep):
 		self.session.openWithCallback(self._onAdapterFlashFinished, InputDeviceAdapterFlasher)
 		return False
 
-	def _onAdapterFlashFinished(self):
+	def _onAdapterFlashFinished(self, result):
 		self.parent.nextStep()
 
 class InputDeviceConnectStep(SetupListStep, InputDeviceManagementBase):

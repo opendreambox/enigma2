@@ -17,12 +17,14 @@ entryPicture[IMG_WHITEBOUQUET] = LoadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, "s
 
 def ParentalControlEntryComponent(service, name, protectionType):
 	sizes = componentSizes[componentSizes.PARENTAL_CONTROL_LIST]
-	tx = sizes.get("textX", 50)
-	ty = sizes.get("textY", 0)
-	tw = sizes.get("textWidth", 300)
-	th = sizes.get("textHeight", 32)
-	pxw = sizes.get("pixmapWidth", 32)
-	pxh = sizes.get("pixmapHeight", 32)
+	tx = sizes.get(componentSizes.TEXT_X, 50)
+	ty = sizes.get(componentSizes.TEXT_Y, 0)
+	tw = sizes.get(componentSizes.TEXT_WIDTH, 300)
+	th = sizes.get(componentSizes.TEXT_HEIGHT, 32)
+	pxx = sizes.get(componentSizes.PIXMAP_X, 0)
+	pxy = sizes.get(componentSizes.PIXMAP_Y, 0)
+	pxw = sizes.get(componentSizes.PIXMAP_WIDTH, 32)
+	pxh = sizes.get(componentSizes.PIXMAP_HEIGHT, 32)
 
 	locked = protectionType[0]
 	sImage = protectionType[1]
@@ -32,7 +34,7 @@ def ParentalControlEntryComponent(service, name, protectionType):
 	]
 	#Changed logic: The image is defined by sImage, not by locked anymore
 	if sImage != "":
-		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, 0, 0, pxw, pxh, entryPicture[sImage]))
+		res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHATEST, pxx, pxy, pxw, pxh, entryPicture[sImage]))
 	return res
 
 class ParentalControlList(MenuList):

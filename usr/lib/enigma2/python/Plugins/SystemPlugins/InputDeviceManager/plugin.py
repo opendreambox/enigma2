@@ -73,7 +73,7 @@ class InputDeviceWatcher(object):
 			self.session.open(InputDeviceManagement)
 
 	def _onUpdateAvailable(self):
-		AddNotificationWithCallback(self._onUpdateAnswer, MessageBox, _("There is a new firmware for your bluetooth remote reciver available. Update now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Bluetooth Remote"))
+		AddNotificationWithCallback(self._onUpdateAnswer, MessageBox, _("There is a new firmware for your frontprocessor available. Update now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Firmware"))
 
 	def _onUpdateAnswer(self, answer):
 		if answer:

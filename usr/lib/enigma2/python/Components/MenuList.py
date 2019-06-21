@@ -1,10 +1,10 @@
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 
-from enigma import eListboxPythonStringContent, eListbox
+from enigma import eListboxPythonStringContent, eListbox, ePoint
 
 class MenuList(HTMLComponent, GUIComponent):
-	def __init__(self, list, enableWrapAround=False, content=eListboxPythonStringContent, mode=eListbox.layoutVertical, itemSize=0, itemWidth=0, itemHeight=0):
+	def __init__(self, list, enableWrapAround=False, content=eListboxPythonStringContent, mode=eListbox.layoutVertical, itemSize=0, itemWidth=0, itemHeight=0, margin=ePoint(0,0), selectionZoom=1.0):
 		GUIComponent.__init__(self)
 		self.list = list
 		self.l = content()
@@ -15,6 +15,8 @@ class MenuList(HTMLComponent, GUIComponent):
 		self._itemSize = itemSize
 		self._itemWidth = itemWidth
 		self._itemHeight = itemHeight
+		self._margin = margin
+		self._selectionZoom = selectionZoom
 
 	def getCurrent(self):
 		return self.l.getCurrentSelection()
@@ -24,6 +26,8 @@ class MenuList(HTMLComponent, GUIComponent):
 	def postWidgetCreate(self, instance):
 		instance.setContent(self.l)
 		instance.setMode(self._mode)
+		instance.setMargin(self._margin)
+		instance.setSelectionZoom(self._selectionZoom)
 		if self._itemSize:
 			if self._mode == eListbox.layoutVertical:
 				instance.setItemHeight(self._itemSize)

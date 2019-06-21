@@ -1,5 +1,5 @@
 from Renderer import Renderer
-from enigma import eListbox
+from enigma import eListbox, ePoint
 
 # the listbox renderer is the listbox, but no listbox content.
 # the content will be provided by the source (or converter).
@@ -17,10 +17,13 @@ class Listbox(Renderer, object):
 	def __init__(self):
 		Renderer.__init__(self)
 		self.__content = None
+		self.__mode = eListbox.layoutVertical
 		self.__wrap_around = False
 		self.__selection_enabled = True
 		self.__scrollbarMode = "showOnDemand"
 		self.__backlogMode = False
+		self.__margin = ePoint(0,0)
+		self.__selectionZoom = 1.0
 
 	GUI_WIDGET = eListbox
 
@@ -34,9 +37,33 @@ class Listbox(Renderer, object):
 
 	content = property(lambda self: self.__content, setContent)
 
+	def setMode(self, mode):
+		self.__mode = mode
+		if self.instance:
+			self.instance.setMode(self.__mode)
+
+	mode = property(lambda self: self.__mode, setMode)
+
+	def setMargin(self, leftRight, topBottom):
+		self.__margin = ePoint(leftRight, topBottom)
+		if self.instance:
+			self.instance.setMargin(self.__margin)
+
+	margin = property(lambda self: self.__margin, setMargin)
+
+	def setSelectionZoom(self, factor):
+		self.__selectionZoom = factor
+		if self.instance:
+			self.instance.setSelectionZoom(factor)
+
+	selectionZoom = property(lambda self: self.__selectionZoom, setSelectionZoom)
+
 	def postWidgetCreate(self, instance):
 		if self.__content is not None:
 			instance.setContent(self.__content)
+		self.instance.setMode(self.__mode)
+		self.instance.setMargin(self.__margin)
+		self.setSelectionZoom(self.__selectionZoom)
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		self.wrap_around = self.wrap_around # trigger
 		self.selection_enabled = self.selection_enabled # trigger
@@ -44,6 +71,18 @@ class Listbox(Renderer, object):
 			if attrib == "scrollbarMode":
 				self.__scrollbarMode = value
 				break
+			elif attrib == "mode":
+				mode = {
+					'vertical' : eListbox.layoutVertical,
+					'grid' : eListbox.layoutGrid,
+					'horizontal' : eListbox.layoutHorizontal
+				}[value]
+				self.mode = mode
+			elif attrib == "margin":
+				leftRight, bottomTop = [int(x) for x in value.split(",")]
+				self.__margin = ePoint(leftRight, bottomTop)
+			elif attrib == "selectionZoom":
+				self.selectionZoom = float(value)
 		self.scrollbarMode = self.scrollbarMode # trigger
 		self.backlogMode = self.backlogMode # trigger
 
@@ -103,6 +142,12 @@ class Listbox(Renderer, object):
 	scrollbarMode = property(lambda self: self.__scrollbarMode, setScrollbarMode)
 	
 	def changed(self, what):
+		if hasattr(self.source, "mode"):
+			self.mode = self.source.mode
+		if hasattr(self.source, "margin"):
+			self.margin = self.source.margin
+		if hasattr(self.source, "selectionZoom"):
+			self.selectionZoom = self.source.selectionZoom
 		if hasattr(self.source, "selectionEnabled"):
 			self.selection_enabled = self.source.selectionEnabled
 		if hasattr(self.source, "scrollbarMode"):

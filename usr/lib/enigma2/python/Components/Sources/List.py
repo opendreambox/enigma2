@@ -1,3 +1,4 @@
+from enigma import eListbox, ePoint
 from Source import Source
 from Components.Element import cached
 
@@ -20,6 +21,9 @@ to generate HTML."""
 		self.__style = "default" # style might be an optional string which can be used to define different visualisations in the skin
 		self.__buildfunc = buildfunc
 		self.__selection_enabled = True
+		self.__mode = eListbox.layoutVertical
+		self.__margin = ePoint(0,0)
+		self.__selectionZoom = 1.0
 
 	def setList(self, list):
 		self.__list = list
@@ -131,6 +135,27 @@ to generate HTML."""
 			self.changed((self.CHANGED_SPECIFIC, "selection_enabled"))
 
 	selection_enabled = property(lambda self: self.__selection_enabled, setSelectionEnabled)
+
+	def setMode(self, mode):
+		if self.__mode != mode:
+			self.__mode = mode
+			self.changed((self.CHANGED_SPECIFIC, "mode"))
+
+	mode = property(lambda self: self.__mode, setMode)
+
+	def setMargin(self, margin):
+		if self.__margin != margin:
+			self.__margin = margin
+			self.changed(self.CHANGED_SPECIFIC, "margin")
+
+	margin = property(lambda self: self.__margin, setMargin)
+
+	def setSelectionZoom(self, zoom):
+		if self.__selectionZoom != zoom:
+			self.__selectionZoom = zoom
+			self.changed(self.CHANGED_SPECIFIC, "selectionZoom")
+
+	selectionZoom = property(lambda self: self.__selectionZoom, setSelectionZoom)
 
 	def hide(self):
 		self.changed((self.CHANGED_SPECIFIC, "hide"))

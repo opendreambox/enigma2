@@ -4,11 +4,23 @@ from Screens.MessageBox import MessageBox
 from Tools.Directories import fileExists
 from Components.config import config
 
+from Tools.HardwareInfo import HardwareInfo
+
 class InputDeviceAdapterFlasher(MessageBox):
 	FLASHER_BINARY = eEnv.resolve("${sbindir}/flash-nrf52")
+	NRF_AS_FRONTPROCESSOR_DEVICES = ["one"]
 
 	def __init__(self, session):
-		MessageBox.__init__(self, session, _("Please wait! We are about to start..."), title=_("Flashing Adapter Firmware"), type=MessageBox.TYPE_WARNING, windowTitle=_("Bluetooth Receiver Firmware"))
+		self._isFrontProcessor = HardwareInfo().get_device_name() in self.NRF_AS_FRONTPROCESSOR_DEVICES
+		if self._isFrontProcessor:
+			title = _("Flashing Frontprocessor Firmware")
+			windowTitle =_("Frontprocessor Firmware")
+		else:
+			title = _("Flashing Adapter Firmware")
+			windowTitle = _("Bluetooth Frontprocessor Firmware")
+
+		fakeText ="\n.                                                         .\n.\n.\n." ##reserve some space for future text in our messagebox
+		MessageBox.__init__(self, session, fakeText, title=title, type=MessageBox.TYPE_WARNING, windowTitle=windowTitle)
 		self.skinName = "MessageBox"
 		self._console = eConsoleAppContainer()
 		self.__onDataConn = self._console.dataAvail.connect(self._onData)
@@ -18,9 +30,15 @@ class InputDeviceAdapterFlasher(MessageBox):
 		self._flasherMissing = False
 
 		self.onFirstExecBegin.append(self._check)
+		self.onShow.append(self.__onShow)
 		self.onClose.append(self.__onClose)
 
 		self._flashFirmware()
+
+	def __onShow(self):
+		t = _("Please wait! We are about to start...")
+		self["Text"].setText(t)
+		self["text"].setText(t)
 
 	def _check(self):
 		if self._flasherMissing:
@@ -38,6 +56,10 @@ class InputDeviceAdapterFlasher(MessageBox):
 		elif data.strip().startswith("verifying"):
 			pre = _("Verifying firmware...")
 
+		if self._isFrontProcessor:
+			pre += _("\n\nDO NOT TURN OFF YOUR DREAMBOX!")
+#
+		Log.w(config.usage.setup_level.index)
 		if pre and config.usage.setup_level.index >= 2:
 			text = "%s\n\n%s" %(pre, data)
 		else:

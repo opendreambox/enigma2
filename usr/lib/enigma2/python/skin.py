@@ -5,7 +5,7 @@ from os.path import dirname
 
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
-	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent
+	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent, eListbox
 from Components.config import ConfigSubsection, ConfigText, config
 from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
@@ -13,9 +13,12 @@ from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Log import Log
 
+from re import search as re_search
+
 HAS_SKIN_USER_DISPLAY = True
 
 colorNames = dict()
+skinGlobals = dict()
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -125,8 +128,18 @@ def getParentSize(desktop, guiObject):
 		parent_size = desktop.size()
 	return parent_size
 
-def parsePosition(str, scale, desktop = None, guiObject = None):
-	p = str.split(',')
+def translateVariable(value):
+	match = re_search("{{(.*)}}", value)
+	if match and len(match.groups()) == 1:
+		key = match.group(1)
+		val = skinGlobals.get(key, value)
+		Log.i("%s => %s" %(key, val))
+		return val
+	return value
+
+def parsePosition(value, scale, desktop = None, guiObject = None):
+	value = translateVariable(value)
+	p = value.split(',')
 	x, y = p[0], p[1]
 	wsize = 1, 1
 	ssize = 1, 1
@@ -150,8 +163,9 @@ def parsePosition(str, scale, desktop = None, guiObject = None):
 
 	return ePoint(x, y)
 
-def parseSize(str, scale, desktop = None, guiObject = None):
-	x, y = str.split(',')
+def parseSize(value, scale, desktop = None, guiObject = None):
+	value = translateVariable(value)
+	x, y = value.split(',')
 	if guiObject is not None:
 		parent_size = getParentSize(desktop, guiObject)
 		#width aliases
@@ -226,6 +240,19 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setZPosition(int(value))
 		elif attrib == 'itemHeight':
 			guiObject.setItemHeight(int(value))
+		elif attrib == 'itemWidth':
+			guiObject.setItemWidth(int(value))
+		elif attrib == 'mode':
+			mode = {'vertical' : eListbox.layoutVertical,
+					'grid' : eListbox.layoutGrid,
+					'horizontal' : eListbox.layoutHorizontal
+				}[value]
+			guiObject.setMode(mode)
+		elif attrib == 'margin':
+			leftRight, topBottom = [int(x) for x in value.split(",")]
+			guiObject.setMargin(ePoint(leftRight, topBottom))
+		elif attrib == 'selectionZoom':
+			guiObject.setSelectionZoom(float(value))
 		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
 			if attrib == "pixmap" and value.endswith("svg"):
 				ptr = loadPixmap(value, desktop, guiObject.size())
@@ -630,6 +657,11 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(id, style)
 
+	for g in skin.findall("globals"):
+		for value in g.findall("value"):
+			Log.i("Global skin value : %s" %(value.attrib,))
+			skinGlobals[value.attrib["name"]] = value.attrib["value"]
+
 	for components in skin.findall("components"):
 		for component in components.findall("component"):
 			componentSizes.apply(component.attrib)
@@ -729,11 +761,20 @@ class ComponentSizes():
 	SERVICE_INFO_LIST = "ServiceInfoList"
 	TIMER_LIST = "TimerList"
 	MOVIE_LIST = "MovieList"
+	NIM_SETUP = "NimSetup"
 	TIMELINE_TEXT = "TimelineText"
 	MENU_PIXMAP = "MenuPixmap"
 	ITEM_HEIGHT = "itemHeight"
 	ITEM_WIDTH = "itemWidth"
 	TEMPLATE = "template"
+	TEXT_X = "textX"
+	TEXT_Y = "textY"
+	TEXT_WIDTH = "textWidth"
+	TEXT_HEIGHT = "textHeight"
+	PIXMAP_X = "pixmapX"
+	PIXMAP_Y = "pixmapY"
+	PIXMAP_WIDTH = "pixmapWidth"
+	PIXMAP_HEIGHT = "pixmapHeight"
 
 	def __init__(self, style_id = 0):
 		self.components = {}

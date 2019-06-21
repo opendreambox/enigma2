@@ -26,7 +26,7 @@ class InitialSetupSteps(object):
 		self.steps = [{
 			InitialSetupSteps.PRIO_VIDEO : [ResolutionStep, RateStep],
 			InitialSetupSteps.PRIO_LANGUAGE : LanguageStep,
-			InitialSetupSteps.PRIO_TIMEZONE : TimezoneStep,
+			#InitialSetupSteps.PRIO_TIMEZONE : TimezoneStep,
 			InitialSetupSteps.PRIO_DEFAULT_SERVICES : DefaultServicelistStep,
 			InitialSetupSteps.PRIO_PARENTAL_CONTROL : ParentalControlStep,
 			InitialSetupSteps.PRIO_AUTO_STANDBY : AutomaticStandbyStep,

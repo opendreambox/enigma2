@@ -828,8 +828,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		</widget>
 	</screen>
 	<!-- Nim setup -->
-	<screen name="NimSetup" position="center,120" size="720,520" title="Reception Settings">
-		<widget name="config" position="10,10" size="700,480" enableWrapAround="1" scrollbarMode="showOnDemand"/>
+	<screen name="NimSetup" position="center,120" size="820,520" title="Reception Settings">
+		<widget name="config" position="10,10" size="800,480" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
 	<!-- Numberzap -->
 	<screen name="NumberZap" position="center,center" size="250,60" flags="wfNoBorder">
@@ -1012,10 +1012,10 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,(720-wsizey)/2))
 		<widget name="config" position="10,180" size="700,330" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
 	<!-- Scan setup -->
-	<screen name="ScanSetup" position="center,120" size="720,520" title="Service scan">
-		<widget name="config" position="10,10" size="700,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
-		<eLabel	position="10,480" size="700,1" backgroundColor="grey"/>
-		<widget name="introduction" position="10,488" size="700,25" font="Regular;22" halign="center"/>
+	<screen name="ScanSetup" position="center,120" size="820,520" title="Service scan">
+		<widget name="config" position="10,10" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
+		<eLabel	position="10,480" size="800,1" backgroundColor="grey"/>
+		<widget name="introduction" position="10,488" size="800,25" font="Regular;22" halign="center"/>
 	</screen>
 	<!-- Scan simple -->
 	<screen name="ScanSimple" position="center,120" size="720,520" title="Service scan">

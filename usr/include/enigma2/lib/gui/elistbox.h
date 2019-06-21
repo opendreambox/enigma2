@@ -51,6 +51,7 @@ protected:
 	virtual void paint(gPainter &painter, eWindowStyle &style, const ePoint &offset, int selected)=0;
 	
 	virtual int getItemHeight()=0;
+	virtual int getItemWidth() { return -1; }
 	
 	eListbox *m_listbox;
 #endif
@@ -77,10 +78,11 @@ struct eListboxStyle
 
 class eListbox: public eWidget
 {
+	SWIG_AUTODOC
 	void updateScrollBar();
 	static bool wrap_around_default;
 public:
-	eListbox(eWidget *parent);
+	eListbox(eWidget *parent, bool withActionMap=true);
 	~eListbox();
 
 	static void setWrapAroundDefault(bool on);
@@ -137,6 +139,8 @@ public:
 	void setMode(int mode);
 	void setItemHeight(int h);
 	void setItemWidth(int w);
+	void setMargin(const ePoint &margin);
+	void setSelectionZoom(float zoom);
 	void setSelectionEnable(int en);
 
 	void setBackgroundColor(gRGB &col);
@@ -184,6 +188,7 @@ protected:
 	const ePoint calculatePosition(int at);
 	const ePoint calculatePositionInGrid(int at);
 	const eRect entryRect(int position);
+	const eRect selectionRect(int position);
 
 	void hapticFeedback();
 private:
@@ -201,12 +206,17 @@ private:
 	ePtr<iListboxContent> m_content;
 	eSlider *m_scrollbar;
 	eListboxStyle m_style;
+	ePtr<gPixmap> m_selectionPixmap;
+	ePoint m_margin;
 
 	int m_scrollbar_width;
 	int m_scrollbar_slider_border_width;
 	int m_scrollbar_top_backgroundpixmap_height, m_scrollbar_bottom_backgroundpixmap_height, m_scrollbar_top_valuepixmap_height, m_scrollbar_bottom_valuepixmap_height;
 	ePtr<gPixmap> m_scrollbarsliderpixmap, m_scrollbarvaluepixmap, m_scrollbarsliderbackgroundpixmap;
 	int scrollbarPropertiesResetted;
+	bool m_withActionMap;
+	float m_selectionZoom;
+
 #endif
 };
 
