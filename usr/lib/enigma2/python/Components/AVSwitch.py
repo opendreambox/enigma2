@@ -19,6 +19,7 @@ class AVSwitch:
 		eAVSwitch.getInstance().setVideomode(value)
 
 	def getOutputAspect(self):
+		return (16,9) # this function is very old... for analog TVs with different pixel aspect ratio .. for modern digital TVs 16:9 is always okay...
 		valstr = config.av.aspectratio.value
 		if valstr in ("4_3_letterbox", "4_3_panscan"): # 4:3
 			return (4,3)

@@ -1,5 +1,5 @@
 from Components.Converter.Converter import Converter
-from enigma import iServiceInformation, iPlayableService, iAudioType_ENUMS as iAt
+from enigma import iServiceInformation, iPlayableService, iAudioType_ENUMS as iAt, CT_MPEG2, CT_H264, CT_MPEG1, CT_MPEG4_PART2, CT_VC1, CT_VC1_SIMPLE_MAIN, CT_H265, CT_DIVX311, CT_DIVX4, CT_SPARK, CT_VP6, CT_VP8, CT_VP9, CT_H263, CT_MJPEG, CT_REAL, CT_AVS, CT_UNKNOWN
 from Components.Element import cached
 
 class ServiceInfo(Converter, object):
@@ -23,6 +23,7 @@ class ServiceInfo(Converter, object):
 	HAS_SUBTITLES = 17
 	IS_HDR = 18
 	VIDEO_PARAMS = 19
+	VIDEO_TYPE = 20
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
@@ -33,6 +34,7 @@ class ServiceInfo(Converter, object):
 				"IsWidescreen": (self.IS_WIDESCREEN, (iPlayableService.evVideoSizeChanged,)),
 				"IsHdr": (self.IS_HDR, (iPlayableService.evVideoSizeChanged,)),
 				"SubservicesAvailable": (self.SUBSERVICES_AVAILABLE, (iPlayableService.evUpdatedEventInfo,)),
+				"VideoType": (self.VIDEO_TYPE, (iPlayableService.evVideoTypeReady,)),
 				"VideoWidth": (self.XRES, (iPlayableService.evVideoSizeChanged,)),
 				"VideoHeight": (self.YRES, (iPlayableService.evVideoSizeChanged,)),
 				"VideoParams": (self.VIDEO_PARAMS, (iPlayableService.evVideoSizeChanged, iPlayableService.evVideoProgressiveChanged, iPlayableService.evVideoFramerateChanged)),
@@ -139,6 +141,13 @@ class ServiceInfo(Converter, object):
 				frame_rate *= 2
 			frame_rate = (frame_rate+500)/1000
 			return "%d%s%d" % (yres, 'p' if progressive else 'i', frame_rate)
+		elif self.type == self.VIDEO_TYPE:
+			vtype = info.getInfo(iServiceInformation.sVideoType)
+			return { CT_MPEG2 : "MPEG2", CT_H264 : "H.264", CT_MPEG1 : "MPEG1", CT_MPEG4_PART2 : "MPEG4", 
+				  CT_VC1 : "VC1", CT_VC1_SIMPLE_MAIN : "WMV3", CT_H265 : "HEVC", CT_DIVX311 : "DIVX3", 
+				  CT_DIVX4 : "DIVX4", CT_SPARK : "SPARK", CT_VP6 : "VP6", CT_VP8 : "VP8", 
+				  CT_VP9 : "VP9", CT_H263 : "H.263", CT_MJPEG : "MJPEG", CT_REAL : "RV", 
+				  CT_AVS : "AVS", CT_UNKNOWN : "UNK" }[vtype]
 		return ""
 
 	text = property(getText)

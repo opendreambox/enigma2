@@ -136,6 +136,7 @@ private:
 	bool m_ml_running;
 	eSingleLock m_sec_mutex, m_sec_lock_mutex;
 	eFixedMessagePump<int> m_pump, m_thread_pump;
+	eLock m_msg_ack_lock;
 	void thread();
 	void gotMessage(int);
 

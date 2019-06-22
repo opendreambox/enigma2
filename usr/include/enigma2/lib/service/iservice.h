@@ -16,6 +16,8 @@ class eServiceEvent;
 
 extern std::string mediaRecvUserAgent;
 
+enum { CT_MPEG2, CT_H264, CT_MPEG1, CT_MPEG4_PART2, CT_VC1, CT_VC1_SIMPLE_MAIN, CT_H265, CT_DIVX311, CT_DIVX4, CT_SPARK, CT_VP6, CT_VP8, CT_VP9, CT_H263, CT_MJPEG, CT_REAL, CT_AVS, CT_UNKNOWN = -1 };
+
 class eServiceReference
 {
 public:
@@ -1034,6 +1036,7 @@ public:
 		evUpdatedRassSlidePic,
 		evUpdatedRassInteractivePicMask,
 
+		evVideoTypeReady,
 		evVideoSizeChanged,
 		evVideoFramerateChanged,
 		evVideoProgressiveChanged,

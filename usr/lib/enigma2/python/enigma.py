@@ -385,6 +385,24 @@ def eServiceEvent_setEPGLanguage(language):
     return _enigma.eServiceEvent_setEPGLanguage(language)
 eServiceEvent_setEPGLanguage = _enigma.eServiceEvent_setEPGLanguage
 
+CT_MPEG2 = _enigma.CT_MPEG2
+CT_H264 = _enigma.CT_H264
+CT_MPEG1 = _enigma.CT_MPEG1
+CT_MPEG4_PART2 = _enigma.CT_MPEG4_PART2
+CT_VC1 = _enigma.CT_VC1
+CT_VC1_SIMPLE_MAIN = _enigma.CT_VC1_SIMPLE_MAIN
+CT_H265 = _enigma.CT_H265
+CT_DIVX311 = _enigma.CT_DIVX311
+CT_DIVX4 = _enigma.CT_DIVX4
+CT_SPARK = _enigma.CT_SPARK
+CT_VP6 = _enigma.CT_VP6
+CT_VP8 = _enigma.CT_VP8
+CT_VP9 = _enigma.CT_VP9
+CT_H263 = _enigma.CT_H263
+CT_MJPEG = _enigma.CT_MJPEG
+CT_REAL = _enigma.CT_REAL
+CT_AVS = _enigma.CT_AVS
+CT_UNKNOWN = _enigma.CT_UNKNOWN
 class eServiceReference(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -1129,6 +1147,7 @@ class iPlayableService_ENUMS(object):
     evUpdatedRtpText = _enigma.iPlayableService_ENUMS_evUpdatedRtpText
     evUpdatedRassSlidePic = _enigma.iPlayableService_ENUMS_evUpdatedRassSlidePic
     evUpdatedRassInteractivePicMask = _enigma.iPlayableService_ENUMS_evUpdatedRassInteractivePicMask
+    evVideoTypeReady = _enigma.iPlayableService_ENUMS_evVideoTypeReady
     evVideoSizeChanged = _enigma.iPlayableService_ENUMS_evVideoSizeChanged
     evVideoFramerateChanged = _enigma.iPlayableService_ENUMS_evVideoFramerateChanged
     evVideoProgressiveChanged = _enigma.iPlayableService_ENUMS_evVideoProgressiveChanged
