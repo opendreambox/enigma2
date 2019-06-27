@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import dbus, argparse, os
+import dbus, argparse, os, subprocess
 
 class DreamboxDBus(object):
 	INTERFACE = "de.dreambox.ctl"
@@ -24,9 +24,36 @@ class DreamboxDBus(object):
 	def _getProperty(self, name):
 		return self._proxy.Get(self.INTERFACE, name, dbus_interface=dbus.PROPERTIES_IFACE)
 
-	def screenshot(self, filename, width=0, height=0, desktop=0, osd=True, video=False):
+	def screenshot(self, filename, width=0, height=0, desktop=0, mode='combined'):
 		fmt = filename.split(".")[-1]
-		return self._interface.screenshot(str(filename), str(fmt), width, height, desktop, osd, video)
+		osd = False
+		video = False
+		if mode == 'combined' or mode == 'osd':
+			osd = True
+		if mode == 'combined' or mode == 'video':
+			video = True
+
+		if self._interface.screenshot(str(filename), str(fmt), width, height, desktop, osd, video) == True:
+			return True
+
+		grabArgs = []
+		grabArgs.append('/usr/bin/grab')
+		if fmt == 'png':
+			grabArgs.append('-p')
+		elif fmt == 'jpg':
+			grabArgs.append('-j80')
+
+		if mode == 'osd':
+			grabArgs.append('-o')
+		if mode == 'video':
+			grabArgs.append('-v')
+
+		with open(os.devnull, 'w') as DEVNULL:
+			popen = subprocess.Popen(grabArgs, stdout=DEVNULL)
+			if popen.wait() == 0:
+				return True
+
+		return False
 
 	def recordCount(self):
 		return self._interface.recordCount()
@@ -80,6 +107,7 @@ def getArgs():
 	pshot.add_argument('-iw', '--width', type=int, default=0, help='image width. 0 for original size')
 	pshot.add_argument('-ih', '--height', type=int, default=0, help='image height. 0 for original size')
 	pshot.add_argument('-d', '--desktop', type=int, default=0, help='desktop to take a screenshot of. 0 for TV, 1 for display')
+	pshot.add_argument('-m', '--mode', type=str, default="combined", help='capture mode, values: osd, video, combined')
 	#recordings
 	prec = subparsers.add_parser('recordings', help='recordings related functions', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 	prec.add_argument('-c', '--count', action='store_true', help='print the number of currently active recordings')

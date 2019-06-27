@@ -103,6 +103,11 @@ public:
 		return false;
 	}
 
+	virtual bool canBlit8bppIndexed() const
+	{
+		return false;
+	}
+
 	virtual int maxDownScaleFactor() const
 	{
 		return 0;
