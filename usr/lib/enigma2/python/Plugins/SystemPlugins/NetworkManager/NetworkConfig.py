@@ -102,6 +102,14 @@ class NetworkConfigGeneral(object):
 			service.setAutoConnect(False)
 			service.remove()
 
+	def getActiveTechnologyCount(self):
+		techs = self._nm.getTechnologies()
+		counter = 0
+		for tech in techs:
+			if tech.powered():
+				counter += 1
+		return counter
+
 	def getTechnologyConfig(self):
 		l = []
 		techs = self._nm.getTechnologies()

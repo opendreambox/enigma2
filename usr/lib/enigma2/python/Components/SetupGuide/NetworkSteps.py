@@ -53,6 +53,8 @@ class NetworkServicesStep(SetupListStep, NetworkConfigGeneral):
 		self._nm = eNetworkManager.getInstance()
 		if self._nm.online():
 			return False
+		if self.getActiveTechnologyCount() == 0:
+			return False
 		self.title = _("Network services")
 		self.text = _("Please select the network service(s) you want to connect your Dreambox to.\nIt may take a few moments before wireless networks show up in the list below!")
 		self._nm_conn = [

@@ -12,13 +12,13 @@ class InitialSetupSteps(object):
 	PRIO_SETTINGS_RESTORE = 0x30
 	PRIO_WELCOME = 0x40
 	PRIO_NETWORK = 0x50
-	PRIO_TIMEZONE = 0x60
 	PRIO_INPUT = 0x70
 	PRIO_TUNER = 0x80
 	PRIO_DEFAULT_SERVICES = 0x90
 	PRIO_PARENTAL_CONTROL = 0x100
 	PRIO_AUTO_STANDBY = 0x110
 	PRIO_USAGE_LEVEL = 0x120
+	PRIO_TIMEZONE = 0x125
 	PRIO_AUTOMATIC_UPDATES = 0x130
 	PRIO_FINISH = 0x140
 
@@ -26,11 +26,11 @@ class InitialSetupSteps(object):
 		self.steps = [{
 			InitialSetupSteps.PRIO_VIDEO : [ResolutionStep, RateStep],
 			InitialSetupSteps.PRIO_LANGUAGE : LanguageStep,
-			#InitialSetupSteps.PRIO_TIMEZONE : TimezoneStep,
 			InitialSetupSteps.PRIO_DEFAULT_SERVICES : DefaultServicelistStep,
 			InitialSetupSteps.PRIO_PARENTAL_CONTROL : ParentalControlStep,
 			InitialSetupSteps.PRIO_AUTO_STANDBY : AutomaticStandbyStep,
 			InitialSetupSteps.PRIO_USAGE_LEVEL : UsageLevelStep,
+			InitialSetupSteps.PRIO_TIMEZONE : TimezoneStep,
 			InitialSetupSteps.PRIO_AUTOMATIC_UPDATES : AutomaticUpdatesStep,
 			InitialSetupSteps.PRIO_FINISH : FinishGuideStep,
 		}]

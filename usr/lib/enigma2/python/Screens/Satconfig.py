@@ -137,7 +137,7 @@ class NimSetupBase(object):
 		if multiType.enabled:
 			self.list.append(self.multiType)
 
-		curType = self.nim.types[multiType.value]
+		curType = self.nim.types.get(multiType.value, "")
 		if curType.startswith("DVB-S"):
 			self.configMode = getConfigListEntry(_("Configuration Mode"), self.nimConfig.sat.configMode)
 			self.list.append(self.configMode)

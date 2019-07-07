@@ -71,7 +71,9 @@ class FinishGuideStep(SetupListStep):
 		current = lst.current and lst.current[0]
 		if current:
 			if current == self.OPTION_SCAN_AUTOMATIC:
-				self.session.open(ScanSimple)
+				self.session.open(ScanSimple, noSetupAfterScan = True)
+				return False # stay in the SetupGuide step after scan is finished/aborted
 			elif current == self.OPTION_SCAN_MANUAL:
 				self.session.open(ScanSetup)
+				return False # stay in the SetupGuide step after scan is finished/aborted
 		return True

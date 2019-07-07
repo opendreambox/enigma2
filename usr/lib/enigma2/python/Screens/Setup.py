@@ -89,6 +89,7 @@ class Setup(ConfigListScreen, Screen):
 			{
 				"cancel": self.keyCancel,
 				"save": self.keySave,
+				"ok": self.keySave,
 			}, -2)
 
 		self._changedEntry()

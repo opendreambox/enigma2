@@ -2168,7 +2168,7 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 			networks.append("DVB-T")
 		return networks
 
-	def __init__(self, session):
+	def __init__(self, session, noSetupAfterScan = False):
 		Screen.__init__(self, session)
 
 		self["actions"] = ActionMap(["SetupActions"],
@@ -2179,7 +2179,10 @@ class ScanSimple(ConfigListScreen, Screen, TransponderSearchSupport, CableTransp
 
 		self.list = []
 		nim_networks = { }
-		self.finished_cb = None
+		if noSetupAfterScan:
+			self.finished_cb = self.close
+		else:
+			self.finished_cb = None
 
 		for nim in nimmanager.nim_slots:
 			# collect networks provided by this tuner

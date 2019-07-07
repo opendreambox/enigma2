@@ -46,6 +46,9 @@ class InputDeviceManagementBase(object):
 		if len(self._devices) > index:
 			self._list.index = index
 
+	def _getInputDevicesCount(self):
+		return len(self._devices)
+
 	def _getInputDevices(self):
 		items = self._dm.getAvailableDevices()
 		devices = []

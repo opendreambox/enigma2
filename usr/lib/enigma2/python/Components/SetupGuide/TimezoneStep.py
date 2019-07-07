@@ -1,6 +1,6 @@
 from Components.SetupGuide.BaseStep import SetupConfigStep
 from Components.config import config, getConfigListEntry
-from Components.Timezones import Timezones
+from Components.Timezones import Timezones, timezones
 
 class TimezoneStep(SetupConfigStep):
 	def __init__(self, parent):
@@ -9,7 +9,11 @@ class TimezoneStep(SetupConfigStep):
 	def prepare(self):
 		self.title = _("Timezone")
 		self.text = _("Please select your timezone!")
-		return True
+		# !!!! WORKAROUND !!!!
+		# this step cannot be displayed if the timezones haven't been pulled from the net yet. this can happen on very fast boxes with very fast users
+		if timezones.loadFinished:
+			return True
+		return False
 
 	@property
 	def configContent(self):

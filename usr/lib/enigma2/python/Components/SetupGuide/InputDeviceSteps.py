@@ -15,7 +15,7 @@ class InputDeviceCheckFirmwareStep(SetupListStep):
 		self.text = _("Your Dreambox bluetooth receiver has no firmware installed.\nInstall the latest firmware now?")
 		self._options = [
 				(True, _("Yes, install the latest bluetooth receiver firmware")),
-				(False,_("No, continue without bluetooth remote setup")),
+				(False,_("No, skip update process")),
 			]
 		idm = eInputDeviceManager.getInstance()
 		return idm.available() and not idm.responding()
@@ -48,6 +48,12 @@ class InputDeviceConnectStep(SetupListStep, InputDeviceManagementBase):
 
 	def prepare(self):
 		if not self._dm.available():
+			return False
+		if (self._getInputDevicesCount() < 1):
+			# Don't display this step if no input device is found yet:
+			# infrared only devices don't need a pairing here
+			# bluetooth rcus should've been seen by now since this isn't the first step of the SetupGuide. So if the list is empty, the user doesn't need to pair a device.
+			# if we get another device in the future which could be discovered later or only on demand, we need to change this behavior.
 			return False
 		self._list = self.parent.list
 		self.title = _("Input Devices")
