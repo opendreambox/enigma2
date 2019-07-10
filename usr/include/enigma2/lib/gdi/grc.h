@@ -321,6 +321,8 @@ protected:
 	virtual void requestSyncPaint(iSyncPaintable *target) {}
 
 private:
+	bool m_nativePainting;
+
 	gSyncPainter(gDC *dc);
 	virtual ~gSyncPainter();
 };

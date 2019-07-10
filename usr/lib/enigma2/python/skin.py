@@ -5,7 +5,7 @@ from os.path import dirname
 
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
-	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent
+	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent, eListbox
 from Components.config import ConfigSubsection, ConfigText, config
 from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
@@ -226,6 +226,19 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 			guiObject.setZPosition(int(value))
 		elif attrib == 'itemHeight':
 			guiObject.setItemHeight(int(value))
+		elif attrib == 'itemWidth':
+			guiObject.setItemWidth(int(value))
+		elif attrib == 'mode':
+			mode = {'vertical' : eListbox.layoutVertical,
+					'grid' : eListbox.layoutGrid,
+					'horizontal' : eListbox.layoutHorizontal
+				}[value]
+			guiObject.setMode(mode)
+		elif attrib == 'margin':
+			leftRight, topBottom = [int(x) for x in value.split(",")]
+			guiObject.setMargin(ePoint(leftRight, topBottom))
+		elif attrib == 'selectionZoom':
+			guiObject.setSelectionZoom(float(value))
 		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
 			if attrib == "pixmap" and value.endswith("svg"):
 				ptr = loadPixmap(value, desktop, guiObject.size())
@@ -729,11 +742,20 @@ class ComponentSizes():
 	SERVICE_INFO_LIST = "ServiceInfoList"
 	TIMER_LIST = "TimerList"
 	MOVIE_LIST = "MovieList"
+	NIM_SETUP = "NimSetup"
 	TIMELINE_TEXT = "TimelineText"
 	MENU_PIXMAP = "MenuPixmap"
 	ITEM_HEIGHT = "itemHeight"
 	ITEM_WIDTH = "itemWidth"
 	TEMPLATE = "template"
+	TEXT_X = "textX"
+	TEXT_Y = "textY"
+	TEXT_WIDTH = "textWidth"
+	TEXT_HEIGHT = "textHeight"
+	PIXMAP_X = "pixmapX"
+	PIXMAP_Y = "pixmapY"
+	PIXMAP_WIDTH = "pixmapWidth"
+	PIXMAP_HEIGHT = "pixmapHeight"
 
 	def __init__(self, style_id = 0):
 		self.components = {}

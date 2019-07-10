@@ -1,4 +1,5 @@
 from enigma import eNetworkManager, eNetworkService
+from Tools.Log import Log
 
 class NetworkData(object):
 	def __init__(self, data):
@@ -25,7 +26,13 @@ class IpData(NetworkData):
 		if self._data.has_key(eNetworkService.KEY_NETMASK):
 			return self._data.get(eNetworkService.KEY_NETMASK, self.default)
 		else:
-			return ord( self._data.get(eNetworkService.KEY_PREFIX_LENGTH, chr(1)) or chr(1) )
+			prefix = self._data.get(eNetworkService.KEY_PREFIX_LENGTH, chr(64)).strip()
+			if len(prefix) == 1:
+				prefix = ord(prefix)
+			else:
+				Log.w("INVALID PREFIX '%s' - defaulting to 64" %(prefix,))
+				prefix = 64
+			return prefix
 	netmask = property(getNetmask)
 
 	def getGateway(self):

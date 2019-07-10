@@ -494,6 +494,60 @@ def eServiceEvent_setEPGLanguage(language):
     return _enigma.eServiceEvent_setEPGLanguage(language)
 eServiceEvent_setEPGLanguage = _enigma.eServiceEvent_setEPGLanguage
 
+
+_enigma.CT_MPEG2_swigconstant(_enigma)
+CT_MPEG2 = _enigma.CT_MPEG2
+
+_enigma.CT_H264_swigconstant(_enigma)
+CT_H264 = _enigma.CT_H264
+
+_enigma.CT_MPEG1_swigconstant(_enigma)
+CT_MPEG1 = _enigma.CT_MPEG1
+
+_enigma.CT_MPEG4_PART2_swigconstant(_enigma)
+CT_MPEG4_PART2 = _enigma.CT_MPEG4_PART2
+
+_enigma.CT_VC1_swigconstant(_enigma)
+CT_VC1 = _enigma.CT_VC1
+
+_enigma.CT_VC1_SIMPLE_MAIN_swigconstant(_enigma)
+CT_VC1_SIMPLE_MAIN = _enigma.CT_VC1_SIMPLE_MAIN
+
+_enigma.CT_H265_swigconstant(_enigma)
+CT_H265 = _enigma.CT_H265
+
+_enigma.CT_DIVX311_swigconstant(_enigma)
+CT_DIVX311 = _enigma.CT_DIVX311
+
+_enigma.CT_DIVX4_swigconstant(_enigma)
+CT_DIVX4 = _enigma.CT_DIVX4
+
+_enigma.CT_SPARK_swigconstant(_enigma)
+CT_SPARK = _enigma.CT_SPARK
+
+_enigma.CT_VP6_swigconstant(_enigma)
+CT_VP6 = _enigma.CT_VP6
+
+_enigma.CT_VP8_swigconstant(_enigma)
+CT_VP8 = _enigma.CT_VP8
+
+_enigma.CT_VP9_swigconstant(_enigma)
+CT_VP9 = _enigma.CT_VP9
+
+_enigma.CT_H263_swigconstant(_enigma)
+CT_H263 = _enigma.CT_H263
+
+_enigma.CT_MJPEG_swigconstant(_enigma)
+CT_MJPEG = _enigma.CT_MJPEG
+
+_enigma.CT_REAL_swigconstant(_enigma)
+CT_REAL = _enigma.CT_REAL
+
+_enigma.CT_AVS_swigconstant(_enigma)
+CT_AVS = _enigma.CT_AVS
+
+_enigma.CT_UNKNOWN_swigconstant(_enigma)
+CT_UNKNOWN = _enigma.CT_UNKNOWN
 class eServiceReference(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
@@ -1237,6 +1291,7 @@ class iPlayableService_ENUMS(object):
     evUpdatedRtpText = _enigma.iPlayableService_ENUMS_evUpdatedRtpText
     evUpdatedRassSlidePic = _enigma.iPlayableService_ENUMS_evUpdatedRassSlidePic
     evUpdatedRassInteractivePicMask = _enigma.iPlayableService_ENUMS_evUpdatedRassInteractivePicMask
+    evVideoTypeReady = _enigma.iPlayableService_ENUMS_evVideoTypeReady
     evVideoSizeChanged = _enigma.iPlayableService_ENUMS_evVideoSizeChanged
     evVideoFramerateChanged = _enigma.iPlayableService_ENUMS_evVideoFramerateChanged
     evVideoProgressiveChanged = _enigma.iPlayableService_ENUMS_evVideoProgressiveChanged
@@ -3019,6 +3074,8 @@ eSlider.setValuePixmapTopHeight = new_instancemethod(_enigma.eSlider_setValuePix
 eSlider.setValuePixmapBottomHeight = new_instancemethod(_enigma.eSlider_setValuePixmapBottomHeight, None, eSlider)
 eSlider.clearProperties = new_instancemethod(_enigma.eSlider_clearProperties, None, eSlider)
 eSlider.updateScrollLabelProperties = new_instancemethod(_enigma.eSlider_updateScrollLabelProperties, None, eSlider)
+eSlider.setBackgroundColor = new_instancemethod(_enigma.eSlider_setBackgroundColor, None, eSlider)
+eSlider.setForegroundColor = new_instancemethod(_enigma.eSlider_setForegroundColor, None, eSlider)
 eSlider_swigregister = _enigma.eSlider_swigregister
 eSlider_swigregister(eSlider)
 
@@ -3102,10 +3159,19 @@ class eListbox(eWidget):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
-    def __init__(self, parent):
-        _enigma.eListbox_swiginit(self, _enigma.new_eListbox(parent))
+    def __init__(self, parent, withActionMap=True):
+        """
+        __init__(eListbox self, eWidget parent, bool withActionMap=True) -> eListbox
+        __init__(eListbox self, eWidget parent) -> eListbox
+        """
+        _enigma.eListbox_swiginit(self, _enigma.new_eListbox(parent, withActionMap))
     __swig_destroy__ = _enigma.delete_eListbox
-    setWrapAroundDefault = staticmethod(_enigma.eListbox_setWrapAroundDefault)
+
+    def setWrapAroundDefault(on):
+        """setWrapAroundDefault(bool on)"""
+        return _enigma.eListbox_setWrapAroundDefault(on)
+
+    setWrapAroundDefault = staticmethod(setWrapAroundDefault)
     selectionChanged = _swig_property(_enigma.eListbox_selectionChanged_get, _enigma.eListbox_selectionChanged_set)
     layoutVertical = _enigma.eListbox_layoutVertical
     layoutHorizontal = _enigma.eListbox_layoutHorizontal
@@ -3113,6 +3179,61 @@ class eListbox(eWidget):
     showOnDemand = _enigma.eListbox_showOnDemand
     showAlways = _enigma.eListbox_showAlways
     showNever = _enigma.eListbox_showNever
+
+    def setScrollbarMode(self, mode):
+        """setScrollbarMode(eListbox self, int mode)"""
+        return _enigma.eListbox_setScrollbarMode(self, mode)
+
+
+    def setupScrollbar(self):
+        """setupScrollbar(eListbox self)"""
+        return _enigma.eListbox_setupScrollbar(self)
+
+
+    def setWrapAround(self, arg2):
+        """setWrapAround(eListbox self, bool arg2)"""
+        return _enigma.eListbox_setWrapAround(self, arg2)
+
+
+    def setBacklogMode(self, arg2):
+        """setBacklogMode(eListbox self, bool arg2)"""
+        return _enigma.eListbox_setBacklogMode(self, arg2)
+
+
+    def setContent(self, content):
+        """setContent(eListbox self, iListboxContent content)"""
+        return _enigma.eListbox_setContent(self, content)
+
+
+    def getCurrentIndex(self):
+        """getCurrentIndex(eListbox self) -> int"""
+        return _enigma.eListbox_getCurrentIndex(self)
+
+
+    def moveSelection(self, how):
+        """moveSelection(eListbox self, long how)"""
+        return _enigma.eListbox_moveSelection(self, how)
+
+
+    def moveSelectionTo(self, index):
+        """moveSelectionTo(eListbox self, int index)"""
+        return _enigma.eListbox_moveSelectionTo(self, index)
+
+
+    def moveToEnd(self):
+        """moveToEnd(eListbox self)"""
+        return _enigma.eListbox_moveToEnd(self)
+
+
+    def atBegin(self):
+        """atBegin(eListbox self) -> bool"""
+        return _enigma.eListbox_atBegin(self)
+
+
+    def atEnd(self):
+        """atEnd(eListbox self) -> bool"""
+        return _enigma.eListbox_atEnd(self)
+
     moveUp = _enigma.eListbox_moveUp
     moveDown = _enigma.eListbox_moveDown
     moveTop = _enigma.eListbox_moveTop
@@ -3123,6 +3244,126 @@ class eListbox(eWidget):
     refresh = _enigma.eListbox_refresh
     moveLeft = _enigma.eListbox_moveLeft
     moveRight = _enigma.eListbox_moveRight
+
+    def setMode(self, mode):
+        """setMode(eListbox self, int mode)"""
+        return _enigma.eListbox_setMode(self, mode)
+
+
+    def setItemHeight(self, h):
+        """setItemHeight(eListbox self, int h)"""
+        return _enigma.eListbox_setItemHeight(self, h)
+
+
+    def setItemWidth(self, w):
+        """setItemWidth(eListbox self, int w)"""
+        return _enigma.eListbox_setItemWidth(self, w)
+
+
+    def setMargin(self, margin):
+        """setMargin(eListbox self, ePoint margin)"""
+        return _enigma.eListbox_setMargin(self, margin)
+
+
+    def setSelectionZoom(self, zoom):
+        """setSelectionZoom(eListbox self, float zoom)"""
+        return _enigma.eListbox_setSelectionZoom(self, zoom)
+
+
+    def setSelectionEnable(self, en):
+        """setSelectionEnable(eListbox self, int en)"""
+        return _enigma.eListbox_setSelectionEnable(self, en)
+
+
+    def setBackgroundColor(self, col):
+        """setBackgroundColor(eListbox self, gRGB col)"""
+        return _enigma.eListbox_setBackgroundColor(self, col)
+
+
+    def setBackgroundColorSelected(self, col):
+        """setBackgroundColorSelected(eListbox self, gRGB col)"""
+        return _enigma.eListbox_setBackgroundColorSelected(self, col)
+
+
+    def setForegroundColor(self, col):
+        """setForegroundColor(eListbox self, gRGB col)"""
+        return _enigma.eListbox_setForegroundColor(self, col)
+
+
+    def setForegroundColorSelected(self, col):
+        """setForegroundColorSelected(eListbox self, gRGB col)"""
+        return _enigma.eListbox_setForegroundColorSelected(self, col)
+
+
+    def setBackgroundPicture(self, pixmap):
+        """setBackgroundPicture(eListbox self, gPixmapPtr pixmap)"""
+        return _enigma.eListbox_setBackgroundPicture(self, pixmap)
+
+
+    def setSelectionPicture(self, pixmap):
+        """setSelectionPicture(eListbox self, gPixmapPtr pixmap)"""
+        return _enigma.eListbox_setSelectionPicture(self, pixmap)
+
+
+    def setScrollbarSliderPicture(self, pm):
+        """setScrollbarSliderPicture(eListbox self, gPixmapPtr pm)"""
+        return _enigma.eListbox_setScrollbarSliderPicture(self, pm)
+
+
+    def setScrollbarSliderBackgroundPicture(self, pm):
+        """setScrollbarSliderBackgroundPicture(eListbox self, gPixmapPtr pm)"""
+        return _enigma.eListbox_setScrollbarSliderBackgroundPicture(self, pm)
+
+
+    def setScrollbarValuePicture(self, pm):
+        """setScrollbarValuePicture(eListbox self, gPixmapPtr pm)"""
+        return _enigma.eListbox_setScrollbarValuePicture(self, pm)
+
+
+    def setScrollbarSliderBorderWidth(self, size):
+        """setScrollbarSliderBorderWidth(eListbox self, int size)"""
+        return _enigma.eListbox_setScrollbarSliderBorderWidth(self, size)
+
+
+    def setScrollbarWidth(self, size):
+        """setScrollbarWidth(eListbox self, int size)"""
+        return _enigma.eListbox_setScrollbarWidth(self, size)
+
+
+    def setScrollbarBackgroundPixmapTopHeight(self, value):
+        """setScrollbarBackgroundPixmapTopHeight(eListbox self, int value)"""
+        return _enigma.eListbox_setScrollbarBackgroundPixmapTopHeight(self, value)
+
+
+    def setScrollbarBackgroundPixmapBottomHeight(self, value):
+        """setScrollbarBackgroundPixmapBottomHeight(eListbox self, int value)"""
+        return _enigma.eListbox_setScrollbarBackgroundPixmapBottomHeight(self, value)
+
+
+    def setScrollbarValuePixmapTopHeight(self, value):
+        """setScrollbarValuePixmapTopHeight(eListbox self, int value)"""
+        return _enigma.eListbox_setScrollbarValuePixmapTopHeight(self, value)
+
+
+    def setScrollbarValuePixmapBottomHeight(self, value):
+        """setScrollbarValuePixmapBottomHeight(eListbox self, int value)"""
+        return _enigma.eListbox_setScrollbarValuePixmapBottomHeight(self, value)
+
+
+    def resetScrollbarProperties(self):
+        """resetScrollbarProperties(eListbox self)"""
+        return _enigma.eListbox_resetScrollbarProperties(self)
+
+
+    def getEntryTop(self):
+        """getEntryTop(eListbox self) -> int"""
+        return _enigma.eListbox_getEntryTop(self)
+
+
+    def getVisibleItemCount(self):
+        """getVisibleItemCount(eListbox self) -> int"""
+        return _enigma.eListbox_getVisibleItemCount(self)
+
 eListbox.setScrollbarMode = new_instancemethod(_enigma.eListbox_setScrollbarMode, None, eListbox)
 eListbox.setupScrollbar = new_instancemethod(_enigma.eListbox_setupScrollbar, None, eListbox)
 eListbox.setWrapAround = new_instancemethod(_enigma.eListbox_setWrapAround, None, eListbox)
@@ -3137,6 +3378,8 @@ eListbox.atEnd = new_instancemethod(_enigma.eListbox_atEnd, None, eListbox)
 eListbox.setMode = new_instancemethod(_enigma.eListbox_setMode, None, eListbox)
 eListbox.setItemHeight = new_instancemethod(_enigma.eListbox_setItemHeight, None, eListbox)
 eListbox.setItemWidth = new_instancemethod(_enigma.eListbox_setItemWidth, None, eListbox)
+eListbox.setMargin = new_instancemethod(_enigma.eListbox_setMargin, None, eListbox)
+eListbox.setSelectionZoom = new_instancemethod(_enigma.eListbox_setSelectionZoom, None, eListbox)
 eListbox.setSelectionEnable = new_instancemethod(_enigma.eListbox_setSelectionEnable, None, eListbox)
 eListbox.setBackgroundColor = new_instancemethod(_enigma.eListbox_setBackgroundColor, None, eListbox)
 eListbox.setBackgroundColorSelected = new_instancemethod(_enigma.eListbox_setBackgroundColorSelected, None, eListbox)
@@ -3160,8 +3403,8 @@ eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 
 def eListbox_setWrapAroundDefault(on):
+    """eListbox_setWrapAroundDefault(bool on)"""
     return _enigma.eListbox_setWrapAroundDefault(on)
-eListbox_setWrapAroundDefault = _enigma.eListbox_setWrapAroundDefault
 
 class eListboxPythonStringContent(iListboxContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -3249,6 +3492,8 @@ eListboxPythonMultiContent.setFont = new_instancemethod(_enigma.eListboxPythonMu
 eListboxPythonMultiContent.setBuildFunc = new_instancemethod(_enigma.eListboxPythonMultiContent_setBuildFunc, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setSelectableFunc = new_instancemethod(_enigma.eListboxPythonMultiContent_setSelectableFunc, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setItemHeight = new_instancemethod(_enigma.eListboxPythonMultiContent_setItemHeight, None, eListboxPythonMultiContent)
+eListboxPythonMultiContent.setItemWidth = new_instancemethod(_enigma.eListboxPythonMultiContent_setItemWidth, None, eListboxPythonMultiContent)
+eListboxPythonMultiContent.getItemWidth = new_instancemethod(_enigma.eListboxPythonMultiContent_getItemWidth, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setSelectionEnable = new_instancemethod(_enigma.eListboxPythonMultiContent_setSelectionEnable, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.moveSelection = new_instancemethod(_enigma.eListboxPythonMultiContent_moveSelection, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setSelectionClip = new_instancemethod(_enigma.eListboxPythonMultiContent_setSelectionClip, None, eListboxPythonMultiContent)
@@ -3298,6 +3543,12 @@ SCALE_WIDTH = _enigma.SCALE_WIDTH
 
 _enigma.SCALE_HEIGHT_swigconstant(_enigma)
 SCALE_HEIGHT = _enigma.SCALE_HEIGHT
+
+_enigma.SCALE_STRETCH_swigconstant(_enigma)
+SCALE_STRETCH = _enigma.SCALE_STRETCH
+
+_enigma.SCALE_FILL_swigconstant(_enigma)
+SCALE_FILL = _enigma.SCALE_FILL
 class eWindowStyle_ENUMS(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 

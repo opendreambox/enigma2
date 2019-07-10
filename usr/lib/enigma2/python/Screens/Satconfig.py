@@ -12,6 +12,7 @@ from Screens.ServiceStopScreen import ServiceStopScreen
 
 from time import mktime, localtime
 from datetime import datetime
+from skin import componentSizes
 
 class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 	def createSimpleSetup(self, list, mode):
@@ -487,6 +488,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 		self.stopService()
 
 		ConfigListScreen.__init__(self, self.list, session=session)
+		clSizes = componentSizes[componentSizes.CONFIG_LIST]
+		sizes = componentSizes[componentSizes.NIM_SETUP]
+		self["config"].l.setSeperation(sizes.get("seperation", clSizes.get("seperation", 400)))
 
 		self["actions"] = ActionMap(["SetupActions", "SatlistShortcutAction"],
 		{

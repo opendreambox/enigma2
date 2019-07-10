@@ -1,4 +1,5 @@
 from Components.Converter.StringList import StringList
+from enigma import eListbox
 
 class TemplatedMultiContent(StringList):
 	"""Turns a python tuple list into a multi-content list which can be used in a listbox renderer."""
@@ -66,19 +67,33 @@ class TemplatedMultiContent(StringList):
 			templates = self.template.get("templates")
 			template = self.template.get("template")
 			itemheight = self.template["itemHeight"]
+			itemwidth = self.template.get("itemWidth", -1)
+			layoutMode = self.template.get("mode", None)
 			selectionEnabled = self.template.get("selectionEnabled", True)
 			scrollbarMode = self.template.get("scrollbarMode", None)
 
 			if templates and style and style in templates: # if we have a custom style defined in the source, and different templates in the skin, look it up
 				template = templates[style][1]
 				itemheight = templates[style][0]
+
 				if len(templates[style]) > 2:
 					selectionEnabled = templates[style][2]
 				if len(templates[style]) > 3:
 					scrollbarMode = templates[style][3]
-
+			mode = None
+			if layoutMode:
+				mode = {
+						'vertical' : eListbox.layoutVertical,
+						'grid' : eListbox.layoutGrid,
+						'horizontal' : eListbox.layoutHorizontal
+					}[layoutMode]
+				self.mode = mode
+				if mode != eListbox.layoutVertical:
+					assert itemwidth > 0
 			self.content.setTemplate(template)
 			self.content.setItemHeight(itemheight)
+			if itemwidth > 0:
+				self.content.setItemWidth(itemwidth)
 			self.selectionEnabled = selectionEnabled
 			self.content.setSelectionEnable(selectionEnabled)
 			if scrollbarMode is not None:

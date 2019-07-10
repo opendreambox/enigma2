@@ -15,6 +15,7 @@ from enigma import eTimer, eDVBFrontendParametersSatellite, eComponentScan, \
 	eDVBSatelliteEquipmentControl as secClass, eDVBFrontendParametersTerrestrial, \
 	eDVBFrontendParametersCable, eConsoleAppContainer, eDVBResourceManager, \
 	eDVBFrontendParameters, iDVBFrontend
+from skin import componentSizes
 
 feTerrestrial = iDVBFrontend.feTerrestrial
 feSatellite = iDVBFrontend.feSatellite
@@ -1236,7 +1237,12 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		}, -2)
 
 		self.list = []
-		ConfigListScreen.__init__(self, self.list)
+		ConfigListScreen.__init__(self, self.list, session=session)
+		ConfigListScreen.__init__(self, self.list, session=session)
+		clSizes = componentSizes[componentSizes.CONFIG_LIST]
+		sizes = componentSizes[componentSizes.NIM_SETUP]
+		self["config"].l.setSeperation(sizes.get("seperation", clSizes.get("seperation", 400)))
+
 		if not self.scan_nims.value == "":
 			self.createSetup()
 			self["introduction"] = Label(_("Press OK to start the scan"))

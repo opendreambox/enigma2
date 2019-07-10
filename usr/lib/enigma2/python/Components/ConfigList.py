@@ -5,6 +5,7 @@ from Components.ActionMap import NumberActionMap, ActionMap
 from enigma import eListbox, eListboxPythonConfigContent, eTimer
 from Screens.MessageBox import MessageBox
 from skin import componentSizes
+from Tools.Log import Log
 
 class ConfigList(HTMLComponent, GUIComponent, object):
 	def __init__(self, list, session = None):
@@ -19,6 +20,18 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		self.onSelectionChanged = [ ]
 		self.current = None
 		self.session = session
+
+	def applySkin(self, desktop, parent):
+		if self.skinAttributes is None:
+			return False
+		for (attrib, value) in self.skinAttributes:
+			if attrib == "seperation":
+				Log.d("seperation=%i" %(int(value),))
+				self.l.setSeperation(int(value))
+			elif attrib == "dividerHeight":
+				Log.d("dividerHeight=%i" %(int(value),))
+				self.l.setDividerHeight(int(value))
+		return GUIComponent.applySkin(self, desktop, parent)
 
 	def execBegin(self):
 		self.timer_conn = self.timer.timeout.connect(self.timeout)
