@@ -146,9 +146,11 @@ class DisplayHardware:
 		self.setMode(currentPort, currentMode, currentRate)
 
 	def hdmiChanged(self):
-		self.initHardware()
-		self.initConfig()
-		self.setConfiguredMode()
+		from Screens.Standby import inStandby
+		if inStandby is None:
+			self.initHardware()
+			self.initConfig()
+			self.setConfiguredMode()
 
 	def getAvailablePortNames(self):
 		return [name for (name, port) in self.availablePorts.items()]

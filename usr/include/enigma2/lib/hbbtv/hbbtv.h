@@ -109,8 +109,8 @@ public:
 	void onCurrentServiceStop();
 	void onCurrentServiceEvent(iPlayableService *playableService, int what);
 	ePtr<iPlayableService> getPlayableService();
-	long getPlayTime();
-	long getPlayPosition();
+	int getPlayTime();
+	int getPlayPosition();
 	void setVolume(int volume);
 	const std::list<eServiceReference> getServiceList();
 	ePtr<eServiceEvent> getEvent(int nownext);
