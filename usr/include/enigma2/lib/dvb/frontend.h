@@ -185,7 +185,7 @@ public:
 
 	/* for multi channel frontends with multiple inputs */
 	int getNumInputs();
-	int getInput() const { return m_input; }
+	int getInput() { return getNumInputs() == 1 ? 0 : m_input; }
 	int getFirstChannelSlotID() const { return m_slotid_first_channel; }
 	int getLastChannelSlotID() const { return m_slotid_last_channel; }
 	void setBestLinkSlotID(int slot) { m_best_link_slot = slot; }

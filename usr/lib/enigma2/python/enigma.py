@@ -171,6 +171,9 @@ HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 _enigma.HAVE_LIBSYSTEMD_swigconstant(_enigma)
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 
+_enigma.HAVE_LIBTURBOJPEG_swigconstant(_enigma)
+HAVE_LIBTURBOJPEG = _enigma.HAVE_LIBTURBOJPEG
+
 _enigma.HAVE_MEMORY_H_swigconstant(_enigma)
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H
 

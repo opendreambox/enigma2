@@ -10,6 +10,7 @@
 		<font font="Regular;20" name="config_description"/>
 		<font font="Regular;16" name="config_value"/>
 		<value name="config_item_height" value="30"/>
+		<config onPixmap="skin_default/switch_on.svg" offPixmap="skin_default/switch_off.svg" size="30,16"/>
 	</listboxcontent>
 	<!-- Colors (#AARRGGBB) -->
 	<colors>

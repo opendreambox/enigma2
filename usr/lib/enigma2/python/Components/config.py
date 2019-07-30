@@ -434,6 +434,14 @@ class ConfigSelection(ConfigElement):
 #
 boolean_descriptions = {False: "false", True: "true"}
 class ConfigBoolean(ConfigElement):
+	_onOffPixmaps = {}
+	@staticmethod
+	def setOnOffPixmaps(onPixmap, offPixmap):
+		ConfigBoolean._onOffPixmaps = {
+				True : onPixmap,
+				False : offPixmap
+			}
+
 	def __init__(self, default = False, descriptions = boolean_descriptions):
 		ConfigElement.__init__(self)
 		self.descriptions = descriptions
@@ -454,6 +462,8 @@ class ConfigBoolean(ConfigElement):
 		return descr
 
 	def getMulti(self, selected):
+		if ConfigBoolean._onOffPixmaps:
+			return ("pixmap", ConfigBoolean._onOffPixmaps[self.value])
 		descr = self.descriptions[self.value]
 		if descr:
 			return ("text", _(descr))

@@ -6,16 +6,19 @@ from os.path import dirname
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
 	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent, eListbox
-from Components.config import ConfigSubsection, ConfigText, config
+from Components.config import ConfigSubsection, ConfigText, config, ConfigBoolean
 from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Log import Log
 
+from re import search as re_search
+
 HAS_SKIN_USER_DISPLAY = True
 
 colorNames = dict()
+skinGlobals = dict()
 
 def dump(x, i=0):
 	print " " * i + str(x)
@@ -125,8 +128,18 @@ def getParentSize(desktop, guiObject):
 		parent_size = desktop.size()
 	return parent_size
 
-def parsePosition(str, scale, desktop = None, guiObject = None):
-	p = str.split(',')
+def translateVariable(value):
+	match = re_search("{{(.*)}}", value)
+	if match and len(match.groups()) == 1:
+		key = match.group(1)
+		val = skinGlobals.get(key, value)
+		Log.i("%s => %s" %(key, val))
+		return val
+	return value
+
+def parsePosition(value, scale, desktop = None, guiObject = None):
+	value = translateVariable(value)
+	p = value.split(',')
 	x, y = p[0], p[1]
 	wsize = 1, 1
 	ssize = 1, 1
@@ -150,8 +163,9 @@ def parsePosition(str, scale, desktop = None, guiObject = None):
 
 	return ePoint(x, y)
 
-def parseSize(str, scale, desktop = None, guiObject = None):
-	x, y = str.split(',')
+def parseSize(value, scale, desktop = None, guiObject = None):
+	value = translateVariable(value)
+	x, y = value.split(',')
 	if guiObject is not None:
 		parent_size = getParentSize(desktop, guiObject)
 		#width aliases
@@ -503,7 +517,19 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					eListboxPythonConfigContent.setItemHeight(parseValue(value))
 				else:
 					raise SkinError("got listboxcontent value '%s' but 'string_item_height' or 'config_item_height' is allowed only" % name)
-
+		for cfgpm in c.findall("config"):
+			onPath =  cfgpm.attrib.get("onPixmap")
+			if not fileExists(onPath):
+				onPath = resolveFilename(SCOPE_CURRENT_SKIN, onPath)
+			offPath =  cfgpm.attrib.get("offPixmap")
+			if not fileExists(offPath):
+				offPath = resolveFilename(SCOPE_CURRENT_SKIN, offPath)
+			pixmapSize = cfgpm.attrib.get("size")
+			if pixmapSize:
+				pixmapSize = parseSize(pixmapSize, ((1,1),(1,1)))
+			else:
+				pixmapSize = eSize()
+			ConfigBoolean.setOnOffPixmaps(loadPixmap(onPath, desktop, pixmapSize), loadPixmap(offPath, desktop, pixmapSize))
 	for c in skin.findall("fonts"):
 		for font in c.findall("font"):
 			get_attr = font.attrib.get
@@ -642,6 +668,11 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					style.setValuePixmap(png)
 		x = eWindowStyleManager.getInstance()
 		x.setStyle(id, style)
+
+	for g in skin.findall("globals"):
+		for value in g.findall("value"):
+			Log.i("Global skin value : %s" %(value.attrib,))
+			skinGlobals[value.attrib["name"]] = value.attrib["value"]
 
 	for components in skin.findall("components"):
 		for component in components.findall("component"):
