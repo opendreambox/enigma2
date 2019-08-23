@@ -16,8 +16,12 @@ if [ -f /run/enigma2/system-state ]; then
 		"ui-restart")
 			;;
 		"system-recovery")
-			echo "rescue" > /proc/stb/fp/boot_mode
-			systemctl --no-block reboot
+			if [ -f /proc/stb/fp/boot_mode ]; then
+				echo "rescue" > /proc/stb/fp/boot_mode
+				systemctl --no-block reboot
+			else
+				to-the-rescue
+			fi
 			;;
 	esac
 	rm -f /run/enigma2/system-state

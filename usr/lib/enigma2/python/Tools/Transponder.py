@@ -124,7 +124,7 @@ def ConvertToHumanReadable(tp, ttype = None):
 			eDVBFrontendParametersTerrestrial.Modulation_QAM256 : "QAM256"}[tp["constellation"]]
 		ret["transmission_mode"] = {
 			eDVBFrontendParametersTerrestrial.TransmissionMode_2k : "2k",
-			eDVBFrontendParametersTerrestrial.TransmissionMode_2k : "4k",
+			eDVBFrontendParametersTerrestrial.TransmissionMode_4k : "4k",
 			eDVBFrontendParametersTerrestrial.TransmissionMode_8k : "8k",
 			eDVBFrontendParametersTerrestrial.TransmissionMode_Auto : _("Auto"),
 			eDVBFrontendParametersTerrestrial.TransmissionMode_1k : "1k",

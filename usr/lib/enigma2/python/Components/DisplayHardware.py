@@ -202,11 +202,14 @@ class DisplayHardware:
 				print "Couldnt get content framerate, fallback to 50 hz"
 				rate_value = self.rateIndexToKey(eDisplayManager.RATE_50HZ) # 50hz default
 
-
 		newMode = self.getCurrentModeByValue(port_value, mode_value, rate_value)
 		activeMode = self._displayManager.getCurrentMode()
 
-		if (newMode.value != activeMode.value):
+		if newMode is None:
+			print "can't set new display mode because it's not available (port, mode, rate) => ", port_value, mode_value, rate_value
+			return
+
+		if activeMode is None or newMode.value != activeMode.value:
 			print "-> setting (port, mode, rate) => ", port_value, mode_value, rate_value
 			self._displayManager.setCurrentMode(newMode)
 

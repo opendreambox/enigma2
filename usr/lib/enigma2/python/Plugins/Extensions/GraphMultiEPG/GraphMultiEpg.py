@@ -816,25 +816,19 @@ class GraphMultiEPGMenu(ConfigListScreen, Screen):
 	onChangedEntry = [ ]
 
 	def __init__(self, session):
-		width = 492
-		height = 230
-		dsk_size   = getDesktop(0).size()
-		left = (dsk_size.width() - width)>>1
-		top = (dsk_size.height() - height)>>1
-		GraphMultiEPGMenu.skin = """<screen position="%d,%d" size="%d,%d" title="%s">
-				<widget name="config" position="0,0"   size="492,105" scrollbarMode="showOnDemand" zPosition="1"/>
-				<ePixmap pixmap="skin_default/div-h.png" position="0,108" zPosition="1" size="492,2" />
-				<widget name="label"  position="0,110" size="492,70" font="Regular;16" zPosition="1" halign="left" valign="top"/>
-				<ePixmap pixmap="skin_default/div-h.png" position="0,185" zPosition="1" size="492,2" />
-				<ePixmap pixmap="skin_default/buttons/red.png"    position="0,190"   zPosition="0" size="140,40" transparent="1" alphatest="on" />
-				<ePixmap pixmap="skin_default/buttons/green.png"  position="176,190" zPosition="0" size="140,40" transparent="1" alphatest="on" />
-				<ePixmap pixmap="skin_default/buttons/yellow.png" position="352,190" zPosition="0" size="140,40" transparent="1" alphatest="on" />
-				<widget name="key_r" position="0,190"   size="140,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
-				<widget name="key_g" position="176,190" size="140,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
-				<widget name="key_y" position="352,190" size="140,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
-			</screen>""" % (left, top, width, height, _("GraphMultiEPG settings"))
-
+		GraphMultiEPGMenu.skin = """<screen position="center,center" size="820,520" title="GraphMultiEPG settings">
+				<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
+				<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
+				<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" zPosition="0" size="200,40" transparent="1" alphatest="on" />
+				<widget name="key_r" position="10,5"   size="200,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
+				<widget name="key_g" position="210,5" size="200,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
+				<widget name="key_y" position="410,5" size="200,40" zPosition="5" valign="center" halign="center" font="Regular;21" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-1,-1" />
+				<eLabel position="10,50" size="800,1" backgroundColor="grey"/>
+				<widget name="config" position="10,60" size="800,350" enableWrapAround="1" scrollbarMode="showOnDemand"/>
+				<widget name="label"  position="10,460" size="800,60" font="Regular;24" zPosition="1" halign="left" valign="top"/>
+			</screen>"""
 		Screen.__init__(self, session)
+		self.setTitle(_("GraphMultiEPG settings"))
 
 		# create config list
 		self.list = []

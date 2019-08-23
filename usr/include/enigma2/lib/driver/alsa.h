@@ -34,6 +34,10 @@ public:
 	int fifoSize() const;
 	void flushFifo();
 	int64_t getPTS();
+	unsigned int sample_rate();
+	unsigned int channels();
+	unsigned int hw_channels();
+	unsigned int bits();
 #endif
 };
 

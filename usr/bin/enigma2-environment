@@ -13,3 +13,8 @@ echo LD_PRELOAD=\"${LD_PRELOAD}\" > /run/enigma2/environment
 if [ -f /usr/lib/libpagecache.so ]; then
 	echo PAGECACHE_FLUSH_INTERVAL=$((512*1024)) >> /run/enigma2/environment
 fi
+
+if [ -f /proc/stb/fp/nec_ir ]; then
+	echo 1 > /proc/stb/fp/nec_ir
+	[ -f /sys/class/remote/amremote/protocol ] && echo 2 > /sys/class/remote/amremote/protocol
+fi

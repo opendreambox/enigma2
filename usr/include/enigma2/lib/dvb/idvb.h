@@ -277,6 +277,14 @@ struct eServiceReferenceDVB: public eServiceReference
 	}
 };
 
+class CompareService
+{
+public:
+	bool operator()(const eServiceReferenceDVB &a, const eServiceReferenceDVB &b) const
+	{
+		return a.compareDVB(b);
+	}
+};
 
 ////////////////// TODO: we need an interface here, but what exactly?
 

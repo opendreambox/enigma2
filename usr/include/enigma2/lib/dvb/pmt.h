@@ -33,7 +33,7 @@ struct channel_data: public sigc::trackable
 	int m_dataDemux;
 };
 
-typedef std::map<eServiceReferenceDVB, eDVBCAService*> CAServiceMap;
+typedef std::map<eServiceReferenceDVB, eDVBCAService*, CompareService> CAServiceMap;
 typedef std::map<iDVBChannel*, channel_data*> ChannelMap;
 
 class eDVBCAServiceConn;

@@ -6,7 +6,7 @@ from os.path import dirname
 profile("LOAD:enigma_skin")
 from enigma import eSize, ePoint, gFont, eWindow, eLabel, ePixmap, eWindowStyleManager, \
 	addFont, gRGB, eWindowStyleSkinned, eWindowStyleScrollbar, eListboxPythonStringContent, eListboxPythonConfigContent, eListbox
-from Components.config import ConfigSubsection, ConfigText, config
+from Components.config import ConfigSubsection, ConfigText, config, ConfigBoolean
 from Components.Sources.Source import ObsoleteSource
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
@@ -517,7 +517,19 @@ def loadSingleSkinData(desktop, skin, path_prefix):
 					eListboxPythonConfigContent.setItemHeight(parseValue(value))
 				else:
 					raise SkinError("got listboxcontent value '%s' but 'string_item_height' or 'config_item_height' is allowed only" % name)
-
+		for cfgpm in c.findall("config"):
+			onPath =  cfgpm.attrib.get("onPixmap")
+			if not fileExists(onPath):
+				onPath = resolveFilename(SCOPE_CURRENT_SKIN, onPath)
+			offPath =  cfgpm.attrib.get("offPixmap")
+			if not fileExists(offPath):
+				offPath = resolveFilename(SCOPE_CURRENT_SKIN, offPath)
+			pixmapSize = cfgpm.attrib.get("size")
+			if pixmapSize:
+				pixmapSize = parseSize(pixmapSize, ((1,1),(1,1)))
+			else:
+				pixmapSize = eSize()
+			ConfigBoolean.setOnOffPixmaps(loadPixmap(onPath, desktop, pixmapSize), loadPixmap(offPath, desktop, pixmapSize))
 	for c in skin.findall("fonts"):
 		for font in c.findall("font"):
 			get_attr = font.attrib.get
