@@ -252,7 +252,7 @@ class Menu(Screen):
 					if x[2] == plugin_menuid:
 						list.remove(x)
 						break
-				description = plugins.getDescriptionForMenuEntryID(menuID, plugin_menuid)
+				description = l[4] if len(l) == 5 else plugins.getDescriptionForMenuEntryID(menuID, plugin_menuid)
 				menupng = MenuEntryPixmap(l[2], self.png_cache, lastMenuID)
 				list.append((l[0], boundFunction(l[1], self.session), l[2], l[3] or 50, description, menupng))
 

@@ -504,32 +504,28 @@ class CableTransponderSearchSupport:
 
 				if cableConfig.scan_type.value == "bands":
 					if cableConfig.scan_band_US_LOW.value:
-						frequencies.extend(range(54000, 84000 + 1, 6000))
+						frequencies.extend(range(57000, 87000 + 1, 6000))
 					if cableConfig.scan_band_US_MID.value:
-						frequencies.extend(range(91250, 115250 + 1, 6000))
-						frequencies.extend(range(120000, 168000 + 1, 6000))
+						frequencies.extend(range(93000, 171000 + 1, 6000))
 					if cableConfig.scan_band_US_HIGH.value:
-						frequencies.extend(range(174000, 210000 + 1, 6000))
+						frequencies.extend(range(177000, 213000 + 1, 6000))
 					if cableConfig.scan_band_US_SUPER.value:
-						frequencies.extend(range(216000, 294000 + 1, 6000))
+						frequencies.extend(range(219000, 297000 + 1, 6000))
 					if cableConfig.scan_band_US_HYPER.value:
-						frequencies.extend(range(300000, 462000 + 1, 6000))
+						frequencies.extend(range(303000, 465000 + 1, 6000))
 					if cableConfig.scan_band_US_ULTRA.value:
-						frequencies.extend(range(468000, 642000 + 1, 6000))
+						frequencies.extend(range(471000, 645000 + 1, 6000))
 					if cableConfig.scan_band_US_JUMBO.value:
-						frequencies.extend(range(648000, 996000 + 1, 6000))
+						frequencies.extend(range(651000, 999000 + 1, 6000))
 
 					if cableConfig.scan_band_EU_VHF_I.value:
-						frequencies.extend(range(50500, 64500 + 1, 7000))
-						frequencies.extend(range(69000, 77000 + 1, 8000))
+						frequencies.extend(range(73000, 81000 + 1, 8000))
 					if cableConfig.scan_band_EU_MID.value:
-						frequencies.append(101000)
-						frequencies.extend(range(113000, 121000 + 1, 8000))
-						frequencies.extend(range(128500, 170500 + 1, 7000))
+						frequencies.extend(range(105500, 170500 + 1, 8000))
 					if cableConfig.scan_band_EU_VHF_III.value:
-						frequencies.extend(range(177500, 226500 + 1, 7000))
+						frequencies.extend(range(178000, 226000 + 1, 8000))
 					if cableConfig.scan_band_EU_SUPER.value:
-						frequencies.extend(range(233500, 296500 + 1, 7000))
+						frequencies.extend(range(234000, 298000 + 1, 8000))
 					if cableConfig.scan_band_EU_HYPER.value:
 						frequencies.extend(range(306000, 466000 + 1, 8000))
 					if cableConfig.scan_band_EU_UHF_IV.value:
@@ -539,16 +535,19 @@ class CableTransponderSearchSupport:
 				else:
 					frequencies.extend(range(17000, 999000 + 1, cableConfig.scan_frequency_steps.value))
 
-				if cableConfig.scan_mod_qam16.value:
-					modulations.append(eDVBFrontendParametersCable.Modulation_QAM16)
-				if cableConfig.scan_mod_qam32.value:
-					modulations.append(eDVBFrontendParametersCable.Modulation_QAM32)
-				if cableConfig.scan_mod_qam64.value:
-					modulations.append(eDVBFrontendParametersCable.Modulation_QAM64)
-				if cableConfig.scan_mod_qam128.value:
-					modulations.append(eDVBFrontendParametersCable.Modulation_QAM128)
-				if cableConfig.scan_mod_qam256.value:
-					modulations.append(eDVBFrontendParametersCable.Modulation_QAM256)
+				if nimmanager.nim_slots[nim_idx].can_modulation_auto:
+					modulations.append(eDVBFrontendParametersCable.Modulation_Auto)
+				else:
+					if cableConfig.scan_mod_qam16.value:
+						modulations.append(eDVBFrontendParametersCable.Modulation_QAM16)
+					if cableConfig.scan_mod_qam32.value:
+						modulations.append(eDVBFrontendParametersCable.Modulation_QAM32)
+					if cableConfig.scan_mod_qam64.value:
+						modulations.append(eDVBFrontendParametersCable.Modulation_QAM64)
+					if cableConfig.scan_mod_qam128.value:
+						modulations.append(eDVBFrontendParametersCable.Modulation_QAM128)
+					if cableConfig.scan_mod_qam256.value:
+						modulations.append(eDVBFrontendParametersCable.Modulation_QAM256)
 				if cableConfig.scan_sr_6900.value:
 					symbol_rates.append(6900000)
 				if cableConfig.scan_sr_6875.value:

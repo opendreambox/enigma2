@@ -166,7 +166,7 @@ public:
 
 	int getEntryTop();
 	int getVisibleItemCount();
-
+	const eRect getSelectionRect(bool zoomed=false);
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
 

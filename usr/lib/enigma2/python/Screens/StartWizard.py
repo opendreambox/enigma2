@@ -115,7 +115,7 @@ class StartWizard(InputDeviceWizardBase, NetworkWizardNew, VideoWizard, DefaultS
 				break
 			slotid += 1
 
-		text += _("Please set up tuner %s") % nimmanager.getNimSlotInputName(slotid)
+		text += _("Please set up tuner %s") % nimmanager.getNimSlotInputName(slotid, True)
 		return text
 
 	def showHideButtons(self, green = False, yellow = False, blue = False):

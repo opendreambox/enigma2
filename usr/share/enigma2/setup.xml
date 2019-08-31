@@ -76,6 +76,8 @@
 				<item level="2" text="Alternative services tuner priority">config.usage.alternatives_priority</item>
 			<item level="1" text = "Streaming" />
 				<item level="1" text="Maximum stream resolution">config.usage.max_stream_resolution</item>
+				<item level="1" text="TS Streaming Buffer (ms)">config.usage.ts_streaming_buffer</item>
+				<item level="1" text="Non TS Streaming Buffer (ms)">config.usage.non_ts_streaming_buffer</item>
 			<item level="2" text = "Debug" />
 				<item level="2" text="Debug accel memory usage">config.misc.debug_accel_memory_usage</item>
 		</setup>

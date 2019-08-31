@@ -28,7 +28,6 @@ from Screens.MessageBox import MessageBox
 from Screens.ServiceInfo import ServiceInfo
 profile("ChannelSelection.py 4")
 from Screens.PictureInPicture import PictureInPicture
-from Screens.RdsDisplay import RassInteractive
 import Screens.Standby
 from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
@@ -1639,13 +1638,7 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 
 ########## RDS Radiotext / Rass Support BEGIN
 		self["RdsDecoder"] = self.info["RdsDecoder"]
-		self["RdsActions"] = HelpableActionMap(self, "InfobarRdsActions",
-		{
-			"startRassInteractive": (self.startRassInteractive, _("View Rass interactive..."))
-		},-1)
-		self["RdsActions"].setEnabled(False)
 		self.infobar.rds_display.hide()
-		self.infobar.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
 		self.onClose.append(self.__onClose)
 		self.onShow.append(self.info.show)
 		self.onHide.append(self.info.hide)
@@ -1653,21 +1646,9 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 	def __onClose(self):
 		del self.info["RdsDecoder"]
 		self.session.deleteDialog(self.info)
-		self.infobar.rds_display.onRassInteractivePossibilityChanged.remove(self.RassInteractivePossibilityChanged)
 		lastservice=eServiceReference(config.tv.lastservice.value)
 		self.session.nav.playService(lastservice)
 
-	def startRassInteractive(self):
-		self.info.hide();
-		self.infobar.rass_interactive = self.session.openWithCallback(self.RassInteractiveClosed, RassInteractive)
-
-	def RassInteractiveClosed(self):
-		self.info.show()
-		self.infobar.rass_interactive = None
-		self.infobar.RassSlidePicChanged()
-
-	def RassInteractivePossibilityChanged(self, state):
-		self["RdsActions"].setEnabled(state)
 ########## RDS Radiotext / Rass Support END
 
 	def cancel(self):

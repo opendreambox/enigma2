@@ -31,7 +31,7 @@ from Screens.MinuteInput import MinuteInput
 from Screens.TimerSelection import TimerSelection
 from Screens.PictureInPicture import PictureInPicture
 from Screens.SubtitleDisplay import SubtitleDisplay
-from Screens.RdsDisplay import RdsInfoDisplay, RassInteractive
+from Screens.RdsDisplay import RdsInfoDisplay
 from Screens.TimeDateInput import TimeDateInput
 from Screens.UnhandledKey import UnhandledKey
 from ServiceReference import ServiceReference
@@ -867,55 +867,11 @@ class InfoBarRdsDecoder:
 	def __init__(self):
 		self.rds_display = self.session.instantiateDialog(RdsInfoDisplay)
 		self.rds_display.neverAnimate()
-		self.rass_interactive = None
-
-		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
-			{
-				iPlayableService.evEnd: self.__serviceStopped,
-				iPlayableService.evUpdatedRassSlidePic: self.RassSlidePicChanged
-			})
-
-		self["RdsActions"] = ActionMap(["InfobarRdsActions"],
-		{
-			"startRassInteractive": self.startRassInteractive
-		},-1)
-
-		self["RdsActions"].setEnabled(False)
-
-		self.onLayoutFinish.append(self.rds_display.show)
-		self.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
-
 		self.onClose.append(self.__delRdsInfoDisplayScreen)
 
 	def __delRdsInfoDisplayScreen(self):
 		self.session.deleteDialog(self.rds_display)
 		self.rds_display = None
-
-	def RassInteractivePossibilityChanged(self, state):
-		self["RdsActions"].setEnabled(state)
-
-	def RassSlidePicChanged(self):
-		if not self.rass_interactive:
-			service = self.session.nav.getCurrentService()
-			decoder = service and service.rdsDecoder()
-			if decoder:
-				decoder.showRassSlidePicture()
-
-	def __serviceStopped(self):
-		if self.rass_interactive is not None:
-			rass_interactive = self.rass_interactive
-			self.rass_interactive = None
-			rass_interactive.close()
-
-	def startRassInteractive(self):
-		self.rds_display.hide()
-		self.rass_interactive = self.session.openWithCallback(self.RassInteractiveClosed, RassInteractive)
-
-	def RassInteractiveClosed(self, *val):
-		if self.rass_interactive is not None:
-			self.rass_interactive = None
-			self.RassSlidePicChanged()
-		self.rds_display.show()
 
 class PlayerBase:
 	def __init__(self):

@@ -6,6 +6,7 @@ class TunerLabel(Renderer):
 	def __init__(self, tuner_no, which='demod'):
 		Renderer.__init__(self)
 		tuner_no = int(tuner_no)
+		self.which = which
 		if which == 'input':
 			# convert input to slot
 			index = -1
@@ -25,5 +26,5 @@ class TunerLabel(Renderer):
 
 	def postWidgetCreate(self, instance):
 		if self.tuner_no < nimmanager.getSlotCount():
-			slot_name = nimmanager.getNimSlotInputName(self.tuner_no)
+			slot_name = nimmanager.getNimSlotInputName(self.tuner_no, self.which == 'input')
 			self.instance.setText(slot_name)

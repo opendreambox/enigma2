@@ -937,6 +937,7 @@ class iStreamedService: public iObject
 public:
 	virtual std::list<int> getBufferCharge() const=0;
 	virtual int setBufferSize(int size)=0;
+	virtual int setBufferDuration(int ms) { return -1; }
 	virtual void setTransportHeaders(stringMap headers)=0;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamedService>, iStreamedServicePtr);

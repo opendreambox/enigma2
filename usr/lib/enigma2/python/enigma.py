@@ -1199,6 +1199,7 @@ iStreamedServicePtr.getPtrString = new_instancemethod(_enigma.iStreamedServicePt
 iStreamedServicePtr.__deref__ = new_instancemethod(_enigma.iStreamedServicePtr___deref__, None, iStreamedServicePtr)
 iStreamedServicePtr.getBufferCharge = new_instancemethod(_enigma.iStreamedServicePtr_getBufferCharge, None, iStreamedServicePtr)
 iStreamedServicePtr.setBufferSize = new_instancemethod(_enigma.iStreamedServicePtr_setBufferSize, None, iStreamedServicePtr)
+iStreamedServicePtr.setBufferDuration = new_instancemethod(_enigma.iStreamedServicePtr_setBufferDuration, None, iStreamedServicePtr)
 iStreamedServicePtr.setTransportHeaders = new_instancemethod(_enigma.iStreamedServicePtr_setTransportHeaders, None, iStreamedServicePtr)
 iStreamedServicePtr_swigregister = _enigma.iStreamedServicePtr_swigregister
 iStreamedServicePtr_swigregister(iStreamedServicePtr)
@@ -3367,6 +3368,14 @@ class eListbox(eWidget):
         """getVisibleItemCount(eListbox self) -> int"""
         return _enigma.eListbox_getVisibleItemCount(self)
 
+
+    def getSelectionRect(self, zoomed=False):
+        """
+        getSelectionRect(eListbox self, bool zoomed=False) -> eRect
+        getSelectionRect(eListbox self) -> eRect
+        """
+        return _enigma.eListbox_getSelectionRect(self, zoomed)
+
 eListbox.setScrollbarMode = new_instancemethod(_enigma.eListbox_setScrollbarMode, None, eListbox)
 eListbox.setupScrollbar = new_instancemethod(_enigma.eListbox_setupScrollbar, None, eListbox)
 eListbox.setWrapAround = new_instancemethod(_enigma.eListbox_setWrapAround, None, eListbox)
@@ -3402,6 +3411,7 @@ eListbox.setScrollbarValuePixmapBottomHeight = new_instancemethod(_enigma.eListb
 eListbox.resetScrollbarProperties = new_instancemethod(_enigma.eListbox_resetScrollbarProperties, None, eListbox)
 eListbox.getEntryTop = new_instancemethod(_enigma.eListbox_getEntryTop, None, eListbox)
 eListbox.getVisibleItemCount = new_instancemethod(_enigma.eListbox_getVisibleItemCount, None, eListbox)
+eListbox.getSelectionRect = new_instancemethod(_enigma.eListbox_getSelectionRect, None, eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 

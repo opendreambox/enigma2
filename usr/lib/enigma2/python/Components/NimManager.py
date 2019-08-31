@@ -687,7 +687,7 @@ class NIM(object):
 		type = self._types.values()[0]
 		if len(self._types) > 1:
 			import traceback
-			print "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nNIM Slot", self.getSlotInputName(), "supports multiple types", self._types, "\nthis function is deprecated and just for backward compatibility it should not be used anymore\nplease report to plugin author... ", type, "is returned for this nim now"
+			print "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nNIM Slot", self.getSlotInputName(True), "supports multiple types", self._types, "\nthis function is deprecated and just for backward compatibility it should not be used anymore\nplease report to plugin author... ", type, "is returned for this nim now"
 			traceback.print_stack(limit = 2)
 		return type
 	type = property(getType)
@@ -705,11 +705,11 @@ class NIM(object):
 			connectables += connectable[ntype]
 		return connectables
 
-	def getSlotInputName(self):
+	def getSlotInputName(self, for_input_desc=False):
 		name = self.input_name
 		if name is None:
 			name = chr(ord('A') + self.slot)
-		return name [:-1] if self.inputs and len(self.inputs) == 1 else name
+		return name [:-1] if self.inputs and len(self.inputs) == 1 and for_input_desc else name
 
 	slot_input_name = property(getSlotInputName)
 
@@ -718,7 +718,7 @@ class NIM(object):
 		# we name them "Tuner A/B/C/...", because that's what's usually written on the back
 		# of the device.
 		descr = _("Tuner ")
-		return descr + self.getSlotInputName()
+		return descr + self.getSlotInputName(True)
 
 	slot_name = property(getSlotName)
 
@@ -995,9 +995,9 @@ class NimManager:
 	def getNimName(self, slotid):
 		return self.nim_slots[slotid].description
 
-	def getNimSlotInputName(self, slotid):
+	def getNimSlotInputName(self, slotid, for_input_desc=False):
 		# returns just "A", "B", ...
-		return self.nim_slots[slotid].slot_input_name
+		return self.nim_slots[slotid].getSlotInputName(for_input_desc)
 
 	def getNimSlotName(self, slotid):
 		# returns a friendly description string ("Tuner A", "Tuner B" etc.)

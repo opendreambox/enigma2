@@ -194,6 +194,8 @@ def FinalInitUsageConfig():
 		("cached_io", _("Cached IO")) ] )
 
 	config.usage.max_stream_resolution = ConfigSelection(default = "1080", choices = ["480", "720", "1080", "1440", "2160"])
+	config.usage.ts_streaming_buffer = ConfigInteger(default = 500, limits=(0,10000))
+	config.usage.non_ts_streaming_buffer = ConfigInteger(default = 500, limits=(0,10000))
 
 	config.media_database = ConfigSubsection()
 	config.media_database.readmeta = ConfigYesNo(default=False)
