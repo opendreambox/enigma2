@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from Components.Task import Task, Job, DiskspacePrecondition, Condition
 from Components.Harddisk import harddiskmanager
 from Tools.Directories import SCOPE_HDD, resolveFilename, createDir
@@ -7,6 +9,7 @@ from Project import iso639language
 import struct
 import os
 import re
+from six.moves import range
 
 zeros = bytearray(128)
 VIDEO_TYPES	= { 'video/mpeg, mpegversion=(int)1': 0x01, 'video/mpeg, mpegversion=(int)2': 0x02, 'VC1': 0xEA, 'video/x-h264': 0x1B }
@@ -58,24 +61,24 @@ class BludiscTitle(object):
 
 	def getInTimeBytes(self):
 		in_time = self.entrypoints[0][1]	# first keyframe (in 90khz pts)
-		return struct.pack('>L',in_time/2)	# start time (in 45khz ticks)
+		return struct.pack('>L',in_time//2)	# start time (in 45khz ticks)
 
 	def getOutTimeBytes(self):
 	      out_time = self.entrypoints[-1][1]	# last keyframe (in 90khz pts)
-	      return struct.pack('>L',out_time/2)	# end time (in 45khz ticks)
+	      return struct.pack('>L',out_time//2)	# end time (in 45khz ticks)
 
 	InTime = property(getInTimeBytes)
 	OutTime = property(getOutTimeBytes)
 
 	def getNumSourcePackets(self):
-		num_source_packets = self.muxed_size / 192
+		num_source_packets = self.muxed_size // 192
 		return struct.pack('>L',num_source_packets) 
 
 	def getTsRecordingRate(self):
-		clip_len_seconds = (self.entrypoints[-1][1] - self.entrypoints[0][1]) / 90000
+		clip_len_seconds = (self.entrypoints[-1][1] - self.entrypoints[0][1]) // 90000
 		if self.length > clip_len_seconds:
 			clip_len_seconds = self.length
-		ts_recording_rate = self.muxed_size / clip_len_seconds	#! possible lack in accuracy 
+		ts_recording_rate = self.muxed_size // clip_len_seconds	#! possible lack in accuracy 
 		return struct.pack('>L',ts_recording_rate)
 
 	def getEPforOffsetPTS(self, requested_pts):
@@ -85,7 +88,7 @@ class BludiscTitle(object):
 				best_pts = ep_pts
 			else:
 				break
-		return best_pts / 2
+		return best_pts // 2
 
 class BludiscStream(object):
 	def __init__(self, parent, PID):
@@ -151,12 +154,12 @@ class BludiscStream(object):
 			if videoformatstring in VIDEO_FORMATS:
 				videoformat = VIDEO_FORMATS[videoformatstring]
 			else:
-				print "BludiscStream %s object warning... PID %i video stream format %s out of spec!" % (self.__parent.inputfile, self.__PID, videoformatstring)
+				print("BludiscStream %s object warning... PID %i video stream format %s out of spec!" % (self.__parent.inputfile, self.__PID, videoformatstring))
 
 			if self.__parent.framerate in VIDEO_RATES:
 				frame_rate = VIDEO_RATES[self.__parent.framerate]
 			else:
-				print "BludiscStream %s object warning... PID %i video frame rate %s out of spec!" % (self.__parent.inputfile, self.__PID, self.__parent.framerate)
+				print("BludiscStream %s object warning... PID %i video frame rate %s out of spec!" % (self.__parent.inputfile, self.__PID, self.__parent.framerate))
 
 			byteval = (videoformat << 4) + frame_rate
 
@@ -202,7 +205,7 @@ class RemuxTask(Task):
 		self.outputfile = self.job.workspace+'BDMV/STREAM/%05d.m2ts' % self.title_no
 		self.args += [inputfile, self.outputfile, "--entrypoints", "--cutlist"]
 		self.args += self.getPIDs()
-		self.end = ( self.title.filesize / 188 )
+		self.end = ( self.title.filesize // 188 )
 		self.weighting = 1000
 
 	def getPIDs(self):
@@ -212,7 +215,7 @@ class RemuxTask(Task):
 				if audiotrack.format.value == "AC3": #! only consider ac3 streams at the moment
 					dvbpids.append(int(audiotrack.pid.getValue()))
 		sourcepids = "--source-pids=" + ",".join(["0x%04x" % pid for pid in dvbpids])
-		self.bdmvpids = [0x1011]+range(0x1100,0x1107)[:len(dvbpids)-1]
+		self.bdmvpids = [0x1011]+list(range(0x1100,0x1107))[:len(dvbpids)-1]
 		resultpids = "--result-pids=" + ",".join(["0x%04x" % pid for pid in self.bdmvpids])
 		return [sourcepids, resultpids]
 
@@ -222,13 +225,13 @@ class RemuxTask(Task):
 			(spn, pts) = (int(values[1]), int(values[2]))
 			if spn > 0 and pts > 0:
 				self.title.entrypoints.append((spn, pts))
-				print "[bdremux] added new entrypoint", self.title.entrypoints[-1]
+				print("[bdremux] added new entrypoint", self.title.entrypoints[-1])
 			self.progress = spn
 		elif line.startswith("linked:"):	
 			words = line[:-1].split(' ')
 			pid = int(words[5].split('_')[1])
 			self.title.addStream(pid)
-			print "[bdremux] added stream with pid", pid
+			print("[bdremux] added stream with pid", pid)
 		elif line.find("has CAPS:") > 0:
 			words = line[:-1].split(' ')
 			pid = int(words[0].split('_')[1])
@@ -238,7 +241,7 @@ class RemuxTask(Task):
 
 			stream = self.title.getStreamByPID(pid)
 			if stream == None:
-				print "[bdremux] invalid stream!"
+				print("[bdremux] invalid stream!")
 				return
 
 			sdict = {}
@@ -258,13 +261,13 @@ class RemuxTask(Task):
 						stream.setAudioRate(v)
 					elif key == "channels":
 						stream.setAudioPresentation(v)
-			print "[bdremux] discovered caps for pid %i (%s)" % (pid, stype)
+			print("[bdremux] discovered caps for pid %i (%s)" % (pid, stype))
 		elif line.startswith("ERROR:"):
 			self.error_text = line[7:-1]
-			print "[bdremux] error:", self.error_text
+			print("[bdremux] error:", self.error_text)
 			Task.processFinished(self, 1)
 		else:
-			print "[bdremux]", line[:-1]
+			print("[bdremux]", line[:-1])
 
 	def cleanup(self, failed):
 		if not failed:
@@ -473,7 +476,7 @@ class CreateMplsTask(Task):
 		
 		if num_primary_video == 0:
 			self.error_text = "Title %05d has no valid video streams!" % self.mpls_num
-			raise Exception, self.error_text
+			raise Exception(self.error_text)
 
 		num_primary_audio = len(self.title.AudioStreams)
 
@@ -508,7 +511,7 @@ class CreateMplsTask(Task):
 			StnTable += zeros[0:5]	# reserved
 
 			for vid in self.title.VideoStreams:
-				print "adding vid", vid, type(vid)
+				print("adding vid", vid, type(vid))
 				VideoEntry = bytearray(1)	# len
 				VideoEntry += '\x01'		# type 01 = elementary stream of the clip used by the PlayItem
 
@@ -554,12 +557,12 @@ class CreateMplsTask(Task):
 		mplsbuffer[0x0C:0x10] = PlayListMarkStartAdress
 		
 		if len(self.title.entrypoints) == 0:
-			print "no entry points found for this title!"
+			print("no entry points found for this title!")
 			self.title.entrypoints.append(0)
 
 		#playlist mark list [(id, type, timestamp, skip duration)]
 		#! implement cutlist / skip marks
-		markslist = [(0, 1, self.title.entrypoints[0][1]/2, 0)]
+		markslist = [(0, 1, self.title.entrypoints[0][1]//2, 0)]
 		mark_id = 1
 		try:
 			for chapter_pts in self.title.chaptermarks:
@@ -569,8 +572,8 @@ class CreateMplsTask(Task):
 						markslist.append((mark_id, 1, ep_pts, 0))
 						mark_id += 1
 		except AttributeError:
-			print "title has no chaptermarks"
-		print "**** final markslist", markslist
+			print("title has no chaptermarks")
+		print("**** final markslist", markslist)
 
 		num_marks = len(markslist)
 		PlayListMark = bytearray()			# len 4 bytes

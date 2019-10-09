@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screen import Screen
 from Components.Button import Button
 from Components.ActionMap import HelpableActionMap, ActionMap
@@ -43,13 +44,13 @@ def setPreferredTagEditor(te):
 	try:
 		if preferredTagEditor == None:
 			preferredTagEditor = te
-			print "Preferred tag editor changed to ", preferredTagEditor
+			print("Preferred tag editor changed to ", preferredTagEditor)
 		else:
-			print "Preferred tag editor already set to ", preferredTagEditor
-			print "ignoring ", te
+			print("Preferred tag editor already set to ", preferredTagEditor)
+			print("ignoring ", te)
 	except:
 		preferredTagEditor = te
-		print "Preferred tag editor set to ", preferredTagEditor
+		print("Preferred tag editor set to ", preferredTagEditor)
 
 def getPreferredTagEditor():
 	global preferredTagEditor
@@ -428,7 +429,7 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo):
 			self.showTagsMenu(tagele)
 		else:
 			self.selected_tags_ele = tagele
-			self.selected_tags = set([tagele.value])
+			self.selected_tags = {tagele.value}
 			self.reloadList(home = True)
 
 	def showTagsFirst(self):
@@ -442,7 +443,7 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo):
 
 	def tagChosen(self, tag):
 		if tag is not None:
-			self.selected_tags = set([tag[0]])
+			self.selected_tags = {tag[0]}
 			if self.selected_tags_ele:
 				self.selected_tags_ele.value = tag[0]
 				self.selected_tags_ele.save()

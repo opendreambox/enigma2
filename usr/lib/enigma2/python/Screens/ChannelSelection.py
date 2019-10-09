@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from Tools.Profile import profile
 
 from Screen import Screen
@@ -7,6 +9,7 @@ from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
 from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Screens.ChoiceBox import ChoiceBox
+from six import unichr
 profile("ChannelSelection.py 1")
 from EpgSelection import EPGSelection
 from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv, eEPGCache
@@ -170,7 +173,7 @@ class ChannelContextMenu(Screen):
 				else:
 					if current_root_path.find('FROM SATELLITES') != -1:
 						unsigned_orbpos = current.getUnsignedData(4) >> 16
-						print "unsigned orbpos %08x" %unsigned_orbpos
+						print("unsigned orbpos %08x" %unsigned_orbpos)
 						if unsigned_orbpos == 0xFFFF: #Cable
 							append_when_current_valid(current, menu, (_("remove cable services"), self.removeSatelliteServices), level = 0)
 						elif unsigned_orbpos == 0xEEEE: #Terrestrial
@@ -548,7 +551,7 @@ class ChannelSelectionEdit:
 		mutableBouquet = cur_root.list().startEdit()
 		if mutableBouquet:
 			name = cur_service.getServiceName()
-			print "NAME", name
+			print("NAME", name)
 			if self.mode == MODE_TV:
 				str = '1:134:1:0:0:0:0:0:0:0:FROM BOUQUET \"alternatives.%s.tv\" ORDER BY bouquet'%(self.buildBouquetID(name))
 			else:
@@ -562,16 +565,16 @@ class ChannelSelectionEdit:
 				if mutableAlternatives:
 					mutableAlternatives.setListName(name)
 					if mutableAlternatives.addService(cur_service.ref):
-						print "add", cur_service.ref.toString(), "to new alternatives failed"
+						print("add", cur_service.ref.toString(), "to new alternatives failed")
 					mutableAlternatives.flushChanges()
 					self.servicelist.removeCurrent()
 					self.servicelist.addService(new_ref.ref, True)
 				else:
-					print "get mutable list for new created alternatives failed"
+					print("get mutable list for new created alternatives failed")
 			else:
-				print "add", str, "to", cur_root.getServiceName(), "failed"
+				print("add", str, "to", cur_root.getServiceName(), "failed")
 		else:
-			print "bouquetlist is not editable"
+			print("bouquetlist is not editable")
 
 	def addBouquet(self, bName, services):
 		serviceHandler = eServiceCenter.getInstance()
@@ -593,10 +596,10 @@ class ChannelSelectionEdit:
 					if services is not None:
 						for service in services:
 							if mutableBouquet.addService(service):
-								print "add", service.toString(), "to new bouquet failed"
+								print("add", service.toString(), "to new bouquet failed")
 					mutableBouquet.flushChanges()
 				else:
-					print "get mutable list for new created bouquet failed"
+					print("get mutable list for new created bouquet failed")
 				# do some voodoo to check if current_root is equal to bouquet_root
 				cur_root = self.getRoot();
 				str1 = cur_root and cur_root.toString()
@@ -605,9 +608,9 @@ class ChannelSelectionEdit:
 				if pos1 != -1 and pos2 != -1 and str1[pos1:] == self.bouquet_rootstr[pos2:]:
 					self.servicelist.addService(new_bouquet_ref)
 			else:
-				print "add", str, "to bouquets failed"
+				print("add", str, "to bouquets failed")
 		else:
-			print "bouquetlist is not editable"
+			print("bouquetlist is not editable")
 
 	def copyCurrentToBouquetList(self):
 		provider = ServiceReference(self.getCurrentSelection())
@@ -629,18 +632,18 @@ class ChannelSelectionEdit:
 					self.servicelist.addService(first_in_alternative, True)
 					self.servicelist.setCurrent(cur_service.ref)
 				else:
-					print "couldn't add first alternative service to current root"
+					print("couldn't add first alternative service to current root")
 			else:
-				print "couldn't edit current root!!"
+				print("couldn't edit current root!!")
 		else:
-			print "remove empty alternative list !!"
+			print("remove empty alternative list !!")
 		self.removeBouquet()
 		if first_in_alternative:
 			self.servicelist.setCurrent(first_in_alternative) 
 
 	def removeBouquet(self):
 		refstr = self.getCurrentSelection().toString()
-		print "removeBouquet", refstr
+		print("removeBouquet", refstr)
 		self.bouquetNumOffsetCache = { }
 		pos = refstr.find('FROM BOUQUET "')
 		filename = None
@@ -654,7 +657,7 @@ class ChannelSelectionEdit:
 			if filename is not None:
 				remove(filename)
 		except OSError:
-			print "error during remove of", filename
+			print("error during remove of", filename)
 
 #  multiple marked entry stuff ( edit mode, later multiepg selection )
 	def startMarkedEdit(self, type):
@@ -921,7 +924,7 @@ class ChannelSelectionBase(Screen):
 			return 0
 		str = bouquet.toString()
 		offsetCount = 0
-		if not self.bouquetNumOffsetCache.has_key(str):
+		if str not in self.bouquetNumOffsetCache:
 			serviceHandler = eServiceCenter.getInstance()
 			bouquetlist = serviceHandler.list(self.bouquet_root)
 			if not bouquetlist is None:
@@ -1152,7 +1155,7 @@ class ChannelSelectionBase(Screen):
 										h = _("W")
 									else:
 										h = _("E")
-									service_name = ("%d.%d" + h) % (orbpos / 10, orbpos % 10)
+									service_name = ("%d.%d" + h) % (orbpos // 10, orbpos % 10)
 							service.setName("%s - %s" % (service_name, service_type))
 							self.servicelist.addService(service)
 						self.servicelist.finishFill()

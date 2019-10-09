@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from enigma import eTimer
 from Components.Language import language
+import six
 
 class NumericalTextInput:
 	def __init__(self, nextFunc=None, handleTimeout = True, search = False):
@@ -19,8 +20,8 @@ class NumericalTextInput:
 		self.pos = -1
 
 		if search:
-			if isinstance(search, basestring):
-				self.mapping.append (unicode(search)+u"0") # 0
+			if isinstance(search, six.string_types):
+				self.mapping.append (six.text_type(search)+u"0") # 0
 			else:
 				self.mapping.append (u"%_0") # 1
 			self.mapping.append (u" 1") # 1
@@ -102,7 +103,7 @@ class NumericalTextInput:
 			self.mapping.append (u"wxyz9WXYZ") # 9
 
 	def setUseableChars(self, useable):
-		self.useableChars = unicode(useable)
+		self.useableChars = six.text_type(useable)
 		
 
 	def getKey(self, num):

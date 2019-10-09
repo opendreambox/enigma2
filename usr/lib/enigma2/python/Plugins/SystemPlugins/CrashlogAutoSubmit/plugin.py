@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigYesNo
 from Components.ConfigList import ConfigListScreen
@@ -149,7 +150,7 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 		self.close()
 
 	def keyCancel(self):
-		print "cancel"
+		print("cancel")
 		if self["config"].isChanged():
 			self.hideKeypad()
 			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"))
@@ -157,7 +158,7 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 			self.close()
 
 	def keySave(self):
-		print "saving"
+		print("saving")
 		CrashlogAutoSubmitConfiguration.oldMailEntryValue = config.plugins.crashlogautosubmit.sendmail.value
 		ConfigListScreen.keySave(self)
 
@@ -166,11 +167,11 @@ class CrashlogAutoSubmitConfiguration(Screen, ConfigListScreen):
 			try:
 				callCrashMailer(True, self.session)
 			except AttributeError:
-				print "error, not restarting crashlogmailer"
+				print("error, not restarting crashlogmailer")
 
 
 def mxServerFound(mxServer,session):
-	print "[CrashlogAutoSubmit] - mxServerFound -->", mxServer
+	print("[CrashlogAutoSubmit] - mxServerFound -->", mxServer)
 	crashLogFilelist = []
 	message = StringIO.StringIO()
 	writer = MimeWriter.MimeWriter(message)
@@ -202,10 +203,10 @@ def mxServerFound(mxServer,session):
 	)
 
 	def handleError(error):
-		print "[CrashlogAutoSubmit] - Message send Error -->", error.getErrorMessage()
+		print("[CrashlogAutoSubmit] - Message send Error -->", error.getErrorMessage())
 
 	def handleSuccess(result):
-		print "[CrashlogAutoSubmit] - Message sent successfully -->",result
+		print("[CrashlogAutoSubmit] - Message sent successfully -->",result)
 		for crashlog in crashLogFilelist:
 			if config.plugins.crashlogautosubmit.sendlog.value == "delete":
 				remove(crashlog)
@@ -215,7 +216,7 @@ def mxServerFound(mxServer,session):
 				rename(crashlog, newfilename)
 
 	def send_mail():
-		print "[CrashlogAutoSubmit] - send_mail"
+		print("[CrashlogAutoSubmit] - send_mail")
 		for crashlog in crashLogFilelist:
 			filename = basename(crashlog)
 			subpart = writer.nextpart()
@@ -230,7 +231,7 @@ def mxServerFound(mxServer,session):
 
 	def handleAnswer(answer):
 		answer = answer and answer[1]
-		print "[CrashlogAutoSubmit] - handleAnswer --> ",answer
+		print("[CrashlogAutoSubmit] - handleAnswer --> ",answer)
 		if answer == "send":
 			send_mail()
 		elif answer == "send_always":
@@ -245,10 +246,10 @@ def mxServerFound(mxServer,session):
 			config.plugins.crashlogautosubmit.save()
 			config.plugins.save()
 		elif answer == "send_not":
-			print "[CrashlogAutoSubmit] - not sending crashlogs for this time."
+			print("[CrashlogAutoSubmit] - not sending crashlogs for this time.")
 
 	for crashlog in glob('/media/hdd/enigma2_crash_*.log'):
-		print "[CrashlogAutoSubmit] - found crashlog: ", basename(crashlog)
+		print("[CrashlogAutoSubmit] - found crashlog: ", basename(crashlog))
 		crashLogFilelist.append(crashlog)
 
 	if len(crashLogFilelist):
@@ -257,20 +258,20 @@ def mxServerFound(mxServer,session):
 		elif config.plugins.crashlogautosubmit.sendmail.value == "send_always":
 			send_mail()
 	else:
-		print "[CrashlogAutoSubmit] - no crashlogs found."
+		print("[CrashlogAutoSubmit] - no crashlogs found.")
 
 
 def startMailer(session):
 	if config.plugins.crashlogautosubmit.sendmail.value == "send_never":
-		print "[CrashlogAutoSubmit] - not starting CrashlogAutoSubmit"
+		print("[CrashlogAutoSubmit] - not starting CrashlogAutoSubmit")
 		return False
 
 	def gotMXServer(mx):
-		print "[CrashlogAutoSubmit] gotMXServer: ", mx.name
+		print("[CrashlogAutoSubmit] gotMXServer: ", mx.name)
 		mxServerFound(mx.name, session)
 
 	def handleMXError(error):
-		print "[CrashlogAutoSubmit] - MX resolve ERROR:", error.getErrorMessage()
+		print("[CrashlogAutoSubmit] - MX resolve ERROR:", error.getErrorMessage())
 
 	if not config.misc.firstrun.value:
 		relaymanager.MXCalculator().getMX('crashlog.dream-multimedia-tv.de').addCallback(gotMXServer).addErrback(handleMXError)
@@ -278,19 +279,19 @@ def startMailer(session):
 
 def callCrashMailer(result,session):
 	if result is True:
-		print "[CrashlogAutoSubmit] - config changed"
+		print("[CrashlogAutoSubmit] - config changed")
 		startMailer(session)
 	else:
-		print "[CrashlogAutoSubmit] - config not changed"
+		print("[CrashlogAutoSubmit] - config not changed")
 
 
 def autostart(reason, **kwargs):
-	print "[CrashlogAutoSubmit] - autostart"
+	print("[CrashlogAutoSubmit] - autostart")
 	if "session" in kwargs:
 		try:
 			startMailer(kwargs["session"])
-		except ImportError, e:
-			print "[CrashlogAutoSubmit] Twisted-mail not available, not starting CrashlogAutoSubmitter", e
+		except ImportError as e:
+			print("[CrashlogAutoSubmit] Twisted-mail not available, not starting CrashlogAutoSubmitter", e)
 
 
 def openconfig(session, **kwargs):

@@ -118,6 +118,7 @@ HAVE_BOOST = _enigma.HAVE_BOOST
 HAVE_BOOST_ALGORITHM_STRING_HPP = _enigma.HAVE_BOOST_ALGORITHM_STRING_HPP
 HAVE_BOOST_FORMAT_HPP = _enigma.HAVE_BOOST_FORMAT_HPP
 HAVE_CXX14 = _enigma.HAVE_CXX14
+HAVE_DATE_DATE_H = _enigma.HAVE_DATE_DATE_H
 HAVE_DLFCN_H = _enigma.HAVE_DLFCN_H
 HAVE_DRM_DRM_FOURCC_H = _enigma.HAVE_DRM_DRM_FOURCC_H
 HAVE_EGL_EGLEXT_H = _enigma.HAVE_EGL_EGLEXT_H
@@ -1405,6 +1406,156 @@ def eUriResolver_removeResolver(resolver):
 def eUriResolver_tryResolveUri(service, uri):
     """eUriResolver_tryResolveUri(iUriService service, std::string const & uri) -> bool"""
     return _enigma.eUriResolver_tryResolveUri(service, uri)
+
+class eStreamProcessor(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def __init__(self, name):
+        """__init__(eStreamProcessor self, std::string const & name) -> eStreamProcessor"""
+        if self.__class__ == eStreamProcessor:
+            _self = None
+        else:
+            _self = self
+        _enigma.eStreamProcessor_swiginit(self, _enigma.new_eStreamProcessor(_self, name))
+    __swig_destroy__ = _enigma.delete_eStreamProcessor
+
+    def getName(self):
+        """getName(eStreamProcessor self) -> std::string const &"""
+        return _enigma.eStreamProcessor_getName(self)
+
+
+    def start(self):
+        """start(eStreamProcessor self)"""
+        return _enigma.eStreamProcessor_start(self)
+
+
+    def stop(self):
+        """stop(eStreamProcessor self)"""
+        return _enigma.eStreamProcessor_stop(self)
+
+
+    def pause(self):
+        """pause(eStreamProcessor self) -> bool"""
+        return _enigma.eStreamProcessor_pause(self)
+
+
+    def resume(self):
+        """resume(eStreamProcessor self) -> bool"""
+        return _enigma.eStreamProcessor_resume(self)
+
+
+    def seekDone(self):
+        """seekDone(eStreamProcessor self)"""
+        return _enigma.eStreamProcessor_seekDone(self)
+
+
+    def canProcess(self, streamInfos):
+        """canProcess(eStreamProcessor self, std::vector< StreamInfo,std::allocator< StreamInfo > > & streamInfos) -> bool"""
+        return _enigma.eStreamProcessor_canProcess(self, streamInfos)
+
+
+    def parsed(self):
+        """parsed(eStreamProcessor self)"""
+        return _enigma.eStreamProcessor_parsed(self)
+
+
+    def ready(self):
+        """ready(eStreamProcessor self)"""
+        return _enigma.eStreamProcessor_ready(self)
+
+
+    def getStreams(self):
+        """getStreams(eStreamProcessor self) -> std::vector< StreamInfo,std::allocator< StreamInfo > > &"""
+        return _enigma.eStreamProcessor_getStreams(self)
+
+
+    def selectVideoStream(self, *args):
+        """
+        selectVideoStream(eStreamProcessor self, int index, StreamRestrictions const & restrictions) -> bool
+        selectVideoStream(eStreamProcessor self, int index) -> bool
+        """
+        return _enigma.eStreamProcessor_selectVideoStream(self, *args)
+
+
+    def selectAudioStream(self, *args):
+        """
+        selectAudioStream(eStreamProcessor self, int index, StreamRestrictions const & restrictions) -> bool
+        selectAudioStream(eStreamProcessor self, int index) -> bool
+        """
+        return _enigma.eStreamProcessor_selectAudioStream(self, *args)
+
+
+    def deleteStream(self, index):
+        """deleteStream(eStreamProcessor self, int index)"""
+        return _enigma.eStreamProcessor_deleteStream(self, index)
+
+
+    def getActiveVideoIndex(self):
+        """getActiveVideoIndex(eStreamProcessor self) -> int"""
+        return _enigma.eStreamProcessor_getActiveVideoIndex(self)
+
+
+    def getActiveAudioIndex(self):
+        """getActiveAudioIndex(eStreamProcessor self) -> int"""
+        return _enigma.eStreamProcessor_getActiveAudioIndex(self)
+
+
+    def getVideoFrames(self, frames):
+        """getVideoFrames(eStreamProcessor self, std::vector< RawData,std::allocator< RawData > > & frames) -> bool"""
+        return _enigma.eStreamProcessor_getVideoFrames(self, frames)
+
+
+    def getAudioPackets(self, packets):
+        """getAudioPackets(eStreamProcessor self, std::vector< RawData,std::allocator< RawData > > & packets) -> bool"""
+        return _enigma.eStreamProcessor_getAudioPackets(self, packets)
+
+
+    def getProcessors():
+        """getProcessors() -> std::vector< eStreamProcessor *,std::allocator< eStreamProcessor * > > const &"""
+        return _enigma.eStreamProcessor_getProcessors()
+
+    getProcessors = staticmethod(getProcessors)
+
+    def addProcessor(processor):
+        """addProcessor(eStreamProcessor processor)"""
+        return _enigma.eStreamProcessor_addProcessor(processor)
+
+    addProcessor = staticmethod(addProcessor)
+    formatChanged = _swig_property(_enigma.eStreamProcessor_formatChanged_get, _enigma.eStreamProcessor_formatChanged_set)
+    framerateChanged = _swig_property(_enigma.eStreamProcessor_framerateChanged_get, _enigma.eStreamProcessor_framerateChanged_set)
+    progressiveChanged = _swig_property(_enigma.eStreamProcessor_progressiveChanged_get, _enigma.eStreamProcessor_progressiveChanged_set)
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eStreamProcessor(self)
+        return weakref_proxy(self)
+eStreamProcessor.getName = new_instancemethod(_enigma.eStreamProcessor_getName, None, eStreamProcessor)
+eStreamProcessor.start = new_instancemethod(_enigma.eStreamProcessor_start, None, eStreamProcessor)
+eStreamProcessor.stop = new_instancemethod(_enigma.eStreamProcessor_stop, None, eStreamProcessor)
+eStreamProcessor.pause = new_instancemethod(_enigma.eStreamProcessor_pause, None, eStreamProcessor)
+eStreamProcessor.resume = new_instancemethod(_enigma.eStreamProcessor_resume, None, eStreamProcessor)
+eStreamProcessor.seekDone = new_instancemethod(_enigma.eStreamProcessor_seekDone, None, eStreamProcessor)
+eStreamProcessor.canProcess = new_instancemethod(_enigma.eStreamProcessor_canProcess, None, eStreamProcessor)
+eStreamProcessor.parsed = new_instancemethod(_enigma.eStreamProcessor_parsed, None, eStreamProcessor)
+eStreamProcessor.ready = new_instancemethod(_enigma.eStreamProcessor_ready, None, eStreamProcessor)
+eStreamProcessor.getStreams = new_instancemethod(_enigma.eStreamProcessor_getStreams, None, eStreamProcessor)
+eStreamProcessor.selectVideoStream = new_instancemethod(_enigma.eStreamProcessor_selectVideoStream, None, eStreamProcessor)
+eStreamProcessor.selectAudioStream = new_instancemethod(_enigma.eStreamProcessor_selectAudioStream, None, eStreamProcessor)
+eStreamProcessor.deleteStream = new_instancemethod(_enigma.eStreamProcessor_deleteStream, None, eStreamProcessor)
+eStreamProcessor.getActiveVideoIndex = new_instancemethod(_enigma.eStreamProcessor_getActiveVideoIndex, None, eStreamProcessor)
+eStreamProcessor.getActiveAudioIndex = new_instancemethod(_enigma.eStreamProcessor_getActiveAudioIndex, None, eStreamProcessor)
+eStreamProcessor.getVideoFrames = new_instancemethod(_enigma.eStreamProcessor_getVideoFrames, None, eStreamProcessor)
+eStreamProcessor.getAudioPackets = new_instancemethod(_enigma.eStreamProcessor_getAudioPackets, None, eStreamProcessor)
+eStreamProcessor_swigregister = _enigma.eStreamProcessor_swigregister
+eStreamProcessor_swigregister(eStreamProcessor)
+
+def eStreamProcessor_getProcessors():
+    """eStreamProcessor_getProcessors() -> std::vector< eStreamProcessor *,std::allocator< eStreamProcessor * > > const &"""
+    return _enigma.eStreamProcessor_getProcessors()
+
+def eStreamProcessor_addProcessor(processor):
+    """eStreamProcessor_addProcessor(eStreamProcessor processor)"""
+    return _enigma.eStreamProcessor_addProcessor(processor)
 
 class ePythonMessagePump(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -5820,6 +5971,19 @@ class eNetworkService(iObject):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
+    WOL_SUCCESS = _enigma.eNetworkService_WOL_SUCCESS
+    WOL_ERROR_FOREIGN_INTERFACE = _enigma.eNetworkService_WOL_ERROR_FOREIGN_INTERFACE
+    WOL_ERROR_SETUP_FAILED = _enigma.eNetworkService_WOL_ERROR_SETUP_FAILED
+    WOL_ERROR_NOT_SUPPORTED = _enigma.eNetworkService_WOL_ERROR_NOT_SUPPORTED
+    WOL_ERROR_NO_SUCH_INTERFACE = _enigma.eNetworkService_WOL_ERROR_NO_SUCH_INTERFACE
+    WAKE_FLAG_NEVER = _enigma.eNetworkService_WAKE_FLAG_NEVER
+    WAKE_FLAG_UNICAST = _enigma.eNetworkService_WAKE_FLAG_UNICAST
+    WAKE_FLAG_MULTICAST = _enigma.eNetworkService_WAKE_FLAG_MULTICAST
+    WAKE_FLAG_BROADCAST = _enigma.eNetworkService_WAKE_FLAG_BROADCAST
+    WAKE_FLAG_ACTIVITY = _enigma.eNetworkService_WAKE_FLAG_ACTIVITY
+    WAKE_FLAG_ARP = _enigma.eNetworkService_WAKE_FLAG_ARP
+    WAKE_FLAG_MAGIC = _enigma.eNetworkService_WAKE_FLAG_MAGIC
+    WAKE_FLAG_MAGIC_SECURE = _enigma.eNetworkService_WAKE_FLAG_MAGIC_SECURE
 
     def name(self):
         """name(eNetworkService self) -> std::string const"""
@@ -5951,6 +6115,21 @@ class eNetworkService(iObject):
         return _enigma.eNetworkService_connected(self)
 
 
+    def hasWoL(self):
+        """hasWoL(eNetworkService self) -> bool"""
+        return _enigma.eNetworkService_hasWoL(self)
+
+
+    def wol(self):
+        """wol(eNetworkService self) -> int"""
+        return _enigma.eNetworkService_wol(self)
+
+
+    def setWoL(self, type):
+        """setWoL(eNetworkService self, int type) -> int"""
+        return _enigma.eNetworkService_setWoL(self, type)
+
+
     def requestConnect(self):
         """requestConnect(eNetworkService self)"""
         return _enigma.eNetworkService_requestConnect(self)
@@ -6051,6 +6230,9 @@ eNetworkService.roaming = new_instancemethod(_enigma.eNetworkService_roaming, No
 eNetworkService.setPath = new_instancemethod(_enigma.eNetworkService_setPath, None, eNetworkService)
 eNetworkService.updateProperties = new_instancemethod(_enigma.eNetworkService_updateProperties, None, eNetworkService)
 eNetworkService.connected = new_instancemethod(_enigma.eNetworkService_connected, None, eNetworkService)
+eNetworkService.hasWoL = new_instancemethod(_enigma.eNetworkService_hasWoL, None, eNetworkService)
+eNetworkService.wol = new_instancemethod(_enigma.eNetworkService_wol, None, eNetworkService)
+eNetworkService.setWoL = new_instancemethod(_enigma.eNetworkService_setWoL, None, eNetworkService)
 eNetworkService.requestConnect = new_instancemethod(_enigma.eNetworkService_requestConnect, None, eNetworkService)
 eNetworkService.requestDisconnect = new_instancemethod(_enigma.eNetworkService_requestDisconnect, None, eNetworkService)
 eNetworkService.remove = new_instancemethod(_enigma.eNetworkService_remove, None, eNetworkService)
@@ -6082,6 +6264,7 @@ eNetworkService.TYPE_WIFI = _enigma.cvar.eNetworkService_TYPE_WIFI
 eNetworkService.IPV6_PRIVACY_DISABLED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_DISABLED
 eNetworkService.IPV6_PRIVACY_PREFERRED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_PREFERRED
 eNetworkService.IPV6_PRIVACY_ENABLED = _enigma.cvar.eNetworkService_IPV6_PRIVACY_ENABLED
+eNetworkService.WAKE_FLAG_LUT = _enigma.cvar.eNetworkService_WAKE_FLAG_LUT
 
 class eNetworkServicePtr(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -6109,6 +6292,7 @@ class eNetworkServicePtr(object):
     IPV6_PRIVACY_DISABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_DISABLED_get)
     IPV6_PRIVACY_PREFERRED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_PREFERRED_get)
     IPV6_PRIVACY_ENABLED = _swig_property(_enigma.eNetworkServicePtr_IPV6_PRIVACY_ENABLED_get)
+    WAKE_FLAG_LUT = _swig_property(_enigma.eNetworkServicePtr_WAKE_FLAG_LUT_get)
 
     def name(self):
         """name(eNetworkServicePtr self) -> std::string const"""
@@ -6240,6 +6424,21 @@ class eNetworkServicePtr(object):
         return _enigma.eNetworkServicePtr_connected(self)
 
 
+    def hasWoL(self):
+        """hasWoL(eNetworkServicePtr self) -> bool"""
+        return _enigma.eNetworkServicePtr_hasWoL(self)
+
+
+    def wol(self):
+        """wol(eNetworkServicePtr self) -> int"""
+        return _enigma.eNetworkServicePtr_wol(self)
+
+
+    def setWoL(self, type):
+        """setWoL(eNetworkServicePtr self, int type) -> int"""
+        return _enigma.eNetworkServicePtr_setWoL(self, type)
+
+
     def requestConnect(self):
         """requestConnect(eNetworkServicePtr self)"""
         return _enigma.eNetworkServicePtr_requestConnect(self)
@@ -6343,6 +6542,9 @@ eNetworkServicePtr.roaming = new_instancemethod(_enigma.eNetworkServicePtr_roami
 eNetworkServicePtr.setPath = new_instancemethod(_enigma.eNetworkServicePtr_setPath, None, eNetworkServicePtr)
 eNetworkServicePtr.updateProperties = new_instancemethod(_enigma.eNetworkServicePtr_updateProperties, None, eNetworkServicePtr)
 eNetworkServicePtr.connected = new_instancemethod(_enigma.eNetworkServicePtr_connected, None, eNetworkServicePtr)
+eNetworkServicePtr.hasWoL = new_instancemethod(_enigma.eNetworkServicePtr_hasWoL, None, eNetworkServicePtr)
+eNetworkServicePtr.wol = new_instancemethod(_enigma.eNetworkServicePtr_wol, None, eNetworkServicePtr)
+eNetworkServicePtr.setWoL = new_instancemethod(_enigma.eNetworkServicePtr_setWoL, None, eNetworkServicePtr)
 eNetworkServicePtr.requestConnect = new_instancemethod(_enigma.eNetworkServicePtr_requestConnect, None, eNetworkServicePtr)
 eNetworkServicePtr.requestDisconnect = new_instancemethod(_enigma.eNetworkServicePtr_requestDisconnect, None, eNetworkServicePtr)
 eNetworkServicePtr.remove = new_instancemethod(_enigma.eNetworkServicePtr_remove, None, eNetworkServicePtr)

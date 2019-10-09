@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport, InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarPlugins, InfoBarGstreamerErrorPopupSupport
@@ -110,7 +111,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 		self.leavePlayerConfirmed([True, "quit"])
 
 	def playAgain(self):
-		print "playAgain"
+		print("playAgain")
 		self.stopCurrent()
 		self.play()
 
@@ -130,7 +131,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 			self.pauseCB()
 
 	def stopCurrent(self):
-		print "stopCurrent"
+		print("stopCurrent")
 		self.session.nav.stopService()
 		if self.stopCB != None:
 			self.stopCB()

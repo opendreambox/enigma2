@@ -5,6 +5,7 @@ from Screens.MoviePlayer import MoviePlayer
 from Screens.Screen import Screen
 
 import copy
+import six
 
 class MediaCore:
 	TYPE_AUDIO = 0
@@ -110,7 +111,7 @@ class MediaCore:
 			browsers = self.audioBrowsers
 
 		refs = []
-		for key, browser in browsers.iteritems():
+		for key, browser in six.iteritems(browsers):
 			cls = browser["class"]
 			if cls.FEATURE_SEARCH:
 				Log.i("searching %s!" %key)

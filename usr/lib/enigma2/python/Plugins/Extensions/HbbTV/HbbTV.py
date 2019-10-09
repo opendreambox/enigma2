@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eHbbtv, eServiceReference, eTimer, eDVBVolumecontrol, cvar
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
@@ -49,7 +50,7 @@ class HbbTV(object):
 		self.__restoreTimer_conn = self.__restoreTimer.timeout.connect(self._restoreLastService)
 
 	def connectCallbacks(self):
-		print "[HbbTV] connecting callbacks"
+		print("[HbbTV] connecting callbacks")
 		self.conns = [ ]
 		self.conns.append(self.eHbbtv.playServiceRequest.connect(self.zap))
 		self.conns.append(self.eHbbtv.playStreamRequest.connect(self.playStream))
@@ -69,7 +70,7 @@ class HbbTV(object):
 		self.conns.append(self.eHbbtv.hide.connect(self.hideBrowser))
 
 	def disconnectCallbacks(self):
-		print "[HbbTV] disconnecting callbacks"
+		print("[HbbTV] disconnecting callbacks")
 		self.conns = None
 		for fnc in self.onClose:
 			fnc()
@@ -215,14 +216,14 @@ class HbbTV(object):
 		ib.zapUp()
 
 	def redButtonAppplicationReady(self, appid):
-		print "[HbbTV].readButtonApplicationReady, appid=%s" % (appid)
+		print("[HbbTV].readButtonApplicationReady, appid=%s" % (appid))
 		self._redButtonApp = appid
 		app = self.eHbbtv.getApplication(self._redButtonApp)
 		HbbTV.redButtonDescriptor.name = app.getName()
 		plugins.addPlugin(HbbTV.redButtonDescriptor)
 
 	def textApplicationReady(self, appid):
-		print "[HbbTV].textApplicationReady, appid=%s" % (appid)
+		print("[HbbTV].textApplicationReady, appid=%s" % (appid))
 		if config.plugins.hbbtv.text.value:
 			self._textApp = appid
 			app = self.eHbbtv.getApplication(self._textApp)
@@ -230,7 +231,7 @@ class HbbTV(object):
 			plugins.addPlugin(HbbTV.textDescriptor)
 
 	def aitInvalidated(self):
-		print "[HbbTV].aitInvalidated"
+		print("[HbbTV].aitInvalidated")
 		self._redButtonApp = None
 		self._textApp = None
 		if plugins.getPlugins(PluginDescriptor.WHERE_HBBTV).count(HbbTV.redButtonDescriptor) > 0:
@@ -245,12 +246,12 @@ class HbbTV(object):
 		return self._textApp != None
 
 	def showRedButtonApplication(self):
-		print "[HbbTV].HbbTV.showRedButtonApplication"
+		print("[HbbTV].HbbTV.showRedButtonApplication")
 		if self._redButtonApp is not None:
 			self.startApplicationById(self._redButtonApp)
 
 	def showTextApplication(self):
-		print "[HbbTV].HbbTV.showTextApplication"
+		print("[HbbTV].HbbTV.showTextApplication")
 		if self._textApp is not None:
 			self.startApplicationById(self._textApp)
 

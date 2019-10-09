@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.Label import Label
 from Screens.Screen import Screen
 
@@ -52,7 +53,7 @@ class MediaRendererLCDScreen(Screen):
 		elif line == 3:
 			self["text3"].setText(text)
 		else:
-			print "SimpleLCDScreen line %s does not exist!"
+			print("SimpleLCDScreen line %s does not exist!")
 
 	def clear(self):
 		self["text1"].setText("")

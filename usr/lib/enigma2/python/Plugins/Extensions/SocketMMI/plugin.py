@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Tools.BoundFunction import boundFunction
 from Plugins.Plugin import PluginDescriptor
 from SocketMMI import SocketMMIMessageHandler
@@ -31,7 +32,7 @@ def autostart(reason, **kwargs):
 		if socketHandler is None:
 			socketHandler = SocketMMIMessageHandler()
 		else:
-			print "[SocketMMI] - socketHandler already connected."
+			print("[SocketMMI] - socketHandler already connected.")
 
 def Plugins(**kwargs):
 	return [ PluginDescriptor(name = "SocketMMI", description = _("Python frontend for /tmp/mmi.socket"), where = PluginDescriptor.WHERE_MENU, needsRestart = True, fnc = menu),

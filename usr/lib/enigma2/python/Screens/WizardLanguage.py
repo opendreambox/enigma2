@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Wizard import Wizard
 from Components.Label import Label
 from Components.Language import language
@@ -22,7 +23,7 @@ class WizardLanguage(Wizard):
 		self.__updateCallbacks.remove(callback)
 
 	def languageSelect(self):
-		print "languageSelect"
+		print("languageSelect")
 		newlanguage = language.getActiveLanguageIndex() + 1
 		if newlanguage >= len(language.getLanguageList()):
 			newlanguage = 0
@@ -31,11 +32,11 @@ class WizardLanguage(Wizard):
 		self.updateTexts()
 
 	def updateLanguageDescription(self):
-		print language.getLanguageList()[language.getActiveLanguageIndex()]
+		print(language.getLanguageList()[language.getActiveLanguageIndex()])
 		self["languagetext"].setText(self.getTranslation(language.getLanguageList()[language.getActiveLanguageIndex()][1][0]))
 		
 	def updateTexts(self):
-		print "updateTexts"
+		print("updateTexts")
 		self.setTitle(_(self.getTitle()))
 		self.updateText(firstset = True)
 		self.updateValues()

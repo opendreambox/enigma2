@@ -13,6 +13,8 @@ from Tools.Log import Log
 from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
 from Screens.ChoiceBox import ChoiceBox
+import six
+from six.moves import range
 
 config.misc.firstrun = ConfigBoolean(default = True)
 
@@ -228,7 +230,7 @@ class SetupGuide(Screen):
 				self[key_text].show()
 
 	def addSteps(self, steps):
-		for prio, step in steps.iteritems():
+		for prio, step in six.iteritems(steps):
 			self._stepper.add(self, prio, step)
 
 	def left(self):

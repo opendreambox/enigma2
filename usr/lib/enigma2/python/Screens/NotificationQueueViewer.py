@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.Sources.List import List
@@ -80,7 +81,7 @@ class NotificationQueueViewer(Screen):
 		Notifications.notificationQueue.addedCB.remove(self.checkNotifications)
 
 	def checkNotifications(self):
-		print "[NotificationQueueViewer::checkNotifications]"
+		print("[NotificationQueueViewer::checkNotifications]")
 		self.refreshList()
 		Notifications.notificationQueue.popNotification(self)
 
@@ -109,7 +110,7 @@ class NotificationQueueViewer(Screen):
 
 	def keyGreen(self):
 		current = self["notifications"].getCurrent()
-		print "keyGreen", current
+		print("keyGreen", current)
 		if isinstance(current, tuple):
 			entry = current[0]
 			Notifications.notificationQueue.popNotification(self, entry)

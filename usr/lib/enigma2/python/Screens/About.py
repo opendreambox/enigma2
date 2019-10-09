@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eNetworkManager
 
 from Screen import Screen
@@ -108,7 +109,7 @@ class TranslationInfo(Screen):
 				continue
 			(type, value) = l
 			infomap[type] = value
-		print infomap
+		print(infomap)
 
 		self["TranslationInfo"] = StaticText(info)
 

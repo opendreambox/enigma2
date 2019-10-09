@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import NumberActionMap
@@ -49,7 +50,7 @@ class Test(Screen):
 #		self.session.open(InputBox)
 
 	def mycallback(self, answer):
-		print "answer:", answer
+		print("answer:", answer)
 		if answer:
 			raise Exception("test-crash")
 		self.close()
@@ -68,7 +69,7 @@ class Test(Screen):
 			self["pixmap"].instance.setPixmapFromFile(selection[0])
 
 	def keyNumberGlobal(self, number):
-		print "pressed", number
+		print("pressed", number)
 		self["text"].number(number)
 
 def main(session, **kwargs):
@@ -77,7 +78,7 @@ def main(session, **kwargs):
 	#session.openWithCallback(test, ChoiceBox, title="Delete everything on this Dreambox?", list=[(_("yes"), "yes"), (_("no"), "no"), (_("perhaps"), "perhaps"), (_("ask me tomorrow"), "ask me tomorrow"), (_("leave me alone with this!"), "yes")])
 
 def test(returnValue):
-	print "You entered", returnValue
+	print("You entered", returnValue)
 
 def Plugins(**kwargs):
 	return PluginDescriptor(name="Test", description=_("plugin to test some capabilities"), where = PluginDescriptor.WHERE_PLUGINMENU, needsRestart = False, fnc=main)

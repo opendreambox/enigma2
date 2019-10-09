@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eEPGCache
 from Components.config import config
 from Plugins.Plugin import PluginDescriptor
@@ -14,7 +15,7 @@ class TestEpgCache(unittest.TestCase):
 		self.oldfile = config.misc.epgcache_filename.value
 		config.misc.epgcache_filename.value = resolveFilename(SCOPE_CONFIG, testdb)
 		self._remove_db()
-		print "saving to %s... " % (config.misc.epgcache_filename.value),
+		print("saving to %s... " % (config.misc.epgcache_filename.value), end=' ')
 		config.misc.epgcache_filename.save()
 		eEPGCache.getInstance().save()
 
@@ -24,7 +25,7 @@ class TestEpgCache(unittest.TestCase):
 
 	def _remove_db(self):
 		if fileExists(config.misc.epgcache_filename.value):
-			print "Removing old test result...",
+			print("Removing old test result...", end=' ')
 			os.remove(config.misc.epgcache_filename.value)
 
 

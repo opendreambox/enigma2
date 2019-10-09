@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from GUIComponent import GUIComponent
 from Tools.FuzzyDate import FuzzyTime
 from ServiceReference import ServiceReference
@@ -120,7 +122,7 @@ class MovieList(TemplatedMultiContentComponent):
 			self.list[cur_idx] = (x[0], x[1], x[2], len) #update entry in list... so next time we don't need to recalc
 		
 		if len > 0:
-			len = "%d:%02d" % (len / 60, len % 60)
+			len = "%d:%02d" % (len // 60, len % 60)
 		else:
 			len = ""
 		
@@ -204,12 +206,12 @@ class MovieList(TemplatedMultiContentComponent):
 		self.root = root
 		list = self.serviceHandler.list(root)
 		if list is None:
-			print "listing of movies failed"
+			print("listing of movies failed")
 			list = [ ]	
 			return
 		tags = set()
 		
-		while 1:
+		while True:
 			serviceref = list.getNext()
 			if not serviceref.valid():
 				break

@@ -1,3 +1,4 @@
+from __future__ import division
 from Poll import PollConverter
 from time import time
 from Components.Element import cached, ElementError
@@ -64,7 +65,7 @@ class EventTime(PollConverter, object):
 		start_time = event.getBeginTime()
 		duration = event.getDuration()
 		if start_time <= now <= (start_time + duration) and duration > 0:
-			return (now - start_time) * 1000 / duration
+			return (now - start_time) * 1000 // duration
 		else:
 			return None
 

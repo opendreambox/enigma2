@@ -1,6 +1,7 @@
 from argparse import Namespace
 from json import loads as json_loads
 from twisted.web.client import getPage
+import six
 
 """
 This returns a native python object derived from the following JSON data (converted using argparse.Namespace)
@@ -35,7 +36,7 @@ class GeoIPLookup(object):
 	def _onLookupData(self, response, callback=None):
 		try:
 			geoipdata = json_loads(response)
-			for key, value in geoipdata.iteritems():
+			for key, value in six.iteritems(geoipdata):
 				geoipdata[key] = str(value)
 			geoipdata = Namespace(**geoipdata)
 			self.cachedData = geoipdata

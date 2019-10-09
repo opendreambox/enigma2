@@ -16,8 +16,9 @@ from Tools.ISO639 import LanguageCodes
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
+from six.moves import range
 
-FOCUS_CONFIG, FOCUS_STREAMS = range(2)
+FOCUS_CONFIG, FOCUS_STREAMS = list(range(2))
 [PAGE_AUDIO, PAGE_SUBTITLES] = ["audio", "subtitles"]
 
 #{key: (shortname, display name, default sort rank)}
@@ -190,7 +191,7 @@ class AudioSelection(Screen, ConfigListScreen):
 					for lang in languages:
 						if cnt:
 							s_language += ' / '
-						if LanguageCodes.has_key(lang):
+						if lang in LanguageCodes:
 							s_language += _(LanguageCodes[lang][0])
 						elif lang == "und":
 							_("<unknown>")
@@ -233,7 +234,7 @@ class AudioSelection(Screen, ConfigListScreen):
 
 				lang = trackinfo.getLanguage()
 				if lang != "und":
-					if LanguageCodes.has_key(lang):
+					if lang in LanguageCodes:
 						s_language = _(LanguageCodes[lang][0])
 					else:
 						s_language = lang

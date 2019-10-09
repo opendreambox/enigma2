@@ -1,4 +1,7 @@
+from __future__ import division
+from __future__ import print_function
 from Tools.Profile import profile
+import six
 profile("LOAD:ElementTree")
 import xml.etree.cElementTree
 from os.path import dirname
@@ -13,6 +16,8 @@ from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Log import Log
 
+from compat import skin_applet_compile
+
 from re import search as re_search
 
 HAS_SKIN_USER_DISPLAY = True
@@ -21,7 +26,7 @@ colorNames = dict()
 skinGlobals = dict()
 
 def dump(x, i=0):
-	print " " * i + str(x)
+	print(" " * i + str(x))
 	try:
 		for n in x.childNodes:
 			dump(n, i + 1)
@@ -74,19 +79,19 @@ config.skin.primary_skin = ConfigText(default = "skin.xml")
 profile("LoadSkin")
 try:
 	loadSkin('skin_user_display.xml', SCOPE_CONFIG)
-except (SkinError, IOError, AssertionError), err:
-	print "not loading display user skin: ", err
+except (SkinError, IOError, AssertionError) as err:
+	print("not loading display user skin: ", err)
 
 try:
 	loadSkin('skin_user.xml', SCOPE_CONFIG)
-except (SkinError, IOError, AssertionError), err:
-	print "not loading user skin: ", err
+except (SkinError, IOError, AssertionError) as err:
+	print("not loading user skin: ", err)
 
 try:
 	loadSkin(config.skin.primary_skin.value)
-except (SkinError, IOError, AssertionError), err:
-	print "SKIN ERROR:", err
-	print "defaulting to standard skin..."
+except (SkinError, IOError, AssertionError) as err:
+	print("SKIN ERROR:", err)
+	print("defaulting to standard skin...")
 	config.skin.primary_skin.value = 'skin.xml'
 	loadSkin('skin.xml')
 
@@ -96,7 +101,7 @@ if yres > 0:
 	skin_default_specific = 'skin_default_%s.xml' %yres
 	try:
 		loadSkin(skin_default_specific)
-	except (SkinError, IOError, AssertionError), err:
+	except (SkinError, IOError, AssertionError) as err:
 		Log.w("Not loading %s %s" %(skin_default_specific,err))
 
 profile("LoadSkinDefault")
@@ -109,13 +114,13 @@ def parsePercent(val, base):
 
 def evalPos(pos, wsize, ssize, scale):
 	if pos == "center":
-		pos = (ssize - wsize) / 2
+		pos = (ssize - wsize) // 2
 	elif pos == "max":
 		pos = ssize - wsize
 	elif pos.endswith("%"):
 		pos = parsePercent(pos, ssize)
 	else:
-		pos = int(pos) * scale[0] / scale[1]
+		pos = int(pos) * scale[0] // scale[1]
 	return int(pos)
 
 def getParentSize(desktop, guiObject):
@@ -178,11 +183,11 @@ def parseSize(value, scale, desktop = None, guiObject = None):
 			y = parsePercent(y, parent_size.height())
 		elif y == "fill_parent":
 			y = parent_size.height()
-	return eSize(int(x) * scale[0][0] / scale[0][1], int(y) * scale[1][0] / scale[1][1])
+	return eSize(int(x) * scale[0][0] // scale[0][1], int(y) * scale[1][0] // scale[1][1])
 
 def parseFont(str, scale):
 	name, size = str.split(';')
-	return gFont(name, int(size) * scale[0][0] / scale[0][1])
+	return gFont(name, int(size) * scale[0][0] // scale[0][1])
 
 def parseColor(str):
 	if str[0] != '#':
@@ -311,7 +316,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 						"orRightToLeft": (guiObject.orHorizontal, True),
 					}[value])
 			except KeyError:
-				print "oprientation must be either orVertical or orHorizontal!"
+				print("oprientation must be either orVertical or orHorizontal!")
 		elif attrib == "valign":
 			try:
 				guiObject.setVAlign(
@@ -321,7 +326,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 						"centerOrBottom" : guiObject.alignCenterOrBottom
 					}[value])
 			except KeyError:
-				print "valign must be either top, center, bottom or centerOrBottom!"
+				print("valign must be either top, center, bottom or centerOrBottom!")
 		elif attrib == "halign":
 			try:
 				guiObject.setHAlign(
@@ -332,7 +337,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 						"centerOrRight": guiObject.alignCenterOrRight
 					}[value])
 			except KeyError:
-				print "halign must be either left, center, right, block or centerOrRight!"
+				print("halign must be either left, center, right, block or centerOrRight!")
 		elif attrib == "flags":
 			flags = value.split(',')
 			for f in flags:
@@ -340,7 +345,7 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 					fv = eWindow.__dict__[f]
 					guiObject.setFlag(fv)
 				except KeyError:
-					print "illegal flag %s!" % f
+					print("illegal flag %s!" % f)
 		elif attrib == "padding":
 			guiObject.setPadding(parsePosition(value, scale))
 		elif attrib in ("radius", "cornerRadius"):
@@ -406,10 +411,10 @@ def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1)
 		elif attrib == 'id':
 			pass
 		else:
-			print "WARNING!!!!: unsupported skin attribute " + attrib + "=" + value
+			print("WARNING!!!!: unsupported skin attribute " + attrib + "=" + value)
 	except int:
 # AttributeError:
-		print "widget %s (%s) doesn't support attribute %s!" % ("", guiObject.__class__.__name__, attrib)
+		print("widget %s (%s) doesn't support attribute %s!" % ("", guiObject.__class__.__name__, attrib))
 
 def applyAllAttributes(guiObject, desktop, attributes, scale, skipZPosition=False):
 	size_key = 'size'
@@ -716,7 +721,7 @@ class WidgetGroup():
 		for child in self.children:
 			if isinstance(child, additionalWidget):
 				child.instance.hide()
-			elif isinstance(child, basestring):
+			elif isinstance(child, six.string_types):
 				self._screen[child].hide()
 			else:
 				child.hide()
@@ -726,7 +731,7 @@ class WidgetGroup():
 		for child in self.children:
 			if isinstance(child, additionalWidget):
 				child.instance.show()
-			elif isinstance(child, basestring):
+			elif isinstance(child, six.string_types):
 				self._screen[child].show()
 			else:
 				child.show()
@@ -851,7 +856,7 @@ def readSkin(screen, skin, names, desktop):
 
 	# try uncompiled embedded skin
 	if myscreen is None and getattr(screen, "skin", None):
-		print "Looking for embedded skin"
+		print("Looking for embedded skin")
 		skin_tuple = screen.skin
 		if not isinstance(skin_tuple, tuple):
 			skin_tuple = (skin_tuple,)
@@ -864,7 +869,7 @@ def readSkin(screen, skin, names, desktop):
 
 	#assert myscreen is not None, "no skin for screen '" + repr(names) + "' found!"
 	if myscreen is None:
-		print "No skin to read..."
+		print("No skin to read...")
 		emptySkin = "<screen></screen>"
 		myscreen = screen.parsedSkin = xml.etree.cElementTree.fromstring(emptySkin)
 
@@ -899,7 +904,7 @@ def parseWidgets(name, node, screen, skin_path_prefix, visited_components, group
 
 		if w_tag == "group":
 			gname = widget.attrib.get('name')
-			assert(gname) not in screen.keys(), "element with name %s already exists in %s!" % (gname, screen.skinName)
+			assert(gname) not in list(screen.keys()), "element with name %s already exists in %s!" % (gname, screen.skinName)
 			inner_group = WidgetGroup(screen)
 			screen[gname] = inner_group
 			if group is not None:
@@ -922,7 +927,10 @@ def parseWidgets(name, node, screen, skin_path_prefix, visited_components, group
 			#print codeText
 			widgetType = widget.attrib.get('type')
 
-			code = compile(codeText, "skin applet", "exec")
+			if "//" in codeText:
+				code = compile(codeText, "skin applet", "exec")
+			else:
+				code = skin_applet_compile(codeText, "skin applet", "exec")
 
 			if widgetType == "onLayoutFinish":
 				screen.onLayoutFinish.append(code)
@@ -961,7 +969,7 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 	wsource = get_attr('source')
 
 	if wname is None and wsource is None:
-		print "widget has no name and no source!"
+		print("widget has no name and no source!")
 		return
 
 	if wname:
@@ -1005,10 +1013,10 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 			source = scr.get(path[0])
 			if isinstance(source, ObsoleteSource):
 				# however, if we found an "obsolete source", issue warning, and resolve the real source.
-				print "WARNING: SKIN '%s' USES OBSOLETE SOURCE '%s', USE '%s' INSTEAD!" % (name, wsource, source.new_source)
-				print "OBSOLETE SOURCE WILL BE REMOVED %s, PLEASE UPDATE!" % (source.removal_date)
+				print("WARNING: SKIN '%s' USES OBSOLETE SOURCE '%s', USE '%s' INSTEAD!" % (name, wsource, source.new_source))
+				print("OBSOLETE SOURCE WILL BE REMOVED %s, PLEASE UPDATE!" % (source.removal_date))
 				if source.description:
-					print source.description
+					print(source.description)
 
 				wsource = source.new_source
 			else:
@@ -1046,11 +1054,11 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 					c = i
 
 			if c is None:
-				print "allocating new converter!"
+				print("allocating new converter!")
 				c = converter_class(parms)
 				c.connect(source)
 			else:
-				print "reused converter!"
+				print("reused converter!")
 				hasattr(c, "reuse") and c.reuse()
 
 			source = c

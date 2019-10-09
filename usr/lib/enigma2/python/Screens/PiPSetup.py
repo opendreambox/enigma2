@@ -1,3 +1,4 @@
+from __future__ import division
 from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.Label import Label
@@ -5,10 +6,10 @@ from Components.Label import Label
 # this is not so great.
 MAX_X = 720
 MAX_Y = 576
-MAX_W = MAX_X * 3 / 4
-MAX_H = MAX_Y * 3 / 4
-MIN_W = MAX_X / 8
-MIN_H = MAX_Y / 8
+MAX_W = MAX_X * 3 // 4
+MAX_H = MAX_Y * 3 // 4
+MIN_W = MAX_X // 8
+MIN_H = MAX_Y // 8
 
 def clip(val, min, max):
 	if min <= val <= max:
@@ -72,12 +73,12 @@ class PiPSetup(Screen):
 		resize += 100 # resize is in percent, so resize=+20 means: 120%
 		
 		oldsize = self.size
-		w = clip(self.size[0] * resize / 100, MIN_W, MAX_W)
-		h = clip(self.size[1] * resize / 100, MIN_H, MAX_H)
+		w = clip(self.size[0] * resize // 100, MIN_W, MAX_W)
+		h = clip(self.size[1] * resize // 100, MIN_H, MAX_H)
 		
 		# calculate offset from center
-		mx = (oldsize[0] - w) / 2
-		my = (oldsize[1] - h) / 2
+		mx = (oldsize[0] - w) // 2
+		my = (oldsize[1] - h) // 2
 		
 		self.size = (w, h)
 		# reclip, account for new center
@@ -108,16 +109,16 @@ class PiPSetup(Screen):
 	def keyNumberGlobal(self, number):
 		
 		if number > 0:
-			colsize = MAX_X / 3
-			rowsize = MAX_Y / 3
+			colsize = MAX_X // 3
+			rowsize = MAX_Y // 3
 			col = (number-1) % 3
-			row = (number-1) / 3
+			row = (number-1) // 3
 
 			self.size = (180, 135)
 
 			# offset to keep center
-			ox = (colsize - self.size[0]) / 2
-			oy = (rowsize - self.size[1]) / 2
+			ox = (colsize - self.size[0]) // 2
+			oy = (rowsize - self.size[1]) // 2
 
 			self.pos = (col * colsize + ox, row * rowsize + oy)
 		else:

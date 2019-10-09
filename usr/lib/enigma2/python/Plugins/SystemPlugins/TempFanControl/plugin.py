@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.ActionMap import ActionMap
 from Components.Sensors import sensors
 from Components.Sources.Sensor import SensorSource
@@ -8,6 +9,7 @@ from enigma import getDesktop, eSize
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.FanControl import fancontrol
+from six.moves import range
 
 sz_w = getDesktop(0).size().width()
 
@@ -266,7 +268,7 @@ class TempFanControl(Screen, ConfigListScreen):
 			else:
 				h=sh-((8-count)*30)-40 # 30 pixels per fan in HD skin
 		if self.instance is not None:
-			print "[TempFanControl] resizes for %d temperatures and %d fans to width %d and height %d" % (self.tempcount, self.fancount,w,h)
+			print("[TempFanControl] resizes for %d temperatures and %d fans to width %d and height %d" % (self.tempcount, self.fancount,w,h))
 			self.instance.resize(eSize(*(w, h)))
 
 	def save(self):
@@ -286,10 +288,10 @@ class TempFanControl(Screen, ConfigListScreen):
 		self.close()
 
 	def yellowKey(self):
-		print "[TempFanControl] yellow pressed ..."
+		print("[TempFanControl] yellow pressed ...")
 
 	def blueKey(self):
-		print "[TempFanControl] blue pressed ..."
+		print("[TempFanControl] blue pressed ...")
 
 def main(session, **kwargs):
 	session.open(TempFanControl)

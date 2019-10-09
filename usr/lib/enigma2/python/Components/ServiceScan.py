@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import eComponentScan, iDVBFrontend, eSlot3IIIRetI
 from Components.NimManager import nimmanager as nimmgr
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
@@ -53,19 +55,19 @@ class ServiceScan:
 							h = _("W")
 						else:
 							h = _("E")
-						if sat_name.find("%d.%d" % (orb_pos/10, orb_pos%10)) != -1:
+						if sat_name.find("%d.%d" % (orb_pos//10, orb_pos%10)) != -1:
 							network = sat_name
 						else:
-							network = ("%s %d.%d %s") % (sat_name, orb_pos / 10, orb_pos % 10, h)
+							network = ("%s %d.%d %s") % (sat_name, orb_pos // 10, orb_pos % 10, h)
 						tp_text = ("%s %s %d%c / %d / %s") %( { tp.System_DVB_S : "DVB-S",
 								tp.System_DVB_S2 : "DVB-S2", tp.System_DVB_S_S2 : "DVB-S/DVB-S2" }.get(tp.system, tp.System_DVB_S),
 							{ tp.Modulation_Auto : "Auto", tp.Modulation_QPSK : "QPSK",
 							  tp.Modulation_8PSK : "8PSK", tp.Modulation_16APSK : "16APSK",
 							  tp.Modulation_32APSK : "32APSK", tp.Modulation_QAM16 : "QAM16" }.get(tp.modulation, tp.Modulation_QPSK),
-							tp.frequency/1000,
+							tp.frequency//1000,
 							{ tp.Polarisation_Horizontal : 'H', tp.Polarisation_Vertical : 'V', tp.Polarisation_CircularLeft : 'L',
 								tp.Polarisation_CircularRight : 'R' }.get(tp.polarisation, tp.Polarisation_Horizontal),
-							tp.symbol_rate/1000,
+							tp.symbol_rate//1000,
 							{ tp.FEC_Auto : "AUTO", tp.FEC_1_2 : "1/2", tp.FEC_2_3 : "2/3",
 								tp.FEC_3_4 : "3/4", tp.FEC_5_6 : "5/6", tp.FEC_7_8 : "7/8",
 								tp.FEC_8_9 : "8/9", tp.FEC_3_5 : "3/5", tp.FEC_4_5 : "4/5",
@@ -78,7 +80,7 @@ class ServiceScan:
 							tp.Modulation_QAM64 : "QAM64", tp.Modulation_QAM128 : "QAM128",
 							tp.Modulation_QAM256 : "QAM256" }.get(tp.modulation, tp.Modulation_Auto),
 							tp.frequency,
-							tp.symbol_rate/1000,
+							tp.symbol_rate//1000,
 							{ tp.FEC_Auto : "AUTO", tp.FEC_1_2 : "1/2", tp.FEC_2_3 : "2/3",
 								tp.FEC_3_4 : "3/4", tp.FEC_5_6 : "5/6", tp.FEC_7_8 : "7/8",
 								tp.FEC_8_9 : "8/9", tp.FEC_None : "NONE" }.get(tp.fec_inner, tp.FEC_Auto))
@@ -96,7 +98,7 @@ class ServiceScan:
 								tp.Bandwidth_5MHz : "Bw 5MHz", tp.Bandwidth_1_712MHz : "Bw 1.712MHz",
 								tp.Bandwidth_10MHz : "Bw 10MHz" }.get(tp.bandwidth, tp.Bandwidth_Auto))
 					else:
-						print "unknown transponder type in scanStatusChanged"
+						print("unknown transponder type in scanStatusChanged")
 				self.network.setText(network)
 				self.transponder.setText(tp_text)
 
@@ -167,7 +169,7 @@ class ServiceScan:
 			eval(self.scan_tp_valid_func, d, d)
 		except:
 			if self.show_exec_tsid_onid_valid_error:
-				print "execing /etc/enigma2/scan_tp_valid_check failed!\n"
+				print("execing /etc/enigma2/scan_tp_valid_check failed!\n")
 				"usable global variables in scan_tp_valid_check.py are 'orbpos', 'tsid', 'onid'\n"
 				"the return value must be stored in a global var named 'ret'"
 				self.show_exec_tsid_onid_valid_error = False
@@ -191,9 +193,9 @@ class ServiceScan:
 				fname = resolveFilename(SCOPE_CONFIG, "scan_tp_valid_check.py")
 				if fileExists(fname):
 					try:
-						self.scan_tp_valid_func = compile(file(fname).read(), fname, 'exec')
+						self.scan_tp_valid_func = compile(open(fname).read(), fname, 'exec')
 					except:
-						print "content of", fname, "is not valid python code!!"
+						print("content of", fname, "is not valid python code!!")
 					else:
 						self.scan.setAdditionalTsidOnidCheckFunc(self.checkTsidOnidValid_slot)
 			self.scanStatusChanged()
@@ -206,7 +208,7 @@ class ServiceScan:
 			self.scan_newServiceConn = None
 			self.scan = None
 			if not self.isDone():
-				print "*** warning *** scan was not finished!"
+				print("*** warning *** scan was not finished!")
 
 	def isDone(self):
 		return self.state == self.Done or self.state == self.Error

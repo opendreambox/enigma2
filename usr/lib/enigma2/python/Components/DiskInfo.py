@@ -1,3 +1,4 @@
+from __future__ import division
 from GUIComponent import GUIComponent
 from VariableText import VariableText
 from os import statvfs
@@ -26,7 +27,7 @@ class DiskInfo(VariableText, GUIComponent):
 			return -1
 		
 		if self.type == self.FREE:
-			free = stat.f_bfree / 1000 * stat.f_bsize / 1000
+			free = stat.f_bfree // 1000 * stat.f_bsize // 1000
 			self.setText(("%d MB " + _("free diskspace")) % (free))
 
 	GUI_WIDGET = eLabel

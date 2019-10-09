@@ -33,7 +33,7 @@ class PackageRestoreCheck(DreamInfoHandler):
 				for packagename in f:
 					packagename = packagename.strip()
 					if packagename in available:
-						if not iSoftwareTools.installed_packetlist.has_key(packagename):
+						if packagename not in iSoftwareTools.installed_packetlist:
 							packagesAvailable.append(packagename)
 							Log.w("%s is NOT installed!" %packagename)
 					else:

@@ -1,13 +1,17 @@
 # A Job consists of many "Tasks".
 # A task is the run of an external tool, with proper methods for failure handling
 
+from __future__ import division
+from __future__ import print_function
 from Tools.CList import CList
 from Tools import Notifications
+from six.moves import map
+from six.moves import range
 
 Notifications.notificationQueue.registerDomain("JobManager", _("Job Manager"), Notifications.ICON_DEFAULT)
 
 class Job(object):
-	NOT_STARTED, IN_PROGRESS, FINISHED, FAILED = range(4)
+	NOT_STARTED, IN_PROGRESS, FINISHED, FAILED = list(range(4))
 	def __init__(self, name):
 		self.tasks = [ ]
 		self.resident_tasks = [ ]
@@ -72,7 +76,7 @@ class Job(object):
 				self.callback(self, None, [])
 				self.callback = None
 			else:
-				print "still waiting for %d resident task(s) %s to finish" % (len(self.resident_tasks), str(self.resident_tasks))
+				print("still waiting for %d resident task(s) %s to finish" % (len(self.resident_tasks), str(self.resident_tasks)))
 		else:
 			self.tasks[self.current_task].run(self.taskCallback)
 			self.state_changed()
@@ -82,18 +86,18 @@ class Job(object):
 		if stay_resident:
 			if cb_idx not in self.resident_tasks:
 				self.resident_tasks.append(self.current_task)
-				print "task going resident:", task
+				print("task going resident:", task)
 			else:
-				print "task keeps staying resident:", task
+				print("task keeps staying resident:", task)
 				return
 		if len(res):
-			print ">>> Error:", res
+			print(">>> Error:", res)
 			self.status = self.FAILED
 			self.state_changed()
 			self.callback(self, task, res)
 		if cb_idx != self.current_task:
 			if cb_idx in self.resident_tasks:
-				print "resident task finished:", task
+				print("resident task finished:", task)
 				self.resident_tasks.remove(cb_idx)
 		if res == []:
 			self.state_changed()
@@ -183,11 +187,11 @@ class Task(object):
 			self.container.setCWD(self.cwd)
 
 		if not self.cmd and self.cmdline:
-			print "execute:", self.container.execute(self.cmdline), self.cmdline
+			print("execute:", self.container.execute(self.cmdline), self.cmdline)
 		else:
 			assert self.cmd is not None
 			assert len(self.args) >= 1
-			print "execute:", self.container.execute(self.cmd, *self.args), ' '.join(self.args)
+			print("execute:", self.container.execute(self.cmd, *self.args), ' '.join(self.args))
 		if self.initial_input:
 			self.writeInput(self.initial_input)
 
@@ -279,7 +283,7 @@ class JobManager:
 				self.active_job.start(self.jobDone)
 
 	def jobDone(self, job, task, problems):
-		print "job", job, "completed with", problems, "in", task
+		print("job", job, "completed with", problems, "in", task)
 		if self.in_background:
 			from Screens.TaskView import JobView
 			self.in_background = False
@@ -299,10 +303,10 @@ class JobManager:
 
 	def errorCB(self, answer):
 		if answer:
-			print "retrying job"
+			print("retrying job")
 			self.active_job.retry()
 		else:
-			print "not retrying job."
+			print("not retrying job.")
 			self.failed_jobs.append(self.active_job)
 			self.active_job = None
 			self.kick()
@@ -370,7 +374,7 @@ class DiskspacePrecondition(Condition):
 			return False
 
 	def getErrorMessage(self, task):
-		return _("Not enough diskspace. Please free up some diskspace and try again. (%d MB required, %d MB available)") % (self.diskspace_required / 1024 / 1024, self.diskspace_available / 1024 / 1024)
+		return _("Not enough diskspace. Please free up some diskspace and try again. (%d MB required, %d MB available)") % (self.diskspace_required // 1024 // 1024, self.diskspace_available // 1024 // 1024)
 
 class ToolExistsPrecondition(Condition):
 	def check(self, task):
@@ -378,13 +382,13 @@ class ToolExistsPrecondition(Condition):
 
 		if task.cmd[0]=='/':
 			self.realpath = task.cmd
-			print "[Task.py][ToolExistsPrecondition] WARNING: usage of absolute paths for tasks should be avoided!"
+			print("[Task.py][ToolExistsPrecondition] WARNING: usage of absolute paths for tasks should be avoided!")
 			return os.access(self.realpath, os.X_OK)
 		else:
 			self.realpath = task.cmd
 			path = os.environ.get('PATH', '').split(os.pathsep)
 			path.append(task.cwd + '/')
-			absolutes = filter(lambda file: os.access(file, os.X_OK), map(lambda directory, file = task.cmd: os.path.join(directory, file), path))
+			absolutes = [file for file in map(lambda directory, file = task.cmd: os.path.join(directory, file), path) if os.access(file, os.X_OK)]
 			if len(absolutes) > 0:
 				self.realpath = task.cmd[0]
 				return True

@@ -1,7 +1,9 @@
+from __future__ import print_function
 from datetime import datetime
 from Tools.BoundFunction import boundFunction
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
+import six
 
 class NotificationQueueEntry():
 	def __init__(self, fnc, screen, id, *args, **kwargs):
@@ -14,24 +16,24 @@ class NotificationQueueEntry():
 		self.kwargs = kwargs
 		self.domain = "default"
 
-		if kwargs.has_key("domain"):
+		if "domain" in kwargs:
 			if kwargs["domain"]:
 				if kwargs["domain"] in notificationQueue.domains:
 					self.domain = kwargs["domain"]
 				else:
-					print "[NotificationQueueEntry] WARNING: domain", kwargs["domain"], "is not registred in notificationQueue!"
+					print("[NotificationQueueEntry] WARNING: domain", kwargs["domain"], "is not registred in notificationQueue!")
 			del kwargs["domain"]
 
-		if kwargs.has_key("deferred_callable"):
+		if "deferred_callable" in kwargs:
 			if kwargs["deferred_callable"]:
 				self.deferred_callable = kwargs["deferred_callable"]
 			del kwargs["deferred_callable"]
 		else:
 			self.deferred_callable = notificationQueue.domains[self.domain]["deferred_callable"]
 
-		if kwargs.has_key("text"):
+		if "text" in kwargs:
 			self.text = kwargs["text"]
-		elif len(args) and isinstance(args, tuple) and isinstance(args[0],basestring):
+		elif len(args) and isinstance(args, tuple) and isinstance(args[0],six.string_types):
 			self.text = args[0]
 		else:
 			self.text = screen.__name__
@@ -54,7 +56,7 @@ def AddNotificationWithCallback(fnc, screen, *args, **kwargs):
 def AddNotificationWithID(id, screen, *args, **kwargs):
 	q = notificationQueue
 	if q.isVisibleID(id) or q.isPendingID(id):
-		print "ignore duplicate notification", id, screen
+		print("ignore duplicate notification", id, screen)
 		return
 	__AddNotification(None, screen, id, *args, **kwargs)
 
@@ -63,7 +65,7 @@ def AddNotificationWithID(id, screen, *args, **kwargs):
 
 def RemovePopup(id):
 	# remove similiar notifications
-	print "RemovePopup, id =", id
+	print("RemovePopup, id =", id)
 	notificationQueue.removeSameID(id)
 
 from Screens.MessageBox import MessageBox
@@ -71,7 +73,7 @@ from Screens.MessageBox import MessageBox
 def AddPopup(text, type, timeout, id = None, domain = None, screen=MessageBox, additionalActionMap=None):
 	if id is not None:
 		RemovePopup(id)
-	print "AddPopup, id =", id, "domain =", domain
+	print("AddPopup, id =", id, "domain =", domain)
 	__AddNotification(None, screen, id, text = text, type = type, timeout = timeout, close_on_any_key = True, domain = domain, additionalActionMap = additionalActionMap)
 
 ICON_DEFAULT = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/icons/marker.png'))
@@ -117,12 +119,12 @@ class NotificationQueue():
 	def removeSameID(self, id):
 		for entry in self.queue:
 			if entry.pending and entry.id == id:
-				print "(found in notifications)"
+				print("(found in notifications)")
 				self.queue.remove(entry)
 
 		for entry, dlg in self.current:
 			if entry.id == id:
-				print "(found in current notifications)"
+				print("(found in current notifications)")
 				dlg.close()
 
 	def getPending(self, domain = None):
@@ -143,9 +145,9 @@ class NotificationQueue():
 				return
 			performCB = True
 
-		print "[NotificationQueue::popNotification] domain", entry.domain, "deferred_callable:", entry.deferred_callable
+		print("[NotificationQueue::popNotification] domain", entry.domain, "deferred_callable:", entry.deferred_callable)
 
-		if performCB and entry.kwargs.has_key("onSessionOpenCallback"):
+		if performCB and "onSessionOpenCallback" in entry.kwargs:
 			entry.kwargs["onSessionOpenCallback"]()
 			del entry.kwargs["onSessionOpenCallback"]
 

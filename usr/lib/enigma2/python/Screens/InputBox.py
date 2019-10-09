@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import getPrevAsciiCode
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -132,7 +134,7 @@ class PinInput(InputBox):
 		if self.getTries() == 0:
 			if (self.triesEntry.time.value + (self.waitTime * 60)) > time():
 				remaining = (self.triesEntry.time.value + (self.waitTime * 60)) - time()
-				remainingMinutes = int(remaining / 60)
+				remainingMinutes = int(remaining // 60)
 				remainingSeconds = int(remaining % 60)
 				self.onFirstExecBegin.append(boundFunction(self.session.openWithCallback, self.closePinCancel, MessageBox, _("You have to wait %s!") % (str(remainingMinutes) + " " + _("minutes") + ", " + str(remainingSeconds) + " " + _("seconds")), MessageBox.TYPE_ERROR))
 			else:
@@ -181,7 +183,7 @@ class PinInput(InputBox):
 				pass
 	
 	def closePinWrong(self, *args):
-		print "args:", args
+		print("args:", args)
 		self.close(False)
 		
 	def closePinCorrect(self, *args):

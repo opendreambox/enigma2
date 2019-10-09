@@ -23,6 +23,7 @@ from coherence.extern.et import ET
 from twisted.python import failure
 
 import sys
+import six
 if sys.getdefaultencoding() != 'UTF-8':
 	reload(sys)
 	sys.setdefaultencoding('UTF-8')
@@ -238,7 +239,7 @@ class Album(DBContainer):
 				if res and not res.error():
 					data = res.data()
 					for d in data:
-						for coverid in d.itervalues():
+						for coverid in six.itervalues(d):
 							if int(coverid) != 0:
 								self.item.albumArtURI = self.store.getCoverArtUri(coverid)
 #								Log.d("%s - %s: %s" %(self.artist, self.name, self.item.albumArtURI))
@@ -703,7 +704,7 @@ class DreamboxMediaStore(AbstractBackendStore):
 
 		wmc_mapping = getattr(self, "wmc_mapping", None)
 		if kwargs.get('X_UPnPClient', '') == 'XBox':
-			if wmc_mapping and wmc_mapping.has_key(parent_container):
+			if wmc_mapping and parent_container in wmc_mapping:
 				""" fake a Windows Media Connect Server
 				"""
 				root_id = wmc_mapping[parent_container]

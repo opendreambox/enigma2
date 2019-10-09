@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Source import Source
 from enigma import eDVBResourceManager
 
@@ -15,7 +16,7 @@ class TunerInfo(Source):
 			self.frontendUseMaskChanged_conn = res_mgr.frontendUseMaskChanged.connect(self.tunerUseMaskChanged)
 			self.frontendInputUseMaskChanged_conn = res_mgr.frontendInputUseMaskChanged.connect(self.tunerInputUseMaskChanged)
 		else:
-			print "no res_mgr!!"
+			print("no res_mgr!!")
 
 	def tunerUseMaskChanged(self, mask):
 		self.tuner_use_mask = mask
@@ -37,5 +38,5 @@ class TunerInfo(Source):
 			self.frontendUseMaskChanged_conn = None
 			self.frontendInputUseMaskChanged_conn = None
 		else:
-			print "no res_mgr!!"
+			print("no res_mgr!!")
 		Source.destroy(self)

@@ -1,3 +1,4 @@
+from __future__ import division
 from enigma import eLabel, eSize, eServiceReference, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, gFont, eListbox, eServiceCenter, eListboxPythonMultiContent, eListboxServiceContent, eEPGCache,\
 	getDesktop, eTimer
 from skin import parseColor, parseFont, TemplatedColors, componentSizes, TemplatedListFonts
@@ -68,7 +69,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		Log.i(self._componentSizes)
 		tlf = TemplatedListFonts()
 
-		upper_service_name_limit = self.getDesktopWith() / 3
+		upper_service_name_limit = self.getDesktopWith() // 3
 		config.usage.configselection_servicenamecolwidth.limits = [(100, upper_service_name_limit),]
 		self.session = session
 		self.mode = self.MODE_NORMAL
@@ -170,7 +171,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 			if hasattr(timer, "Filename") and not timer.justplay and timer.state == TimerEntry.StateRunning:
 				self.recordingList[str(timer.service_ref)] = 1
 			else:
-				if self.recordingList.has_key(str(timer.service_ref)):
+				if str(timer.service_ref) in self.recordingList:
 					del self.recordingList[str(timer.service_ref)]
 
 	def setItemHeight(self, configElement = None):
@@ -189,8 +190,8 @@ class ServiceList(HTMLComponent, GUIComponent):
 		progressH = self._componentSizes.get(self.KEY_PROGRESS_BAR_HEIGHT, 8)
 		if event and event.getDuration():
 			now = int(time())
-			percent = 100 * (now - event.getBeginTime()) / event.getDuration()
-		top = int((height - progressH) / 2)
+			percent = 100 * (now - event.getBeginTime()) // event.getDuration()
+		top = int((height - progressH) // 2)
 		if self.picServiceEventProgressbar is None:
 			return(eListboxPythonMultiContent.TYPE_PROGRESS, xoffset, top, progressW, progressH, percent, 1, self.serviceEventProgressbarColor, self.serviceEventProgressbarColorSelected, self.serviceEventProgressbarBackColor, self.serviceEventProgressbarBackColorSelected)
 		else:
@@ -240,36 +241,36 @@ class ServiceList(HTMLComponent, GUIComponent):
 		maxTimeValue = 9999
 		if config.usage.configselection_showadditionaltimedisplay.value == "1": # percent
 			now = int(time())
-			percent = 100 * (now - event.getBeginTime()) / event.getDuration()
+			percent = 100 * (now - event.getBeginTime()) // event.getDuration()
 			addtimedisplay = "%d%%" % percent
 			textTpl = "100%"
 		elif config.usage.configselection_showadditionaltimedisplay.value == "2": # remain
 			now = int(time())
-			remain =  int((event.getBeginTime() + event.getDuration() - now) / 60)
+			remain =  int((event.getBeginTime() + event.getDuration() - now) // 60)
 			addtimedisplay = "+%d min" %(remain,)
 			textTpl = "+%d min" %(maxTimeValue,)
 		elif config.usage.configselection_showadditionaltimedisplay.value == "3": # Remain / duration
 			now = int(time())
-			remain =  int((event.getBeginTime() + event.getDuration() - now) / 60)
-			duration = int(event.getDuration() / 60)
+			remain =  int((event.getBeginTime() + event.getDuration() - now) // 60)
+			duration = int(event.getDuration() // 60)
 			addtimedisplay = "+%d/%d min"  % (remain, duration)
 			textTpl = "+%d/%d min"  % (maxTimeValue, maxTimeValue)
 		elif config.usage.configselection_showadditionaltimedisplay.value == "4": # elapsed
 			now = int(time())
-			elapsed =  int((now - event.getBeginTime()) / 60)
+			elapsed =  int((now - event.getBeginTime()) // 60)
 			addtimedisplay = "%d min" % (elapsed,)
 			textTpl = "%d min" % (maxTimeValue,)
 		elif config.usage.configselection_showadditionaltimedisplay.value == "5": # elapsed / duration
 			now = int(time())
-			elapsed =  int((now - event.getBeginTime()) / 60)
-			duration = int(event.getDuration() / 60)
+			elapsed =  int((now - event.getBeginTime()) // 60)
+			duration = int(event.getDuration() // 60)
 			addtimedisplay = "%d/%d min"  % (elapsed, duration)
 			textTpl = "%d/%d min"  % (maxTimeValue, maxTimeValue)
 		elif config.usage.configselection_showadditionaltimedisplay.value == "6": # elapsed / remain /  duration
 			now = int(time())
-			elapsed =  int((now - event.getBeginTime()) / 60)
-			remain =  int((event.getBeginTime() + event.getDuration() - now) / 60)
-			duration = int(event.getDuration() / 60)
+			elapsed =  int((now - event.getBeginTime()) // 60)
+			remain =  int((event.getBeginTime() + event.getDuration() - now) // 60)
+			duration = int(event.getDuration() // 60)
 			addtimedisplay = "%d/+%d/%d min"  % (elapsed, remain, duration)
 			textTpl = "%d/+%d/%d min"  % (maxTimeValue, maxTimeValue, maxTimeValue)
 		elif config.usage.configselection_showadditionaltimedisplay.value == "7": #  begin - end time
@@ -278,7 +279,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 			addtimedisplay = "%02d:%02d - %02d:%02d" % (beginTime[3],beginTime[4],endTime[3],endTime[4])
 			textTpl = "00:00 - 00:000"
 		if columnStyle:
-			addtimedisplayWidth = self._calcTextWidth(textTpl, font=self.additionalInfoFont, size=eSize(self.getDesktopWith() / 3, 0))
+			addtimedisplayWidth = self._calcTextWidth(textTpl, font=self.additionalInfoFont, size=eSize(self.getDesktopWith() // 3, 0))
 		return addtimedisplay, addtimedisplayWidth
 
 	def _buildOptionEntryServicePicon(self, service):
@@ -296,7 +297,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 	def _checkHasRecording(self, service, isPlayable):
 		if not config.usage.configselection_showrecordings.value:
 			return False
-		if self.recordingList.has_key(service.toString()):
+		if service.toString() in self.recordingList:
 			return True
 		if isPlayable and len(self.recordingList) and service.flags & eServiceReference.mustDescent:
 			alist = ServiceReference(service).list()
@@ -304,7 +305,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				aservice = alist.getNext()
 				if not aservice.valid():
 					break
-				if self.recordingList.has_key(aservice.toString()):
+				if aservice.toString() in self.recordingList:
 					return True
 		return False
 
@@ -379,7 +380,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 			pixmap_size = self.picMarker.size()
 			pix_width = pixmap_size.width()
 			pix_height = pixmap_size.height()
-			ypos = (height - pix_height) / 2
+			ypos = (height - pix_height) // 2
 			res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, xoffset, ypos, pix_width, pix_height, pixmap))
 			xoffset += pix_width + self._componentSizes.get(self.KEY_PICON_OFFSET, 8)
 
@@ -489,7 +490,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 				# service description
 				res.append((eListboxPythonMultiContent.TYPE_TEXT, xoffset, 0, length , height, 3, RT_HALIGN_LEFT|RT_VALIGN_CENTER, text, serviceDescriptionColor, serviceDescriptionColorSelected, backgroundColor, backgroundColorSel))
 				if drawProgressbar and progressbarPosition == "2":
-					xoffset += length + textOffset / 2
+					xoffset += length + textOffset // 2
 					res.append(self._buildOptionEntryProgressBar(event, xoffset, width, height))
 			else:
 				res.append((eListboxPythonMultiContent.TYPE_TEXT, xoffset, 0, width - xoffset , height, 2, RT_HALIGN_LEFT|RT_VALIGN_CENTER, serviceName, forgroundColor, forgroundColorSel, backgroundColor, backgroundColorSel))
@@ -634,7 +635,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		self.selectionChanged_conn = instance.selectionChanged.connect(self.selectionChanged)
 		self.setMode(self.mode)
 		self.textRenderer = eLabel(self.instance)
-		self.textRenderer.resize(eSize(self.getDesktopWith() / 3, 0))
+		self.textRenderer.resize(eSize(self.getDesktopWith() // 3, 0))
 		self.textRenderer.hide()
 
 	def preWidgetRemove(self, instance):
@@ -655,7 +656,7 @@ class ServiceList(HTMLComponent, GUIComponent):
 		list = serviceHandler.list(self.root)
 		dest = [ ]
 		if list is not None:
-			while 1:
+			while True:
 				s = list.getNext()
 				if s.valid():
 					dest.append(s.toString())

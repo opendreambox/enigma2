@@ -1,3 +1,4 @@
+from __future__ import division
 from enigma import eInputDeviceManager
 from Components.Converter.Converter import Converter
 

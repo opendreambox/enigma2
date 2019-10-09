@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 
@@ -157,12 +159,12 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.descr_rect = Rect(desc_x, 0, desc_width, height)
 		else: # EPG_TYPE_MULTI
 			xpos = self._itemMargin;
-			w = width / 3;
+			w = width // 3;
 			self.service_rect = Rect(xpos, 0, w, height)
 			xpos += w + self._itemMargin;
-			w = width / 6;
+			w = width // 6;
 			self.start_end_rect = Rect(xpos, 0, w, height)
-			self.progress_rect = Rect(xpos,  self._itemMargin / 2, w, height - self._itemMargin)
+			self.progress_rect = Rect(xpos,  self._itemMargin // 2, w, height - self._itemMargin)
 			xpos += w + self._itemMargin
 			w = width - xpos - self._itemMargin;
 			self.descr_rect = Rect(xpos, 0, w, height)
@@ -246,7 +248,7 @@ class EPGList(HTMLComponent, GUIComponent):
 					(eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName)
 				))
 			else:
-				percent = (nowTime - beginTime) * 100 / duration
+				percent = (nowTime - beginTime) * 100 // duration
 				res.extend((
 					(eListboxPythonMultiContent.TYPE_PROGRESS, r2.left(), r2.top(), r2.width(), r2.height(), percent),
 					(eListboxPythonMultiContent.TYPE_TEXT, r3.left(), r3.top(), r3.width(), r3.height(), 0, RT_HALIGN_LEFT|RT_VALIGN_CENTER, EventName)
@@ -352,4 +354,4 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.list.sort(key=lambda x: x[2])
 		self.l.setList(self.list)
 		self.selectionChanged()
-		print time() - t
+		print(time() - t)

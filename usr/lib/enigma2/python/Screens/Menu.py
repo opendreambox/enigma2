@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eSize
 
 from Screen import Screen
@@ -77,7 +78,7 @@ class MenuUpdater:
 		self.updatedMenuItems[id].remove([text, pos, module, screen, weight, description])
 
 	def updatedMenuAvailable(self, id):
-		return self.updatedMenuItems.has_key(id)
+		return id in self.updatedMenuItems
 
 	def getUpdatedMenu(self, id):
 		return self.updatedMenuItems[id]
@@ -102,7 +103,7 @@ class Menu(Screen):
 	png_cache = {}
 
 	def okbuttonClick(self):
-		print "okbuttonClick"
+		print("okbuttonClick")
 		selection = self["menu"].getCurrent()
 		if selection is not None:
 			global lastMenuID
@@ -110,7 +111,7 @@ class Menu(Screen):
 			selection[1]()
 
 	def execText(self, text):
-		exec text
+		exec(text)
 
 	def runScreen(self, arg):
 		# arg[0] is the module (as string)
@@ -120,7 +121,7 @@ class Menu(Screen):
 		#        stuff which is just imported)
 		# FIXME. somehow
 		if arg[0] != "":
-			exec "from " + arg[0] + " import *"
+			exec("from " + arg[0] + " import *")
 
 		self.openDialog(*eval(arg[1]))
 
@@ -187,7 +188,7 @@ class Menu(Screen):
 				if screen is None:
 					screen = module
 
-				print module, screen
+				print(module, screen)
 				if module:
 					module = "Screens." + module
 				else:
@@ -299,7 +300,7 @@ class Menu(Screen):
 		self._onSelectionChanged()
 
 	def keyNumberGlobal(self, number):
-		print "menu keyNumber:", number
+		print("menu keyNumber:", number)
 		# Calculate index
 		number -= 1
 

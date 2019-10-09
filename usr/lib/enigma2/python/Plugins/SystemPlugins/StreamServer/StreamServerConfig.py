@@ -9,6 +9,7 @@ from Components.Network import iNetworkInfo
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from enigma import eStreamServer
+import six
 
 def applyConfig(streamServerControl, initial=False, forceRestart=False):
 		isMediatorEnabled = streamServerControl.config.streamserver.mediator.enabled.value
@@ -285,7 +286,7 @@ class StreamServerConfig(Screen, ConfigListScreen):
 		localstreams = []
 		if self._streamServerControl.config.streamserver.rtsp.enabled.value or self._streamServerControl.config.streamserver.hls.enabled.value:
 			ifaces = iNetworkInfo.getConfiguredInterfaces()
-			for iface in ifaces.itervalues():
+			for iface in six.itervalues(ifaces):
 				ip = iface.getIpv4()
 				if not ip:
 					ip = iface.getIpv6()

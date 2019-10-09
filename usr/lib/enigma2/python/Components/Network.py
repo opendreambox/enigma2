@@ -1,5 +1,9 @@
 from enigma import eNetworkManager, eNetworkService
+from Components.config import config, ConfigSubsection, ConfigBoolean
 from Tools.Log import Log
+
+config.network = ConfigSubsection()
+config.network.wol_enabled = ConfigBoolean(default=False)
 
 class NetworkData(object):
 	def __init__(self, data):
@@ -23,7 +27,7 @@ class IpData(NetworkData):
 	address = property(getAddress)
 
 	def getNetmask(self):
-		if self._data.has_key(eNetworkService.KEY_NETMASK):
+		if eNetworkService.KEY_NETMASK in self._data:
 			return self._data.get(eNetworkService.KEY_NETMASK, self.default)
 		else:
 			prefix = self._data.get(eNetworkService.KEY_PREFIX_LENGTH, chr(64)).strip()
@@ -95,7 +99,7 @@ class NetworkInfo(object):
 			if service:
 				iface = NetworkInterface(service)
 				key = iface.ethernet.interface
-				if not key in adapters.keys() or not service.state() in (eNetworkManager.STATE_IDLE, eNetworkManager.STATE_FAILURE):
+				if not key in list(adapters.keys()) or not service.state() in (eNetworkManager.STATE_IDLE, eNetworkManager.STATE_FAILURE):
 					adapters[key] = iface
 		return adapters
 

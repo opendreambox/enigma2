@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import eRCInput, getPrevAsciiCode
 from Tools.NumericalTextInput import NumericalTextInput, NumericalHexInput
 from Tools.Directories import resolveFilename, SCOPE_CONFIG, fileExists
@@ -9,6 +11,9 @@ from netaddr import IPAddress
 from ast import literal_eval
 
 from Tools.Log import Log
+import six
+from six import unichr
+from six.moves import range
 # ConfigElement, the base class of all ConfigElements.
 
 # it stores:
@@ -40,18 +45,18 @@ class ConfigElement(object):
 		self.key = 0
 
 	def getNotifiers(self):
-		return [func for (key, func, val, call_on_save_and_cancel) in self.__notifiers.itervalues()]
+		return [func for (key, func, val, call_on_save_and_cancel) in six.itervalues(self.__notifiers)]
 
 	def setNotifiers(self, val):
-		print "just readonly access to notifiers is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers"
+		print("just readonly access to notifiers is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers")
 
 	notifiers = property(getNotifiers, setNotifiers)
 
 	def getNotifiersFinal(self):
-		return [func for (key, func, val, call_on_save_and_cancel) in self.__notifiers_final.itervalues()]
+		return [func for (key, func, val, call_on_save_and_cancel) in six.itervalues(self.__notifiers_final)]
 
 	def setNotifiersFinal(self, val):
-		print "just readonly access to notifiers_final is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers"
+		print("just readonly access to notifiers_final is allowed! append/remove doesnt work anymore! please use addNotifier, removeNotifier, clearNotifiers")
 
 	notifiers_final = property(getNotifiersFinal, setNotifiersFinal)
 
@@ -101,14 +106,14 @@ class ConfigElement(object):
 		return self.tostring(self.value) != sv
 
 	def changed(self, save_or_cancel=False):
-		for (func, val) in sorted(self.__notifiers.iteritems()):
+		for (func, val) in sorted(six.iteritems(self.__notifiers)):
 			strval = str(self.value)
 			if (val[3] and save_or_cancel) or (save_or_cancel == False and val[2] != strval):
 				self.__notifiers[func] = (val[0], val[1], strval, val[3])
 				val[1](self)
 
 	def changedFinal(self, save_or_cancel=False):
-		for (func, val) in sorted(self.__notifiers_final.iteritems()):
+		for (func, val) in sorted(six.iteritems(self.__notifiers_final)):
 			strval = str(self.value)
 			if (val[3] and save_or_cancel) or (save_or_cancel == False and val[2] != strval):
 				self.__notifiers_final[func] = (val[0], val[1], strval, val[3])
@@ -175,7 +180,7 @@ KEY_END = 6
 KEY_TOGGLEOW = 7
 KEY_ASCII = 8
 KEY_TIMEOUT = 9
-KEY_NUMBERS = range(12, 12+10)
+KEY_NUMBERS = list(range(12, 12+10))
 KEY_0 = 12
 KEY_9 = 12+9
 
@@ -205,7 +210,7 @@ class choicesList(object): # XXX: we might want a better name for this
 		if self.type == choicesList.LIST_TYPE_LIST:
 			ret = [not isinstance(x, tuple) and x or x[0] for x in self.choices]
 		else:
-			ret = self.choices.keys()
+			ret = list(self.choices.keys())
 		return ret or [""]
 
 	def __iter__(self):
@@ -227,14 +232,14 @@ class choicesList(object): # XXX: we might want a better name for this
 			assert isinstance(orig, tuple)
 			self.choices[index] = (orig[0], descr)
 		else:
-			key = self.choices.keys()[index]
+			key = list(self.choices.keys())[index]
 			self.choices[key] = descr
 		for cb in self.__itemDescriptionUpdatedCallbacks:
 			try:
 				cb()
 			except:
 				from traceback import print_exc
-				print "WARNING: callback", cb, "in config.choicesList.__itemDescriptionUpdatedCallbacks throws exception (removing callback):"
+				print("WARNING: callback", cb, "in config.choicesList.__itemDescriptionUpdatedCallbacks throws exception (removing callback):")
 				print_exc()
 				self.__itemDescriptionUpdatedCallbacks.remove(cb)
 
@@ -244,7 +249,7 @@ class choicesList(object): # XXX: we might want a better name for this
 			if isinstance(ret, tuple):
 				ret = ret[0]
 			return ret
-		return self.choices.keys()[index]
+		return list(self.choices.keys())[index]
 
 	def index(self, value):
 		return self.__list__().index(value)
@@ -257,7 +262,7 @@ class choicesList(object): # XXX: we might want a better name for this
 			else:
 				self.choices[index] = value
 		else:
-			key = self.choices.keys()[index]
+			key = list(self.choices.keys())[index]
 			orig = self.choices[key]
 			del self.choices[key]
 			self.choices[value] = orig
@@ -271,7 +276,7 @@ class choicesList(object): # XXX: we might want a better name for this
 			if isinstance(default, tuple):
 				default = default[0]
 		else:
-			default = choices.keys()[0]
+			default = list(choices.keys())[0]
 		return default
 
 class descriptionList(choicesList): # XXX: we might want a better name for this
@@ -279,7 +284,7 @@ class descriptionList(choicesList): # XXX: we might want a better name for this
 		if self.type == choicesList.LIST_TYPE_LIST:
 			ret = [not isinstance(x, tuple) and x or x[1] for x in self.choices]
 		else:
-			ret = self.choices.values()
+			ret = list(self.choices.values())
 		return ret or [""]
 
 	def __iter__(self):
@@ -507,7 +512,7 @@ class ConfigOnOff(ConfigBoolean):
 
 class ConfigEnableDisable(ConfigOnOff):
 	def __init__(self, default = False):
-		print "WARNING! ConfigEnableDisable is deprecated, please use ConfigOnOff instead!"
+		print("WARNING! ConfigEnableDisable is deprecated, please use ConfigOnOff instead!")
 		ConfigOnOff.__init__(self, default = default)
 
 class ConfigDateTime(ConfigElement):
@@ -763,7 +768,7 @@ class ConfigIP(ConfigSequence):
 			value += str(i)
 		leftPos = sum(block_strlen[:(self.marked_block)])+self.marked_block
 		rightPos = sum(block_strlen[:(self.marked_block+1)])+self.marked_block
-		mBlock = range(leftPos, rightPos)
+		mBlock = list(range(leftPos, rightPos))
 		return (value, mBlock)
 
 	def getMulti(self, selected):
@@ -1008,7 +1013,7 @@ class ConfigTextBase(ConfigElement):
 			self.text = val.decode("utf-8")
 		except UnicodeDecodeError:
 			self.text = val.decode("utf-8", "ignore")
-			print "Broken UTF8!"
+			print("Broken UTF8!")
 		self.changed()
 
 	value = property(getValue, setValue)
@@ -1035,13 +1040,13 @@ class ConfigTextBase(ConfigElement):
 		text = self.genText()
 		if self.visible_width:
 			if self.allmarked:
-				mark = range(0, min(self.visible_width, len(text)))
+				mark = list(range(0, min(self.visible_width, len(text))))
 			else:
 				mark = [self.marked_pos-self.offset]
 			return ("mtext"[1-selected:], text[self.offset:self.offset+self.visible_width].encode("utf-8")+" ", mark)
 		else:
 			if self.allmarked:
-				mark = range(0, len(text))
+				mark = list(range(0, len(text)))
 			else:
 				mark = [self.marked_pos]
 			return ("mtext"[1-selected:], text.encode("utf-8")+" ", mark)
@@ -1244,7 +1249,7 @@ class ConfigDirectory(ConfigText):
 
 	def getMulti(self, selected):
 		if self.text == "":
-			return ("mtext"[1-selected:], _("List of Storage Devices"), range(0))
+			return ("mtext"[1-selected:], _("List of Storage Devices"), list())
 		else:
 			return ConfigText.getMulti(self, selected)
 
@@ -1382,7 +1387,7 @@ class ConfigSet(ConfigElement):
 			else:
 				chstr = "("+self.description[ch]+")"
 			len_val1 = len(val1)
-			return ("mtext", val1+chstr+val2, range(len_val1, len_val1 + len(chstr)))
+			return ("mtext", val1+chstr+val2, list(range(len_val1, len_val1 + len(chstr))))
 
 
 	def onSelect(self, session):
@@ -1548,13 +1553,13 @@ class ConfigLocations(ConfigElement):
 					ind2 = len(valstr)
 				i += 1
 			if self.visible_width and len(valstr) > self.visible_width:
-				if ind1+1 < self.visible_width/2:
+				if ind1+1 < self.visible_width//2:
 					off = 0
 				else:
-					off = min(ind1+1-self.visible_width/2, len(valstr)-self.visible_width)
-				return ("mtext", valstr[off:off+self.visible_width], range(ind1-off,ind2-off))
+					off = min(ind1+1-self.visible_width//2, len(valstr)-self.visible_width)
+				return ("mtext", valstr[off:off+self.visible_width], list(range(ind1-off,ind2-off)))
 			else:
-				return ("mtext", valstr, range(ind1,ind2))
+				return ("mtext", valstr, list(range(ind1,ind2)))
 
 	def onDeselect(self, session):
 		self.pos = -1
@@ -1833,7 +1838,7 @@ class Config(ConfigSubsection):
 					if changed:
 						tmp[0] = '.'.join(x) 
 						l = '='.join(tmp)
-						print "UNICABLE MIGRATION", l,
+						print("UNICABLE MIGRATION", l, end=' ')
 			lines.append(l)
 
 		self.unpickle(lines, base_file, append)
@@ -1848,15 +1853,15 @@ class ConfigFile:
 	def load(self):
 		try:
 			config.loadFromFile(self.CONFIG_FILE, True)
-		except IOError, e:
-			print "unable to load config (%s), assuming defaults..." % str(e)
+		except IOError as e:
+			print("unable to load config (%s), assuming defaults..." % str(e))
 
 	def save(self):
 		config.saveToFile(self.CONFIG_FILE)
 
 	def __resolveValue(self, pickles, cmap):
 		key = pickles[0]
-		if cmap.has_key(key):
+		if key in cmap:
 			if len(pickles) > 1:
 				return self.__resolveValue(pickles[1:], cmap[key].dict())
 			else:

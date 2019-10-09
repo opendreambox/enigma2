@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Components.ResourceManager import resourcemanager
 
 from coherence.upnp.core import DIDLLite
@@ -141,7 +142,7 @@ class UPnPBrowser(object):
 		return False
 
 	def ascend(self):
-		print "[UPnPBrowser].ascend currentID='%s'" %(self._currentID)
+		print("[UPnPBrowser].ascend currentID='%s'" %(self._currentID))
 		if len(self._idHistory) > 0:
 			self._requestedID = self._idHistory[-1]
 			self.currentPath = self.currentPath[0:self.currentPath.rfind(' > ')]
@@ -190,7 +191,7 @@ class UPnPBrowser(object):
 		if self._currentClient == None:
 			raise UnboundLocalError("UPnPBrowser.browse called but no valid client assigned")
 
-		print "[UPnPBrowser].browse: %s#%s" %(self._currentClient.device.get_friendly_name(), container_id)
+		print("[UPnPBrowser].browse: %s#%s" %(self._currentClient.device.get_friendly_name(), container_id))
 		self._requestedID = container_id
 
 		d = self._currentClient.content_directory.browse(
@@ -220,7 +221,7 @@ class UPnPBrowser(object):
 		if self._currentClient == None:
 			raise UnboundLocalError("UPnPBrowser.search called but no valid item assigned")
 
-		print "[UPnPBrowser].search: '%s#%s" %(self._currentClient.device.get_friendly_name(), container_id)
+		print("[UPnPBrowser].search: '%s#%s" %(self._currentClient.device.get_friendly_name(), container_id))
 		self._requestedID = container_id
 
 		d = self._currentClient.content_directory.search(
@@ -235,7 +236,7 @@ class UPnPBrowser(object):
 
 	def _onBrowseResult(self, result, client):
 		if self._currentClient != client:
-			print "WARNING! - [UPnPBrowser]._onBrowseResult - Concurrent Requests detected, please fix your client!"
+			print("WARNING! - [UPnPBrowser]._onBrowseResult - Concurrent Requests detected, please fix your client!")
 			self._setClient(client)
 
 		res = DIDLLite.DIDLElement.fromString(result['Result'].encode( "utf-8" ))
@@ -258,7 +259,7 @@ class UPnPBrowser(object):
 		self._onListReady(list)
 
 	def _onBrowseError(self, err):
-		print "[UPnPBrowser]._onBrowseError"
+		print("[UPnPBrowser]._onBrowseError")
 		err.printTraceback()
 		self._currentID = self._requestedID
 		for fnc in self.onBrowseError:
@@ -273,11 +274,11 @@ class UPnPBrowser(object):
 		return Item.isContainer(item)
 
 	def _onMediaServerDetected(self, udn, client):
-		print "[UPnPBrowser]._onMediaServerDetected %s" %udn
+		print("[UPnPBrowser]._onMediaServerDetected %s" %udn)
 		for fnc in self.onMediaServerDetected:
 			fnc(udn, client)
 
 	def _onMediaServerRemoved(self, udn):
-		print "[UPnPBrowser]._onMediaServerRemoved %s" %udn
+		print("[UPnPBrowser]._onMediaServerRemoved %s" %udn)
 		for fnc in self.onMediaServerRemoved:
 			fnc(udn)

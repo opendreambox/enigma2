@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eMediaDatabase, StringList
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -149,7 +150,7 @@ class MediaDatabaseManager(Screen):
 
 	def _getSelectedDir(self):
 		dir = self["list"].getCurrent()
-		print dir
+		print(dir)
 		if dir:
 			dir = dir[1]["path"]
 		return dir

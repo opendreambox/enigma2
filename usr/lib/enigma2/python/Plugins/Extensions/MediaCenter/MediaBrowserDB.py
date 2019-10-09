@@ -277,7 +277,7 @@ class MediaBrowserDBList(MenuList, MediaBrowserList):
 
 		if self._currentNavHandle.hasAllHandle():
 			lastitem = self._currentNavHandle.getLastItem() or {}
-			item = dict( lastitem.items() + {ITEM_KEY_TITLE : ITEM_TITLE_ALL, ITEM_KEY_TYPE : MediaBrowser.ITEM_TYPE_ALL}.items() )
+			item = dict( list(lastitem.items()) + list({ITEM_KEY_TITLE : ITEM_TITLE_ALL, ITEM_KEY_TYPE : MediaBrowser.ITEM_TYPE_ALL}.items()) )
 			lst.append((item, MediaBrowser.ITEM_TYPE_FOLDER))
 			if prev_title == ITEM_TITLE_ALL:
 				restoreindex = idx

@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService, iAudioType_ENUMS as iAt, CT_MPEG2, CT_H264, CT_MPEG1, CT_MPEG4_PART2, CT_VC1, CT_VC1_SIMPLE_MAIN, CT_H265, CT_DIVX311, CT_DIVX4, CT_SPARK, CT_VP6, CT_VP8, CT_VP9, CT_H263, CT_MJPEG, CT_REAL, CT_AVS, CT_UNKNOWN
 from Components.Element import cached
@@ -129,17 +131,17 @@ class ServiceInfo(Converter, object):
 		elif self.type == self.SID:
 			return self.getServiceInfoString(info, iServiceInformation.sSID)
 		elif self.type == self.FRAMERATE:
-			return self.getServiceInfoString(info, iServiceInformation.sFrameRate, lambda x: "%d fps" % ((x+500)/1000))
+			return self.getServiceInfoString(info, iServiceInformation.sFrameRate, lambda x: "%d fps" % ((x+500)//1000))
 		elif self.type == self.TRANSFERBPS:
-			return self.getServiceInfoString(info, iServiceInformation.sTransferBPS, lambda x: "%d kB/s" % (x/1024))
+			return self.getServiceInfoString(info, iServiceInformation.sTransferBPS, lambda x: "%d kB/s" % (x//1024))
 		elif self.type == self.VIDEO_PARAMS:
 			yres = info.getInfo(iServiceInformation.sVideoHeight)
 			frame_rate = info.getInfo(iServiceInformation.sFrameRate)
 			progressive = info.getInfo(iServiceInformation.sProgressive)
-			print "yres", yres, "frame_rate", frame_rate, "progressive", progressive
+			print("yres", yres, "frame_rate", frame_rate, "progressive", progressive)
 			if not progressive:
 				frame_rate *= 2
-			frame_rate = (frame_rate+500)/1000
+			frame_rate = (frame_rate+500)//1000
 			return "%d%s%d" % (yres, 'p' if progressive else 'i', frame_rate)
 		elif self.type == self.VIDEO_TYPE:
 			vtype = info.getInfo(iServiceInformation.sVideoType)

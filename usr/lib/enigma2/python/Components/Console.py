@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eConsoleAppContainer
 from Tools.BoundFunction import boundFunction
 
@@ -11,10 +12,10 @@ class Console(object):
 	def ePopen(self, cmd, callback=None, extra_args=[]):
 		name = cmd
 		i = 0
-		while self.appContainers.has_key(name):
+		while name in self.appContainers:
 			name = cmd +'_'+ str(i)
 			i += 1
-		print "[ePopen] command:", cmd
+		print("[ePopen] command:", cmd)
 		self.appResults[name] = ""
 		self.extra_args[name] = extra_args
 		self.callbacks[name] = callback
@@ -35,7 +36,7 @@ class Console(object):
 	def eBatchCB(self, data, retval, _extra_args):
 		(cmds, callback, extra_args) = _extra_args
 		if self.debug:
-			print '[eBatch] retval=%s, cmds left=%d, data:\n%s' % (retval, len(cmds), data)
+			print('[eBatch] retval=%s, cmds left=%d, data:\n%s' % (retval, len(cmds), data))
 		if len(cmds):
 			cmd = cmds.pop(0)
 			self.ePopen(cmd, self.eBatchCB, [cmds, callback, extra_args])
@@ -56,7 +57,7 @@ class Console(object):
 
 	def kill(self,name):
 		if name in self.appContainers:
-			print "[Console] killing: ",self.appContainers[name]
+			print("[Console] killing: ",self.appContainers[name])
 			self.appContainers[name].kill()
 
 	def killAll(self):

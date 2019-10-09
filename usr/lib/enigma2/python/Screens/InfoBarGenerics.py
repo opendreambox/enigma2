@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from ChannelSelection import ChannelSelection, BouquetSelector, SilentBouquetSelector
 
 from Components.ActionMap import ActionMap, HelpableActionMap
@@ -9,6 +11,7 @@ from Components.PluginComponent import plugins
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.Sources.Boolean import Boolean
 from Tools.Log import Log
+from six.moves import range
 
 try:
 	from Components.Sources.HbbtvApplication import HbbtvApplication
@@ -126,7 +129,7 @@ class InfoBarAutoSleepTimer:
 		return 0
 
 	def inactive(self):
-		print "[InfoBarAutoSleepTimer].inactive"
+		print("[InfoBarAutoSleepTimer].inactive")
 		if Screens.Standby.inStandby == None:
 			self.session.openWithCallback(self.shutdown, MessageBox, _("The device will shutdown due to inactivity.\nDo you want to abort the shutdown?"), MessageBox.TYPE_YESNO, timeout=120, default=False, title=_("Inactivity shutdown"))
 		else:
@@ -134,17 +137,17 @@ class InfoBarAutoSleepTimer:
 			return
 
 	def shutdown(self, aborted):
-		print "[InfoBarAutoSleepTimer].shutdown"
+		print("[InfoBarAutoSleepTimer].shutdown")
 		if aborted or Screens.Standby.inTryQuitMainloop:
-			print "aborted"
+			print("aborted")
 			self.keypress(None, 1) #restart the timer
 			return
 
 		if Screens.Standby.inStandby != None:
-			print "RecordTimer.TryQuitMainloop"
+			print("RecordTimer.TryQuitMainloop")
 			RecordTimerEntry.TryQuitMainloop(True)
 		else:
-			print "Screens.Standby.TryQuitMainloop"
+			print("Screens.Standby.TryQuitMainloop")
 			self.session.open(Screens.Standby.TryQuitMainloop, 1)
 
 class InfoBarShowHide:
@@ -299,7 +302,7 @@ class InfoBarNumberZap:
 			else:
 				self.servicelist.recallPrevService()
 		else:
-			if self.has_key("TimeshiftActions") and not self.timeshift_enabled:
+			if "TimeshiftActions" in self and not self.timeshift_enabled:
 				self.session.openWithCallback(self.numberEntered, NumberZap, number)
 
 	def numberEntered(self, retval):
@@ -456,7 +459,7 @@ class InfoBarChannelSelection:
 		for service in services:
 			if isRelevant:
 				cur = eServiceReference(service)
-				print "getNextService {0} / {1}".format(service, ref)
+				print("getNextService {0} / {1}".format(service, ref))
 				if not cur or (not (cur.flags & 64)):
 					return cur
 			if service == ref:
@@ -471,7 +474,7 @@ class InfoBarChannelSelection:
 			if service == ref:
 				for svc in previous:
 					cur = eServiceReference(svc)
-					print "getPrevService {0} / {1}".format(svc, ref)
+					print("getPrevService {0} / {1}".format(svc, ref))
 					if not cur or (not (cur.flags & 64)):
 						return cur
 			else:
@@ -488,7 +491,7 @@ class InfoBarMenu:
 		self.session.infobar = None
 
 	def mainMenu(self):
-		print "loading mainmenu XML..."
+		print("loading mainmenu XML...")
 		menu = mdom.getroot()
 		assert menu.tag == "menu", "root element in menu must be 'menu'!"
 
@@ -851,7 +854,7 @@ class InfoBarEPG:
 			self.eventView = self.session.openWithCallback(self.closed, EventViewEPGSelect, self.epglist[0], ServiceReference(ref), self.eventViewCallback, self.openSingleServiceEPG, self.openMultiServiceEPG, self.openSimilarList)
 			self.dlg_stack.append(self.eventView)
 		else:
-			print "no epg for the service avail.. so we show multiepg instead of eventinfo"
+			print("no epg for the service avail.. so we show multiepg instead of eventinfo")
 			self.openMultiServiceEPG(False)
 
 	def eventViewCallback(self, setEvent, setService, val): #used for now/next displaying
@@ -916,7 +919,7 @@ class InfoBarSeek(PlayerBase):
 				self.screen = screen
 
 			def action(self, contexts, action):
-				print "action:", action
+				print("action:", action)
 				if action[:5] == "seek:":
 					time = int(action[5:])
 					self.screen.doSeekRelative(time * 90000)
@@ -1048,22 +1051,22 @@ class InfoBarSeek(PlayerBase):
 			pauseable = service.pause()
 
 			if pauseable is None:
-				print "not pauseable."
+				print("not pauseable.")
 				state = self.SEEK_STATE_PLAY
 
 			if pauseable is not None:
 				if state[0]:
 					ret = pauseable.pause()
-					print "resolved to PAUSE", ret
+					print("resolved to PAUSE", ret)
 				elif state[1]:
 					ret = pauseable.setFastForward(state[1])
-					print "resolved to FAST FORWARD", ret
+					print("resolved to FAST FORWARD", ret)
 				elif state[2]:
 					ret = pauseable.setSlowMotion(state[2])
-					print "resolved to SLOW MOTION", ret
+					print("resolved to SLOW MOTION", ret)
 				else:
 					ret = pauseable.unpause()
-					print "resolved to PLAY", ret
+					print("resolved to PLAY", ret)
 
 		if ret == 0:
 			self.seekstate = state
@@ -1095,7 +1098,7 @@ class InfoBarSeek(PlayerBase):
 			self.setSeekState(self.SEEK_STATE_PAUSE);
 
 	def unPauseService(self):
-		print "unpause"
+		print("unpause")
 		if self.seekstate == self.SEEK_STATE_PLAY:
 			return 0
 		self.setSeekState(self.SEEK_STATE_PLAY)
@@ -1199,14 +1202,14 @@ class InfoBarSeek(PlayerBase):
 		self.session.openWithCallback(self.fwdSeekTo, MinuteInput)
 
 	def fwdSeekTo(self, minutes):
-		print "Seek", minutes, "minutes forward"
+		print("Seek", minutes, "minutes forward")
 		self.doSeekRelative(minutes * 60 * 90000)
 
 	def seekBackManual(self):
 		self.session.openWithCallback(self.rwdSeekTo, MinuteInput)
 
 	def rwdSeekTo(self, minutes):
-		print "rwdSeekTo"
+		print("rwdSeekTo")
 		self.doSeekRelative(-minutes * 60 * 90000)
 
 	def checkSkipShowHideLock(self):
@@ -1237,7 +1240,7 @@ class InfoBarSeek(PlayerBase):
 			if not len[0] and not pos[0]:
 				if len[1] <= pos[1]:
 					return 0
-				time = (len[1] - pos[1])*speedden/(90*speednom)
+				time = (len[1] - pos[1])*speedden//(90*speednom)
 				return time
 		return False
 
@@ -1382,7 +1385,7 @@ class InfoBarTimeshift:
 		return service and service.timeshift()
 
 	def startTimeshift(self):
-		print "enable timeshift"
+		print("enable timeshift")
 		ts = self.getTimeshift()
 		if ts is None:
 			if harddiskmanager.HDDCount() and not harddiskmanager.HDDEnabledCount():
@@ -1398,11 +1401,11 @@ class InfoBarTimeshift:
 						+ _("Please verify if your default storage device is attached or set up your default storage device in menu -> setup -> system -> recording paths."), MessageBox.TYPE_ERROR)
 			else:
 				self.session.open(MessageBox, _("Timeshift not possible!"), MessageBox.TYPE_ERROR)
-				print "no ts interface"
+				print("no ts interface")
 			return 0
 
 		if self.timeshift_enabled:
-			print "hu, timeshift already enabled?"
+			print("hu, timeshift already enabled?")
 		else:
 			if not ts.startTimeshift():
 				self.timeshift_enabled = 1
@@ -1418,12 +1421,12 @@ class InfoBarTimeshift:
 				# the startTimeshift actions
 				self.__seekableStatusChanged()
 			else:
-				print "timeshift failed"
+				print("timeshift failed")
 
 	def stopTimeshift(self):
 		if not self.timeshift_enabled:
 			return 0
-		print "disable timeshift"
+		print("disable timeshift")
 		ts = self.getTimeshift()
 		if ts is None:
 			return 0
@@ -1446,16 +1449,16 @@ class InfoBarTimeshift:
 	# activates timeshift, and seeks to (almost) the end
 	def activateTimeshiftEnd(self, back = True):
 		ts = self.getTimeshift()
-		print "activateTimeshiftEnd"
+		print("activateTimeshiftEnd")
 
 		if ts is None:
 			return
 
 		if ts.isTimeshiftActive():
-			print "!! activate timeshift called - but shouldn't this be a normal pause?"
+			print("!! activate timeshift called - but shouldn't this be a normal pause?")
 			self.pauseService()
 		else:
-			print "play, ..."
+			print("play, ...")
 			ts.activateTimeshift() # activate timeshift will automatically pause
 			self.setSeekState(self.SEEK_STATE_PAUSE)
 
@@ -1467,7 +1470,7 @@ class InfoBarTimeshift:
 
 	# same as activateTimeshiftEnd, but pauses afterwards.
 	def activateTimeshiftEndAndPause(self):
-		print "activateTimeshiftEndAndPause"
+		print("activateTimeshiftEndAndPause")
 		#state = self.seekstate
 		self.activateTimeshiftEnd(False)
 
@@ -1510,12 +1513,12 @@ class InfoBarExtensions:
 	def updateExtension(self, extension, key = None):
 		self.extensionsList.append(extension)
 		if key is not None:
-			if self.extensionKeys.has_key(key):
+			if key in self.extensionKeys:
 				key = None
 
 		if key is None:
 			for x in self.availableKeys:
-				if not self.extensionKeys.has_key(x):
+				if x not in self.extensionKeys:
 					key = x
 					break
 
@@ -1540,7 +1543,7 @@ class InfoBarExtensions:
 		keys = []
 		list = []
 		for x in self.availableKeys:
-			if self.extensionKeys.has_key(x):
+			if x in self.extensionKeys:
 				entry = self.extensionKeys[x]
 				extension = self.extensionsList[entry]
 				if extension[2]():
@@ -1640,10 +1643,10 @@ class InfoBarPiP:
 
 	def showPiP(self):
 		if self.session.pipshown:
-			print "pip currently shown.... pointer:", self.session.pip
+			print("pip currently shown.... pointer:", self.session.pip)
 			self.session.deleteDialog(self.session.pip)
 			del self.session.pip
-			print 'hasattr(self.session,"pip")', hasattr(self.session,"pip")
+			print('hasattr(self.session,"pip")', hasattr(self.session,"pip"))
 			self.session.pipshown = False
 		else:
 			self.session.pip = self.session.instantiateDialog(PictureInPicture)
@@ -1795,7 +1798,7 @@ class InfoBarInstantRecord:
 			if len(simulTimerList) > 1: # with other recording
 				name = simulTimerList[1].name
 				name_date = ' '.join((name, strftime('%c', localtime(simulTimerList[1].begin))))
-				print "[TIMER] conflicts with", name_date
+				print("[TIMER] conflicts with", name_date)
 				recording.autoincrease = True	# start with max available length, then increment
 				if recording.setAutoincreaseEnd():
 					self.session.nav.RecordTimer.record(recording)
@@ -1809,7 +1812,7 @@ class InfoBarInstantRecord:
 			recording.autoincrease = False
 
 	def isInstantRecordRunning(self):
-		print "self.recording:", self.recording
+		print("self.recording:", self.recording)
 		if self.recording:
 			for x in self.recording:
 				if x.isRunning():
@@ -1817,7 +1820,7 @@ class InfoBarInstantRecord:
 		return False
 
 	def recordQuestionCallback(self, answer):
-		print "pre:\n", self.recording
+		print("pre:\n", self.recording)
 
 		if answer is None or answer[1] == "no":
 			return
@@ -1841,7 +1844,7 @@ class InfoBarInstantRecord:
 				self.changeDuration(len(self.recording)-1)
 			elif answer[1] == "manualendtime":
 				self.setEndtime(len(self.recording)-1)
-		print "after:\n", self.recording
+		print("after:\n", self.recording)
 
 	def setEndtime(self, entry):
 		if entry is not None and entry >= 0:
@@ -1854,7 +1857,7 @@ class InfoBarInstantRecord:
 		if len(ret) > 1:
 			if ret[0]:
 				localendtime = localtime(ret[1])
-				print "stopping recording at", strftime("%c", localendtime)
+				print("stopping recording at", strftime("%c", localendtime))
 				if self.recording[self.selectedEntry].end != ret[1]:
 					self.recording[self.selectedEntry].autoincrease = False
 				self.recording[self.selectedEntry].end = ret[1]
@@ -1867,7 +1870,7 @@ class InfoBarInstantRecord:
 
 	def inputCallback(self, value):
 		if value is not None:
-			print "stopping recording after", int(value), "minutes."
+			print("stopping recording after", int(value), "minutes.")
 			entry = self.recording[self.selectedEntry]
 			if int(value) != 0:
 				entry.autoincrease = False
@@ -1919,7 +1922,7 @@ class InfoBarAudioSelection:
 		self.session.openWithCallback(self.audioSelected, AudioSelection, infobar=self)
 
 	def audioSelected(self, ret=None):
-		print "[infobar::audioSelected]", ret
+		print("[infobar::audioSelected]", ret)
 
 class InfoBarSubserviceSelection:
 	def __init__(self):
@@ -2134,7 +2137,7 @@ class InfoBarServiceNotifications:
 			})
 
 	def serviceHasEnded(self):
-		print "service end!"
+		print("service end!")
 		try:
 			self.setSeekState(self.SEEK_STATE_STOP, True)
 		except:
@@ -2171,7 +2174,7 @@ class InfoBarCueSheetSupport:
 		self._tryResume = False
 		if self.is_closing:
 			return
-		print "new service started! trying to download cuts!"
+		print("new service started! trying to download cuts!")
 		self.downloadCuesheet()
 
 		if self.ENABLE_RESUME_SUPPORT:
@@ -2186,12 +2189,12 @@ class InfoBarCueSheetSupport:
 
 				if (self.length[1] > 0) and abs(self.length[1] - last) < 4*90000: # if last playpos is within 4 seconds span to the length of this recording, assume it has been watched all the way to the end and don't resume
 					return
-				l = last / 90000
+				l = last // 90000
 				if l < config.usage.resume_treshold.value:
 					Log.w("Resume treshold not reached, starting from the beginning")
 					return
 				if config.usage.on_movie_start.value == "ask":
-					Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l/3600, l%3600/60, l%60))), timeout=10, domain = "InfoBar")
+					Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l//3600, l%3600//60, l%60))), timeout=10, domain = "InfoBar")
 				elif config.usage.on_movie_start.value == "resume":
 # TRANSLATORS: The string "Resuming playback" flashes for a moment
 # TRANSLATORS: at the start of a movie, when the user has selected
@@ -2233,7 +2236,7 @@ class InfoBarCueSheetSupport:
 		r = seek.getPlayPosition()
 		if r[0]:
 			return None
-		return long(r[1])
+		return int(r[1])
 
 	def cueGetEndCutPosition(self):
 		ret = False
@@ -2303,7 +2306,7 @@ class InfoBarCueSheetSupport:
 	def toggleMark(self, onlyremove=False, onlyadd=False, tolerance=5*90000, onlyreturn=False):
 		current_pos = self.cueGetCurrentPosition()
 		if current_pos is None:
-			print "not seekable"
+			print("not seekable")
 			return
 
 		nearest_cutpoint = self.getNearestCutPoint(current_pos)
@@ -2345,7 +2348,7 @@ class InfoBarCueSheetSupport:
 		cue = self.__getCuesheet()
 
 		if cue is None:
-			print "upload failed, no cuesheet interface"
+			print("upload failed, no cuesheet interface")
 			return
 		cue.setCutList(self.cut_list)
 
@@ -2356,7 +2359,7 @@ class InfoBarCueSheetSupport:
 		cue = self.__getCuesheet()
 
 		if cue is None:
-			print "download failed, no cuesheet interface"
+			print("download failed, no cuesheet interface")
 			self.cut_list = [ ]
 		else:
 			self.cut_list = cue.getCutList()
@@ -2493,7 +2496,7 @@ class InfoBarSubtitleSupport(object):
 		sub_count = subtitle and subtitle.getNumberOfSubtitleTracks() or 0
 		if self.cached_subtitle_checked != sub_count:
 			self.cached_subtitle_checked = sub_count
-			if not config.plugins.dict().has_key('TrackAutoselect') or config.plugins.TrackAutoselect.subtitle_autoselect_enable.value:
+			if 'TrackAutoselect' not in config.plugins.dict() or config.plugins.TrackAutoselect.subtitle_autoselect_enable.value:
 				for idx in range(sub_count):
 					info = subtitle.getSubtitleTrackInfo(idx)
 					if info.isSaved():

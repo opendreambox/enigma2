@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eTimer, iPlayableService, iServiceInformation, eServiceReference, iServiceKeys, getDesktop
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -16,6 +17,7 @@ from Tools.Directories import pathExists, fileExists
 from Components.Harddisk import harddiskmanager
 
 import servicedvd # load c++ part of dvd player plugin
+from six.moves import range
 
 lastpath = ""
 
@@ -59,36 +61,36 @@ class FileBrowser(Screen):
 
 	def ok(self):
 		if len(self.dvd_filelist):
-			print "OK " + self["filelist"].getCurrent()
+			print("OK " + self["filelist"].getCurrent())
 			self.close(self["filelist"].getCurrent())
 		else:
 			global lastpath
 			filename = self["filelist"].getFilename()
 			if filename is not None:
 				if filename.upper().endswith("VIDEO_TS/"):
-					print "dvd structure found, trying to open..."
+					print("dvd structure found, trying to open...")
 					dvdpath = filename[0:-9]
 					lastpath = (dvdpath.rstrip("/").rsplit("/",1))[0]
-					print "lastpath video_ts/=", lastpath
+					print("lastpath video_ts/=", lastpath)
 					self.close(dvdpath)
 					return
 			if self["filelist"].canDescent(): # isDir
 				self["filelist"].descent()
 				pathname = self["filelist"].getCurrentDirectory() or ""
 				if fileExists(pathname+"VIDEO_TS.IFO"):
-					print "dvd structure found, trying to open..."
+					print("dvd structure found, trying to open...")
 					lastpath = (pathname.rstrip("/").rsplit("/",1))[0]
-					print "lastpath video_ts.ifo=", lastpath
+					print("lastpath video_ts.ifo=", lastpath)
 					self.close(pathname)
 				if fileExists(pathname+"VIDEO_TS/VIDEO_TS.IFO"):
-					print "dvd structure found, trying to open..."
+					print("dvd structure found, trying to open...")
 					lastpath = (pathname.rstrip("/").rsplit("/",1))[0]
-					print "lastpath video_ts.ifo=", lastpath
+					print("lastpath video_ts.ifo=", lastpath)
 					pathname += "VIDEO_TS"
 					self.close(pathname)
 			else:
 				lastpath = filename[0:filename.rfind("/")]
-				print "lastpath directory=", lastpath
+				print("lastpath directory=", lastpath)
 				self.close(filename)
 
 	def exit(self):
@@ -390,7 +392,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		self.in_menu = False
 
 	def keyNumberGlobal(self, number):
-		print "You pressed number " + str(number)
+		print("You pressed number " + str(number))
 		self.session.openWithCallback(self.numberEntered, ChapterZap, number)
 
 	def numberEntered(self, retval):
@@ -453,24 +455,24 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 	def toggleInfo(self):
 		if not self.in_menu:
 			self.toggleShow()
-			print "toggleInfo"
+			print("toggleInfo")
 
 	def __statePlay(self):
-		print "statePlay"
+		print("statePlay")
 
 	def __statePause(self):
-		print "statePause"
+		print("statePause")
 
 	def __osdFFwdInfoAvail(self):
 		self.setChapterLabel()
-		print "FFwdInfoAvail"
+		print("FFwdInfoAvail")
 
 	def __osdFBwdInfoAvail(self):
 		self.setChapterLabel()
-		print "FBwdInfoAvail"
+		print("FBwdInfoAvail")
 
 	def __osdStringAvail(self):
-		print "StringAvail"
+		print("StringAvail")
 
 	def __osdAudioInfoAvail(self):
 		service = self.session.nav.getCurrentService()
@@ -506,7 +508,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 	def __osdAngleInfoAvail(self):
 		info = self.getServiceInterface("info")
 		angleTuple = info and info.getInfoObject(iServiceInformation.sAngle)
-		print "AngleInfoAvail ", repr(angleTuple)
+		print("AngleInfoAvail ", repr(angleTuple))
 		if angleTuple:
 			angleString = ""
 			if angleTuple[1] > 1:
@@ -525,7 +527,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			self.currentChapter = info.getInfo(iServiceInformation.sCurrentChapter)
 			self.totalChapters = info.getInfo(iServiceInformation.sTotalChapters)
 			self.setChapterLabel()
-			print "__chapterUpdated: %d/%d" % (self.currentChapter, self.totalChapters)
+			print("__chapterUpdated: %d/%d" % (self.currentChapter, self.totalChapters))
 
 	def __titleUpdated(self):
 		info = self.getServiceInterface("info")
@@ -533,7 +535,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			self.currentTitle = info.getInfo(iServiceInformation.sCurrentTitle)
 			self.totalTitles = info.getInfo(iServiceInformation.sTotalTitles)
 			self.setChapterLabel()
-			print "__titleUpdated: %d/%d" % (self.currentTitle, self.totalTitles)
+			print("__titleUpdated: %d/%d" % (self.currentTitle, self.totalTitles))
 			if not self.in_menu:
 				self.doShow()
 
@@ -593,7 +595,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		if self.service:
 			seekable = self.getSeek()
 			if seekable:
-				print "seek to chapter %d" % number
+				print("seek to chapter %d" % number)
 				seekable.seekChapter(number)
 
 #	MENU ACTIONS
@@ -637,12 +639,12 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 
 	def FileBrowserClosed(self, val):
 		curref = self.session.nav.getCurrentlyPlayingServiceReference()
-		print "FileBrowserClosed", val
+		print("FileBrowserClosed", val)
 		if val is None:
 			self.askLeavePlayer()
 		else:
 			newref = eServiceReference(eServiceReference.idDVD, 0, val)
-			print "play", newref.toString()
+			print("play", newref.toString())
 			if curref is None or curref != newref:
 				self.service = None
 				if newref.toString().endswith("/VIDEO_TS") or newref.toString().endswith("/"):
@@ -651,12 +653,12 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 						name = str(names[1]) + " - " + str(names[2])
 					else:
 						name = names[2]
-					print "setting name to: ", self.service
+					print("setting name to: ", self.service)
 					newref.setName(str(name))
 				self.session.nav.playService(newref)
 				self.service = self.session.nav.getCurrentService()
-				print "self.service", self.service
-				print "cur_dlg", self.session.current_dialog
+				print("self.service", self.service)
+				print("cur_dlg", self.session.current_dialog)
 
 	def exitCB(self, answer):
 		if answer is not None:
@@ -680,7 +682,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		hotplugNotifier.remove(self.hotplugCB)
 
 	def playLastCB(self, answer): # overwrite infobar cuesheet function
-		print "playLastCB", answer, self.resume_point
+		print("playLastCB", answer, self.resume_point)
 		if self.service:
 			if answer == True:
 				seekable = self.getSeek()
@@ -705,7 +707,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		return 0
 
 	def hotplugCB(self, dev, media_state):
-		print "[hotplugCB]", dev, media_state
+		print("[hotplugCB]", dev, media_state)
 		if dev == harddiskmanager.getCD():
 			if media_state == "1":
 				self.scanHotplug()
@@ -721,9 +723,9 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 			if list:
 				(desc, scanner, files, session) = list[0]
 				for file in files:
-					print file
+					print(file)
 					if file.mimetype == "video/x-dvd":
-						print "physical dvd found:", devicepath
+						print("physical dvd found:", devicepath)
 						self.physicalDVD = True
 						return
 		self.physicalDVD = False
@@ -733,7 +735,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		sub_count = subtitle and subtitle.getNumberOfSubtitleTracks() or 0
 		if self.cached_subtitle_checked != sub_count:
 			self.cached_subtitle_checked = sub_count
-			hasTrackAutoselect = config.plugins.dict().has_key('TrackAutoselect')
+			hasTrackAutoselect = 'TrackAutoselect' in config.plugins.dict()
 
 			currentSREF = self.session.nav.getCurrentlyPlayingServiceReference()
 			stype = currentSREF and currentSREF.valid() and currentSREF.type or None
@@ -768,13 +770,13 @@ from Plugins.Plugin import PluginDescriptor
 def filescan_open(list, session, **kwargs):
 	if len(list) == 1 and list[0].mimetype == "video/x-dvd":
 		splitted = list[0].path.split('/')
-		print "splitted", splitted
+		print("splitted", splitted)
 		if len(splitted) > 2:
 			if splitted[1] == 'autofs':
 				session.open(DVDPlayer, dvd_device="/dev/%s" %(splitted[2]))
 				return
 			else:
-				print "splitted[0]", splitted[1]
+				print("splitted[0]", splitted[1])
 	else:
 		dvd_filelist = []
 		for x in list:

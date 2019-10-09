@@ -1,3 +1,4 @@
+from __future__ import print_function
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 from VariableText import VariableText
@@ -5,6 +6,7 @@ from VariableText import VariableText
 from enigma import eLabel
 
 from Tools.NumericalTextInput import NumericalTextInput
+from six import unichr
 
 class Input(VariableText, HTMLComponent, GUIComponent, NumericalTextInput):
 	TEXT = 0
@@ -68,7 +70,7 @@ class Input(VariableText, HTMLComponent, GUIComponent, NumericalTextInput):
 			try:
 				self.Text = text.decode("utf-8")
 			except UnicodeDecodeError:
-				print "utf8 kaputt!"
+				print("utf8 kaputt!")
 				self.Text = text
 		self.update()
 

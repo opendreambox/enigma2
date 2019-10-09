@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Tools.Directories import SCOPE_CONFIG, resolveFilename
 import sqlite3
 
@@ -91,14 +92,14 @@ class Cookie:
 				except:
 					return None
 		except CookieError as e:
-			print e
+			print(e)
 			return None
 
 	def cookieDate2Ts(self, cd):
 		#Sat, 02-Nov-2013 11:33:51 GMT
 		if cd.strip() != "" and cd != None:
 			return mktime_tz(parsedate_tz(cd.strip()))
-		return long(0)
+		return int(0)
 
 	def __str__(self):
 		return "Cookie::key=%s|domain=%s|path=%s|expires=%s" %(self.key, self.domain, self.path, self.expires)
@@ -165,7 +166,7 @@ class BrowserDB:
 		instance = None
 		try:
 			instance = BrowserDB()
-		except BrowserDB, d:
+		except BrowserDB as d:
 			instance = d
 
 		return instance
@@ -190,7 +191,7 @@ class BrowserDB:
 
 	def __createDB(self):
 		c = self.__conn.cursor()
-		print "[BrowserDB].__initDB :: Creating Database Tables"
+		print("[BrowserDB].__initDB :: Creating Database Tables")
 		c.execute(BrowserDB.SQL_CREATE_VERSION_T)
 		c.execute(BrowserDB.SQL_CREATE_BM_T)
 		c.execute(BrowserDB.SQL_CREATE_BM_GROUPS_T)
@@ -198,10 +199,10 @@ class BrowserDB:
 		c.execute(BrowserDB.SQL_CREATE_CERT_T)
 		c.execute(BrowserDB.SQL_CREATE_COOKIE_T)
 
-		print BrowserDB.SQL_SET_VERSION
+		print(BrowserDB.SQL_SET_VERSION)
 		c.execute(BrowserDB.SQL_SET_VERSION, (str(BrowserDB.DB_VERSION)))
 
-		print "[BrowserDB].__initDB :: Adding default bookmarks"
+		print("[BrowserDB].__initDB :: Adding default bookmarks")
 		list = [ Bookmark(-1, "Dream Multimedia TV", "http://www.dream-multimedia-tv.de/"),
 				Bookmark(-1, "Dream Multimedia TV - Forum", "http://www.dream-multimedia-tv.de/board/"),
 				Bookmark(-1, "Twitter", "http://www.twitter.com"),
@@ -212,7 +213,7 @@ class BrowserDB:
 
 		self.__conn.commit()
 		c.close()
-		print "[BrowserDB].__initDB :: Database Tables Initialized"
+		print("[BrowserDB].__initDB :: Database Tables Initialized")
 
 	def __checkDbVersion(self):
 		pass #TODO implement version Check
@@ -281,7 +282,7 @@ class BrowserDB:
 			BrowserDB.FIELD_BM_URL,
 			BrowserDB.FIELD_BM_GROUPID
 		)
-		print sql
+		print(sql)
 		cursor.execute(sql, (bm.name, bm.url, bm.group))
 		self.__conn.commit()
 
@@ -293,13 +294,13 @@ class BrowserDB:
 			BrowserDB.FIELD_BM_GROUPID,
 			BrowserDB.FIELD_ID
 		)
-		print sql
+		print(sql)
 		cursor.execute(sql, (bm.name, bm.url, bm.group, str(bm.id)) )
 		self.__conn.commit()
 
 	def __deleteBookmark(self, bm, cursor):
 		sql = "DELETE FROM %s WHERE %s=?" %(BrowserDB.TABLE_BM, BrowserDB.FIELD_ID)
-		print sql
+		print(sql)
 		cursor.execute(sql, (str(bm.id)) )
 		self.__conn.commit()
 
@@ -360,7 +361,7 @@ class BrowserDB:
 			BrowserDB.FIELD_HIS_TITLE,
 			BrowserDB.FIELD_HIS_URL,
 		)
-		print sql
+		print(sql)
 		cursor.execute(sql, (str(hi.timestamp), hi.title, hi.url))
 		self.__conn.commit()
 
@@ -375,11 +376,11 @@ class BrowserDB:
 
 		urls = []
 		sqlBM = sql %{"url" : BrowserDB.FIELD_BM_URL, "table" : BrowserDB.TABLE_BM}
-		print sqlBM
+		print(sqlBM)
 		urls = self.__execUrlSearch(cursor, sqlBM, needle, urls)
 
 		sqlHis = sql %{"url" : BrowserDB.FIELD_HIS_URL, "table" : BrowserDB.TABLE_HISTORY}
-		print sqlHis
+		print(sqlHis)
 		urls = self.__execUrlSearch(cursor, sqlHis, needle, urls)
 
 		self.__conn.commit()
@@ -391,7 +392,7 @@ class BrowserDB:
 		return urls
 
 	def __execUrlSearch(self, cursor, sql, needle, list):
-		print "needle=%s" %needle
+		print("needle=%s" %needle)
 		cursor.execute(sql, [needle])
 		for item in cursor:
 			list.append(str(item[0]))
@@ -405,7 +406,7 @@ class BrowserDB:
 			BrowserDB.FIELD_CERT_HOST,
 			BrowserDB.FIELD_CERT_PEM
 		)
-		print sql
+		print(sql)
 		c.execute(sql, (cert.host, cert.pem))
 		self.__conn.commit()
 		c.close()
@@ -465,7 +466,7 @@ class BrowserDB:
 
 	def __deleteCert(self, cert, cursor):
 		sql = "DELETE FROM %s WHERE %s=?" %(BrowserDB.TABLE_CERTS, BrowserDB.FIELD_ID)
-		print sql
+		print(sql)
 		cursor.execute(sql, (str(cert.id)) )
 		self.__conn.commit()
 
@@ -500,9 +501,9 @@ class BrowserDB:
 			BrowserDB.FIELD_COOKIE_PATH,
 			BrowserDB.FIELD_COOKIE_RAW,
 			BrowserDB.FIELD_COOKIE_EXPIRES)
-		print sql
+		print(sql)
 		sqlDel = "DELETE FROM %(table)s WHERE %(expires)s > 0 and %(expires)s < ?" %{ 'table' : BrowserDB.TABLE_COOKIES, 'expires' : BrowserDB.FIELD_COOKIE_EXPIRES }
-		print sqlDel
+		print(sqlDel)
 		c = None
 		if cursor is None:
 			c = self.__conn.cursor()

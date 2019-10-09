@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from __future__ import division
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -291,6 +292,6 @@ def MediaBrowserEntryComponent(item, title, type=MediaBrowser.ITEM_TYPE_FOLDER):
 	if pixmap:
 		png = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, pixmap))
 	if png:
-		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, (th-pxh)/2), size=(pxw, pxh), png=png))
+		res.append(MultiContentEntryPixmapAlphaBlend(pos=(10, (th-pxh)//2), size=(pxw, pxh), png=png))
 
 	return res

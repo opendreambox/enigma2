@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from Components.Converter.Converter import Converter
 from Components.Element import cached
 from enigma import iDVBFrontend
@@ -68,7 +70,7 @@ class FrontendInfo(Converter, object):
 			return "Unknown"
 		if percent is None:
 			return "N/A"
-		return "%d %%" % (percent * 100 / 65536)
+		return "%d %%" % (percent * 100 // 65536)
 
 	@cached
 	def getBool(self):
@@ -109,7 +111,7 @@ class FrontendInfo(Converter, object):
 				return 1
 			elif frontend_type == feTerrestrial:
 				return 2
-			print "FIXMEE unknown frontend type in FrontendInfo getValue Converter return 0 (SAT)", frontend_type
+			print("FIXMEE unknown frontend type in FrontendInfo getValue Converter return 0 (SAT)", frontend_type)
 			return 0
  		elif self.type == self.SLOT_NUMBER:
 			num = self.source.slot_number

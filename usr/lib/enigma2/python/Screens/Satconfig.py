@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import eDVBDB
 from Screen import Screen
 from Components.SystemInfo import SystemInfo
@@ -106,7 +108,7 @@ class NimSetupBase(object):
 			self.nimConfig.sat.configMode.setChoices(dict(choices), default = "nothing")
 
 	def createSetup(self, fill_advanced_sat=True):
-		print "Creating setup"
+		print("Creating setup")
 		self.list = [ ]
 
 		self.multiType = None
@@ -171,7 +173,7 @@ class NimSetupBase(object):
 			elif configMode == "loopthrough":
 				choices = []
 				connectable = nimmanager.canConnectTo(self.slotid)
-				print "connectable to:", connectable
+				print("connectable to:", connectable)
 				for id, type in connectable:
 					if type == 0:
 						choices.append((str(id), nimmanager.getNimDescription(id)))
@@ -187,7 +189,7 @@ class NimSetupBase(object):
 				self.list.append(self.advancedSatsEntry)
 				cur_orb_pos = self.nimConfig.advanced.sats.orbital_position
 				if cur_orb_pos is not None and fill_advanced_sat:
-					satlist = self.nimConfig.advanced.sat.keys()
+					satlist = list(self.nimConfig.advanced.sat.keys())
 					if cur_orb_pos not in satlist:
 						cur_orb_pos = satlist[0]
 					currSat = self.nimConfig.advanced.sat[cur_orb_pos]
@@ -228,11 +230,12 @@ class NimSetupBase(object):
 						elif self.nimConfig.cable.scan_type.value == "steps":
 							self.list.append(getConfigListEntry(_("Frequency scan step size(khz)"), self.nimConfig.cable.scan_frequency_steps))
 						if self.nim.description != "ATBM781x":
-							self.list.append(getConfigListEntry(_("Scan QAM16"), self.nimConfig.cable.scan_mod_qam16))
-							self.list.append(getConfigListEntry(_("Scan QAM32"), self.nimConfig.cable.scan_mod_qam32))
-							self.list.append(getConfigListEntry(_("Scan QAM64"), self.nimConfig.cable.scan_mod_qam64))
-							self.list.append(getConfigListEntry(_("Scan QAM128"), self.nimConfig.cable.scan_mod_qam128))
-							self.list.append(getConfigListEntry(_("Scan QAM256"), self.nimConfig.cable.scan_mod_qam256))
+							if not nimmanager.nim_slots[self.slotid].can_modulation_auto:
+								self.list.append(getConfigListEntry(_("Scan QAM16"), self.nimConfig.cable.scan_mod_qam16))
+								self.list.append(getConfigListEntry(_("Scan QAM32"), self.nimConfig.cable.scan_mod_qam32))
+								self.list.append(getConfigListEntry(_("Scan QAM64"), self.nimConfig.cable.scan_mod_qam64))
+								self.list.append(getConfigListEntry(_("Scan QAM128"), self.nimConfig.cable.scan_mod_qam128))
+								self.list.append(getConfigListEntry(_("Scan QAM256"), self.nimConfig.cable.scan_mod_qam256))
 							self.list.append(getConfigListEntry(_("Scan SR6900"), self.nimConfig.cable.scan_sr_6900))
 							self.list.append(getConfigListEntry(_("Scan SR6875"), self.nimConfig.cable.scan_sr_6875))
 							self.list.append(getConfigListEntry(_("Scan additional SR"), self.nimConfig.cable.scan_sr_ext1))
@@ -284,7 +287,7 @@ class NimSetupBase(object):
 	def refillAdvancedSats(self):
 		if self.have_advanced and self.nim.config.sat.configMode.value == "advanced":
 			self.createSetup(False)
-			satlist = self.nimConfig.advanced.sat.keys()
+			satlist = list(self.nimConfig.advanced.sat.keys())
 			for orb_pos in satlist:
 				curSat = self.nimConfig.advanced.sat[orb_pos]
 				self.fillListWithAdvancedSatEntrys(curSat)
@@ -535,7 +538,7 @@ class NimSetup(NimSetupBase, Screen, ConfigListScreen, ServiceStopScreen):
 					h = _("W")
 				else:
 					h = _("E")
-				sat_name = ("%d.%d" + h) % (orbpos / 10, orbpos % 10)
+				sat_name = ("%d.%d" + h) % (orbpos // 10, orbpos % 10)
 				
 			if confirmed[1] == "yes" or confirmed[1] == "no":
 				self.session.openWithCallback(self.deleteConfirmed, ChoiceBox, _("Delete no more configured satellite\n%s?") %(sat_name), [(_("Yes"), "yes"), (_("No"), "no"), (_("Yes to all"), "yestoall"), (_("No to all"), "notoall")], allow_cancel = False)
@@ -573,7 +576,7 @@ class NimSetup(NimSetupBase, Screen, ConfigListScreen, ServiceStopScreen):
 		self.restoreService(_("Zap back to service before tuner setup?"))
 
 	def nothingConnectedShortcut(self):
-		if type(self["config"].getCurrent()[1]) is ConfigSatlist:
+		if isinstance(self["config"].getCurrent()[1], ConfigSatlist):
 			self["config"].getCurrent()[1].setValue("3601")
 			self["config"].invalidateCurrent()
 
@@ -608,7 +611,7 @@ class NimSelection(Screen):
 
 	def updateList(self):
 		self.list = [ ]
-		slot_names = [ x.slot_input_name for x in nimmanager.nim_slots ]
+		slot_names = [ x.getSlotInputName(True) for x in nimmanager.nim_slots ]
 		for x in nimmanager.nim_slots:
 			slotid = x.slot
 			nimConfig = nimmanager.getNimConfig(x.slot)

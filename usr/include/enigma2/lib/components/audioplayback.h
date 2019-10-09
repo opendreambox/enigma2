@@ -16,7 +16,7 @@ public:
 	~eAudioPlayback();
 
 	int init(int type, int samplerate = -1, int channels = -1, int misc = -1, int bitrate = -1, int block_align = -1, int codec_data_size = 0, const uint8_t *codec_data = NULL, std::string raw_format = "", int mpegversion = 4);
-	void processAudio(const uint8_t *data, int bytes, int64_t pts); // should be called from worker thread
+	void processAudio(const uint8_t *data, int bytes, int64_t pts, bool framed=true); // should be called from worker thread
 
 	bool decoderStarted();
 

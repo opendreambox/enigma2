@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigYesNo, ConfigNumber
@@ -11,7 +12,7 @@ config.plugins.cleanupwizard.enable = ConfigYesNo(default = True)
 config.plugins.cleanupwizard.threshold = ConfigNumber(default = 2048)
 
 freeSpace = checkFreeSpaceAvailable()
-print "[CleanupWizard] freeSpaceAvailable-->",freeSpace
+print("[CleanupWizard] freeSpaceAvailable-->",freeSpace)
 
 if freeSpace is None:
 	internalMemoryExceeded = 0

@@ -8,6 +8,7 @@ from Components.Sources.StaticText import StaticText
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.HardwareInfo import HardwareInfo
+import six
 
 config.osd.window_animation = ConfigOnOff(default=True)
 config.osd.window_animation_default = ConfigText(default="simple_fade")
@@ -55,7 +56,7 @@ class AnimationSetup(Screen):
 	def reload(self):
 		animations = eWindowAnimationManager.getAnimations()
 		l = []
-		for key, name in animations.iteritems():
+		for key, name in six.iteritems(animations):
 			if key == config.osd.window_animation_default.value:
 				name = "* %s" %(name)
 			l.append( (name, key) )

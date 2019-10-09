@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from Renderer import Renderer
 
 from enigma import eCanvas, eRect, gRGB, eSize
@@ -39,7 +41,7 @@ class Canvas(Renderer):
 			elif l[0] == 2:
 				self.instance.writeText(eRect(l[1], l[2], l[3], l[4]), gRGB(l[5]), gRGB(l[6]), l[7], l[8], l[9])
 			else:
-				print "drawlist entry:", l
+				print("drawlist entry:", l)
 				raise RuntimeError("invalid drawlist entry")
 
 	def changed(self, what):
@@ -82,12 +84,12 @@ class Canvas(Renderer):
 		if fix_fb_aspect and size and pos is not None:
 			aspect = AVSwitch().getFramebufferScale()
 			if fix_fb_aspect == 'height':
-				fixed_height = (size[1] * aspect[0]) / aspect[1]
+				fixed_height = (size[1] * aspect[0]) // aspect[1]
 				y_corr = fixed_height - size[1]
 				attribs[pos_idx] = ("position", str(pos[0])+','+str(pos[1] - y_corr))
 				attribs[size_idx] = ("size", str(size[0])+','+str(fixed_height))
 			elif fix_fb_aspect == 'width':
-				fixed_width = (size[0] * aspect[1]) / aspect[0]
+				fixed_width = (size[0] * aspect[1]) // aspect[0]
 				x_corr = size[0] - fixed_width
 				attribs[pos_idx] = ("position", str(pos[0] + x_corr)+','+str(pos[1]))
 				attribs[size_idx] = ("size", str(fixed_width)+','+str(size[1]))

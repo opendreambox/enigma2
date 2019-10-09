@@ -1,3 +1,4 @@
+import six
 # !!! WARNING !!!
 # The steps are double-linked which means that the GC cannot collect them without unlinking them!
 # Call the cleanup method when done with this or you'll have memleak and other unwanted side-effects!
@@ -22,7 +23,7 @@ class PrioritizedStepper(object):
 			lastStep.PRV = steps[-2]
 
 	def add(self, parent, prio, steps):
-		while prio in self._steps.keys():
+		while prio in list(self._steps.keys()):
 			prio += 1
 
 		if isinstance(steps, list) and len(steps) == 1:
@@ -37,11 +38,11 @@ class PrioritizedStepper(object):
 			steps = self._instantiateStep(steps, parent)
 
 		self._steps[prio] = steps
-		self._sortedPrios = self._steps.keys()
+		self._sortedPrios = list(self._steps.keys())
 		self._sortedPrios.sort()
 
 	def cleanup(self):
-		for prio, steps in self._steps.iteritems():
+		for prio, steps in six.iteritems(self._steps):
 			if isinstance(steps, list):
 				for step in steps:
 					step.NXT = None

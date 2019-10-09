@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Tools.Profile import profile
 
 # workaround for required config entry dependencies.
@@ -123,11 +124,11 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		answer = answer and answer[1]
 		if answer is not None:
 			if answer == "ok_always":
-				print answer
+				print(answer)
 				config.misc.missingdefaultstoragenotification.value = False
 				config.misc.missingdefaultstoragenotification.save()
 			elif answer == "ok_setup":
-				print answer
+				print(answer)
 				from Screens.HarddiskSetup import HarddiskDriveSelection
 				self.session.open(HarddiskDriveSelection)
 
@@ -142,9 +143,9 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 			if InfoBar.instance.execing:
 				self.showHarddiskPopup(dev, media_state)
 			else:
-				print "HDDDetectedCB: main infobar is not execing... so we ignore hotplug event!"
+				print("HDDDetectedCB: main infobar is not execing... so we ignore hotplug event!")
 		else:
-				print "HDDDetectedCB: hotplug event.. but no infobar"
+				print("HDDDetectedCB: hotplug event.. but no infobar")
 
 	def __onClose(self):
 		InfoBar.instance = None

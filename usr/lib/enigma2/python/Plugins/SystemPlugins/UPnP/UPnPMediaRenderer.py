@@ -2,6 +2,7 @@
 # Originally based on http://coherence.beebits.net/browser/trunk/Coherence/coherence/backends/gstreamer_renderer.py
 # Which has been licensed under the MIT license.
 # Sublicensed under the enigma2 license.
+from __future__ import division
 from enigma import iPlayableService, eTimer, eDVBVolumecontrol, eServiceReference
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.ResourceManager import resourcemanager
@@ -137,7 +138,7 @@ class UPnPPlayer(object):
 		self.stopPolling() #don't send a new position until we're done seeking
 		seekable = self.getSeekable()
 		if seekable != None:
-			seekable.seekTo( long(int(position) * 90000) )
+			seekable.seekTo( int(int(position) * 90000) )
 
 		self.startPolling() #start sending position again
 
@@ -353,7 +354,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 
 	def _format_time(self, time):
 		time /= 90000
-		formatted = "%d:%02d:%02d" %(time/3600, time%3600/60, time%60)
+		formatted = "%d:%02d:%02d" %(time//3600, time%3600//60, time%60)
 		return formatted
 
 	def load(self, uri, metadata, mimetype=None):
@@ -462,7 +463,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		"""
 		dlna-playcontainer://uuid%3Afe814e3e-5214-4c24-847b-383fb599ff01?sid=urn%3Aupnp-org%3AserviceId%3AContentDirectory&cid=1441&fid=1444&fii=0&sc=&md=0
 		"""
-		from urllib import unquote
+		from six.moves.urllib.parse import unquote
 		from cgi import parse_qs
 
 		def handle_reply(r, uri, action, kw):

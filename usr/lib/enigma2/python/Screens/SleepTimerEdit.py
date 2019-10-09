@@ -1,3 +1,4 @@
+from __future__ import division
 from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.Input import Input
@@ -194,7 +195,7 @@ class SleepTimerEdit(Screen):
 					if length and position:
 						remaining = length[1] - position[1]
 						if remaining > 0:
-							remaining = remaining / 90000
+							remaining = remaining // 90000
 			else: # DVB
 				epg = eEPGCache.getInstance()
 				event = epg.lookupEventTime(ref, -1, 0)
@@ -205,5 +206,5 @@ class SleepTimerEdit(Screen):
 					end = start + duration
 					remaining = end - now
 		if remaining:
-			config.SleepTimer.defaulttime.value = (remaining / 60) + 2
-			self["input"].setText(str((remaining / 60) + 2))
+			config.SleepTimer.defaulttime.value = (remaining // 60) + 2
+			self["input"].setText(str((remaining // 60) + 2))

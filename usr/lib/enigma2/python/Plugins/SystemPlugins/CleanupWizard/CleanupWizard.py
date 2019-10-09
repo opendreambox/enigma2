@@ -1,3 +1,4 @@
+from __future__ import division
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
 from Screens.MessageBox import MessageBox
@@ -13,7 +14,7 @@ def checkFreeSpaceAvailable():
 		stat = statvfs('/')
 	except OSError:
 		return None
-	return (stat.f_bfree * stat.f_bsize)/1024 #return free space in kiloBytes
+	return (stat.f_bfree * stat.f_bsize)//1024 #return free space in kiloBytes
 
 
 class CleanupWizard(WizardLanguage, Rc):

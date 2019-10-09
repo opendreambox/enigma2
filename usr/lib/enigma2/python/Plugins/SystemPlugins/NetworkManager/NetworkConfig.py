@@ -3,8 +3,7 @@ from enigma import eNetworkManager, eNetworkService, eNetworkServicePtr, StringL
 
 from Components.Label import Label
 from Components.ActionMap import ActionMap
-from Components.config import getConfigListEntry, ConfigIP, ConfigOnOff, ConfigIP6, ConfigSelection, ConfigInteger,\
-	ConfigText
+from Components.config import config, getConfigListEntry, ConfigIP, ConfigOnOff, ConfigIP6, ConfigSelection, ConfigInteger, ConfigText
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
@@ -206,40 +205,6 @@ class NetworkConfigGeneral(object):
 		return (service.path(), interfacepng, strength, service.name(), ip, NetworkConfigGeneral.translateState(service.state()), None, security)
 
 class NetworkServiceConfig(Screen, NetworkConfigGeneral):
-	skin = """
-		<screen name="NetworkServiceConfig" position="center,120" size="920,520" title="Network Configuration">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="140,40" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="150,5" size="140,40" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="290,5" size="140,40" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="430,5" size="140,40" />
-			<widget name="key_red" position="10,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget name="key_green" position="150,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget name="key_yellow" position="290,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget name="key_blue" position="430,5" size="140,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<eLabel position="10,50" size="560,1" backgroundColor="grey" />
-			<widget source="list" render="Listbox" position="15,60" size="550,450" scrollbarMode="showOnDemand">
-				<convert type="TemplatedMultiContent">
-					{"template":[
-							MultiContentEntryPixmapAlphaTest(pos = (0, 0), size = (50, 50), png = 1), #type icon
-							MultiContentEntryText(pos = (55, 0), size = (300, 24), font=0, flags = RT_HALIGN_LEFT, text = 3), #service name
-							MultiContentEntryText(pos = (360, 0), size = (180, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text = 7), #security
-							MultiContentEntryText(pos = (430, 30), size = (110, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 2), #signal strength
-							MultiContentEntryText(pos = (55, 30), size = (220, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 4), #ip
-							MultiContentEntryText(pos = (280, 30), size = (145, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), #state
-							MultiContentEntryText(pos = (5, 0), size = (490, 50), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 6), #technology name
-						],
-					"itemHeight": 50,
-					"fonts": [gFont("Regular", 22), gFont("Regular", 16)]
-					}
-				</convert>
-			</widget>
-			<ePixmap position="580,5" size="330,510" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
-			<ePixmap pixmap="skin_default/buttons/key_menu.png" position="850,480" size="50,25"/>
-			<widget name="details_label" position="590,30" zPosition="2" size="310,25" font="Regular;22" foregroundColor="white" backgroundColor="background" halign="center" transparent="1" />
-			<widget name="details" position="590,70" zPosition="2" size="300,340" font="Regular;18" halign="center" foregroundColor="white" backgroundColor="background" transparent="1" />
-			<widget name="hint" position="590,440" zPosition="2" size="300,25" font="Regular;20" halign="center" foregroundColor="white" backgroundColor="background" transparent="1" />
-		</screen>"""
-
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		NetworkConfigGeneral.__init__(self)
@@ -256,7 +221,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			"menu": self._menu,
 			"cancel": self.close,
 			"ok" : self._ok,
-			"green": self._rescan,
+			"green": self._green,
 			"red": self._removeService
 		}, -3)
 		self["ServiceActions"] = ActionMap(["ColorActions"],
@@ -281,12 +246,31 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	def _menu(self):
 		self.session.open(NetworkTimeserverConfig)
 
+	def _green(self):
+		if isinstance(self._currentService, eNetworkServicePtr):
+			wol = self._currentService.wol()
+			self._enableWoL(wol == eNetworkService.WAKE_FLAG_NEVER)
+		else:
+			self._rescan()
+
 	def _rescan(self):
 		if not self._currentService or isinstance(self._currentService, eNetworkServicePtr):
 			return
 		if self._currentService.type() != eNetworkService.TYPE_WIFI:
 			return
 		if NetworkConfigGeneral._rescan(self, self._currentService):
+			self._createSetup()
+
+	def _enableWoL(self, enable):
+		if isinstance(self._currentService, eNetworkServicePtr) and self._currentService.hasWoL():
+			Log.w(self._currentService.wol())
+			config.network.wol_enabled.value = enable
+			config.network.wol_enabled.save()
+			if enable:
+
+				self._currentService.setWoL(eNetworkService.WAKE_FLAG_MAGIC)
+			else:
+				self._currentService.setWoL(eNetworkService.WAKE_FLAG_NEVER)
 			self._createSetup()
 
 	def _scanFinished(self, tech):
@@ -329,7 +313,11 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 	def _checkButtons(self):
 		self["hint"].setText("")
 		if isinstance(self._currentService, eNetworkServicePtr): #a service
-			self["key_green"].hide()
+			if self._currentService.hasWoL():
+				self["key_green"].setText(_("WoL"))
+				self["key_green"].show()
+			else:
+				self["key_green"].hide()
 			if self._currentService.connected():
 				self["hint"].setText(_("Press OK to disconnect"))
 			else:
@@ -343,6 +331,7 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 			self["ServiceActions"].setEnabled(True)
 		else: #a technology
 			if self._currentService and self._currentService.type() == eNetworkService.TYPE_WIFI:
+				self["key_green"].setText(_("Scan"))
 				self["key_green"].show()
 			else:
 				self["key_green"].hide()
@@ -424,7 +413,12 @@ class NetworkServiceConfig(Screen, NetworkConfigGeneral):
 				if text:
 					text = "\n\n%s" %(text)
 
-				text = "%s\n\n" %(service.name())
+				text = "%s" %(service.name())
+				Log.w(service.wol())
+				if service.wol() != eNetworkService.WAKE_FLAG_NEVER:
+					Log.w(service.wol())
+					text = "%s (Wake-on-Lan enabled)" %(text,)
+				text = "%s\n\n" %(text,)
 				ni = NetworkInterface(service)
 
 				ip4 = ni.getIpv4()
@@ -670,24 +664,6 @@ class ServiceIPConfiguration(object):
 			self._service.setIpv6Config(ip6_config)
 
 class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
-	skin = """
-		<screen name="NetworkServiceIPConfig" position="center,120" size="820,520" title="Network: Service configuration">
-			<!--
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
-			-->
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" />
-			<!--
-			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			-->
-			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-			<widget name="config" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand" />
-		</screen>"""
-
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
 		ConfigListScreen.__init__(self, [], session=session)
@@ -727,6 +703,7 @@ class NetworkServiceIPConfig(ConfigListScreen, Screen, ServiceBoundConfiguration
 		self["config"].list = self._ipconfig.getList()
 
 class ServiceNSConfiguration(object):
+
 	def __init__(self, service):
 		self._service = service
 		self.onChanged = []
@@ -766,21 +743,6 @@ class ServiceNSConfiguration(object):
 		self._service.setNameserversConfig(StringList(servers))
 
 class NetworkServiceNSConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
-	skin = """
-		<screen name="NetworkServiceNSConfig" position="center,120" size="820,520" title="Service: Name server configuration">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" />
-			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-			<widget name="config" position="10,60" size="800,360" enableWrapAround="1" scrollbarMode="showOnDemand" />
-			<eLabel position="10,430" size="800,1" backgroundColor="grey" />
-			<widget source="activedns" render="Label" position="10,440" size="800,75" font="Regular;20" valign="bottom"/>
-		</screen>"""
 
 	def __init__(self, session, service):
 		Screen.__init__(self, session)
@@ -870,21 +832,7 @@ class NetworkTimeserverConfiguration(object):
 		self._nm.setTimeservers(StringList(servers))
 
 class NetworkTimeserverConfig(ConfigListScreen, Screen, ServiceBoundConfiguration):
-	skin = """
-		<screen name="NetworkServiceNSConfig" position="center,120" size="820,520" title="Time server configuration">
-			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" />
-			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<eLabel position="10,50" size="800,1" backgroundColor="grey" />
-			<widget name="config" position="10,60" size="800,360" enableWrapAround="1" scrollbarMode="showOnDemand" />
-			<eLabel position="10,430" size="800,1" backgroundColor="grey" />
-			<widget source="activedns" render="Label" position="10,440" size="800,75" font="Regular;20" valign="bottom"/>
-		</screen>"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session, windowTitle=_("Time server configuration"))
 		ConfigListScreen.__init__(self, [], session=session)

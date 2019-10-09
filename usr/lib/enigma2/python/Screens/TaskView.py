@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screen import Screen
 from Components.ConfigList import ConfigListScreen
 from Components.config import ConfigSubsection, ConfigSelection, getConfigListEntry
@@ -135,7 +136,7 @@ class JobView(InfoBarNotifications, Screen, ConfigListScreen):
 		InfoBarNotifications.checkNotifications(self, immediate=True)
 		pending = Notifications.notificationQueue.getPending("JobMananger")
 		if pending:
-			print "[JobView] have pending JobMananger Notification(s):", pending
+			print("[JobView] have pending JobMananger Notification(s):", pending)
 		elif self.settings.afterEvent.getValue() == "close" and self.job.status == self.job.FAILED:
 			self.close(False)
 

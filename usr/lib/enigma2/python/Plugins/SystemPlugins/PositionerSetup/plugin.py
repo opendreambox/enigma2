@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import eTimer, eDVBResourceManager, \
 	eDVBDiseqcCommand, eDVBFrontendParametersSatellite, \
 	iDVBFrontend
@@ -18,6 +20,7 @@ from Components.TuneTest import Tuner
 from Tools.Transponder import ConvertToHumanReadable
 
 from time import sleep
+from six.moves import range
 
 class PositionerSetup(Screen):
 	skin = """
@@ -84,8 +87,8 @@ class PositionerSetup(Screen):
 		self.diseqc = Diseqc(self.frontend)
 		self.tuner = Tuner(self.frontend, True) #True means we dont like that the normal sec stuff sends commands to the rotor!
 
-		tp = ( cur.get("frequency", 0) / 1000,
-			cur.get("symbol_rate", 0) / 1000,
+		tp = ( cur.get("frequency", 0) // 1000,
+			cur.get("symbol_rate", 0) // 1000,
 			cur.get("polarization", eDVBFrontendParametersSatellite.Polarisation_Horizontal),
 			cur.get("fec_inner", eDVBFrontendParametersSatellite.FEC_Auto),
 			cur.get("inversion", eDVBFrontendParametersSatellite.Inversion_Unknown),
@@ -173,11 +176,11 @@ class PositionerSetup(Screen):
 				if self.frontend:
 					return True
 				else:
-					print "getFrontend failed"
+					print("getFrontend failed")
 			else:
-				print "getRawChannel failed"
+				print("getRawChannel failed")
 		else:
-			print "getResourceManager instance failed"
+			print("getResourceManager instance failed")
 		return False
 
 	def createConfig(self):
@@ -286,7 +289,7 @@ class PositionerSetup(Screen):
 			fe_data["orbital_position"] = feparm.orbital_position
 			self.session.openWithCallback(self.tune, TunerScreen, self.feid, fe_data)
 		elif entry == "goto0":
-			print "move to position 0"
+			print("move to position 0")
 			self.diseqccommand("moveTo", 0)
 
 	def greenKey(self):
@@ -302,10 +305,10 @@ class PositionerSetup(Screen):
 				self.diseqccommand("moveWest", 0)
 			self.updateColors("move")
 		elif entry == "finemove":
-			print "stepping west"
+			print("stepping west")
 			self.diseqccommand("moveWest", 0xFF) # one step
 		elif entry == "storage":
-			print "store at position", int(self.positioner_storage.value)
+			print("store at position", int(self.positioner_storage.value))
 			self.diseqccommand("store", int(self.positioner_storage.value))
 
 		elif entry == "limits":
@@ -324,10 +327,10 @@ class PositionerSetup(Screen):
 				self.diseqccommand("moveEast", 0)
 			self.updateColors("move")
 		elif entry == "finemove":
-			print "stepping east"
+			print("stepping east")
 			self.diseqccommand("moveEast", 0xFF) # one step
 		elif entry == "storage":
-			print "move to position", int(self.positioner_storage.value)
+			print("move to position", int(self.positioner_storage.value))
 			self.diseqccommand("moveTo", int(self.positioner_storage.value))
 		elif entry == "limits":
 			self.diseqccommand("limitEast")
@@ -343,7 +346,7 @@ class PositionerSetup(Screen):
 				self.diseqccommand("moveEast", 0)
 				self.isMoving = True
 			self.updateColors("move")
-			print "moving east"
+			print("moving east")
 		elif entry == "limits":
 			self.diseqccommand("limitOn")
 
@@ -404,8 +407,8 @@ class Diseqc:
 			else:
 				string = 'e03160' #positioner stop
 
-			print "diseqc command:",
-			print string
+			print("diseqc command:", end=' ')
+			print(string)
 			cmd.setCommandString(string)
 			self.frontend.setTone(iDVBFrontend.toneOff)
 			sleep(0.015) # wait 15msec after disable tone
@@ -577,7 +580,7 @@ class TunerScreen(ScanSetup):
 				self.scan_sat.pls_code.value if self.scan_sat.pls_mode.value < eDVBFrontendParametersSatellite.PLS_Unknown else 0)
 		elif tuning.type.value == "predefined_transponder":
 			transponder = nimmanager.getTransponders(satpos)[tuning.transponder.index]
-			returnvalue = (transponder[1] / 1000, transponder[2] / 1000,
+			returnvalue = (transponder[1] // 1000, transponder[2] // 1000,
 				transponder[3], transponder[4], 2, satpos, transponder[5], transponder[6], transponder[8], transponder[9])
 		self.close(returnvalue)
 

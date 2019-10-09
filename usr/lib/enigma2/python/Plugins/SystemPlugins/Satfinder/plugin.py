@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import eDVBResourceManager,\
 	eDVBFrontendParametersSatellite
 
@@ -23,11 +25,11 @@ class Satfinder(ScanSetup):
 				if self.frontend:
 					return True
 				else:
-					print "getFrontend failed"
+					print("getFrontend failed")
 			else:
-				print "getRawChannel failed"
+				print("getRawChannel failed")
 		else:
-			print "getResourceManager instance failed"
+			print("getResourceManager instance failed")
 		return False
 
 	def __init__(self, session, feid):
@@ -163,7 +165,7 @@ class Satfinder(ScanSetup):
 			l = len(tps)
 			if l > self.tuning_transponder.index:
 				transponder = tps[self.tuning_transponder.index]
-				returnvalue = (transponder[1] / 1000, transponder[2] / 1000,
+				returnvalue = (transponder[1] // 1000, transponder[2] // 1000,
 					transponder[3], transponder[4], 2, satpos, transponder[5], transponder[6], transponder[8], transponder[9])
 				self.tune(returnvalue)
 

@@ -1,11 +1,14 @@
+from __future__ import division
+from __future__ import print_function
 import NavigationInstance
 from time import localtime, mktime, gmtime
 from enigma import iServiceInformation, eServiceCenter, eServiceReference
 from timer import TimerEntry
+from six.moves import range
 
 class TimerSanityCheck:
 	def __init__(self, timerlist, newtimer=None):
-		print "sanitycheck"
+		print("sanitycheck")
 		self.localtimediff = 25*3600 - mktime(gmtime(25*3600))
 		self.timerlist = timerlist
 		self.newtimer = newtimer
@@ -16,7 +19,7 @@ class TimerSanityCheck:
 		self.eflag = 1
 
 	def check(self, ext_timer=1):
-		print "check"
+		print("check")
 		if ext_timer != 1:
 			self.newtimer = ext_timer
 		if self.newtimer is None:
@@ -60,7 +63,7 @@ class TimerSanityCheck:
 		# count of running timers
 
 		serviceHandler = eServiceCenter.getInstance()
-		print "checkTimerlist"
+		print("checkTimerlist")
 # create a list with all start and end times
 # split it into recurring and singleshot timers
 
@@ -119,7 +122,7 @@ class TimerSanityCheck:
 			interval_begin = min(self.nrep_eventlist)[0]
 			interval_end = max(self.nrep_eventlist)[0]
 			offset_0 = interval_begin - (interval_begin % 604800)
-			weeks = (interval_end - offset_0) / 604800
+			weeks = (interval_end - offset_0) // 604800
 			if ((interval_end - offset_0) % 604800):
 				weeks += 1
 			for cnt in range(weeks):
@@ -219,7 +222,7 @@ class TimerSanityCheck:
 					if entry[1] == timer:
 						overlaplist.remove(entry)
 			else:
-				print "Bug: unknown flag!"
+				print("Bug: unknown flag!")
 			self.nrep_eventlist[idx] = (event[0],event[1],event[2],cnt,overlaplist[:]) # insert a duplicate into current overlaplist
 			fakeRecService = None
 			idx += 1
@@ -262,6 +265,6 @@ class TimerSanityCheck:
 								break
 
 		if len(self.simultimer) < 2:
-			print "Bug: unknown Conflict!"
+			print("Bug: unknown Conflict!")
 
 		return False # conflict detected!

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from enigma import eNetworkManager, StringMap
+from enigma import eNetworkManager, StringMap, eNetworkService
 from Components.config import config, ConfigBoolean
 from Plugins.Plugin import PluginDescriptor
 from Screens.MessageBox import MessageBox
@@ -10,6 +10,7 @@ from MultiInputBox import MultiInputBox
 from NetworkConfig import NetworkServiceConfig
 
 from NetworkWizard import NetworkWizardNew
+import six
 
 class NetworkAgent(object):
 	def __init__(self, session):
@@ -36,7 +37,7 @@ class NetworkAgent(object):
 	def _userInputRequested(self, svcpath):
 		Log.i(svcpath)
 		dialog_values = self._nm.getUserInputRequestFields()
-		for key,value in dialog_values.iteritems():
+		for key,value in six.iteritems(dialog_values):
 			Log.i("%s => %s" %(key, value))
 
 		windowTitle = _("Network")
@@ -54,7 +55,7 @@ class NetworkAgent(object):
 
 		input_config = []
 		if len(dialog_values) > 0:
-			for key, value in dialog_values.iteritems():
+			for key, value in six.iteritems(dialog_values):
 				input_config.append( self._createInputConfig(key, value, prev) ),
 			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=windowTitle, config=input_config)
 		else:
@@ -97,6 +98,16 @@ class NetworkAgent(object):
 
 global networkagent
 networkagent = None
+
+def onServicesChanged():
+	if not config.network.wol_enabled.value:
+		return
+	for service in eNetworkManager.getInstance().getServices():
+		if service.hasWoL() and not service.wol():
+			service.setWoL(eNetworkService.WAKE_FLAG_MAGIC)
+
+__nm_svc_conn =  eNetworkManager.getInstance().servicesChanged.connect(onServicesChanged)
+
 def main(reason, **kwargs):
 	global networkagent
 	if reason == 0:

@@ -154,7 +154,7 @@ class Timezones(object):
 
 	@property
 	def regions(self):
-		return self._regions.keys()
+		return list(self._regions.keys())
 
 	@property
 	def defaultRegion(self):
@@ -178,8 +178,7 @@ class Timezones(object):
 		self._lut = {}
 		self._regions = OrderedDict()
 		zones = ZoneInfoFile(getzoneinfofile_stream()).zones
-		keys = zones.keys()
-		keys.sort()
+		keys = sorted(zones.keys())
 		for key in keys:
 			zinfo = zones[key]
 			timezone = Timezone(key, zinfo)
@@ -226,7 +225,7 @@ class Timezones(object):
 	def getDefaultTimezone(self):
 		# TODO return something more useful - depending on country-settings?
 		t = self.getCurrentTimezone()
-		if t in self._lut.keys():
+		if t in list(self._lut.keys()):
 			return t
 		return self.timezones[0][0]
 

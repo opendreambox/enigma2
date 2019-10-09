@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.Label import Label
@@ -8,6 +9,7 @@ from InfoBarGenerics import InfoBarShowHide, InfoBarMenu, InfoBarInstantRecord, 
 from Components.ServiceEventTracker import InfoBarBase
 
 from enigma import eTimer
+from six.moves import range
 
 class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 		InfoBarInstantRecord, InfoBarSeek, InfoBarTimeshift, \
@@ -95,7 +97,7 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 				return x
 	
 	def keyNumberGlobal(self, number):
-		print number, "pressed"
+		print(number, "pressed")
 		self.updateSubservices()
 		if number == 0:
 			self.playSubservice(self.__lastservice)
@@ -117,7 +119,7 @@ class SubservicesQuickzap(InfoBarBase, InfoBarShowHide, InfoBarMenu, \
 		self.session.openWithCallback(self.subserviceSelected, ChoiceBox, title=_("Please select a subservice..."), list = tlist, selection = self.currentlyPlayingSubservice, keys = keys)
 	
 	def subserviceSelected(self, service):
-		print "playing subservice number", service
+		print("playing subservice number", service)
 		if service is not None:
 			self.playSubservice(service[1])
 	

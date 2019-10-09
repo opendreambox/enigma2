@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from PerServiceDisplay import PerServiceDisplay, PerServiceBase
 from Components.GUIComponent import GUIComponent
 from enigma import eTimer, iPlayableService, ePositionGauge
@@ -43,7 +45,7 @@ class ServicePosition(PerServiceDisplay, object):
 			elif what == self.TYPE_POSITION:
 				r = seek.getPlayPosition()
 			if not r[0]:
-				return r[1] / 90000
+				return r[1] // 90000
 		
 		return -1
 	
@@ -62,7 +64,7 @@ class ServicePosition(PerServiceDisplay, object):
 				elif self.type == self.TYPE_REMAINING:
 					l = self.get(self.TYPE_LENGTH) - self.get(self.TYPE_POSITION)
 			
-				self.setText("%d:%02d" % (l/60, l%60))
+				self.setText("%d:%02d" % (l//60, l%60))
 			else:
 				l = self.get(self.TYPE_POSITION)
 				if l != -1:
@@ -157,10 +159,10 @@ class ServicePositionGauge(PerServiceBase, GUIComponent):
 		return self.__seek_position
 	
 	def setSeekPosition(self, pos):
-		print "set seek position:", pos
+		print("set seek position:", pos)
 		self.__seek_position = pos
 		if self.instance is not None:
-			print "set instance."
+			print("set instance.")
 			self.instance.setSeekPosition(pos)
 	
 	seek_pointer_position = property(getSeekPosition, setSeekPosition)

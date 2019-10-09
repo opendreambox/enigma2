@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eDisplayManager
 from Screens.Wizard import WizardSummary
 from Components.DisplayHardware import DisplayHardware
@@ -53,7 +54,7 @@ class VideoWizard():
 	def listPorts(self):
 		hw_type = HardwareInfo().get_device_name()
 		list_ports = list(config.av.videoport.getChoices())
-		print "listPorts:", list_ports
+		print("listPorts:", list_ports)
 
 		try:
 			list_ports.remove(("HDMI-PC", "HDMI-PC"))
@@ -69,12 +70,12 @@ class VideoWizard():
 		self.portSelectionMade(self.selection)
 
 	def portSelectionMade(self, index):
-		print "portSelectionMade:", index
+		print("portSelectionMade:", index)
 		self.port = index
 		self.portSelect(index)
 		
 	def portSelectionMoved(self):
-		print "portSelectionMoved:", self.selection
+		print("portSelectionMoved:", self.selection)
 		self.portSelect(self.selection)
 		if self["portpic"].instance is not None:
 			picname = self.selection
@@ -83,7 +84,7 @@ class VideoWizard():
 			self["portpic"].instance.setPixmapFromFile(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/Videomode/" + picname + ".png"))
 		
 	def portSelect(self, port):
-		print "inputSelect:", port
+		print("inputSelect:", port)
 		self.port = port
 
 		modeList = self.listModes()
@@ -95,28 +96,28 @@ class VideoWizard():
 			self.hw.setMode(self.port, self.mode, self.rate)
 		
 	def listModes(self):
-		print "modes for port", self.port
+		print("modes for port", self.port)
 
 		try:
 			list = config.av.videomode[self.port].getChoices()
-			print "modeslist:", list
+			print("modeslist:", list)
 			return list
 		except KeyError:
-			print "modeslist: empty"
+			print("modeslist: empty")
 			return []
 	
 	def modeSelectionMade(self, index):
-		print "modeSelectionMade:", index
+		print("modeSelectionMade:", index)
 		self.mode = index
 		self.modeSelect(index)
 		
 	def modeSelectionMoved(self):
-		print "mode selection moved:", self.selection
+		print("mode selection moved:", self.selection)
 		self.modeSelect(self.selection)
 		
 	def modeSelect(self, mode):
-		print "modeSelect"
-		print "Mode: ", mode
+		print("modeSelect")
+		print("Mode: ", mode)
 		self.mode = mode
 		ratesList = self.listRates()
 
@@ -126,16 +127,16 @@ class VideoWizard():
 
 	def listRates(self):
 		list = sorted(config.av.videorate[self.mode].getChoices(), key=lambda rate: rate[0], reverse=True)
-		print list
+		print(list)
 		return list
 
 	def rateSelectionMade(self, index):
-		print "rateSelectionMade:", index
+		print("rateSelectionMade:", index)
 		self.rate = index
 		self.rateSelect(index)
 
 	def rateSelectionMoved(self):
-		print "rate selection moved:", self.selection
+		print("rate selection moved:", self.selection)
 		self.rateSelect(self.selection)
 
 	def rateSelect(self, rate):

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import getPrevAsciiCode
 
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -131,7 +132,7 @@ class BookmarkEditor(Screen):
 			self.inputUrl.number(number)
 	
 	def __ascii(self):
-		print "ASCII!"
+		print("ASCII!")
 		if self.nameFocus:
 			self.inputName.handleAscii(getPrevAsciiCode())
 		else:

@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 import Project, TitleCutter, TitleProperties, ProjectSettings, MediumToolbox, Process, Bludisc
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
@@ -11,8 +13,9 @@ from Components.Sources.StaticText import StaticText
 from Components.Sources.Progress import Progress
 from Components.Label import MultiColorLabel
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from six.moves import range
 
-MODE_DVD, MODE_BLUDISC = range(2)
+MODE_DVD, MODE_BLUDISC = list(range(2))
 
 class TitleList(Screen, HelpableScreen):
 	skin = """
@@ -109,9 +112,9 @@ class TitleList(Screen, HelpableScreen):
 
 	def checkBackgroundJobs(self):
 		for job in job_manager.getPendingJobs():
-			print "type(job):", type(job)
-			print "Process.DVDJob:", Process.DVDJob
-			if type(job) == Process.DVDJob:
+			print("type(job):", type(job))
+			print("Process.DVDJob:", Process.DVDJob)
+			if isinstance(job, Process.DVDJob):
 				self.backgroundJob = job
 				return
 		self.backgroundJob = None
@@ -178,7 +181,7 @@ class TitleList(Screen, HelpableScreen):
 			def updateTags(self):
 				pass
 			def doContext(self):
-				print "context menu forbidden inside DVDBurn to prevent calling multiple instances"
+				print("context menu forbidden inside DVDBurn to prevent calling multiple instances")
 			def insertWithoutEdit(self):
 				current = self.getCurrent()
 				if current is not None:
@@ -291,11 +294,11 @@ class TitleList(Screen, HelpableScreen):
 		self.project.finished_burning = False
 
 	def updateSize(self):
-		size = self.project.size/(1024*1024)
+		size = self.project.size//(1024*1024)
 		MAX_DL = self.project.MAX_DL-100
 		MAX_SL = self.project.MAX_SL-100
 		MAX_BD = self.project.MAX_BD-200
-		self["space_bar_bludisc"].value = 100 * size / (MAX_BD)
+		self["space_bar_bludisc"].value = 100 * size // (MAX_BD)
 
 		if self.project.settings.authormode.value == "bdmv":
 			percent = 100 * size / float(MAX_BD)
@@ -406,6 +409,6 @@ class TitleList(Screen, HelpableScreen):
 			self.session.openWithCallback(self.exitCB, MessageBox,text = _("Your current collection will get lost!") + "\n" + _("Do you really want to exit?"), type = MessageBox.TYPE_YESNO)
 
 	def exitCB(self, answer):
-		print "exitCB", answer
+		print("exitCB", answer)
 		if answer is not None and answer:
 			self.close()

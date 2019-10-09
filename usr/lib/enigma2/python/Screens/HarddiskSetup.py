@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screen import Screen
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.Harddisk import harddiskmanager  #global harddiskmanager
@@ -23,6 +24,7 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.BoundFunction import boundFunction
 from enigma import eTimer
 from os import path, makedirs, listdir, access, F_OK, R_OK
+import six
 
 HARDDISK_INITIALIZE = 1
 HARDDISK_CHECK = 2
@@ -69,10 +71,10 @@ def updateVideoDirs(uuid = None):
 	config.movielist.videodirs.save()
 	config.movielist.save()
 	configfile.save()
-	print "updateVideoDirs:",config.movielist.videodirs.value
+	print("updateVideoDirs:",config.movielist.videodirs.value)
 
 def doFstabUpgrade(uuid, path, mp, callConfirmApply, applyCallback = None, answer = None, selection = None):
-	print "[doFstabUpgrade] - Removing hard mount entry from fstab.",path, mp, answer, selection
+	print("[doFstabUpgrade] - Removing hard mount entry from fstab.",path, mp, answer, selection)
 	partitionPath = path
 	uuidpartitionPath = "/dev/disk/by-uuid/" + uuid
 	mountpath = mp
@@ -103,15 +105,15 @@ def doFstabUpgrade(uuid, path, mp, callConfirmApply, applyCallback = None, answe
 			else:
 				applyCallback(True, callConfirmApply)
 	else:
-		print "error removing fstab entry!"
+		print("error removing fstab entry!")
 
 def hddConfirmed(confirmed, stype, hdd, partition = None, callback = None ):
 	if not confirmed:
 		return
-	print "hddConfirmed: this will start either the initialize or the fsck now!"
+	print("hddConfirmed: this will start either the initialize or the fsck now!")
 	UUIDPartitionList = [ ]
 	if stype == HARDDISK_INITIALIZE:
-		print "hddConfirmed: start initialize for device:%s and partitions:%s" % (hdd.device, hdd.numPartitions())
+		print("hddConfirmed: start initialize for device:%s and partitions:%s" % (hdd.device, hdd.numPartitions()))
 		for p in harddiskmanager.partitions[:]:
 			if p.device is not None:
 				if p.device.startswith(hdd.device):
@@ -126,7 +128,7 @@ def hddConfirmed(confirmed, stype, hdd, partition = None, callback = None ):
 					cfg["enabled"].value = False
 					updateVideoDirs(uuid)
 					del config.storage[uuid]
-					print "hddConfirmed: known device re-initialize, removed old uuid:",uuid
+					print("hddConfirmed: known device re-initialize, removed old uuid:",uuid)
 				else:
 					harddiskmanager.unmountPartitionbyUUID(uuid)
 
@@ -207,8 +209,8 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 		self.UUIDPartitionList = [ ]
 
 		self.deviceName, self.UUID, self.numPartitions, self.partitionNum, self.uuidPath, self.partitionPath = harddiskmanager.getPartitionVars(self.hdd,partition)
-		print "[HarddiskDriveSetup] - deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s' - partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
-		% (self.deviceName, self.UUID, self.numPartitions, self.partitionNum, self.partitionPath, self.uuidPath, self.hdd.device,self.hdd.dev_path)
+		print("[HarddiskDriveSetup] - deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s' - partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
+		% (self.deviceName, self.UUID, self.numPartitions, self.partitionNum, self.partitionPath, self.uuidPath, self.hdd.device,self.hdd.dev_path))
 
 		self.setup_title = _("Partition") + " " + self.deviceName
 		if config.storage.get(self.UUID, None) is not None:
@@ -332,13 +334,13 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 			mountpath = retval.strip().replace(' ','')
 			if retval.endswith("/"):
 				mountpath = retval[:-1]
-			print "MountpointBrowserClosed: with path: " + str(mountpath)
+			print("MountpointBrowserClosed: with path: " + str(mountpath))
 			try:
 				if mountpath != self.oldMountpath:
 					if not path.exists(mountpath):
 						makedirs(mountpath)
 			except OSError:
-				print "mountpoint directory could not be created."
+				print("mountpoint directory could not be created.")
 
 			if not path.exists(mountpath):
 				self.session.open(MessageBox, _("Sorry, your directory is not writeable."), MessageBox.TYPE_INFO, timeout = 10)
@@ -354,7 +356,7 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 						self.session.openWithCallback(lambda x : self.confirmFstabUpgrade(x, self.UUID, self.partitionPath, mountpath, False), MessageBox, message, MessageBox.TYPE_YESNO, timeout = 20, default = True)
 
 	def confirmFstabUpgrade(self, result, uuid, partitionPath, mountpath, callConfirmApply = False):
-		print "[HarddiskSetup] - confirmFstabUpgrade:",result, uuid, partitionPath, mountpath, callConfirmApply
+		print("[HarddiskSetup] - confirmFstabUpgrade:",result, uuid, partitionPath, mountpath, callConfirmApply)
 		if not result:
 			return
 		doFstabUpgrade(uuid, partitionPath, mountpath, callConfirmApply, self.confirmFstabUpgradeCB)
@@ -372,12 +374,12 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 
 	def confirmApply(self, confirmed):
 		if not confirmed:
-			print "not confirmed"
+			print("not confirmed")
 			return
 		else:
 			for x in self["config"].list:
 				x[1].save()
-			print "confirmApply:",config.storage[self.UUID]['enabled'].value, config.storage[self.UUID]['mountpoint'].value
+			print("confirmApply:",config.storage[self.UUID]['enabled'].value, config.storage[self.UUID]['mountpoint'].value)
 			successfully = False
 			action = "mount_only"
 			uuid_cfg = config.storage.get(self.UUID, None)
@@ -557,7 +559,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 
 	def hotplugCB(self, dev, media_state):
 		if media_state in ("add_delayed", "remove_delayed"):
-			print "[HarddiskDriveSelection] - hotplugCB for dev:%s, media_state:%s" % (dev, media_state)
+			print("[HarddiskDriveSelection] - hotplugCB for dev:%s, media_state:%s" % (dev, media_state))
 			if self.currentlyUpdating is False:
 				self.currentlyUpdating = True
 				self.setButtons()
@@ -582,7 +584,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 
 		if isOfflineStorageDevice:
 			uuid = hd
-			print "[HarddiskDriveSelection] - buildHDDList for offline uuid: ",uuid
+			print("[HarddiskDriveSelection] - buildHDDList for offline uuid: ",uuid)
 			hdd_description = config.storage[uuid]["device_description"].value
 			if config.storage[uuid]["enabled"].value == True:
 				currentMountpoint = config.storage[uuid]["mountpoint"].value
@@ -599,7 +601,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		else:
 			hdd_description = hd.model()
 			deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hd,partNum)
-			print "[HarddiskDriveSelection] - buildHDDList for online device:",deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath
+			print("[HarddiskDriveSelection] - buildHDDList for online device:",deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath)
 			if uuid is None and numPartitions == 2:
 				part2Type = harddiskmanager.getBlkidPartitionType(hd.partitionPath("2"))
 				if part2Type == "swap":
@@ -612,7 +614,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 							numPartitions = 1
 							uuidPath = "/dev/disk/by-uuid/" + uuid
 							partitionPath = hd.partitionPath("1")
-							print "[HarddiskDriveSelection] - RE-buildHDDList for online device:",deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath
+							print("[HarddiskDriveSelection] - RE-buildHDDList for online device:",deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath)
 			blkdev = BlockDevice(partitionPath)
 			hdd_description += " (" + blkdev.capacityString() + ")"
 			if uuid is not None:
@@ -858,8 +860,8 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 				introduction = mount_msg
 
 				deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hd,partNum)
-				print "[HarddiskDriveSelection] - selectionChanged: deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s' - partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
-				% (deviceName, uuid, numPartitions, partitionNum, partitionPath, uuidPath, hd.device, hd.dev_path)
+				print("[HarddiskDriveSelection] - selectionChanged: deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s' - partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
+				% (deviceName, uuid, numPartitions, partitionNum, partitionPath, uuidPath, hd.device, hd.dev_path))
 
 				if numPartitions >= 2:
 					introduction = showpartitions_msg
@@ -869,8 +871,8 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 					if p is not None:
 						selectedPart = p
 						if selectedPart is not None:
-							print "[HarddiskDriveSelection] - selectionChanged: SelectedPart device:'%s'-uuid:'%s' isMountable:'%s'-isReadable:'%s'-isWriteable:'%s'-isInitialized:'%s'-fsType:'%s'" \
-							% (selectedPart.device ,selectedPart.uuid ,selectedPart.isMountable, selectedPart.isReadable,selectedPart.isWriteable,selectedPart.isInitialized,selectedPart.fsType)
+							print("[HarddiskDriveSelection] - selectionChanged: SelectedPart device:'%s'-uuid:'%s' isMountable:'%s'-isReadable:'%s'-isWriteable:'%s'-isInitialized:'%s'-fsType:'%s'" \
+							% (selectedPart.device ,selectedPart.uuid ,selectedPart.isMountable, selectedPart.isReadable,selectedPart.isWriteable,selectedPart.isInitialized,selectedPart.fsType))
 							isReadable = selectedPart.isReadable
 							partitionType = selectedPart.fsType
 				if partitionType is None:
@@ -916,7 +918,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 				self["key_red"].setText(remove_btntxt)
 				self["RedColorActions"].setEnabled(True)
 				self["OkActions"].setEnabled(True)
-				if isinstance(current[1], (basestring, str)):
+				if isinstance(current[1], six.string_types):
 					self.devicedescription = storagedevice_description
 					if not config.storage[current[1]]["isRemovable"].value:
 						self.devicedescription = harddisk_description
@@ -934,7 +936,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 	def handleAnswer(self, answer, selection):
 		self.devicedescription = storagedevice_description
 		answer = answer and answer[1]
-		print "[HarddiskDriveSelection] - handleAnswer:",answer
+		print("[HarddiskDriveSelection] - handleAnswer:",answer)
 		if answer == "mount_default":
 			self.applyAnswer(answer, selection)
 		elif answer == "mount_only":
@@ -952,7 +954,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		elif answer in ("unmount", "eject"):
 			self.confirmApplyAnswer(True, answer, selection)
 		elif answer == "remove":
-			if isinstance(selection[1], (basestring, str)):
+			if isinstance(selection[1], six.string_types):
 				if not config.storage[selection[1]]["isRemovable"].value:
 					self.devicedescription = harddisk_description
 				message = _("Really remove this %(desc)s entry?") % self.devicedescription
@@ -963,10 +965,10 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 			message = _("Do you really want to initialize this %(desc)s?\nAll data on this %(desc)s will be lost!") % self.devicedescription
 			self.session.openWithCallback(lambda x : hddConfirmed(x, HARDDISK_INITIALIZE, selection[1], None, self.starthddInitCheck), MessageBox, message)
 		elif answer in ( None, "nothing"):
-			print "nothing to do"
+			print("nothing to do")
 
 	def applyAnswer(self, answer, selection):
-		print "[HarddiskDriveSelection] - applyAnswer:",answer,selection
+		print("[HarddiskDriveSelection] - applyAnswer:",answer,selection)
 		hd = selection[1]
 		partNum = selection[10]
 		deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hd,partNum)
@@ -995,7 +997,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 			else:
 				self.confirmApplyAnswer(True, answer, selection)
 		else:
-			print "[applyAnswer] - could not determine uuid"
+			print("[applyAnswer] - could not determine uuid")
 
 	def confirmFstabUpgrade(self, result, uuid, partitionPath, mountpath, answer, selection, callConfirmApply = False):
 		if not result:
@@ -1014,7 +1016,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 
 	def confirmApplyAnswer(self, confirmed, answer, selection):
 		if not confirmed:
-			print "not confirmed"
+			print("not confirmed")
 			return
 		else:
 			self.devicedescription = storagedevice_description
@@ -1044,7 +1046,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 					successfully = harddiskmanager.changeStorageDevice(uuid, "mount_only", ["", False, mountpoint, True]) #mountDATA
 				else:
 					successfully = harddiskmanager.changeStorageDevice(uuid, answer, None)
-				print "confirmApplyAnswer:",answer, uuid_cfg['enabled'].value, uuid_cfg['mountpoint'].value
+				print("confirmApplyAnswer:",answer, uuid_cfg['enabled'].value, uuid_cfg['mountpoint'].value)
 			if successfully:
 				uuid_cfg = config.storage.get(uuid, None)
 				if uuid_cfg is not None:
@@ -1060,7 +1062,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 	def okbuttonClick(self):
 		selection = self["hddlist"].getCurrent()
 		if selection[1] != 0:
-			print "[HarddiskDriveSelection] - okbuttonClick:",selection[0], selection[2], selection[3],selection[10]
+			print("[HarddiskDriveSelection] - okbuttonClick:",selection[0], selection[2], selection[3],selection[10])
 			hd = selection[1]
 			offline = selection[4]
 			partNum = selection[10]
@@ -1068,8 +1070,8 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 			selectedPart = None
 			if not offline:
 				deviceName, uuid, numPartitions, partitionNum, uuidPath, partitionPath = harddiskmanager.getPartitionVars(hd,partNum)
-				print "[HarddiskDriveSelection] - okbuttonClick: deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s'- partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
-				% (deviceName, uuid, numPartitions, partitionNum, partitionPath, uuidPath, hd.device, hd.dev_path)
+				print("[HarddiskDriveSelection] - okbuttonClick: deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s'- partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
+				% (deviceName, uuid, numPartitions, partitionNum, partitionPath, uuidPath, hd.device, hd.dev_path))
 				isRemovable = hd.isRemovable
 			else: #offline drive ?
 				uuid = hd
@@ -1162,11 +1164,11 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 
 	def starthddInitCheck(self, stype, hdd, partition ):
 		if stype == HARDDISK_INITIALIZE:
-			print "[HarddiskDriveSelection]- starthddInit Initialize: ",stype, hdd
+			print("[HarddiskDriveSelection]- starthddInit Initialize: ",stype, hdd)
 			hdd.isInitializing = True
 			self.session.openWithCallback(lambda x : self.hddReady(x, stype, hdd), HarddiskWait, hdd, stype)
 		else:
-			print "[HarddiskDriveSelection]- starthddInit Check: ",stype, hdd, partition
+			print("[HarddiskDriveSelection]- starthddInit Check: ",stype, hdd, partition)
 			hdd.isVerifying = True
 			self.session.openWithCallback(lambda x : self.hddReady(x, stype, hdd, partition), HarddiskWait, hdd, stype, partition)
 
@@ -1204,7 +1206,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		#print "[HarddiskDriveSelection]-> deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s'\n- partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
 		#% (deviceName, uuid, numPartitions, partitionNum, partitionPath, uuidPath, hdd.device, hdd.dev_path)
 		if uuid is not None:
-			print "[HarddiskDriveSelection]- verifyInitialize - got new uuid:'%s', defaultStorageDevice:'%s', HDDEnabledCount:'%d'" % (uuid,defaultStorageDevice(),harddiskmanager.HDDEnabledCount())
+			print("[HarddiskDriveSelection]- verifyInitialize - got new uuid:'%s', defaultStorageDevice:'%s', HDDEnabledCount:'%d'" % (uuid,defaultStorageDevice(),harddiskmanager.HDDEnabledCount()))
 			if defaultStorageDevice() in ("<undefined>", uuid):
 				action = "mount_default"
 			else:
@@ -1233,10 +1235,10 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 
 	def keyRed(self):
 		selection = self["hddlist"].getCurrent()
-		print "[HarddiskDriveSelection] - keyRed:",selection[0], selection[1], selection[2], selection[3], selection[4], selection[10],selection[11]
+		print("[HarddiskDriveSelection] - keyRed:",selection[0], selection[1], selection[2], selection[3], selection[4], selection[10],selection[11])
 		if selection[1] != 0:
 			self.devicedescription = storagedevice_description
-			if isinstance(selection[1], (basestring, str)):
+			if isinstance(selection[1], six.string_types):
 				if not config.storage[selection[1]]["isRemovable"].value:
 					self.devicedescription = harddisk_description
 				message = _("Really delete this %(desc)s entry?") % self.devicedescription
@@ -1270,7 +1272,7 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 		#[HarddiskDriveSelection] - current: (0: hdd_description, 1:hd/uuid, 2;device_info, 3:numpart, 4:isOfflineStorageDevice, 5:isMountedPartition, 6:currentMountpoint, 10:partNum, devicepng, onlinepng, divpng)
 		selection = self["hddlist"].getCurrent()
 		if selection[1] != 0:
-			print "[HarddiskDriveSelection] - keyGreen:",selection[0], selection[1], selection[2], selection[3], selection[10]
+			print("[HarddiskDriveSelection] - keyGreen:",selection[0], selection[1], selection[2], selection[3], selection[10])
 			hd = selection[1]
 			message = _("Do you really want to check the filesystem?\nThis could take lots of time!")
 			if selection[3] >= 2 and selection[10] is not False:
@@ -1280,9 +1282,9 @@ class HarddiskDriveSelection(Screen, HelpableScreen):
 
 	def keyYellow(self):
 		selection = self["hddlist"].getCurrent()
-		print "[HarddiskDriveSelection] - keyYellow:",selection[0], selection[1], selection[2], selection[3], selection[4], selection[10],selection[11]
+		print("[HarddiskDriveSelection] - keyYellow:",selection[0], selection[1], selection[2], selection[3], selection[4], selection[10],selection[11])
 		if selection[1] != 0:
-			if not isinstance(selection[1], (basestring, str)):
+			if not isinstance(selection[1], six.string_types):
 				storage_plugins = plugins.getPlugins(PluginDescriptor.WHERE_STORAGEMANAGER)
 				l = len(storage_plugins)
 				if l == 1:
@@ -1393,8 +1395,8 @@ class StorageInformation(Screen):
 		self.setup_title = _("Storage device information")
 
 		self.deviceName, self.UUID, self.numPartitions, self.partitionNum, self.uuidPath, self.partitionPath = harddiskmanager.getPartitionVars(self.hdd,self.partition)
-		print "[StorageInformation] - deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s'\n- partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
-		% (self.deviceName, self.UUID, self.numPartitions, self.partitionNum, self.partitionPath, self.uuidPath, self.hdd.device,self.hdd.dev_path)
+		print("[StorageInformation] - deviceName:'%s' - uuid:'%s' - numPart:'%s' - partNum:'%s'\n- partPath:'%s' - uuidPath:'%s' - hdd.device:'%s' - hdd.dev_path:'%s'" \
+		% (self.deviceName, self.UUID, self.numPartitions, self.partitionNum, self.partitionPath, self.uuidPath, self.hdd.device,self.hdd.dev_path))
 
 		self["key_red"] = StaticText()
 		self["key_green"] = StaticText()

@@ -12,6 +12,8 @@ from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
 
 from skin import TemplatedListFonts, componentSizes
+from six import unichr
+from six.moves import range
 
 class VirtualKeyBoardList(MenuList):
 	COMPONENT_VIRTUAL_KEYBOARD_LIST = "VirtualKeyBoardList"

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayableServiceReference, iPlayableService
 from Components.config import config
 from Components.ParentalControl import parentalControl
@@ -36,7 +37,7 @@ class Navigation:
 		if getFPWasTimerWakeup():
 			clearFPWasTimerWakeup()
 			if getFPWasTimerWakeup(): # sanity check to detect if the FP driver is working correct!
-				print "buggy fp driver detected!!! please update drivers.... ignore timer wakeup!"
+				print("buggy fp driver detected!!! please update drivers.... ignore timer wakeup!")
 			else:
 				self.__wasTimerWakeup = True
 				if config.misc.prev_wakeup_time.value and config.misc.prev_wakeup_time_type.value == 0:
@@ -49,7 +50,7 @@ class Navigation:
 	def serviceListInitialized(self, configElement):
 		self.immediatePlay = configElement.value
 		if self.immediatePlay and self.scheduledServiceReference is not None:
-			print "deferred playService ... ChannelSelection is finally initialized now"
+			print("deferred playService ... ChannelSelection is finally initialized now")
 			ref = self.scheduledServiceReference
 			self.scheduledServiceReference = None
 			self.playService(ref[0], ref[1], ref[2])
@@ -71,14 +72,14 @@ class Navigation:
 
 	def playService(self, ref, checkParentalControl = True, forceRestart = False):
 		if not self.immediatePlay:
-			print "delaying playService request until the ChannelSelection is finally initialized"
+			print("delaying playService request until the ChannelSelection is finally initialized")
 			self.scheduledServiceReference = (ref, checkParentalControl, forceRestart)
 			return
 		oldref = self.currentlyPlayingServiceReference
 		if ref and oldref and ref == oldref and not forceRestart:
-			print "ignore request to play already running service(1)"
+			print("ignore request to play already running service(1)")
 			return 0
-		print "playing", ref and ref.toString()
+		print("playing", ref and ref.toString())
 		if ref is None:
 			self.stopService()
 			return 0
@@ -87,9 +88,9 @@ class Navigation:
 				if not oldref:
 					oldref = eServiceReference()
 				playref = getBestPlayableServiceReference(ref, oldref)
-				print "playref", playref
+				print("playref", playref)
 				if playref and oldref and playref == oldref and not forceRestart:
-					print "ignore request to play already running service(2)"
+					print("ignore request to play already running service(2)")
 					return 0
 				if not playref or (checkParentalControl and not parentalControl.isServicePlayable(playref, boundFunction(self.playService, checkParentalControl = False))):
 					self.stopService()
@@ -114,7 +115,7 @@ class Navigation:
 	def recordService(self, ref, simulate=False):
 		service = None
 		if not simulate:
-			print "recording service: %s" % (str(ref))
+			print("recording service: %s" % (str(ref)))
 		if isinstance(ref, ServiceReference.ServiceReference):
 			ref = ref.ref
 		if ref:
@@ -123,8 +124,8 @@ class Navigation:
 			service = ref and self.pnav and self.pnav.recordService(ref, simulate)
 			if service is None:
 				if simulate:
-					print "simulate recording service: %s failed" % (str(ref))
-				print "record returned non-zero"
+					print("simulate recording service: %s failed" % (str(ref)))
+				print("record returned non-zero")
 		return service
 
 	def stopRecordService(self, service):
@@ -143,7 +144,7 @@ class Navigation:
 		if not self.immediatePlay:
 			self.scheduledServiceReference = None
 			return
-		print "stopService"
+		print("stopService")
 		if self.pnav:
 			self.pnav.stopService()
 

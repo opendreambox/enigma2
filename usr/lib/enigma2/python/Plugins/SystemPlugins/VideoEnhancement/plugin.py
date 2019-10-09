@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eVideoManager
 from Plugins.Plugin import PluginDescriptor
 from Components.ConfigList import ConfigListScreen
@@ -163,7 +164,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 
 	def confirm(self, confirmed):
 		if not confirmed:
-			print "not confirmed"
+			print("not confirmed")
 		else:
 			if self.splitEntry is not None:
 				config.pep.split.setValue(eVideoManager.SM_OFF)
@@ -186,7 +187,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 
 	def keyYellowConfirm(self, confirmed):
 		if not confirmed:
-			print "not confirmed"
+			print("not confirmed")
 		else:
 			if self.color_tempEntry is not None:
 				config.pep.color_temp.setValue(self.oldColor_temp)
@@ -225,7 +226,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 
 	def keyBlueConfirm(self, confirmed):
 		if not confirmed:
-			print "not confirmed"
+			print("not confirmed")
 		else:
 			videoManager = eVideoManager.getInstance()
 			if self.contrastEntry is not None:
@@ -349,7 +350,7 @@ class VideoEnhancementPreview(Screen, ConfigListScreen):
 			else:
 				self.isStepSlider = False
 		except AttributeError:
-			print "no max value"
+			print("no max value")
 
 	def keyLeft(self):
 		if self.isStepSlider is True:

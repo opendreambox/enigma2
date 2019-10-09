@@ -7,6 +7,7 @@ from MediaCore import MediaCore
 from Playlist import Playlist, PlayListEntry, AudioPlaylistEntry, DefaultCoverArt
 
 from os import path as os_path
+import six
 
 class DatabasePlaylistEntry(PlayListEntry):
 	@staticmethod
@@ -183,7 +184,7 @@ class DatabasePlaylist(Playlist):
 		for item in self._list:
 			item = item[2]
 			stringMap = StringMap()
-			for k, v in item.iteritems():
+			for k, v in six.iteritems(item):
 				stringMap[k] = str(v)
 			stringMap[eMediaDatabase.FIELD_POS] = str(pos)
 			pos += 1

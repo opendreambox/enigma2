@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import ePicLoad, eRect, eSize, eTimer, getDesktop, gPixmapPtr
 
 from Screens.Screen import Screen
@@ -15,6 +17,7 @@ from Components.config import config, ConfigSubsection, ConfigInteger, ConfigSel
 from Components.Label import Label
 
 from skin import componentSizes, TemplatedListFonts
+from six.moves import range
 
 def getScale():
 	return AVSwitch().getFramebufferScale()
@@ -47,9 +50,9 @@ def setPixmap(dest, ptr, scaleSize, aspectRatio):
 #		print "dest area size %dx%d" %(dest_width, dest_height)
 
 		if pic_scale_width == dest_width: # v center
-			dest_rect = eRect(0, (dest_height - pic_scale_height) / 2, pic_scale_width, pic_scale_height)
+			dest_rect = eRect(0, (dest_height - pic_scale_height) // 2, pic_scale_width, pic_scale_height)
 		else: # h center
-			dest_rect = eRect((dest_width - pic_scale_width) / 2, 0, pic_scale_width, pic_scale_height)
+			dest_rect = eRect((dest_width - pic_scale_width) // 2, 0, pic_scale_width, pic_scale_height)
 
 #		print "dest rect", (dest_rect.left(), dest_rect.top(), dest_rect.width(), dest_rect.height())
 
@@ -336,8 +339,8 @@ class Pic_Thumb(Screen):
 
 		size_w = getDesktop(0).size().width()
 		size_h = getDesktop(0).size().height()
-		self.thumbsX = size_w / (self._spaceX + self._thumbX) # thumbnails in X
-		self.thumbsY = size_h / (self._spaceY + self._thumbY) # thumbnails in Y
+		self.thumbsX = size_w // (self._spaceX + self._thumbX) # thumbnails in X
+		self.thumbsY = size_h // (self._spaceY + self._thumbY) # thumbnails in Y
 		self.thumbsC = self.thumbsX * self.thumbsY # all thumbnails
 
 		self.positionlist = []
@@ -345,7 +348,7 @@ class Pic_Thumb(Screen):
 
 		posX = -1
 		for x in range(self.thumbsC):
-			posY = x / self.thumbsX
+			posY = x // self.thumbsX
 			posX += 1
 			if posX >= self.thumbsX:
 				posX = 0
@@ -629,9 +632,9 @@ class Pic_Full_View(Screen):
 				setPixmap(self["pic"], ptr, self._scaleSize, self._aspectRatio)
 				self.picVisible = True
 			else:
-				print "picture ready but no picture avail!!!!!!!"
+				print("picture ready but no picture avail!!!!!!!")
 
-			print "direction", self.direction
+			print("direction", self.direction)
 			if self.direction > 0:
 				self.next()
 			else:
@@ -662,7 +665,7 @@ class Pic_Full_View(Screen):
 			self.index = self.maxentry
 
 	def slidePic(self):
-		print "slide to next Picture index=" + str(self.lastindex)
+		print("slide to next Picture index=" + str(self.lastindex))
 		if config.pic.loop.value==False and self.lastindex == self.maxentry:
 			self.PlayPause()
 		self.shownow = True

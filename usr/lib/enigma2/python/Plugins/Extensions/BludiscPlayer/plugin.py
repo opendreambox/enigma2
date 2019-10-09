@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import eServiceReference, ePicLoad
 from Screens.Screen import Screen
 from Screens.InfoBar import MoviePlayer
@@ -49,10 +51,10 @@ class BludiscMenu(Screen):
 
 	def opened(self):
 		self.discinfo = bludiscmenu.getDiscinfo(self.bd_mountpoint)
-		print 'bludiscmenu.getDiscinfo("%s") returned:' % self.bd_mountpoint, self.discinfo
+		print('bludiscmenu.getDiscinfo("%s") returned:' % self.bd_mountpoint, self.discinfo)
 		if isinstance(self.discinfo, dict):
 			for idx, duration, chapters, angels, clips, title_no, title_name in self.discinfo["titles"]:
-				titlestring = "%d. %s (%02d:%02d:%02d), %d %s" % (title_no or idx, title_name or _("Title"), (duration / 3600), ((duration % 3600) / 60), (duration % 60), chapters, _("chapters"))
+				titlestring = "%d. %s (%02d:%02d:%02d), %d %s" % (title_no or idx, title_name or _("Title"), (duration // 3600), ((duration % 3600) // 60), (duration % 60), chapters, _("chapters"))
 				self.list.append((titlestring, idx))
 			self["menu"].l.setList(self.list)
 			thumbs = self.discinfo["thumbnails"]
@@ -63,7 +65,7 @@ class BludiscMenu(Screen):
 					if x > max_x or ( x == -1 and filename.lower().find("lg") > 0 ):
 						thumb_filename = filename
 					thumb_path = self.bd_mountpoint+"/BDMV/META/DL/"+thumb_filename
-					print "decoding thumbnail:", thumb_path
+					print("decoding thumbnail:", thumb_path)
 				self.picload.startDecode(thumb_path)
 			if self.discinfo["di_name"]:
 				self.setTitle(_("Bludisc Player") + ": " + self.discinfo["di_name"])
@@ -88,7 +90,7 @@ class BludiscMenu(Screen):
 			self["pixmap"].instance.setPixmap(ptr)
 
 	def ok(self):
-		if type(self["menu"].getCurrent()) is type(None):
+		if not self["menu"].getCurrent():
 			self.exit()
 			return
 		name = self["menu"].getCurrent()[0]
@@ -96,14 +98,14 @@ class BludiscMenu(Screen):
 		newref = eServiceReference(0x04, 0, "%s:%03d" % (self.bd_mountpoint, idx))
 		newref.setData(1,1)
 		newref.setName("Bludisc title %d" % idx)
-		print "[Bludisc] play: ", name, newref.toString()		
+		print("[Bludisc] play: ", name, newref.toString())		
 		self.session.openWithCallback(self.moviefinished, BludiscPlayer, newref)
 
 	def settings(self):
 		pass
 
 	def moviefinished(self):
-		print "Bludisc playback finished"
+		print("Bludisc playback finished")
 
 	def exit(self):
 		self.close()
@@ -150,7 +152,7 @@ def filescan(**kwargs):
 		)]
 
 def filescan_open(list, session, **kwargs):
-	print "filescan_open", list, list[0].mimetype, list[0].path
+	print("filescan_open", list, list[0].mimetype, list[0].path)
 	if len(list) >= 1 and list[0].mimetype == "video/x-bluray":
 		pos = list[0].path.find("BDMV")
 		path = None

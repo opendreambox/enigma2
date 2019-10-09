@@ -6,6 +6,7 @@ from keyids import KEYIDS
 # these are only informational (for help)...
 from Tools.KeyBindings import addKeyBinding
 from Tools.Log import Log
+from six.moves import map
 
 class KeymapError(Exception):
 	def __init__(self, message):
@@ -15,7 +16,7 @@ class KeymapError(Exception):
 		return self.msg
 
 def parseKeys(context, filename, actionmap, device, keys):
-	devices = filter(None, map(lambda x: x.strip(), device.split(";")))
+	devices = [_f for _f in [x.strip() for x in device.split(";")] if _f]
 	for x in keys.findall("key"):
 		get_attr = x.attrib.get
 		mapto = get_attr("mapto")

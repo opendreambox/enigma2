@@ -7,6 +7,7 @@ from urlparse import parse_qs
 from Tools import Notifications
 from Screens.MessageBox import MessageBox
 from Tools.HardwareInfo import HardwareInfo
+import six
 
 NOTIFICATION_DOMAIN_STREAMSERVER = "StreamServer"
 Notifications.notificationQueue.registerDomain(NOTIFICATION_DOMAIN_STREAMSERVER, _("Streaming Server"))
@@ -48,7 +49,7 @@ class StreamServerControl(object):
 		FRAME_RATE_60 : "60"
 	}
 
-	FRAME_RATE_LUT_REVERSE = {v: k for k, v in FRAME_RATE_LUT.iteritems()}
+	FRAME_RATE_LUT_REVERSE = {v: k for k, v in six.iteritems(FRAME_RATE_LUT)}
 
 	LEVELS = [
 		(str(eStreamServer.LEVEL1_1) , _("1.1")),
@@ -161,7 +162,7 @@ class StreamServerControl(object):
 		self.config.streamserver.audioBitrate = ConfigInteger(96, StreamServerControl.AUDIO_BITRATE_LIMITS)
 		self.config.streamserver.videoBitrate = ConfigInteger(1500, StreamServerControl.VIDEO_BITRATE_LIMITS)
 		self.config.streamserver.autoBitrate = ConfigOnOff(default=False)
-		self.config.streamserver.resolution = ConfigSelection(StreamServerControl.RESOLUTIONS.keys(), default=StreamServerControl.RES_KEY_PAL)
+		self.config.streamserver.resolution = ConfigSelection(list(StreamServerControl.RESOLUTIONS.keys()), default=StreamServerControl.RES_KEY_PAL)
 		self.config.streamserver.framerate = ConfigSelection(StreamServerControl.FRAME_RATES, default=StreamServerControl.FRAME_RATE_23_976)
 		# extended encoder settings
 		self.config.streamserver.gopLength = ConfigInteger(default=eStreamServer.GOP_LENGTH_AUTO, limits=[eStreamServer.GOP_LENGTH_MIN, eStreamServer.GOP_LENGTH_MAX])

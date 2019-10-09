@@ -1,3 +1,4 @@
+from __future__ import print_function
 from GUIComponent import GUIComponent
 
 from enigma import eListboxPythonMultiContent, eListbox, gFont, \
@@ -47,7 +48,7 @@ class HelpMenuList(GUIComponent):
 
 				if isinstance(help, list):
 					self.extendedHelp = True
-					print "extendedHelpEntry found"
+					print("extendedHelpEntry found")
 					entry.extend((
 						(eListboxPythonMultiContent.TYPE_TEXT, 0, 0, textWidth, textHeight, 0, RT_VALIGN_CENTER, help[0]),
 						(eListboxPythonMultiContent.TYPE_TEXT, 0, textY, textWidth, textHeight, 1, RT_VALIGN_CENTER, help[1])

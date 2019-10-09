@@ -1,6 +1,7 @@
 # -*- coding: iso-8859-1 -*-
 # (c) 2006 Stephan Reichholf
 # This Software is Free, use it where you want, when you want for whatever you want and modify it if you want but don't remove my copyright!
+from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.MessageBox import MessageBox
@@ -19,7 +20,7 @@ class SkinSelector(Screen):
 	# _("Choose your Skin")
 	skinlist = []
 	root = eEnv.resolve("${datadir}/enigma2/")
-	print root
+	print(root)
 
 	def __init__(self, session, args = None):
 
@@ -66,7 +67,7 @@ class SkinSelector(Screen):
 	def find(self, arg, dirname, names):
 		for x in names:
 			if x == "skin.xml":
-				if dirname <> self.root:
+				if dirname != self.root:
 					subdir = dirname.split('/')[-1]
 					self.skinlist.append(subdir)
 				else:
@@ -79,7 +80,7 @@ class SkinSelector(Screen):
 		else:
 			skinfile = self["SkinList"].getCurrent()+"/skin.xml"
 
-		print "Skinselector: Selected Skin: "+self.root+skinfile
+		print("Skinselector: Selected Skin: "+self.root+skinfile)
 		config.skin.primary_skin.value = skinfile
 		config.skin.primary_skin.save()
 		restartbox = self.session.openWithCallback(self.restartGUI,MessageBox,_("GUI needs a restart to apply a new skin\nDo you want to Restart the GUI now?"), MessageBox.TYPE_YESNO)

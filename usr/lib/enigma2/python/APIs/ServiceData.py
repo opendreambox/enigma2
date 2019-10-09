@@ -1,12 +1,14 @@
+from __future__ import print_function
 from Screens.ChannelSelection import service_types_tv, service_types_radio
 from enigma import eServiceCenter, eServiceReference, iServiceInformation
 from Components.NimManager import nimmanager
 from ServiceReference import ServiceReference
 from Tools.Transponder import ConvertToHumanReadable
+from six.moves import range
 
 
 def getServiceList(ref):
-	print "getServiceList:", type(ref)
+	print("getServiceList:", type(ref))
 	root = eServiceReference(str(ref))
 	serviceHandler = eServiceCenter.getInstance()
 	hnd = serviceHandler and serviceHandler.list(root)

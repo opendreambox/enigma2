@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
 
@@ -87,7 +88,7 @@ class ScanFile:
 		return "<ScanFile " + self.path + " (" + str(self.mimetype) + ", " + str(self.size) + " MB)>"
 
 def execute(option):
-	print "execute", option
+	print("execute", option)
 	if option is None:
 		return
 
@@ -103,7 +104,7 @@ def scanDevice(mountpoint):
 			l = [l]
 		scanner += l
 
-	print "scanner:", scanner
+	print("scanner:", scanner)
 
 	res = { }
 
@@ -156,7 +157,7 @@ def openList(session, files):
 			l = [l]
 		scanner += l
 
-	print "scanner:", scanner
+	print("scanner:", scanner)
 
 	res = { }
 

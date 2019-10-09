@@ -32,6 +32,13 @@ public:
 	long getResponseCode() { return m_responseCode; }
 
 	void finalize();
+	bool headersOnly() const;
+	void setHeadersOnly(bool headersOnly);
+	void setPostData(const std::string &postData);
+
+	int getUserId() const;
+	void setUserId(int userId);
+
 
 private:
 	bool m_valid;
@@ -42,6 +49,9 @@ private:
 	sigc::slot<void, ePtr<eHTTPRequest>> m_doneCallback;
 	std::map<std::string, std::string> m_responseHeaders;
 	long m_responseCode;
+	bool m_headersOnly;
+	std::string m_postData;
+	int m_userId;
 };
 
 class eHTTP : public eMainloop_native, public sigc::trackable
@@ -50,6 +60,9 @@ friend class eHTTPRequest;
 public:
 	eHTTP();
 	~eHTTP();
+
+	static std::string urlEncode(const std::string &url);
+	static std::string urlDecode(const std::string &url);
 
 	bool addRequest(ePtr<eHTTPRequest> request);
 private:

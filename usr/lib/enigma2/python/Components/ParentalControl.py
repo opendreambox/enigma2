@@ -8,6 +8,7 @@ from Tools.Directories import resolveFilename, SCOPE_CONFIG
 from enigma import eTimer, eServiceCenter, iServiceInformation, eServiceReference
 import time
 from os import fsync
+import six
 
 TYPE_SERVICE = "SERVICE"
 TYPE_BOUQUETSERVICE = "BOUQUETSERVICE"
@@ -105,7 +106,7 @@ class ParentalControl:
 			if recrefstr:
 				recref = eServiceReference(recrefstr)
 				service = recref.toCompareString()
-		if (config.ParentalControl.type.value == LIST_WHITELIST and not self.whitelist.has_key(service)) or (config.ParentalControl.type.value == LIST_BLACKLIST and self.blacklist.has_key(service)):
+		if (config.ParentalControl.type.value == LIST_WHITELIST and service not in self.whitelist) or (config.ParentalControl.type.value == LIST_BLACKLIST and service in self.blacklist):
 			#Check if the session pin is cached and return the cached value, if it is.
 			if self.sessionPinCached == True:
 				#As we can cache successful pin- entries as well as canceled pin- entries,
@@ -115,7 +116,7 @@ class ParentalControl:
 			#Someone started to implement different levels of protection. Seems they were never completed
 			#I did not throw out this code, although it is of no use at the moment
 			levelNeeded = 0
-			if self.serviceLevel.has_key(service):
+			if service in self.serviceLevel:
 				levelNeeded = self.serviceLevel[service]
 			pinList = self.getPinList()[:levelNeeded + 1]
 			Notifications.AddNotificationWithCallback(boundFunction(self.servicePinEntered, ref), PinInput, triesEntry = config.ParentalControl.retries.servicepin, pinList = pinList, service = ServiceReference(ref).getServiceName(), title = _("this service is protected by a parental control pin"), windowTitle = _("Parental control"), domain = "ParentalControl")
@@ -125,11 +126,11 @@ class ParentalControl:
 		
 	def protectService(self, service):
 		if config.ParentalControl.type.value == LIST_WHITELIST:
-			if self.whitelist.has_key(service):
+			if service in self.whitelist:
 				self.serviceMethodWrapper(service, self.removeServiceFromList, self.whitelist)
 				#self.deleteWhitelistService(service)
 		else: # blacklist
-			if not self.blacklist.has_key(service):
+			if service not in self.blacklist:
 				self.serviceMethodWrapper(service, self.addServiceToList, self.blacklist)
 				#self.addBlacklistService(service)
 		#print "whitelist:", self.whitelist
@@ -139,19 +140,19 @@ class ParentalControl:
 		#print "unprotect"
 		#print "config.ParentalControl.type.value:", config.ParentalControl.type.value
 		if config.ParentalControl.type.value == LIST_WHITELIST:
-			if not self.whitelist.has_key(service):
+			if service not in self.whitelist:
 				self.serviceMethodWrapper(service, self.addServiceToList, self.whitelist)
 				#self.addWhitelistService(service)
 		else: # blacklist
-			if self.blacklist.has_key(service):
+			if service in self.blacklist:
 				self.serviceMethodWrapper(service, self.removeServiceFromList, self.blacklist)
 				#self.deleteBlacklistService(service)
 		#print "whitelist:", self.whitelist
 		#print "blacklist:", self.blacklist
 
 	def getProtectionLevel(self, service):
-		if (config.ParentalControl.type.value == LIST_WHITELIST and not self.whitelist.has_key(service)) or (config.ParentalControl.type.value == LIST_BLACKLIST and self.blacklist.has_key(service)):
-			if self.serviceLevel.has_key(service):
+		if (config.ParentalControl.type.value == LIST_WHITELIST and service not in self.whitelist) or (config.ParentalControl.type.value == LIST_BLACKLIST and service in self.blacklist):
+			if service in self.serviceLevel:
 				return self.serviceLevel[service]
 			else:
 				return 0
@@ -163,13 +164,13 @@ class ParentalControl:
 		#if a service is protected or not, it also returns, why (whitelist or blacklist, service or bouquet)
 		sImage = ""
 		if (config.ParentalControl.type.value == LIST_WHITELIST):
-			if self.whitelist.has_key(service):
+			if service in self.whitelist:
 				if TYPE_SERVICE in self.whitelist[service]:
 					sImage = IMG_WHITESERVICE
 				else:
 					sImage = IMG_WHITEBOUQUET
 		elif (config.ParentalControl.type.value == LIST_BLACKLIST):
-			if self.blacklist.has_key(service):
+			if service in self.blacklist:
 				if TYPE_SERVICE in self.blacklist[service]:
 					sImage = IMG_BLACKSERVICE
 				else:
@@ -263,7 +264,7 @@ class ParentalControl:
 		else:
 			vList = self.whitelist
 		file = open(resolveFilename(SCOPE_CONFIG, sWhichList), 'w')
-		for sService,sType in vList.iteritems():
+		for sService,sType in six.iteritems(vList):
 			#Only Services that are selected directly and Bouqets are saved. 
 			#Services that are added by a bouquet are not saved. 
 			#This is the reason for the change in self.whitelist and self.blacklist
@@ -297,7 +298,7 @@ class ParentalControl:
 		#The lists are not only lists of service references any more. 
 		#They are named lists with the service as key and an array of types as value:
 		
-		if vList.has_key(service):
+		if service in vList:
 			if not type in vList[service]:
 				vList[service].append(type)
 		else:
@@ -305,12 +306,12 @@ class ParentalControl:
 	
 	def removeServiceFromList(self, service, type, vList):
 		#Replaces deleteWhitelistService and deleteBlacklistService
-		if vList.has_key(service):
+		if service in vList:
 			if type in vList[service]:
 				vList[service].remove(type)
 			if not vList[service]:
 				del vList[service]
-		if self.serviceLevel.has_key(service):
+		if service in self.serviceLevel:
 			self.serviceLevel.remove(service)
 		
 	def readServicesFromBouquet(self,sBouquetSelection,formatstring):

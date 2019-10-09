@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eActionMap, eCec
 
 from Components.HdmiCec import hdmi_cec
@@ -71,7 +72,7 @@ class Cec(object):
 			return
 		hdmi_cec.setPowerState(hdmi_cec.POWER_STATE_ON)
 		if config.cec.sendpower.value or forceOtp:
-			print "[Cec] power on"
+			print("[Cec] power on")
 			hdmi_cec.otpEnable()
 			if config.cec.avr_power_explicit.value:
 				self._remoteHandler.sendKey(5, eCec.RC_POWER_ON)
@@ -82,7 +83,7 @@ class Cec(object):
 		if self._idle_to_standby:
 			return
 		if config.cec.sendpower.value:
-			print "[Cec] power off"
+			print("[Cec] power off")
 			if self._skip_next_poweroff_message:
 				self._skip_next_poweroff_message = False
 			else:

@@ -1,12 +1,13 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import print_function
 from Components.config import config, ConfigSubsection, ConfigInteger
 
 #some minor magic, please don't remove those
 try: #systemplugins-upnp may not be installed
 	from MediaBrowserUPnP import MediaBrowserUPnP
 except:
-	print "[MediaCenter] UPnP/DLNA not installed, though not available"
+	print("[MediaCenter] UPnP/DLNA not installed, though not available")
 from MediaBrowserFile import MediaBrowserFile
 from MediaBrowserDB import MediaBrowserDB
 from MediaBrowserSearch import MediaBrowserSearch

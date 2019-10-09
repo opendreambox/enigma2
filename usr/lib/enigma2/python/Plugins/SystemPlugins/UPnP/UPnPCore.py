@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from __future__ import print_function
 from Components.ResourceManager import resourcemanager
 from Components.PluginComponent import plugins
 
@@ -11,6 +12,7 @@ from coherence.upnp.devices.media_server_client import MediaServerClient
 from HTMLParser import HTMLParser
 from Plugins.Plugin import PluginDescriptor
 from Tools.Log import Log
+import six
 
 
 class Statics:
@@ -185,7 +187,7 @@ class ManagedControlPoint(object):
 			plugin(reason, session=self._session)
 
 	def _onMediaServerDetected(self, client, udn):
-		print "[DLNA] MediaServer Detected: %s (%s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type())
+		print("[DLNA] MediaServer Detected: %s (%s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type()))
 		self.__mediaServerClients[udn] = client
 		for fnc in self.onMediaServerDetected:
 			fnc(udn, client)
@@ -197,13 +199,13 @@ class ManagedControlPoint(object):
 				fnc(udn)
 
 	def _onMediaRendererDetected(self, client, udn):
-		print "[DLNA] MediaRenderer detected: %s (%s, %s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type(), udn)
+		print("[DLNA] MediaRenderer detected: %s (%s, %s)" % (client.device.get_friendly_name(), client.device.get_friendly_device_type(), udn))
 		self.__mediaRendererClients[udn] = client
 		for fnc in self.onMediaRendererDetected:
 			fnc(udn, client)
 
 	def _onMediaRendererRemoved(self, udn):
-		print "[DLNA] MediaRenderer removed: %s" % (udn)
+		print("[DLNA] MediaRenderer removed: %s" % (udn))
 		if self.__mediaRendererClients.get(udn, None) != None:
 			del self.__mediaRendererClients[udn]
 			for fnc in self.onMediaRendererRemoved:
@@ -227,7 +229,7 @@ class ManagedControlPoint(object):
 
 	def _onMediaDeviceRemoved(self, usn):
 		if usn in self.__mediaDevices:
-			print "[DLNA] Device removed: %s" % (usn)
+			print("[DLNA] Device removed: %s" % (usn))
 			device = self.__mediaDevices[usn]
 			device_type = device.get_friendly_device_type()
 			if device_type == self.DEVICE_TYPE_SATIP_SERVER:
@@ -255,24 +257,24 @@ class ManagedControlPoint(object):
 		return instance
 
 	def getServerList(self):
-		return self.__mediaServerClients.values()
+		return list(self.__mediaServerClients.values())
 
 	def getRenderingControlClientList(self):
-		return self.__mediaRendererClients.values()
+		return list(self.__mediaRendererClients.values())
 
 	def getDeviceName(self, client):
 		return Item.ue(client.device.get_friendly_name())
 
 	def getSatIPDevices(self):
 		devices = []
-		for device in self.__mediaDevices.itervalues():
+		for device in six.itervalues(self.__mediaDevices):
 			if device.get_friendly_device_type() == self.DEVICE_TYPE_SATIP_SERVER:
 				devices.append(device)
 		return devices
 
 	def getDreamboxes(self):
 		devices = []
-		for device in self.__mediaDevices.itervalues():
+		for device in six.itervalues(self.__mediaDevices):
 			if device.get_friendly_device_type() == self.DEVICE_TYPE_DREAMBOX:
 				devices.append(device)
 		return devices
@@ -384,7 +386,7 @@ class Item(object):
 		for res in item.res:
 			uri = Item.ue(res.data)
 			meta = Item.ue(res.protocolInfo.split(":")[2])
-			print "URL: %s\nMeta:%s" %(uri, meta)
+			print("URL: %s\nMeta:%s" %(uri, meta))
 			if uri:
 				return {Statics.META_URI : uri, Statics.META_METATYPE : meta}
 

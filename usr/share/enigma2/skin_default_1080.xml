@@ -94,7 +94,6 @@
 		<font font="Regular;28" name="config_description" />
 		<font font="Regular;28" name="config_value" />
 		<value name="config_item_height" value="45" />
-        <config onPixmap="skin_default/switch_on.svg" offPixmap="skin_default/switch_off.svg" size="57,30"/>
 	</listboxcontent>
 	<subtitles>
 		<sub font="Regular;45" name="Subtitle_TTX" foregroundColor="#E5E500" shadowColor="#40101010" shadowOffset="3,3" />
@@ -122,6 +121,7 @@
 		<component itemHeight="45" itemWidth="850" textHeight="45" textWidth="570" type="AutomaticVolumeAdjustmentList" />
 		<component iconHPos="8" iconHeight="24" iconWidth="60" itemHeight="40" itemWidth="1300" type="MediaplayerPlayList" />
 		<component descriptionHeight="35" itemHeight="90" itemWidth="1160" lineSpacing="5" titleHeight="40" type="YTTrailerList" />
+		<component itemHeight="45" textHeight="45" text1Width="380" text2Width="800" text3Width="160" type="ZapStatisticBrowserList" />
 		<component dirWidth="400" itemHeight="100" itemWidth="810" lineSpacing="30" textHeight="35" type="MerlinServiceRecordingList" />
 		<component eventNameHeight="30" itemHeight="72" itemWidth="1160" lineSpacing="1" serviceNameHeight="35" type="ZapHistoryBrowserList" />
 		<component itemHeight="45" pixmapHeight="40" pixmapWidth="40" textHeight="45" textWidth="1300" textX="60" textY="0" type="FileList" />
@@ -600,7 +600,7 @@ self["list"].instance.resize(eSize(*listsize))#200d1940
 
 # center window
 newwidth=wsize[0]
-self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
+self.instance.move(ePoint((1920-wsizex)//2,(1080-wsizey)//2))
 		</applet>
 	</screen>
 	<screen backgroundColor="background" flags="wfNoBorder" name="ConfigSetHelpDialog" position="center,850" size="1200,190" zPosition="2">
@@ -1765,8 +1765,12 @@ self["list"].instance.resize(eSize(*listsize))
 
 # center window
 newwidth=wsize[0]
-self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
+self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 		</applet>
+	</screen>
+	<screen name="MultiInputBox" position="center,center" size="800,110" title="Input">
+		<widget font="Regular;30" render="Label" source="title" position="10,10" size="780,35" />
+		<widget name="config" seperation="200" position="10,55" size="780,50" />
 	</screen>
 	<screen name="MMIDialog" position="center,center" size="840,400" title="CI/CA Menu">
 		<widget font="Regular;30" name="title" position="10,10" size="820,35" />
@@ -2124,8 +2128,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 			<convert type="TemplatedMultiContent">
 			{"templates":
 			{"default": (80,[
-			MultiContentEntryText(pos=(170,5),size=(1000,40),font=0,text=1),# index 1 is the plugin.name
-			MultiContentEntryText(pos=(170,45),size=(1000,30),font=1,text=2,color=0xa0a0a0),# index 2 is the plugin.description
+			MultiContentEntryText(pos=(170,5),size=(1000,40),font=0,text=1,color_sel=0xFF000004),# index 1 is the plugin.name
+			MultiContentEntryText(pos=(170,45),size=(1000,30),font=1,text=2,color=0xa0a0a0,color_sel=0xFF000004),# index 2 is the plugin.description
 			MultiContentEntryPixmapAlphaTest(pos=(5,10),size=(150,60),png=3),# index 3 is the icon
 			]),
 			},
@@ -2987,6 +2991,19 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="20,75" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" source="key_red" transparent="1" valign="center" zPosition="1" />
 		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="540,75" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" source="key_green" transparent="1" valign="center" zPosition="1" />
 	</screen>
+<!-- AutomaticCleanup -->
+	<screen name="AutomaticCleanupSetup" position="center,170" size="1200,820" title=" ">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="390,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="405,5" scale="stretch" size="390,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="800,5" scale="stretch" size="390,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="390,70" source="key_red" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="405,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="390,70" source="key_green" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="800,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="390,70" source="key_yellow" transparent="1" valign="center" zPosition="1" />
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,585" />
+		<eLabel backgroundColor="grey" position="10,690" size="1180,1" />
+		<widget font="Regular;32" halign="center" position="10,700" size="1180,110" render="Label" source="help" valign="center" />
+	</screen>
 <!-- AutomaticVolumeAdjustment -->
 	<screen name="AutomaticVolumeAdjustmentConfigScreen" position="center,170" size="1200,820" title=" ">
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="390,70" />
@@ -3557,6 +3574,45 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget name="thumbnail" position="670,90" size="520,320" />
 		<eLabel backgroundColor="grey" position="10,420" size="1180,1" />
 		<widget enableWrapAround="1" name="config" position="10,440" scrollbarMode="showOnDemand" size="1180,360" />
+	</screen>
+<!-- Email -->
+	<screen name="EmailConfigOptions" position="center,170" size="1200,820" title="Email Setup">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="310,5" size="300,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="buttonred" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="buttongreen" position="310,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+		<widget font="Regular;34" halign="right" position="1050,25" render="Label" size="120,40" source="global.CurrentTime">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget font="Regular;34" halign="right" position="800,25" render="Label" size="240,40" source="global.CurrentTime">
+			<convert type="ClockToText">Date</convert>
+		</widget>
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
+	<screen name="EmailConfigAccount" position="center,170" size="1200,820" title="Account Setup">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="300,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="310,5" size="300,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="buttonred" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="buttongreen" position="310,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="300,70" transparent="1" valign="center" zPosition="1" />
+		<widget font="Regular;34" halign="right" position="1050,25" render="Label" size="120,40" source="global.CurrentTime">
+			<convert type="ClockToText">Default</convert>
+		</widget>
+		<widget font="Regular;34" halign="right" position="800,25" render="Label" size="240,40" source="global.CurrentTime">
+			<convert type="ClockToText">Date</convert>
+		</widget>
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
+	<screen name="EmailAccountList" position="center,170" size="1200,820" title="Accounts list">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" scale="stretch" size="390,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="405,5" scale="stretch" size="390,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="800,5" scale="stretch" size="390,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="390,70" name="buttonred" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" position="405,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="390,70" name="buttongreen" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="800,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="390,70" name="buttonyellow" transparent="1" valign="center" zPosition="1" />
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+		<widget enableWrapAround="1" name="accounts" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
 	</screen>
 <!-- EpgCopy -->
 	<screen name="epgCopyScreen" position="center,170" size="1200,820" title="EPG Copy view">
@@ -4478,8 +4534,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget font="Regular;32" halign="center" position="10,655" render="Label" size="1180,145" source="help" valign="center" />
 	</screen>
 <!-- PermanentClock -->
-	<screen name="PermanentClockMenu" position="center,center" size="840,110" title="Permanent Clock">
-		<widget enableWrapAround="1" name="list" position="10,10" scrollbarMode="showOnDemand" size="820,90" />
+	<screen name="PermanentClockMenu" position="center,center" size="840,120" title="Permanent Clock">
+		<widget enableWrapAround="1" name="list" position="10,10" scrollbarMode="showOnDemand" size="820,100" />
 	</screen>
 	<screen backgroundColor="transparent" flags="wfNoBorder" name="PermanentClockScreen" position="0,0" size="150,60">
 		<widget font="Regular;42" halign="center" position="5,5" render="Label" size="140,50" source="global.CurrentTime" valign="center" transparent="1">
@@ -4648,6 +4704,9 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
 		<widget enableWrapAround="1" name="config" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+	</screen>
+	<screen name="RSSTickerView" position="center,1000" size="1920,60" title="Simple RSS Ticker">
+		<widget name="newsLabel" position="10,14" font="Regular;26" size="1900,32" />
 	</screen>
 <!-- RemoteTimer -->
 	<screen name="RemoteTimerScreen" position="center,170" size="1200,860" title="Remote-Timer digest">
@@ -4907,6 +4966,21 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget backgroundColor="#18188b" font="Regular;30" halign="center" name="key_blue" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
 		<widget enableWrapAround="1" itemHeight="36" name="list" position="10,90" scrollbarMode="showOnDemand" size="1180,612" />
+		<eLabel backgroundColor="grey" position="10,730" size="1180,1" />
+		<widget font="Regular;32" halign="center" name="info" position="10,735" render="Label" size="1180,75" valign="center" />
+	</screen>
+<!-- TV Charts -->
+	<screen name="TVChartsMain" position="center,170" size="1200,820" title=" ">
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="10,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="305,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="600,5" size="295,70" />
+		<ePixmap pixmap="Default-FHD/skin_default/buttons/blue.svg" position="895,5" size="295,70" />
+		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="key_red" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="key_green" position="305,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#a08500" font="Regular;30" halign="center" name="key_yellow" position="600,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
+		<widget backgroundColor="#18188b" font="Regular;30" halign="center" name="key_blue" position="895,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" transparent="1" valign="center" zPosition="1" />
+		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
+        <widget enableWrapAround="1" name="channellist" position="10,90" scrollbarMode="showOnDemand" size="1180,608" />
 		<eLabel backgroundColor="grey" position="10,730" size="1180,1" />
 		<widget font="Regular;32" halign="center" name="info" position="10,735" render="Label" size="1180,75" valign="center" />
 	</screen>

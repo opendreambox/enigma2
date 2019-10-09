@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screen import Screen
 from Components.ServiceScan import ServiceScan as CScan
 from Components.ProgressBar import ProgressBar
@@ -30,7 +31,7 @@ class ServiceScanSummary(Screen):
 class ServiceScan(Screen):
 
 	def ok(self):
-		print "ok"
+		print("ok")
 		if self.scan_running and self["scan"].isDone():
 			self.close()
 
@@ -69,5 +70,5 @@ class ServiceScan(Screen):
 		self.scan_running = True
 
 	def createSummary(self):
-		print "ServiceScanCreateSummary"
+		print("ServiceScanCreateSummary")
 		return ServiceScanSummary

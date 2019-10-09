@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Plugins.Plugin import PluginDescriptor
 from twisted.web import resource
 from API import api, getFunctionTree, getSubAPITree
@@ -74,7 +75,7 @@ def sessionstart(reason, **kwargs):
 			root.putChild("getFunctionTree", APIgetFunctionTree())
 			addExternalChild(("api", root, "JSON-RPC API", api.version, False))
 		except Exception as e:
-			print "--------------------- JSON WEB API !!!NOT!!! AVAILABLE!\n%s" %e
+			print("--------------------- JSON WEB API !!!NOT!!! AVAILABLE!\n%s" %e)
 
 def Plugins(**kwargs):
 	return [ PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=sessionstart) ]

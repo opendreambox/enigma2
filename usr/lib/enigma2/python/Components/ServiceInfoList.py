@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eServiceCenter, eListboxPythonMultiContent, eListbox, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER
 
 from Components.HTMLComponent import HTMLComponent
@@ -25,7 +26,7 @@ def ServiceInfoListEntry(a, b, valueType=TYPE_TEXT, param=4):
 	t2w = sizes.get("text2Width", 350)
 	t2h = sizes.get("text2Height", 30)
 
-	print "b:", b
+	print("b:", b)
 	if not isinstance(b, str):
 		if valueType == TYPE_VALUE_HEX:
 			b = ("0x%0" + str(param) + "x") % to_unsigned(b)

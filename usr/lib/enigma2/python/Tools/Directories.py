@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
+from __future__ import print_function
 from os import path as os_path, mkdir, rmdir, system, walk, stat as os_stat, listdir, readlink, makedirs, symlink, access, F_OK, R_OK, W_OK
 from stat import S_IMODE
 from re import compile
@@ -121,7 +123,7 @@ def resolveFilename(scope, base = "", path_prefix = None):
 			try:
 				mkdir(path)
 			except OSError:
-				print "resolveFilename: Couldn't create %s" % path
+				print("resolveFilename: Couldn't create %s" % path)
 				return None
 
 	fallbackPath = fallbackPaths.get(scope)
@@ -255,7 +257,7 @@ def copyfile(src, dst):
 		if have_utime:
 			utime(dst, (st.st_atime, st.st_mtime))
 	except:
-		print "copy", src, "to", dst, "failed!"
+		print("copy", src, "to", dst, "failed!")
 		return -1
 	return 0
 
@@ -279,7 +281,7 @@ def copytree(src, dst, symlinks=False):
 			else:
 				copyfile(srcname, dstname)
 		except:
-			print "dont copy srcname (no file or link or folder)"
+			print("dont copy srcname (no file or link or folder)")
 	try:
 		st = os_stat(src)
 		mode = S_IMODE(st.st_mode)
@@ -288,7 +290,7 @@ def copytree(src, dst, symlinks=False):
 		if have_utime:
 			utime(dst, (st.st_atime, st.st_mtime))
 	except:
-		print "copy stats for", src, "failed!"
+		print("copy stats for", src, "failed!")
 
 def getSize(path, pattern=".*"):
 	path_size = 0

@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from skin import parseColor, componentSizes
 from Components.config import config, ConfigClock, ConfigInteger, ConfigSelection, ConfigYesNo, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
@@ -27,6 +29,7 @@ from enigma import eEPGCache, eListbox, gFont, eListboxPythonMultiContent, getDe
 from skin import TemplatedListFonts
 
 from time import localtime, time, mktime, strftime
+from six.moves import range
 
 class EPGList(HTMLComponent, GUIComponent):
 	GUI_WIDGET = eListbox
@@ -218,15 +221,15 @@ class EPGList(HTMLComponent, GUIComponent):
 		width = esize.width()
 		height = esize.height()
 		xpos = 0;
-		w = width/10*2;
+		w = width//10*2;
 		self.service_rect = Rect(xpos, 0, w-10, height)
 		xpos += w;
-		w = width/10*8;
+		w = width//10*8;
 		self.event_rect = Rect(xpos, 0, w, height)
 
 	def calcEntryPosAndWidthHelper(self, stime, duration, start, end, width):
-		xpos = (stime - start) * width / (end - start)
-		ewidth = (stime + duration - start) * width / (end - start)
+		xpos = (stime - start) * width // (end - start)
+		ewidth = (stime + duration - start) * width // (end - start)
 		ewidth -= xpos;
 		if xpos < 0:
 			ewidth += xpos;
@@ -690,7 +693,7 @@ class GraphMultiEPG(Screen):
 			self.session.openWithCallback(self.finishedAdd, TimerEntry, newEntry)
 
 	def finishedAdd(self, answer):
-		print "finished add"
+		print("finished add")
 		if answer[0]:
 			entry = answer[1]
 			simulTimerList = self.session.nav.RecordTimer.record(entry)
@@ -706,7 +709,7 @@ class GraphMultiEPG(Screen):
 		else:
 			self["key_green"].setText(_("Add timer"))
 			self.key_green_choice = self.ADD_TIMER
-			print "Timeredit aborted"
+			print("Timeredit aborted")
 	
 	def finishSanityCorrection(self, answer):
 		self.finishedAdd(answer)
@@ -768,8 +771,8 @@ class GraphMultiEPG(Screen):
 			return
 		time_steps = time_epoch > 180 and 60 or 30
 		
-		num_lines = time_epoch/time_steps
-		incWidth=event_rect.width()/num_lines
+		num_lines = time_epoch//time_steps
+		incWidth=event_rect.width()//num_lines
 		pos=event_rect.left()
 		timeline_entries = [ ]
 		x = 0

@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import print_function
 from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
 
 import struct
@@ -7,8 +8,9 @@ from ioctl.linux import IOC
 from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY, O_RDWR
 from Components.config import ConfigOnOff, ConfigSelection,	ConfigBoolean
 from enigma import eInputDeviceManager
+import six
 
-O_CLOEXEC = 02000000
+O_CLOEXEC = 0o2000000
 
 def EVIOCGNAME(length):
 	return IOC('r', 'E', 0x06, length)
@@ -58,36 +60,36 @@ class inputDevices:
 		elif name.find("mouse") != -1:
 			return "mouse"
 		else:
-			print "Unknown device type:",name
+			print("Unknown device type:",name)
 			return None
 			
 	def getDeviceName(self, x):
-		if x in self.Devices.keys():
+		if x in list(self.Devices.keys()):
 			return self.Devices[x].get("name", x)
 		else:
 			return "Unknown device name"
 
 	def getDeviceList(self):
-		return sorted(self.Devices.iterkeys())
+		return sorted(six.iterkeys(self.Devices))
 
 	def getDefaultRCdeviceName(self):
 		if config.misc.rcused.value == 1:
-			for device in self.Devices.iterkeys():
+			for device in six.iterkeys(self.Devices):
 				if self.Devices[device]["name"] == "dreambox remote control (native)":
 					return device
 		else:
-			for device in self.Devices.iterkeys():
+			for device in six.iterkeys(self.Devices):
 				if self.Devices[device]["name"] == "dreambox advanced remote control (native)":
 					return device
 
 	def setDeviceAttribute(self, device, attribute, value):
 		#print "[iInputDevices] setting for device", device, "attribute", attribute, " to value", value
-		if self.Devices.has_key(device):
+		if device in self.Devices:
 			self.Devices[device][attribute] = value
 			
 	def getDeviceAttribute(self, device, attribute):
-		if self.Devices.has_key(device):
-			if self.Devices[device].has_key(attribute):
+		if device in self.Devices:
+			if attribute in self.Devices[device]:
 				return self.Devices[device][attribute]
 		return None
 			
@@ -110,7 +112,7 @@ class inputDevices:
 	#}; -> size = 16
 
 	def setDefaults(self, device):
-		print "[iInputDevices] setDefaults for device %s" % (device)
+		print("[iInputDevices] setDefaults for device %s" % (device))
 		self.setDeviceAttribute(device, 'configuredName', None)
 		event_repeat = struct.pack('llHHi', 0, 0, 0x14, 0x01, 100)
 		event_delay = struct.pack('llhhi', 0, 0, 0x14, 0x00, 700)
@@ -121,7 +123,7 @@ class inputDevices:
 
 	def setRepeat(self, device, value): #REP_PERIOD
 		if self.getDeviceAttribute(device, 'enabled') == True:
-			print "[iInputDevices] setRepeat for device %s to %d ms" % (device,value)
+			print("[iInputDevices] setRepeat for device %s to %d ms" % (device,value))
 			event = struct.pack('llHHi', 0, 0, 0x14, 0x01, int(value))
 			fd = os_open("/dev/input/" + device, O_RDWR | O_CLOEXEC)
 			os_write(fd, event)
@@ -129,7 +131,7 @@ class inputDevices:
 
 	def setDelay(self, device, value): #REP_DELAY
 		if self.getDeviceAttribute(device, 'enabled') == True:
-			print "[iInputDevices] setDelay for device %s to %d ms" % (device,value)
+			print("[iInputDevices] setDelay for device %s to %d ms" % (device,value))
 			event = struct.pack('llHHi', 0, 0, 0x14, 0x00, int(value))
 			fd = os_open("/dev/input/" + device, O_RDWR | O_CLOEXEC)
 			os_write(fd, event)
@@ -165,7 +167,7 @@ class InitInputDevices:
 		config.inputDevices.settings.connectedColor = ConfigSelection(colors, default="0xFF0066")
 		config.inputDevices.settings.connectedColor.addNotifier(self._onConnectedRcuColorChanged, initial_call=False)
 
-		for device in sorted(iInputDevices.Devices.iterkeys()):
+		for device in sorted(six.iterkeys(iInputDevices.Devices)):
 			self.currentDevice = device
 			#print "[InitInputDevices] -> creating config entry for device: %s -> %s  " % (self.currentDevice, iInputDevices.Devices[device]["name"])
 			self.setupConfigEntries(self.currentDevice)

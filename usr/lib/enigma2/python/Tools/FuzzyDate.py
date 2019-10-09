@@ -1,3 +1,4 @@
+from __future__ import print_function
 from time import localtime, time
 
 def FuzzyTime(t):
@@ -22,18 +23,18 @@ def FuzzyTime(t):
 	return (date, timeres)
 
 if __name__ == "__main__":
-	print "now:    %s %s" % FuzzyTime(time())
-	print "1 day:  %s %s" % FuzzyTime(time() + 86400)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *2)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *3)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *4)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *5)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *6)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *7)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *8)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *9)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *10)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *11)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *12)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *13)
-	print "2 days: %s %s" % FuzzyTime(time() + 86400 *14)
+	print("now:    %s %s" % FuzzyTime(time()))
+	print("1 day:  %s %s" % FuzzyTime(time() + 86400))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *2))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *3))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *4))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *5))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *6))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *7))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *8))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *9))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *10))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *11))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *12))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *13))
+	print("2 days: %s %s" % FuzzyTime(time() + 86400 *14))

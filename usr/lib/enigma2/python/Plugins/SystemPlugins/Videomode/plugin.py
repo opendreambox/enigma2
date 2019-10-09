@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.SystemInfo import SystemInfo
@@ -136,8 +137,8 @@ class VideoSetup(Screen, ConfigListScreen):
 		self.last_good = self.getCurrentPortModeRateValues()
 
 	def apply(self):
-		print "Current PMR: " + str(self.getCurrentPortModeRateValues())
-		print("Last Good PMR: " + str(self.last_good))
+		print("Current PMR: " + str(self.getCurrentPortModeRateValues()))
+		print(("Last Good PMR: " + str(self.last_good)))
 		if(self.getCurrentPortModeRateValues() != self.last_good):
 			pmr = self.getCurrentPortModeRateValues()
 			self.display_hw.setMode(pmr[0], pmr[1], pmr[2])

@@ -11,6 +11,7 @@ from Tools.Directories import resolveFilename, SCOPE_CONFIG
 from Tools.Log import Log
 from MediaCore import MediaCore, mediaCore
 from DatabasePlaylist import DatabasePlaylist
+import six
 
 # when playing audio content no dedicated player class is used
 # so here we must inherit from PlayerBase to not break the 
@@ -141,7 +142,7 @@ class PlaylistPlayer(Screen, HelpableScreen, PlayerBase):
 				browsers = mediaCore.getVideoBrowsers()
 			Log.i("browser: %s" %browsers)
 			choices = []
-			for key, browser in browsers.iteritems():
+			for key, browser in six.iteritems(browsers):
 				choices.append( (browser["name"], key) )
 
 			if len(choices) == 1:

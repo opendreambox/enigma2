@@ -1,5 +1,7 @@
+from __future__ import print_function
 from enigma import eActionMap
 from Components.config import config
+import six
 
 class ActionMap:
 	def __init__(self, contexts = [ ], actions = { }, prio=0):
@@ -56,16 +58,16 @@ class ActionMap:
 
 	def action(self, context, action):
 		actions = self.actions
-		if not actions.has_key(action):
-			print "unknown action %s/%s! typo in keymap?" % (context, action)
+		if action not in actions:
+			print("unknown action %s/%s! typo in keymap?" % (context, action))
 			return 0
 		act = actions[action]
 		if act is None:
 			# explicitly ignored
 			return 0
-		print " ".join(("action -> ", context, action))
+		print(" ".join(("action -> ", context, action)))
 		if action in ('instantRecord', 'timeshiftStart') and not config.misc.recording_allowed.value:
-			print "recording / timeshift not allowed with this dreambox!"
+			print("recording / timeshift not allowed with this dreambox!")
 			return 0
 		res = act()
 		if res is not None:
@@ -78,7 +80,7 @@ class ActionMap:
 class NumberActionMap(ActionMap):
 	def action(self, contexts, action):
 		numbers = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-		if (action in numbers and self.actions.has_key(action)):
+		if (action in numbers and action in self.actions):
 			res = self.actions[action](int(action))
 			if res is not None:
 				return res
@@ -102,7 +104,7 @@ class HelpableActionMap(ActionMap):
 	def __init__(self, parent, context, actions = { }, prio=0):
 		alist = [ ]
 		adict = { }
-		for (action, funchelp) in actions.iteritems():
+		for (action, funchelp) in six.iteritems(actions):
 			# check if this is a tuple
 			if isinstance(funchelp, tuple):
 				alist.append((action, funchelp[1]))
@@ -116,7 +118,7 @@ class HelpableActionMap(ActionMap):
 	def update(self, parent, context, actions = { }, prio=0):
 		alist = [ ]
 		adict = { }
-		for (action, funchelp) in actions.iteritems():
+		for (action, funchelp) in six.iteritems(actions):
 			# check if this is a tuple
 			if isinstance(funchelp, tuple):
 				alist.append((action, funchelp[1]))

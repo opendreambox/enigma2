@@ -1,3 +1,4 @@
+from __future__ import print_function
 from twisted.web import client
 from twisted.internet import reactor, defer, ssl
 from twisted.internet._sslverify import ClientTLSOptions
@@ -11,14 +12,14 @@ class HTTPProgressDownloader(client.HTTPDownloader):
 
 	def noPage(self, reason):
 		if self.status == "304":
-			print reason.getErrorMessage()
+			print(reason.getErrorMessage())
 			client.HTTPDownloader.page(self, "")
 		else:
 			client.HTTPDownloader.noPage(self, reason)
 
 	def gotHeaders(self, headers):
 		if self.status == "200":
-			if headers.has_key("content-length"):
+			if "content-length" in headers:
 				self.totalbytes = int(headers["content-length"][0])
 			else:
 				self.totalbytes = 0
@@ -73,9 +74,9 @@ class downloadWithProgress:
 
 	def stop(self):
 		if self.connection:
-			print "[stop]"
+			print("[stop]")
 			self.connection.disconnect()
 
 	def addProgress(self, progress_callback):
-		print "[addProgress]"
+		print("[addProgress]")
 		self.factory.progress_callback = progress_callback

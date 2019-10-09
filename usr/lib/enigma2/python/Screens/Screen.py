@@ -1,4 +1,6 @@
+from __future__ import print_function
 from Tools.Profile import profile
+from six.moves import range
 
 profile("LOAD:GUISkin")
 from Components.GUISkin import GUISkin
@@ -11,7 +13,7 @@ from enigma import eRCInput
 
 class Screen(dict, GUISkin):
 
-	False, SUSPEND_STOPS, SUSPEND_PAUSES = range(3)
+	False, SUSPEND_STOPS, SUSPEND_PAUSES = list(range(3))
 	ALLOW_SUSPEND = False
 
 	def __init__(self, session, parent = None, windowTitle=None):
@@ -87,7 +89,7 @@ class Screen(dict, GUISkin):
 #			assert self.session == None, "a screen can only exec once per time"
 #			self.session = session
 
-			for val in self.values() + self.renderer:
+			for val in list(self.values()) + self.renderer:
 				val.execBegin()
 				if not self.stand_alone and self.session.current_dialog != self:
 					return
@@ -111,7 +113,7 @@ class Screen(dict, GUISkin):
 			x()
 
 	def doClose(self, immediate=True):
-		print "WARNING: NEVER call Screen.doClose directly!!! You have to use Session.deleteDialog(screen)\nThis function is deprecated and will be removed in the future\nPlease report!"
+		print("WARNING: NEVER call Screen.doClose directly!!! You have to use Session.deleteDialog(screen)\nThis function is deprecated and will be removed in the future\nPlease report!")
 		import traceback
 		traceback.print_stack(limit = 2)
 		self.session.deleteDialog(self)
@@ -197,7 +199,7 @@ class Screen(dict, GUISkin):
 	def __onShow(self):
 		for x in self.onShow:
 			x()
-		for val in self.values() + self.renderer:
+		for val in list(self.values()) + self.renderer:
 			if isinstance(val, GUIComponent) or isinstance(val, Source):
 				val.onShow()
 
@@ -217,7 +219,7 @@ class Screen(dict, GUISkin):
 	def __onHide(self):
 		for x in self.onHide:
 			x()
-		for val in self.values() + self.renderer:
+		for val in list(self.values()) + self.renderer:
 			if isinstance(val, GUIComponent) or isinstance(val, Source):
 				val.onHide()
 

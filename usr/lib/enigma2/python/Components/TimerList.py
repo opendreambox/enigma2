@@ -1,3 +1,4 @@
+from __future__ import division
 from HTMLComponent import HTMLComponent
 from GUIComponent import GUIComponent
 from TemplatedMultiContentComponent import TemplatedMultiContentComponent
@@ -67,17 +68,17 @@ class TimerList(HTMLComponent, TemplatedMultiContentComponent, object):
 				if timer.end - timer.begin < 4: # rounding differences
 					repeatedtext += ((" %s "+ _("(ZAP)")) % (FuzzyTime(timer.begin)[1]))
 				else:
-					repeatedtext += ((" %s ... %s (%d " + _("mins") + ") ") % (FuzzyTime(timer.begin)[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) / 60)) + _("(ZAP)")
+					repeatedtext += ((" %s ... %s (%d " + _("mins") + ") ") % (FuzzyTime(timer.begin)[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) // 60)) + _("(ZAP)")
 			else:
-				repeatedtext += ((" %s ... %s (%d " + _("mins") + ")") % (FuzzyTime(timer.begin)[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) / 60))
+				repeatedtext += ((" %s ... %s (%d " + _("mins") + ")") % (FuzzyTime(timer.begin)[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) // 60))
 		else:
 			if timer.justplay:
 				if timer.end - timer.begin < 4:
 					repeatedtext += (("%s, %s " + _("(ZAP)")) % (FuzzyTime(timer.begin)))
 				else:
-					repeatedtext += (("%s, %s ... %s (%d " + _("mins") + ") ") % (FuzzyTime(timer.begin) + FuzzyTime(timer.end)[1:] + ((timer.end - timer.begin) / 60,))) + _("(ZAP)")
+					repeatedtext += (("%s, %s ... %s (%d " + _("mins") + ") ") % (FuzzyTime(timer.begin) + FuzzyTime(timer.end)[1:] + ((timer.end - timer.begin) // 60,))) + _("(ZAP)")
 			else:
-				repeatedtext += (("%s, %s ... %s (%d " + _("mins") + ")") % (FuzzyTime(timer.begin) + FuzzyTime(timer.end)[1:] + ((timer.end - timer.begin) / 60,)))
+				repeatedtext += (("%s, %s ... %s (%d " + _("mins") + ")") % (FuzzyTime(timer.begin) + FuzzyTime(timer.end)[1:] + ((timer.end - timer.begin) // 60,)))
 
 		res.append(repeatedtext)
 

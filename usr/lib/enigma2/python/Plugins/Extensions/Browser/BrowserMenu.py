@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from enigma import getDesktop, eListbox, eTimer, getPrevAsciiCode
 
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -157,7 +159,7 @@ class BrowserMenu(Screen):
 		#Lists
 		self.detailList = List([], enableWrapAround = True)
 		self.detailConfigList = ConfigList([])
-		self.detailConfigList.l.setSeperation( (BrowserMenu.width - 210) / 2 )
+		self.detailConfigList.l.setSeperation( (BrowserMenu.width - 210) // 2 )
 		config.plugins.WebBrowser.storage.enabled.addNotifier(self.__cfgExpandableElementChanged, initial_call = False)
 		config.plugins.WebBrowser.storage.enabled.addNotifier(self.__cfgStoragePathChanged, initial_call = False)
 		config.plugins.WebBrowser.storage.path.addNotifier(self.__cfgStoragePathChanged, initial_call = False)
@@ -331,7 +333,7 @@ class BrowserMenu(Screen):
 		self.__ckList = self.__db.getCookies()
 
 	def __action(self, action):
-		print "[BrowserMenu].__action :: action='%s'" %action
+		print("[BrowserMenu].__action :: action='%s'" %action)
 		fnc = self.__actionFuncs[self.__curMenu].get(action, None)
 		if fnc != None:
 			fnc()
@@ -426,7 +428,7 @@ class BrowserMenu(Screen):
 		self["line"].flush()
 
 	def __setStatus(self, text):
-		print "[BrowserMenu].__setStatus"
+		print("[BrowserMenu].__setStatus")
 		self["statuslabel"].setText(text)
 		self["statuslabel"].show()
 		self.__statusTimer.startLongTimer(3)
@@ -520,10 +522,10 @@ class BrowserMenu(Screen):
 
 	#Bookmark List Methods
 	def __bmOk(self):
-		print "[BrowserMenu].__bmOk"
+		print("[BrowserMenu].__bmOk")
 		if self.detailList.index > 0 and  self.detailList.getCurrent() != None:
 			current = self.detailList.getCurrent()[0]
-			print "[BrowserMenu].__bmOk, current = '%s'" %current
+			print("[BrowserMenu].__bmOk, current = '%s'" %current)
 			self.__actions.append( (self.ACTION_BOOKMARK, current.url) )
 			self.close( self.__actions )
 		else:
@@ -546,7 +548,7 @@ class BrowserMenu(Screen):
 	def __bmDelete(self):
 		if self.detailList.getCurrent() != None:
 			name = self.detailList.getCurrent()[0].name
-			print "[BrowserMenu].__bmDelete, name='%s'" %name
+			print("[BrowserMenu].__bmDelete, name='%s'" %name)
 			dlg = self.session.openWithCallback( self.__bmDeleteCB, MessageBox, _("Do you really want to delete the bookmark '%s'?") %name, type = MessageBox.TYPE_YESNO )
 			dlg.setTitle(_("Delete Bookmark?"))
 
@@ -565,7 +567,7 @@ class BrowserMenu(Screen):
 		return ( bookmark, bookmark.name, bookmark.url )
 
 	def __bmBuildList(self):
-		print "[BrowserMenu].__bmBuildList"
+		print("[BrowserMenu].__bmBuildList")
 		list = []
 		#Suggest current page for adding
 
@@ -576,13 +578,13 @@ class BrowserMenu(Screen):
 		self.detailList.setList(list)
 
 	def __bmReload(self, needle = ""):
-		print "[BrowserMenu].__bmReload"
+		print("[BrowserMenu].__bmReload")
 		self.__bmNeedle = needle
 		self.__bmList = self.__db.getBookmarks(needle)
 		self.__bmBuildList()
 
 	def __bmFilterCB(self):
-		print "[BrowserMenu].__bmFilterCB"
+		print("[BrowserMenu].__bmFilterCB")
 		needle = self.detailInput.getText()
 		if needle != self.__bmNeedle:
 			self.__bmReload(needle)
@@ -632,13 +634,13 @@ class BrowserMenu(Screen):
 		return ( historyItem, date, time, historyItem.title, historyItem.url )
 
 	def __hisReload(self, needle = ""):
-		print "[BrowserMenu].__hisReload"
+		print("[BrowserMenu].__hisReload")
 		self.__hisNeedle = needle
 		self.__hisList = self.__db.getHistory(needle)
 		self.__hisBuildList()
 
 	def __hisBuildList(self):
-		print "[BrowserMenu].__hisBuildList"
+		print("[BrowserMenu].__hisBuildList")
 		history = []
 		for h in self.__hisList:
 			history.append(self.__hisGetEntryComponent(h))
@@ -678,7 +680,7 @@ class BrowserMenu(Screen):
 		return ( job, job.name, job.getStatustext(), int(100*job.progress/float(job.end)), str(100*job.progress/float(job.end)) + "%")
 
 	def __dlBuildList(self):
-		print "[BrowserMenu].__dlBuildList"
+		print("[BrowserMenu].__dlBuildList")
 		downloads = []
 		for job in downloadManager.getPendingJobs():
 			downloads.append(self.__dlGetEntryComponent(job))
@@ -687,7 +689,7 @@ class BrowserMenu(Screen):
 			self.__dlRefreshTimer.startLongTimer(3)
 
 	def __dlAbort(self):
-		print "[BrowserMenu].__dlAbort"
+		print("[BrowserMenu].__dlAbort")
 		cur = self.detailList.getCurrent()
 		if cur != None:
 			job = cur[0]
@@ -705,13 +707,13 @@ class BrowserMenu(Screen):
 		return ( cert, str(cert.notBefore()), str(cert.notAfter()), str(cert.host), cn, str(cert.cert.digest("sha1")) )
 
 	def __crtReload(self):
-		print "[BrowserMenu].__crtReload"
+		print("[BrowserMenu].__crtReload")
 		self.__crtList = self.__db.getCerts()
 		self.__crtBuildList()
 
 
 	def __crtBuildList(self):
-		print "[BrowserMenu].__crtBuildList"
+		print("[BrowserMenu].__crtBuildList")
 		certs = []
 		for c in self.__crtList:
 			certs.append(self.__crtGetEntryComponent(c))
@@ -720,20 +722,20 @@ class BrowserMenu(Screen):
 	def __crtDelete(self):
 		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
 			cert = self.detailList.getCurrent()[0]
-			print "[BrowserMenu].__crtDelete, host=%s,SHA1 fingerprint=%s" %(cert.host,cert.cert.digest("sha1"))
+			print("[BrowserMenu].__crtDelete, host=%s,SHA1 fingerprint=%s" %(cert.host,cert.cert.digest("sha1")))
 			text = _("Do you really want to remove the following certificate from the list of trusted certificates?\n\nHostname: %s\nSHA1-Fingerprint: %s") %(cert.host, cert.cert.digest("sha1"))
 			dlg = self.session.openWithCallback( self.__crtDeleteCB, MessageBox, text, type = MessageBox.TYPE_YESNO )
 			dlg.setTitle(_("Remove trusted certificate?"))
 
 	def __crtDeleteCB(self, confirmed):
-		print "[BrowserMenu].__crtDeleteCB"
+		print("[BrowserMenu].__crtDeleteCB")
 		if confirmed:
 			cert = self.detailList.getCurrent()[0]
 			self.__db.deleteCert(cert)
 			self.__crtReload()
 
 	def __crtDetails(self):
-		print "[BrowserMenu].__crtDetails"
+		print("[BrowserMenu].__crtDetails")
 		if self.detailList.index >= 0 and self.detailList.getCurrent() != None:
 			cert = self.detailList.getCurrent()[0]
 
@@ -753,12 +755,12 @@ class BrowserMenu(Screen):
 			dlg.setTitle(_("Certificate Details (%s)") %cert.host)
 
 	def __ckReload(self):
-		print "[BrowserMenu].__ckReload"
+		print("[BrowserMenu].__ckReload")
 		self.__ckList = self.__db.getCookies()
 		self.__ckBuildList()
 
 	def __ckBuildList(self):
-		print "[BrowserMenu].__ckBuildList"
+		print("[BrowserMenu].__ckBuildList")
 		cookies = []
 		for c in self.__ckList:
 			cookies.append(self.__ckGetEntryComponent(c))
@@ -781,7 +783,7 @@ class BrowserMenu(Screen):
 			dlg.setTitle(_("Delete Cookie?"))
 
 	def __ckDeleteCB(self, confirmed):
-		print "[BrowserMenu].__ckDeleteCB"
+		print("[BrowserMenu].__ckDeleteCB")
 		if confirmed:
 			self.__db.deleteCookie(self.detailList.getCurrent()[0])
 			self.__ckReload()
@@ -796,7 +798,7 @@ class BrowserMenu(Screen):
 			dlg.setTitle(_("Delete Cookie?"))
 
 	def __ckDeleteAllCB(self, confirmed):
-		print "[BrowserMenu].__ckDeleteCB"
+		print("[BrowserMenu].__ckDeleteCB")
 		if confirmed:
 			self.__db.deleteAllCookies()
 			self.__ckReload()

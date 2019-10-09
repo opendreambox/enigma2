@@ -1,3 +1,4 @@
+from __future__ import division
 from enigma import ePoint, eSize, eTimer
 
 from Components.Label import Label
@@ -30,7 +31,7 @@ class Toast(Screen):
 
 		# center window
 		newwidth = textsize[0]
-		self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth) / 2, orgpos.y()))
+		self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth) // 2, orgpos.y()))
 
 class ToastManager(object):
 	def __init__(self, session):

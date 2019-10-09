@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 try:
 	import twisted.python.runtime
 	twisted.python.runtime.platform.supportsThreads = lambda: True
@@ -15,7 +17,7 @@ from Screens.SetupGuide import SetupGuide
 queryFunc_conn = ePythonConfigQuery.getQueryFuncSignal().connect(configfile.getResolvedKey)
 
 def gPixmapPtr_deref(self):
-	print "gPixmapPtr.__deref__() is deprecated please completely remove the \".__deref__()\" call!"
+	print("gPixmapPtr.__deref__() is deprecated please completely remove the \".__deref__()\" call!")
 	import traceback
 	traceback.print_stack(limit = 2)
 	return self
@@ -26,7 +28,7 @@ enigma.gPixmapPtr.__deref__ = gPixmapPtr_deref
 ePixmap_setPixmap_org = enigma.ePixmap.setPixmap
 def ePixmap_setPixmap(self, pixmap):
 	if pixmap is None:
-		print "ePixmap.setPixmap(None) is deprecated please use ePixmap.setPixmap(enigma.gPixmapPtr())!"
+		print("ePixmap.setPixmap(None) is deprecated please use ePixmap.setPixmap(enigma.gPixmapPtr())!")
 		import traceback
 		traceback.print_stack(limit = 2)
 		pm = enigma.gPixmapPtr()
@@ -39,7 +41,7 @@ enigma.ePixmap.setPixmap = ePixmap_setPixmap
 eSlider_setPixmap_org = enigma.eSlider.setPixmap
 def eSlider_setPixmap(self, pixmap):
 	if pixmap is None:
-		print "eSlider.setPixmap(None) is deprecated please use eSlider.setPixmap(enigma.gPixmapPtr())!"
+		print("eSlider.setPixmap(None) is deprecated please use eSlider.setPixmap(enigma.gPixmapPtr())!")
 		import traceback
 		traceback.print_stack(limit = 2)
 		pm = enigma.gPixmapPtr()
@@ -52,7 +54,7 @@ enigma.eSlider.setPixmap = eSlider_setPixmap
 eSlider_setBackgroundPixmap_org = enigma.eSlider.setBackgroundPixmap
 def eSlider_setBackgroundPixmap(self, pixmap):
 	if pixmap is None:
-		print "eSlider.setBackgroundPixmap(None) is deprecated please use eSlider.setBackgroundPixmap(enigma.gPixmapPtr())!"
+		print("eSlider.setBackgroundPixmap(None) is deprecated please use eSlider.setBackgroundPixmap(enigma.gPixmapPtr())!")
 		import traceback
 		traceback.print_stack(limit = 2)
 		pm = enigma.gPixmapPtr()
@@ -65,7 +67,7 @@ enigma.eSlider.setBackgroundPixmap = eSlider_setBackgroundPixmap
 ePositionGauge_setPointer_org = enigma.ePositionGauge.setPointer
 def ePositionGauge_setPointer(self, which, pixmap, center):
 	if pixmap is None:
-		print "ePositionGauge.setPointer(which, None, center) is deprecated please use ePositionGauge.setPointer(which, enigma.gPixmapPtr(), center)!"
+		print("ePositionGauge.setPointer(which, None, center) is deprecated please use ePositionGauge.setPointer(which, enigma.gPixmapPtr(), center)!")
 		import traceback
 		traceback.print_stack(limit = 2)
 		pm = enigma.gPixmapPtr()
@@ -103,7 +105,7 @@ profile("LANGUAGE")
 from Components.Language import language
 
 def setEPGLanguage():
-	print "language set to", language.getLanguage()
+	print("language set to", language.getLanguage())
 	eServiceEvent.setEPGLanguage(language.getLanguage())
 
 language.addCallback(setEPGLanguage)
@@ -204,7 +206,7 @@ try:
 		reactor.doShutdown()
 
 except ImportError:
-	print "twisted not available"
+	print("twisted not available")
 	def runReactor():
 		runMainloop()
 
@@ -235,13 +237,13 @@ def dump(dir, p = ""):
 			dump(val, p + "(dict)/" + entry)
 	if hasattr(dir, "__dict__"):
 		for name, value in dir.__dict__.items():
-			if not had.has_key(str(value)):
+			if str(value) not in had:
 				had[str(value)] = 1
 				dump(value, p + "/" + str(name))
 			else:
-				print p + "/" + str(name) + ":" + str(dir.__class__) + "(cycle)"
+				print(p + "/" + str(name) + ":" + str(dir.__class__) + "(cycle)")
 	else:
-		print p + ":" + str(dir)
+		print(p + ":" + str(dir))
 
 # + ":" + str(dir.__class__)
 
@@ -376,7 +378,7 @@ class Session:
 			return screen(self, *arguments, **kwargs)
 		except:
 			errstr = "Screen %s(%s, %s): %s" % (str(screen), str(arguments), str(kwargs), exc_info()[0])
-			print errstr
+			print(errstr)
 			print_exc(file=stdout)
 			quitMainloop(5)
 
@@ -400,17 +402,17 @@ class Session:
 		try:
 			dlg = self.create(screen, arguments, **kwargs)
 		except Exception as e:
-			print 'EXCEPTION IN DIALOG INIT CODE, ABORTING:'
-			print '-'*60
+			print('EXCEPTION IN DIALOG INIT CODE, ABORTING:')
+			print('-'*60)
 			print_exc(file=stdout)
 			if isinstance(e, SkinError):
-				print "SKIN ERROR", e
-				print "defaulting to standard skin..."
+				print("SKIN ERROR", e)
+				print("defaulting to standard skin...")
 				config.skin.primary_skin.value = "skin.xml"
 				config.skin.primary_skin.save()
 				configfile.save()
 			quitMainloop(5)
-			print '-'*60
+			print('-'*60)
 
 		if dlg is None:
 			return
@@ -492,7 +494,7 @@ class Session:
 
 	def close(self, screen, *retval):
 		if not self.in_exec:
-			print "close after exec!"
+			print("close after exec!")
 			return
 
 		# be sure that the close is for the right dialog!
@@ -541,7 +543,7 @@ class PowerKey:
 		self.session.infobar = None
 
 	def shutdown(self):
-		print "PowerOff - Now!"
+		print("PowerOff - Now!")
 		if not Screens.Standby.inTryQuitMainloop and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND:
 			self.session.open(Screens.Standby.TryQuitMainloop, 1)
 
@@ -555,7 +557,7 @@ class PowerKey:
 		if action == "shutdown":
 			self.shutdown()
 		elif action == "show_menu":
-			print "Show shutdown Menu"
+			print("Show shutdown Menu")
 			root = mdom.getroot()
 			for x in root.findall("menu"):
 				y = x.find("id")
@@ -698,13 +700,12 @@ def runScreenTest():
 	#get currentTime
 	nowTime = time()
 	wakeup_on_zaptimers = config.usage.standby_zaptimer_wakeup.value
-	wakeupList = [
+	wakeupList = sorted([
 		x for x in ((session.nav.RecordTimer.getNextRecordingTime(), 0, session.nav.RecordTimer.isNextRecordAfterEventActionAuto()),
 					(session.nav.RecordTimer.getNextZapTime(), 1),
 					(plugins.getNextWakeupTime(), 2))
 		if x[0] != -1 and (x[1] != 1 or wakeup_on_zaptimers)
-	]
-	wakeupList.sort()
+	])
 	recordTimerWakeupAuto = False
 	if wakeupList:
 		from time import strftime
@@ -714,9 +715,9 @@ def runScreenTest():
 		else:
 			wptime = startTime[0] - 240
 		if not config.misc.useTransponderTime.value:
-			print "dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime))
+			print("dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime)))
 			setRTCtime(nowTime)
-		print "set wakeup time to", strftime("%Y/%m/%d %H:%M", localtime(wptime))
+		print("set wakeup time to", strftime("%Y/%m/%d %H:%M", localtime(wptime)))
 		setFPWakeuptime(wptime)
 		recordTimerWakeupAuto = startTime[1] == 0 and startTime[2]
 		config.misc.prev_wakeup_time.value = startTime[0]
@@ -811,7 +812,7 @@ class FixDemuxThread(Thread):
 		class _SchedParams(ctypes.Structure):
 			_fields_ = [('sched_priority', ctypes.c_int)]
 		# set prio of dmxX processes to same prio as linux threaded interrupts
-		prio = c.sched_get_priority_max(SCHED_FIFO) / 2 + 1
+		prio = c.sched_get_priority_max(SCHED_FIFO) // 2 + 1
 		schedParams = _SchedParams(prio)
 		params = ctypes.byref(schedParams)
 		process_num = self.process_num
@@ -821,7 +822,7 @@ class FixDemuxThread(Thread):
 			if pid is None:
 				break
 			if c.sched_setscheduler(pid, SCHED_FIFO, params) == -1:
-				print "sched_setscheduler failed for dmx%d" %x
+				print("sched_setscheduler failed for dmx%d" %x)
 			x += 1
 
 # first, setup a screen
@@ -835,14 +836,14 @@ try:
 	from Components.ParentalControl import parentalControl
 	parentalControl.save()
 except Exception as e:
-	print 'EXCEPTION IN PYTHON STARTUP CODE:'
-	print '-'*60
+	print('EXCEPTION IN PYTHON STARTUP CODE:')
+	print('-'*60)
 	print_exc(file=stdout)
 	if isinstance(e, SkinError):
-		print "SKIN ERROR", e
-		print "defaulting to standard skin..."
+		print("SKIN ERROR", e)
+		print("defaulting to standard skin...")
 		config.skin.primary_skin.value = "skin.xml"
 		config.skin.primary_skin.save()
 		configfile.save()
 	quitMainloop(5)
-	print '-'*60
+	print('-'*60)

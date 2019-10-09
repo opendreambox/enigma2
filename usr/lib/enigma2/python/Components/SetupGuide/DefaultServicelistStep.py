@@ -6,6 +6,7 @@ from Tools.Log import Log
 from Tools.Directories import resolveFilename, SCOPE_DEFAULTDIR,\
 	SCOPE_DEFAULTPARTITION, SCOPE_DEFAULTPARTITIONMOUNTDIR
 from Components.NimManager import nimmanager
+from six.moves import range
 
 class DefaultServicelistStep(DreamInfoHandler, SetupConfigStep):
 	def __init__(self, parent):

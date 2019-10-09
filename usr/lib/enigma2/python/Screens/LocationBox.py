@@ -3,6 +3,7 @@
 #
 
 # GUI (Screens)
+from __future__ import division
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.InputBox import InputBox
@@ -28,6 +29,7 @@ from Components.MenuList import MenuList
 
 # Timer
 from enigma import eTimer
+import six
 
 class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 	"""Simple Class similar to MessageBox / ChoiceBox but used to choose a folder/pathname combination"""
@@ -355,7 +357,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 				# Try to read fs stats
 				try:
 					s = os.statvfs(currentFolder)
-					if (s.f_bavail * s.f_bsize) / 1000000 > self.minFree:
+					if (s.f_bavail * s.f_bsize) // 1000000 > self.minFree:
 						# Automatically confirm if we have enough free disk Space available
 						return self.selectConfirmed(True)
 				except OSError:
@@ -455,7 +457,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 
 		# Get char and append to text
 		char = self.getKey(number)
-		self.quickselect = self.quickselect[:self.curr_pos] + unicode(char)
+		self.quickselect = self.quickselect[:self.curr_pos] + six.text_type(char)
 
 		# Start Timeout
 		self.qs_timer_type = 0

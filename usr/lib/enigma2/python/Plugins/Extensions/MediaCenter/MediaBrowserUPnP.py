@@ -10,6 +10,7 @@ from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 
 from MediaCore import MediaCore, mediaCore
 from MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
+import six
 
 def getItemTypeFromUPnP(itemtype):
 	itemtype = {
@@ -68,7 +69,7 @@ def upnpMeta2DBMeta(meta):
 		Statics.META_URI : eMediaDatabase.FIELD_FILE_URI,
 	}
 	meta_db = {}
-	for key, value in meta.iteritems():
+	for key, value in six.iteritems(meta):
 		if key == Statics.META_RESOLUTION:
 			try:
 				width, height = value.split("x")

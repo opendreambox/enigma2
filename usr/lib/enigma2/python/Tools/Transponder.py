@@ -1,3 +1,4 @@
+from __future__ import print_function
 from enigma import eDVBFrontendParametersSatellite, eDVBFrontendParametersCable, eDVBFrontendParametersTerrestrial
 from enigma import iDVBFrontend
 from Components.NimManager import nimmanager
@@ -182,8 +183,8 @@ def ConvertToHumanReadable(tp, ttype = None):
 				ret["plp_id"] = '%d' %tp["plp_id"]
 			ret["system"] = "DVB-T2"
 	else:
-		print "ConvertToHumanReadable: no or unknown type in tpdata dict!"
+		print("ConvertToHumanReadable: no or unknown type in tpdata dict!")
 	for x in tp.keys():
-		if not ret.has_key(x) and x not in ("is_id", "pls_code", "pls_mode", "plp_id"):
+		if x not in ret and x not in ("is_id", "pls_code", "pls_mode", "plp_id"):
 			ret[x] = tp[x]
 	return ret

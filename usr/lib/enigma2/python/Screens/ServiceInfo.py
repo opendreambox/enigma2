@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.Label import Label
@@ -50,7 +51,7 @@ class ServiceInfo(Screen):
 			if service is not None:
 				self.info = service.info()
 				self.feinfo = service.frontendInfo()
-				print self.info.getInfoObject(iServiceInformation.sCAIDs);
+				print(self.info.getInfoObject(iServiceInformation.sCAIDs));
 			else:
 				self.info = None
 				self.feinfo = None

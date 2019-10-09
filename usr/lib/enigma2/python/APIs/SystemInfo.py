@@ -1,9 +1,10 @@
+from __future__ import print_function
 from Components.NimManager import nimmanager
 
 def printme(text):
 	"""Test
 	"""
-	print text
+	print(text)
 
 def getNimCount():
 	return nimmanager.getSlotCount()

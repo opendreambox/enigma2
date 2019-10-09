@@ -1,10 +1,11 @@
+from __future__ import print_function
 from Components.Harddisk import harddiskmanager
 from enigma import eDeviceEventManager
 from os.path import basename
 
 class Hotplug(object):
 	def __init__(self):
-		print "starting hotplug handler"
+		print("starting hotplug handler")
 		self.__eventCallbacks = []
 		self.__eventManager = eDeviceEventManager()
 		self.__conn = self.__eventManager.event.connect(self.__hotplugEvent)
@@ -13,7 +14,7 @@ class Hotplug(object):
 		self.__eventManager.trigger()
 
 	def release(self):
-		print "stopping hotplug handler"
+		print("stopping hotplug handler")
 		self.__conn = None
 		self.__eventManager = None
 

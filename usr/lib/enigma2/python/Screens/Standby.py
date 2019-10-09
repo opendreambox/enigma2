@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 from Screen import Screen
 from Components.ActionMap import ActionMap
 from Components.config import config
@@ -10,7 +12,7 @@ inStandby = None
 
 class Standby(Screen):
 	def Power(self):
-		print "leave standby"
+		print("leave standby")
 		#set input to encoder
 		self.avswitch.setInput("ENCODER")
 		#restart last played service
@@ -22,7 +24,7 @@ class Standby(Screen):
 	def setMute(self):
 		if (eDVBVolumecontrol.getInstance().isMuted()):
 			self.wasMuted = 1
-			print "mute already active"
+			print("mute already active")
 		else:	
 			self.wasMuted = 0
 			eDVBVolumecontrol.getInstance().volumeToggleMute()
@@ -35,7 +37,7 @@ class Standby(Screen):
 		Screen.__init__(self, session)
 		self.avswitch = AVSwitch()
 
-		print "enter standby"
+		print("enter standby")
 
 		self["actions"] = ActionMap( [ "StandbyActions" ],
 		{

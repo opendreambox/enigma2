@@ -1,7 +1,11 @@
+from __future__ import division
+from __future__ import print_function
 import _webview
 from webview import eWebView
 from enigma import getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint, eRect, cvar
 import enigma
+import six
+from six.moves import map
 enigma.eWebView = eWebView
 
 from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
@@ -35,7 +39,7 @@ from EnhancedInput import EnhancedInput
 from MoviePlayer import MoviePlayer
 
 from base64 import b64decode, b64encode
-from urllib import unquote as url_unquote, quote_plus as url_quote_plus
+from six.moves.urllib.parse import unquote as url_unquote, quote_plus as url_quote_plus
 from urlparse import urlparse
 
 config.plugins.WebBrowser = ConfigSubsection()
@@ -100,7 +104,7 @@ class Browser(Screen, HelpableScreen):
 			""" %{	"w" : width,
 					"h" : height,
 					"loadingX" : width-150,
-					"textX" : (width - 375) / 2,
+					"textX" : (width - 375) // 2,
 					"mainH" : height-55,
 					"btnY" : height-22,
 					"btnTxtY" : height-24,
@@ -159,8 +163,8 @@ class Browser(Screen, HelpableScreen):
 					"h" : fheight,
 					"urlW": fwidth - 150,
 					"loadingY" : fheight - 125,
-					"loadingX" : ( fwidth / 2 ) - 75,
-					"textX" : (fwidth - 375) / 2,
+					"loadingX" : ( fwidth // 2 ) - 75,
+					"textX" : (fwidth - 375) // 2,
 					"mainH" : fheight-55,
 					"btnBarX": fwidth - 75 - 200,
 					"btnBarY": fheight - 75 - 108,
@@ -170,7 +174,7 @@ class Browser(Screen, HelpableScreen):
 					"btnGreenY" : fheight - 75 - 75,
 					"btnYellowY" : fheight - 75 - 50,
 					"btnBlueY" : fheight - 75 - 25,
-					"notifX" : ( fwidth / 2 ) - 175,
+					"notifX" : ( fwidth // 2 ) - 175,
 				}
 
 		self.__isHbbtv = isHbbtv
@@ -371,7 +375,7 @@ class Browser(Screen, HelpableScreen):
 		eRCInput.getInstance().setKeyboardMode(self.__keyboardMode)
 
 	def __setStatus(self, text):
-		print "[Browser].__setStatus"
+		print("[Browser].__setStatus")
 		self.statuslabel.setText(text)
 		self.statuslabel.show()
 		self.__statusTimer.startLongTimer(3)
@@ -502,14 +506,14 @@ class Browser(Screen, HelpableScreen):
 		self.onAuthRequired(token, user, password, realm)
 
 	def __onDownloadRequested(self, url):
-		print "[Browser].__onDownloadRequested '%s'" %(url)
+		print("[Browser].__onDownloadRequested '%s'" %(url))
 		filename = url_unquote(url).split("/")[-1]
 		localfile = "%s/%s" %(config.plugins.WebBrowser.downloadpath.value, filename)
 		downloadManager.AddJob(DownloadJob(url, localfile, filename))
 		self.session.open(MessageBox, _("Download started..."), type = MessageBox.TYPE_INFO, timeout = 3)
 
 	def __onUnsupportedContent(self, url, contentType):
-		print "[Browser].__onUnsupportedContent 'url=%s; contentType='%s'" %(url, contentType)
+		print("[Browser].__onUnsupportedContent 'url=%s; contentType='%s'" %(url, contentType))
 		self.__handledUnsupportedContent = True
 		if contentType.startswith("video") or contentType.startswith("audio"):
 			list = [( _("Download"), ("download", url) ),
@@ -604,7 +608,7 @@ class Browser(Screen, HelpableScreen):
 				self.__showHideButtonBar(visible)
 
 	def __registerCallbacks(self):
-		print "[Browser].__registerCallbacks"
+		print("[Browser].__registerCallbacks")
 		self.webnavigation.onUrlChanged.append(self.__onUrlChanged)
 		self.webnavigation.onTitleChanged.append(self.__onTitleChanged)
 		self.webnavigation.onLoadProgress.append(self.__onLoadProgress)
@@ -866,7 +870,7 @@ class Browser(Screen, HelpableScreen):
 			self.setTitle("Web Browser - %s" %self.pageTitle)
 
 	def __onLoadProgress(self, progress):
-		print "[Browser].__onLoadProgress %s" %progress
+		print("[Browser].__onLoadProgress %s" %progress)
 		if(progress < 100):
 			self["loading"].show()
 			self["loading"].setText(_("Loading... %s%%" %progress))
@@ -875,7 +879,7 @@ class Browser(Screen, HelpableScreen):
 			self["loading"].setText("")
 
 	def __onLoadFinished(self, val):
-		print "[Browser].__onLoadFinished %s" %val
+		print("[Browser].__onLoadFinished %s" %val)
 		if val == 1:
 			if not self.__isHbbtv:
 				self.__db.addToHistory(HistoryItem(title = self.pageTitle, url = self.webnavigation.url));
@@ -900,16 +904,15 @@ class Browser(Screen, HelpableScreen):
 			self.setUrl(url)
 
 	def __onWindowRequested(self, url):
-		print "[Browser].__onWindowRequested :: '%s'" %url
+		print("[Browser].__onWindowRequested :: '%s'" %url)
 		self.setUrl(url)
 
 	def __onSslErrors(self, token, errors, pems):
-		print "[Browser].__onSslErrors :: 'token='%s', errors='%s'" %(token, errors)
+		print("[Browser].__onSslErrors :: 'token='%s', errors='%s'" %(token, errors))
 		self.__hasSslErrors = True
 		cnt = 0
 		perrors = {}
-		pems = list(pems)
-		pems.sort()
+		pems = sorted(pems)
 		for bytes in pems:
 			pem = "".join(map(chr, bytes))
 			if pem.strip() != "":
@@ -918,16 +921,16 @@ class Browser(Screen, HelpableScreen):
 				perrors[pem] = messages
 				cnt += 1
 
-		for pem, messages in perrors.iteritems():
+		for pem, messages in six.iteritems(perrors):
 			cert = Certificate(-1, self.__getCurrentNetloc(), pem)
 			checkVal = self.__db.checkCert( cert ) == BrowserDB.CERT_UNKOWN
 			if checkVal == BrowserDB.CERT_OK:
-				print "[Browser].__onSslErrors :: netloc/pem combination known and trusted!"
+				print("[Browser].__onSslErrors :: netloc/pem combination known and trusted!")
 				dict = eDict()
 				dict.setFlag("ignore")
 				self.webnavigation.setDict(token, dict)
 			else:
-				print "[Browser].__onSslErrors :: netloc/pem combination NOT known and/or trusted!"
+				print("[Browser].__onSslErrors :: netloc/pem combination NOT known and/or trusted!")
 				self.__currentPEM = pem
 
 				errorstr = ""
@@ -945,7 +948,7 @@ class Browser(Screen, HelpableScreen):
 	def __onSslErrorCB(self, confirmed):
 		self.__hasSslErrors = False
 		if confirmed:
-			print "[Browser].__onSslErrorCB :: loc='%s', PEM='%s'" %(self.__getCurrentNetloc(), self.__currentPEM)
+			print("[Browser].__onSslErrorCB :: loc='%s', PEM='%s'" %(self.__getCurrentNetloc(), self.__currentPEM))
 			self.__db.addCert( Certificate(-1, self.__getCurrentNetloc(), self.__currentPEM) )
 			self.setUrl(self.webnavigation.url)
 
@@ -987,7 +990,7 @@ class Browser(Screen, HelpableScreen):
 			self.__actionNavigateNumber(chr(getPrevAsciiCode()))
 
 	def __actionNavigateNumber(self, char):
-		print "[Browser].__actionNavigateNumber %s" %char
+		print("[Browser].__actionNavigateNumber %s" %char)
 		nav = { '0' : eWebView.nav0,
 				'1' : eWebView.nav1,
 				'2' : eWebView.nav2,
@@ -1011,8 +1014,8 @@ class Browser(Screen, HelpableScreen):
 		size = self.webnavigation.size
 		off = 100 #offset
 
-		hcenter = size.width() / 2
-		vcenter = size.height() / 2
+		hcenter = size.width() // 2
+		vcenter = size.height() // 2
 
 		roff = size.width() - off #right offset
 		boff = size.height() - off # bottom offset
@@ -1087,7 +1090,7 @@ class Browser(Screen, HelpableScreen):
 
 	def __restoreCookies(self):
 		cookies = self.__db.getCookies()
-		print "[Browser].__restoreCookies ::: restoring %s cookies" %len(cookies)
+		print("[Browser].__restoreCookies ::: restoring %s cookies" %len(cookies))
 		rawCookies = []
 		for cookie in cookies:
 			rawCookies.append( b64encode(cookie.raw) )
@@ -1103,10 +1106,10 @@ class Browser(Screen, HelpableScreen):
 				cookie = Cookie.fromRawString(b64decode(rawCookie))
 				if cookie != None:
 					cookies.append( cookie )
-			print "[Browser].__persistCookies ::: persisting %s cookies" %len(cookies)
+			print("[Browser].__persistCookies ::: persisting %s cookies" %len(cookies))
 			self.__db.persistCookies(cookies)
 		else:
-			print "[Browser].__persistCookies ::: NO cookies to be persisted"
+			print("[Browser].__persistCookies ::: NO cookies to be persisted")
 
 #VIDEO 
 	def showVideo(self):

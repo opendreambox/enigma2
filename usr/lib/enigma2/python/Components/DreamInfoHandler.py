@@ -1,4 +1,5 @@
 # -*- coding: iso-8859-1 -*-
+from __future__ import print_function
 import xml.sax
 from Tools.Directories import crawlDirectory, resolveFilename, SCOPE_CONFIG, SCOPE_SKIN, SCOPE_DEFAULTDIR, copyfile, copytree, fileExists
 from Components.NimManager import nimmanager
@@ -32,21 +33,21 @@ class InfoHandler(xml.sax.ContentHandler):
 		self.data = {}
 
 	def printError(self, error):
-		print "Error in defaults xml files:", error
-		raise InfoHandlerParseError, error
+		print("Error in defaults xml files:", error)
+		raise InfoHandlerParseError(error)
 
 	def startElement(self, name, attrs):
 		#print name, ":", attrs.items()
 		self.elements.append(name)
 
 		if name in ("hardware", "bcastsystem", "satellite", "tag", "flag", "eth0mac"):
-			if not attrs.has_key("type"):
+			if "type" not in attrs:
 					self.printError(str(name) + " tag with no type attribute")
 			if self.elements[-3] in ("default", "package"):
 				prerequisites = self.globalprerequisites
 			else:
 				prerequisites = self.prerequisites
-			if not prerequisites.has_key(name):
+			if name not in prerequisites:
 				prerequisites[name] = []
 			prerequisites[name].append(str(attrs["type"]))
 
@@ -55,15 +56,15 @@ class InfoHandler(xml.sax.ContentHandler):
 			self.data = ""
 
 		if name == "files":
-			if attrs.has_key("type"):
+			if "type" in attrs:
 				self.attributes["filestype"] = str(attrs["type"])
 
 		if name == "file":
 			self.prerequisites = {}
-			if not attrs.has_key("type"):
+			if "type" not in attrs:
 				self.printError("file tag with no type attribute")
 			else:
-				if not attrs.has_key("name"):
+				if "name" not in attrs:
 					self.printError("file tag with no name attribute")
 				else:	
 					filetype = attrs["type"]
@@ -75,10 +76,10 @@ class InfoHandler(xml.sax.ContentHandler):
 
 		if name == "package":
 			for key in self.VALID_PACKAGE_ATTRIBS:
-				if attrs.has_key(key):
+				if key in attrs:
 					self.attributes[key] = str(attrs[key])
 
-		if name == "screenshot" and attrs.has_key("src"):
+		if name == "screenshot" and "src" in attrs:
 			self.attributes["screenshot"] = str(attrs["src"])
 
 	def endElement(self, name):
@@ -88,9 +89,9 @@ class InfoHandler(xml.sax.ContentHandler):
 		if name == "file":
 			#print "prerequisites:", self.prerequisites
 			if len(self.prerequisites) == 0 or self.prerequisitesMet(self.prerequisites):
-				if not self.attributes.has_key(self.filetype):
+				if self.filetype not in self.attributes:
 					self.attributes[self.filetype] = []
-				if self.fileattrs.has_key("directory"):
+				if "directory" in self.fileattrs:
 					directory = str(self.fileattrs["directory"])
 					if len(directory) < 1 or directory[0] != "/":
 						directory = self.directory + directory
@@ -106,7 +107,7 @@ class InfoHandler(xml.sax.ContentHandler):
 	def characters(self, data):
 		tag = self.elements[-1]
 		if tag in self.VALID_PACKAGE_ATTRIBS:
-			if not self.attributes.has_key(tag):
+			if tag not in self.attributes:
 				self.attributes[tag] = ""
 			self.attributes[tag] += str(data.strip())
 
@@ -154,14 +155,14 @@ class DreamInfoHandler:
 			self.readDetails(d, f)
 
 	def readInfo(self, directory, file):
-		print "Reading .info file", file
+		print("Reading .info file", file)
 		handler = InfoHandler(self.prerequisiteMet, directory)
 		try:
 			xml.sax.parse(file, handler)
 			for entry in handler.list:
 				self.packageslist.append((entry,file)) 
 		except InfoHandlerParseError:
-			print "file", file, "ignored due to errors in the file"
+			print("file", file, "ignored due to errors in the file")
 		#print handler.list
 
 	def readDetails(self, directory, file):
@@ -173,7 +174,7 @@ class DreamInfoHandler:
 				entry["attributes"]["details"] = file
 				DreamInfoHandler.PACKAGES.append((entry,file))
 		except InfoHandlerParseError:
-			print "file", file, "ignored due to errors in the file"
+			print("file", file, "ignored due to errors in the file")
 		#print handler.list
 
 	# prerequisites = True: give only packages matching the prerequisites
@@ -216,48 +217,48 @@ class DreamInfoHandler:
 	def prerequisiteMet(self, prerequisites):
 
 		# TODO: we need to implement a hardware detection here...
-		print "prerequisites:", prerequisites
+		print("prerequisites:", prerequisites)
 		if self.neededTag is None:
-			if prerequisites.has_key("tag"):
+			if "tag" in prerequisites:
 				return False
 		elif self.neededTag == 'ALL_TAGS':
 				return True
 		else:
-			if prerequisites.has_key("tag"):
+			if "tag" in prerequisites:
 				if not self.neededTag in prerequisites["tag"]:
 					return False
 			else:
 				return False
 
 		if self.neededFlag is None:
-			if prerequisites.has_key("flag"):
+			if "flag" in prerequisites:
 				return False
 		else:
-			if prerequisites.has_key("flag"):
+			if "flag" in prerequisites:
 				if not self.neededFlag in prerequisites["flag"]:
 					return False
 			else:
 				return True # No flag found, assuming all flags valid
 				
-		if prerequisites.has_key("satellite"):
+		if "satellite" in prerequisites:
 			for sat in prerequisites["satellite"]:
 				if int(sat) not in nimmanager.getConfiguredSats():
 					return False			
-		if prerequisites.has_key("bcastsystem"):
+		if "bcastsystem" in prerequisites:
 			has_system = False
 			for bcastsystem in prerequisites["bcastsystem"]:
 				if nimmanager.hasNimType(bcastsystem):
 					has_system = True
 			if not has_system:
 				return False
-		if prerequisites.has_key("hardware"):
+		if "hardware" in prerequisites:
 			hardware_found = False
 			for hardware in prerequisites["hardware"]:
 				if hardware == self.hardware_info.device_name:
 					hardware_found = True
 			if not hardware_found:
 				return False
-		if prerequisites.has_key("eth0mac"):
+		if "eth0mac" in prerequisites:
 			nm = eNetworkManager.getInstance()
 			for service in nm.getServices():
 				ethernet = NetworkInterface(service).ethernet
@@ -267,21 +268,21 @@ class DreamInfoHandler:
 		return True
 	
 	def installPackages(self, indexes):
-		print "installing packages", indexes
+		print("installing packages", indexes)
 		if len(indexes) == 0:
 			self.setStatus(self.STATUS_DONE)
 			return
 		self.installIndexes = indexes
-		print "+++++++++++++++++++++++bla"
+		print("+++++++++++++++++++++++bla")
 		self.currentlyInstallingMetaIndex = 0
 		self.installPackage(self.installIndexes[self.currentlyInstallingMetaIndex])
 
 	def installPackage(self, index):
-		print "self.packageslist:", self.packageslist
+		print("self.packageslist:", self.packageslist)
 		if len(self.packageslist) <= index:
-			print "no package with index", index, "found... installing nothing"
+			print("no package with index", index, "found... installing nothing")
 			return
-		print "installing package with index", index, "and name", self.packageslist[index][0]["attributes"]["name"]
+		print("installing package with index", index, "and name", self.packageslist[index][0]["attributes"]["name"])
 		
 		attributes = self.packageslist[index][0]["attributes"]
 		self.installingAttributes = attributes
@@ -304,13 +305,13 @@ class DreamInfoHandler:
 		#print "attributes:", attributes
 		
 		if self.currentAttributeIndex >= len(self.attributeNames): # end of package reached
-			print "end of package reached"
+			print("end of package reached")
 			if self.currentlyInstallingMetaIndex is None or self.currentlyInstallingMetaIndex >= len(self.installIndexes) - 1:
-				print "set status to DONE"
+				print("set status to DONE")
 				self.setStatus(self.STATUS_DONE)
 				return
 			else:
-				print "increment meta index to install next package"
+				print("increment meta index to install next package")
 				self.currentlyInstallingMetaIndex += 1
 				self.currentAttributeIndex = 0
 				self.installPackage(self.installIndexes[self.currentlyInstallingMetaIndex])
@@ -318,12 +319,12 @@ class DreamInfoHandler:
 		
 		self.setStatus(self.STATUS_WORKING)		
 		
-		print "currentAttributeIndex:", self.currentAttributeIndex
+		print("currentAttributeIndex:", self.currentAttributeIndex)
 		currentAttribute = self.attributeNames[self.currentAttributeIndex]
 		
-		print "installing", currentAttribute, "with index", self.currentIndex
+		print("installing", currentAttribute, "with index", self.currentIndex)
 		
-		if attributes.has_key(currentAttribute):
+		if currentAttribute in attributes:
 			if self.currentIndex >= len(attributes[currentAttribute]): # all jobs done for current attribute
 				self.currentIndex = -1
 				self.currentAttributeIndex += 1
@@ -363,7 +364,7 @@ class DreamInfoHandler:
 		return lines
 			
 	def mergeConfig(self, directory, name, merge = True):
-		print "merging config:", directory, " - ", name
+		print("merging config:", directory, " - ", name)
 		if os.path.isfile(directory + name):
 			config.loadFromFile(directory + name, append = merge)
 			configfile.save()
@@ -379,25 +380,25 @@ class DreamInfoHandler:
 			self.ipkg.startCmd(IpkgComponent.CMD_INSTALL, {'package': directory + name})
 		
 	def ipkgCallback(self, event, param):
-		print "ipkgCallback"
+		print("ipkgCallback")
 		if event == IpkgComponent.EVENT_DONE:
 			self.installNext()
 		elif event == IpkgComponent.EVENT_ERROR:
 			self.installNext()
 	
 	def installSkin(self, directory, name):
-		print "installing skin:", directory, " - ", name
-		print "cp -a %s %s" % (directory, resolveFilename(SCOPE_SKIN))
+		print("installing skin:", directory, " - ", name)
+		print("cp -a %s %s" % (directory, resolveFilename(SCOPE_SKIN)))
 		if self.blocking:
 			copytree(directory, resolveFilename(SCOPE_SKIN))
 			self.installNext()
 		else:
 			if self.console.execute("cp -a %s %s" % (directory, resolveFilename(SCOPE_SKIN))):
-				print "execute failed"
+				print("execute failed")
 				self.installNext()
 
 	def mergeServices(self, directory, name, merge = False):
-		print "merging services:", directory, " - ", name
+		print("merging services:", directory, " - ", name)
 		if os.path.isfile(directory + name):
 			db = eDVBDB.getInstance()
 			db.reloadServicelist()
@@ -406,7 +407,7 @@ class DreamInfoHandler:
 		self.installNext()
 
 	def installFavourites(self, directory, name):
-		print "installing favourites:", directory, " - ", name
+		print("installing favourites:", directory, " - ", name)
 		self.reloadFavourites = True
 
 		if self.blocking:
@@ -414,7 +415,7 @@ class DreamInfoHandler:
 			self.installNext()
 		else:
 			if self.console.execute("cp %s %s" % ((directory + name), resolveFilename(SCOPE_CONFIG))):
-				print "execute failed"
+				print("execute failed")
 				self.installNext()
 
 
@@ -424,10 +425,10 @@ class ImageDefaultInstaller(DreamInfoHandler):
 		self.directory = resolveFilename(SCOPE_DEFAULTDIR)
 		#config is not available yet!
 		if not fileExists("/etc/enigma2/settings"):
-			print "Installing image defaults."
+			print("Installing image defaults.")
 			self.fillPackagesList()
 			self.installPackage(0)
-			print "Installing image defaults done!"
+			print("Installing image defaults done!")
 		
 	def statusCallback(self, status, progress):
 		pass

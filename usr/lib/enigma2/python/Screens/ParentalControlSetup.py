@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Screen import Screen
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import NumberActionMap
@@ -71,7 +72,7 @@ class ParentalControlSetup(Screen, ConfigListScreen, ProtectedScreen):
 		
 		self.list = []
 		self.list.append(getConfigListEntry(_("Enable parental control"), config.ParentalControl.configured))
-		print "config.ParentalControl.configured.value", config.ParentalControl.configured.value
+		print("config.ParentalControl.configured.value", config.ParentalControl.configured.value)
 		self.editBouquetListEntry = -1
 		self.reloadLists = -1
 		if config.ParentalControl.configured.value:
@@ -106,7 +107,7 @@ class ParentalControlSetup(Screen, ConfigListScreen, ProtectedScreen):
 		self["config"].setList(self.list)
 
 	def keyOK(self):
-		print "self[\"config\"].l.getCurrentSelection()", self["config"].l.getCurrentSelection()
+		print("self[\"config\"].l.getCurrentSelection()", self["config"].l.getCurrentSelection())
 		if self["config"].l.getCurrentSelection() == self.editListEntry:
 			self.session.open(ParentalControlEditor)
 		elif self["config"].l.getCurrentSelection() == self.editBouquetListEntry:
@@ -123,17 +124,17 @@ class ParentalControlSetup(Screen, ConfigListScreen, ProtectedScreen):
 			parentalControl.open()
 		else:
 			ConfigListScreen.keyRight(self)
-			print "current selection:", self["config"].l.getCurrentSelection()
+			print("current selection:", self["config"].l.getCurrentSelection())
 			self.createSetup()
 
 	def keyLeft(self):
 		ConfigListScreen.keyLeft(self)
-		print "current selection:", self["config"].l.getCurrentSelection()
+		print("current selection:", self["config"].l.getCurrentSelection())
 		self.createSetup()
 
 	def keyRight(self):
 		ConfigListScreen.keyRight(self)
-		print "current selection:", self["config"].l.getCurrentSelection()
+		print("current selection:", self["config"].l.getCurrentSelection())
 		self.createSetup()
 
 	def SetupPinMessageCallback(self, value):
@@ -238,12 +239,12 @@ class ParentalControlEditor(Screen):
 				if key < 'a' or key > 'z':
 					key = chr(SPECIAL_CHAR)
 				#key = str(key)
-				if not self.servicesList.has_key(key):
+				if key not in self.servicesList:
 					self.servicesList[key] = []
 				self.servicesList[key].append(s)
 			
 	def chooseLetter(self):
-		print "choose letter"
+		print("choose letter")
 		mylist = []
 		for x in self.servicesList.keys():
 			if x == chr(SPECIAL_CHAR):
@@ -258,7 +259,7 @@ class ParentalControlEditor(Screen):
 	def letterChosen(self, result):
 		from Components.ParentalControl import parentalControl
 		if result is not None:
-			print "result:", result
+			print("result:", result)
 			self.currentLetter = result[1]
 			#Replace getProtectionLevel by new getProtectionType
 			self.list = [ParentalControlEntryComponent(x[0], x[1], parentalControl.getProtectionType(x[0])) for x in self.servicesList[result[1]]]

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Tools.BoundFunction import boundFunction
 
 def getFunctionTree(my_api, name = None):
@@ -41,8 +42,8 @@ def registerAPIs():
 	for module in modules:
 		module.registerAPIs(api)
 
-	print "APIs:", getSubAPITree(api, "api")
-	print "Functions:", getFunctionTree(api, "api")
+	print("APIs:", getSubAPITree(api, "api"))
+	print("Functions:", getFunctionTree(api, "api"))
 
 session = None
 
@@ -73,7 +74,7 @@ class API(object):
 		return calls
 
 	def __setVersion(self, version):
-		assert type(version) == int
+		assert isinstance(version, int)
 		self.__version = version
 
 	def __getVersion(self):
@@ -84,14 +85,14 @@ class API(object):
 		session = current_session
 
 	def getFunctions(self):
-		functions = self.__getSub(lambda x: type(x) != type(self))
+		functions = self.__getSub(lambda x: not isinstance(x, type(self)))
 		functions.remove("_%s__version" % self.__class__.__name__)
 		functions.remove("_%s__return_type" % self.__class__.__name__)
 		functions.remove("_%s__parameters_type" % self.__class__.__name__)
 		return functions
 
 	def getSubAPIs(self):
-		return self.__getSub(lambda x: type(x) == type(self))
+		return self.__getSub(lambda x: isinstance(x, type(self)))
 
 	def add_call(self, name, call, parameters_type, return_type, needsSession = False):
 		split = name.split(".")
