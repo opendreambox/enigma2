@@ -9,6 +9,7 @@
 		<hardware type="dm900" />
 		<hardware type="dm920" />
 		<hardware type="one" />
+		<hardware type="two" />
 	</prerequisites>
 
 	<info>
@@ -33,6 +34,7 @@
 				<hardware type="dm900" />
 				<hardware type="dm920" />
 				<hardware type="one" />
+				<hardware type="two" />
 			</prerequisites>
 		</file>
 		<file type="config" name="settings.anim_off">

@@ -350,7 +350,7 @@ class SoftwareManagerSetup(Screen, ConfigListScreen):
 		self.overwriteConfigfilesEntry = getConfigListEntry(_("Overwrite configuration files ?"), config.plugins.softwaremanager.overwriteConfigFiles)
 		self.list.append(self.overwriteConfigfilesEntry)	
 		self["config"].list = self.list
-		self["config"].l.setSeperation(400)
+		self["config"].l.setSeparation(400)
 		self["config"].l.setList(self.list)
 		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)

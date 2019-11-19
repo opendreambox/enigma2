@@ -50,6 +50,7 @@
 			<pixmap pos="bpTop" filename="skin_default/b_t.png"/>
 			<pixmap pos="bpTopRight" filename="skin_default/b_tr.png"/>
 		</borderset>
+		<listfont type="Keyboard" font="Regular" size="24"/>
 		<listfont type="Bigger" font="Regular" size="24"/>
 		<listfont type="Big" font="Regular" size="22"/>
 		<listfont type="Medium" font="Regular" size="20"/>
@@ -125,8 +126,8 @@
 	<!-- Components -->
 	<components>
 		<component type="MenuPixmap" itemHeight="192" itemWidth="192"/>
-		<component type="ConfigList" seperation="380" dividerHeight="1"/>
-		<component type="NimSetup" seperation="400" />
+		<component type="ConfigList" separation="380" dividerHeight="1"/>
+		<component type="NimSetup" separation="400" />
 		<component type="ChoiceList" itemHeight="30" textX="50" textY="0" textWidth="800" textHeight="30" pixmapWidth="40" pixmapHeight="30" fillerCount="200"/>
 		<component type="FileList" itemHeight="30" textX="50" textY="0" textWidth="1000" textHeight="30" pixmapWidth="30" pixmapHeight="30"/>
 		<component type="MultiFileSelectList" itemHeight="30" textX="70" textY="0" textWidth="1000" textHeight="30" pixmapWidth="30" pixmapHeight="30" pixmap2Width="30" pixmap2Height="30"/>
@@ -956,7 +957,7 @@
 		<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
-		<widget name="config" seperation="200" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
+		<widget name="config" separation="200" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
 	<!-- MyTube -->
 	<screen name="MyTubeHistoryScreen" position="center,205" size="920,465" zPosition="6" title="MyTube - History" flags="wfNoBorder">
@@ -1384,7 +1385,7 @@
 		<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 		<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
-		<widget name="config" seperation="200" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
+		<widget name="config" separation="200" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
 	<!-- Softwaremanager -->
 	<screen name="SoftwareManagerSetup" position="center,120" size="820,520" title=" ">

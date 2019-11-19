@@ -155,6 +155,10 @@ def CableScanHelperDMM(nim_idx):
 		cmd += " --init --scan --verbose --wakeup --inv 2 --bus %d" % bus
 	return cmd
 
+def freq_round(freq, val):
+	mod = freq % val
+	return freq + val - mod if mod >= (val // 2) else freq - mod
+
 class CableTransponderSearchSupport:
 	CableScanHelpers = [ CableScanHelperDMM ]
 
@@ -171,8 +175,7 @@ class CableTransponderSearchSupport:
 		if tuner_state in (stateLock, stateFailed) or frontend_ptr is None:
 			d = { }
 			self.frontend.getTransponderData(d, False)
-			freq = int(round(float(d["frequency"]*2) / 1000)) * 1000
-			freq /= 2
+			freq = freq_round(d["frequency"], 500)
 
 			if tuner_state == stateLock:
 				parm = eDVBFrontendParametersCable()
@@ -180,8 +183,8 @@ class CableTransponderSearchSupport:
 				fstr = str(parm.frequency)
 
 				sr = d["symbol_rate"]
-				sr_rounded = round(float(sr*2) / 1000) * 1000
-				sr_rounded /= 2
+				sr_rounded = freq_round(sr, 500)
+
 #				print "SR after round", sr_rounded
 				parm.symbol_rate = int(sr_rounded)
 				fstr += " "
@@ -820,10 +823,6 @@ class SatBlindscanState(Screen):
 		self.tmr.stop()
 		self.close(False)
 
-def freq_round(freq, val):
-	mod = freq % val
-	return freq + val - mod if mod >= (val // 2) else freq - mod
-
 class SatelliteTransponderSearchSupport:
 	def satelliteTransponderSearchSessionClosed(self, *val):
 		if self.frontend:
@@ -1244,7 +1243,16 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		ConfigListScreen.__init__(self, self.list, session=session)
 		clSizes = componentSizes[componentSizes.CONFIG_LIST]
 		sizes = componentSizes[componentSizes.NIM_SETUP]
-		self["config"].l.setSeperation(sizes.get("seperation", clSizes.get("seperation", 400)))
+		self["config"].l.setSeparation(
+			sizes.get(
+				"separation", clSizes.get(
+					"separation", sizes.get(
+						"seperation", clSizes.get(
+							"seperation", 400)
+						)
+					)
+				)
+			)
 
 		if not self.scan_nims.value == "":
 			self.createSetup()

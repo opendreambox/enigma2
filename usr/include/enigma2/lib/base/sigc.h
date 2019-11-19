@@ -25,4 +25,17 @@ typedef sigc::trackable		Object;
 
 #define slot(x, y)		sigc::mem_fun(x, y)
 
+#define _SIGC_TYPE_0	R
+#define _SIGC_TYPE_1	R,T
+#define _SIGC_TYPE_2	R,T,U
+#define _SIGC_TYPE_3	R,T,U,V
+#define _SIGC_TYPE_4	R,T,U,V,W
+#define _SIGC_TYPE_5	R,T,U,V,W,X
+//#define _SIGC_TYPE_0	R()
+//#define _SIGC_TYPE_1	R(T)
+//#define _SIGC_TYPE_2	R(T,U)
+//#define _SIGC_TYPE_3	R(T,U,V)
+//#define _SIGC_TYPE_4	R(T,U,V,W)
+//#define _SIGC_TYPE_5	R(T,U,V,W,X)
+
 #endif /* __lib_base_sigc_h__ */

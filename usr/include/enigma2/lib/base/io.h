@@ -396,4 +396,46 @@ public:
 	}
 };
 
+/**
+ * Reads long longs from text files.
+ */
+class eLongLongReader : public iNumberReader<long long, LLONG_MIN, LLONG_MAX, strtoll>
+{
+public:
+	eLongLongReader(int base = 0) :
+		iNumberReader<long long, LLONG_MIN, LLONG_MAX, strtoll>(base)
+	{
+	}
+
+	eLongLongReader(const std::string &filename, int base = 0) :
+		iNumberReader<long long, LLONG_MIN, LLONG_MAX, strtoll>(filename, base)
+	{
+	}
+
+	virtual ~eLongLongReader()
+	{
+	}
+};
+
+/**
+ * Reads unsigned long longs from text files.
+ */
+class eUnsignedLongLongReader : public iNumberReader<unsigned long long, ULLONG_MAX, ULLONG_MAX, strtoull>
+{
+public:
+	eUnsignedLongLongReader(int base = 0) :
+		iNumberReader<unsigned long long, ULLONG_MAX, ULLONG_MAX, strtoull>(base)
+	{
+	}
+
+	eUnsignedLongLongReader(const std::string &filename, int base = 0) :
+		iNumberReader<unsigned long long, ULLONG_MAX, ULLONG_MAX, strtoull>(filename, base)
+	{
+	}
+
+	virtual ~eUnsignedLongLongReader()
+	{
+	}
+};
+
 #endif

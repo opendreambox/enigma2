@@ -112,7 +112,7 @@
 		<component itemHeight="65" type="VirtualKeyBoardList" />
 		<component iconHeight="30" iconWidth="50" type="MultiEPGList" />
 		<component itemHeight="35" itemWidth="100" type="TimelineText" />
-		<component dividerHeight="2" seperation="600" type="ConfigList" />
+		<component dividerHeight="2" separation="600" type="ConfigList" />
 		<component iconHPos="2" iconHeight="40" iconWidth="40" itemMargin="20" type="EPGList" />
 		<component iconHeight="30" iconWidth="30" itemMargin="160" textHeight="65" type="MerlinEPGList" />
 		<component iconHeight="40" iconWidth="60" itemHeight="45" itemWidth="1300" type="ConfigManagerList" />
@@ -1770,7 +1770,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 	</screen>
 	<screen name="MultiInputBox" position="center,center" size="800,110" title="Input">
 		<widget font="Regular;30" render="Label" source="title" position="10,10" size="780,35" />
-		<widget name="config" seperation="200" position="10,55" size="780,50" />
+		<widget name="config" separation="200" position="10,55" size="780,50" />
 	</screen>
 	<screen name="MMIDialog" position="center,center" size="840,400" title="CI/CA Menu">
 		<widget font="Regular;30" name="title" position="10,10" size="820,35" />
@@ -2926,7 +2926,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 		<widget font="Regular;30" position="20,120" render="Label" size="620,70" source="TranslationInfo" />
 	</screen>
 	<screen name="TimeDateInput" position="center,center" size="640,220" title="Time/Date Input">
-		<widget enableWrapAround="1" name="config" seperation="200" position="10,10" scrollbarMode="showOnDemand" size="620,120" />
+		<widget enableWrapAround="1" name="config" separation="200" position="10,10" scrollbarMode="showOnDemand" size="620,120" />
 		<eLabel backgroundColor="foreground" position="10,140" size="620,2" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="20,150" size="300,70" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="320,150" size="300,70" />
@@ -2984,7 +2984,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 <!--  Plugins -->
 <!-- Automatic Timerlist Cleanup -->
 	<screen name="AutomaticTimerlistCleanUpSetup" position="center,center" size="860,150" title="Automatic Timerlist Cleanup Setup">
-		<widget enableWrapAround="1" name="config" seperation="300" position="10,10" scrollbarMode="showOnDemand" size="840,45" />
+		<widget enableWrapAround="1" name="config" separation="300" position="10,10" scrollbarMode="showOnDemand" size="840,45" />
 		<eLabel backgroundColor="grey" position="10,65" size="840,1" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="20,75" size="300,70" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="540,75" size="300,70" />
@@ -3518,7 +3518,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 		<widget backgroundColor="#a08500" font="Regular;30" halign="center" position="600,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_yellow" transparent="1" valign="center" zPosition="1" />
 		<widget backgroundColor="#18188b" font="Regular;30" halign="center" position="895,5" render="Label" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="295,70" source="key_blue" transparent="1" valign="center" zPosition="1" />
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-		<widget enableWrapAround="1" name="config" seperation="300" position="10,90" scrollbarMode="showOnDemand" size="1180,540" />
+		<widget enableWrapAround="1" name="config" separation="300" position="10,90" scrollbarMode="showOnDemand" size="1180,540" />
 		<eLabel backgroundColor="grey" position="10,640" size="1180,1" />
 		<widget font="Regular;32" halign="center" position="10,650" render="Label" size="1180,160" source="info" valign="center" />
 	</screen>
@@ -4497,7 +4497,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 			<convert type="ClockToText">Date</convert>
 		</widget>
 		<eLabel backgroundColor="grey" position="10,80" size="1180,1" />
-		<widget enableWrapAround="1" name="config" seperation="300" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
+		<widget enableWrapAround="1" name="config" separation="300" position="10,90" scrollbarMode="showOnDemand" size="1180,720" />
 	</screen>
 <!-- MovieEpg -->
 	<screen name="MovieEpgSetup" position="center,170" size="1200,820" title=" ">
@@ -4685,7 +4685,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,orgpos.y()))
 	</screen>
 <!-- Quickbutton -->
 	<screen name="QuickbuttonSetup" position="center,center" size="1040,340" title="Quickbutton Setup">
-		<widget enableWrapAround="1" name="config" seperation="300" position="10,10" scrollbarMode="showOnDemand" size="1020,225" />
+		<widget enableWrapAround="1" name="config" separation="300" position="10,10" scrollbarMode="showOnDemand" size="1020,225" />
 		<eLabel backgroundColor="grey" position="10,245" size="1020,1" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/red.svg" position="20,260" size="300,70" />
 		<ePixmap pixmap="Default-FHD/skin_default/buttons/green.svg" position="720,260" size="300,70" />

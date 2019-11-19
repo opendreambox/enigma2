@@ -1089,6 +1089,7 @@ class TemplatedColors():
 		return color_name in self.colors and self.colors[color_name] or gRGB(0)
 
 class TemplatedListFonts():
+	KEYBOARD = "Keyboard"
 	BIGGER = "Bigger"
 	BIG = "Big"
 	MEDIUM = "Medium"
@@ -1107,8 +1108,8 @@ class TemplatedListFonts():
 			self.sizes[font_id] = size
 			self.faces[font_id] = face
 
-	def size(self, font_id):
-		return font_id in self.sizes and self.sizes[font_id] or 20
+	def size(self, font_id, default=20):
+		return font_id in self.sizes and self.sizes[font_id] or default
 
-	def face(self, font_id):
-		return font_id in self.faces and self.faces[font_id] or "Regular"
+	def face(self, font_id, default="Regular"):
+		return font_id in self.faces and self.faces[font_id] or default

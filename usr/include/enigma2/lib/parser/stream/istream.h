@@ -102,7 +102,8 @@ public:
 	eSignal0<void> initialized;
 	eSignal0<void> parsed;
 	eSignal0<void> ready;
-	eSignal0<void> seekDone;
+	eSignal1<void, int> seekDone;
+	eSignal0<void> videoEOS;
 
 protected:
 	bool m_valid;

@@ -86,6 +86,9 @@ class VideoSetup(Screen, ConfigListScreen):
 		if SystemInfo["CanChangeScalerSharpness"]:
 			self.list.append(getConfigListEntry(_("Scaler sharpness"), config.av.scaler_sharpness))
 
+		if not isinstance(config.av.sync_mode, ConfigNothing):
+			self.list.append(getConfigListEntry(_("Sync mode"), config.av.sync_mode))
+
 		if level >= 1:
 			if SystemInfo["HDRSupport"]:
 				self.list.append(getConfigListEntry(_("HLG Support"), config.av.hlg_support))

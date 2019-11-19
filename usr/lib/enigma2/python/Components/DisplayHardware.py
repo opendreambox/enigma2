@@ -4,7 +4,6 @@ from Components.config import config, ConfigSelection, ConfigSubDict, ConfigSubs
 from Components.SystemInfo import SystemInfo
 from collections import defaultdict, OrderedDict
 
-
 class DisplayHardware:
 	instance = None
 	def __init__(self):
@@ -124,6 +123,24 @@ class DisplayHardware:
 				config.av.allow_10bit.addNotifier(self.setHdr10Bit)
 			if not isinstance(config.av.allow_12bit, ConfigNothing):
 				config.av.allow_12bit.addNotifier(self.setHdr12Bit)
+
+		def setSyncMode(configElement):
+			open("/proc/stb/video/sync_mode", "w").write(configElement.value)
+
+		try:
+			have_sync_mode_switch = open("/proc/stb/video/sync_mode_choices", "r").read()[:-1].find("hold") != -1
+			if have_sync_mode_switch:
+				config.av.sync_mode = ConfigSelection(choices={
+				"slow": _("Slow Motion"),
+				"hold": _("Hold First Frame"),
+				"black": _("Black Screen")},
+				default = "slow")
+				config.av.sync_mode.addNotifier(setSyncMode)
+		except:
+			have_sync_mode_switch = False
+
+		if not have_sync_mode_switch:
+			config.av.sync_mode = ConfigNothing()
 
 	def setConfiguredMode(self):
 		currentPort = config.av.videoport.value

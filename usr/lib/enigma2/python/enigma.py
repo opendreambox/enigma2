@@ -129,6 +129,7 @@ HAVE_GLES3_GL31_H = _enigma.HAVE_GLES3_GL31_H
 HAVE_GLES3_GL32_H = _enigma.HAVE_GLES3_GL32_H
 HAVE_GLES3_GL3_H = _enigma.HAVE_GLES3_GL3_H
 HAVE_GST_1 = _enigma.HAVE_GST_1
+HAVE_GST_STREAM_FLAG_FORCED = _enigma.HAVE_GST_STREAM_FLAG_FORCED
 HAVE_INTTYPES_H = _enigma.HAVE_INTTYPES_H
 HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 HAVE_LIBTURBOJPEG = _enigma.HAVE_LIBTURBOJPEG
@@ -1445,9 +1446,9 @@ class eStreamProcessor(object):
         return _enigma.eStreamProcessor_resume(self)
 
 
-    def seekDone(self):
-        """seekDone(eStreamProcessor self)"""
-        return _enigma.eStreamProcessor_seekDone(self)
+    def seekDone(self, status):
+        """seekDone(eStreamProcessor self, int status)"""
+        return _enigma.eStreamProcessor_seekDone(self, status)
 
 
     def canProcess(self, streamInfos):
@@ -3459,6 +3460,7 @@ class eListboxPythonConfigContent(eListboxPythonStringContent):
         _enigma.eListboxPythonConfigContent_swiginit(self, _enigma.new_eListboxPythonConfigContent())
     __swig_destroy__ = _enigma.delete_eListboxPythonConfigContent
 eListboxPythonConfigContent.paint = new_instancemethod(_enigma.eListboxPythonConfigContent_paint, None, eListboxPythonConfigContent)
+eListboxPythonConfigContent.setSeparation = new_instancemethod(_enigma.eListboxPythonConfigContent_setSeparation, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.setSeperation = new_instancemethod(_enigma.eListboxPythonConfigContent_setSeperation, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.setDividerHeight = new_instancemethod(_enigma.eListboxPythonConfigContent_setDividerHeight, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.currentCursorSelectable = new_instancemethod(_enigma.eListboxPythonConfigContent_currentCursorSelectable, None, eListboxPythonConfigContent)
@@ -3635,6 +3637,7 @@ class eWindowStyleSkinned(object):
     listFontSmall = _enigma.eWindowStyleSkinned_listFontSmall
     listFontSmaller = _enigma.eWindowStyleSkinned_listFontSmaller
     listFontBigger = _enigma.eWindowStyleSkinned_listFontBigger
+    listFontKeyboard = _enigma.eWindowStyleSkinned_listFontKeyboard
     listFontMax = _enigma.eWindowStyleSkinned_listFontMax
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle, None, eWindowStyleSkinned)
@@ -8471,6 +8474,9 @@ class eCec(object):
     MSG_VERSION = _enigma.eCec_MSG_VERSION
     MSG_GET_CEC_VERSION = _enigma.eCec_MSG_GET_CEC_VERSION
     MSG_VENDOR_COMMAND_WITH_ID = _enigma.eCec_MSG_VENDOR_COMMAND_WITH_ID
+    MSG_GIVE_DECK_STATUS = _enigma.eCec_MSG_GIVE_DECK_STATUS
+    MSG_DECK_STATUS = _enigma.eCec_MSG_DECK_STATUS
+    MSG_DECK_CONTROL = _enigma.eCec_MSG_DECK_CONTROL
     ABORT_REASON_UNRECOGNIZED_OPCODE = _enigma.eCec_ABORT_REASON_UNRECOGNIZED_OPCODE
     ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND = _enigma.eCec_ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND
     ABORT_REASON_CANNOT_PROVIDE_SOURCE = _enigma.eCec_ABORT_REASON_CANNOT_PROVIDE_SOURCE
@@ -8589,6 +8595,21 @@ class eCec(object):
     POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.eCec_POWER_STATE_TRANSITION_STANDBY_TO_ON
     POWER_STATE_TRANSITION_ON_TO_STANDBY = _enigma.eCec_POWER_STATE_TRANSITION_ON_TO_STANDBY
     POWER_STATE_UNKNOWN = _enigma.eCec_POWER_STATE_UNKNOWN
+    DECK_INFO_PLAY = _enigma.eCec_DECK_INFO_PLAY
+    DECK_INFO_RECORD = _enigma.eCec_DECK_INFO_RECORD
+    DECK_INFO_PLAY_REVERSE = _enigma.eCec_DECK_INFO_PLAY_REVERSE
+    DECK_INFO_STILL = _enigma.eCec_DECK_INFO_STILL
+    DECK_INFO_SLOW = _enigma.eCec_DECK_INFO_SLOW
+    DECK_INFO_SLOW_REVERSE = _enigma.eCec_DECK_INFO_SLOW_REVERSE
+    DECK_INFO_FFW = _enigma.eCec_DECK_INFO_FFW
+    DECK_INFO_RWD = _enigma.eCec_DECK_INFO_RWD
+    DECK_INFO_NO_MEDIA = _enigma.eCec_DECK_INFO_NO_MEDIA
+    DECK_INFO_STOP = _enigma.eCec_DECK_INFO_STOP
+    DECK_INFO_SKIP_FWD = _enigma.eCec_DECK_INFO_SKIP_FWD
+    DECK_INFO_SKIP_RWD = _enigma.eCec_DECK_INFO_SKIP_RWD
+    DECK_INFO_INDEX_SEARCH_FWD = _enigma.eCec_DECK_INFO_INDEX_SEARCH_FWD
+    DECK_INFO_INDEX_SEARCH_REVERSE = _enigma.eCec_DECK_INFO_INDEX_SEARCH_REVERSE
+    DECK_INFO_OTHER_STATE = _enigma.eCec_DECK_INFO_OTHER_STATE
 
     def vendor(id):
         """vendor(uint32_t id) -> std::string const"""

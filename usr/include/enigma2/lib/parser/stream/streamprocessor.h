@@ -23,7 +23,7 @@ public:
 	virtual void stop() = 0;
 	virtual bool pause() = 0;
 	virtual bool resume() = 0;
-	virtual void seekDone() = 0;
+	virtual void seekDone(int status) = 0;
 
 	virtual bool canProcess(std::vector<StreamInfo> &streamInfos) = 0;
 	virtual void parsed() = 0;
