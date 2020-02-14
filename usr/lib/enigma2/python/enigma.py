@@ -149,6 +149,7 @@ HAVE_STRING_H = _enigma.HAVE_STRING_H
 HAVE_SYS_STAT_H = _enigma.HAVE_SYS_STAT_H
 HAVE_SYS_TYPES_H = _enigma.HAVE_SYS_TYPES_H
 HAVE_UNISTD_H = _enigma.HAVE_UNISTD_H
+HAVE_WEBM_WEBM_PARSER_H = _enigma.HAVE_WEBM_WEBM_PARSER_H
 LT_OBJDIR = _enigma.LT_OBJDIR
 PACKAGE_BUGREPORT = _enigma.PACKAGE_BUGREPORT
 PACKAGE_NAME = _enigma.PACKAGE_NAME
@@ -481,6 +482,7 @@ iStaticServiceInformationPtr.getPtrString = new_instancemethod(_enigma.iStaticSe
 iStaticServiceInformationPtr.__deref__ = new_instancemethod(_enigma.iStaticServiceInformationPtr___deref__, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getName = new_instancemethod(_enigma.iStaticServiceInformationPtr_getName, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getLength = new_instancemethod(_enigma.iStaticServiceInformationPtr_getLength, None, iStaticServiceInformationPtr)
+iStaticServiceInformationPtr.getLength64 = new_instancemethod(_enigma.iStaticServiceInformationPtr_getLength64, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getEvent = new_instancemethod(_enigma.iStaticServiceInformationPtr_getEvent, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.isPlayable = new_instancemethod(_enigma.iStaticServiceInformationPtr_isPlayable, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getInfo = new_instancemethod(_enigma.iStaticServiceInformationPtr_getInfo, None, iStaticServiceInformationPtr)
@@ -906,6 +908,7 @@ class iSubtitleType_ENUMS(object):
     TTX = _enigma.iSubtitleType_ENUMS_TTX
     DVD = _enigma.iSubtitleType_ENUMS_DVD
     GST = _enigma.iSubtitleType_ENUMS_GST
+    TXT = _enigma.iSubtitleType_ENUMS_TXT
 iSubtitleType_ENUMS_swigregister = _enigma.iSubtitleType_ENUMS_swigregister
 iSubtitleType_ENUMS_swigregister(iSubtitleType_ENUMS)
 
@@ -5659,7 +5662,6 @@ class eMediaDatabase(object):
     scanStatistics = _swig_property(_enigma.eMediaDatabase_scanStatistics_get, _enigma.eMediaDatabase_scanStatistics_set)
     scanFinished = _swig_property(_enigma.eMediaDatabase_scanFinished_get, _enigma.eMediaDatabase_scanFinished_set)
     insertFinished = _swig_property(_enigma.eMediaDatabase_insertFinished_get, _enigma.eMediaDatabase_insertFinished_set)
-    priorityInsertFinished = _swig_property(_enigma.eMediaDatabase_priorityInsertFinished_get, _enigma.eMediaDatabase_priorityInsertFinished_set)
 eMediaDatabase.resetDatabase = new_instancemethod(_enigma.eMediaDatabase_resetDatabase, None, eMediaDatabase)
 eMediaDatabase.getCurrentScanPath = new_instancemethod(_enigma.eMediaDatabase_getCurrentScanPath, None, eMediaDatabase)
 eMediaDatabase.getEnqueuedPaths = new_instancemethod(_enigma.eMediaDatabase_getEnqueuedPaths, None, eMediaDatabase)

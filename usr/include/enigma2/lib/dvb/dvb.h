@@ -327,7 +327,7 @@ private:
 	int m_skipmode_m, m_skipmode_n, m_skipmode_frames, m_skipmode_frames_remainder;
 	
 	std::list<std::pair<uint64_t, uint64_t> > m_source_span;
-	void getNextSourceSpan(uint64_t current_offset, size_t bytes_read, uint64_t &start, size_t &size);
+	void getNextSourceSpan(int64_t current_offset, size_t bytes_read, int64_t &start, size_t &size);
 	void flushPVR(iDVBDemux *decoding_demux=0);
 
 	eSingleLock m_cuesheet_lock;

@@ -1,6 +1,7 @@
 #ifndef __include_lib_dvb_pvrparse_h
 #define __include_lib_dvb_pvrparse_h
 
+#include <lib/components/file_monitor.h>
 #include <lib/dvb/idvb.h>
 #include <map>
 #include <set>
@@ -8,12 +9,18 @@
 	/* This module parses TS data and collects valuable information  */
 	/* about it, like PTS<->offset correlations and sequence starts. */
 
+class eFileWatch;
+
 	/* At first, we define the collector class: */
 class eMPEGStreamInformation
 {
+	void fileWatchEventCB(eFileWatch *fw, eFileEvent evt);
 public:
 	eMPEGStreamInformation();
 	~eMPEGStreamInformation();
+
+	void closeWrite();
+	void closeRead();
 		/* we order by uint64_t here, since the timestamp may */
 		/* wrap around. */
 		/* we only record sequence start's pts values here. */
@@ -47,8 +54,9 @@ public:
 	uint64_t getAccessPoint(pts_t ts, int marg=0);
 	
 	int getNextAccessPoint(pts_t &ts, const pts_t &start, int direction);
-	
-	bool empty();
+
+	bool AccessPointsAvail();
+	bool StructureCacheAvail();
 	
 	typedef unsigned long long structure_data;
 		/* this is usually:
@@ -58,14 +66,26 @@ public:
 	void writeStructureEntry(uint64_t offset, structure_data data);
 
 		/* get a structure entry at given offset (or previous one, if no exact match was found).
-		   optionall, return next element. Offset will be returned. this allows you to easily 
+		   optionally, return next element. Offset will be returned. this allows you to easily
 		   get previous and next structure elements. */
 	int getStructureEntry(uint64_t &offset, uint64_t &data, int get_next);
+	int update_structure_cache(uint64_t offset);
 
 	std::string m_filename;
-	int m_structure_cache_valid;
-	uint64_t m_structure_cache[1024];
-	FILE *m_structure_read, *m_structure_write;
+
+	/* used for read */
+	int m_structure_cache_entries;
+	int m_structure_read_fd;
+	uint64_t *m_structure_read_mem;
+	off_t m_structure_read_size;
+	int m_structure_read_prev_result; // prev returned entry used for accel next search
+	eFileWatch *m_structure_file_watch;
+	bool m_structure_file_changed;
+
+	/* used for write */
+	int m_structure_wp;
+	int m_structure_write_fd;
+	uint64_t *m_structure_write_mem;
 };
 
 	/* Now we define the parser's state: */
@@ -76,6 +96,7 @@ public:
 	void parseData(uint64_t offset, const void *data, unsigned int len);
 	void setPid(int pid, int streamtype);
 	int getLastPTS(pts_t &last_pts);
+	void setAccessPoints(bool on);
 private:
 	eMPEGStreamInformation &m_streaminfo;
 	unsigned char m_pkt[188];
@@ -86,6 +107,7 @@ private:
 	int m_need_next_packet;
 	int m_last_pts_valid;
 	pts_t m_last_pts;
+	bool m_collect_accesspoints;
 	unsigned char m_pkt2[188*2];
 	uint64_t m_last_sc_offset;
 	int m_last_sc_offset_valid;

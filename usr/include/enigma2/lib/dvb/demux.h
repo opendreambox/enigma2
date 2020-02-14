@@ -105,6 +105,7 @@ public:
 	
 	RESULT setTargetFD(int fd);
 	RESULT setTargetFilename(const char *filename);
+	RESULT setAccessPoints(bool on);
 	
 	RESULT stop();
 

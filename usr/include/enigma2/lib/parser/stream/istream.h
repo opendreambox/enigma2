@@ -5,38 +5,7 @@
 #include <vector>
 #include <stdint.h>
 #include <lib/base/ebase.h>
-
-
-enum class StreamEncryptionType
-{
-	NONE,
-	UNKNOWN,
-	WIDEVINE
-};
-
-enum class StreamRawType
-{
-	UNKNOWN,
-	VIDEO,
-	AUDIO
-};
-
-struct RawData
-{
-	RawData() : type(StreamRawType::UNKNOWN), pts(0), offset(0), encType(StreamEncryptionType::NONE) {}
-	StreamRawType type;
-	std::vector<uint8_t> data;
-	int64_t pts;
-	uint64_t offset;
-	StreamEncryptionType encType;
-
-	// Crypto stuff (unused)
-	std::vector<uint8_t> iv;
-	uint16_t subsampleCount;
-	std::vector<int> clearBytes;
-	std::vector<int> cryptoBytes;
-
-};
+#include <lib/parser/container/sample.h>
 
 struct VideoCodecInfo
 {
@@ -47,6 +16,8 @@ struct VideoCodecInfo
 	double framerate;
 	double aspect;
 	std::vector<uint8_t> extraData;
+
+	std::vector<std::map<std::string, std::string>> protections;
 };
 
 struct AudioCodecInfo
@@ -60,18 +31,42 @@ struct AudioCodecInfo
 	std::vector<uint8_t> extraData;
 	std::string raw_format;
 	int mpeg_version;
+
+	std::vector<std::map<std::string, std::string>> protections;
+};
+
+struct SubtitleInfo
+{
+	std::string codecs;
+	std::string role;
+	std::string url;
+};
+
+enum ContentType
+{
+	UNKNOWN = -1,
+	VIDEO,
+	AUDIO,
+	TEXT,
+	MIXED = 100
 };
 
 struct StreamInfo
 {
-	int type; // video / audio
+	StreamInfo() :
+		type(ContentType::UNKNOWN),
+		activeIndex(0)
+	{}
+
+	ContentType type;
+	std::string mimeType;
+
 	std::string language;
 	int activeIndex;
 
-	std::vector<std::map<std::string, std::string>> protections;
-
 	std::vector<VideoCodecInfo> videoCodecInfo;
 	std::vector<AudioCodecInfo> audioCodecInfo;
+	std::vector<SubtitleInfo> subtitleInfo;
 };
 
 struct StreamRestrictions
@@ -99,9 +94,9 @@ public:
 	virtual bool getAudioPackets(std::vector<RawData> &rawData) = 0;
 	bool valid() const { return m_valid; }
 
-	eSignal0<void> initialized;
-	eSignal0<void> parsed;
-	eSignal0<void> ready;
+	eSignal0<void> initialized; // emit when meta data is ready
+	eSignal0<void> parsed; // emit when stream init data was parsed (MP4: init segment, TS: PAT/PMT)
+	eSignal0<void> ready; // emit when buffer is okay for the first time
 	eSignal1<void, int> seekDone;
 	eSignal0<void> videoEOS;
 

@@ -41,11 +41,12 @@ AUDIO_FORMATS = {
 }
 
 SUB_FORMATS = {
-	iSt.DVB:   ("DVB", _("DVB"), 1),
-	iSt.TTX:   ("TTX", _("TTX"), 2),
-	iSt.DVD:   ("DVD", _("DVD"), 3),
-	iSt.GST:   ("GST",  ("GST"), -1),
-	iSt.NONE:  ("unknown", _("<unknown>"), -1)
+	iSt.DVB:        ("DVB", _("DVB"), 1),
+	iSt.TTX:        ("TTX", _("TTX"), 2),
+	iSt.DVD:        ("DVD", _("DVD"), 3),
+	iSt.GST:        ("GST",  ("GST"), -1),
+	iSt.TXT:        ("TXT", _("TXT"), -1),
+	iSt.NONE:       ("unknown", _("<unknown>"), -1)
 }
 
 GST_SUB_FORMATS = {
@@ -244,7 +245,7 @@ class AudioSelection(Screen, ConfigListScreen):
 				else:
 					s_codec = SUB_FORMATS[trackinfo.getType()][1]
 
-				if trackinfo.getType() in [iSt.GST, iSt.DVD]:
+				if trackinfo.getType() in [iSt.GST, iSt.DVD, iSt.TXT]:
 					if trackinfo.isDefault():
 						flags.append(_("Default"))
 					if trackinfo.isForced():

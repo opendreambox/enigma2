@@ -12,6 +12,10 @@
 
 #include <boost/any.hpp>
 
+#ifdef SWIG
+#define __attribute__(...)
+#endif
+
 class eServiceEvent;
 
 extern std::string mediaRecvUserAgent;
@@ -270,8 +274,10 @@ class iStaticServiceInformation: public iObject
 public:
 	virtual SWIG_VOID(RESULT) getName(const eServiceReference &ref, std::string &SWIG_OUTPUT)=0;
 
-		// doesn't need to be implemented, should return -1 then.
-	virtual int getLength(const eServiceReference &ref);
+		// returns -1 if not implemented
+	virtual int getLength(const eServiceReference &ref) __attribute__ ((deprecated));
+	virtual int64_t getLength64(const eServiceReference &ref);
+
 	virtual SWIG_VOID(RESULT) getEvent(const eServiceReference &ref, ePtr<eServiceEvent> &SWIG_OUTPUT, time_t start_time=-1);
 		// returns true when not implemented
 	virtual int isPlayable(const eServiceReference &ref, const eServiceReference &ignore, bool simulate=false);
@@ -714,7 +720,7 @@ class iSubtitleType_ENUMS
 	~iSubtitleType_ENUMS();
 #endif
 public:
-	enum { NONE, DVB, TTX, DVD, GST };
+	enum { NONE, DVB, TTX, DVD, GST, TXT };
 };
 
 class iGstSubtitleType_ENUMS
@@ -755,14 +761,14 @@ class iSubtitleTrackInfo: public iSubtitleType_ENUMS, public iGstSubtitleType_EN
 
 	/* gst */
 	bool m_forced;
-	int *m_filter;
+	int m_filter;
 	int m_gst_subtype;
 
 #ifndef SWIG
 public:
 #endif
 	iSubtitleTrackInfo(int type, int pid, std::string language, int data1, int data2, bool saved = false)
-		: m_type(type), m_pid(pid), m_language(language), m_saved(saved), m_default(false), m_forced(false), m_filter(NULL), m_gst_subtype(0)
+		: m_type(type), m_pid(pid), m_language(language), m_saved(saved), m_default(false), m_forced(false), m_filter(SUB_FILTER_NONE), m_gst_subtype(0)
 		{
 			if (type == DVB)
 			{
@@ -776,16 +782,12 @@ public:
 			}
 		}
 	iSubtitleTrackInfo(int type, int pid, std::string language, bool saved, bool defaultf, bool forced, int filter, int gst_subtype = NONE)
-		: m_type(type), m_pid(pid), m_language(language), m_saved(saved), m_default(defaultf), m_forced(forced), m_gst_subtype(gst_subtype)
+		: m_type(type), m_pid(pid), m_language(language), m_saved(saved), m_default(defaultf), m_forced(forced), m_filter(filter), m_gst_subtype(gst_subtype)
 		{
-			m_filter = (int*)malloc(sizeof(int));
-			*m_filter = filter;
 		}
 #ifdef SWIG
 public:
 	~iSubtitleTrackInfo() {
-		if (m_filter)
-			free (m_filter);
 	};
 #endif
 	iSubtitleTrackInfo() : m_type(NONE) {};
@@ -801,9 +803,9 @@ public:
 	int isSaved() { return m_saved; }
 	int isDefault() { return m_default; }
 	int isForced() { return m_forced; }
-	int getFilter() { return *m_filter; }
+	int getFilter() { return m_filter; }
 	void setLanguage(std::string language) { m_language = language; }
-	void setFilter(int filter) { *m_filter = filter; }
+	void setFilter(int filter) { m_filter = filter; }
 	void setGstSubtype(int gst_subtype) { m_gst_subtype = gst_subtype; }
 };
 SWIG_ALLOW_OUTPUT_SIMPLE(iSubtitleTrackInfo);

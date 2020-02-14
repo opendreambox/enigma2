@@ -39,6 +39,7 @@ public:
 	virtual RESULT setTargetFD(int fd) = 0;
 		/* for saving additional meta data. */
 	virtual RESULT setTargetFilename(const char *filename) = 0;
+	virtual RESULT setAccessPoints(bool on) = 0;
 	
 	virtual RESULT stop() = 0;
 

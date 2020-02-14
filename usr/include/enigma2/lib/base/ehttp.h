@@ -19,6 +19,7 @@ public:
 	CURL *getCURL() { return m_curl; }
 
 	const std::string &getURL() { return m_url; }
+	bool getEffectiveURL(std::string &effectiveURL);
 
 	static size_t chunkCallback0(void *contents, size_t size, size_t nmemb, void *userp);
 	size_t chunkCallback(void *contents, size_t size, size_t nmemb);
