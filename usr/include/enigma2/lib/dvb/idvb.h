@@ -526,7 +526,7 @@ public:
 	virtual RESULT sendToneburst(int burst)=0;
 #ifndef SWIG
 	virtual RESULT setSEC(iDVBSatelliteEquipmentControl *sec)=0;
-	virtual RESULT setSecSequence(eSecCommandList &list)=0;
+	virtual RESULT setSecSequence(const eSecCommandList &list)=0;
 #endif
 	virtual int readFrontendData(int type)=0;
 	virtual RESULT getFrontendStatus(FrontendDataMap &INOUT)=0;

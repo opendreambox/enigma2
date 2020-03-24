@@ -158,8 +158,7 @@ class eFileMonitor: public eMainloop_native, public eThread, public sigc::tracka
 	std::queue<eFileEvent> m_eventqueue;
 	//lookup-tables
 	std::map<std::string, int> m_dir_wd; //key: directory, value: watch-descriptor-id
-	std::map<int, eFileWatch*> m_wd_watches; //key: watch-descriptor-id, value: related eFileWatch, required for getting all eFileWatches for an event
-	std::map<int, uint64_t> m_wd_watchcount; //key: watch-descriptor-id, value: number of associated watches
+	std::map<int, std::list<eFileWatch*>> m_wd_watches; //key: watch-descriptor-id, value: related eFileWatch, required for getting all eFileWatches for an event
 
 	struct Message
 	{
@@ -191,7 +190,7 @@ public:
 
 	int addWatch(eFileWatch *watch);
 	bool removeWatch(eFileWatch *watch);
-	eFileWatch* getWatch(int wd);
+	std::list<eFileWatch*> getWatches(int wd);
 
 	/**
 	 * processEvents(bool finished)
