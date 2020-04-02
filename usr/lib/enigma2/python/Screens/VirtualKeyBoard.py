@@ -18,7 +18,7 @@ class VirtualKeyBoardList(MenuList):
 	def __init__(self, list, enableWrapAround=False):
 		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
 		tlf = TemplatedListFonts()
-		self.l.setFont(0, gFont(tlf.face(tlf.BIG), tlf.size(tlf.BIG)))
+		self.l.setFont(0, gFont(tlf.face(tlf.KEYBOARD, default=tlf.face(tlf.BIG)), tlf.size(tlf.KEYBOARD, default=tlf.size(tlf.BIG))))
 		self.l.setItemHeight(VirtualKeyBoardList.itemHeight())
 
 	@staticmethod

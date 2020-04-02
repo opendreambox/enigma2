@@ -146,6 +146,7 @@ config.misc.prev_wakeup_time = ConfigInteger(default=0)
 config.misc.prev_wakeup_time_type = ConfigInteger(default=0) # 0 = RecordTimer, 1 = SleepTimer, 2 = Plugin
 config.misc.use_legacy_virtual_subservices_detection = ConfigYesNo(default=False)
 config.misc.recording_allowed = ConfigYesNo(default=True)
+config.misc.fileWatchVerboseDebug = ConfigYesNo(default=False)
 
 #gstreamer User-Agent settings (used by servicemp3)
 config.mediaplayer = ConfigSubsection()
@@ -189,6 +190,10 @@ def debugAccelMemoryUsageChanged(configElement):
 config.misc.debug_accel_memory_usage = ConfigSelection(default = "nothing", 
 	choices = [("nothing", _("nothing")), ("alloc", _("allocations")), ("dealloc", _("deallocations")), ("all", _("all"))])
 config.misc.debug_accel_memory_usage.addNotifier(debugAccelMemoryUsageChanged) 
+
+def fileWatchVerboseDebugChanged(configElement):
+	enigma.eFileWatch.setVerboseDebug(configElement.value)
+config.misc.fileWatchVerboseDebug.addNotifier(fileWatchVerboseDebugChanged)
 
 profile("Twisted")
 try:

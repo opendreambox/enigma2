@@ -157,7 +157,7 @@ class BrowserMenu(Screen):
 		#Lists
 		self.detailList = List([], enableWrapAround = True)
 		self.detailConfigList = ConfigList([])
-		self.detailConfigList.l.setSeperation( (BrowserMenu.width - 210) / 2 )
+		self.detailConfigList.l.setSeparation( (BrowserMenu.width - 210) / 2 )
 		config.plugins.WebBrowser.storage.enabled.addNotifier(self.__cfgExpandableElementChanged, initial_call = False)
 		config.plugins.WebBrowser.storage.enabled.addNotifier(self.__cfgStoragePathChanged, initial_call = False)
 		config.plugins.WebBrowser.storage.path.addNotifier(self.__cfgStoragePathChanged, initial_call = False)

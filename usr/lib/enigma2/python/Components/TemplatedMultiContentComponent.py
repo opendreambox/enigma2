@@ -34,7 +34,7 @@ class TemplatedMultiContentComponent(GUIComponent):
 		self.applyTemplate()
 
 	def applyTemplate(self, additional_locals={}):
-		from enigma import gFont, RT_HALIGN_LEFT, RT_HALIGN_CENTER, RT_HALIGN_RIGHT, RT_VALIGN_TOP, RT_VALIGN_CENTER, RT_VALIGN_BOTTOM, RT_WRAP
+		from enigma import gFont, RT_HALIGN_LEFT, RT_HALIGN_CENTER, RT_HALIGN_RIGHT, RT_VALIGN_TOP, RT_VALIGN_CENTER, RT_VALIGN_BOTTOM, RT_WRAP, SCALE_NONE, SCALE_CENTER, SCALE_ASPECT, SCALE_WIDTH, SCALE_HEIGHT, SCALE_STRETCH, SCALE_FILL
 		from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmap, MultiContentEntryPixmapAlphaTest, MultiContentEntryPixmapAlphaBlend, MultiContentTemplateColor, MultiContentEntryProgress, MultiContentEntryProgressPixmap
 
 		l = locals()

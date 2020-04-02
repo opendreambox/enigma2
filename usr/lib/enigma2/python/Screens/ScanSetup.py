@@ -1240,7 +1240,16 @@ class ScanSetup(ConfigListScreen, Screen, TransponderSearchSupport, CableTranspo
 		ConfigListScreen.__init__(self, self.list, session=session)
 		clSizes = componentSizes[componentSizes.CONFIG_LIST]
 		sizes = componentSizes[componentSizes.NIM_SETUP]
-		self["config"].l.setSeperation(sizes.get("seperation", clSizes.get("seperation", 400)))
+		self["config"].l.setSeparation(
+			sizes.get(
+				"separation", clSizes.get(
+					"separation", sizes.get(
+						"seperation", clSizes.get(
+							"seperation", 400)
+						)
+					)
+				)
+			)
 
 		if not self.scan_nims.value == "":
 			self.createSetup()

@@ -261,6 +261,9 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		config.seek.enter_backward.value = self.saved_config_enter_backward
 		config.seek.on_pause.value = self.saved_config_seek_on_pause
 
+	def SubtitleWindowFakeHide(self):
+		pass
+
 	def __init__(self, session, dvd_device = None, dvd_filelist = [ ], args = None):
 		Screen.__init__(self, session)
 		InfoBarBase.__init__(self)
@@ -268,6 +271,8 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 		InfoBarShowHide.__init__(self)
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
+		self.subtitle_window.real_hide = self.subtitle_window.hide
+		self.subtitle_window.hide = self.SubtitleWindowFakeHide
 		InfoBarExtensions.__init__(self)
 		InfoBarPlugins.__init__(self)
 		InfoBarNotifications.__init__(self)
@@ -417,7 +422,7 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 
 	def serviceStarted(self): #override InfoBarShowHide function
 		subTracks = self.getCurrentServiceSubtitle()
-		subTracks.enableSubtitles(self.dvdScreen.instance, 0) # give parent widget reference to service for drawing menu highlights in a repurposed subtitle widget
+		subTracks.enableSubtitles(self.dvdScreen.instance, 0xFFFFFFFF) # give parent widget reference to service for drawing menu highlights in a repurposed subtitle widget
 		self.dvdScreen.show()
 
 	def doEofInternal(self, playing):
@@ -427,9 +432,11 @@ class DVDPlayer(Screen, InfoBarBase, InfoBarNotifications, InfoBarSeek, InfoBarP
 	def __menuOpened(self):
 		self.hide()
 		self.in_menu = True
+		self.subtitle_window.show()
 		self["NumberActions"].setEnabled(False)
 
 	def __menuClosed(self):
+		self.subtitle_window.real_hide()
 		self.show()
 		self.in_menu = False
 		self["NumberActions"].setEnabled(True)

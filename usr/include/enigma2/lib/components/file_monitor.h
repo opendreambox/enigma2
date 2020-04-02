@@ -1,10 +1,7 @@
 #ifndef __lib_components_file_watcher_h
 #define __lib_components_file_watcher_h
-#include <lib/base/thread.h>
-#include <lib/base/message.h>
-#include <lib/base/ebase.h>
-#include <lib/base/elock.h>
 #include <lib/base/esignal.h>
+#include <lib/base/ebase.h>
 
 #include <queue>
 #include <future>
@@ -69,8 +66,8 @@ public:
  */
 class eFileWatch : public sigc::trackable
 {
-	pthread_mutex_t m_startstop_mutex;
-	pthread_mutex_t m_child_mutex;
+	pthread_mutex_t m_startstop_mutex; // unused yet... but not removed yet to not break binary plugins
+	pthread_mutex_t m_child_mutex; // unused yet... but not removed yet to not break binary plugins
 	friend class eFileMonitor;
 
 	int m_wd;
@@ -136,6 +133,8 @@ public:
 
 	void setDirectory(const std::string &dir){ m_directory = dir; };
 
+	static void setVerboseDebug(int val);
+
 	eSignal2<void, eFileWatch*, eFileEvent> fileChanged;
 };
 SWIG_EXTEND(eFileWatch,
@@ -149,34 +148,19 @@ SWIG_EXTEND(eFileWatch,
  * Do not use this class directly unless you really know why.
  * Use eFileWatch instances instead, they handle all the tricky stuff properly.
  */
-class eFileMonitor: public eMainloop_native, public eThread, public sigc::trackable
+class eFileMonitor: public sigc::trackable
 {
 	int m_fd;
 	uint64_t m_watchcount; //watches total
 	ePtr<eSocketNotifier> m_sn;
-	eSingleLock m_watch_lock, m_queue_lock;
+
 	std::queue<eFileEvent> m_eventqueue;
 	//lookup-tables
 	std::map<std::string, int> m_dir_wd; //key: directory, value: watch-descriptor-id
 	std::map<int, std::list<eFileWatch*>> m_wd_watches; //key: watch-descriptor-id, value: related eFileWatch, required for getting all eFileWatches for an event
 
-	struct Message
-	{
-		int type;
-		int count;
-		enum{
-			process=0,
-			quit,
-		};
-		Message(int type=0, int count=0): type(type), count(count){};
-	};
-
 	static eFileMonitor *instance;
 
-	eFixedMessagePump<Message> messages_from_thread;
-	eFixedMessagePump<Message> messages_to_thread;
-
-	void gotMessage(const Message &msg);
 	void thread();
 	void readEvents(int what);
 	int processInotifyEvents();

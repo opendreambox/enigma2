@@ -105,7 +105,7 @@ class VideoEnhancementSetup(Screen, ConfigListScreen):
 		self.digital_contour_removalEntry = addToConfigList(_("Digital contour removal"), config.pep.digital_contour_removal, add_to_xtdlist)
 
 		self["config"].list = self.list
-		self["config"].l.setSeperation(300)
+		self["config"].l.setSeparation(300)
 		self["config"].l.setList(self.list)
 		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)
@@ -326,7 +326,7 @@ class VideoEnhancementPreview(Screen, ConfigListScreen):
 			self.list.append(self.configStepsEntry)
 
 		self["config"].list = self.list
-		self["config"].l.setSeperation(300)
+		self["config"].l.setSeparation(300)
 		self["config"].l.setList(self.list)
 		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)

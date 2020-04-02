@@ -80,6 +80,7 @@
 				<item level="1" text="Non TS Streaming Buffer (ms)">config.usage.non_ts_streaming_buffer</item>
 			<item level="2" text = "Debug" />
 				<item level="2" text="Debug accel memory usage">config.misc.debug_accel_memory_usage</item>
+				<item level="2" text="Verbose FileWatch Debug output">config.misc.fileWatchVerboseDebug</item>
 		</setup>
 		<setup key="harddisk" title="Harddisk setup" >
 			<item level="0" text="Harddisk standby after">config.usage.hdd_standby</item>

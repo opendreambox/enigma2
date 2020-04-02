@@ -3466,6 +3466,7 @@ class eListboxPythonConfigContent(eListboxPythonStringContent):
         _enigma.eListboxPythonConfigContent_swiginit(self, _enigma.new_eListboxPythonConfigContent())
     __swig_destroy__ = _enigma.delete_eListboxPythonConfigContent
 eListboxPythonConfigContent.paint = new_instancemethod(_enigma.eListboxPythonConfigContent_paint, None, eListboxPythonConfigContent)
+eListboxPythonConfigContent.setSeparation = new_instancemethod(_enigma.eListboxPythonConfigContent_setSeparation, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.setSeperation = new_instancemethod(_enigma.eListboxPythonConfigContent_setSeperation, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.setDividerHeight = new_instancemethod(_enigma.eListboxPythonConfigContent_setDividerHeight, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.currentCursorSelectable = new_instancemethod(_enigma.eListboxPythonConfigContent_currentCursorSelectable, None, eListboxPythonConfigContent)
@@ -3672,6 +3673,7 @@ class eWindowStyleSkinned(object):
     listFontSmall = _enigma.eWindowStyleSkinned_listFontSmall
     listFontSmaller = _enigma.eWindowStyleSkinned_listFontSmaller
     listFontBigger = _enigma.eWindowStyleSkinned_listFontBigger
+    listFontKeyboard = _enigma.eWindowStyleSkinned_listFontKeyboard
     listFontMax = _enigma.eWindowStyleSkinned_listFontMax
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle, None, eWindowStyleSkinned)
@@ -5168,6 +5170,7 @@ class eFileWatch(object):
     def __init__(self, *args):
         _enigma.eFileWatch_swiginit(self, _enigma.new_eFileWatch(*args))
     __swig_destroy__ = _enigma.delete_eFileWatch
+    setVerboseDebug = staticmethod(_enigma.eFileWatch_setVerboseDebug)
     fileChanged = _swig_property(_enigma.eFileWatch_fileChanged_get, _enigma.eFileWatch_fileChanged_set)
 eFileWatch.startWatching = new_instancemethod(_enigma.eFileWatch_startWatching, None, eFileWatch)
 eFileWatch.stopWatching = new_instancemethod(_enigma.eFileWatch_stopWatching, None, eFileWatch)
@@ -5179,6 +5182,10 @@ eFileWatch.setDirectory = new_instancemethod(_enigma.eFileWatch_setDirectory, No
 eFileWatch.__eq__ = new_instancemethod(_enigma.eFileWatch___eq__, None, eFileWatch)
 eFileWatch_swigregister = _enigma.eFileWatch_swigregister
 eFileWatch_swigregister(eFileWatch)
+
+def eFileWatch_setVerboseDebug(val):
+    return _enigma.eFileWatch_setVerboseDebug(val)
+eFileWatch_setVerboseDebug = _enigma.eFileWatch_setVerboseDebug
 
 class eMusicPlayer(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')

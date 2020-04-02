@@ -276,7 +276,7 @@ class HarddiskDriveSetup(Screen, ConfigListScreen):
 					self.list.append(getConfigListEntry(_("Mountpoint:"), uuid_cfg["mountpoint"]))
 
 		self["config"].list = self.list
-		self["config"].l.setSeperation(400)
+		self["config"].l.setSeparation(400)
 		self["config"].l.setList(self.list)
 		if not self.selectionChanged in self["config"].onSelectionChanged:
 			self["config"].onSelectionChanged.append(self.selectionChanged)

@@ -12,7 +12,7 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		GUIComponent.__init__(self)
 		self.l = eListboxPythonConfigContent()
 		sizes = componentSizes[componentSizes.CONFIG_LIST]
-		self.l.setSeperation(sizes.get("seperation", 400))
+		self.l.setSeparation(sizes.get("separation", sizes.get("seperation", 400)))
 		self.l.setDividerHeight(sizes.get("dividerHeight", 1))
 		self.timer = eTimer()
 		self._headers = []
@@ -25,9 +25,9 @@ class ConfigList(HTMLComponent, GUIComponent, object):
 		if self.skinAttributes is None:
 			return False
 		for (attrib, value) in self.skinAttributes:
-			if attrib == "seperation":
-				Log.d("seperation=%i" %(int(value),))
-				self.l.setSeperation(int(value))
+			if attrib == "seperation" or attrib == "separation":
+				Log.d("separation=%i" %(int(value),))
+				self.l.setSeparation(int(value))
 			elif attrib == "dividerHeight":
 				Log.d("dividerHeight=%i" %(int(value),))
 				self.l.setDividerHeight(int(value))

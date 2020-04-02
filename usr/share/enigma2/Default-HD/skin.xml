@@ -97,7 +97,7 @@
 	<!-- Components -->
 	<components>
 		<component type="MenuPixmap" itemHeight="180" itemWidth="180"/>
-		<component type="ConfigList" seperation="400" dividerHeight="1"/>
+		<component type="ConfigList" separation="400" dividerHeight="1"/>
 		<component type="ChoiceList" itemHeight="30" textX="45" textY="0" textWidth="800" textHeight="30" pixmapWidth="35" pixmapHeight="30" fillerCount="200" />
 		<component type="FileList" itemHeight="25" textX="35" textY="0" textWidth="1000" textHeight="25" pixmapWidth="20" pixmapHeight="20" />
 		<component type="MultiFileSelectList" itemHeight="25" textX="55" textY="0" textWidth="1000" textHeight="25" pixmapWidth="20" pixmapHeight="20" pixmap2Width="25" pixmap2Height="25" />
