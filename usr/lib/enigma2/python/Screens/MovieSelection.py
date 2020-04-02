@@ -3,7 +3,7 @@ from Screen import Screen
 from Components.Button import Button
 from Components.ActionMap import HelpableActionMap, ActionMap
 from Components.MenuList import MenuList
-from Components.MovieList import MovieList, MovieListDB
+from Components.MovieList import MovieList
 from Components.DiskInfo import DiskInfo
 from Components.Pixmap import Pixmap
 from Components.Label import Label
@@ -219,10 +219,8 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo):
 			config.movielist.last_videodir.value = defaultMoviePath()
 			config.movielist.last_videodir.save()
 		self.current_ref = eServiceReference("2:0:1:0:0:0:0:0:0:0:" + config.movielist.last_videodir.value)
-		ML = MovieList
-		if config.media_database.readmeta.value:
-			ML = MovieListDB
-		self["list"] = ML(None,
+
+		self["list"] = MovieList(None,
 			config.movielist.listtype.value,
 			config.movielist.moviesort.value,
 			config.movielist.description.value)
@@ -288,13 +286,10 @@ class MovieSelection(Screen, HelpableScreen, SelectionEventInfo):
 			self.session.open(EventViewSimple, evt, ServiceReference(self.getCurrent()))
 
 	def go(self):
-		delay = 300
-		if config.media_database.readmeta.value:
-			delay = 0
 		if not self.inited:
 		# ouch. this should redraw our "Please wait..."-text.
 		# this is of course not the right way to do this.
-			self.delayTimer.start(delay, 1)
+			self.delayTimer.start(300, 1)
 			self.inited=True
 
 	def saveListsize(self):

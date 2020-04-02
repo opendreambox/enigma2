@@ -145,7 +145,7 @@ public:
 
 	void onScanStatistics(const std::string &dir, uint64_t total, uint64_t successful, uint64_t skipped);
 	void onScanFinished(const std::string &dir, uint64_t total, uint64_t successful, uint64_t skipped);
-	void onInsertFinished(const std::string &filename, uint64_t success, uint64_t skipped, uint64_t errors, const std::list<int> &ids);
+	void onInsertFinished(uint64_t success, uint64_t skipped, uint64_t errors, const std::list<int> &ids);
 
 	ePtr<eMediaDatabaseResult> resultFromQuery(QSqlQuery* qry, table_line_extension_func extendItem=0);
 	void extendPlaylistItemAttributes(stringMap *item, QSqlQuery *qry);
@@ -235,7 +235,9 @@ public:
 	/* void scanFinished( std::string, uint64_t, uint64_t, uint64_t ); */
 	eSignal4<void, std::string, uint64_t, uint64_t, uint64_t> scanFinished;
 	/* void insertFinished(uint64_t, uint64_t, uint64_t, PyObject*); */
-	eSignal5<void, std::string, uint64_t, uint64_t, uint64_t, intList > insertFinished;
+	eSignal4<void, uint64_t, uint64_t, uint64_t, intList > insertFinished;
+	/* void priorityInsertFinished ( char*, uint64_t, uint64_t, uint64_t, int ); */
+	eSignal5<void, const char *, uint64_t, uint64_t, uint64_t, int> priorityInsertFinished;
 };
 
 SWIG_TEMPLATE_TYPEDEF(ePtr<eMediaDatabaseResult>, eMediaDatabaseResultPtr);
@@ -252,10 +254,8 @@ protected:
 
 class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
 {
-	int SCHEMA_VERSION = 9;
+	int SCHEMA_VERSION = 10;
 
-	QSqlDatabase rw();
-	
 	std::string normalizePath(const std::string &path);
 	bool upgradeSchema(int from);
 	bool upgradeSchema0_to_1();
@@ -266,22 +266,19 @@ class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native
 	bool upgradeSchema5_to_6();
 	bool upgradeSchema6_to_7();
 	bool upgradeSchema7_to_8();
-	bool upgradeSchema8_to_9();
 
 public:
 	eMediaDatabaseHandler();
 	~eMediaDatabaseHandler();
 
-	static pthread_mutex_t priority_files_lock, files_lock, rw_lock;
-
-	void initializeQueries(bool rw=false);
+	static pthread_mutex_t priority_files_lock, files_lock;
 
 	void insertList(const std::string &dir, std::list<file_metadata> &files, std::map< uint32_t, ePtr<cover_art> > &covers);
 	void priorityInsert(const file_metadata &file);
 	void thread();
 
-	bool transaction();
-	bool commit();
+	void transaction();
+	void commit();
 
 	int addParentDirectory(const std::string &dir, bool watch);
 	bool isParentDirectory(int dir_id);
@@ -368,7 +365,10 @@ public:
 
 	QSqlQuery query(const std::string &sql, const stringList &values=stringList(), bool rw = false);
 
-	Signal5<void, std::string, uint64_t, uint64_t, uint64_t, std::list<int> > insertFinished;
+	void addRescanPath(const std::string &path);
+
+	Signal4<void, uint64_t, uint64_t, uint64_t, std::list<int> > insertFinished;
+	Signal5<void, char*, uint64_t, uint64_t, uint64_t, int> priorityInsertFinished;
 
 private:
 	enum {
@@ -380,7 +380,7 @@ private:
 	struct DbMessage
 	{
 		int type;
-		char* path;
+		char* filename;
 		uint64_t errors;
 		uint64_t successful;
 		uint64_t skipped;
@@ -393,8 +393,8 @@ private:
 			done_single
 		};
 
-		DbMessage(int type=0, char* path=0, uint64_t errors=0, uint64_t successful=0, uint64_t skipped=0, int file_id=0) :
-		type(type), path(path), errors(errors), successful(successful), skipped(skipped), file_id(file_id) {}
+		DbMessage(int type=0, char* filename=0, uint64_t errors=0, uint64_t successful=0, uint64_t skipped=0, int file_id=0) :
+		type(type), filename(filename), errors(errors), successful(successful), skipped(skipped), file_id(file_id) {}
 	};
 
 	eFixedMessagePump<DbMessage> m_messages_to_thread;
@@ -407,66 +407,60 @@ private:
 	std::list<file_metadata> m_files;
 	std::list<int> m_inserted_ids;
 	std::list<std::string> m_directories;
+	std::list<std::string> m_rescanPaths;
 	std::map<uint32_t, ePtr<cover_art> > m_covers;
 	std::string m_parent_dir;
 	int m_parent_dir_id;
 
-	QString m_db_path;
+	QSqlDatabase m_db_rw, m_db_ro;
 
-	static thread_local QSqlDatabase m_db_ro;
-	static thread_local QSqlDatabase m_db_rw;
+	QSqlQuery m_qry_insert_file;
+	QSqlQuery m_qry_insert_directory;
+	QSqlQuery m_qry_insert_codec;
+	QSqlQuery m_qry_insert_audio_track;
+	QSqlQuery m_qry_insert_audio_meta;
+	QSqlQuery m_qry_insert_artist;
+	QSqlQuery m_qry_insert_album;
+	QSqlQuery m_qry_insert_genre;
+	QSqlQuery m_qry_insert_cover;
+	QSqlQuery m_qry_insert_video;
+	QSqlQuery m_qry_insert_location;
+	QSqlQuery m_qry_insert_tag;
 
-	static thread_local QSqlQuery m_qry_insert_file;
-	static thread_local QSqlQuery m_qry_insert_directory;
-	static thread_local QSqlQuery m_qry_insert_codec;
-	static thread_local QSqlQuery m_qry_insert_audio_track;
-	static thread_local QSqlQuery m_qry_insert_audio_meta;
-	static thread_local QSqlQuery m_qry_insert_artist;
-	static thread_local QSqlQuery m_qry_insert_album;
-	static thread_local QSqlQuery m_qry_insert_genre;
-	static thread_local QSqlQuery m_qry_insert_cover;
-	static thread_local QSqlQuery m_qry_insert_video;
-	static thread_local QSqlQuery m_qry_insert_location;
-	static thread_local QSqlQuery m_qry_insert_tag;
+	QSqlQuery m_qry_delete_file;
+	QSqlQuery m_qry_update_file;
+	QSqlQuery m_qry_update_audio_meta;
+	QSqlQuery m_qry_update_album;
 
-	static thread_local QSqlQuery m_qry_delete_file;
-	static thread_local QSqlQuery m_qry_update_file;
-	static thread_local QSqlQuery m_qry_update_audio_meta;
-	static thread_local QSqlQuery m_qry_update_album;
+	QSqlQuery m_qry_get_file_by_id;
+	QSqlQuery m_qry_get_file_lastmodified;
+	QSqlQuery m_qry_get_directory_by_id;
+	QSqlQuery m_qry_get_directory_by_path;
+	QSqlQuery m_qry_get_codec_by_id;
+	QSqlQuery m_qry_get_codec_by_name;
+	QSqlQuery m_qry_get_audio_tracks_by_file_id;
+	QSqlQuery m_qry_get_audio_meta_by_file_id;
+	QSqlQuery m_qry_get_artist_by_id;
+	QSqlQuery m_qry_get_artist_by_name;
+	QSqlQuery m_qry_get_album_by_id;
+	QSqlQuery m_qry_get_album_by_name;
+	QSqlQuery m_qry_get_genre_by_id;
+	QSqlQuery m_qry_get_genre_by_name;
+	QSqlQuery m_qry_get_video_by_file_id;
+	QSqlQuery m_qry_get_location_by_id;
+	QSqlQuery m_qry_get_tag_by_id;
+	QSqlQuery m_qry_get_tag_by_name;
 
-	static thread_local QSqlQuery m_qry_get_file_by_id;
-	static thread_local QSqlQuery m_qry_get_file_lastmodified;
-	static thread_local QSqlQuery m_qry_get_directory_by_id;
-	static thread_local QSqlQuery m_qry_get_directory_by_path;
-	static thread_local QSqlQuery m_qry_get_codec_by_id;
-	static thread_local QSqlQuery m_qry_get_codec_by_name;
-	static thread_local QSqlQuery m_qry_get_audio_tracks_by_file_id;
-	static thread_local QSqlQuery m_qry_get_audio_meta_by_file_id;
-	static thread_local QSqlQuery m_qry_get_artist_by_id;
-	static thread_local QSqlQuery m_qry_get_artist_by_name;
-	static thread_local QSqlQuery m_qry_get_album_by_id;
-	static thread_local QSqlQuery m_qry_get_album_by_name;
-	static thread_local QSqlQuery m_qry_get_genre_by_id;
-	static thread_local QSqlQuery m_qry_get_genre_by_name;
-	static thread_local QSqlQuery m_qry_get_video_by_file_id;
-	static thread_local QSqlQuery m_qry_get_location_by_id;
-	static thread_local QSqlQuery m_qry_get_tag_by_id;
-	static thread_local QSqlQuery m_qry_get_tag_by_name;
-
-	static thread_local QSqlQuery m_qry_check_file;
-	static thread_local QSqlQuery m_qry_check_directory;
-	static thread_local QSqlQuery m_qry_check_codec;
-	static thread_local QSqlQuery m_qry_check_audio_track;
-	static thread_local QSqlQuery m_qry_check_audio_meta;
-	static thread_local QSqlQuery m_qry_check_artist;
-	static thread_local QSqlQuery m_qry_check_album;
-	static thread_local QSqlQuery m_qry_check_genre;
-	static thread_local QSqlQuery m_qry_check_cover;
-	static thread_local QSqlQuery m_qry_check_tag;
-
-	void dbro();
-	void dbrw();
-	bool transaction(QSqlDatabase &db);
+	QSqlQuery m_qry_check_file;
+	QSqlQuery m_qry_check_directory;
+	QSqlQuery m_qry_check_codec;
+	QSqlQuery m_qry_check_audio_track;
+	QSqlQuery m_qry_check_audio_meta;
+	QSqlQuery m_qry_check_artist;
+	QSqlQuery m_qry_check_album;
+	QSqlQuery m_qry_check_genre;
+	QSqlQuery m_qry_check_cover;
+	QSqlQuery m_qry_check_tag;
 
 	void checkDeletedFiles(int parent_id, const std::list<file_metadata> files);
 	bool haveFiles();
@@ -484,7 +478,7 @@ private:
 	bool updateAndCleanup(QSqlQuery *qry);
 
 	insert_result getSetDirectory(int parent_id, const std::string &path, bool parent = false, bool watch = false);
-	insert_result getSetFile(int dir_id, const std::string &name, int64_t size, int type, int64_t duration, int64_t lastmodified, int popularity=0, int64_t lastplaypos=0, int cover_art_id=0, bool recording=0);
+	insert_result getSetFile(int dir_id, const std::string &name, int64_t size, int type, int64_t duration, int64_t lastmodified, int popularity=0, int64_t lastplaypos=0, int cover_art_id=0);
 	int getFileLastModified(int dir_id, const std::string &name, int64_t *timestamp);
 	insert_result getSetTag(const std::string &tag);
 	insert_result getSetCodec(const std::string &codec, const std::string &codec_long);

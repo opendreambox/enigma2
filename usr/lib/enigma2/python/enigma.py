@@ -5662,6 +5662,7 @@ class eMediaDatabase(object):
     scanStatistics = _swig_property(_enigma.eMediaDatabase_scanStatistics_get, _enigma.eMediaDatabase_scanStatistics_set)
     scanFinished = _swig_property(_enigma.eMediaDatabase_scanFinished_get, _enigma.eMediaDatabase_scanFinished_set)
     insertFinished = _swig_property(_enigma.eMediaDatabase_insertFinished_get, _enigma.eMediaDatabase_insertFinished_set)
+    priorityInsertFinished = _swig_property(_enigma.eMediaDatabase_priorityInsertFinished_get, _enigma.eMediaDatabase_priorityInsertFinished_set)
 eMediaDatabase.resetDatabase = new_instancemethod(_enigma.eMediaDatabase_resetDatabase, None, eMediaDatabase)
 eMediaDatabase.getCurrentScanPath = new_instancemethod(_enigma.eMediaDatabase_getCurrentScanPath, None, eMediaDatabase)
 eMediaDatabase.getEnqueuedPaths = new_instancemethod(_enigma.eMediaDatabase_getEnqueuedPaths, None, eMediaDatabase)
