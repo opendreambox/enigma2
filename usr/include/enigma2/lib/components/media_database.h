@@ -248,13 +248,13 @@ class eVersionedDatabase {
 public:
 	virtual ~eVersionedDatabase(){};
 protected:
-	void checkVersion(const QSqlDatabase &db_rw, int requiredVersion);
+	void checkVersion(QSqlDatabase &db_rw, int requiredVersion);
 	virtual bool upgradeSchema(int from)=0;
 };
 
 class eMediaDatabaseHandler : public eVersionedDatabase, public eMainloop_native, public eThread, public sigc::trackable
 {
-	int SCHEMA_VERSION = 10;
+	int SCHEMA_VERSION = 11;
 
 	std::string normalizePath(const std::string &path);
 	bool upgradeSchema(int from);
