@@ -166,7 +166,7 @@ public:
 	RESULT sendDiseqc(const eDVBDiseqcCommand &diseqc);
 	RESULT sendToneburst(int burst);
 	RESULT setSEC(iDVBSatelliteEquipmentControl *sec);
-	RESULT setSecSequence(eSecCommandList &list);
+	RESULT setSecSequence(const eSecCommandList &list);
 	RESULT getData(int num, long &data);
 	RESULT setData(int num, long val);
 

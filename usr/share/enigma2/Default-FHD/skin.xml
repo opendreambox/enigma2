@@ -35,6 +35,7 @@
 		<borderset name="bsWindow">
 			<pixmap filename="Default-FHD/skin_default/b_t.png" pos="bpTop" />
 		</borderset>
+		<listfont font="Regular" size="36" type="Keyboard" />
 		<listfont font="Regular" size="32" type="Bigger" />
 		<listfont font="Regular" size="30" type="Big" />
 		<listfont font="Regular" size="28" type="Medium" />
@@ -97,7 +98,7 @@
 		<font font="Regular;28" name="config_description" />
 		<font font="Regular;28" name="config_value" />
 		<value name="config_item_height" value="45" />
-        <config onPixmap="skin_default/switch_on.svg" offPixmap="skin_default/switch_off.svg" size="57,30"/>
+		<config onPixmap="skin_default/switch_on.svg" offPixmap="skin_default/switch_off.svg" size="57,30" />
 	</listboxcontent>
 	<subtitles>
 		<sub font="Regular;45" name="Subtitle_TTX" shadowColor="#40101010" shadowOffset="3,3" />

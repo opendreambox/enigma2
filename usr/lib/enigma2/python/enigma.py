@@ -5140,6 +5140,7 @@ class eFileWatch(object):
     def __init__(self, *args):
         _enigma.eFileWatch_swiginit(self, _enigma.new_eFileWatch(*args))
     __swig_destroy__ = _enigma.delete_eFileWatch
+    setVerboseDebug = staticmethod(_enigma.eFileWatch_setVerboseDebug)
     fileChanged = _swig_property(_enigma.eFileWatch_fileChanged_get, _enigma.eFileWatch_fileChanged_set)
 eFileWatch.startWatching = new_instancemethod(_enigma.eFileWatch_startWatching, None, eFileWatch)
 eFileWatch.stopWatching = new_instancemethod(_enigma.eFileWatch_stopWatching, None, eFileWatch)
@@ -5151,6 +5152,10 @@ eFileWatch.setDirectory = new_instancemethod(_enigma.eFileWatch_setDirectory, No
 eFileWatch.__eq__ = new_instancemethod(_enigma.eFileWatch___eq__, None, eFileWatch)
 eFileWatch_swigregister = _enigma.eFileWatch_swigregister
 eFileWatch_swigregister(eFileWatch)
+
+def eFileWatch_setVerboseDebug(val):
+    return _enigma.eFileWatch_setVerboseDebug(val)
+eFileWatch_setVerboseDebug = _enigma.eFileWatch_setVerboseDebug
 
 class eMusicPlayer(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
