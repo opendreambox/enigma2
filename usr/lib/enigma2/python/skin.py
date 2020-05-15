@@ -1093,7 +1093,7 @@ class TemplatedListFonts():
 		style = x.getStyle(style_id)
 		self.sizes = {}
 		self.faces = {}
-		for font_id in (self.BIGGER, self.BIG, self.MEDIUM, self.SMALL, self.SMALLER):
+		for font_id in (self.KEYBOARD, self.BIGGER, self.BIG, self.MEDIUM, self.SMALL, self.SMALLER):
 			size = int(style.getListFontSize(eWindowStyleSkinned.__dict__["listFont" + font_id]))
 			face = style.getListFontFace(eWindowStyleSkinned.__dict__["listFont" + font_id])
 			Log.i("%s: %s, %s" %(font_id, size, face))
