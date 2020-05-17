@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.config import config
@@ -7,12 +8,13 @@ from Components.TimerList import TimerList
 from Components.TimerSanityCheck import TimerSanityCheck
 from Components.UsageConfig import preferredTimerPath
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from ServiceReference import ServiceReference
-from TimerEntry import TimerEntry, TimerLog
+from Screens.TimerEntry import TimerEntry, TimerLog
 from Tools.BoundFunction import boundFunction
+from functools import cmp_to_key
 from time import time
 from timer import TimerEntry as RealTimerEntry
 
@@ -177,7 +179,7 @@ class TimerEditList(Screen):
 		timers = [(timer, False) for timer in self.session.nav.RecordTimer.timer_list]
 		timers.extend([(timer, True) for timer in self.session.nav.RecordTimer.processed_timers])
 		if config.usage.timerlist_finished_timer_position.index: #end of list
-			timers.sort(cmp = eol_compare)
+			timers.sort(key=cmp_to_key(eol_compare))
 		else:
 			timers.sort(key = lambda x: x[0].begin)
 		self.list = timers

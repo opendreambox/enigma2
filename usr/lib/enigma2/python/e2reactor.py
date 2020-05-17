@@ -16,7 +16,7 @@ __all__ = ['install']
 from enigma import runMainloop, quitMainloop, eSocketNotifier, eTimer
 from select import POLLIN, POLLOUT
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log
@@ -75,11 +75,11 @@ class TwistedSocketNotifier:
 		log.callWithLogger(w, _write)
 		self.reactor.simulate()
 
+@implementer(IReactorFDSet)
 class e2reactor(PosixReactorBase):
 	"""
 	e2 reactor.
 	"""
-	implements(IReactorFDSet)
 
 	# Reference to a DelayedCall for self.crash() when the reactor is
 	# entered through .iterate()

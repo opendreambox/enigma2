@@ -1,8 +1,9 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import absolute_import
 from Tools.Profile import profile
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Components.Button import Button
 from Components.ServiceList import ServiceList
 from Components.ActionMap import NumberActionMap, ActionMap, HelpableActionMap
@@ -11,7 +12,7 @@ from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Screens.ChoiceBox import ChoiceBox
 from six import unichr
 profile("ChannelSelection.py 1")
-from EpgSelection import EPGSelection
+from Screens.EpgSelection import EPGSelection
 from enigma import eServiceReference, eServiceCenter, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode, eEnv, eEPGCache
 from Components.config import config, ConfigSubsection, ConfigText, NoSave, ConfigBoolean
 from Tools.NumericalTextInput import NumericalTextInput
@@ -37,7 +38,7 @@ from Tools.BoundFunction import boundFunction
 from os import remove
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
-from ChannelSelectionDisplaySettings import ChannelSelectionDisplaySettings
+from Screens.ChannelSelectionDisplaySettings import ChannelSelectionDisplaySettings
 profile("ChannelSelection.py after imports")
 
 FLAG_SERVICE_NEW_FOUND = 64 #define in lib/dvb/idvb.h as dxNewFound = 64
@@ -1623,7 +1624,7 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 		ChannelSelectionEPG.__init__(self)
 		InfoBarBase.__init__(self)
 		if not infobar:
-			from InfoBar import InfoBar
+			from Screens.InfoBar import InfoBar
 			infobar = InfoBar.instance
 		self.infobar = infobar
 

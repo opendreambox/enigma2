@@ -1,7 +1,8 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from enigma import eNetworkManager
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Components.config import config
 from API import api
 from Components.About import about
@@ -101,23 +102,9 @@ class TranslationInfo(Screen):
 		if info == "TRANSLATOR_INFO":
 			info = "(N/A)"
 
-		infolines = _("").split("\n")
-		infomap = {}
-		for x in infolines:
-			l = x.split(': ')
-			if len(l) != 2:
-				continue
-			(type, value) = l
-			infomap[type] = value
-		print(infomap)
-
 		self["TranslationInfo"] = StaticText(info)
 
-		translator_name = infomap.get("Language-Team", "none")
-		if translator_name == "none":
-			translator_name = infomap.get("Last-Translator", "")
-
-		self["TranslatorName"] = StaticText(translator_name)
+		self["TranslatorName"] = StaticText("https://dreambox.de/pootle/")
 
 		self["actions"] = ActionMap(["SetupActions"],
 			{

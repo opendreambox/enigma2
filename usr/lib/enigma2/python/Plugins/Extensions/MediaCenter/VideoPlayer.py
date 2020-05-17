@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from Components.config import config
 from Components.ActionMap import HelpableActionMap
 
-from MediaCore import MediaCore, mediaCore
-from MediaCenterLCDScreen import MediaCenterLCDScreen
-from PlaylistPlayer import PlaylistPlayer
+from .MediaCore import MediaCore, mediaCore
+from .MediaCenterLCDScreen import MediaCenterLCDScreen
+from .PlaylistPlayer import PlaylistPlayer
 
 class VideoPlayer(PlaylistPlayer):
 	title = _("Video Player")

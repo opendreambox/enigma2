@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import absolute_import
 from enigma import getDesktop, eListbox, eTimer, getPrevAsciiCode
 
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -16,10 +17,10 @@ from Screens.Screen import Screen
 
 from Tools.BoundFunction import boundFunction
 
-from Bookmarks import BookmarkEditor
-from BrowserDB import Bookmark, BrowserDB
-from Downloads import downloadManager
-from EnhancedInput import EnhancedInput
+from .Bookmarks import BookmarkEditor
+from .BrowserDB import Bookmark, BrowserDB
+from .Downloads import downloadManager
+from .EnhancedInput import EnhancedInput
 
 from time import localtime, strftime
 

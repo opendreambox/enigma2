@@ -5,6 +5,7 @@ This is a Media Backend that allows you to access audio, videos and live-streams
 a Dreambox.
 """
 
+from __future__ import absolute_import
 from enigma import eMediaDatabase, eServiceReference, StringList
 from Components.config import config
 from Components.ResourceManager import resourcemanager
@@ -17,16 +18,12 @@ from coherence.upnp.core.soap_service import errorCode
 
 from twisted.internet import defer
 
-from UPnPCore import DLNA, removeUPnPDevice
+from .UPnPCore import DLNA, removeUPnPDevice
 
 from coherence.extern.et import ET
 from twisted.python import failure
 
-import sys
 import six
-if sys.getdefaultencoding() != 'UTF-8':
-	reload(sys)
-	sys.setdefaultencoding('UTF-8')
 
 def convertString(string):
 	return str(string).encode('utf-8', 'replace')
@@ -497,7 +494,7 @@ class ProviderList(DVBServiceList):
 	def _gen_child(self, ref, name):
 		return Provider(self, name, ref)
 
-from WebCoverResource import CoverRoot
+from .WebCoverResource import CoverRoot
 
 class DreamboxMediaStore(AbstractBackendStore):
 	implements = ['MediaServer']

@@ -5,9 +5,9 @@ import sqlite3
 import os.path as os_path
 from time import time
 from datetime import datetime, timedelta
-from email.Utils import mktime_tz, parsedate_tz
+from email.utils import mktime_tz, parsedate_tz
 
-from Cookie import SmartCookie, CookieError
+from six.moves.http_cookies import SimpleCookie, CookieError
 
 from OpenSSL.crypto import load_certificate, FILETYPE_PEM
 
@@ -85,7 +85,7 @@ class Cookie:
 	@staticmethod
 	def fromRawString(raw):
 		try:
-			sc = SmartCookie(raw)
+			sc = SimpleCookie(raw)
 			for key, cookie in sc.items():
 				try:
 					return Cookie(key, cookie['domain'], cookie['path'], raw, cookie['expires'], True)

@@ -1,8 +1,9 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from Components.ResourceManager import resourcemanager
 
 from coherence.upnp.core import DIDLLite
-from UPnPCore import Statics, Item
+from .UPnPCore import Statics, Item
 
 class UPnPBrowser(object):
 	def __init__(self):

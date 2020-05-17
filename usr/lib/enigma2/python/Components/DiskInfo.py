@@ -1,6 +1,7 @@
 from __future__ import division
-from GUIComponent import GUIComponent
-from VariableText import VariableText
+from __future__ import absolute_import
+from Components.GUIComponent import GUIComponent
+from Components.VariableText import VariableText
 from os import statvfs
 
 from enigma import eLabel

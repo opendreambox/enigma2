@@ -1,13 +1,14 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import print_function
+from __future__ import absolute_import
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport
 
 from Components.ActionMap import ActionMap
 
-from Helpers import debug
+from .Helpers import debug
 
 class MoviePlayer(Screen, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True

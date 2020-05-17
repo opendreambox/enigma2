@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from Components.config import config
 
 from Plugins.Plugin import PluginDescriptor
-from HbbTV import HbbTV
-from HbbTVSetup import HbbTVSetup
+from .HbbTV import HbbTV
+from .HbbTVSetup import HbbTVSetup
 
 def hbbtv_browser(session, **kwargs):
 	HbbTV.instance.startApplicationByUri("http://www.hbbig.com")
@@ -25,7 +26,7 @@ def Plugins(**kwargs):
 	list = [PluginDescriptor(name = "HbbTV", description = _("Setup HbbTV functionalities"), where = PluginDescriptor.WHERE_MENU, fnc = menu_setup)]
 
 	if config.plugins.hbbtv.enabled.value:
-		from HbbTV import start, autostart
+		from .HbbTV import start, autostart
 		list.extend(
 			[ PluginDescriptor(where=[PluginDescriptor.WHERE_INFOBAR,], fnc=start),
 			PluginDescriptor(where=[PluginDescriptor.WHERE_AUTOSTART,], fnc=autostart) ]

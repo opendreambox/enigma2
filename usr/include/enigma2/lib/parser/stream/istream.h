@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <mutex>
 #include <lib/base/ebase.h>
 #include <lib/parser/container/sample.h>
 
@@ -92,7 +93,7 @@ public:
 	virtual bool seek(int64_t pts, int index = -1) = 0;
 	virtual bool getVideoFrames(std::vector<RawData> &rawData) = 0;
 	virtual bool getAudioPackets(std::vector<RawData> &rawData) = 0;
-	bool valid() const { return m_valid; }
+	bool valid() const { std::lock_guard<std::mutex> lk(m_mtx); return m_valid; }
 
 	eSignal0<void> initialized; // emit when meta data is ready
 	eSignal0<void> parsed; // emit when stream init data was parsed (MP4: init segment, TS: PAT/PMT)
@@ -101,6 +102,7 @@ public:
 	eSignal0<void> videoEOS;
 
 protected:
+	mutable std::mutex m_mtx;
 	bool m_valid;
 };
 

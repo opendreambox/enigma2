@@ -1,7 +1,8 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from Tools.BoundFunction import boundFunction
 from Plugins.Plugin import PluginDescriptor
-from SocketMMI import SocketMMIMessageHandler
+from .SocketMMI import SocketMMIMessageHandler
 
 socketHandler = None
 

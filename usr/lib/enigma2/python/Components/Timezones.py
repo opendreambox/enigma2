@@ -10,19 +10,6 @@ from os import environ, unlink, symlink, readlink
 from Screens.Setup import Setup
 from Tools import Notifications
 
-class TimezoneIterator(object):
-	def __init__(self, timezone):
-		self._timezone = timezone
-		self._index = -1
-
-	def next(self):
-		self._index += 1
-		if self._index == 0:
-			return self._timezone.name
-		elif self._index == 1:
-			return self._timezone.key
-		raise StopIteration
-
 class Timezone(object):
 	def __init__(self, key, zinfo):
 		self._key = key
@@ -94,9 +81,6 @@ class Timezone(object):
 	def offset(self):
 		return self._offset
 	
-	def __iter__(self):
-		return TimezoneIterator(self)
-
 	def __getitem__(self, item):
 		if item == 0:
 			return self.key
@@ -186,7 +170,7 @@ class Timezones(object):
 			region.append(timezone)
 			self._regions[timezone.region] = region
 			self._lut[key] = timezone
-			self.timezones.append(list(timezone))
+			self.timezones.append([timezone.name, timezone.key])
 
 	def activateTimezone(self, zone):
 		Log.i(zone)
@@ -225,7 +209,7 @@ class Timezones(object):
 	def getDefaultTimezone(self):
 		# TODO return something more useful - depending on country-settings?
 		t = self.getCurrentTimezone()
-		if t in list(self._lut.keys()):
+		if t in self._lut:
 			return t
 		return self.timezones[0][0]
 

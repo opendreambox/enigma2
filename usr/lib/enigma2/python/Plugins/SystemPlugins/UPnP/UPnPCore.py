@@ -9,7 +9,7 @@ from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.devices.media_renderer import MediaRenderer
 from coherence.upnp.devices.media_server import MediaServer
 from coherence.upnp.devices.media_server_client import MediaServerClient
-from HTMLParser import HTMLParser
+from six.moves.html_parser import HTMLParser
 from Plugins.Plugin import PluginDescriptor
 from Tools.Log import Log
 import six

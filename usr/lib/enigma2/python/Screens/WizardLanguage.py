@@ -1,5 +1,6 @@
 from __future__ import print_function
-from Wizard import Wizard
+from __future__ import absolute_import
+from Screens.Wizard import Wizard
 from Components.Label import Label
 from Components.Language import language
 

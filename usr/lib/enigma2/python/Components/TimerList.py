@@ -1,7 +1,8 @@
 from __future__ import division
-from HTMLComponent import HTMLComponent
-from GUIComponent import GUIComponent
-from TemplatedMultiContentComponent import TemplatedMultiContentComponent
+from __future__ import absolute_import
+from Components.HTMLComponent import HTMLComponent
+from Components.GUIComponent import GUIComponent
+from Components.TemplatedMultiContentComponent import TemplatedMultiContentComponent
 
 from Tools.FuzzyDate import FuzzyTime
 

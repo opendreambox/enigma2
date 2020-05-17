@@ -13,8 +13,11 @@ from enigma import eRCInput
 
 class Screen(dict, GUISkin):
 
-	False, SUSPEND_STOPS, SUSPEND_PAUSES = list(range(3))
-	ALLOW_SUSPEND = False
+	SUSPEND_NONE = 0
+	SUSPEND_STOPS = 1
+	SUSPEND_PAUSES = 2
+
+	ALLOW_SUSPEND = SUSPEND_NONE
 
 	def __init__(self, session, parent = None, windowTitle=None):
 		dict.__init__(self)
@@ -149,7 +152,7 @@ class Screen(dict, GUISkin):
 
 		# we can have multiple dict entries with different names but same Element
 		# but we dont can call destroy multiple times
-		for name in self.keys():
+		for name in list(self.keys()):
 			val = self[name]
 			del self[name] # remove from dict
 			if val is not None: # is not a duplicate...

@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
 from Screens.Screen import Screen
 
 from Components.ActionMap import ActionMap
@@ -8,10 +9,10 @@ from Components.Sources.List import List
 from Tools.Directories import resolveFilename, pathExists, SCOPE_PLUGINS, SCOPE_CURRENT_SKIN
 from Tools.Log import Log
 
-from AudioPlayer import AudioPlayer
-from VideoPlayer import VideoPlayer
-from Helpers import EasyPixmap
-from MediaCore import MediaCore, mediaCore
+from .AudioPlayer import AudioPlayer
+from .VideoPlayer import VideoPlayer
+from .Helpers import EasyPixmap
+from .MediaCore import MediaCore, mediaCore
 
 class MediaCenterMenuSummary(Screen):
 	skin = ("""

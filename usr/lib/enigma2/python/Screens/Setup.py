@@ -1,10 +1,12 @@
-from Screen import Screen
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Components.ActionMap import NumberActionMap
 from Components.config import config, ConfigNothing
 from Components.SystemInfo import SystemInfo
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.StaticText import StaticText
 from Tools.Directories import resolveFilename, SCOPE_DATADIR
+import six
 
 import xml.etree.cElementTree
 
@@ -70,7 +72,7 @@ class Setup(ConfigListScreen, Screen):
 			if x.get("key") != self.setup:
 				continue
 			self.addItems(listItems, x);
-			self.setup_title = x.get("title", "").encode("UTF-8")
+			self.setup_title = six.ensure_str(x.get("title", ""))
 
 	def __init__(self, session, setup):
 		Screen.__init__(self, session)
@@ -125,7 +127,7 @@ class Setup(ConfigListScreen, Screen):
 				if requires and not SystemInfo.get(requires, False):
 					continue;
 
-				item_text = _(x.get("text", "??").encode("UTF-8"))
+				item_text = _(six.ensure_str(x.get("text", "??")))
 				b = eval(x.text or "str('')");
 				#add to configlist
 				item = b
@@ -147,5 +149,5 @@ def getSetupTitle(setupId):
 	xmldata = setupdom.getroot()
 	for x in xmldata.findall("setup"):
 		if x.get("key") == setupId:
-			return x.get("title", "").encode("UTF-8")
+			return six.ensure_str(x.get("title", ""))
 	raise SetupError("unknown setup id '%s'!" % repr(setupId))

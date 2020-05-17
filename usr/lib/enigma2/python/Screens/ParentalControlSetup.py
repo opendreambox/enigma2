@@ -1,5 +1,6 @@
 from __future__ import print_function
-from Screen import Screen
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import NumberActionMap
 from Components.config import config, getConfigListEntry, ConfigNothing, NoSave, ConfigPIN
@@ -9,7 +10,7 @@ from Components.Sources.StaticText import StaticText
 from Screens.ChoiceBox import ChoiceBox
 from Screens.MessageBox import MessageBox
 from Screens.InputBox import PinInput
-from Screens.ChannelSelection import service_types_tv
+import Screens.ChannelSelection
 from Tools.BoundFunction import boundFunction
 from enigma import eServiceCenter, eTimer, eServiceReference
 from operator import itemgetter
@@ -228,7 +229,7 @@ class ParentalControlEditor(Screen):
 
 	def readServiceList(self):
 		serviceHandler = eServiceCenter.getInstance()
-		refstr = '%s ORDER BY name' % (service_types_tv)
+		refstr = '%s ORDER BY name' % (Screens.ChannelSelection.service_types_tv)
 		self.root = eServiceReference(refstr)
 		self.servicesList = {}
 		list = serviceHandler.list(self.root)

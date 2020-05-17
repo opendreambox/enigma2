@@ -99,7 +99,7 @@ class NetworkInfo(object):
 			if service:
 				iface = NetworkInterface(service)
 				key = iface.ethernet.interface
-				if not key in list(adapters.keys()) or not service.state() in (eNetworkManager.STATE_IDLE, eNetworkManager.STATE_FAILURE):
+				if key not in adapters or service.state() not in (eNetworkManager.STATE_IDLE, eNetworkManager.STATE_FAILURE):
 					adapters[key] = iface
 		return adapters
 

@@ -36,11 +36,11 @@ class HTTPProgressDownloader(client.HTTPDownloader):
 	def pageEnd(self):
 		return client.HTTPDownloader.pageEnd(self)
 
-import urlparse
+import six.moves.urllib.parse
 def url_parse(url, defaultPort=None):
-	parsed = urlparse.urlparse(url)
+	parsed = six.moves.urllib.parse.urlparse(url)
 	scheme = parsed[0]
-	path = urlparse.urlunparse(('', '') + parsed[2:])
+	path = six.moves.urllib.parse.urlunparse(('', '') + parsed[2:])
 	if defaultPort is None:
 		if scheme == 'https':
 			defaultPort = 443

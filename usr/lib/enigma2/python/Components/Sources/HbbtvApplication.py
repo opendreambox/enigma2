@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from enigma import eHbbtv
-from Source import Source
+from Components.Sources.Source import Source
 from Components.Element import cached
 
 class HbbtvApplication(Source):

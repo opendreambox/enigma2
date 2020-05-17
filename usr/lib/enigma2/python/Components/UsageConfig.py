@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, ConfigInteger, ConfigSlider
+from Components.config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, ConfigInteger, ConfigSlider
 from Tools.Directories import resolveFilename, SCOPE_HDD
 from enigma import setTunerTypePriorityOrder, eEnv
 from six.moves import map
@@ -42,12 +43,12 @@ def BaseInitUsageConfig():
 def FinalInitUsageConfig():
 	try:
 		usage_old = config.usage.dict().copy()
-	except KeyError:
+	except AttributeError:
 		usage_old = { }
 
 	try:
 		seek_old = config.seek.dict().copy()
-	except KeyError:
+	except AttributeError:
 		seek_old = { }
 
 	#We have do it again to ensure tranlsations are applied after language load has finished

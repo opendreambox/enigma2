@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import eServiceCenter, iServiceInformation
 
 from Components.Sources.List import List
@@ -5,7 +6,7 @@ from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
 from Tools.LoadPixmap import LoadPixmap
 from Tools.Log import Log
 
-from MediaCore import MediaCore
+from .MediaCore import MediaCore
 
 from os import path as os_path
 import random

@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
 from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport
-from MediaGUI import MediaGUI
+from .MediaGUI import MediaGUI
 
 class VideoGUI(MediaGUI, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True

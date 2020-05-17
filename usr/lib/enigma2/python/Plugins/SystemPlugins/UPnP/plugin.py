@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from Components.config import config
 from Components.ResourceManager import resourcemanager
 from Plugins.Plugin import PluginDescriptor
 from Plugins.SystemPlugins.UPnP.DreamboxMediaStore import restartMediaServer
 
-from UPnPConfig import UPnPConfig, getUUID
+from .UPnPConfig import UPnPConfig, getUUID
 
 from coherence import log
 from coherence.upnp.devices.basics import BasicDeviceMixin, DeviceHttpRoot, RootDeviceXML

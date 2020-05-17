@@ -4,6 +4,7 @@
 //
 // This file contains simple and reusable STL-based typedefs.
 //
+#include <boost/any.hpp>
 
 #include <list>
 #include <map>

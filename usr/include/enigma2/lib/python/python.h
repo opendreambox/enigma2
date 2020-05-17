@@ -8,6 +8,124 @@
 #include <lib/base/object.h>
 
 #if !defined(SKIP_PART1) && !defined(SWIG)
+
+#if PY_MAJOR_VERSION >= 3
+static inline PyObject *ePyBytes_FromStringAndSize(const char *v, Py_ssize_t len)
+{
+	return PyBytes_FromStringAndSize(v, len);
+}
+
+static inline long ePyInt_AS_LONG(PyObject *io)
+{
+	return PyLong_AsLong(io);
+}
+
+static inline long ePyInt_AsLong(PyObject *io)
+{
+	return PyLong_AsLong(io);
+}
+
+static inline unsigned long ePyInt_AsUnsignedLongMask(PyObject *io)
+{
+	return PyLong_AsUnsignedLong(io);
+}
+
+static inline int ePyInt_Check(PyObject *o)
+{
+	return PyLong_Check(o);
+}
+
+static inline PyObject *ePyInt_FromLong(long ival)
+{
+	return PyLong_FromLong(ival);
+}
+
+static inline const char *ePyUnicode_AsUTF8(PyObject *unicode)
+{
+	return PyUnicode_AsUTF8(unicode);
+}
+
+static inline int ePyUnicode_Check(PyObject *o)
+{
+	return PyUnicode_Check(o);
+}
+
+static inline PyObject *ePyUnicode_FromFormatV(const char *format, va_list vargs)
+{
+	return PyUnicode_FromFormatV(format, vargs);
+}
+
+static inline PyObject *ePyUnicode_FromString(const char *u)
+{
+	return PyUnicode_FromString(u);
+}
+
+static inline PyObject *ePyMemoryView_FromMemory(char *mem, Py_ssize_t size, int flags)
+{
+	return PyMemoryView_FromMemory(mem, size, flags);
+}
+
+#else
+
+static inline PyObject *ePyBytes_FromStringAndSize(const char *v, Py_ssize_t len)
+{
+	return PyString_FromStringAndSize(v, len);
+}
+
+static inline long ePyInt_AS_LONG(PyObject *io)
+{
+	return PyInt_AS_LONG(io);
+}
+
+static inline long ePyInt_AsLong(PyObject *io)
+{
+	return PyInt_AsLong(io);
+}
+
+static inline unsigned long ePyInt_AsUnsignedLongMask(PyObject *io)
+{
+	return PyInt_AsUnsignedLongMask(io);
+}
+
+static inline int ePyInt_Check(PyObject *o)
+{
+	return PyInt_Check(o);
+}
+
+static inline PyObject *ePyInt_FromLong(long ival)
+{
+	return PyInt_FromLong(ival);
+}
+
+static inline const char *ePyUnicode_AsUTF8(PyObject *unicode)
+{
+	return PyString_AS_STRING(unicode);
+}
+
+static inline int ePyUnicode_Check(PyObject *o)
+{
+	return PyString_Check(o);
+}
+
+static inline PyObject *ePyUnicode_FromFormatV(const char *format, va_list vargs)
+{
+	return PyString_FromFormatV(format, vargs);
+}
+
+static inline PyObject *ePyUnicode_FromString(const char *u)
+{
+	return PyString_FromString(u);
+}
+
+static inline PyObject *ePyMemoryView_FromMemory(char *mem, Py_ssize_t size, int flags)
+{
+	if (flags == PyBUF_WRITE)
+		return PyBuffer_FromReadWriteMemory(static_cast<void *>(mem), size);
+	else
+		return PyBuffer_FromMemory(static_cast<void *>(mem), size);
+}
+#endif
+
 class ePyObject
 {
 	PyObject *m_ob;
@@ -23,27 +141,27 @@ public:
 #ifdef PYTHON_REFCOUNT_DEBUG
 	inline ePyObject(PyObject *ob, const char *file, int line);
 #endif
-	inline ePyObject(PyVarObject *ob);
-	inline ePyObject(PyDictObject *ob);
-	inline ePyObject(PyTupleObject *ob);
-	inline ePyObject(PyListObject *ob);
-	inline ePyObject(PyStringObject *ob);
+	inline ePyObject(const char *string);
+	inline ePyObject(const unsigned char *buf, size_t count);
+
 	operator bool() const { return !!m_ob; }
 	operator bool() { return !!m_ob; }
 	ePyObject &operator=(const ePyObject &);
 	ePyObject &operator=(PyObject *);
-	ePyObject &operator=(PyVarObject *ob) { return operator=((PyObject*)ob); }
-	ePyObject &operator=(PyDictObject *ob) { return operator=((PyObject*)ob); }
-	ePyObject &operator=(PyTupleObject *ob) { return operator=((PyObject*)ob); }
-	ePyObject &operator=(PyListObject *ob) { return operator=((PyObject*)ob); }
-	ePyObject &operator=(PyStringObject *ob) { return operator=((PyObject*)ob); }
+	ePyObject &operator=(const char *string);
+
 	operator PyObject*();
-	operator PyVarObject*() { return (PyVarObject*)operator PyVarObject*(); }
+	operator PyVarObject*() { return (PyVarObject*)operator PyObject*(); }
 	operator PyTupleObject*() { return (PyTupleObject*)operator PyObject*(); }
 	operator PyListObject*() { return (PyListObject*)operator PyObject*(); }
+#if PY_MAJOR_VERSION >= 3
+	operator PyBytesObject*() { return (PyBytesObject*)operator PyObject*(); }
+	operator PyUnicodeObject*() { return (PyUnicodeObject*)operator PyObject*(); }
+#else
 	operator PyStringObject*() { return (PyStringObject*)operator PyObject*(); }
+#endif
 	operator PyDictObject*() { return (PyDictObject*)operator PyObject*(); }
-	PyObject *operator->() { return operator PyObject*(); }
+
 #ifdef PYTHON_REFCOUNT_DEBUG
 	void incref(const char *file, int line);
 	void decref(const char *file, int line);
@@ -51,6 +169,10 @@ public:
 	void incref();
 	void decref();
 #endif
+
+	ssize_t len() const;
+	bool isinstance_str() const;
+	const char *str() const;
 };
 
 inline ePyObject::ePyObject()
@@ -73,7 +195,7 @@ inline ePyObject::ePyObject(const ePyObject &ob)
 inline ePyObject::ePyObject(PyObject *ob)
 	:m_ob(ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?Py_REFCNT(ob):0), m_to(ob?Py_REFCNT(ob):0), m_erased(false)
 #endif
 {
 }
@@ -81,47 +203,23 @@ inline ePyObject::ePyObject(PyObject *ob)
 #ifdef PYTHON_REFCOUNT_DEBUG
 inline ePyObject::ePyObject(PyObject *ob, const char* file, int line)
 	:m_ob(ob)
-	,m_file(file), m_line(line), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
+	,m_file(file), m_line(line), m_from(ob?Py_REFCNT(ob):0), m_to(ob?Py_REFCNT(ob):0), m_erased(false)
 {
 }
 #endif
 
-inline ePyObject::ePyObject(PyVarObject *ob)
-	:m_ob((PyObject*)ob)
+inline ePyObject::ePyObject(const char *string)
+	:m_ob(ePyUnicode_FromString(string))
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?Py_REFCNT(ob):0), m_to(ob?Py_REFCNT(ob):0), m_erased(false)
 #endif
 {
 }
 
-inline ePyObject::ePyObject(PyDictObject *ob)
-	:m_ob((PyObject*)ob)
+inline ePyObject::ePyObject(const unsigned char *buf, size_t count)
+	:m_ob(ePyBytes_FromStringAndSize(reinterpret_cast<const char *>(buf), count))
 #ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
-#endif
-{
-}
-
-inline ePyObject::ePyObject(PyTupleObject *ob)
-	:m_ob((PyObject*)ob)
-#ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
-#endif
-{
-}
-
-inline ePyObject::ePyObject(PyListObject *ob)
-	:m_ob((PyObject*)ob)
-#ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
-#endif
-{
-}
-
-inline ePyObject::ePyObject(PyStringObject *ob)
-	:m_ob((PyObject*)ob)
-#ifdef PYTHON_REFCOUNT_DEBUG
-	,m_file(0), m_line(0), m_from(ob?ob->ob_refcnt:0), m_to(ob?ob->ob_refcnt:0), m_erased(false)
+	,m_file(0), m_line(0), m_from(ob?Py_REFCNT(ob):0), m_to(ob?Py_REFCNT(ob):0), m_erased(false)
 #endif
 {
 }
@@ -139,9 +237,33 @@ inline ePyObject &ePyObject::operator=(const ePyObject &ob)
 	return *this;
 }
 
+inline ePyObject &ePyObject::operator=(const char *string)
+{
+	m_ob = ePyUnicode_FromString(string);
+	return *this;
+}
+
 inline ePyObject::operator PyObject*()
 {
 	return m_ob;
+}
+
+inline ssize_t ePyObject::len() const
+{
+	if (m_ob == nullptr)
+		return -1;
+
+	return PyObject_Size(m_ob);
+}
+
+inline bool ePyObject::isinstance_str() const
+{
+	return m_ob && ePyUnicode_Check(m_ob);
+}
+
+inline const char *ePyObject::str() const
+{
+	return isinstance_str() ? ePyUnicode_AsUTF8(m_ob) : nullptr;
 }
 
 inline void ePyObject::incref()
@@ -233,24 +355,12 @@ inline ePyObject Impl_PyDict_New(const char* file, int line)
 	return ePyObject(PyDict_New(), file, line);
 }
 
-inline ePyObject Impl_PyString_FromString(const char* file, int line, const char *str)
-{
-	return ePyObject(PyString_FromString(str), file, line);
-}
-
-inline ePyObject Impl_PyString_FromFormat(const char* file, int line, const char *fmt, ...)
-{
-	va_list ap;
-	va_start(ap, fmt);
-	PyObject *ob = PyString_FromFormatV(fmt, ap);
-	va_end(ap);
-	return ePyObject(ob, file, line);
-}
-
+#if PY_MAJOR_VERSION < 3
 inline ePyObject Impl_PyInt_FromLong(const char* file, int line, long val)
 {
 	return ePyObject(PyInt_FromLong(val), file, line);
 }
+#endif
 
 inline ePyObject Impl_PyLong_FromLong(const char* file, int line, long val)
 {
@@ -319,24 +429,12 @@ inline ePyObject Impl_PyDict_New()
 	return PyDict_New();
 }
 
-inline ePyObject Impl_PyString_FromString(const char *str)
-{
-	return PyString_FromString(str);
-}
-
-inline ePyObject Impl_PyString_FromFormat(const char *fmt, ...)
-{
-	va_list ap;
-	va_start(ap, fmt);
-	PyObject *ob = PyString_FromFormatV(fmt, ap);
-	va_end(ap);
-	return ePyObject(ob);
-}
-
+#if PY_MAJOR_VERSION < 3
 inline ePyObject Impl_PyInt_FromLong(long val)
 {
 	return PyInt_FromLong(val);
 }
+#endif
 
 inline ePyObject Impl_PyLong_FromLong(long val)
 {
@@ -394,9 +492,9 @@ inline void Impl_DECREF(PyObject *ob)
 #define PyList_New(args...) Impl_PyList_New(__FILE__, __LINE__, args)
 #define PyTuple_New(args...) Impl_PyTuple_New(__FILE__, __LINE__, args)
 #define PyDict_New(...) Impl_PyDict_New(__FILE__, __LINE__)
-#define PyString_FromString(str) Impl_PyString_FromString(__FILE__, __LINE__, str)
-#define PyString_FromFormat(str, args...) Impl_PyString_FromFormat(__FILE__, __LINE__, str, args)
+#if PY_MAJOR_VERSION < 3
 #define PyInt_FromLong(val) Impl_PyInt_FromLong(__FILE__, __LINE__, val)
+#endif
 #define PyLong_FromLong(val) Impl_PyLong_FromLong(__FILE__, __LINE__, val)
 #define PyLong_FromUnsignedLong(val) Impl_PyLong_FromUnsignedLong(__FILE__, __LINE__, val)
 #define PyLong_FromUnsignedLongLong(val) Impl_PyLong_FromUnsignedLongLong(__FILE__, __LINE__, val)
@@ -411,9 +509,9 @@ inline void Impl_DECREF(PyObject *ob)
 #define PyList_New(args...) Impl_PyList_New(args)
 #define PyTuple_New(args...) Impl_PyTuple_New(args)
 #define PyDict_New(...) Impl_PyDict_New()
-#define PyString_FromString(str) Impl_PyString_FromString(str)
-#define PyString_FromFormat(str, args...) Impl_PyString_FromFormat(str, args)
+#if PY_MAJOR_VERSION < 3
 #define PyInt_FromLong(val) Impl_PyInt_FromLong(val)
+#endif
 #define PyLong_FromLong(val) Impl_PyLong_FromLong(val)
 #define PyLong_FromUnsignedLong(val) Impl_PyLong_FromUnsignedLong(val)
 #define PyLong_FromUnsignedLongLong(val) Impl_PyLong_FromUnsignedLongLong(val)
@@ -435,17 +533,9 @@ public:
 private:
 };
 
-inline long Impl_PyInt_AS_LONG(PyObject *o)
-{
-	return PyInt_AS_LONG(o);
-}
-
-#undef PyInt_AS_LONG
-#define PyInt_AS_LONG(o) Impl_PyInt_AS_LONG(o)
-
-#define PyInt_AsLongSafe(ob) __extension__ \
+#define ePyInt_AsLongSafe(ob) __extension__ \
 ({ \
-	long ret = PyInt_AsLong(ob); \
+	long ret = ePyInt_AsLong(ob); \
 	if (PyErr_Occurred()) \
 	{ \
 		PyErr_Print(); \
@@ -455,9 +545,9 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 	ret; \
 } )
 
-#define PyInt_AsUnsignedLongMaskSafe(ob) __extension__ \
+#define ePyInt_AsUnsignedLongMaskSafe(ob) __extension__ \
 ({ \
-	unsigned long ret = PyInt_AsUnsignedLongMask(ob); \
+	unsigned long ret = ePyInt_AsUnsignedLongMask(ob); \
 	if (PyErr_Occurred()) \
 	{ \
 		PyErr_Print(); \
@@ -491,15 +581,41 @@ inline long Impl_PyInt_AS_LONG(PyObject *o)
 	ret; \
 } )
 
-#define PyString_AsStringSafe(ob) __extension__ \
+#define ePyUnicode_AsUTF8Safe(ob) __extension__ \
 ({ \
-	if (!PyString_Check(ob)) \
+	if (!ePyUnicode_Check(ob)) \
 	{ \
 		ePython::dumpStackTrace(); \
 		ASSERT(0); \
 	} \
-	PyString_AS_STRING(ob); \
+	ePyUnicode_AsUTF8(ob); \
 } )
+
+#if PY_MAJOR_VERSION >= 3
+  #define PYMOD_SUCCESS_VAL(val) val
+  #define PYMOD_INIT(name) PyMODINIT_FUNC PyInit_##name(void)
+  #define PYMOD_DEF(name, doc, methods) ({ \
+          static struct PyModuleDef moduledef = { \
+            PyModuleDef_HEAD_INIT, name, doc, -1, methods, }; \
+          PyModule_Create(&moduledef); \
+  })
+#else
+  static inline void PYMOD_SUCCESS_VAL(PyObject *m) {}
+  #define PYMOD_INIT(name) void init##name(void)
+  #define PYMOD_DEF(name, doc, methods) \
+          Py_InitModule3(name, methods, doc);
+#endif
+
+#if PY_MAJOR_VERSION < 3
+extern int _Py_Finalizing;
+#endif
+
+#if PY_VERSION_HEX < 0x03070000
+static inline int _Py_IsFinalizing(void)
+{
+	return _Py_Finalizing;
+}
+#endif
 
 #endif // SWIG
 #endif // SKIP_PART2

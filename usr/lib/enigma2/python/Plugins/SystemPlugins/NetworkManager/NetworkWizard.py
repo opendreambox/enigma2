@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from enigma import eNetworkManager
 from Screens.WizardLanguage import WizardLanguage
-from NetworkConfig import NetworkConfigGeneral, ServiceIPConfiguration, ServiceNSConfiguration
+from .NetworkConfig import NetworkConfigGeneral, ServiceIPConfiguration, ServiceNSConfiguration
 
 
 class NetworkWizardNew(NetworkConfigGeneral):

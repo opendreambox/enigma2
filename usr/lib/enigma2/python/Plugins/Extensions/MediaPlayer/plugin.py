@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from os import path as os_path, remove as os_remove, listdir as os_listdir
 from time import strftime
 from enigma import iPlayableService, eTimer, eServiceCenter, iServiceInformation, ePicLoad, eServiceMP3, eServiceReference
@@ -21,7 +22,7 @@ from Components.AVSwitch import AVSwitch
 from Components.Harddisk import harddiskmanager
 from Components.config import config
 from Tools.Directories import fileExists, resolveFilename, SCOPE_CONFIG, SCOPE_PLAYLIST, SCOPE_CURRENT_SKIN
-from settings import MediaPlayerSettings
+from .settings import MediaPlayerSettings
 import random
 from six.moves import range
 

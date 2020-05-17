@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
 from enigma import eTimer
 from Components.ActionMap import ActionMap
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
@@ -6,7 +7,7 @@ from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 
 from Tools.Log import Log
-from LCDScreen import MediaRendererLCDScreen
+from .LCDScreen import MediaRendererLCDScreen
 
 class MediaGUI(Screen):
 	ENABLE_RESUME_SUPPORT = True

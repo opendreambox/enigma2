@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 from enigma import eListboxPythonStringContent, eTimer, eRCInput, getPrevAsciiCode
 
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.MenuList import MenuList
 from Tools.Log import Log
 
-from MediaBrowser import MediaBrowser, MediaBrowserList
-from MediaCore import MediaCore, mediaCore
+from .MediaBrowser import MediaBrowser, MediaBrowserList
+from .MediaCore import MediaCore, mediaCore
 
 ITEM_KEY_TITLE = "__item_title"
 

@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from Plugins.Plugin import PluginDescriptor
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigYesNo
 from Components.ConfigList import ConfigListScreen
@@ -16,7 +17,7 @@ from os import remove, rename
 from os.path import basename
 from twisted.mail import smtp, relaymanager
 import MimeWriter, mimetools, StringIO
-from __init__ import decrypt_block, validate_cert, read_random
+from .__init__ import decrypt_block, validate_cert, read_random
 
 config.plugins.crashlogautosubmit = ConfigSubsection()
 config.plugins.crashlogautosubmit.sendmail = ConfigSelection(default = "send", choices = [

@@ -1,8 +1,9 @@
 from __future__ import division
 from __future__ import print_function
-from Screen import Screen
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Screens.DefaultWizard import DefaultWizard
-from ServiceScan import ServiceScan
+from Screens.ServiceScan import ServiceScan
 from Components.config import config, ConfigSubsection, ConfigSelection, \
 	ConfigYesNo, ConfigInteger, getConfigListEntry, ConfigSlider, ConfigOnOff, ConfigText, ConfigFloat
 from Components.ActionMap import NumberActionMap, ActionMap

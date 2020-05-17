@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from Plugins.Plugin import PluginDescriptor
-from MediaDatabaseManager import MediaDatabaseManager
+from .MediaDatabaseManager import MediaDatabaseManager
 
 def manager_menu(menuid, **kwargs):
 	if menuid == "system":

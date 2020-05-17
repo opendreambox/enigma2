@@ -1,7 +1,8 @@
 from __future__ import division
 from __future__ import print_function
-from HTMLComponent import HTMLComponent
-from GUIComponent import GUIComponent
+from __future__ import absolute_import
+from Components.HTMLComponent import HTMLComponent
+from Components.GUIComponent import GUIComponent
 
 from enigma import eLabel, eEPGCache, eListbox, eListboxPythonMultiContent, gFont, \
 	RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER

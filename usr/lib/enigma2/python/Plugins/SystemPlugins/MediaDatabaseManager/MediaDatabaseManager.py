@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from enigma import eMediaDatabase, StringList
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -9,7 +10,7 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Log import Log
 
-from FileBrowser import FileBrowser
+from .FileBrowser import FileBrowser
 
 class MediaDatabaseManager(Screen):
 	skin = """

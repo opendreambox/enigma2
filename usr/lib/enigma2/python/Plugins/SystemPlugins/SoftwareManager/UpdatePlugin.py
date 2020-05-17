@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import eNetworkManager, eTimer, quitMainloop
 from Components.config import config
 from Components.ActionMap import ActionMap
@@ -6,7 +7,7 @@ from Components.Slider import Slider
 from Components.Sources.StaticText import StaticText
 from Screens.Screen import Screen
 
-from SoftwareTools import iSoftwareTools
+from .SoftwareTools import iSoftwareTools
 from Screens.MessageBox import MessageBox
 
 

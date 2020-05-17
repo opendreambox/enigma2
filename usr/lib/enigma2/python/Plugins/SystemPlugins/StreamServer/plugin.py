@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from Plugins.Plugin import PluginDescriptor
-from StreamServerConfig import StreamServerConfig
+from .StreamServerConfig import StreamServerConfig
 
 def main(session, **kwargs):
 	session.open(StreamServerConfig)

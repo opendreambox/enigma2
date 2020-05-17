@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import eInputDeviceManager
 from Plugins.Plugin import PluginDescriptor
 from Tools.Notifications import AddNotificationWithCallback
@@ -7,8 +8,8 @@ from Tools.Directories import createDir
 from Tools.Log import Log
 import time
 
-from InputDeviceManagement import InputDeviceManagement
-from InputDeviceAdapterFlasher import InputDeviceUpdateChecker, InputDeviceAdapterFlasher
+from .InputDeviceManagement import InputDeviceManagement
+from .InputDeviceAdapterFlasher import InputDeviceUpdateChecker, InputDeviceAdapterFlasher
 from twisted.internet import reactor
 
 global inputDeviceWatcher

@@ -102,7 +102,7 @@ class VideoWizard():
 			list = config.av.videomode[self.port].getChoices()
 			print("modeslist:", list)
 			return list
-		except KeyError:
+		except AttributeError:
 			print("modeslist: empty")
 			return []
 	

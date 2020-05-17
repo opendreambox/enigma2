@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from __future__ import division
+from __future__ import absolute_import
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -11,7 +12,7 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from Tools.LoadPixmap import LoadPixmap
 from skin import componentSizes
 
-from MediaCore import MediaCore
+from .MediaCore import MediaCore
 
 from Tools.Log import Log
 from Components.Sources.StaticText import StaticText

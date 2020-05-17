@@ -1,6 +1,7 @@
 from __future__ import division
+from __future__ import absolute_import
 import time
-from Poll import PollConverter
+from Components.Converter.Poll import PollConverter
 from enigma import iPlayableService
 from Components.Element import cached, ElementError
 

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import eInputDeviceManager
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
@@ -7,7 +8,7 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Log import Log
 
-from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpdateChecker
+from .InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpdateChecker
 
 
 class InputDeviceManagementBase(object):

@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from enigma import eServiceReference
 from Components.FileList import FileList
 
 from Tools.Log import Log
-from MediaBrowser import MediaBrowser, MediaBrowserList
-from MediaCore import MediaCore, mediaCore
+from .MediaBrowser import MediaBrowser, MediaBrowserList
+from .MediaCore import MediaCore, mediaCore
 
 class MediaBrowserFileList(FileList, MediaBrowserList):
 	audio_ext = ["mp2", "mp3", "flac", "wma", "fla", "flc", "m4a", "aac", "ogg", "wav", "wave", "pcm"]

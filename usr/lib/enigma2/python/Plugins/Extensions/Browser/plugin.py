@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from Components.config import config
 from Plugins.Plugin import PluginDescriptor
 
-from Browser import Browser
-from BrowserMenu import BrowserMenu
+from .Browser import Browser
+from .BrowserMenu import BrowserMenu
 
 def main_widget(session, **kwargs):
 	url = kwargs.get("url", None)

@@ -1,4 +1,5 @@
-from Wizard import Wizard
+from __future__ import absolute_import
+from Screens.Wizard import Wizard
 
 from Components.config import ConfigBoolean, config
 from Components.Pixmap import MovingPixmap

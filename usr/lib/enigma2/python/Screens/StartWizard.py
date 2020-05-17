@@ -1,4 +1,5 @@
-from Wizard import wizardManager
+from __future__ import absolute_import
+from Screens.Wizard import wizardManager
 from Screens.WizardLanguage import WizardLanguage
 from Screens.ScanSetup import DefaultSatLists
 from Screens.DefaultWizard import DefaultWizard

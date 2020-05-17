@@ -1,11 +1,12 @@
 from __future__ import division
+from __future__ import absolute_import
 from enigma import eLabel, eSize, eServiceReference, RT_VALIGN_CENTER, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, gFont, eListbox, eServiceCenter, eListboxPythonMultiContent, eListboxServiceContent, eEPGCache,\
 	getDesktop, eTimer
 from skin import parseColor, parseFont, TemplatedColors, componentSizes, TemplatedListFonts
 from timer import TimerEntry
 from Components.config import config
-from HTMLComponent import HTMLComponent
-from GUIComponent import GUIComponent
+from Components.HTMLComponent import HTMLComponent
+from Components.GUIComponent import GUIComponent
 from ServiceReference import ServiceReference
 from Tools.Log import Log
 from Tools.LoadPixmap import LoadPixmap

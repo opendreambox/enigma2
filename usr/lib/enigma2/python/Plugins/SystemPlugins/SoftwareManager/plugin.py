@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from enigma import eNetworkManager
 
 from Plugins.Plugin import PluginDescriptor
@@ -28,20 +29,20 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_CURRENT_PLUG
 from Tools.LoadPixmap import LoadPixmap
 from Tools.NumericalTextInput import NumericalTextInput
 from enigma import eTimer, quitMainloop, getDesktop, ePicLoad, getPrevAsciiCode, eEnv
-from cPickle import dump, load
+from six.moves.cPickle import dump, load
 from os import path as os_path, stat, mkdir, makedirs, listdir, access, remove, W_OK, R_OK, F_OK
 from time import time
 from stat import ST_MTIME
 from twisted.web import client
 from re import compile as re_compile
 
-from ImageWizard import ImageWizard
-from BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
-from SoftwareTools import iSoftwareTools
+from .ImageWizard import ImageWizard
+from .BackupRestore import BackupSelection, RestoreMenu, BackupScreen, RestoreScreen, getBackupPath, getBackupFilename
+from .SoftwareTools import iSoftwareTools
 from Components.ResourceManager import resourcemanager
 
-from UpdatePlugin import UpdatePlugin
-from UpdateCheck import updateCheck, UpdateCheckConfig
+from .UpdatePlugin import UpdatePlugin
+from .UpdateCheck import updateCheck, UpdateCheckConfig
 from six import unichr
 from six.moves import range
 

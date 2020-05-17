@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from enigma import eSize
 
-from Screen import Screen
+from Screens.Screen import Screen
 
 from Components.ActionMap import ActionMap
 from Components.Language import language

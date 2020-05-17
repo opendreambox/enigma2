@@ -1,6 +1,7 @@
 from __future__ import division
 from __future__ import print_function
-from Renderer import Renderer
+from __future__ import absolute_import
+from Components.Renderer.Renderer import Renderer
 
 from enigma import eCanvas, eRect, gRGB, eSize
 from Components.AVSwitch import AVSwitch

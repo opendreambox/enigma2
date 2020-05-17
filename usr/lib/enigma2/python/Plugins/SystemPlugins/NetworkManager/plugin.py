@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
 from enigma import eNetworkManager, StringMap, eNetworkService
 from Components.config import config, ConfigBoolean
 from Plugins.Plugin import PluginDescriptor
 from Screens.MessageBox import MessageBox
 from Tools.Log import Log
 
-from MultiInputBox import MultiInputBox
-from NetworkConfig import NetworkServiceConfig
+from .MultiInputBox import MultiInputBox
+from .NetworkConfig import NetworkServiceConfig
 
-from NetworkWizard import NetworkWizardNew
+from .NetworkWizard import NetworkWizardNew
 import six
 
 class NetworkAgent(object):

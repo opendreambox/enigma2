@@ -1,10 +1,11 @@
+from __future__ import absolute_import
 from enigma import eMediaDatabase, eServiceReference, StringMap, StringMapVector, eSize
 from Screens.ChoiceBox import ChoiceBox
 from Screens.InputBox import InputBox
 from Tools.Log import Log
 
-from MediaCore import MediaCore
-from Playlist import Playlist, PlayListEntry, AudioPlaylistEntry, DefaultCoverArt
+from .MediaCore import MediaCore
+from .Playlist import Playlist, PlayListEntry, AudioPlaylistEntry, DefaultCoverArt
 
 from os import path as os_path
 import six
@@ -167,7 +168,7 @@ class DatabasePlaylist(Playlist):
 				if file_uri.endswith('.ts'):
 					ref = eServiceReference(eServiceReference.idDVB, 0, file_uri)
 				elif file_uri.endswith('.m2ts'):
-					ref = eServiceReference(3, 0, file_uri)
+					ref = eServiceReference(eServiceReference.idM2TS, 0, file_uri)
 				else:
 					ref = eServiceReference(eServiceReference.idGST, 0, file_uri)
 				self.add(ref, data, True)

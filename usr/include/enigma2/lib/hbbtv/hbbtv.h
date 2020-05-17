@@ -8,12 +8,14 @@
 #include <lib/service/event.h>
 #if defined(__aarch64__)
 #define HBBTV_USER_AGENT "Mozilla/5.0 (Linux aarch64; U;HbbTV/1.2.1 (+RTSP;Dream Property GmbH;Dreambox;1.5;1.0;) CE-HTML/1.0; en) WebKit QtWebkit OIPF/1.1 "
+#define HBBTV_USER_AGENT_ARD_REPLAY "Mozilla/5.0 (Linux aarch64; U;HbbTV/2.0.0 (+RTSP;Dream Property GmbH;Dreambox;1.5;1.0;) CE-HTML/1.0; en) WebKit QtWebkit OIPF/1.1 "
 #elif defined(__arm__)
 #define HBBTV_USER_AGENT "Mozilla/5.0 (Linux armv7l; U;HbbTV/1.2.1 (+RTSP;Dream Property GmbH;Dreambox;1.5;1.0;) CE-HTML/1.0; en) WebKit QtWebkit OIPF/1.1 "
 #else
 #define HBBTV_USER_AGENT "Mozilla/5.0 (Linux mipsel; U;HbbTV/1.2.1 (+RTSP;Dream Property GmbH;Dreambox;1.5;1.0;) CE-HTML/1.0; en) WebKit QtWebkit OIPF/1.1 "
 #endif
 extern std::string hbbtvUserAgent;
+extern std::string hbbtvUserAgentArdReplay;
 
 class eDVBServiceAITHandler;
 

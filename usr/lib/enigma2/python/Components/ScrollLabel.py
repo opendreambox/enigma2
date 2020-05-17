@@ -1,7 +1,8 @@
 from __future__ import division
+from __future__ import absolute_import
 import skin
-from HTMLComponent import HTMLComponent
-from GUIComponent import GUIComponent
+from Components.HTMLComponent import HTMLComponent
+from Components.GUIComponent import GUIComponent
 from enigma import eLabel, eWidget, eSlider, fontRenderClass, ePoint, eSize
 
 class ScrollLabel(HTMLComponent, GUIComponent):

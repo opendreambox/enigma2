@@ -1,6 +1,7 @@
 from __future__ import division
 from __future__ import print_function
-from ChannelSelection import ChannelSelection, BouquetSelector, SilentBouquetSelector
+from __future__ import absolute_import
+from Screens.ChannelSelection import ChannelSelection, BouquetSelector, SilentBouquetSelector
 
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.ActionMap import NumberActionMap
@@ -21,10 +22,10 @@ except:
 from Components.config import config, ConfigBoolean, ConfigClock
 from Components.SystemInfo import SystemInfo
 from Components.UsageConfig import preferredInstantRecordPath, defaultMoviePath, defaultStorageDevice
-from EpgSelection import EPGSelection, OutdatedEPGSelection
+from Screens.EpgSelection import EPGSelection, OutdatedEPGSelection
 from Plugins.Plugin import PluginDescriptor
 
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Dish import Dish
 from Screens.EventView import EventViewEPGSelect, EventViewSimple
@@ -52,7 +53,7 @@ from RecordTimer import RecordTimerEntry
 import Screens.Standby
 
 # hack alert!
-from Menu import MainMenu, mdom
+from Screens.Menu import MainMenu, mdom
 
 class InfoBarDish:
 	def __init__(self):

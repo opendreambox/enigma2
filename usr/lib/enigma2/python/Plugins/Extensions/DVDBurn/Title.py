@@ -1,6 +1,7 @@
 from __future__ import division
+from __future__ import absolute_import
 from Components.config import ConfigSubsection, ConfigSubList, ConfigInteger, ConfigText, ConfigSelection
-import TitleCutter
+from . import TitleCutter
 
 class ConfigFixedText(ConfigText):
 	def __init__(self, text, visible_width=60):

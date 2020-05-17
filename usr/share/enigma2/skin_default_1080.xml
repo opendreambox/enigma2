@@ -544,7 +544,7 @@
 		<layout name="Button_Big" />
 		<layout name="Button_Big_name" />
 		<eLabel backgroundColor="grey" position="1285,80" size="1,840" />
-		<widget additionalInfoFont="Regular;29" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" enableWrapAround="1" foregroundColorServiceNotAvail="grey" name="list" picServiceEventProgressbar="skin_default/progcl.svg" position="10,90" scrollbarMode="showOnDemand" serviceInfoFont="Regular;29" serviceNameFont="Regular;30" serviceNumberFont="Regular;31" size="1260,820" />
+		<widget additionalInfoFont="Regular;29" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" enableWrapAround="1" foregroundColorServiceNotAvail="#777777" name="list" picServiceEventProgressbar="skin_default/progcl.svg" position="10,90" scrollbarMode="showOnDemand" serviceInfoFont="Regular;29" serviceNameFont="Regular;30" serviceNumberFont="Regular;31" size="1260,820" />
 		<widget font="Regular;30" foregroundColor="yellow" position="1300,90" render="Label" size="480,35" source="ServiceEvent">
 			<convert type="ServiceName">Name</convert>
 		</widget>

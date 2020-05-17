@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from Components.ResourceManager import resourcemanager
-from UPnPCore import ManagedControlPoint
+from .UPnPCore import ManagedControlPoint
 
 from enigma import eNetworkManager
 

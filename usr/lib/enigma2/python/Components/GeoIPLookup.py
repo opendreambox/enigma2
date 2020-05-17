@@ -29,7 +29,7 @@ class GeoIPLookup(object):
 		if self._useCache and self.cachedData:
 			self._onLookupData(self.cachedData, callback)
 			return
-		url = self.URL
+		url = six.ensure_binary(self.URL)
 		keywords = {'callback':callback}
 		getPage(url).addCallbacks(self._onLookupData, self._onLookupError, callbackKeywords=keywords, errbackKeywords=keywords)
 

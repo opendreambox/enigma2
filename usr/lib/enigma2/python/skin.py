@@ -214,7 +214,7 @@ def collectAttributes(skinAttributes, node, skin_path_prefix=None, ignore=[]):
 			value = resolveFilename(SCOPE_SKIN_IMAGE, value, path_prefix=skin_path_prefix)
 
 		if attrib not in ignore:
-			skinAttributes.append((attrib, value.encode("utf-8")))
+			skinAttributes.append((attrib, six.ensure_str(value)))
 
 def loadPixmap(path, desktop, size=eSize()):
 	cached = False
@@ -230,191 +230,187 @@ def loadPixmap(path, desktop, size=eSize()):
 
 def applySingleAttribute(guiObject, desktop, attrib, value, scale = ((1,1),(1,1))):
 	# and set attributes
-	try:
-		if attrib == 'position':
-			guiObject.move(parsePosition(value, scale, desktop, guiObject))
-		elif attrib == 'size':
-			guiObject.resize(parseSize(value, scale, desktop, guiObject))
-		elif attrib == 'title':
-			guiObject.setTitle(_(value))
-		elif attrib == 'text':
-			guiObject.setText(_(value))
-		elif attrib == 'font':
-			guiObject.setFont(parseFont(value, scale))
-		elif attrib == 'zPosition':
-			guiObject.setZPosition(int(value))
-		elif attrib == 'itemHeight':
-			guiObject.setItemHeight(int(value))
-		elif attrib == 'itemWidth':
-			guiObject.setItemWidth(int(value))
-		elif attrib == 'mode':
-			mode = {'vertical' : eListbox.layoutVertical,
-					'grid' : eListbox.layoutGrid,
-					'horizontal' : eListbox.layoutHorizontal
-				}[value]
-			guiObject.setMode(mode)
-		elif attrib == 'margin':
-			leftRight, topBottom = [int(x) for x in value.split(",")]
-			guiObject.setMargin(ePoint(leftRight, topBottom))
-		elif attrib == 'selectionZoom':
-			guiObject.setSelectionZoom(float(value))
-		elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
-			if attrib == "pixmap" and value.endswith("svg"):
-				ptr = loadPixmap(value, desktop, guiObject.size())
-			else:
-				try:
-					ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
-				except SkinError:
-					s = value.split('/')
-					if attrib == "pixmap" and len(s) > 2 and s[-2] == 'menu' and s[-1].endswith("png"):
-						Log.w("Please fix the skin... try .svg now");
-						value2 = value[:-3]
-						value2 += 'svg'
-						ptr = loadPixmap(value2, desktop, guiObject.size())
-					else:
-						raise
-			if attrib == "pixmap":
-				guiObject.setPixmap(ptr)
-			elif attrib == "backgroundPixmap":
-				guiObject.setBackgroundPicture(ptr)
-			elif attrib == "selectionPixmap":
-				guiObject.setSelectionPicture(ptr)
-			elif attrib == "scrollbarSliderPicture":
-				guiObject.setScrollbarSliderPicture(ptr)
-			elif attrib == "scrollbarSliderBackgroundPicture":
-				guiObject.setScrollbarSliderBackgroundPicture(ptr)
-			elif attrib == "scrollbarValuePicture":
-				guiObject.setScrollbarValuePicture(ptr)
-			# guiObject.setPixmapFromFile(value)
-		elif attrib in ("alphatest", "blend"): # used by ePixmap
-			guiObject.setAlphatest(
-				{ "on": 1,
-				  "off": 0,
-				  "blend": 2,
-				}[value])
-		elif attrib == "scale":
-			value = {
-				"off" :  ePixmap.SCALE_TYPE_NONE,
-				"none" :  ePixmap.SCALE_TYPE_NONE,
-				"on" :  ePixmap.SCALE_TYPE_ASPECT,
-				"aspect" : ePixmap.SCALE_TYPE_ASPECT,
-				"center" : ePixmap.SCALE_TYPE_CENTER,
-				"width" : ePixmap.SCALE_TYPE_WIDTH,
-				"height" : ePixmap.SCALE_TYPE_HEIGHT,
-				"stretch" : ePixmap.SCALE_TYPE_STRETCH,
-				"fill" : ePixmap.SCALE_TYPE_FILL,
-			}.get(value, ePixmap.SCALE_TYPE_ASPECT)
-			guiObject.setScale(value)
-		elif attrib == "orientation": # used by eSlider
-			try:
-				guiObject.setOrientation(*
-					{ "orVertical": (guiObject.orVertical, False),
-						"orTopToBottom": (guiObject.orVertical, False),
-						"orBottomToTop": (guiObject.orVertical, True),
-						"orHorizontal": (guiObject.orHorizontal, False),
-						"orLeftToRight": (guiObject.orHorizontal, False),
-						"orRightToLeft": (guiObject.orHorizontal, True),
-					}[value])
-			except KeyError:
-				print("oprientation must be either orVertical or orHorizontal!")
-		elif attrib == "valign":
-			try:
-				guiObject.setVAlign(
-					{ "top": guiObject.alignTop,
-						"center": guiObject.alignCenter,
-						"bottom": guiObject.alignBottom,
-						"centerOrBottom" : guiObject.alignCenterOrBottom
-					}[value])
-			except KeyError:
-				print("valign must be either top, center, bottom or centerOrBottom!")
-		elif attrib == "halign":
-			try:
-				guiObject.setHAlign(
-					{ "left": guiObject.alignLeft,
-						"center": guiObject.alignCenter,
-						"right": guiObject.alignRight,
-						"block": guiObject.alignBlock,
-						"centerOrRight": guiObject.alignCenterOrRight
-					}[value])
-			except KeyError:
-				print("halign must be either left, center, right, block or centerOrRight!")
-		elif attrib == "flags":
-			flags = value.split(',')
-			for f in flags:
-				try:
-					fv = eWindow.__dict__[f]
-					guiObject.setFlag(fv)
-				except KeyError:
-					print("illegal flag %s!" % f)
-		elif attrib == "padding":
-			guiObject.setPadding(parsePosition(value, scale))
-		elif attrib in ("radius", "cornerRadius"):
-			guiObject.setCornerRadius(int(value))
-		elif attrib == "gradient":
-			values = value.split(',')
-			direction = {
-				"horizontal" : ePixmap.GRADIENT_HORIZONTAL,
-				"vertical" : ePixmap.GRADIENT_VERTICAL,
-				"horizontalCentered" : ePixmap.GRADIENT_HORIZONTAL_CENTERED,
-				"verticalCentered" : ePixmap.GRADIENT_VERTICAL_CENTERED,
-			}.get(values[2], ePixmap.GRADIENT_VERTICAL)
-			guiObject.setGradient(parseColor(values[0]), parseColor(values[1]), direction)
-		elif attrib == "backgroundColor":
-			guiObject.setBackgroundColor(parseColor(value))
-		elif attrib == "backgroundColorSelected":
-			guiObject.setBackgroundColorSelected(parseColor(value))
-		elif attrib == "foregroundColor":
-			guiObject.setForegroundColor(parseColor(value))
-		elif attrib == "foregroundColorSelected":
-			guiObject.setForegroundColorSelected(parseColor(value))
-		elif attrib == "shadowColor":
-			guiObject.setShadowColor(parseColor(value))
-		elif attrib == "selectionDisabled":
-			guiObject.setSelectionEnable(0)
-		elif attrib == "transparent":
-			guiObject.setTransparent(int(value))
-		elif attrib == "borderColor":
-			guiObject.setBorderColor(parseColor(value))
-		elif attrib == "borderWidth":
-			guiObject.setBorderWidth(int(value))
-		elif attrib == "scrollbarSliderBorderWidth":
-			guiObject.setScrollbarSliderBorderWidth(int(value))
-		elif attrib == "scrollbarWidth":
-			guiObject.setScrollbarWidth(int(value))
-		elif attrib == "scrollbarBackgroundPixmapTopHeight":
-			guiObject.setScrollbarBackgroundPixmapTopHeight(int(value))
-		elif attrib == "scrollbarBackgroundPixmapBottomHeight":
-			guiObject.setScrollbarBackgroundPixmapBottomHeight(int(value))
-		elif attrib == "scrollbarValuePixmapTopHeight":
-			guiObject.setScrollbarValuePixmapTopHeight(int(value))
-		elif attrib == "scrollbarValuePixmapBottomHeight":
-			guiObject.setScrollbarValuePixmapBottomHeight(int(value))
-		elif attrib == "scrollbarMode":
-			guiObject.setScrollbarMode(
-				{ "showOnDemand": guiObject.showOnDemand,
-					"showAlways": guiObject.showAlways,
-					"showNever": guiObject.showNever
-				}[value])
-		elif attrib == "enableWrapAround":
-			guiObject.setWrapAround(True)
-		elif attrib == "backlogMode":
-			guiObject.setBacklogMode(True)
-		elif attrib == "pointer" or attrib == "seek_pointer" or attrib == "progress_pointer":
-			(name, pos) = value.split(':')
-			pos = parsePosition(pos, scale)
-			ptr = loadPixmap(name, desktop)
-			guiObject.setPointer({"pointer": 0, "seek_pointer": 1, "progress_pointer": 2}[attrib], ptr, pos)
-		elif attrib == 'shadowOffset':
-			guiObject.setShadowOffset(parsePosition(value, scale))
-		elif attrib == 'noWrap':
-			guiObject.setNoWrap(1)
-		elif attrib == 'id':
-			pass
+	if attrib == 'position':
+		guiObject.move(parsePosition(value, scale, desktop, guiObject))
+	elif attrib == 'size':
+		guiObject.resize(parseSize(value, scale, desktop, guiObject))
+	elif attrib == 'title':
+		guiObject.setTitle(_(value))
+	elif attrib == 'text':
+		guiObject.setText(_(value))
+	elif attrib == 'font':
+		guiObject.setFont(parseFont(value, scale))
+	elif attrib == 'zPosition':
+		guiObject.setZPosition(int(value))
+	elif attrib == 'itemHeight':
+		guiObject.setItemHeight(int(value))
+	elif attrib == 'itemWidth':
+		guiObject.setItemWidth(int(value))
+	elif attrib == 'mode':
+		mode = {'vertical' : eListbox.layoutVertical,
+				'grid' : eListbox.layoutGrid,
+				'horizontal' : eListbox.layoutHorizontal
+			}[value]
+		guiObject.setMode(mode)
+	elif attrib == 'margin':
+		leftRight, topBottom = [int(x) for x in value.split(",")]
+		guiObject.setMargin(ePoint(leftRight, topBottom))
+	elif attrib == 'selectionZoom':
+		guiObject.setSelectionZoom(float(value))
+	elif attrib in ("pixmap", "backgroundPixmap", "selectionPixmap", "scrollbarSliderPicture", "scrollbarSliderBackgroundPicture", "scrollbarValuePicture"):
+		if attrib == "pixmap" and value.endswith("svg"):
+			ptr = loadPixmap(value, desktop, guiObject.size())
 		else:
-			print("WARNING!!!!: unsupported skin attribute " + attrib + "=" + value)
-	except int:
-# AttributeError:
-		print("widget %s (%s) doesn't support attribute %s!" % ("", guiObject.__class__.__name__, attrib))
+			try:
+				ptr = loadPixmap(value, desktop) # this should already have been filename-resolved.
+			except SkinError:
+				s = value.split('/')
+				if attrib == "pixmap" and len(s) > 2 and s[-2] == 'menu' and s[-1].endswith("png"):
+					Log.w("Please fix the skin... try .svg now");
+					value2 = value[:-3]
+					value2 += 'svg'
+					ptr = loadPixmap(value2, desktop, guiObject.size())
+				else:
+					raise
+		if attrib == "pixmap":
+			guiObject.setPixmap(ptr)
+		elif attrib == "backgroundPixmap":
+			guiObject.setBackgroundPicture(ptr)
+		elif attrib == "selectionPixmap":
+			guiObject.setSelectionPicture(ptr)
+		elif attrib == "scrollbarSliderPicture":
+			guiObject.setScrollbarSliderPicture(ptr)
+		elif attrib == "scrollbarSliderBackgroundPicture":
+			guiObject.setScrollbarSliderBackgroundPicture(ptr)
+		elif attrib == "scrollbarValuePicture":
+			guiObject.setScrollbarValuePicture(ptr)
+		# guiObject.setPixmapFromFile(value)
+	elif attrib in ("alphatest", "blend"): # used by ePixmap
+		guiObject.setAlphatest(
+			{ "on": 1,
+			  "off": 0,
+			  "blend": 2,
+			}[value])
+	elif attrib == "scale":
+		value = {
+			"off" :  ePixmap.SCALE_TYPE_NONE,
+			"none" :  ePixmap.SCALE_TYPE_NONE,
+			"on" :  ePixmap.SCALE_TYPE_ASPECT,
+			"aspect" : ePixmap.SCALE_TYPE_ASPECT,
+			"center" : ePixmap.SCALE_TYPE_CENTER,
+			"width" : ePixmap.SCALE_TYPE_WIDTH,
+			"height" : ePixmap.SCALE_TYPE_HEIGHT,
+			"stretch" : ePixmap.SCALE_TYPE_STRETCH,
+			"fill" : ePixmap.SCALE_TYPE_FILL,
+		}.get(value, ePixmap.SCALE_TYPE_ASPECT)
+		guiObject.setScale(value)
+	elif attrib == "orientation": # used by eSlider
+		try:
+			guiObject.setOrientation(*
+				{ "orVertical": (guiObject.orVertical, False),
+					"orTopToBottom": (guiObject.orVertical, False),
+					"orBottomToTop": (guiObject.orVertical, True),
+					"orHorizontal": (guiObject.orHorizontal, False),
+					"orLeftToRight": (guiObject.orHorizontal, False),
+					"orRightToLeft": (guiObject.orHorizontal, True),
+				}[value])
+		except KeyError:
+			print("oprientation must be either orVertical or orHorizontal!")
+	elif attrib == "valign":
+		try:
+			guiObject.setVAlign(
+				{ "top": guiObject.alignTop,
+					"center": guiObject.alignCenter,
+					"bottom": guiObject.alignBottom,
+					"centerOrBottom" : guiObject.alignCenterOrBottom
+				}[value])
+		except KeyError:
+			print("valign must be either top, center, bottom or centerOrBottom!")
+	elif attrib == "halign":
+		try:
+			guiObject.setHAlign(
+				{ "left": guiObject.alignLeft,
+					"center": guiObject.alignCenter,
+					"right": guiObject.alignRight,
+					"block": guiObject.alignBlock,
+					"centerOrRight": guiObject.alignCenterOrRight
+				}[value])
+		except KeyError:
+			print("halign must be either left, center, right, block or centerOrRight!")
+	elif attrib == "flags":
+		flags = value.split(',')
+		for f in flags:
+			try:
+				fv = eWindow.__dict__[f]
+				guiObject.setFlag(fv)
+			except KeyError:
+				print("illegal flag %s!" % f)
+	elif attrib == "padding":
+		guiObject.setPadding(parsePosition(value, scale))
+	elif attrib in ("radius", "cornerRadius"):
+		guiObject.setCornerRadius(int(value))
+	elif attrib == "gradient":
+		values = value.split(',')
+		direction = {
+			"horizontal" : ePixmap.GRADIENT_HORIZONTAL,
+			"vertical" : ePixmap.GRADIENT_VERTICAL,
+			"horizontalCentered" : ePixmap.GRADIENT_HORIZONTAL_CENTERED,
+			"verticalCentered" : ePixmap.GRADIENT_VERTICAL_CENTERED,
+		}.get(values[2], ePixmap.GRADIENT_VERTICAL)
+		guiObject.setGradient(parseColor(values[0]), parseColor(values[1]), direction)
+	elif attrib == "backgroundColor":
+		guiObject.setBackgroundColor(parseColor(value))
+	elif attrib == "backgroundColorSelected":
+		guiObject.setBackgroundColorSelected(parseColor(value))
+	elif attrib == "foregroundColor":
+		guiObject.setForegroundColor(parseColor(value))
+	elif attrib == "foregroundColorSelected":
+		guiObject.setForegroundColorSelected(parseColor(value))
+	elif attrib == "shadowColor":
+		guiObject.setShadowColor(parseColor(value))
+	elif attrib == "selectionDisabled":
+		guiObject.setSelectionEnable(0)
+	elif attrib == "transparent":
+		guiObject.setTransparent(int(value))
+	elif attrib == "borderColor":
+		guiObject.setBorderColor(parseColor(value))
+	elif attrib == "borderWidth":
+		guiObject.setBorderWidth(int(value))
+	elif attrib == "scrollbarSliderBorderWidth":
+		guiObject.setScrollbarSliderBorderWidth(int(value))
+	elif attrib == "scrollbarWidth":
+		guiObject.setScrollbarWidth(int(value))
+	elif attrib == "scrollbarBackgroundPixmapTopHeight":
+		guiObject.setScrollbarBackgroundPixmapTopHeight(int(value))
+	elif attrib == "scrollbarBackgroundPixmapBottomHeight":
+		guiObject.setScrollbarBackgroundPixmapBottomHeight(int(value))
+	elif attrib == "scrollbarValuePixmapTopHeight":
+		guiObject.setScrollbarValuePixmapTopHeight(int(value))
+	elif attrib == "scrollbarValuePixmapBottomHeight":
+		guiObject.setScrollbarValuePixmapBottomHeight(int(value))
+	elif attrib == "scrollbarMode":
+		guiObject.setScrollbarMode(
+			{ "showOnDemand": guiObject.showOnDemand,
+				"showAlways": guiObject.showAlways,
+				"showNever": guiObject.showNever
+			}[value])
+	elif attrib == "enableWrapAround":
+		guiObject.setWrapAround(True)
+	elif attrib == "backlogMode":
+		guiObject.setBacklogMode(True)
+	elif attrib == "pointer" or attrib == "seek_pointer" or attrib == "progress_pointer":
+		(name, pos) = value.split(':')
+		pos = parsePosition(pos, scale)
+		ptr = loadPixmap(name, desktop)
+		guiObject.setPointer({"pointer": 0, "seek_pointer": 1, "progress_pointer": 2}[attrib], ptr, pos)
+	elif attrib == 'shadowOffset':
+		guiObject.setShadowOffset(parsePosition(value, scale))
+	elif attrib == 'noWrap':
+		guiObject.setNoWrap(1)
+	elif attrib == 'id':
+		pass
+	else:
+		print("WARNING!!!!: unsupported skin attribute " + attrib + "=" + value)
 
 def applyAllAttributes(guiObject, desktop, attributes, scale, skipZPosition=False):
 	size_key = 'size'
@@ -1028,7 +1024,7 @@ def parseWidget(name, widget, screen, skin_path_prefix, visited_components, grou
 
 		tmp = get_attr('render').split(',')
 		wrender = tmp[0]
-		if tmp > 1:
+		if len(tmp) > 1:
 			wrender_args = tmp[1:]
 		else:
 			wrender_args = tuple()

@@ -1,5 +1,6 @@
 from __future__ import print_function
-from Screen import Screen
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.Harddisk import harddiskmanager  #global harddiskmanager
 from Components.Harddisk import BlockDevice

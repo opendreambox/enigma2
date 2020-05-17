@@ -1,7 +1,8 @@
-from InputDeviceManagement import InputDeviceManagementBase
+from __future__ import absolute_import
+from .InputDeviceManagement import InputDeviceManagementBase
 from enigma import eManagedInputDevicePtr, eInputDeviceManager
 
-from InputDeviceAdapterFlasher import InputDeviceAdapterFlasher
+from .InputDeviceAdapterFlasher import InputDeviceAdapterFlasher
 from Tools.Log import Log
 
 class InputDeviceWizardBase(InputDeviceManagementBase):

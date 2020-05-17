@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import iPlayableService, iServiceInformation
 from Components.config import config
 from Components.ActionMap import HelpableActionMap
@@ -8,11 +9,11 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.InfoBarGenerics import InfoBarNotifications
 from Screens.MessageBox import MessageBox
 
-from Helpers import EasyPixmap
-from MediaCore import MediaCore, mediaCore
-from Playlist import Playlist
-from DatabasePlaylist import DatabasePlaylist
-from PlaylistPlayer import PlaylistPlayer
+from .Helpers import EasyPixmap
+from .MediaCore import MediaCore, mediaCore
+from .Playlist import Playlist
+from .DatabasePlaylist import DatabasePlaylist
+from .PlaylistPlayer import PlaylistPlayer
 
 from Tools.Log import Log
 

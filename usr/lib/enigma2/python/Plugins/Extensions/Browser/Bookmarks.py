@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from enigma import getPrevAsciiCode
 
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -7,8 +8,8 @@ from Components.Label import Label
 
 from Screens.Screen import Screen
 
-from EnhancedInput import EnhancedInput
-from BrowserDB import Bookmark
+from .EnhancedInput import EnhancedInput
+from .BrowserDB import Bookmark
 
 class BookmarkEditor(Screen):
 	skin = """

@@ -1,7 +1,8 @@
 from __future__ import division
 from __future__ import print_function
-import _webview
-from webview import eWebView
+from __future__ import absolute_import
+from . import _webview
+from .webview import eWebView
 from enigma import getDesktop, getPrevAsciiCode, eTimer, eListboxPythonStringContent, eDict, eServiceReference, eRCInput, ePoint, eRect, cvar
 import enigma
 import six
@@ -30,17 +31,17 @@ from Tools.BoundFunction import boundFunction
 from Tools.Directories import SCOPE_PLUGINS, resolveFilename
 from Tools.Log import Log
 
-from BrowserDB import BrowserDB, HistoryItem, Certificate, Cookie
-from BrowserMenu import BrowserMenu
-from BrowserVideoWindow import BrowserVideoWindow
-from WebMediaPlayerProxy import WebMediaPlayerProxy
-from Downloads import downloadManager, DownloadJob
-from EnhancedInput import EnhancedInput
-from MoviePlayer import MoviePlayer
+from .BrowserDB import BrowserDB, HistoryItem, Certificate, Cookie
+from .BrowserMenu import BrowserMenu
+from .BrowserVideoWindow import BrowserVideoWindow
+from .WebMediaPlayerProxy import WebMediaPlayerProxy
+from .Downloads import downloadManager, DownloadJob
+from .EnhancedInput import EnhancedInput
+from .MoviePlayer import MoviePlayer
 
 from base64 import b64decode, b64encode
 from six.moves.urllib.parse import unquote as url_unquote, quote_plus as url_quote_plus
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 
 config.plugins.WebBrowser = ConfigSubsection()
 config.plugins.WebBrowser.home = ConfigText(default = "http://box.dream-multimedia-tv.de")

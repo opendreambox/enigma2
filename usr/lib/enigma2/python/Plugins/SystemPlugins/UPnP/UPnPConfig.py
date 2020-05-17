@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from Components.ActionMap import ActionMap
 from Components.config import config, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
@@ -6,8 +7,8 @@ from Screens.Screen import Screen
 
 from coherence.upnp.core.uuid import UUID
 
-from DreamboxMediaStore import restartMediaServer
-from UPnPCore import removeUPnPDevice
+from .DreamboxMediaStore import restartMediaServer
+from .UPnPCore import removeUPnPDevice
 
 def getUUID(config_element):
 	if config_element.value == "":

@@ -88,7 +88,7 @@ class VideoStepBase(SetupListStep):
 			modeList = config.av.videomode[self.port].getChoices()
 			Log.i(modeList)
 			return modeList
-		except KeyError:
+		except AttributeError:
 			Log.w("modeslist: empty")
 			return []
 

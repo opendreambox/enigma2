@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from __future__ import print_function
 import gettext
 import os
@@ -5,12 +6,12 @@ import locale
 
 from Tools.Directories import SCOPE_LANGUAGE, resolveFilename, fileExists
 
-import language_cache
+from Components import language_cache
 import six
 
 class Language:
 	def __init__(self):
-		self.currLangObj = gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), unicode=False, codeset="utf-8", names="ngettext")
+		self.currLangObj = gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), codeset="utf-8", names="ngettext")
 		self.activeLanguage = 0
 		self.lang = {}
 		self.langlist = []

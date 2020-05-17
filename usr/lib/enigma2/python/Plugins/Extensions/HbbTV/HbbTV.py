@@ -17,7 +17,7 @@ config.plugins.hbbtv.testsuite = ConfigSelection([("mainmenu", _("Menu")), ("ext
 config.plugins.hbbtv.text = ConfigOnOff(default=True)
 
 from datetime import datetime
-from urlparse import urlparse
+from six.moves.urllib.parse import urlparse
 
 
 class HbbTV(object):

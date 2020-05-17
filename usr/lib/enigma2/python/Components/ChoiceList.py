@@ -1,4 +1,5 @@
-from MenuList import MenuList
+from __future__ import absolute_import
+from Components.MenuList import MenuList
 from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, gFont
 from skin import TemplatedListFonts, componentSizes

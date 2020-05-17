@@ -1,4 +1,5 @@
 #enigma2 imports
+from __future__ import absolute_import
 from Components.Playlist import PlaylistIOInternal
 from Screens.ChoiceBox import ChoiceBox
 from Screens.HelpMenu import HelpableScreen
@@ -9,8 +10,8 @@ from ServiceReference import ServiceReference
 from Tools.Directories import resolveFilename, SCOPE_CONFIG
 #plugin imports
 from Tools.Log import Log
-from MediaCore import MediaCore, mediaCore
-from DatabasePlaylist import DatabasePlaylist
+from .MediaCore import MediaCore, mediaCore
+from .DatabasePlaylist import DatabasePlaylist
 import six
 
 # when playing audio content no dedicated player class is used

@@ -1,6 +1,7 @@
 from __future__ import division
 from __future__ import print_function
-from Screen import Screen
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Screens.TimerEdit import TimerSanityConflict
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
@@ -11,7 +12,7 @@ from Components.UsageConfig import preferredTimerPath
 from Components.Sources.ServiceEvent import ServiceEvent
 from enigma import eEPGCache, eTimer, eServiceReference
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
-from TimerEntry import TimerEntry
+from Screens.TimerEntry import TimerEntry
 from time import localtime
 
 from Plugins.Plugin import PluginDescriptor
@@ -159,14 +160,6 @@ class EventViewBase:
 			else:
 				self["channel"].setText(_("unknown service"))
 
-	def sort_func(self,x,y):
-		if x[1] < y[1]:
-			return -1
-		elif x[1] == y[1]:
-			return 0
-		else:
-			return 1
-
 	def setEvent(self, event):
 		self.event = event
 		if event is None:
@@ -221,8 +214,7 @@ class EventViewBase:
 			descr = self["epg_description"]
 			text = descr.getText()
 			text += '\n\n' + _('Similar broadcasts:')
-			ret.sort(self.sort_func)
-			for x in ret:
+			for x in sorted(ret, key=lambda x: x[1]):
 				t = localtime(x[1])
 				text += '\n%d.%d.%d, %02d:%02d  -  %s'%(t[2], t[1], t[0], t[3], t[4], x[0])
 			descr.setText(text)

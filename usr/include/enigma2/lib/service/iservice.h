@@ -107,6 +107,7 @@ public:
 	std::string suburi;
 	std::string userAgent;
 	stringMap transportHeaders;
+	std::map<std::string, boost::any> dbMeta;
 #endif
 	std::string getName() const { return name; }
 	void setName( const std::string &n ) { name=n; }

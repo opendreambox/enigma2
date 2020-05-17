@@ -2,6 +2,7 @@ from __future__ import print_function
 from os import fchmod, fsync, path, rename, unlink
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
+import six
 
 
 def runPipe(cmd):
@@ -17,9 +18,9 @@ def saveFile(filename, data, mode=0o644):
 		tmpFilename = f.name
 		if isinstance(data, list):
 			for x in data:
-				f.write(x)
+				f.write(six.ensure_binary(x))
 		else:
-			f.write(data)
+			f.write(six.ensure_binary(data))
 		f.flush()
 		fsync(f.fileno())
 		fchmod(f.fileno(), mode)

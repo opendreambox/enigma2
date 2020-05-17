@@ -1,7 +1,8 @@
-from config import config, ConfigSlider, ConfigSelection, ConfigYesNo, \
+from __future__ import absolute_import
+from Components.config import config, ConfigSlider, ConfigSelection, ConfigYesNo, \
 	ConfigOnOff, ConfigSubsection, ConfigBoolean, ConfigSelectionNumber, ConfigNothing, NoSave
 from enigma import eAVSwitch, getDesktop, eDVBServicePMTHandler
-from SystemInfo import SystemInfo
+from Components.SystemInfo import SystemInfo
 from os import path as os_path
 
 class AVSwitch:
@@ -69,7 +70,7 @@ class AVSwitch:
 def InitAVSwitch():
 	try:
 		x = config.av
-	except KeyError:
+	except AttributeError:
 		config.av = ConfigSubsection()
 	config.av.yuvenabled = ConfigBoolean(default=False)
 	colorformat_choices = {"cvbs": _("CVBS"), "rgb": _("RGB"), "svideo": _("S-Video")}

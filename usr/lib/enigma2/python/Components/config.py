@@ -1006,13 +1006,13 @@ class ConfigTextBase(ConfigElement):
 		self.changed()
 
 	def getValue(self):
-		return self.text.encode("utf-8")
+		return six.ensure_str(self.text)
 
 	def setValue(self, val):
 		try:
-			self.text = val.decode("utf-8")
+			self.text = six.ensure_text(val)
 		except UnicodeDecodeError:
-			self.text = val.decode("utf-8", "ignore")
+			self.text = six.ensure_text(val, errors='ignore')
 			print("Broken UTF8!")
 		self.changed()
 
@@ -1043,13 +1043,13 @@ class ConfigTextBase(ConfigElement):
 				mark = list(range(0, min(self.visible_width, len(text))))
 			else:
 				mark = [self.marked_pos-self.offset]
-			return ("mtext"[1-selected:], text[self.offset:self.offset+self.visible_width].encode("utf-8")+" ", mark)
+			return ("mtext"[1-selected:], six.ensure_str(text[self.offset:self.offset+self.visible_width])+" ", mark)
 		else:
 			if self.allmarked:
 				mark = list(range(0, len(text)))
 			else:
 				mark = [self.marked_pos]
-			return ("mtext"[1-selected:], text.encode("utf-8")+" ", mark)
+			return ("mtext"[1-selected:], six.ensure_str(text)+" ", mark)
 
 	def onSelect(self, session):
 		if not self.enabled:
@@ -1115,7 +1115,7 @@ class ConfigIP6(ConfigTextBase, NumericalHexInput):
 
 	def setValue(self, val):
 		try:
-			val = val.decode("utf-8")
+			val = six.ensure_text(val)
 			self.text = IPAddress(val).format()
 		except:
 			Log.w("No valid IPv6 Address")
@@ -1705,6 +1705,8 @@ class ConfigSubsection(object):
 			value.load()
 
 	def __getattr__(self, name):
+		if name not in self.content.items:
+			raise AttributeError(name)
 		return self.content.items[name]
 
 	def getSavedValue(self):
@@ -1800,7 +1802,7 @@ class Config(ConfigSubsection):
 					configEntry = eval(name)
 					if configEntry is not None:
 						configEntry.value = val
-				except (SyntaxError, KeyError):
+				except (SyntaxError, AttributeError):
 					pass
 
 		# we inherit from ConfigSubsection, so ...

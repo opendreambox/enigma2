@@ -1,8 +1,9 @@
 from __future__ import division
+from __future__ import absolute_import
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, eListboxPythonMultiContent, eServiceReference, eServiceCenter, gFont
 from skin import componentSizes, TemplatedListFonts
 from Components.Harddisk import harddiskmanager
-from MenuList import MenuList
+from Components.MenuList import MenuList
 from Tools.Directories import SCOPE_CURRENT_SKIN, resolveFilename, fileExists
 from Tools.LoadPixmap import LoadPixmap
 

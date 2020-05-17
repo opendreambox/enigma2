@@ -17,13 +17,19 @@ enum class StreamRawType
 	AUDIO
 };
 
+enum StreamRawFlags
+{
+	DISCONTINUITY = 1
+};
+
 struct RawData
 {
 	RawData() :
 		type(StreamRawType::UNKNOWN),
 		pts(0),
 		offset(0),
-		encType(StreamEncryptionType::NONE)
+		encType(StreamEncryptionType::NONE),
+		flags(0)
 	{
 	}
 
@@ -32,6 +38,8 @@ struct RawData
 	int64_t pts;
 	uint64_t offset;
 	StreamEncryptionType encType;
+
+	int flags;
 
 	// Crypto stuff (unused)
 	std::vector<uint8_t> iv;

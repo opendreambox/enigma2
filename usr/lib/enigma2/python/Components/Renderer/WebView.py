@@ -1,4 +1,5 @@
-from Renderer import Renderer
+from __future__ import absolute_import
+from Components.Renderer.Renderer import Renderer
 from Components.Sources.WebNavigation import WebNavigation
 from enigma import eWebView
 

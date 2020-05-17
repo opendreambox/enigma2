@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from Components.ResourceManager import resourcemanager
-from Hotplug import Hotplug
+from .Hotplug import Hotplug
 from Plugins.Plugin import PluginDescriptor
 
 class HotplugNotifier():

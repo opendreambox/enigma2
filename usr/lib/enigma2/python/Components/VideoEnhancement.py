@@ -50,12 +50,12 @@ class VideoEnhancement:
 
 		try:
 			x = config.av.scaler_sharpness.value
-		except KeyError:
+		except AttributeError:
 			if self._videoManager.hasScalerSharpness():
 				scalerSharpnessRange = self._videoManager.getScalerSharpnessRange()
 				try:
 					y = config.av
-				except KeyError:
+				except AttributeError:
 					config.av = ConfigSubsection()
 				config.av.scaler_sharpness = ConfigSlider(default=scalerSharpnessRange.defaultValue, limits=(scalerSharpnessRange.min,scalerSharpnessRange.max))
 				config.av.scaler_sharpness.addNotifier(self.setScalerSharpness)

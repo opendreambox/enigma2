@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
 from Screens.MessageBox import MessageBox
 from Plugins.SystemPlugins.UPnP.UPnPMediaRenderer import UPnPPlayer
 from Tools.Log import Log
 
-from VideoGUI import VideoGUI
-from AudioGUI import AudioGUI
+from .VideoGUI import VideoGUI
+from .AudioGUI import AudioGUI
 
 class PlayerImpl(UPnPPlayer):
 	IMAGE_CACHE_PATH = "/tmp/"
@@ -100,7 +101,7 @@ class PlayerImpl(UPnPPlayer):
 	def _onPictureReady(self, nothing):
 		Log.i("file=%s" %self._imageFile)
 		try:
-			from PictureGUI import PictureGUI
+			from .PictureGUI import PictureGUI
 			path = "%s/" %( "/".join( self._imageFile.split("/")[0:-1] ) )
 			name = self._imageFile.split("/")[-1]
 			filelist = [((self._imageFile, False), None)]

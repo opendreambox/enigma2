@@ -2,7 +2,7 @@ from __future__ import print_function
 from enigma import eDisplayManager, IntList, eVideoPorts
 from Components.config import config, ConfigSelection, ConfigSubDict, ConfigSubsection, ConfigSlider, ConfigBoolean, ConfigNothing
 from Components.SystemInfo import SystemInfo
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 
 class DisplayHardware:
 	instance = None
@@ -23,10 +23,12 @@ class DisplayHardware:
 		self._displayManager.getAvailablePorts(self.availablePorts)
 
 	def getGroupedModeList(self, port_name, preferredOnly = False):
-		grouped_modes = OrderedDefaultDict(list)
+		grouped_modes = OrderedDict()
 		for mode in self.getSortedModeList(port_name):
 			if preferredOnly and mode.preferred == False:
 				continue
+			if mode.name not in grouped_modes:
+				grouped_modes[mode.name] = []
 			grouped_modes[mode.name].append(mode)
 
 		return grouped_modes
@@ -36,7 +38,7 @@ class DisplayHardware:
 
 		try:
 			x = config.av
-		except KeyError:
+		except AttributeError:
 			config.av = ConfigSubsection()
 		config.av.preferred_modes_only = ConfigBoolean(default = True, descriptions = {False: _("no"), True: _("yes")})
 
@@ -453,11 +455,5 @@ class DisplayHardware:
 			"60Hz": eDisplayManager.RATE_60HZ,
 			"multi": eDisplayManager.RATE_AUTO
 		}[rate]
-
-
-class OrderedDefaultDict(OrderedDict, defaultdict):
-	def __init__(self, default_factory=None, *args, **kwargs):
-		super(OrderedDefaultDict, self).__init__(*args, **kwargs)
-		self.default_factory = default_factory
 
 DisplayHardware()

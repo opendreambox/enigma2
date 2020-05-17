@@ -1,6 +1,7 @@
 from __future__ import print_function
-from Screen import Screen
-import ChannelSelection
+from __future__ import absolute_import
+from Screens.Screen import Screen
+import Screens.ChannelSelection
 from ServiceReference import ServiceReference
 from Components.config import config, ConfigSelection, ConfigText, ConfigSubList, ConfigDateTime, ConfigClock, ConfigYesNo, getConfigListEntry
 from Components.ActionMap import NumberActionMap
@@ -268,7 +269,7 @@ class TimerEntry(Screen, ConfigListScreen):
 		if cur == self.channelEntry:
 			self.session.openWithCallback(
 				self.finishedChannelSelection,
-				ChannelSelection.SimpleChannelSelection,
+				Screens.ChannelSelection.SimpleChannelSelection,
 				_("Select channel to record from")
 			)
 		elif config.usage.setup_level.index >= 2 and cur == self.dirname:
@@ -285,7 +286,7 @@ class TimerEntry(Screen, ConfigListScreen):
 				getPreferredTagEditor(),
 				self.timerentry_tags
 			)
-		elif config.usage.setup_level.index >= 2 and cur in list(self.timerentry_plugins.keys()):
+		elif config.usage.setup_level.index >= 2 and cur in self.timerentry_plugins:
 			self.getConfigListValues()
 			setupFnc = self.timerentry_plugins[cur][1]
 			configentry = cur[1]
@@ -328,7 +329,7 @@ class TimerEntry(Screen, ConfigListScreen):
 	def selectChannelSelector(self, *args):
 		self.session.openWithCallback(
 				self.finishedChannelSelectionCorrection,
-				ChannelSelection.SimpleChannelSelection,
+				Screens.ChannelSelection.SimpleChannelSelection,
 				_("Select channel to record from")
 			)
 

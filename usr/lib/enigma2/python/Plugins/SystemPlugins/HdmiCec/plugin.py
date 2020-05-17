@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from enigma import eActionMap, eCec
 
 from Components.HdmiCec import hdmi_cec
@@ -6,13 +7,13 @@ from Components.config import config
 
 from Plugins.Plugin import PluginDescriptor
 
-from CecConfig import CecConfig
+from .CecConfig import CecConfig
 
 from enigma import getExitCode
 from Tools.Log import Log
 from Tools.Notifications import isPendingOrVisibleNotificationID
 
-from CecRemoteHandler import CecRemoteHandler
+from .CecRemoteHandler import CecRemoteHandler
 
 class Cec(object):
 	def __init__(self):

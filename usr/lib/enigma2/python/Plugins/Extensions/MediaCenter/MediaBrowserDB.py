@@ -1,10 +1,11 @@
+from __future__ import absolute_import
 from enigma import eListboxPythonMultiContent, gFont, eServiceReference, eMediaDatabase, StringList
 
 from Components.MenuList import MenuList
 
-from MediaCore import MediaCore, mediaCore
+from .MediaCore import MediaCore, mediaCore
 from Tools.Log import Log
-from MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
+from .MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
 
 from skin import TemplatedListFonts, componentSizes
 

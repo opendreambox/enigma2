@@ -1,11 +1,12 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import absolute_import
 from Components.Task import Task, Job, DiskspacePrecondition, Condition
 from Components.Harddisk import harddiskmanager
 from Tools.Directories import SCOPE_HDD, resolveFilename, createDir
 from time import strftime
-from Process import CheckDiskspaceTask, getISOfilename, BurnTask, RemoveWorkspaceFolder
-from Project import iso639language
+from .Process import CheckDiskspaceTask, getISOfilename, BurnTask, RemoveWorkspaceFolder
+from .Project import iso639language
 import struct
 import os
 import re
@@ -92,8 +93,8 @@ class BludiscTitle(object):
 
 class BludiscStream(object):
 	def __init__(self, parent, PID):
-	  	self.__parent = parent
-	  	self.__PID = PID
+		self.__parent = parent
+		self.__PID = PID
 		self.__streamtype = 0x00
 		self.__framerate = None
 		self.__audiorate = 0
@@ -185,10 +186,10 @@ class BludiscStream(object):
 	def getAspectByte(self):
 		aspect = self.__parent.properties.aspect.value
 		if self.isVideo:
-		      if aspect == "16:9":
-			    return struct.pack('B',0x30)
-		      elif aspect == "4:3":
-			    return struct.pack('B',0x20)
+			if aspect == "16:9":
+				return struct.pack('B',0x30)
+			elif aspect == "4:3":
+				return struct.pack('B',0x20)
 
 	aspect = property(getAspectByte)
 

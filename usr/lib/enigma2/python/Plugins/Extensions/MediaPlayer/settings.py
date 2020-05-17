@@ -92,8 +92,8 @@ class MediaPlayerSettings(Screen,ConfigListScreen):
 			if not config.mediaplayer.saveDirOnExit.getValue():
 				self.list.append(getConfigListEntry(_("start directory"), config.mediaplayer.defaultDir))
 			self["config"].setList(self.list)
-		except KeyError:
-			print("keyError")
+		except AttributeError as exc:
+			print(exc)
 
 	def changedConfigList(self):
 		self.initConfigList()

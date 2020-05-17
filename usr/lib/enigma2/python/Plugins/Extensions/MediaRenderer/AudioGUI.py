@@ -1,12 +1,13 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
 from enigma import iPlayableService
 from Components.Label import Label
 from Components.ServiceEventTracker import ServiceEventTracker
 from Screens.InfoBarGenerics import InfoBarNotifications, InfoBarSeek
-from MediaPixmap import MediaPixmap
+from .MediaPixmap import MediaPixmap
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 
-from MediaGUI import MediaGUI
+from .MediaGUI import MediaGUI
 
 class AudioGUI(MediaGUI, InfoBarNotifications, InfoBarSeek):
 	ENABLE_RESUME_SUPPORT = True

@@ -1,5 +1,6 @@
 from __future__ import print_function
-from Screen import Screen
+from __future__ import absolute_import
+from Screens.Screen import Screen
 from Components.config import config, ConfigClock
 from Components.Button import Button
 from Components.Pixmap import Pixmap
@@ -12,10 +13,10 @@ from Components.Sources.Event import Event
 from Screens.TimerEdit import TimerSanityConflict
 from Screens.EventView import EventViewSimple
 from Screens.MessageBox import MessageBox
-from TimeDateInput import TimeDateInput
+from Screens.TimeDateInput import TimeDateInput
 from enigma import eServiceReference
 from RecordTimer import RecordTimerEntry, parseEvent, AFTEREVENT
-from TimerEntry import TimerEntry
+from Screens.TimerEntry import TimerEntry
 from ServiceReference import ServiceReference
 from time import localtime, time
 from Components.PluginComponent import plugins

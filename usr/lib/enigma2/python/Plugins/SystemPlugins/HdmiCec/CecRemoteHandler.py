@@ -120,7 +120,7 @@ class CecRemoteHandler(object):
 
 	def sendKey(self, dest, keyid, translate=False):
 		if translate:
-			if not keyid in list(self.KEY_MAP_SEND.keys()):
+			if keyid not in self.KEY_MAP_SEND:
 				return
 			keyid = self.KEY_MAP_SEND[keyid]
 		if keyid == self._lastKey and not self._isRepeatAllowed():

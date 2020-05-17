@@ -1,9 +1,10 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import absolute_import
 from Components.Task import Task, Job, DiskspacePrecondition, Condition, ToolExistsPrecondition
 from Components.Harddisk import harddiskmanager
 from Screens.MessageBox import MessageBox
-from Project import iso639language
+from .Project import iso639language
 from Tools import Notifications
 from six.moves import range
 

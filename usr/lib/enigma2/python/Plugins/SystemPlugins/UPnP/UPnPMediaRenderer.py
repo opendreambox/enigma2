@@ -3,14 +3,13 @@
 # Which has been licensed under the MIT license.
 # Sublicensed under the enigma2 license.
 from __future__ import division
+from __future__ import absolute_import
 from enigma import iPlayableService, eTimer, eDVBVolumecontrol, eServiceReference
 from Components.ServiceEventTracker import ServiceEventTracker
 from Components.ResourceManager import resourcemanager
 from GlobalActions import globalActionMap
 from Tools.HardwareInfo import HardwareInfo
 from Tools.Log import Log
-
-from sets import Set
 
 from twisted.internet import defer
 from twisted.python import failure
@@ -22,7 +21,7 @@ from coherence import log
 import coherence.extern.louie as louie
 from coherence.extern.simple_plugin import Plugin
 
-from UPnPCore import Statics, Item, removeUPnPDevice
+from .UPnPCore import Statics, Item, removeUPnPDevice
 
 import os
 
@@ -393,9 +392,9 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		self.server.av_transport_server.set_variable(connection_id, 'CurrentTrackMetaData', metadata)
 
 		if uri.startswith('http://'):
-			transport_actions = Set(['PLAY,STOP,PAUSE'])
+			transport_actions = set(['PLAY,STOP,PAUSE'])
 		else:
-			transport_actions = Set(['PLAY,STOP,PAUSE,SEEK'])
+			transport_actions = set(['PLAY,STOP,PAUSE,SEEK'])
 
 		if len(self.server.av_transport_server.get_variable('NextAVTransportURI').value) > 0:
 			transport_actions.add('NEXT')
@@ -683,7 +682,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 		self.server.av_transport_server.set_variable(current_connection_id, 'NextAVTransportURIMetaData', NextMetaData)
 		if len(NextURI) == 0  and self.playcontainer == None:
 			transport_actions = self.server.av_transport_server.get_variable('CurrentTransportActions').value
-			transport_actions = Set(transport_actions.split(','))
+			transport_actions = set(transport_actions.split(','))
 			try:
 				transport_actions.remove('NEXT')
 				self.server.av_transport_server.set_variable(current_connection_id, 'CurrentTransportActions', transport_actions)
@@ -691,7 +690,7 @@ class UPnPMediaRenderer(log.Loggable, Plugin):
 				pass
 			return {}
 		transport_actions = self.server.av_transport_server.get_variable('CurrentTransportActions').value
-		transport_actions = Set(transport_actions.split(','))
+		transport_actions = set(transport_actions.split(','))
 		transport_actions.add('NEXT')
 		self.server.av_transport_server.set_variable(current_connection_id, 'CurrentTransportActions', transport_actions)
 		return {}

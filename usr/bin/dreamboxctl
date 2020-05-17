@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import dbus, argparse, os, subprocess
 
@@ -16,7 +16,7 @@ class DreamboxDBus(object):
 		self._bus = dbus.SystemBus()
 		self._proxy = self._bus.get_object(DreamboxDBus.INTERFACE, DreamboxDBus.OBJECT)
 		self._interface = dbus.Interface(self._proxy, DreamboxDBus.INTERFACE)
-		#print "Connected to '%s' v%s" % (self.INTERFACE, self.version())
+		#print("Connected to '%s' v%s" % (self.INTERFACE, self.version()))
 
 	def version(self):
 		return self._getProperty(DreamboxDBus.PROPERTY_VERSION)
@@ -203,18 +203,18 @@ def main():
 			kwargs = vars(args)
 			del kwargs["cmd"]
 			if ddbus.screenshot(**kwargs):
-				print "ok:screenshot %s" %args.filename
+				print("ok:screenshot %s" %args.filename)
 				exit(0)
 			else:
-				print "error:screenshot failed"
+				print("error:screenshot failed")
 				exit(1)
 		elif args.cmd == "recordings":
-			print ddbus.recordCount()
+			print(ddbus.recordCount())
 		elif args.cmd == "currentService":
 			res = dbus_to_python(ddbus.currentService(), dict)
 			for k, v in res.iteritems():
-				print"%s:%s" %(k,v)
-			print "postion:%s" %(ddbus.getPosition())
+				print("%s:%s" %(k,v))
+			print("postion:%s" %(ddbus.getPosition()))
 		elif args.cmd == "play":
 			res = False
 			if args.uri:
@@ -228,49 +228,49 @@ def main():
 				args = str(args.ref), False
 			res = ddbus.play(*args)
 			if res:
-				print "ok:play %s" %(args,)
+				print("ok:play %s" %(args,))
 			else:
-				print "error:play failed!"
+				print("error:play failed!")
 		elif args.cmd == "pause":
 			if ddbus.pause():
-				print "ok:pause"
+				print("ok:pause")
 			else:
-				print "error:pause"
+				print("error:pause")
 		elif args.cmd == "resume":
 			if ddbus.resume():
-				print "ok:resume"
+				print("ok:resume")
 			else:
-				print "error:resume"
+				print("error:resume")
 		elif args.cmd == "stop":
 			if ddbus.stop():
-				print "ok:stop"
+				print("ok:stop")
 			else:
-				print "error:stop"
+				print("error:stop")
 		elif args.cmd == "duration":
-			print ddbus.getDuration()
+			print(ddbus.getDuration())
 		elif args.cmd == "position":
 			if args.set:
 				if ddbus.setPosition(args.set):
-					print "ok:position %s" %(args.set,)
+					print("ok:position %s" %(args.set,))
 				else:
-					print "error:position can't jump to %s" %(args.set)
+					print("error:position can't jump to %s" %(args.set))
 			else:
-				print ddbus.getPosition()
+				print(ddbus.getPosition())
 		elif args.cmd == "volume":
 			if args.set:
 				if ddbus.setVolume(args.set):
-					print "ok:volume %s" %(args.set,)
+					print("ok:volume %s" %(args.set,))
 				else:
-					print "error:volume %s may be invalid!" %(args.set,)
+					print("error:volume %s may be invalid!" %(args.set,))
 			else:
-				print ddbus.getVolume()
+				print(ddbus.getVolume())
 		elif args.cmd in ["shutdown", "reboot", "recovery", "restart"]:
 			if ddbus.recordCount() and not args.force:
-				print "error:recordings active, use (the) --force if you have to!"
+				print("error:recordings active, use (the) --force if you have to!")
 				exit(1)
 				return
 			if ddbus.isTimerPending() and not args.force:
-				print "error:timer pending, use (the) --force if you have to!"
+				print("error:timer pending, use (the) --force if you have to!")
 				exit(1)
 				return
 			code = {
@@ -280,7 +280,7 @@ def main():
 				"recovery" : DreamboxDBus.EXIT_CODE_RECOVERY
 			}.get(args.cmd)
 			ddbus.quit(code)
-			print "OK"
+			print("OK")
 
 if __name__ == "__main__":
 	main()

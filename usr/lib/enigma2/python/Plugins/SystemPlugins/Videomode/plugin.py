@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.SystemInfo import SystemInfo
@@ -175,7 +176,7 @@ def startSetup(menuid):
 	return [(_("A/V Settings"), videoSetupMain, "av_setup", 20)]
 
 def VideoWizard(*args, **kwargs):
-	from VideoWizard import VideoWizard
+	from .VideoWizard import VideoWizard
 	return VideoWizard(*args, **kwargs)
 
 def Plugins(**kwargs):

@@ -1,9 +1,10 @@
 # coding: utf-8
 from __future__ import print_function
-from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
+from __future__ import absolute_import
+from Components.config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
 
 import struct
-from ioctl import ioctl
+from fcntl import ioctl
 from ioctl.linux import IOC
 from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY, O_RDWR
 from Components.config import ConfigOnOff, ConfigSelection,	ConfigBoolean
@@ -24,12 +25,15 @@ class inputDevices:
 	
 	def getInputDevices(self):
 		for evdev in sorted(listdir("/dev/input")):
+			if not evdev.startswith("event"):
+				continue
+
 			try:
 				fd = os_open("/dev/input/%s" % evdev, O_RDONLY | O_CLOEXEC)
 			except:
 				continue
 
-			buf = "\0"*256
+			buf = bytearray(256)
 			try:
 				size = ioctl(fd, EVIOCGNAME(len(buf)), buf)
 			except:
@@ -40,7 +44,7 @@ class inputDevices:
 			if size <= 0:
 				continue
 
-			name = buf[:size - 1]
+			name = buf[:size - 1].decode('utf-8')
 			if name:
 				if name == "aml_keypad":
 					name = "dreambox advanced remote control (native)"
@@ -64,7 +68,7 @@ class inputDevices:
 			return None
 			
 	def getDeviceName(self, x):
-		if x in list(self.Devices.keys()):
+		if x in self.Devices:
 			return self.Devices[x].get("name", x)
 		else:
 			return "Unknown device name"

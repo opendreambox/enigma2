@@ -5208,7 +5208,7 @@ class eMediaDatabaseResult(iObject):
 
 
     def data(self):
-        """data(eMediaDatabaseResult self) -> StringMapVector"""
+        """data(eMediaDatabaseResult self) -> databaseResultVector"""
         return _enigma.eMediaDatabaseResult_data(self)
 
 eMediaDatabaseResult.error = new_instancemethod(_enigma.eMediaDatabaseResult_error, None, eMediaDatabaseResult)
@@ -5457,9 +5457,13 @@ class eMediaDatabase(object):
         return _enigma.eMediaDatabase_getVideos(self, *args)
 
 
-    def addRecording(self, filepath, title, created):
-        """addRecording(eMediaDatabase self, std::string const & filepath, std::string const & title, int created) -> eMediaDatabaseResultPtr"""
-        return _enigma.eMediaDatabase_addRecording(self, filepath, title, created)
+    def addRecording(self, *args):
+        """
+        addRecording(eMediaDatabase self, std::string const & filepath, std::string const & title, int created) -> eMediaDatabaseResultPtr
+        addRecording(eMediaDatabase self, eMediaDatabase::RecordDataPtr recordData, eMediaDatabase::RecordMetaPtr recordMeta, StringVector tags)
+        addRecording(eMediaDatabase self, eMediaDatabase::RecordDataPtr recordData, eMediaDatabase::RecordMetaPtr recordMeta)
+        """
+        return _enigma.eMediaDatabase_addRecording(self, *args)
 
 
     def getAllRecordings(self, limit=-1, offset=0):
@@ -5667,7 +5671,6 @@ class eMediaDatabase(object):
     scanStatistics = _swig_property(_enigma.eMediaDatabase_scanStatistics_get, _enigma.eMediaDatabase_scanStatistics_set)
     scanFinished = _swig_property(_enigma.eMediaDatabase_scanFinished_get, _enigma.eMediaDatabase_scanFinished_set)
     insertFinished = _swig_property(_enigma.eMediaDatabase_insertFinished_get, _enigma.eMediaDatabase_insertFinished_set)
-    priorityInsertFinished = _swig_property(_enigma.eMediaDatabase_priorityInsertFinished_get, _enigma.eMediaDatabase_priorityInsertFinished_set)
 eMediaDatabase.resetDatabase = new_instancemethod(_enigma.eMediaDatabase_resetDatabase, None, eMediaDatabase)
 eMediaDatabase.getCurrentScanPath = new_instancemethod(_enigma.eMediaDatabase_getCurrentScanPath, None, eMediaDatabase)
 eMediaDatabase.getEnqueuedPaths = new_instancemethod(_enigma.eMediaDatabase_getEnqueuedPaths, None, eMediaDatabase)
@@ -5780,6 +5783,7 @@ eMediaDatabase.FIELD_SAVED_AUDIO_TRACK = _enigma.cvar.eMediaDatabase_FIELD_SAVED
 eMediaDatabase.FIELD_SAVED_SUBTITLE_TRACK = _enigma.cvar.eMediaDatabase_FIELD_SAVED_SUBTITLE_TRACK
 eMediaDatabase.FIELD_TAG_ID = _enigma.cvar.eMediaDatabase_FIELD_TAG_ID
 eMediaDatabase.FIELD_TAG = _enigma.cvar.eMediaDatabase_FIELD_TAG
+eMediaDatabase.FIELD_TAGS = _enigma.cvar.eMediaDatabase_FIELD_TAGS
 eMediaDatabase.FIELD_CREATED = _enigma.cvar.eMediaDatabase_FIELD_CREATED
 
 def eMediaDatabase_getInstance():
@@ -5820,7 +5824,7 @@ class eMediaDatabaseResultPtr(object):
 
 
     def data(self):
-        """data(eMediaDatabaseResultPtr self) -> StringMapVector"""
+        """data(eMediaDatabaseResultPtr self) -> databaseResultVector"""
         return _enigma.eMediaDatabaseResultPtr_data(self)
 
 eMediaDatabaseResultPtr.__ref__ = new_instancemethod(_enigma.eMediaDatabaseResultPtr___ref__, None, eMediaDatabaseResultPtr)
@@ -9576,7 +9580,7 @@ Created on 29/02/2012
 """
 
 import weakref
-import new
+import six
 
 class WeakMethodReference( object ):
     """
@@ -9603,38 +9607,33 @@ class WeakMethodReference( object ):
             raise AssertionError("ERROR!!! try to create not callable WeakMethodReference", function)
 
         try:
-            if function.im_self is not None:
+            meth_self = six.get_method_self(function)
+            if meth_self is not None:
 # bound method
-                self._obj = weakref.ref( function.im_self )
+                self._obj = weakref.ref(meth_self)
             else:
 # unbound method
                 self._obj = None
-            self._func = function.im_func
-            self._class = function.im_class
+            self._func = six.get_method_function(function)
         except AttributeError:
 # not a method
             self._obj = None
             self._func = function
-            self._class = None
 
     def __call__( self, *args, **kwargs ):
         """
-        @return Returns a new bound-method like the original, or
+        @return Calls a new bound-method like the original, or
         the original function if refers just to a function or
-        unbound method.
+        unbound method and returns its result.
         Returns None if the original object doesn't exist
         """
 
         if self.is_dead():
-            print "dead weakref is not callable!", self
+            print("dead weakref is not callable!", self)
             return None
         if self._obj is not None:
 # we have an instance: return a bound method
-            ret = new.instancemethod(
-                self._func,
-                self._obj(),
-                self._class
-                )
+            ret = six.create_bound_method(self._func, self._obj())
         else:
 # we don't have an instance: return just the
 # function
@@ -9690,7 +9689,7 @@ class WeakMethodReference( object ):
         http://stackoverflow.com/questions/3942303/how-does-a-python-set-check-if-two-objects-are-equal-what-methods-does-an-o
 
         """
-        return hash( (self._obj, self._func, self._class) )
+        return hash( (self._obj, self._func) )
 
 def eServiceReference_create(refstr):
     return eServiceReference(refstr)

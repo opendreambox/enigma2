@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import absolute_import
 from os import system, listdir, statvfs, makedirs, stat, path, access, unlink, getcwd, chdir, W_OK
 from time import time
 
@@ -7,9 +8,9 @@ from Tools.Directories import SCOPE_HDD, resolveFilename, fileExists, createDir
 from Tools.CList import CList
 from Tools.Log import Log
 from Tools.IO import runPipe, saveFile
-from SystemInfo import SystemInfo
+from Components.SystemInfo import SystemInfo
 from Components.Console import Console
-from config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
+from Components.config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
 import subprocess
 
 class Util:
@@ -459,7 +460,7 @@ class Harddisk:
 		self.idle_running = True
 		try:
 			self.setIdleTime(int(config.usage.hdd_standby.value))
-		except KeyError:
+		except AttributeError:
 			self.setIdleTime(self.max_idle_time) # kick the idle polling loop
 
 	def __runIdle(self):
@@ -1857,11 +1858,7 @@ class HarddiskManager:
 					self.configureUuidAsDefault(uuid, device)
 
 	def _reloadSystemdForData(self):
-		try:
-			subprocess.call(['systemctl', 'daemon-reload'])
-			subprocess.call(['systemctl', '--no-block', 'start', 'data.mount'])
-		except:
-			Log.w("Systemd reload failed!")
+		Console().ePopen("systemctl daemon-reload && systemctl --no-block start data.mount")
 
 	def mountDreamboxData(self):
 		Log.d("Mounting Dreambox Data-Partition")

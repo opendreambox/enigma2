@@ -1,10 +1,11 @@
+from __future__ import absolute_import
 from Components.ActionMap import ActionMap
 from Components.config import config, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.StaticText import StaticText
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from CeCDeviceList import CeCDeviceList
+from .CeCDeviceList import CeCDeviceList
 
 class CecConfig(ConfigListScreen, Screen):
 	skin = """

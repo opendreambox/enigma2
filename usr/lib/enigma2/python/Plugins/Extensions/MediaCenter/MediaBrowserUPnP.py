@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import eListboxPythonMultiContent, gFont, eServiceReference, eMediaDatabase
 
 from Components.MenuList import MenuList
@@ -8,8 +9,8 @@ from skin import TemplatedListFonts, componentSizes
 from Plugins.SystemPlugins.UPnP.UPnPBrowser import UPnPBrowser
 from Plugins.SystemPlugins.UPnP.UPnPCore import Statics
 
-from MediaCore import MediaCore, mediaCore
-from MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
+from .MediaCore import MediaCore, mediaCore
+from .MediaBrowser import MediaBrowser, MediaBrowserList, MediaBrowserEntryComponent
 import six
 
 def getItemTypeFromUPnP(itemtype):

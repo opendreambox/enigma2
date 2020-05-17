@@ -2,7 +2,7 @@ from enigma import eStreamServer, eServiceReference, eServiceCenter, getBestPlay
 from Components.config import config, ConfigInteger, ConfigOnOff, ConfigPassword, ConfigSelection, Config, ConfigSubsection, ConfigText, ConfigYesNo
 
 from Tools.Log import Log
-from urlparse import parse_qs
+from six.moves.urllib.parse import parse_qs
 
 from Tools import Notifications
 from Screens.MessageBox import MessageBox

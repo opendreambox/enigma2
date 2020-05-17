@@ -11,7 +11,7 @@ ICON_PENDING = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 
 ICON_SEEN = LoadPixmap(cached=True, path=resolveFilename(SCOPE_CURRENT_SKIN, 'skin_default/buttons/button_green_off.png'))
 
 class NotificationQueueViewer(Screen):
-  	skin = """
+	skin = """
 		<screen position="100,100" size="550,416" title="Notification Queue Viewer" >
 			<ePixmap pixmap="skin_default/buttons/red.png" position="0,0" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="140,0" size="140,40" alphatest="on" />

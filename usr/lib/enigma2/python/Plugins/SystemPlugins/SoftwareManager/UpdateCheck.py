@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from enigma import eNetworkManager, eTimer
 from Components.ActionMap import ActionMap
 from Components.config import config, ConfigSubsection, ConfigEnableDisable, ConfigSelection, ConfigDateTime, getConfigListEntry
@@ -9,8 +10,8 @@ from Screens.Screen import Screen
 from Tools.Log import Log
 from Tools import Notifications
 
-from SoftwareTools import iSoftwareTools
-from UpdatePlugin import UpdatePlugin
+from .SoftwareTools import iSoftwareTools
+from .UpdatePlugin import UpdatePlugin
 
 from time import time, strftime, localtime
 from twisted.internet import reactor

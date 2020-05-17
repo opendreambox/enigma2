@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
+from __future__ import absolute_import
 from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_CENTER, RT_VALIGN_CENTER, getPrevAsciiCode
-from Screen import Screen
+from Screens.Screen import Screen
 from Components.Language import language
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Sources.StaticText import StaticText
@@ -14,6 +15,7 @@ from Tools.NumericalTextInput import NumericalTextInput
 from skin import TemplatedListFonts, componentSizes
 from six import unichr
 from six.moves import range
+import six
 
 class VirtualKeyBoardList(MenuList):
 	COMPONENT_VIRTUAL_KEYBOARD_LIST = "VirtualKeyBoardList"
@@ -75,7 +77,7 @@ def VirtualKeyBoardEntryComponent(keys, selectedKey,shiftMode=False):
 			width = key_bg.size().width()
 			res.extend((
 				MultiContentEntryPixmapAlphaTest(pos=(x, 0), size=(width, height), png=key_bg),
-				MultiContentEntryText(pos=(x, 0), size=(width, height), font=0, text=key.encode("utf-8"), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER)
+				MultiContentEntryText(pos=(x, 0), size=(width, height), font=0, text=six.ensure_str(key), flags=RT_HALIGN_CENTER | RT_VALIGN_CENTER)
 			))
 		
 		if selectedKey == count:
@@ -323,7 +325,7 @@ class VirtualKeyBoard(Screen, NumericalTextInput):
 		if text is None:
 			return
 
-		text = text.encode("UTF-8")
+		text = six.ensure_str(text)
 
 		if text == "EXIT":
 			self.close(None)
@@ -412,7 +414,7 @@ class VirtualKeyBoard(Screen, NumericalTextInput):
 		return False
 
 	def keyGotAscii(self):
-		char = str(unichr(getPrevAsciiCode()).encode('utf-8'))
+		char = six.ensure_str(unichr(getPrevAsciiCode()))
 		if self.inShiftKeyList(char):
 			self.shiftMode = True
 			list = self.shiftkeys_list
@@ -440,7 +442,7 @@ class VirtualKeyBoard(Screen, NumericalTextInput):
 			self.text = self["text"].getText()
 			self.editing = True
 			self["text"].setMarkedPos(len(self.text))
-		self["text"].setText(self.text + unichar.encode('utf-8', 'ignore'))
+		self["text"].setText(self.text + six.ensure_str(unichar))
 
 	def nextFunc(self):
 		self.text = self["text"].getText()

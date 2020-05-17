@@ -1,11 +1,12 @@
 from __future__ import print_function
+from __future__ import absolute_import
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigYesNo, ConfigNumber
 from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
-from CleanupWizard import checkFreeSpaceAvailable
+from .CleanupWizard import checkFreeSpaceAvailable
 
 config.plugins.cleanupwizard = ConfigSubsection()
 config.plugins.cleanupwizard.enable = ConfigYesNo(default = True)
@@ -112,7 +113,7 @@ class CleanupWizardConfiguration(Screen, ConfigListScreen):
 
 
 def CleanupWizard(*args, **kwargs):
-	from CleanupWizard import CleanupWizard
+	from .CleanupWizard import CleanupWizard
 	return CleanupWizard(*args, **kwargs)
 
 def openconfig(session, **kwargs):

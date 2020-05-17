@@ -1,6 +1,7 @@
 from Components.config import ConfigSubsection, config
 from Tools.Directories import resolveFilename, SCOPE_SKIN
 from Tools.LoadPixmap import LoadPixmap
+from Tools.Log import Log
 from os import path as os_path
 
 config.plugins = ConfigSubsection()
@@ -112,7 +113,14 @@ class PluginDescriptor:
 
 		self.wakeupfnc = wakeupfnc
 
-		self.__call__ = fnc
+		self._fnc = fnc
+
+	def __call__(self, *args, **kwargs):
+		if self._fnc:
+			return self._fnc(*args, **kwargs)
+		else:
+			Log.w('PluginDescriptor called without a function!')
+			return []
 
 	def updateIcon(self, path):
 		if isinstance(self.iconstr, str):
@@ -128,4 +136,4 @@ class PluginDescriptor:
 		return self.wakeupfnc and self.wakeupfnc() or -1
 
 	def __eq__(self, other):
-		return self.__call__ == other.__call__
+		return self._fnc == other._fnc
