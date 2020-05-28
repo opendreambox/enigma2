@@ -6,7 +6,7 @@ from os import path as os_path
 
 config.plugins = ConfigSubsection()
 
-class PluginDescriptor:
+class PluginDescriptor(object):
 	"""An object to describe a plugin."""
 
 	# where to list the plugin. Note that there are different call arguments,
@@ -116,11 +116,14 @@ class PluginDescriptor:
 		self._fnc = fnc
 
 	def __call__(self, *args, **kwargs):
-		if self._fnc:
+		if callable(self._fnc):
 			return self._fnc(*args, **kwargs)
-		else:
-			Log.w('PluginDescriptor called without a function!')
-			return []
+		Log.w('PluginDescriptor', name, description, 'called without a function!')
+
+	def __getattribute__(self, name):
+		if name == '__call__':
+			return self._fnc is not None and self._fnc or {}
+		return object.__getattribute__(self, name)
 
 	def updateIcon(self, path):
 		if isinstance(self.iconstr, str):

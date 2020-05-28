@@ -4,6 +4,7 @@ from __future__ import absolute_import
 from Components.config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText
 
 import struct
+from ctypes import c_char
 from fcntl import ioctl
 from ioctl.linux import IOC
 from os import listdir, open as os_open, close as os_close, write as os_write, O_RDONLY, O_RDWR
@@ -33,9 +34,9 @@ class inputDevices:
 			except:
 				continue
 
-			buf = bytearray(256)
+			buf = (c_char * 256)()
 			try:
-				size = ioctl(fd, EVIOCGNAME(len(buf)), buf)
+				size = ioctl(fd, EVIOCGNAME(256), buf, True)
 			except:
 				os_close(fd)
 				continue
@@ -44,7 +45,7 @@ class inputDevices:
 			if size <= 0:
 				continue
 
-			name = buf[:size - 1].decode('utf-8')
+			name = six.ensure_str(buf[:size - 1])
 			if name:
 				if name == "aml_keypad":
 					name = "dreambox advanced remote control (native)"
