@@ -13,6 +13,7 @@ typedef ePtr<eServiceCenter> eServiceCenterPtr;
 
 class eServiceCenter: public iServiceHandler
 {
+	SWIG_AUTODOC
 	DECLARE_REF(eServiceCenter);
 	std::map<int,ePtr<iServiceHandler> > handler;
 	std::map<int,std::list<std::string> > extensions;

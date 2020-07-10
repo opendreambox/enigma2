@@ -139,4 +139,4 @@ class PluginDescriptor(object):
 		return self.wakeupfnc and self.wakeupfnc() or -1
 
 	def __eq__(self, other):
-		return self._fnc == other._fnc
+		return self.__call__ == other.__call__

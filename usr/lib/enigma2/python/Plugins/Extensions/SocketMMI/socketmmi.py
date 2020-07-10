@@ -109,13 +109,75 @@ except __builtin__.Exception:
 
 import enigma
 class eSocket_UI(enigma.eMMI_UI):
+    """Proxy of C++ eSocket_UI class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     socketStateChanged = _swig_property(_socketmmi.eSocket_UI_socketStateChanged_get, _socketmmi.eSocket_UI_socketStateChanged_set)
-    getInstance = staticmethod(_socketmmi.eSocket_UI_getInstance)
+
+    def getInstance():
+        """getInstance() -> eSocket_UI"""
+        return _socketmmi.eSocket_UI_getInstance()
+
+    getInstance = staticmethod(getInstance)
+
+    def setInit(self, slot):
+        """setInit(eSocket_UI self, int slot)"""
+        return _socketmmi.eSocket_UI_setInit(self, slot)
+
+
+    def setReset(self, slot):
+        """setReset(eSocket_UI self, int slot)"""
+        return _socketmmi.eSocket_UI_setReset(self, slot)
+
+
+    def startMMI(self, slot):
+        """startMMI(eSocket_UI self, int slot) -> int"""
+        return _socketmmi.eSocket_UI_startMMI(self, slot)
+
+
+    def stopMMI(self, slot):
+        """stopMMI(eSocket_UI self, int slot) -> int"""
+        return _socketmmi.eSocket_UI_stopMMI(self, slot)
+
+
+    def answerMenu(self, slot, answer):
+        """answerMenu(eSocket_UI self, int slot, int answer) -> int"""
+        return _socketmmi.eSocket_UI_answerMenu(self, slot, answer)
+
+
+    def answerEnq(self, slot, val):
+        """answerEnq(eSocket_UI self, int slot, char * val) -> int"""
+        return _socketmmi.eSocket_UI_answerEnq(self, slot, val)
+
+
+    def cancelEnq(self, slot):
+        """cancelEnq(eSocket_UI self, int slot) -> int"""
+        return _socketmmi.eSocket_UI_cancelEnq(self, slot)
+
+
+    def getState(self, slot):
+        """getState(eSocket_UI self, int slot) -> int"""
+        return _socketmmi.eSocket_UI_getState(self, slot)
+
+
+    def getMMIState(self, slot):
+        """getMMIState(eSocket_UI self, int slot) -> int"""
+        return _socketmmi.eSocket_UI_getMMIState(self, slot)
+
+
+    def numConnections(self):
+        """numConnections(eSocket_UI self) -> int"""
+        return _socketmmi.eSocket_UI_numConnections(self)
+
+
+    def getName(self, slot):
+        """getName(eSocket_UI self, int slot) -> char const *"""
+        return _socketmmi.eSocket_UI_getName(self, slot)
+
 eSocket_UI.setInit = new_instancemethod(_socketmmi.eSocket_UI_setInit, None, eSocket_UI)
 eSocket_UI.setReset = new_instancemethod(_socketmmi.eSocket_UI_setReset, None, eSocket_UI)
 eSocket_UI.startMMI = new_instancemethod(_socketmmi.eSocket_UI_startMMI, None, eSocket_UI)
@@ -131,8 +193,8 @@ eSocket_UI_swigregister = _socketmmi.eSocket_UI_swigregister
 eSocket_UI_swigregister(eSocket_UI)
 
 def eSocket_UI_getInstance():
+    """eSocket_UI_getInstance() -> eSocket_UI"""
     return _socketmmi.eSocket_UI_getInstance()
-eSocket_UI_getInstance = _socketmmi.eSocket_UI_getInstance
 
 
 

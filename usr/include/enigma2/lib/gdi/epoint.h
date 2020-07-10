@@ -2,6 +2,7 @@
 #define EPOINT_H
 
 #include <lib/gdi/esize.h>
+#include <lib/python/swig.h>
 
 #ifndef ABS
 #define ABS(x) ( x>0 ? x : -x )
@@ -9,6 +10,7 @@
 
 class ePoint
 {
+	SWIG_AUTODOC
 public:
 	ePoint();
 	ePoint( int xpos, int ypos );

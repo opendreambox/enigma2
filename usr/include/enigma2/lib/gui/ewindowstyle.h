@@ -46,6 +46,7 @@ public:
 SWIG_IGNORE_ENUMS(eWindowStyle);
 class eWindowStyle: public eWindowStyle_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	eWindowStyle();
 #endif

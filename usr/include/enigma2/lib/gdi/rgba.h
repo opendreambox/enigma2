@@ -2,9 +2,11 @@
 #define __lib_gdi_rgba_h
 
 #include <lib/gdi/gpixelformat.h>
+#include <lib/python/swig.h>
 
 class gRGBA
 {
+	SWIG_AUTODOC
 	unsigned int a1() const;
 	unsigned int a2() const;
 	unsigned int a4() const;
@@ -125,6 +127,7 @@ public:
 //
 class gRGB : public gRGBA
 {
+	SWIG_AUTODOC
 public:
 	class gRGBuchar
 	{

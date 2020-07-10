@@ -74,6 +74,7 @@ SWIG_ALLOW_OUTPUT_SIMPLE(eServiceReference);  // needed for SWIG_OUTPUT in eServ
 SWIG_IGNORE(eServiceEvent);
 class eServiceEvent: public iObject
 {
+	SWIG_AUTODOC
 	DECLARE_REF(eServiceEvent);
 	bool m_rtl_wa_applied;
 	std::list<eComponentData> m_component_data;

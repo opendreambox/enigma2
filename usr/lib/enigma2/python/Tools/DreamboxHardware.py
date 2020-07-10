@@ -3,16 +3,14 @@ from fcntl import ioctl
 from struct import pack, unpack
 
 def getFPVersion():
-	ret = None
-	try:
-		ret = float(open("/proc/stb/fp/version", "r").read().strip())
-	except IOError:
+	for f in ("/proc/stb/fp/version", "/proc/stb/fp/fp_version"):
 		try:
-			fp = open("/dev/dbox/fp0")
-			ret = ioctl(fp.fileno(),0)
+			ret = float(open(f, "r").read().strip())
+			return ret
 		except IOError:
-			print("getFPVersion failed!")
-	return ret
+			pass
+	print("getFPVersion failed!")
+	return None
 
 def setFPWakeuptime(wutime):
 	try:

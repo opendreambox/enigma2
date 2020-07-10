@@ -8,6 +8,7 @@
 
 class eListboxServiceContent: public virtual eListboxPythonMultiContent
 {
+	SWIG_AUTODOC
 	DECLARE_REF(eListboxServiceContent);
 public:
 	eListboxServiceContent();

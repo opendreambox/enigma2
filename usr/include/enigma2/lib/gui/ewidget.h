@@ -13,6 +13,7 @@ class eLabel;
 
 class eWidget : public iSyncPaintable
 {
+	SWIG_AUTODOC
 	friend class eWidgetDesktop;
 	friend class eLabel;
 	friend class eWidgetAnimationSet;

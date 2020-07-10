@@ -158,6 +158,30 @@ to generate HTML."""
 
 	selectionZoom = property(lambda self: self.__selectionZoom, setSelectionZoom)
 
+	@property
+	def currentPage(self):
+		if self.master:
+			return self.master.currentPage
+		return 0
+
+	@property
+	def totalPages(self):
+		if self.master:
+			return self.master.totalPages
+		return 0
+
+	@property
+	def itemWidth(self):
+		if self.master:
+			return self.master.itemWidth
+		return 0
+
+	@property
+	def itemHeight(self):
+		if self.master:
+			return self.master.itemHeight
+		return 0
+
 	def hide(self):
 		self.changed((self.CHANGED_SPECIFIC, "hide"))
 

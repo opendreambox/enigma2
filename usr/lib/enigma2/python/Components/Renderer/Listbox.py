@@ -141,7 +141,31 @@ class Listbox(Renderer, object):
 				}[mode]))
 
 	scrollbarMode = property(lambda self: self.__scrollbarMode, setScrollbarMode)
-	
+
+	@property
+	def currentPage(self):
+		if self.instance:
+			return self.instance.currentPage()
+		return 0
+
+	@property
+	def totalPages(self):
+		if self.instance:
+			return self.instance.totalPages()
+		return 0
+
+	@property
+	def itemWidth(self):
+		if self.instance:
+			return self.instance.itemWidth()
+		return 0
+
+	@property
+	def itemHeight(self):
+		if self.instance:
+			return self.instance.itemHeight()
+		return 0
+
 	def changed(self, what):
 		if hasattr(self.source, "mode"):
 			self.mode = self.source.mode

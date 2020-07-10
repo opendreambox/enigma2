@@ -15,6 +15,7 @@
 #endif
 
 #include <lib/base/esignal.h>
+#include <lib/python/swig.h>
 
 class eMainloop;
 class MainloopList;
@@ -151,6 +152,7 @@ class eTimer;
 
 class eMainloop
 {
+	SWIG_AUTODOC
 	friend class eTimer;
 	friend class eSocketNotifier;
 	friend class ePythonConfigQuery;
@@ -203,6 +205,7 @@ public:
  */
 class eSocketNotifier: public iObject
 {
+	SWIG_AUTODOC
 	friend class eMainloop_native;
 	DECLARE_REF(eSocketNotifier);
 public:
@@ -254,6 +257,7 @@ public:
  */
 class eTimer: public iObject
 {
+	SWIG_AUTODOC
 	friend class eMainloop_native;
 	DECLARE_REF(eTimer);
 	timespec nextActivation;

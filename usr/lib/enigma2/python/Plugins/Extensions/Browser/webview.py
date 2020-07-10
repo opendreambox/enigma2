@@ -109,6 +109,8 @@ except __builtin__.Exception:
 
 import enigma
 class eWebView(enigma.eWidget):
+    """Proxy of C++ eWebView class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     navOpenLink = _webview.eWebView_navOpenLink
@@ -150,8 +152,122 @@ class eWebView(enigma.eWidget):
     navReload = _webview.eWebView_navReload
 
     def __init__(self, parent):
+        """__init__(eWebView self, eWidget parent) -> eWebView"""
         _webview.eWebView_swiginit(self, _webview.new_eWebView(parent))
     __swig_destroy__ = _webview.delete_eWebView
+
+    def navigate(self, action):
+        """navigate(eWebView self, enum eWebView::navAction action)"""
+        return _webview.eWebView_navigate(self, action)
+
+
+    def asciiInput(self, c):
+        """asciiInput(eWebView self, unsigned char c)"""
+        return _webview.eWebView_asciiInput(self, c)
+
+
+    def load(self, url):
+        """load(eWebView self, std::string const & url)"""
+        return _webview.eWebView_load(self, url)
+
+
+    def scroll(self, dx, dy):
+        """scroll(eWebView self, int dx, int dy)"""
+        return _webview.eWebView_scroll(self, dx, dy)
+
+
+    def getHtml(self):
+        """getHtml(eWebView self) -> std::string"""
+        return _webview.eWebView_getHtml(self)
+
+
+    def setHtml(self, *args):
+        """
+        setHtml(eWebView self, std::string const & html, std::string const & baseUrl)
+        setHtml(eWebView self, std::string const & html)
+        """
+        return _webview.eWebView_setHtml(self, *args)
+
+
+    def setZoomFactor(self, factor):
+        """setZoomFactor(eWebView self, double factor)"""
+        return _webview.eWebView_setZoomFactor(self, factor)
+
+
+    def getZoomFactor(self):
+        """getZoomFactor(eWebView self) -> double"""
+        return _webview.eWebView_getZoomFactor(self)
+
+
+    def setDict(self, token, dict):
+        """setDict(eWebView self, long token, eDict dict)"""
+        return _webview.eWebView_setDict(self, token, dict)
+
+
+    def enablePersistentStorage(self, path):
+        """enablePersistentStorage(eWebView self, std::string const & path)"""
+        return _webview.eWebView_enablePersistentStorage(self, path)
+
+
+    def getRawCookies(self):
+        """getRawCookies(eWebView self) -> std::string"""
+        return _webview.eWebView_getRawCookies(self)
+
+
+    def setRawCookies(self, cookies):
+        """setRawCookies(eWebView self, std::string const & cookies)"""
+        return _webview.eWebView_setRawCookies(self, cookies)
+
+
+    def setHbbtv(self, enabled):
+        """setHbbtv(eWebView self, bool enabled)"""
+        return _webview.eWebView_setHbbtv(self, enabled)
+
+
+    def setBackgroundTransparent(self, enabled):
+        """setBackgroundTransparent(eWebView self, bool enabled)"""
+        return _webview.eWebView_setBackgroundTransparent(self, enabled)
+
+
+    def setAcceptLanguage(self, language):
+        """setAcceptLanguage(eWebView self, std::string const & language)"""
+        return _webview.eWebView_setAcceptLanguage(self, language)
+
+
+    def leftClick(self, point):
+        """leftClick(eWebView self, ePoint point)"""
+        return _webview.eWebView_leftClick(self, point)
+
+
+    def scale(self, rect):
+        """scale(eWebView self, eRect rect) -> eRect"""
+        return _webview.eWebView_scale(self, rect)
+
+
+    def show(self):
+        """show(eWebView self)"""
+        return _webview.eWebView_show(self)
+
+
+    def hide(self):
+        """hide(eWebView self)"""
+        return _webview.eWebView_hide(self)
+
+
+    def getUserAgent(self):
+        """getUserAgent(eWebView self) -> std::string"""
+        return _webview.eWebView_getUserAgent(self)
+
+
+    def setUserAgent(self, userAgent):
+        """setUserAgent(eWebView self, std::string userAgent)"""
+        return _webview.eWebView_setUserAgent(self, userAgent)
+
+
+    def resetUserAgent(self):
+        """resetUserAgent(eWebView self)"""
+        return _webview.eWebView_resetUserAgent(self)
+
     contentsSizeChanged = _swig_property(_webview.eWebView_contentsSizeChanged_get, _webview.eWebView_contentsSizeChanged_set)
     iconChanged = _swig_property(_webview.eWebView_iconChanged_get, _webview.eWebView_iconChanged_set)
     initialLayoutCompleted = _swig_property(_webview.eWebView_initialLayoutCompleted_get, _webview.eWebView_initialLayoutCompleted_set)
@@ -207,13 +323,203 @@ eWebView_swigregister(eWebView)
 cvar = _webview.cvar
 
 class StdStringList(object):
+    """Proxy of C++ std::list<(std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(StdStringList self) -> SwigPyIterator"""
+        return _webview.StdStringList_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(StdStringList self) -> bool"""
+        return _webview.StdStringList___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(StdStringList self) -> bool"""
+        return _webview.StdStringList___bool__(self)
+
+
+    def __len__(self):
+        """__len__(StdStringList self) -> std::list< std::string >::size_type"""
+        return _webview.StdStringList___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(StdStringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j) -> StringList"""
+        return _webview.StdStringList___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(StdStringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j)
+        __setslice__(StdStringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j, StringList v)
+        """
+        return _webview.StdStringList___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(StdStringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j)"""
+        return _webview.StdStringList___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(StdStringList self, std::list< std::string >::difference_type i)
+        __delitem__(StdStringList self, PySliceObject * slice)
+        """
+        return _webview.StdStringList___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(StdStringList self, PySliceObject * slice) -> StringList
+        __getitem__(StdStringList self, std::list< std::string >::difference_type i) -> std::list< std::string >::value_type const &
+        """
+        return _webview.StdStringList___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(StdStringList self, PySliceObject * slice, StringList v)
+        __setitem__(StdStringList self, PySliceObject * slice)
+        __setitem__(StdStringList self, std::list< std::string >::difference_type i, std::list< std::string >::value_type const & x)
+        """
+        return _webview.StdStringList___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(StdStringList self) -> std::list< std::string >::value_type"""
+        return _webview.StdStringList_pop(self)
+
+
+    def append(self, x):
+        """append(StdStringList self, std::list< std::string >::value_type const & x)"""
+        return _webview.StdStringList_append(self, x)
+
+
+    def empty(self):
+        """empty(StdStringList self) -> bool"""
+        return _webview.StdStringList_empty(self)
+
+
+    def size(self):
+        """size(StdStringList self) -> std::list< std::string >::size_type"""
+        return _webview.StdStringList_size(self)
+
+
+    def swap(self, v):
+        """swap(StdStringList self, StringList v)"""
+        return _webview.StdStringList_swap(self, v)
+
+
+    def begin(self):
+        """begin(StdStringList self) -> std::list< std::string >::iterator"""
+        return _webview.StdStringList_begin(self)
+
+
+    def end(self):
+        """end(StdStringList self) -> std::list< std::string >::iterator"""
+        return _webview.StdStringList_end(self)
+
+
+    def rbegin(self):
+        """rbegin(StdStringList self) -> std::list< std::string >::reverse_iterator"""
+        return _webview.StdStringList_rbegin(self)
+
+
+    def rend(self):
+        """rend(StdStringList self) -> std::list< std::string >::reverse_iterator"""
+        return _webview.StdStringList_rend(self)
+
+
+    def clear(self):
+        """clear(StdStringList self)"""
+        return _webview.StdStringList_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(StdStringList self) -> std::list< std::string >::allocator_type"""
+        return _webview.StdStringList_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(StdStringList self)"""
+        return _webview.StdStringList_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(StdStringList self, std::list< std::string >::iterator pos) -> std::list< std::string >::iterator
+        erase(StdStringList self, std::list< std::string >::iterator first, std::list< std::string >::iterator last) -> std::list< std::string >::iterator
+        """
+        return _webview.StdStringList_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::list<(std::string)> self) -> StdStringList
+        __init__(std::list<(std::string)> self, StringList arg2) -> StdStringList
+        __init__(std::list<(std::string)> self, std::list< std::string >::size_type size) -> StdStringList
+        __init__(std::list<(std::string)> self, std::list< std::string >::size_type size, std::list< std::string >::value_type const & value) -> StdStringList
+        """
         _webview.StdStringList_swiginit(self, _webview.new_StdStringList(*args))
+
+    def push_back(self, x):
+        """push_back(StdStringList self, std::list< std::string >::value_type const & x)"""
+        return _webview.StdStringList_push_back(self, x)
+
+
+    def front(self):
+        """front(StdStringList self) -> std::list< std::string >::value_type const &"""
+        return _webview.StdStringList_front(self)
+
+
+    def back(self):
+        """back(StdStringList self) -> std::list< std::string >::value_type const &"""
+        return _webview.StdStringList_back(self)
+
+
+    def assign(self, n, x):
+        """assign(StdStringList self, std::list< std::string >::size_type n, std::list< std::string >::value_type const & x)"""
+        return _webview.StdStringList_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(StdStringList self, std::list< std::string >::size_type new_size)
+        resize(StdStringList self, std::list< std::string >::size_type new_size, std::list< std::string >::value_type const & x)
+        """
+        return _webview.StdStringList_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(StdStringList self, std::list< std::string >::iterator pos, std::list< std::string >::value_type const & x) -> std::list< std::string >::iterator
+        insert(StdStringList self, std::list< std::string >::iterator pos, std::list< std::string >::size_type n, std::list< std::string >::value_type const & x)
+        """
+        return _webview.StdStringList_insert(self, *args)
+
+
+    def pop_front(self):
+        """pop_front(StdStringList self)"""
+        return _webview.StdStringList_pop_front(self)
+
+
+    def push_front(self, x):
+        """push_front(StdStringList self, std::list< std::string >::value_type const & x)"""
+        return _webview.StdStringList_push_front(self, x)
+
+
+    def reverse(self):
+        """reverse(StdStringList self)"""
+        return _webview.StdStringList_reverse(self)
+
     __swig_destroy__ = _webview.delete_StdStringList
 StdStringList.iterator = new_instancemethod(_webview.StdStringList_iterator, None, StdStringList)
 StdStringList.__nonzero__ = new_instancemethod(_webview.StdStringList___nonzero__, None, StdStringList)
@@ -251,13 +557,198 @@ StdStringList_swigregister = _webview.StdStringList_swigregister
 StdStringList_swigregister(StdStringList)
 
 class ByteVector(object):
+    """Proxy of C++ std::vector<(unsigned char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(ByteVector self) -> SwigPyIterator"""
+        return _webview.ByteVector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(ByteVector self) -> bool"""
+        return _webview.ByteVector___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(ByteVector self) -> bool"""
+        return _webview.ByteVector___bool__(self)
+
+
+    def __len__(self):
+        """__len__(ByteVector self) -> std::vector< unsigned char >::size_type"""
+        return _webview.ByteVector___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(ByteVector self, std::vector< unsigned char >::difference_type i, std::vector< unsigned char >::difference_type j) -> ByteVector"""
+        return _webview.ByteVector___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(ByteVector self, std::vector< unsigned char >::difference_type i, std::vector< unsigned char >::difference_type j)
+        __setslice__(ByteVector self, std::vector< unsigned char >::difference_type i, std::vector< unsigned char >::difference_type j, ByteVector v)
+        """
+        return _webview.ByteVector___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(ByteVector self, std::vector< unsigned char >::difference_type i, std::vector< unsigned char >::difference_type j)"""
+        return _webview.ByteVector___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(ByteVector self, std::vector< unsigned char >::difference_type i)
+        __delitem__(ByteVector self, PySliceObject * slice)
+        """
+        return _webview.ByteVector___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(ByteVector self, PySliceObject * slice) -> ByteVector
+        __getitem__(ByteVector self, std::vector< unsigned char >::difference_type i) -> std::vector< unsigned char >::value_type const &
+        """
+        return _webview.ByteVector___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(ByteVector self, PySliceObject * slice, ByteVector v)
+        __setitem__(ByteVector self, PySliceObject * slice)
+        __setitem__(ByteVector self, std::vector< unsigned char >::difference_type i, std::vector< unsigned char >::value_type const & x)
+        """
+        return _webview.ByteVector___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(ByteVector self) -> std::vector< unsigned char >::value_type"""
+        return _webview.ByteVector_pop(self)
+
+
+    def append(self, x):
+        """append(ByteVector self, std::vector< unsigned char >::value_type const & x)"""
+        return _webview.ByteVector_append(self, x)
+
+
+    def empty(self):
+        """empty(ByteVector self) -> bool"""
+        return _webview.ByteVector_empty(self)
+
+
+    def size(self):
+        """size(ByteVector self) -> std::vector< unsigned char >::size_type"""
+        return _webview.ByteVector_size(self)
+
+
+    def swap(self, v):
+        """swap(ByteVector self, ByteVector v)"""
+        return _webview.ByteVector_swap(self, v)
+
+
+    def begin(self):
+        """begin(ByteVector self) -> std::vector< unsigned char >::iterator"""
+        return _webview.ByteVector_begin(self)
+
+
+    def end(self):
+        """end(ByteVector self) -> std::vector< unsigned char >::iterator"""
+        return _webview.ByteVector_end(self)
+
+
+    def rbegin(self):
+        """rbegin(ByteVector self) -> std::vector< unsigned char >::reverse_iterator"""
+        return _webview.ByteVector_rbegin(self)
+
+
+    def rend(self):
+        """rend(ByteVector self) -> std::vector< unsigned char >::reverse_iterator"""
+        return _webview.ByteVector_rend(self)
+
+
+    def clear(self):
+        """clear(ByteVector self)"""
+        return _webview.ByteVector_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(ByteVector self) -> std::vector< unsigned char >::allocator_type"""
+        return _webview.ByteVector_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(ByteVector self)"""
+        return _webview.ByteVector_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(ByteVector self, std::vector< unsigned char >::iterator pos) -> std::vector< unsigned char >::iterator
+        erase(ByteVector self, std::vector< unsigned char >::iterator first, std::vector< unsigned char >::iterator last) -> std::vector< unsigned char >::iterator
+        """
+        return _webview.ByteVector_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::vector<(unsigned char)> self) -> ByteVector
+        __init__(std::vector<(unsigned char)> self, ByteVector arg2) -> ByteVector
+        __init__(std::vector<(unsigned char)> self, std::vector< unsigned char >::size_type size) -> ByteVector
+        __init__(std::vector<(unsigned char)> self, std::vector< unsigned char >::size_type size, std::vector< unsigned char >::value_type const & value) -> ByteVector
+        """
         _webview.ByteVector_swiginit(self, _webview.new_ByteVector(*args))
+
+    def push_back(self, x):
+        """push_back(ByteVector self, std::vector< unsigned char >::value_type const & x)"""
+        return _webview.ByteVector_push_back(self, x)
+
+
+    def front(self):
+        """front(ByteVector self) -> std::vector< unsigned char >::value_type const &"""
+        return _webview.ByteVector_front(self)
+
+
+    def back(self):
+        """back(ByteVector self) -> std::vector< unsigned char >::value_type const &"""
+        return _webview.ByteVector_back(self)
+
+
+    def assign(self, n, x):
+        """assign(ByteVector self, std::vector< unsigned char >::size_type n, std::vector< unsigned char >::value_type const & x)"""
+        return _webview.ByteVector_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(ByteVector self, std::vector< unsigned char >::size_type new_size)
+        resize(ByteVector self, std::vector< unsigned char >::size_type new_size, std::vector< unsigned char >::value_type const & x)
+        """
+        return _webview.ByteVector_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(ByteVector self, std::vector< unsigned char >::iterator pos, std::vector< unsigned char >::value_type const & x) -> std::vector< unsigned char >::iterator
+        insert(ByteVector self, std::vector< unsigned char >::iterator pos, std::vector< unsigned char >::size_type n, std::vector< unsigned char >::value_type const & x)
+        """
+        return _webview.ByteVector_insert(self, *args)
+
+
+    def reserve(self, n):
+        """reserve(ByteVector self, std::vector< unsigned char >::size_type n)"""
+        return _webview.ByteVector_reserve(self, n)
+
+
+    def capacity(self):
+        """capacity(ByteVector self) -> std::vector< unsigned char >::size_type"""
+        return _webview.ByteVector_capacity(self)
+
     __swig_destroy__ = _webview.delete_ByteVector
 ByteVector.iterator = new_instancemethod(_webview.ByteVector_iterator, None, ByteVector)
 ByteVector.__nonzero__ = new_instancemethod(_webview.ByteVector___nonzero__, None, ByteVector)
@@ -294,13 +785,203 @@ ByteVector_swigregister = _webview.ByteVector_swigregister
 ByteVector_swigregister(ByteVector)
 
 class ByteVectorList(object):
+    """Proxy of C++ std::list<(std::vector<(unsigned char)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(ByteVectorList self) -> SwigPyIterator"""
+        return _webview.ByteVectorList_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(ByteVectorList self) -> bool"""
+        return _webview.ByteVectorList___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(ByteVectorList self) -> bool"""
+        return _webview.ByteVectorList___bool__(self)
+
+
+    def __len__(self):
+        """__len__(ByteVectorList self) -> std::list< std::vector< unsigned char > >::size_type"""
+        return _webview.ByteVectorList___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i, std::list< std::vector< unsigned char > >::difference_type j) -> ByteVectorList"""
+        return _webview.ByteVectorList___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i, std::list< std::vector< unsigned char > >::difference_type j)
+        __setslice__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i, std::list< std::vector< unsigned char > >::difference_type j, ByteVectorList v)
+        """
+        return _webview.ByteVectorList___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i, std::list< std::vector< unsigned char > >::difference_type j)"""
+        return _webview.ByteVectorList___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i)
+        __delitem__(ByteVectorList self, PySliceObject * slice)
+        """
+        return _webview.ByteVectorList___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(ByteVectorList self, PySliceObject * slice) -> ByteVectorList
+        __getitem__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i) -> ByteVector
+        """
+        return _webview.ByteVectorList___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(ByteVectorList self, PySliceObject * slice, ByteVectorList v)
+        __setitem__(ByteVectorList self, PySliceObject * slice)
+        __setitem__(ByteVectorList self, std::list< std::vector< unsigned char > >::difference_type i, ByteVector x)
+        """
+        return _webview.ByteVectorList___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(ByteVectorList self) -> ByteVector"""
+        return _webview.ByteVectorList_pop(self)
+
+
+    def append(self, x):
+        """append(ByteVectorList self, ByteVector x)"""
+        return _webview.ByteVectorList_append(self, x)
+
+
+    def empty(self):
+        """empty(ByteVectorList self) -> bool"""
+        return _webview.ByteVectorList_empty(self)
+
+
+    def size(self):
+        """size(ByteVectorList self) -> std::list< std::vector< unsigned char > >::size_type"""
+        return _webview.ByteVectorList_size(self)
+
+
+    def swap(self, v):
+        """swap(ByteVectorList self, ByteVectorList v)"""
+        return _webview.ByteVectorList_swap(self, v)
+
+
+    def begin(self):
+        """begin(ByteVectorList self) -> std::list< std::vector< unsigned char > >::iterator"""
+        return _webview.ByteVectorList_begin(self)
+
+
+    def end(self):
+        """end(ByteVectorList self) -> std::list< std::vector< unsigned char > >::iterator"""
+        return _webview.ByteVectorList_end(self)
+
+
+    def rbegin(self):
+        """rbegin(ByteVectorList self) -> std::list< std::vector< unsigned char > >::reverse_iterator"""
+        return _webview.ByteVectorList_rbegin(self)
+
+
+    def rend(self):
+        """rend(ByteVectorList self) -> std::list< std::vector< unsigned char > >::reverse_iterator"""
+        return _webview.ByteVectorList_rend(self)
+
+
+    def clear(self):
+        """clear(ByteVectorList self)"""
+        return _webview.ByteVectorList_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(ByteVectorList self) -> std::list< std::vector< unsigned char > >::allocator_type"""
+        return _webview.ByteVectorList_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(ByteVectorList self)"""
+        return _webview.ByteVectorList_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(ByteVectorList self, std::list< std::vector< unsigned char > >::iterator pos) -> std::list< std::vector< unsigned char > >::iterator
+        erase(ByteVectorList self, std::list< std::vector< unsigned char > >::iterator first, std::list< std::vector< unsigned char > >::iterator last) -> std::list< std::vector< unsigned char > >::iterator
+        """
+        return _webview.ByteVectorList_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::list<(std::vector<(unsigned char)>)> self) -> ByteVectorList
+        __init__(std::list<(std::vector<(unsigned char)>)> self, ByteVectorList arg2) -> ByteVectorList
+        __init__(std::list<(std::vector<(unsigned char)>)> self, std::list< std::vector< unsigned char > >::size_type size) -> ByteVectorList
+        __init__(std::list<(std::vector<(unsigned char)>)> self, std::list< std::vector< unsigned char > >::size_type size, ByteVector value) -> ByteVectorList
+        """
         _webview.ByteVectorList_swiginit(self, _webview.new_ByteVectorList(*args))
+
+    def push_back(self, x):
+        """push_back(ByteVectorList self, ByteVector x)"""
+        return _webview.ByteVectorList_push_back(self, x)
+
+
+    def front(self):
+        """front(ByteVectorList self) -> ByteVector"""
+        return _webview.ByteVectorList_front(self)
+
+
+    def back(self):
+        """back(ByteVectorList self) -> ByteVector"""
+        return _webview.ByteVectorList_back(self)
+
+
+    def assign(self, n, x):
+        """assign(ByteVectorList self, std::list< std::vector< unsigned char > >::size_type n, ByteVector x)"""
+        return _webview.ByteVectorList_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(ByteVectorList self, std::list< std::vector< unsigned char > >::size_type new_size)
+        resize(ByteVectorList self, std::list< std::vector< unsigned char > >::size_type new_size, ByteVector x)
+        """
+        return _webview.ByteVectorList_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(ByteVectorList self, std::list< std::vector< unsigned char > >::iterator pos, ByteVector x) -> std::list< std::vector< unsigned char > >::iterator
+        insert(ByteVectorList self, std::list< std::vector< unsigned char > >::iterator pos, std::list< std::vector< unsigned char > >::size_type n, ByteVector x)
+        """
+        return _webview.ByteVectorList_insert(self, *args)
+
+
+    def pop_front(self):
+        """pop_front(ByteVectorList self)"""
+        return _webview.ByteVectorList_pop_front(self)
+
+
+    def push_front(self, x):
+        """push_front(ByteVectorList self, ByteVector x)"""
+        return _webview.ByteVectorList_push_front(self, x)
+
+
+    def reverse(self):
+        """reverse(ByteVectorList self)"""
+        return _webview.ByteVectorList_reverse(self)
+
     __swig_destroy__ = _webview.delete_ByteVectorList
 ByteVectorList.iterator = new_instancemethod(_webview.ByteVectorList_iterator, None, ByteVectorList)
 ByteVectorList.__nonzero__ = new_instancemethod(_webview.ByteVectorList___nonzero__, None, ByteVectorList)
@@ -340,10 +1021,18 @@ ByteVectorList_swigregister(ByteVectorList)
 from enigma import WeakMethodReference
 
 class eSlot2CStrCstr(enigma.eSlot):
+    """Proxy of C++ eSlot2<(void,p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2CStrCstr self, char const * arg0, char const * arg1)"""
+        return _webview.eSlot2CStrCstr_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,p.q(const).char,p.q(const).char)> self) -> eSlot2CStrCstr"""
         if self.__class__ == eSlot2CStrCstr:
             _self = None
         else:
@@ -359,8 +1048,15 @@ eSlot2CStrCstr_swigregister = _webview.eSlot2CStrCstr_swigregister
 eSlot2CStrCstr_swigregister(eSlot2CStrCstr)
 
 class eSignal2CStrCstr(object):
+    """Proxy of C++ eSignal2<(void,p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2CStrCstr self, eSlot2CStrCstr slot)"""
+        return _webview.eSignal2CStrCstr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2CStrCstr(eSlot2CStrCstr):
@@ -372,6 +1068,7 @@ class eSignal2CStrCstr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,p.q(const).char,p.q(const).char)> self) -> eSignal2CStrCstr"""
         _webview.eSignal2CStrCstr_swiginit(self, _webview.new_eSignal2CStrCstr())
     __swig_destroy__ = _webview.delete_eSignal2CStrCstr
 eSignal2CStrCstr.connect2 = new_instancemethod(_webview.eSignal2CStrCstr_connect2, None, eSignal2CStrCstr)
@@ -379,10 +1076,18 @@ eSignal2CStrCstr_swigregister = _webview.eSignal2CStrCstr_swigregister
 eSignal2CStrCstr_swigregister(eSignal2CStrCstr)
 
 class eSlot3CStrCStrCStr(enigma.eSlot):
+    """Proxy of C++ eSlot3<(void,p.q(const).char,p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2):
+        """cb_func(eSlot3CStrCStrCStr self, char const * arg0, char const * arg1, char const * arg2)"""
+        return _webview.eSlot3CStrCStrCStr_cb_func(self, arg0, arg1, arg2)
+
+
     def __init__(self):
+        """__init__(eSlot3<(void,p.q(const).char,p.q(const).char,p.q(const).char)> self) -> eSlot3CStrCStrCStr"""
         if self.__class__ == eSlot3CStrCStrCStr:
             _self = None
         else:
@@ -398,8 +1103,15 @@ eSlot3CStrCStrCStr_swigregister = _webview.eSlot3CStrCStrCStr_swigregister
 eSlot3CStrCStrCStr_swigregister(eSlot3CStrCStrCStr)
 
 class eSignal3CStrCStrCStr(object):
+    """Proxy of C++ eSignal3<(void,p.q(const).char,p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal3CStrCStrCStr self, eSlot3CStrCStrCStr slot)"""
+        return _webview.eSignal3CStrCStrCStr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot3CStrCStrCStr(eSlot3CStrCStrCStr):
@@ -411,6 +1123,7 @@ class eSignal3CStrCStrCStr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal3<(void,p.q(const).char,p.q(const).char,p.q(const).char)> self) -> eSignal3CStrCStrCStr"""
         _webview.eSignal3CStrCStrCStr_swiginit(self, _webview.new_eSignal3CStrCStrCStr())
     __swig_destroy__ = _webview.delete_eSignal3CStrCStrCStr
 eSignal3CStrCStrCStr.connect2 = new_instancemethod(_webview.eSignal3CStrCStrCStr_connect2, None, eSignal3CStrCStrCStr)
@@ -418,10 +1131,18 @@ eSignal3CStrCStrCStr_swigregister = _webview.eSignal3CStrCStrCStr_swigregister
 eSignal3CStrCStrCStr_swigregister(eSignal3CStrCStrCStr)
 
 class eSlot3LongStrListByteVectorList(enigma.eSlot):
+    """Proxy of C++ eSlot3<(void,long,stringList,byteVectorList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2):
+        """cb_func(eSlot3LongStrListByteVectorList self, long arg0, StringList arg1, ByteVectorList arg2)"""
+        return _webview.eSlot3LongStrListByteVectorList_cb_func(self, arg0, arg1, arg2)
+
+
     def __init__(self):
+        """__init__(eSlot3<(void,long,stringList,byteVectorList)> self) -> eSlot3LongStrListByteVectorList"""
         if self.__class__ == eSlot3LongStrListByteVectorList:
             _self = None
         else:
@@ -437,8 +1158,15 @@ eSlot3LongStrListByteVectorList_swigregister = _webview.eSlot3LongStrListByteVec
 eSlot3LongStrListByteVectorList_swigregister(eSlot3LongStrListByteVectorList)
 
 class eSignal3LongStrListByteVectorList(object):
+    """Proxy of C++ eSignal3<(void,long,stringList,byteVectorList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal3LongStrListByteVectorList self, eSlot3LongStrListByteVectorList slot)"""
+        return _webview.eSignal3LongStrListByteVectorList_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot3LongStrListByteVectorList(eSlot3LongStrListByteVectorList):
@@ -450,6 +1178,7 @@ class eSignal3LongStrListByteVectorList(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal3<(void,long,stringList,byteVectorList)> self) -> eSignal3LongStrListByteVectorList"""
         _webview.eSignal3LongStrListByteVectorList_swiginit(self, _webview.new_eSignal3LongStrListByteVectorList())
     __swig_destroy__ = _webview.delete_eSignal3LongStrListByteVectorList
 eSignal3LongStrListByteVectorList.connect2 = new_instancemethod(_webview.eSignal3LongStrListByteVectorList_connect2, None, eSignal3LongStrListByteVectorList)
@@ -457,10 +1186,18 @@ eSignal3LongStrListByteVectorList_swigregister = _webview.eSignal3LongStrListByt
 eSignal3LongStrListByteVectorList_swigregister(eSignal3LongStrListByteVectorList)
 
 class eSlot4IntIntIntInt(enigma.eSlot):
+    """Proxy of C++ eSlot4<(void,int,int,int,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3):
+        """cb_func(eSlot4IntIntIntInt self, int arg0, int arg1, int arg2, int arg3)"""
+        return _webview.eSlot4IntIntIntInt_cb_func(self, arg0, arg1, arg2, arg3)
+
+
     def __init__(self):
+        """__init__(eSlot4<(void,int,int,int,int)> self) -> eSlot4IntIntIntInt"""
         if self.__class__ == eSlot4IntIntIntInt:
             _self = None
         else:
@@ -476,8 +1213,15 @@ eSlot4IntIntIntInt_swigregister = _webview.eSlot4IntIntIntInt_swigregister
 eSlot4IntIntIntInt_swigregister(eSlot4IntIntIntInt)
 
 class eSignal4IntIntIntInt(object):
+    """Proxy of C++ eSignal4<(void,int,int,int,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal4IntIntIntInt self, eSlot4IntIntIntInt slot)"""
+        return _webview.eSignal4IntIntIntInt_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot4IntIntIntInt(eSlot4IntIntIntInt):
@@ -489,6 +1233,7 @@ class eSignal4IntIntIntInt(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal4<(void,int,int,int,int)> self) -> eSignal4IntIntIntInt"""
         _webview.eSignal4IntIntIntInt_swiginit(self, _webview.new_eSignal4IntIntIntInt())
     __swig_destroy__ = _webview.delete_eSignal4IntIntIntInt
 eSignal4IntIntIntInt.connect2 = new_instancemethod(_webview.eSignal4IntIntIntInt_connect2, None, eSignal4IntIntIntInt)
@@ -496,10 +1241,18 @@ eSignal4IntIntIntInt_swigregister = _webview.eSignal4IntIntIntInt_swigregister
 eSignal4IntIntIntInt_swigregister(eSignal4IntIntIntInt)
 
 class eSlot4LongCStrCStrCStr(enigma.eSlot):
+    """Proxy of C++ eSlot4<(void,long,p.q(const).char,p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3):
+        """cb_func(eSlot4LongCStrCStrCStr self, long arg0, char const * arg1, char const * arg2, char const * arg3)"""
+        return _webview.eSlot4LongCStrCStrCStr_cb_func(self, arg0, arg1, arg2, arg3)
+
+
     def __init__(self):
+        """__init__(eSlot4<(void,long,p.q(const).char,p.q(const).char,p.q(const).char)> self) -> eSlot4LongCStrCStrCStr"""
         if self.__class__ == eSlot4LongCStrCStrCStr:
             _self = None
         else:
@@ -515,8 +1268,15 @@ eSlot4LongCStrCStrCStr_swigregister = _webview.eSlot4LongCStrCStrCStr_swigregist
 eSlot4LongCStrCStrCStr_swigregister(eSlot4LongCStrCStrCStr)
 
 class eSignal4LongCStrCStrCStr(object):
+    """Proxy of C++ eSignal4<(void,long,p.q(const).char,p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal4LongCStrCStrCStr self, eSlot4LongCStrCStrCStr slot)"""
+        return _webview.eSignal4LongCStrCStrCStr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot4LongCStrCStrCStr(eSlot4LongCStrCStrCStr):
@@ -528,6 +1288,7 @@ class eSignal4LongCStrCStrCStr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal4<(void,long,p.q(const).char,p.q(const).char,p.q(const).char)> self) -> eSignal4LongCStrCStrCStr"""
         _webview.eSignal4LongCStrCStrCStr_swiginit(self, _webview.new_eSignal4LongCStrCStrCStr())
     __swig_destroy__ = _webview.delete_eSignal4LongCStrCStrCStr
 eSignal4LongCStrCStrCStr.connect2 = new_instancemethod(_webview.eSignal4LongCStrCStrCStr_connect2, None, eSignal4LongCStrCStrCStr)
@@ -535,10 +1296,18 @@ eSignal4LongCStrCStrCStr_swigregister = _webview.eSignal4LongCStrCStrCStr_swigre
 eSignal4LongCStrCStrCStr_swigregister(eSignal4LongCStrCStrCStr)
 
 class eSlot5IntIntIntIntBool(enigma.eSlot):
+    """Proxy of C++ eSlot5<(void,int,int,int,int,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3, arg4):
+        """cb_func(eSlot5IntIntIntIntBool self, int arg0, int arg1, int arg2, int arg3, bool arg4)"""
+        return _webview.eSlot5IntIntIntIntBool_cb_func(self, arg0, arg1, arg2, arg3, arg4)
+
+
     def __init__(self):
+        """__init__(eSlot5<(void,int,int,int,int,bool)> self) -> eSlot5IntIntIntIntBool"""
         if self.__class__ == eSlot5IntIntIntIntBool:
             _self = None
         else:
@@ -554,8 +1323,15 @@ eSlot5IntIntIntIntBool_swigregister = _webview.eSlot5IntIntIntIntBool_swigregist
 eSlot5IntIntIntIntBool_swigregister(eSlot5IntIntIntIntBool)
 
 class eSignal5IntIntIntIntBool(object):
+    """Proxy of C++ eSignal5<(void,int,int,int,int,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal5IntIntIntIntBool self, eSlot5IntIntIntIntBool slot)"""
+        return _webview.eSignal5IntIntIntIntBool_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot5IntIntIntIntBool(eSlot5IntIntIntIntBool):
@@ -567,6 +1343,7 @@ class eSignal5IntIntIntIntBool(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal5<(void,int,int,int,int,bool)> self) -> eSignal5IntIntIntIntBool"""
         _webview.eSignal5IntIntIntIntBool_swiginit(self, _webview.new_eSignal5IntIntIntIntBool())
     __swig_destroy__ = _webview.delete_eSignal5IntIntIntIntBool
 eSignal5IntIntIntIntBool.connect2 = new_instancemethod(_webview.eSignal5IntIntIntIntBool_connect2, None, eSignal5IntIntIntIntBool)

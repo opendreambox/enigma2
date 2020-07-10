@@ -4,6 +4,7 @@ from Tools.Directories import resolveFilename, SCOPE_CURRENT_SKIN
 from xml.etree.ElementTree import ElementTree
 from Components.config import config, ConfigInteger
 from skin import componentSizes
+from Tools.Log import Log
 
 config.misc.rcused = ConfigInteger(default = 1)
 
@@ -12,15 +13,13 @@ class Rc:
 	SKIN_COMPONENT_RCHEIGHT = "rcheight"
 	SKIN_COMPONENT_RCHEIGHTHALF = "rcheighthalf"
 
-	def __init__(self):
+	def __init__(self, rcUsed=False):
 		self["rc"] = MultiPixmap()
 		self["arrowdown"] = MovingPixmap()
 		self["arrowdown2"] = MovingPixmap()
 		self["arrowup"] = MovingPixmap()
 		self["arrowup2"] = MovingPixmap()
-		
-		config.misc.rcused = ConfigInteger(default = 1)
-		
+		self._rcUsed = rcUsed
 		sizes = componentSizes[Rc.SKIN_COMPONENT_KEY]
 		rcheight = sizes.get(Rc.SKIN_COMPONENT_RCHEIGHT, 500)
 		rcheighthalf = sizes.get(Rc.SKIN_COMPONENT_RCHEIGHTHALF, 250)
@@ -36,8 +35,12 @@ class Rc:
 		self.clearSelectedKeys()
 		self.onShown.append(self.initRc)
 
+	@property
+	def rcUsed(self):
+		return self._rcUsed if self._rcUsed else config.misc.rcused.value
+
 	def initRc(self):
-		self["rc"].setPixmapNum(config.misc.rcused.value)		
+		self["rc"].setPixmapNum(self.rcUsed)
 				
 	def readPositions(self):
 		tree = ElementTree(file = resolveFilename(SCOPE_CURRENT_SKIN, "rcpositions.xml"))
@@ -65,7 +68,7 @@ class Rc:
 		self["rc"].show()
 
 	def selectKey(self, key):
-		rc = self.rcs[config.misc.rcused.value]
+		rc = self.rcs[self.rcUsed]
 		if key in rc:
 			rcpos = self["rc"].getPosition()
 			pos = rc[key]

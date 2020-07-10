@@ -316,6 +316,7 @@ class AdvancedInputDeviceSetup(Screen, ConfigListScreen):
 	def createSetup(self):
 		cfg = [
 			getConfigListEntry(_("LED color when connected to this dreambox"), config.inputDevices.settings.connectedColor),
+			getConfigListEntry(_("IR-Mode LED color when connected to this dreambox"), config.inputDevices.settings.connectedColorIr),
 			getConfigListEntry(_("Haptic feedback in lists"), config.inputDevices.settings.listboxFeedback),
 		]
 		self["config"].list = cfg

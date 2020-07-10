@@ -2,6 +2,7 @@
 #define __lib_gdi_gfont_h
 
 #include <lib/base/object.h>
+#include <lib/python/swig.h>
 #include <string>
 
 /**
@@ -12,6 +13,7 @@
  */
 class gFont: public iObject
 {
+	SWIG_AUTODOC
 	DECLARE_REF(gFont);
 public:
 

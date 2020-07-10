@@ -2,10 +2,12 @@
 #define __lib_hbbtv_eoipfapplication_h_
 
 #include <lib/base/sigc.h>
+#include <lib/python/swig.h>
 #include <dvbsi++/application_information_section.h>
 
 class eOipfApplication: public sigc::trackable
 {
+	SWIG_AUTODOC
 public:
 	enum ControlCodes {
 		CONTROL_CODE_AUTOSTART = 0x01,

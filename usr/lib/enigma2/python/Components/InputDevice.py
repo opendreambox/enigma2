@@ -153,7 +153,7 @@ class InitInputDevices:
 		config.inputDevices = ConfigSubsection()
 		config.inputDevices.settings = ConfigSubsection()
 		config.inputDevices.settings.firstDevice = ConfigBoolean(default=True)
-		config.inputDevices.settings.logBattery = ConfigBoolean(default=False)
+		config.inputDevices.settings.logBattery = ConfigBoolean(default=True)
 		config.inputDevices.settings.listboxFeedback = ConfigOnOff(default=True)
 		colors = [
 			("0xFF0000",_("red")),
@@ -171,6 +171,9 @@ class InitInputDevices:
 		]
 		config.inputDevices.settings.connectedColor = ConfigSelection(colors, default="0xFF0066")
 		config.inputDevices.settings.connectedColor.addNotifier(self._onConnectedRcuColorChanged, initial_call=False)
+		config.inputDevices.settings.connectedColorIr = ConfigSelection(colors, default="0x99DD00")
+		config.inputDevices.settings.connectedColorIr.addNotifier(self._onConnectedRcuColorIrChanged, initial_call=False)
+
 
 		for device in sorted(six.iterkeys(iInputDevices.Devices)):
 			self.currentDevice = device
@@ -180,6 +183,9 @@ class InitInputDevices:
 
 	def _onConnectedRcuColorChanged(self, *args):
 		eInputDeviceManager.getInstance().setLedColor(int(config.inputDevices.settings.connectedColor.value, 0))
+
+	def _onConnectedRcuColorIrChanged(self, *args):
+		eInputDeviceManager.getInstance().setLedColorIr(int(config.inputDevices.settings.connectedColorIr.value, 0))
 
 	def inputDevicesEnabledChanged(self,configElement):
 		if self.currentDevice != "" and iInputDevices.currentDevice == "":

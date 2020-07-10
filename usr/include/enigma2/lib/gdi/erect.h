@@ -3,11 +3,13 @@
 
 #include <lib/gdi/esize.h>
 #include <lib/gdi/epoint.h>
+#include <lib/python/swig.h>
 
 // x2 = x1 + width  (AND NOT, NEVER, NEVER EVER +1 or -1 !!!!)
 
 class eRect // rectangle class
 {
+	SWIG_AUTODOC
 	friend class gRegion;
 public:
 			/* eRect() constructs an INVALID rectangle. */

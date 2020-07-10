@@ -21,6 +21,7 @@ class eDVBServiceAITHandler;
 
 class eHbbtv : public sigc::trackable
 {
+	SWIG_AUTODOC
 	E_DECLARE_PRIVATE(eHbbtv)
 	static eHbbtv *instance;
 

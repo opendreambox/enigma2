@@ -2,9 +2,11 @@
 #define ESIZE_H
 
 #include <algorithm>
+#include <lib/python/swig.h>
 
 class eSize
 {
+	SWIG_AUTODOC
 public:
 	eSize();
 	eSize( int w, int h );

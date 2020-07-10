@@ -567,7 +567,7 @@ self.instance.move(ePoint((1280-wsizex)//2,(720-wsizey)//2))
 <!-- Help menu -->
 	<screen name="HelpMenu" position="center,80" size="1200,610" title="Help">
 		<ePixmap position="4,3" size="260,605" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
-		<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png" position="55,50" zPosition="10" size="160,500"/>
+		<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png,skin_default/rc3.png" position="55,50" zPosition="10" size="160,500"/>
 		<widget name="arrowdown" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70"/>
 		<widget name="arrowdown2" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70"/>
 		<widget name="arrowup" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70"/>
@@ -1386,6 +1386,59 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 		<widget name="config" position="10,60" size="800,360" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 		<eLabel position="10,430" size="800,1" backgroundColor="grey"/>
 		<widget source="activedns" render="Label" position="10,440" size="800,75" font="Regular;20" valign="bottom"/>
+	</screen>
+<!--  InputDeviceManager -->
+	<screen name="InputDeviceManagement" position="center,120" size="820,520" title="Input Devices">
+		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" zPosition="1"/>
+		<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" zPosition="1"/>
+		<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" zPosition="1"/>
+		<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" zPosition="1"/>
+		<widget name="key_red" position="10,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget name="key_green" position="210,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget name="key_yellow" position="410,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget name="key_blue" position="610,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="list" render="Listbox" position="10,60" size="800,340" scrollbarMode="showOnDemand">
+			<convert type="TemplatedMultiContent">
+				{"template":[
+						MultiContentEntryText(pos = (5, 0), size = (590, 24), font=0, flags = RT_HALIGN_LEFT, text = 0), #device name
+						MultiContentEntryText(pos = (600, 0), size = (200, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 4), #connection state
+						MultiContentEntryText(pos = (300, 0), size = (190, 50), font=0, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 3), #pairing state
+						MultiContentEntryText(pos = (5, 30), size = (200, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), #device address
+						MultiContentEntryText(pos = (600, 30), size = (200, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 1), #rssi
+					],
+				"itemHeight": 50,
+				"fonts": [gFont("Regular", 22), gFont("Regular", 16)]
+				}
+			</convert>
+		</widget>
+		<widget source="description" render="Label" position="10,410" size="800,100" font="Regular;22" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+	</screen>
+	<screen name="InputDeviceIRProg" position="center,120" size="820,520" title="Vendor list">
+		<widget source="list" render="Listbox" position="10,10" size="800,470" scrollbarMode="showOnDemand" enableWrapAround="on">
+			<convert type="TemplatedMultiContent">
+				{
+					"template": [
+						MultiContentEntryText(pos=(80,5),size=(630,32),font=0,text=3),
+						MultiContentEntryPixmapAlphaTest(pos=(5,10),size=(60,60),png=1),
+						MultiContentEntryText(pos=(80,32),size=(700,33),font=1,flags=RT_VALIGN_BOTTOM,text=2,color=0xa0a0a0),
+						MultiContentEntryPixmapAlphaTest(pos=(0,0),size=(800,2),png=4),
+					],
+					"fonts": [gFont("Regular",24),gFont("Regular",17)],
+					"itemHeight": 70
+				}
+			</convert>
+		</widget>
+		<eLabel position="10,480" size="800,1" backgroundColor="grey"/>
+		<widget source="status" render="Label" position="10,490" size="780,25" font="Regular;20" foregroundColor="white" halign="center" valign="center" />
+	</screen>
+	<screen name="InputDeviceKeyInfo" position="center,120" size="820,520" title="Key Info">
+		<ePixmap position="4,3" size="260,514" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
+		<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png,skin_default/rc3.png" position="55,10" zPosition="10" size="160,500"/>
+		<widget name="arrowdown" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70"/>
+		<widget name="arrowdown2" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70"/>
+		<widget name="arrowup" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70"/>
+		<widget name="arrowup2" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70"/>
+		<widget name="list" position="280,18" size="530,484" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
 <!-- Summaries -->
 	<screen id="1" name="MyTubePlayer_summary" position="0,0" size="132,64">

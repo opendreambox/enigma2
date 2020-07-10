@@ -4,12 +4,13 @@ from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Components.Label import Label
+from Screens.InputDeviceSetup import AdvancedInputDeviceSetup
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.Log import Log
 
 from .InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpdateChecker
-
+from .InputDeviceIRProg import InputDeviceIRProg
 
 class InputDeviceManagementBase(object):
 	def __init__(self):
@@ -89,33 +90,6 @@ class InputDeviceManagementBase(object):
 		pass
 
 class InputDeviceManagement(Screen, InputDeviceManagementBase):
-	skin = """
-	<screen name="InputDeviceManagement" position="center,120" size="820,520" title="Input Devices">
-		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40" zPosition="1"/>
-		<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40" zPosition="1"/>
-		<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40" zPosition="1"/>
-		<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40" zPosition="1"/>
-		<widget name="key_red" position="10,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget name="key_green" position="210,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget name="key_yellow" position="410,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget name="key_blue" position="610,5" size="200,40" zPosition="2" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
-		<widget source="list" render="Listbox" position="10,60" size="800,340" scrollbarMode="showOnDemand">
-			<convert type="TemplatedMultiContent">
-				{"template":[
-						MultiContentEntryText(pos = (5, 0), size = (590, 24), font=0, flags = RT_HALIGN_LEFT, text = 0), #device name
-						MultiContentEntryText(pos = (600, 0), size = (200, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 4), #connection state
-						MultiContentEntryText(pos = (300, 0), size = (190, 50), font=0, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 3), #pairing state
-						MultiContentEntryText(pos = (5, 30), size = (200, 18), font=1, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2), #device address
-						MultiContentEntryText(pos = (600, 30), size = (200, 18), font=1, flags = RT_HALIGN_RIGHT|RT_VALIGN_TOP, text = 1), #rssi
-					],
-				"itemHeight": 50,
-				"fonts": [gFont("Regular", 22), gFont("Regular", 16)]
-				}
-			</convert>
-		</widget>
-		<widget source="description" render="Label" position="10,410" size="800,100" font="Regular;22" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
-	</screen>"""
-
 	def __init__(self, session):
 		Screen.__init__(self, session, windowTitle=_("Input devices"))
 		InputDeviceManagementBase.__init__(self)
@@ -125,21 +99,39 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 		actions={
 			"ok" : self._onOk,
 			"cancel" : self.close,
-			"blue" : self._dm.rescan
+			"yellow" : self._dm.rescan,
+			"green" : self._irProg,
+			"blue" : self._advanced,
 		})
 
 		self["key_red"] = Label()
 		self["key_green"] = Label()
-		self["key_yellow"] = Label()
-		self["key_blue"] = Label(_("Rescan"))
+		self["key_yellow"] = Label(_("Rescan"))
+		self["key_blue"] = Label(_("Advanced"))
 		self._updateChecker = InputDeviceUpdateChecker()
 		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
 		self._updateChecker.check()
 		self._list.onSelectionChanged.append(self.__onSelectionChanged)
 		self._devices = []
-		self.__onSelectionChanged()
 		self._reload()
 		self.onFirstExecBegin.append(self._checkAdapter)
+		self.onLayoutFinish.append(self.__onSelectionChanged)
+
+	def _updateButtons(self):
+		device = self._currentInputDevice
+		if device and device.connected() and device.checkVersion(1,3) >= 0:
+			self["key_green"].setText(_("IR-Setup"))
+		else:
+			self["key_green"].setText("")
+
+	def _irProg(self):
+		device = self._currentInputDevice
+		if not device or not device.connected() or device.checkVersion(1,3) < 0:
+			return
+		self.session.open(InputDeviceIRProg, device)
+
+	def _advanced(self):
+		self.session.open(AdvancedInputDeviceSetup)
 
 	def _onUpdateAvailable(self):
 		self.session.openWithCallback(
@@ -161,6 +153,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 			return
 
 	def __onSelectionChanged(self):
+		self._updateButtons()
 		if not self.available():
 			self["description"].text = _("No dreambox bluetooth receiver detected! Sorry!")
 			return
@@ -176,6 +169,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 
 	def _devicesChanged(self, *args):
 		self._reload()
+		self.__onSelectionChanged()
 
 	def _onOk(self):
 		device = self._currentInputDevice

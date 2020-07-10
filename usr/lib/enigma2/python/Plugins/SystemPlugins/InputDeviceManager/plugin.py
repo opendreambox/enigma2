@@ -1,10 +1,10 @@
 from __future__ import absolute_import
-from enigma import eInputDeviceManager
+from enigma import eInputDeviceManager, eManagedInputDevice
 from Plugins.Plugin import PluginDescriptor
 from Tools.Notifications import AddNotificationWithCallback
 from Screens.MessageBox import MessageBox
 from Components.config import config
-from Tools.Directories import createDir
+from Tools.Directories import createDir, fileExists
 from Tools.Log import Log
 import time
 
@@ -28,7 +28,7 @@ class InputDeviceWatcher(object):
 		self.__deviceListChanged_conn = None
 		self._batteryStates = {}
 		logdir = "/tmp"
-		if createDir(self.BATTERY_LOG_DIR):
+		if fileExists(self.BATTERY_LOG_DIR) or createDir(self.BATTERY_LOG_DIR):
 			logdir = self.BATTERY_LOG_DIR
 		self._batteryLogFile = "%s/battery.dat" %(logdir,)
 		# Wait 10 seconds before looking for connected devices
@@ -80,9 +80,21 @@ class InputDeviceWatcher(object):
 		if answer:
 			self.session.open(InputDeviceAdapterFlasher)
 
+def idm_setup(session, **kwargs):
+	session.open(InputDeviceManagement)
+
+def idm_menu(menuid, **kwargs):
+	if menuid == "devices":
+		return [(_("Bluetooth Remote Setup"), idm_setup, "bleremote_setup", 10)]
+	else:
+		return []
+
 def sessionStart(reason, session, *args, **kwargs):
 	global inputDeviceWatcher
 	inputDeviceWatcher = InputDeviceWatcher(session)
 
 def Plugins(**kwargs):
-	return [PluginDescriptor(name=_("Input Device Autosetup"), where=PluginDescriptor.WHERE_SESSIONSTART, fnc=sessionStart)]
+	return [
+		PluginDescriptor(name=_("Input Device Autosetup"), where=PluginDescriptor.WHERE_SESSIONSTART, fnc=sessionStart),
+		PluginDescriptor(name=_("Bluetooth Remote Setup"), description=_("Set up your bluetooth remotes"), where = PluginDescriptor.WHERE_MENU, needsRestart = True, fnc=idm_menu)
+	]

@@ -24,6 +24,7 @@ enum { CT_MPEG2, CT_H264, CT_MPEG1, CT_MPEG4_PART2, CT_VC1, CT_VC1_SIMPLE_MAIN, 
 
 class eServiceReference
 {
+	SWIG_AUTODOC
 public:
 	enum
 	{
@@ -268,6 +269,7 @@ class eServiceEvent;
 SWIG_IGNORE(iStaticServiceInformation);
 class iStaticServiceInformation: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iStaticServiceInformation();
 	~iStaticServiceInformation();
@@ -294,6 +296,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iStaticServiceInformation>, iStaticServiceInformation
 
 class iServiceInformation_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iServiceInformation_ENUMS();
 	~iServiceInformation_ENUMS();
@@ -429,6 +432,7 @@ enigma_py_patcher.py to remove the "_ENUMS" strings in enigma.py at all needed l
 SWIG_IGNORE_ENUMS(iServiceInformation);
 class iServiceInformation: public iServiceInformation_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iServiceInformation();
 	~iServiceInformation();
@@ -448,6 +452,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iServiceInformation>, iServiceInformationPtr);
 
 class iFrontendInformation_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iFrontendInformation_ENUMS();
 	~iFrontendInformation_ENUMS();
@@ -470,6 +475,7 @@ typedef std::map<std::string, int> FrontendDataMap;
 SWIG_IGNORE_ENUMS(iFrontendInformation);
 class iFrontendInformation: public iFrontendInformation_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iFrontendInformation();
 	~iFrontendInformation();
@@ -486,6 +492,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iFrontendInformation>, iFrontendInformationPtr);
 SWIG_IGNORE(iPauseableService);
 class iPauseableService: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iPausableService();
 	~iPausableService();
@@ -504,6 +511,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iPauseableService>, iPauseableServicePtr);
 
 class iSeekableService_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iSeekableService_ENUMS();
 	~iSeekableService_ENUMS();
@@ -515,6 +523,7 @@ public:
 SWIG_IGNORE_ENUMS(iSeekableService);
 class iSeekableService: public iSeekableService_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iSeekableService();
 	~iSeekableService();
@@ -535,6 +544,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iSeekableService>, iSeekableServicePtr);
 
 class iAudioType_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iAudioType_ENUMS();
 	~iAudioType_ENUMS();
@@ -545,6 +555,7 @@ public:
 
 class iAudioTrackInfo: public iAudioType_ENUMS
 {
+	SWIG_AUTODOC
 	int m_type;
 	int m_pid; /* for association with the stream. */
 	std::string m_language; /* iso639 */
@@ -577,6 +588,7 @@ SWIG_ALLOW_OUTPUT_SIMPLE(iAudioTrackInfo);
 SWIG_IGNORE(iAudioTrackSelection);
 class iAudioTrackSelection: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iAudioTrackSelection();
 	~iAudioTrackSelection();
@@ -591,6 +603,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iAudioTrackSelection>, iAudioTrackSelectionPtr);
 
 class iAudioChannelSelection_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iAudioChannelSelection_ENUMS();
 	~iAudioChannelSelection_ENUMS();
@@ -602,6 +615,7 @@ public:
 SWIG_IGNORE_ENUMS(iAudioChannelSelection);
 class iAudioChannelSelection: public iAudioChannelSelection_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iAudioChannelSelection();
 	~iAudioChannelSelection();
@@ -615,6 +629,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iAudioChannelSelection>, iAudioChannelSelectionPtr);
 SWIG_IGNORE(iAudioDelay);
 class iAudioDelay: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iAudioDelay();
 	~iAudioDelay();
@@ -629,6 +644,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iAudioDelay>, iAudioDelayPtr);
 
 class iRdsDecoder_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iRdsDecoder_ENUMS();
 	~iRdsDecoder_ENUMS();
@@ -640,6 +656,7 @@ public:
 SWIG_IGNORE_ENUMS(iRdsDecoder);
 class iRdsDecoder: public iObject, public iRdsDecoder_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iRdsDecoder();
 	~iRdsDecoder();
@@ -655,6 +672,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iRdsDecoder>, iRdsDecoderPtr);
 SWIG_IGNORE(iSubserviceList);
 class iSubserviceList: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iSubserviceList();
 	~iSubserviceList();
@@ -668,6 +686,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iSubserviceList>, iSubserviceListPtr);
 SWIG_IGNORE(iTimeshiftService);
 class iTimeshiftService: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iTimeshiftService();
 	~iTimeshiftService();
@@ -688,6 +707,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iTimeshiftService>, iTimeshiftServicePtr);
 
 class iCueSheet_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iCueSheet_ENUMS();
 	~iCueSheet_ENUMS();
@@ -699,6 +719,7 @@ public:
 SWIG_IGNORE_ENUMS(iCueSheet);
 class iCueSheet: public iCueSheet_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iCueSheet();
 	~iCueSheet();
@@ -716,6 +737,7 @@ class PyList;
 
 class iSubtitleType_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iSubtitleType_ENUMS();
 	~iSubtitleType_ENUMS();
@@ -726,6 +748,7 @@ public:
 
 class iGstSubtitleType_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iGstSubtitleType_ENUMS();
 	~iGstSubtitleType_ENUMS();
@@ -736,6 +759,7 @@ public:
 
 class iSubtitleFilterType_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iSubtitleFilterType_ENUMS();
 	~iSubtitleFilterType_ENUMS();
@@ -746,6 +770,7 @@ public:
 
 class iSubtitleTrackInfo: public iSubtitleType_ENUMS, public iGstSubtitleType_ENUMS, iSubtitleFilterType_ENUMS
 {
+	SWIG_AUTODOC
 	int m_type;
 	int m_pid;
 	std::string m_language; /* iso639 */
@@ -814,6 +839,7 @@ SWIG_ALLOW_OUTPUT_SIMPLE(iSubtitleTrackInfo);
 SWIG_IGNORE(iSubtitleTrackSelection);
 class iSubtitleTrackSelection: public iSubtitleType_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iSubtitleTrackSelection();
 	~iSubtitleTrackSelection();
@@ -830,6 +856,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iSubtitleTrackSelection>, iSubtitleTrackSelectionPtr)
 SWIG_IGNORE(iMutableServiceList);
 class iMutableServiceList: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iMutableServiceList();
 	~iMutableServiceList();
@@ -852,6 +879,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iMutableServiceList>, iMutableServiceListPtr);
 SWIG_IGNORE(iListableService);
 class iListableService: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iListableService();
 	~iListableService();
@@ -881,6 +909,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iListableService>, iListableServicePtr);
 	/* a helper class which can be used as argument to stl's sort(). */
 class iListableServiceCompare
 {
+	SWIG_AUTODOC
 	ePtr<iListableService> m_list;
 public:
 	iListableServiceCompare(iListableService *list): m_list(list) { }
@@ -894,6 +923,7 @@ public:
 SWIG_IGNORE(iServiceOfflineOperations);
 class iServiceOfflineOperations: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iServiceOfflineOperations();
 	~iServiceOfflineOperations();
@@ -915,6 +945,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iServiceOfflineOperations>, iServiceOfflineOperations
 SWIG_IGNORE(iStreamableService);
 class iStreamableService: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iStreamableService();
 	~iStreamableService();
@@ -934,6 +965,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamableService>, iStreamableServicePtr);
 SWIG_IGNORE(iStreamedService);
 class iStreamedService: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iStreamedService();
 	~iStreamedService();
@@ -948,6 +980,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iStreamedService>, iStreamedServicePtr);
 
 class iUriService: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iUriService();
 	~iUriService();
@@ -961,6 +994,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iUriService>, iUriServicePtr);
 
 class iServiceKeys_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iServiceKeys_ENUMS();
 	~iServiceKeys_ENUMS();
@@ -979,6 +1013,7 @@ public:
 SWIG_IGNORE_ENUMS(iServiceKeys);
 class iServiceKeys: public iServiceKeys_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iServiceKeys();
 	~iServiceKeys();
@@ -993,6 +1028,7 @@ class eDVBServiceAITHandler;
 SWIG_IGNORE(iHbbtv);
 class iHbbtv: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iHbbtv();
 	~iHbbtv();
@@ -1006,6 +1042,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iHbbtv>, iHbbtvPtr);
 
 class iPlayableService_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iPlayableService_ENUMS();
 	~iPlayableService_ENUMS();
@@ -1076,6 +1113,7 @@ public:
 SWIG_IGNORE_ENUMS(iPlayableService);
 class iPlayableService: public iPlayableService_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iPlayableService();
 	~iPlaybleService();
@@ -1111,6 +1149,7 @@ SWIG_TEMPLATE_TYPEDEF(ePtr<iPlayableService>, iPlayableServicePtr);
 
 class iRecordableService_ENUMS
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iRecordableService_ENUMS();
 	~iRecordableService_ENUMS();
@@ -1144,6 +1183,7 @@ public:
 SWIG_IGNORE_ENUMS(iRecordableService);
 class iRecordableService: public iRecordableService_ENUMS, public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iRecordableService();
 	~iRecordableService();
@@ -1185,6 +1225,7 @@ inline ePyObject Impl_New_iRecordableServicePtr(const ePtr<iRecordableService> &
 SWIG_IGNORE(iServiceHandler);
 class iServiceHandler: public iObject
 {
+	SWIG_AUTODOC
 #ifdef SWIG
 	iServiceHandler();
 	~iServiceHandler();

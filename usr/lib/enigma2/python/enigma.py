@@ -208,6 +208,36 @@ class eMainloop(object):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+
+    def runLoop(self):
+        """runLoop(eMainloop self) -> int"""
+        return _enigma.eMainloop_runLoop(self)
+
+
+    def isIdle(self):
+        """isIdle(eMainloop self) -> int"""
+        return _enigma.eMainloop_isIdle(self)
+
+
+    def idleCount(self):
+        """idleCount(eMainloop self) -> int"""
+        return _enigma.eMainloop_idleCount(self)
+
+
+    def tid(self):
+        """tid(eMainloop self) -> pid_t"""
+        return _enigma.eMainloop_tid(self)
+
+
+    def argc(self):
+        """argc(eMainloop self) -> int &"""
+        return _enigma.eMainloop_argc(self)
+
+
+    def argv(self):
+        """argv(eMainloop self) -> char **"""
+        return _enigma.eMainloop_argv(self)
+
 eMainloop.runLoop = new_instancemethod(_enigma.eMainloop_runLoop, None, eMainloop)
 eMainloop.isIdle = new_instancemethod(_enigma.eMainloop_isIdle, None, eMainloop)
 eMainloop.idleCount = new_instancemethod(_enigma.eMainloop_idleCount, None, eMainloop)
@@ -229,7 +259,56 @@ class eSocketNotifier(iObject):
     __swig_destroy__ = _enigma.delete_eSocketNotifier
     activated = _swig_property(_enigma.eSocketNotifier_activated_get, _enigma.eSocketNotifier_activated_set)
 
+    def start(self):
+        """start(eSocketNotifier self)"""
+        return _enigma.eSocketNotifier_start(self)
+
+
+    def stop(self):
+        """stop(eSocketNotifier self)"""
+        return _enigma.eSocketNotifier_stop(self)
+
+
+    def isRunning(self):
+        """isRunning(eSocketNotifier self) -> bool"""
+        return _enigma.eSocketNotifier_isRunning(self)
+
+
+    def getFD(self):
+        """getFD(eSocketNotifier self) -> int"""
+        return _enigma.eSocketNotifier_getFD(self)
+
+
+    def getRequested(self):
+        """getRequested(eSocketNotifier self) -> int"""
+        return _enigma.eSocketNotifier_getRequested(self)
+
+
+    def setRequested(self, req):
+        """setRequested(eSocketNotifier self, int req)"""
+        return _enigma.eSocketNotifier_setRequested(self, req)
+
+
+    def getState(self):
+        """getState(eSocketNotifier self) -> int"""
+        return _enigma.eSocketNotifier_getState(self)
+
+
+    def activate(self, what):
+        """activate(eSocketNotifier self, int what)"""
+        return _enigma.eSocketNotifier_activate(self, what)
+
+
+    def getContext(self):
+        """getContext(eSocketNotifier self) -> eMainloop"""
+        return _enigma.eSocketNotifier_getContext(self)
+
+
     def __init__(self, fd, req, startNow=True):
+        """
+        __init__(eSocketNotifier self, int fd, int req, bool startNow=True) -> eSocketNotifier
+        __init__(eSocketNotifier self, int fd, int req) -> eSocketNotifier
+        """
         _enigma.eSocketNotifier_swiginit(self, _enigma.new_eSocketNotifier(fd, req, startNow))
 eSocketNotifier.start = new_instancemethod(_enigma.eSocketNotifier_start, None, eSocketNotifier)
 eSocketNotifier.stop = new_instancemethod(_enigma.eSocketNotifier_stop, None, eSocketNotifier)
@@ -249,7 +328,51 @@ class eTimer(iObject):
     __swig_destroy__ = _enigma.delete_eTimer
     timeout = _swig_property(_enigma.eTimer_timeout_get, _enigma.eTimer_timeout_set)
 
+    def isActive(self):
+        """isActive(eTimer self) -> bool"""
+        return _enigma.eTimer_isActive(self)
+
+
+    def getNextActivation(self):
+        """getNextActivation(eTimer self) -> timespec &"""
+        return _enigma.eTimer_getNextActivation(self)
+
+
+    def getInterval(self):
+        """getInterval(eTimer self) -> int"""
+        return _enigma.eTimer_getInterval(self)
+
+
+    def activate(self):
+        """activate(eTimer self)"""
+        return _enigma.eTimer_activate(self)
+
+
+    def start(self, msec, b=False):
+        """
+        start(eTimer self, int msec, bool b=False)
+        start(eTimer self, int msec)
+        """
+        return _enigma.eTimer_start(self, msec, b)
+
+
+    def stop(self):
+        """stop(eTimer self)"""
+        return _enigma.eTimer_stop(self)
+
+
+    def changeInterval(self, msek):
+        """changeInterval(eTimer self, int msek)"""
+        return _enigma.eTimer_changeInterval(self, msek)
+
+
+    def startLongTimer(self, seconds):
+        """startLongTimer(eTimer self, int seconds)"""
+        return _enigma.eTimer_startLongTimer(self, seconds)
+
+
     def __init__(self):
+        """__init__(eTimer self) -> eTimer"""
         _enigma.eTimer_swiginit(self, _enigma.new_eTimer())
 eTimer.isActive = new_instancemethod(_enigma.eTimer_isActive, None, eTimer)
 eTimer.getNextActivation = new_instancemethod(_enigma.eTimer_getNextActivation, None, eTimer)
@@ -267,8 +390,59 @@ class eConsoleAppContainer(iObject):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eConsoleAppContainer self) -> eConsoleAppContainer"""
         _enigma.eConsoleAppContainer_swiginit(self, _enigma.new_eConsoleAppContainer())
     __swig_destroy__ = _enigma.delete_eConsoleAppContainer
+
+    def setCWD(self, path):
+        """setCWD(eConsoleAppContainer self, char const * path) -> int"""
+        return _enigma.eConsoleAppContainer_setCWD(self, path)
+
+
+    def exec1(self, str):
+        """exec1(eConsoleAppContainer self, char const * str) -> int"""
+        return _enigma.eConsoleAppContainer_exec1(self, str)
+
+
+    def exec2(self, cmdline, argv):
+        """exec2(eConsoleAppContainer self, char const * cmdline, char const *const [] argv) -> int"""
+        return _enigma.eConsoleAppContainer_exec2(self, cmdline, argv)
+
+
+    def getPID(self):
+        """getPID(eConsoleAppContainer self) -> int"""
+        return _enigma.eConsoleAppContainer_getPID(self)
+
+
+    def kill(self):
+        """kill(eConsoleAppContainer self)"""
+        return _enigma.eConsoleAppContainer_kill(self)
+
+
+    def sendCtrlC(self):
+        """sendCtrlC(eConsoleAppContainer self)"""
+        return _enigma.eConsoleAppContainer_sendCtrlC(self)
+
+
+    def sendEOF(self):
+        """sendEOF(eConsoleAppContainer self)"""
+        return _enigma.eConsoleAppContainer_sendEOF(self)
+
+
+    def write(self, data, len):
+        """write(eConsoleAppContainer self, char const * data, int len)"""
+        return _enigma.eConsoleAppContainer_write(self, data, len)
+
+
+    def setFileFD(self, num, fd):
+        """setFileFD(eConsoleAppContainer self, int num, int fd)"""
+        return _enigma.eConsoleAppContainer_setFileFD(self, num, fd)
+
+
+    def running(self):
+        """running(eConsoleAppContainer self) -> bool"""
+        return _enigma.eConsoleAppContainer_running(self)
+
     dataAvail = _swig_property(_enigma.eConsoleAppContainer_dataAvail_get, _enigma.eConsoleAppContainer_dataAvail_set)
     stdoutAvail = _swig_property(_enigma.eConsoleAppContainer_stdoutAvail_get, _enigma.eConsoleAppContainer_stdoutAvail_set)
     stderrAvail = _swig_property(_enigma.eConsoleAppContainer_stderrAvail_get, _enigma.eConsoleAppContainer_stderrAvail_set)
@@ -297,6 +471,7 @@ class eDict(object):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eDict self) -> eDict"""
         _enigma.eDict_swiginit(self, _enigma.new_eDict())
     __swig_destroy__ = _enigma.delete_eDict
 eDict.flag = new_instancemethod(_enigma.eDict_flag, None, eDict)
@@ -311,6 +486,7 @@ class eDictList(object):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eDictList self) -> eDictList"""
         _enigma.eDictList_swiginit(self, _enigma.new_eDictList())
     __swig_destroy__ = _enigma.delete_eDictList
 eDictList.push_back = new_instancemethod(_enigma.eDictList_push_back, None, eDictList)
@@ -320,17 +496,23 @@ eDictList_swigregister(eDictList)
 class eEnv(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    resolve = staticmethod(_enigma.eEnv_resolve)
+
+    def resolve(path):
+        """resolve(std::string const & path) -> std::string"""
+        return _enigma.eEnv_resolve(path)
+
+    resolve = staticmethod(resolve)
 
     def __init__(self):
+        """__init__(eEnv self) -> eEnv"""
         _enigma.eEnv_swiginit(self, _enigma.new_eEnv())
     __swig_destroy__ = _enigma.delete_eEnv
 eEnv_swigregister = _enigma.eEnv_swigregister
 eEnv_swigregister(eEnv)
 
 def eEnv_resolve(path):
+    """eEnv_resolve(std::string const & path) -> std::string"""
     return _enigma.eEnv_resolve(path)
-eEnv_resolve = _enigma.eEnv_resolve
 
 
 def segfault():
@@ -368,6 +550,67 @@ class eServiceEvent(object):
         _enigma.eServiceEvent_swiginit(self, _enigma.new_eServiceEvent(*args))
     __swig_destroy__ = _enigma.delete_eServiceEvent
     setEPGLanguage = staticmethod(_enigma.eServiceEvent_setEPGLanguage)
+
+    def getBeginTime(self):
+        """getBeginTime(eServiceEvent self) -> time_t"""
+        return _enigma.eServiceEvent_getBeginTime(self)
+
+
+    def getDuration(self):
+        """getDuration(eServiceEvent self) -> int"""
+        return _enigma.eServiceEvent_getDuration(self)
+
+
+    def getEventId(self):
+        """getEventId(eServiceEvent self) -> int"""
+        return _enigma.eServiceEvent_getEventId(self)
+
+
+    def getEventName(self):
+        """getEventName(eServiceEvent self) -> std::string"""
+        return _enigma.eServiceEvent_getEventName(self)
+
+
+    def getShortDescription(self):
+        """getShortDescription(eServiceEvent self) -> std::string"""
+        return _enigma.eServiceEvent_getShortDescription(self)
+
+
+    def getExtendedDescription(self, original=False):
+        """
+        getExtendedDescription(eServiceEvent self, bool original=False) -> std::string
+        getExtendedDescription(eServiceEvent self) -> std::string
+        """
+        return _enigma.eServiceEvent_getExtendedDescription(self, original)
+
+
+    def getBeginTimeString(self):
+        """getBeginTimeString(eServiceEvent self) -> std::string"""
+        return _enigma.eServiceEvent_getBeginTimeString(self)
+
+
+    def getNumComponent(self):
+        """getNumComponent(eServiceEvent self) -> int"""
+        return _enigma.eServiceEvent_getNumComponent(self)
+
+
+    def getComponentData(self, *args):
+        """
+        getComponentData(eServiceEvent self, int tagnum) -> eComponentData
+        getComponentData(eServiceEvent self) -> std::list< std::tuple< int,int,int,std::string,std::string >,std::allocator< std::tuple< int,int,int,std::string,std::string > > >
+        """
+        return _enigma.eServiceEvent_getComponentData(self, *args)
+
+
+    def getNumOfLinkageServices(self):
+        """getNumOfLinkageServices(eServiceEvent self) -> int"""
+        return _enigma.eServiceEvent_getNumOfLinkageServices(self)
+
+
+    def getLinkageService(self, parent, num):
+        """getLinkageService(eServiceEvent self, eServiceReference parent, int num)"""
+        return _enigma.eServiceEvent_getLinkageService(self, parent, num)
+
 eServiceEvent.__ref__ = new_instancemethod(_enigma.eServiceEvent___ref__, None, eServiceEvent)
 eServiceEvent.getPtrString = new_instancemethod(_enigma.eServiceEvent_getPtrString, None, eServiceEvent)
 eServiceEvent.__deref__ = new_instancemethod(_enigma.eServiceEvent___deref__, None, eServiceEvent)
@@ -436,8 +679,131 @@ class eServiceReference(object):
     mustJoinMulticastGroup = _enigma.eServiceReference_mustJoinMulticastGroup
     flags = _swig_property(_enigma.eServiceReference_flags_get, _enigma.eServiceReference_flags_set)
 
+    def getSortKey(self):
+        """getSortKey(eServiceReference self) -> int"""
+        return _enigma.eServiceReference_getSortKey(self)
+
+
+    def getPath(self):
+        """getPath(eServiceReference self) -> std::string"""
+        return _enigma.eServiceReference_getPath(self)
+
+
+    def setPath(self, n, decode_path=False):
+        """
+        setPath(eServiceReference self, std::string const & n, bool decode_path=False)
+        setPath(eServiceReference self, std::string const & n)
+        """
+        return _enigma.eServiceReference_setPath(self, n, decode_path)
+
+
+    def getUnsignedData(self, num):
+        """getUnsignedData(eServiceReference self, unsigned int num) -> unsigned int"""
+        return _enigma.eServiceReference_getUnsignedData(self, num)
+
+
+    def getData(self, num):
+        """getData(eServiceReference self, unsigned int num) -> int"""
+        return _enigma.eServiceReference_getData(self, num)
+
+
+    def setUnsignedData(self, num, val):
+        """setUnsignedData(eServiceReference self, unsigned int num, unsigned int val)"""
+        return _enigma.eServiceReference_setUnsignedData(self, num, val)
+
+
+    def setData(self, num, val):
+        """setData(eServiceReference self, unsigned int num, int val)"""
+        return _enigma.eServiceReference_setData(self, num, val)
+
+
+    def getName(self):
+        """getName(eServiceReference self) -> std::string"""
+        return _enigma.eServiceReference_getName(self)
+
+
+    def setName(self, n):
+        """setName(eServiceReference self, std::string const & n)"""
+        return _enigma.eServiceReference_setName(self, n)
+
+
+    def setUserAgent(self, uA):
+        """setUserAgent(eServiceReference self, std::string const & uA)"""
+        return _enigma.eServiceReference_setUserAgent(self, uA)
+
+
+    def getUserAgent(self):
+        """getUserAgent(eServiceReference self) -> std::string const"""
+        return _enigma.eServiceReference_getUserAgent(self)
+
+
+    def setTransportHeaders(self, headers):
+        """setTransportHeaders(eServiceReference self, StringMap headers)"""
+        return _enigma.eServiceReference_setTransportHeaders(self, headers)
+
+
+    def getTransportHeaders(self):
+        """getTransportHeaders(eServiceReference self) -> StringMap"""
+        return _enigma.eServiceReference_getTransportHeaders(self)
+
+
+    def getSuburi(self):
+        """getSuburi(eServiceReference self) -> std::string"""
+        return _enigma.eServiceReference_getSuburi(self)
+
+
+    def setSuburi(self, sU):
+        """setSuburi(eServiceReference self, std::string const & sU)"""
+        return _enigma.eServiceReference_setSuburi(self, sU)
+
+
     def __init__(self, *args):
+        """
+        __init__(eServiceReference self) -> eServiceReference
+        __init__(eServiceReference self, int type, int flags, std::string const & p) -> eServiceReference
+        __init__(eServiceReference self, std::string const & string) -> eServiceReference
+        """
         _enigma.eServiceReference_swiginit(self, _enigma.new_eServiceReference(*args))
+
+    def toString(self):
+        """toString(eServiceReference self) -> std::string"""
+        return _enigma.eServiceReference_toString(self)
+
+
+    def toCompareString(self):
+        """toCompareString(eServiceReference self) -> std::string"""
+        return _enigma.eServiceReference_toCompareString(self)
+
+
+    def __eq__(self, c):
+        """__eq__(eServiceReference self, eServiceReference c) -> bool"""
+        return _enigma.eServiceReference___eq__(self, c)
+
+
+    def __ne__(self, c):
+        """__ne__(eServiceReference self, eServiceReference c) -> bool"""
+        return _enigma.eServiceReference___ne__(self, c)
+
+
+    def __lt__(self, c):
+        """__lt__(eServiceReference self, eServiceReference c) -> bool"""
+        return _enigma.eServiceReference___lt__(self, c)
+
+
+    def valid(self):
+        """valid(eServiceReference self) -> int"""
+        return _enigma.eServiceReference_valid(self)
+
+
+    def compare(self, ref):
+        """compare(eServiceReference self, eServiceReference ref) -> int"""
+        return _enigma.eServiceReference_compare(self, ref)
+
+
+    def hash(self):
+        """hash(eServiceReference self) -> long"""
+        return _enigma.eServiceReference_hash(self)
+
     __swig_destroy__ = _enigma.delete_eServiceReference
 eServiceReference.getSortKey = new_instancemethod(_enigma.eServiceReference_getSortKey, None, eServiceReference)
 eServiceReference.getPath = new_instancemethod(_enigma.eServiceReference_getPath, None, eServiceReference)
@@ -477,6 +843,62 @@ class iStaticServiceInformationPtr(object):
     def __init__(self, *args):
         _enigma.iStaticServiceInformationPtr_swiginit(self, _enigma.new_iStaticServiceInformationPtr(*args))
     __swig_destroy__ = _enigma.delete_iStaticServiceInformationPtr
+
+    def getName(self, ref):
+        """getName(iStaticServiceInformationPtr self, eServiceReference ref)"""
+        return _enigma.iStaticServiceInformationPtr_getName(self, ref)
+
+
+    def getLength(self, ref):
+        """getLength(iStaticServiceInformationPtr self, eServiceReference ref) -> int"""
+        return _enigma.iStaticServiceInformationPtr_getLength(self, ref)
+
+
+    def getLength64(self, ref):
+        """getLength64(iStaticServiceInformationPtr self, eServiceReference ref) -> int64_t"""
+        return _enigma.iStaticServiceInformationPtr_getLength64(self, ref)
+
+
+    def getEvent(self, ref, start_time=-1):
+        """
+        getEvent(iStaticServiceInformationPtr self, eServiceReference ref, time_t start_time=-1)
+        getEvent(iStaticServiceInformationPtr self, eServiceReference ref)
+        """
+        return _enigma.iStaticServiceInformationPtr_getEvent(self, ref, start_time)
+
+
+    def isPlayable(self, ref, ignore, simulate=False):
+        """
+        isPlayable(iStaticServiceInformationPtr self, eServiceReference ref, eServiceReference ignore, bool simulate=False) -> int
+        isPlayable(iStaticServiceInformationPtr self, eServiceReference ref, eServiceReference ignore) -> int
+        """
+        return _enigma.iStaticServiceInformationPtr_isPlayable(self, ref, ignore, simulate)
+
+
+    def getInfo(self, ref, w):
+        """getInfo(iStaticServiceInformationPtr self, eServiceReference ref, int w) -> int"""
+        return _enigma.iStaticServiceInformationPtr_getInfo(self, ref, w)
+
+
+    def getInfoString(self, ref, w):
+        """getInfoString(iStaticServiceInformationPtr self, eServiceReference ref, int w) -> std::string"""
+        return _enigma.iStaticServiceInformationPtr_getInfoString(self, ref, w)
+
+
+    def getInfoObject(self, ref, w):
+        """getInfoObject(iStaticServiceInformationPtr self, eServiceReference ref, int w) -> boost::any"""
+        return _enigma.iStaticServiceInformationPtr_getInfoObject(self, ref, w)
+
+
+    def setInfo(self, ref, w, v):
+        """setInfo(iStaticServiceInformationPtr self, eServiceReference ref, int w, int v) -> int"""
+        return _enigma.iStaticServiceInformationPtr_setInfo(self, ref, w, v)
+
+
+    def setInfoString(self, ref, w, v):
+        """setInfoString(iStaticServiceInformationPtr self, eServiceReference ref, int w, char const * v) -> int"""
+        return _enigma.iStaticServiceInformationPtr_setInfoString(self, ref, w, v)
+
 iStaticServiceInformationPtr.__ref__ = new_instancemethod(_enigma.iStaticServiceInformationPtr___ref__, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.getPtrString = new_instancemethod(_enigma.iStaticServiceInformationPtr_getPtrString, None, iStaticServiceInformationPtr)
 iStaticServiceInformationPtr.__deref__ = new_instancemethod(_enigma.iStaticServiceInformationPtr___deref__, None, iStaticServiceInformationPtr)
@@ -602,6 +1024,41 @@ class iServiceInformationPtr(object):
     def __init__(self, *args):
         _enigma.iServiceInformationPtr_swiginit(self, _enigma.new_iServiceInformationPtr(*args))
     __swig_destroy__ = _enigma.delete_iServiceInformationPtr
+
+    def getName(self):
+        """getName(iServiceInformationPtr self)"""
+        return _enigma.iServiceInformationPtr_getName(self)
+
+
+    def getEvent(self, nownext):
+        """getEvent(iServiceInformationPtr self, int nownext)"""
+        return _enigma.iServiceInformationPtr_getEvent(self, nownext)
+
+
+    def getInfo(self, w):
+        """getInfo(iServiceInformationPtr self, int w) -> int"""
+        return _enigma.iServiceInformationPtr_getInfo(self, w)
+
+
+    def getInfoString(self, w):
+        """getInfoString(iServiceInformationPtr self, int w) -> std::string"""
+        return _enigma.iServiceInformationPtr_getInfoString(self, w)
+
+
+    def getInfoObject(self, w):
+        """getInfoObject(iServiceInformationPtr self, int w) -> boost::any"""
+        return _enigma.iServiceInformationPtr_getInfoObject(self, w)
+
+
+    def setInfo(self, w, v):
+        """setInfo(iServiceInformationPtr self, int w, int v) -> int"""
+        return _enigma.iServiceInformationPtr_setInfo(self, w, v)
+
+
+    def setInfoString(self, w, v):
+        """setInfoString(iServiceInformationPtr self, int w, char const * v) -> int"""
+        return _enigma.iServiceInformationPtr_setInfoString(self, w, v)
+
 iServiceInformationPtr.__ref__ = new_instancemethod(_enigma.iServiceInformationPtr___ref__, None, iServiceInformationPtr)
 iServiceInformationPtr.getPtrString = new_instancemethod(_enigma.iServiceInformationPtr_getPtrString, None, iServiceInformationPtr)
 iServiceInformationPtr.__deref__ = new_instancemethod(_enigma.iServiceInformationPtr___deref__, None, iServiceInformationPtr)
@@ -640,6 +1097,31 @@ class iFrontendInformationPtr(object):
     def __init__(self, *args):
         _enigma.iFrontendInformationPtr_swiginit(self, _enigma.new_iFrontendInformationPtr(*args))
     __swig_destroy__ = _enigma.delete_iFrontendInformationPtr
+
+    def getFrontendInfo(self, w):
+        """getFrontendInfo(iFrontendInformationPtr self, int w) -> int"""
+        return _enigma.iFrontendInformationPtr_getFrontendInfo(self, w)
+
+
+    def getFrontendData(self):
+        """getFrontendData(iFrontendInformationPtr self)"""
+        return _enigma.iFrontendInformationPtr_getFrontendData(self)
+
+
+    def getFrontendStatus(self):
+        """getFrontendStatus(iFrontendInformationPtr self)"""
+        return _enigma.iFrontendInformationPtr_getFrontendStatus(self)
+
+
+    def getTransponderData(self, original):
+        """getTransponderData(iFrontendInformationPtr self, bool original)"""
+        return _enigma.iFrontendInformationPtr_getTransponderData(self, original)
+
+
+    def getAll(self, original):
+        """getAll(iFrontendInformationPtr self, bool original)"""
+        return _enigma.iFrontendInformationPtr_getAll(self, original)
+
 iFrontendInformationPtr.__ref__ = new_instancemethod(_enigma.iFrontendInformationPtr___ref__, None, iFrontendInformationPtr)
 iFrontendInformationPtr.getPtrString = new_instancemethod(_enigma.iFrontendInformationPtr_getPtrString, None, iFrontendInformationPtr)
 iFrontendInformationPtr.__deref__ = new_instancemethod(_enigma.iFrontendInformationPtr___deref__, None, iFrontendInformationPtr)
@@ -658,6 +1140,32 @@ class iPauseableServicePtr(object):
     def __init__(self, *args):
         _enigma.iPauseableServicePtr_swiginit(self, _enigma.new_iPauseableServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iPauseableServicePtr
+
+    def pause(self):
+        """pause(iPauseableServicePtr self) -> RESULT"""
+        return _enigma.iPauseableServicePtr_pause(self)
+
+
+    def unpause(self):
+        """unpause(iPauseableServicePtr self) -> RESULT"""
+        return _enigma.iPauseableServicePtr_unpause(self)
+
+
+    def setSlowMotion(self, ratio=0):
+        """
+        setSlowMotion(iPauseableServicePtr self, int ratio=0) -> RESULT
+        setSlowMotion(iPauseableServicePtr self) -> RESULT
+        """
+        return _enigma.iPauseableServicePtr_setSlowMotion(self, ratio)
+
+
+    def setFastForward(self, ratio=0):
+        """
+        setFastForward(iPauseableServicePtr self, int ratio=0) -> RESULT
+        setFastForward(iPauseableServicePtr self) -> RESULT
+        """
+        return _enigma.iPauseableServicePtr_setFastForward(self, ratio)
+
 iPauseableServicePtr.__ref__ = new_instancemethod(_enigma.iPauseableServicePtr___ref__, None, iPauseableServicePtr)
 iPauseableServicePtr.getPtrString = new_instancemethod(_enigma.iPauseableServicePtr_getPtrString, None, iPauseableServicePtr)
 iPauseableServicePtr.__deref__ = new_instancemethod(_enigma.iPauseableServicePtr___deref__, None, iPauseableServicePtr)
@@ -687,6 +1195,49 @@ class iSeekableServicePtr(object):
     def __init__(self, *args):
         _enigma.iSeekableServicePtr_swiginit(self, _enigma.new_iSeekableServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iSeekableServicePtr
+
+    def getLength(self):
+        """getLength(iSeekableServicePtr self) -> RESULT"""
+        return _enigma.iSeekableServicePtr_getLength(self)
+
+
+    def seekTo(self, to):
+        """seekTo(iSeekableServicePtr self, pts_t to) -> RESULT"""
+        return _enigma.iSeekableServicePtr_seekTo(self, to)
+
+
+    def seekRelative(self, direction, to):
+        """seekRelative(iSeekableServicePtr self, int direction, pts_t to) -> RESULT"""
+        return _enigma.iSeekableServicePtr_seekRelative(self, direction, to)
+
+
+    def getPlayPosition(self):
+        """getPlayPosition(iSeekableServicePtr self) -> RESULT"""
+        return _enigma.iSeekableServicePtr_getPlayPosition(self)
+
+
+    def setTrickmode(self, trick=0):
+        """
+        setTrickmode(iSeekableServicePtr self, int trick=0) -> RESULT
+        setTrickmode(iSeekableServicePtr self) -> RESULT
+        """
+        return _enigma.iSeekableServicePtr_setTrickmode(self, trick)
+
+
+    def isCurrentlySeekable(self):
+        """isCurrentlySeekable(iSeekableServicePtr self) -> RESULT"""
+        return _enigma.iSeekableServicePtr_isCurrentlySeekable(self)
+
+
+    def seekChapter(self, arg2):
+        """seekChapter(iSeekableServicePtr self, int arg2) -> RESULT"""
+        return _enigma.iSeekableServicePtr_seekChapter(self, arg2)
+
+
+    def seekTitle(self, arg2):
+        """seekTitle(iSeekableServicePtr self, int arg2) -> RESULT"""
+        return _enigma.iSeekableServicePtr_seekTitle(self, arg2)
+
 iSeekableServicePtr.__ref__ = new_instancemethod(_enigma.iSeekableServicePtr___ref__, None, iSeekableServicePtr)
 iSeekableServicePtr.getPtrString = new_instancemethod(_enigma.iSeekableServicePtr_getPtrString, None, iSeekableServicePtr)
 iSeekableServicePtr.__deref__ = new_instancemethod(_enigma.iSeekableServicePtr___deref__, None, iSeekableServicePtr)
@@ -732,6 +1283,46 @@ class iAudioTrackInfo(iAudioType_ENUMS):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     __swig_destroy__ = _enigma.delete_iAudioTrackInfo
+
+    def getDescription(self):
+        """getDescription(iAudioTrackInfo self) -> std::string"""
+        return _enigma.iAudioTrackInfo_getDescription(self)
+
+
+    def getLanguage(self):
+        """getLanguage(iAudioTrackInfo self) -> std::string"""
+        return _enigma.iAudioTrackInfo_getLanguage(self)
+
+
+    def getPID(self):
+        """getPID(iAudioTrackInfo self) -> int"""
+        return _enigma.iAudioTrackInfo_getPID(self)
+
+
+    def getType(self):
+        """getType(iAudioTrackInfo self) -> int"""
+        return _enigma.iAudioTrackInfo_getType(self)
+
+
+    def isSaved(self):
+        """isSaved(iAudioTrackInfo self) -> int"""
+        return _enigma.iAudioTrackInfo_isSaved(self)
+
+
+    def isDefault(self):
+        """isDefault(iAudioTrackInfo self) -> int"""
+        return _enigma.iAudioTrackInfo_isDefault(self)
+
+
+    def setLanguage(self, language):
+        """setLanguage(iAudioTrackInfo self, std::string language)"""
+        return _enigma.iAudioTrackInfo_setLanguage(self, language)
+
+
+    def setDescription(self, description):
+        """setDescription(iAudioTrackInfo self, std::string description)"""
+        return _enigma.iAudioTrackInfo_setDescription(self, description)
+
 iAudioTrackInfo.getDescription = new_instancemethod(_enigma.iAudioTrackInfo_getDescription, None, iAudioTrackInfo)
 iAudioTrackInfo.getLanguage = new_instancemethod(_enigma.iAudioTrackInfo_getLanguage, None, iAudioTrackInfo)
 iAudioTrackInfo.getPID = new_instancemethod(_enigma.iAudioTrackInfo_getPID, None, iAudioTrackInfo)
@@ -750,6 +1341,26 @@ class iAudioTrackSelectionPtr(object):
     def __init__(self, *args):
         _enigma.iAudioTrackSelectionPtr_swiginit(self, _enigma.new_iAudioTrackSelectionPtr(*args))
     __swig_destroy__ = _enigma.delete_iAudioTrackSelectionPtr
+
+    def getNumberOfTracks(self):
+        """getNumberOfTracks(iAudioTrackSelectionPtr self) -> int"""
+        return _enigma.iAudioTrackSelectionPtr_getNumberOfTracks(self)
+
+
+    def selectTrack(self, i):
+        """selectTrack(iAudioTrackSelectionPtr self, unsigned int i) -> RESULT"""
+        return _enigma.iAudioTrackSelectionPtr_selectTrack(self, i)
+
+
+    def getTrackInfo(self, n):
+        """getTrackInfo(iAudioTrackSelectionPtr self, unsigned int n)"""
+        return _enigma.iAudioTrackSelectionPtr_getTrackInfo(self, n)
+
+
+    def getCurrentTrack(self):
+        """getCurrentTrack(iAudioTrackSelectionPtr self) -> int"""
+        return _enigma.iAudioTrackSelectionPtr_getCurrentTrack(self)
+
 iAudioTrackSelectionPtr.__ref__ = new_instancemethod(_enigma.iAudioTrackSelectionPtr___ref__, None, iAudioTrackSelectionPtr)
 iAudioTrackSelectionPtr.getPtrString = new_instancemethod(_enigma.iAudioTrackSelectionPtr_getPtrString, None, iAudioTrackSelectionPtr)
 iAudioTrackSelectionPtr.__deref__ = new_instancemethod(_enigma.iAudioTrackSelectionPtr___deref__, None, iAudioTrackSelectionPtr)
@@ -780,6 +1391,16 @@ class iAudioChannelSelectionPtr(object):
     def __init__(self, *args):
         _enigma.iAudioChannelSelectionPtr_swiginit(self, _enigma.new_iAudioChannelSelectionPtr(*args))
     __swig_destroy__ = _enigma.delete_iAudioChannelSelectionPtr
+
+    def getCurrentChannel(self):
+        """getCurrentChannel(iAudioChannelSelectionPtr self) -> int"""
+        return _enigma.iAudioChannelSelectionPtr_getCurrentChannel(self)
+
+
+    def selectChannel(self, i):
+        """selectChannel(iAudioChannelSelectionPtr self, int i) -> RESULT"""
+        return _enigma.iAudioChannelSelectionPtr_selectChannel(self, i)
+
 iAudioChannelSelectionPtr.__ref__ = new_instancemethod(_enigma.iAudioChannelSelectionPtr___ref__, None, iAudioChannelSelectionPtr)
 iAudioChannelSelectionPtr.getPtrString = new_instancemethod(_enigma.iAudioChannelSelectionPtr_getPtrString, None, iAudioChannelSelectionPtr)
 iAudioChannelSelectionPtr.__deref__ = new_instancemethod(_enigma.iAudioChannelSelectionPtr___deref__, None, iAudioChannelSelectionPtr)
@@ -795,6 +1416,26 @@ class iAudioDelayPtr(object):
     def __init__(self, *args):
         _enigma.iAudioDelayPtr_swiginit(self, _enigma.new_iAudioDelayPtr(*args))
     __swig_destroy__ = _enigma.delete_iAudioDelayPtr
+
+    def getAC3Delay(self):
+        """getAC3Delay(iAudioDelayPtr self) -> int"""
+        return _enigma.iAudioDelayPtr_getAC3Delay(self)
+
+
+    def getPCMDelay(self):
+        """getPCMDelay(iAudioDelayPtr self) -> int"""
+        return _enigma.iAudioDelayPtr_getPCMDelay(self)
+
+
+    def setAC3Delay(self, arg2):
+        """setAC3Delay(iAudioDelayPtr self, int arg2)"""
+        return _enigma.iAudioDelayPtr_setAC3Delay(self, arg2)
+
+
+    def setPCMDelay(self, arg2):
+        """setPCMDelay(iAudioDelayPtr self, int arg2)"""
+        return _enigma.iAudioDelayPtr_setPCMDelay(self, arg2)
+
 iAudioDelayPtr.__ref__ = new_instancemethod(_enigma.iAudioDelayPtr___ref__, None, iAudioDelayPtr)
 iAudioDelayPtr.getPtrString = new_instancemethod(_enigma.iAudioDelayPtr_getPtrString, None, iAudioDelayPtr)
 iAudioDelayPtr.__deref__ = new_instancemethod(_enigma.iAudioDelayPtr___deref__, None, iAudioDelayPtr)
@@ -824,6 +1465,29 @@ class iRdsDecoderPtr(object):
     def __init__(self, *args):
         _enigma.iRdsDecoderPtr_swiginit(self, _enigma.new_iRdsDecoderPtr(*args))
     __swig_destroy__ = _enigma.delete_iRdsDecoderPtr
+
+    def getText(self, *args):
+        """
+        getText(iRdsDecoderPtr self, int x) -> std::string
+        getText(iRdsDecoderPtr self) -> std::string
+        """
+        return _enigma.iRdsDecoderPtr_getText(self, *args)
+
+
+    def showRassSlidePicture(self):
+        """showRassSlidePicture(iRdsDecoderPtr self)"""
+        return _enigma.iRdsDecoderPtr_showRassSlidePicture(self)
+
+
+    def showRassInteractivePic(self, page, subpage):
+        """showRassInteractivePic(iRdsDecoderPtr self, int page, int subpage)"""
+        return _enigma.iRdsDecoderPtr_showRassInteractivePic(self, page, subpage)
+
+
+    def getRassInteractiveMask(self):
+        """getRassInteractiveMask(iRdsDecoderPtr self) -> unsigned char const *"""
+        return _enigma.iRdsDecoderPtr_getRassInteractiveMask(self)
+
 iRdsDecoderPtr.__ref__ = new_instancemethod(_enigma.iRdsDecoderPtr___ref__, None, iRdsDecoderPtr)
 iRdsDecoderPtr.getPtrString = new_instancemethod(_enigma.iRdsDecoderPtr_getPtrString, None, iRdsDecoderPtr)
 iRdsDecoderPtr.__deref__ = new_instancemethod(_enigma.iRdsDecoderPtr___deref__, None, iRdsDecoderPtr)
@@ -841,6 +1505,16 @@ class iSubserviceListPtr(object):
     def __init__(self, *args):
         _enigma.iSubserviceListPtr_swiginit(self, _enigma.new_iSubserviceListPtr(*args))
     __swig_destroy__ = _enigma.delete_iSubserviceListPtr
+
+    def getNumberOfSubservices(self):
+        """getNumberOfSubservices(iSubserviceListPtr self) -> int"""
+        return _enigma.iSubserviceListPtr_getNumberOfSubservices(self)
+
+
+    def getSubservice(self, n):
+        """getSubservice(iSubserviceListPtr self, unsigned int n)"""
+        return _enigma.iSubserviceListPtr_getSubservice(self, n)
+
 iSubserviceListPtr.__ref__ = new_instancemethod(_enigma.iSubserviceListPtr___ref__, None, iSubserviceListPtr)
 iSubserviceListPtr.getPtrString = new_instancemethod(_enigma.iSubserviceListPtr_getPtrString, None, iSubserviceListPtr)
 iSubserviceListPtr.__deref__ = new_instancemethod(_enigma.iSubserviceListPtr___deref__, None, iSubserviceListPtr)
@@ -856,6 +1530,39 @@ class iTimeshiftServicePtr(object):
     def __init__(self, *args):
         _enigma.iTimeshiftServicePtr_swiginit(self, _enigma.new_iTimeshiftServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iTimeshiftServicePtr
+
+    def startTimeshift(self):
+        """startTimeshift(iTimeshiftServicePtr self) -> RESULT"""
+        return _enigma.iTimeshiftServicePtr_startTimeshift(self)
+
+
+    def stopTimeshift(self, mode=1):
+        """
+        stopTimeshift(iTimeshiftServicePtr self, int mode=1) -> RESULT
+        stopTimeshift(iTimeshiftServicePtr self) -> RESULT
+        """
+        return _enigma.iTimeshiftServicePtr_stopTimeshift(self, mode)
+
+
+    def setNextPlaybackFile(self, fn):
+        """setNextPlaybackFile(iTimeshiftServicePtr self, char const * fn) -> RESULT"""
+        return _enigma.iTimeshiftServicePtr_setNextPlaybackFile(self, fn)
+
+
+    def setPrevPlaybackFile(self, fn):
+        """setPrevPlaybackFile(iTimeshiftServicePtr self, char const * fn) -> RESULT"""
+        return _enigma.iTimeshiftServicePtr_setPrevPlaybackFile(self, fn)
+
+
+    def isTimeshiftActive(self):
+        """isTimeshiftActive(iTimeshiftServicePtr self) -> int"""
+        return _enigma.iTimeshiftServicePtr_isTimeshiftActive(self)
+
+
+    def activateTimeshift(self):
+        """activateTimeshift(iTimeshiftServicePtr self) -> RESULT"""
+        return _enigma.iTimeshiftServicePtr_activateTimeshift(self)
+
 iTimeshiftServicePtr.__ref__ = new_instancemethod(_enigma.iTimeshiftServicePtr___ref__, None, iTimeshiftServicePtr)
 iTimeshiftServicePtr.getPtrString = new_instancemethod(_enigma.iTimeshiftServicePtr_getPtrString, None, iTimeshiftServicePtr)
 iTimeshiftServicePtr.__deref__ = new_instancemethod(_enigma.iTimeshiftServicePtr___deref__, None, iTimeshiftServicePtr)
@@ -888,6 +1595,21 @@ class iCueSheetPtr(object):
     def __init__(self, *args):
         _enigma.iCueSheetPtr_swiginit(self, _enigma.new_iCueSheetPtr(*args))
     __swig_destroy__ = _enigma.delete_iCueSheetPtr
+
+    def getCutList(self):
+        """getCutList(iCueSheetPtr self) -> std::list< std::pair< pts_t,unsigned int >,std::allocator< std::pair< pts_t,unsigned int > > >"""
+        return _enigma.iCueSheetPtr_getCutList(self)
+
+
+    def setCutList(self, list):
+        """setCutList(iCueSheetPtr self, std::list< std::pair< pts_t,unsigned int >,std::allocator< std::pair< pts_t,unsigned int > > > list)"""
+        return _enigma.iCueSheetPtr_setCutList(self, list)
+
+
+    def setCutListEnable(self, enable):
+        """setCutListEnable(iCueSheetPtr self, int enable)"""
+        return _enigma.iCueSheetPtr_setCutListEnable(self, enable)
+
 iCueSheetPtr.__ref__ = new_instancemethod(_enigma.iCueSheetPtr___ref__, None, iCueSheetPtr)
 iCueSheetPtr.getPtrString = new_instancemethod(_enigma.iCueSheetPtr_getPtrString, None, iCueSheetPtr)
 iCueSheetPtr.__deref__ = new_instancemethod(_enigma.iCueSheetPtr___deref__, None, iCueSheetPtr)
@@ -946,6 +1668,81 @@ class iSubtitleTrackInfo(iSubtitleType_ENUMS, iGstSubtitleType_ENUMS):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     __swig_destroy__ = _enigma.delete_iSubtitleTrackInfo
+
+    def getType(self):
+        """getType(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getType(self)
+
+
+    def getPID(self):
+        """getPID(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getPID(self)
+
+
+    def getLanguage(self):
+        """getLanguage(iSubtitleTrackInfo self) -> std::string"""
+        return _enigma.iSubtitleTrackInfo_getLanguage(self)
+
+
+    def getCompositionPageID(self):
+        """getCompositionPageID(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getCompositionPageID(self)
+
+
+    def getAncillaryPageID(self):
+        """getAncillaryPageID(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getAncillaryPageID(self)
+
+
+    def getPageNumber(self):
+        """getPageNumber(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getPageNumber(self)
+
+
+    def getMagazineNumber(self):
+        """getMagazineNumber(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getMagazineNumber(self)
+
+
+    def getGstSubtype(self):
+        """getGstSubtype(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getGstSubtype(self)
+
+
+    def isSaved(self):
+        """isSaved(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_isSaved(self)
+
+
+    def isDefault(self):
+        """isDefault(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_isDefault(self)
+
+
+    def isForced(self):
+        """isForced(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_isForced(self)
+
+
+    def getFilter(self):
+        """getFilter(iSubtitleTrackInfo self) -> int"""
+        return _enigma.iSubtitleTrackInfo_getFilter(self)
+
+
+    def setLanguage(self, language):
+        """setLanguage(iSubtitleTrackInfo self, std::string language)"""
+        return _enigma.iSubtitleTrackInfo_setLanguage(self, language)
+
+
+    def setFilter(self, filter):
+        """setFilter(iSubtitleTrackInfo self, int filter)"""
+        return _enigma.iSubtitleTrackInfo_setFilter(self, filter)
+
+
+    def setGstSubtype(self, gst_subtype):
+        """setGstSubtype(iSubtitleTrackInfo self, int gst_subtype)"""
+        return _enigma.iSubtitleTrackInfo_setGstSubtype(self, gst_subtype)
+
 iSubtitleTrackInfo.getType = new_instancemethod(_enigma.iSubtitleTrackInfo_getType, None, iSubtitleTrackInfo)
 iSubtitleTrackInfo.getPID = new_instancemethod(_enigma.iSubtitleTrackInfo_getPID, None, iSubtitleTrackInfo)
 iSubtitleTrackInfo.getLanguage = new_instancemethod(_enigma.iSubtitleTrackInfo_getLanguage, None, iSubtitleTrackInfo)
@@ -971,6 +1768,31 @@ class iSubtitleTrackSelectionPtr(object):
     def __init__(self, *args):
         _enigma.iSubtitleTrackSelectionPtr_swiginit(self, _enigma.new_iSubtitleTrackSelectionPtr(*args))
     __swig_destroy__ = _enigma.delete_iSubtitleTrackSelectionPtr
+
+    def getNumberOfSubtitleTracks(self):
+        """getNumberOfSubtitleTracks(iSubtitleTrackSelectionPtr self) -> int"""
+        return _enigma.iSubtitleTrackSelectionPtr_getNumberOfSubtitleTracks(self)
+
+
+    def getSubtitleTrackInfo(self, n):
+        """getSubtitleTrackInfo(iSubtitleTrackSelectionPtr self, unsigned int n)"""
+        return _enigma.iSubtitleTrackSelectionPtr_getSubtitleTrackInfo(self, n)
+
+
+    def getCurrentSubtitleTrack(self):
+        """getCurrentSubtitleTrack(iSubtitleTrackSelectionPtr self) -> int"""
+        return _enigma.iSubtitleTrackSelectionPtr_getCurrentSubtitleTrack(self)
+
+
+    def enableSubtitles(self, parent, i):
+        """enableSubtitles(iSubtitleTrackSelectionPtr self, eWidget parent, unsigned int i) -> RESULT"""
+        return _enigma.iSubtitleTrackSelectionPtr_enableSubtitles(self, parent, i)
+
+
+    def disableSubtitles(self, parent):
+        """disableSubtitles(iSubtitleTrackSelectionPtr self, eWidget parent) -> RESULT"""
+        return _enigma.iSubtitleTrackSelectionPtr_disableSubtitles(self, parent)
+
 iSubtitleTrackSelectionPtr.__ref__ = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr___ref__, None, iSubtitleTrackSelectionPtr)
 iSubtitleTrackSelectionPtr.getPtrString = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr_getPtrString, None, iSubtitleTrackSelectionPtr)
 iSubtitleTrackSelectionPtr.__deref__ = new_instancemethod(_enigma.iSubtitleTrackSelectionPtr___deref__, None, iSubtitleTrackSelectionPtr)
@@ -989,6 +1811,34 @@ class iMutableServiceListPtr(object):
     def __init__(self, *args):
         _enigma.iMutableServiceListPtr_swiginit(self, _enigma.new_iMutableServiceListPtr(*args))
     __swig_destroy__ = _enigma.delete_iMutableServiceListPtr
+
+    def flushChanges(self):
+        """flushChanges(iMutableServiceListPtr self) -> RESULT"""
+        return _enigma.iMutableServiceListPtr_flushChanges(self)
+
+
+    def addService(self, *args):
+        """
+        addService(iMutableServiceListPtr self, eServiceReference ref, eServiceReference before) -> RESULT
+        addService(iMutableServiceListPtr self, eServiceReference ref) -> RESULT
+        """
+        return _enigma.iMutableServiceListPtr_addService(self, *args)
+
+
+    def removeService(self, ref):
+        """removeService(iMutableServiceListPtr self, eServiceReference ref) -> RESULT"""
+        return _enigma.iMutableServiceListPtr_removeService(self, ref)
+
+
+    def moveService(self, ref, pos):
+        """moveService(iMutableServiceListPtr self, eServiceReference ref, int pos) -> RESULT"""
+        return _enigma.iMutableServiceListPtr_moveService(self, ref, pos)
+
+
+    def setListName(self, name):
+        """setListName(iMutableServiceListPtr self, std::string const & name) -> RESULT"""
+        return _enigma.iMutableServiceListPtr_setListName(self, name)
+
 iMutableServiceListPtr.__ref__ = new_instancemethod(_enigma.iMutableServiceListPtr___ref__, None, iMutableServiceListPtr)
 iMutableServiceListPtr.getPtrString = new_instancemethod(_enigma.iMutableServiceListPtr_getPtrString, None, iMutableServiceListPtr)
 iMutableServiceListPtr.__deref__ = new_instancemethod(_enigma.iMutableServiceListPtr___deref__, None, iMutableServiceListPtr)
@@ -1007,6 +1857,29 @@ class iListableServicePtr(object):
     def __init__(self, *args):
         _enigma.iListableServicePtr_swiginit(self, _enigma.new_iListableServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iListableServicePtr
+
+    def getContent(self, format, sorted=False):
+        """
+        getContent(iListableServicePtr self, char const * format, bool sorted=False) -> PyObject
+        getContent(iListableServicePtr self, char const * format) -> PyObject *
+        """
+        return _enigma.iListableServicePtr_getContent(self, format, sorted)
+
+
+    def getNext(self):
+        """getNext(iListableServicePtr self)"""
+        return _enigma.iListableServicePtr_getNext(self)
+
+
+    def compareLessEqual(self, arg2, arg3):
+        """compareLessEqual(iListableServicePtr self, eServiceReference arg2, eServiceReference arg3) -> int"""
+        return _enigma.iListableServicePtr_compareLessEqual(self, arg2, arg3)
+
+
+    def startEdit(self):
+        """startEdit(iListableServicePtr self)"""
+        return _enigma.iListableServicePtr_startEdit(self)
+
 iListableServicePtr.__ref__ = new_instancemethod(_enigma.iListableServicePtr___ref__, None, iListableServicePtr)
 iListableServicePtr.getPtrString = new_instancemethod(_enigma.iListableServicePtr_getPtrString, None, iListableServicePtr)
 iListableServicePtr.__deref__ = new_instancemethod(_enigma.iListableServicePtr___deref__, None, iListableServicePtr)
@@ -1024,6 +1897,24 @@ class iServiceOfflineOperationsPtr(object):
     def __init__(self, *args):
         _enigma.iServiceOfflineOperationsPtr_swiginit(self, _enigma.new_iServiceOfflineOperationsPtr(*args))
     __swig_destroy__ = _enigma.delete_iServiceOfflineOperationsPtr
+
+    def deleteFromDisk(self, simulate=1):
+        """
+        deleteFromDisk(iServiceOfflineOperationsPtr self, int simulate=1) -> RESULT
+        deleteFromDisk(iServiceOfflineOperationsPtr self) -> RESULT
+        """
+        return _enigma.iServiceOfflineOperationsPtr_deleteFromDisk(self, simulate)
+
+
+    def getListOfFilenames(self, OUTPUT):
+        """getListOfFilenames(iServiceOfflineOperationsPtr self, StringList OUTPUT)"""
+        return _enigma.iServiceOfflineOperationsPtr_getListOfFilenames(self, OUTPUT)
+
+
+    def reindex(self):
+        """reindex(iServiceOfflineOperationsPtr self) -> int"""
+        return _enigma.iServiceOfflineOperationsPtr_reindex(self)
+
 iServiceOfflineOperationsPtr.__ref__ = new_instancemethod(_enigma.iServiceOfflineOperationsPtr___ref__, None, iServiceOfflineOperationsPtr)
 iServiceOfflineOperationsPtr.getPtrString = new_instancemethod(_enigma.iServiceOfflineOperationsPtr_getPtrString, None, iServiceOfflineOperationsPtr)
 iServiceOfflineOperationsPtr.__deref__ = new_instancemethod(_enigma.iServiceOfflineOperationsPtr___deref__, None, iServiceOfflineOperationsPtr)
@@ -1040,6 +1931,14 @@ class iStreamableServicePtr(object):
     def __init__(self, *args):
         _enigma.iStreamableServicePtr_swiginit(self, _enigma.new_iStreamableServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iStreamableServicePtr
+
+    def getStreamingData(self, includeEit=True):
+        """
+        getStreamingData(iStreamableServicePtr self, bool includeEit=True) -> PseudoDict
+        getStreamingData(iStreamableServicePtr self) -> PseudoDict
+        """
+        return _enigma.iStreamableServicePtr_getStreamingData(self, includeEit)
+
 iStreamableServicePtr.__ref__ = new_instancemethod(_enigma.iStreamableServicePtr___ref__, None, iStreamableServicePtr)
 iStreamableServicePtr.getPtrString = new_instancemethod(_enigma.iStreamableServicePtr_getPtrString, None, iStreamableServicePtr)
 iStreamableServicePtr.__deref__ = new_instancemethod(_enigma.iStreamableServicePtr___deref__, None, iStreamableServicePtr)
@@ -1054,6 +1953,26 @@ class iStreamedServicePtr(object):
     def __init__(self, *args):
         _enigma.iStreamedServicePtr_swiginit(self, _enigma.new_iStreamedServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iStreamedServicePtr
+
+    def getBufferCharge(self):
+        """getBufferCharge(iStreamedServicePtr self) -> IntList"""
+        return _enigma.iStreamedServicePtr_getBufferCharge(self)
+
+
+    def setBufferSize(self, size):
+        """setBufferSize(iStreamedServicePtr self, int size) -> int"""
+        return _enigma.iStreamedServicePtr_setBufferSize(self, size)
+
+
+    def setBufferDuration(self, ms):
+        """setBufferDuration(iStreamedServicePtr self, int ms) -> int"""
+        return _enigma.iStreamedServicePtr_setBufferDuration(self, ms)
+
+
+    def setTransportHeaders(self, headers):
+        """setTransportHeaders(iStreamedServicePtr self, StringMap headers)"""
+        return _enigma.iStreamedServicePtr_setTransportHeaders(self, headers)
+
 iStreamedServicePtr.__ref__ = new_instancemethod(_enigma.iStreamedServicePtr___ref__, None, iStreamedServicePtr)
 iStreamedServicePtr.getPtrString = new_instancemethod(_enigma.iStreamedServicePtr_getPtrString, None, iStreamedServicePtr)
 iStreamedServicePtr.__deref__ = new_instancemethod(_enigma.iStreamedServicePtr___deref__, None, iStreamedServicePtr)
@@ -1070,6 +1989,24 @@ class iUriService(iObject):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+
+    def setResolvedName(self, name):
+        """setResolvedName(iUriService self, std::string const & name)"""
+        return _enigma.iUriService_setResolvedName(self, name)
+
+
+    def setResolvedUri(self, *args):
+        """
+        setResolvedUri(iUriService self, std::string const & resolvedUri, int serviceType, std::string const & suburi)
+        setResolvedUri(iUriService self, std::string const & resolvedUri, int serviceType)
+        """
+        return _enigma.iUriService_setResolvedUri(self, *args)
+
+
+    def failedToResolveUri(self):
+        """failedToResolveUri(iUriService self)"""
+        return _enigma.iUriService_failedToResolveUri(self)
+
 iUriService.setResolvedName = new_instancemethod(_enigma.iUriService_setResolvedName, None, iUriService)
 iUriService.setResolvedUri = new_instancemethod(_enigma.iUriService_setResolvedUri, None, iUriService)
 iUriService.failedToResolveUri = new_instancemethod(_enigma.iUriService_failedToResolveUri, None, iUriService)
@@ -1083,6 +2020,24 @@ class iUriServicePtr(object):
     def __init__(self, *args):
         _enigma.iUriServicePtr_swiginit(self, _enigma.new_iUriServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iUriServicePtr
+
+    def setResolvedName(self, name):
+        """setResolvedName(iUriServicePtr self, std::string const & name)"""
+        return _enigma.iUriServicePtr_setResolvedName(self, name)
+
+
+    def setResolvedUri(self, *args):
+        """
+        setResolvedUri(iUriServicePtr self, std::string const & resolvedUri, int serviceType, std::string const & suburi)
+        setResolvedUri(iUriServicePtr self, std::string const & resolvedUri, int serviceType)
+        """
+        return _enigma.iUriServicePtr_setResolvedUri(self, *args)
+
+
+    def failedToResolveUri(self):
+        """failedToResolveUri(iUriServicePtr self)"""
+        return _enigma.iUriServicePtr_failedToResolveUri(self)
+
 iUriServicePtr.__ref__ = new_instancemethod(_enigma.iUriServicePtr___ref__, None, iUriServicePtr)
 iUriServicePtr.getPtrString = new_instancemethod(_enigma.iUriServicePtr_getPtrString, None, iUriServicePtr)
 iUriServicePtr.__deref__ = new_instancemethod(_enigma.iUriServicePtr___deref__, None, iUriServicePtr)
@@ -1115,6 +2070,11 @@ class iServiceKeysPtr(object):
     def __init__(self, *args):
         _enigma.iServiceKeysPtr_swiginit(self, _enigma.new_iServiceKeysPtr(*args))
     __swig_destroy__ = _enigma.delete_iServiceKeysPtr
+
+    def keyPressed(self, key):
+        """keyPressed(iServiceKeysPtr self, int key)"""
+        return _enigma.iServiceKeysPtr_keyPressed(self, key)
+
 iServiceKeysPtr.__ref__ = new_instancemethod(_enigma.iServiceKeysPtr___ref__, None, iServiceKeysPtr)
 iServiceKeysPtr.getPtrString = new_instancemethod(_enigma.iServiceKeysPtr_getPtrString, None, iServiceKeysPtr)
 iServiceKeysPtr.__deref__ = new_instancemethod(_enigma.iServiceKeysPtr___deref__, None, iServiceKeysPtr)
@@ -1187,6 +2147,106 @@ class iPlayableServicePtr(object):
     def __init__(self, *args):
         _enigma.iPlayableServicePtr_swiginit(self, _enigma.new_iPlayableServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iPlayableServicePtr
+
+    def start(self):
+        """start(iPlayableServicePtr self) -> RESULT"""
+        return _enigma.iPlayableServicePtr_start(self)
+
+
+    def stop(self):
+        """stop(iPlayableServicePtr self) -> RESULT"""
+        return _enigma.iPlayableServicePtr_stop(self)
+
+
+    def playState(self):
+        """playState(iPlayableServicePtr self) -> int"""
+        return _enigma.iPlayableServicePtr_playState(self)
+
+
+    def setTarget(self, target):
+        """setTarget(iPlayableServicePtr self, int target) -> RESULT"""
+        return _enigma.iPlayableServicePtr_setTarget(self, target)
+
+
+    def seek(self):
+        """seek(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_seek(self)
+
+
+    def pause(self):
+        """pause(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_pause(self)
+
+
+    def info(self):
+        """info(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_info(self)
+
+
+    def audioTracks(self):
+        """audioTracks(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_audioTracks(self)
+
+
+    def audioChannel(self):
+        """audioChannel(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_audioChannel(self)
+
+
+    def subServices(self):
+        """subServices(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_subServices(self)
+
+
+    def frontendInfo(self):
+        """frontendInfo(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_frontendInfo(self)
+
+
+    def timeshift(self):
+        """timeshift(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_timeshift(self)
+
+
+    def cueSheet(self):
+        """cueSheet(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_cueSheet(self)
+
+
+    def subtitleTracks(self):
+        """subtitleTracks(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_subtitleTracks(self)
+
+
+    def audioDelay(self):
+        """audioDelay(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_audioDelay(self)
+
+
+    def rdsDecoder(self):
+        """rdsDecoder(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_rdsDecoder(self)
+
+
+    def stream(self):
+        """stream(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_stream(self)
+
+
+    def streamed(self):
+        """streamed(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_streamed(self)
+
+
+    def keys(self):
+        """keys(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_keys(self)
+
+
+    def hbbtv(self):
+        """hbbtv(iPlayableServicePtr self)"""
+        return _enigma.iPlayableServicePtr_hbbtv(self)
+
 iPlayableServicePtr.__ref__ = new_instancemethod(_enigma.iPlayableServicePtr___ref__, None, iPlayableServicePtr)
 iPlayableServicePtr.getPtrString = new_instancemethod(_enigma.iPlayableServicePtr_getPtrString, None, iPlayableServicePtr)
 iPlayableServicePtr.__deref__ = new_instancemethod(_enigma.iPlayableServicePtr___deref__, None, iPlayableServicePtr)
@@ -1249,6 +2309,62 @@ class iRecordableServicePtr(object):
     def __init__(self, *args):
         _enigma.iRecordableServicePtr_swiginit(self, _enigma.new_iRecordableServicePtr(*args))
     __swig_destroy__ = _enigma.delete_iRecordableServicePtr
+
+    def getError(self):
+        """getError(iRecordableServicePtr self)"""
+        return _enigma.iRecordableServicePtr_getError(self)
+
+
+    def prepare(self, filename, begTime=-1, endTime=-1, eit_event_id=-1, name=None, descr=None, tags=None):
+        """
+        prepare(iRecordableServicePtr self, char const * filename, time_t begTime=-1, time_t endTime=-1, int eit_event_id=-1, char const * name=None, char const * descr=None, char const * tags=None) -> RESULT
+        prepare(iRecordableServicePtr self, char const * filename, time_t begTime=-1, time_t endTime=-1, int eit_event_id=-1, char const * name=None, char const * descr=None) -> RESULT
+        prepare(iRecordableServicePtr self, char const * filename, time_t begTime=-1, time_t endTime=-1, int eit_event_id=-1, char const * name=None) -> RESULT
+        prepare(iRecordableServicePtr self, char const * filename, time_t begTime=-1, time_t endTime=-1, int eit_event_id=-1) -> RESULT
+        prepare(iRecordableServicePtr self, char const * filename, time_t begTime=-1, time_t endTime=-1) -> RESULT
+        prepare(iRecordableServicePtr self, char const * filename, time_t begTime=-1) -> RESULT
+        prepare(iRecordableServicePtr self, char const * filename) -> RESULT
+        """
+        return _enigma.iRecordableServicePtr_prepare(self, filename, begTime, endTime, eit_event_id, name, descr, tags)
+
+
+    def prepareStreaming(self):
+        """prepareStreaming(iRecordableServicePtr self) -> RESULT"""
+        return _enigma.iRecordableServicePtr_prepareStreaming(self)
+
+
+    def start(self, simulate=False):
+        """
+        start(iRecordableServicePtr self, bool simulate=False) -> RESULT
+        start(iRecordableServicePtr self) -> RESULT
+        """
+        return _enigma.iRecordableServicePtr_start(self, simulate)
+
+
+    def stop(self):
+        """stop(iRecordableServicePtr self) -> RESULT"""
+        return _enigma.iRecordableServicePtr_stop(self)
+
+
+    def frontendInfo(self):
+        """frontendInfo(iRecordableServicePtr self)"""
+        return _enigma.iRecordableServicePtr_frontendInfo(self)
+
+
+    def stream(self):
+        """stream(iRecordableServicePtr self)"""
+        return _enigma.iRecordableServicePtr_stream(self)
+
+
+    def subServices(self):
+        """subServices(iRecordableServicePtr self)"""
+        return _enigma.iRecordableServicePtr_subServices(self)
+
+
+    def getFileExtension(self):
+        """getFileExtension(iRecordableServicePtr self)"""
+        return _enigma.iRecordableServicePtr_getFileExtension(self)
+
 iRecordableServicePtr.__ref__ = new_instancemethod(_enigma.iRecordableServicePtr___ref__, None, iRecordableServicePtr)
 iRecordableServicePtr.getPtrString = new_instancemethod(_enigma.iRecordableServicePtr_getPtrString, None, iRecordableServicePtr)
 iRecordableServicePtr.__deref__ = new_instancemethod(_enigma.iRecordableServicePtr___deref__, None, iRecordableServicePtr)
@@ -1275,6 +2391,31 @@ class iServiceHandlerPtr(object):
     def __init__(self, *args):
         _enigma.iServiceHandlerPtr_swiginit(self, _enigma.new_iServiceHandlerPtr(*args))
     __swig_destroy__ = _enigma.delete_iServiceHandlerPtr
+
+    def play(self, arg2):
+        """play(iServiceHandlerPtr self, eServiceReference arg2)"""
+        return _enigma.iServiceHandlerPtr_play(self, arg2)
+
+
+    def record(self, arg2):
+        """record(iServiceHandlerPtr self, eServiceReference arg2)"""
+        return _enigma.iServiceHandlerPtr_record(self, arg2)
+
+
+    def list(self, arg2):
+        """list(iServiceHandlerPtr self, eServiceReference arg2)"""
+        return _enigma.iServiceHandlerPtr_list(self, arg2)
+
+
+    def info(self, arg2):
+        """info(iServiceHandlerPtr self, eServiceReference arg2)"""
+        return _enigma.iServiceHandlerPtr_info(self, arg2)
+
+
+    def offlineOperations(self, arg2):
+        """offlineOperations(iServiceHandlerPtr self, eServiceReference arg2)"""
+        return _enigma.iServiceHandlerPtr_offlineOperations(self, arg2)
+
 iServiceHandlerPtr.__ref__ = new_instancemethod(_enigma.iServiceHandlerPtr___ref__, None, iServiceHandlerPtr)
 iServiceHandlerPtr.getPtrString = new_instancemethod(_enigma.iServiceHandlerPtr_getPtrString, None, iServiceHandlerPtr)
 iServiceHandlerPtr.__deref__ = new_instancemethod(_enigma.iServiceHandlerPtr___deref__, None, iServiceHandlerPtr)
@@ -1292,13 +2433,18 @@ class eServiceCenter(object):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
-    getInstance = staticmethod(_enigma.eServiceCenter_getInstance)
+
+    def getInstance():
+        """getInstance()"""
+        return _enigma.eServiceCenter_getInstance()
+
+    getInstance = staticmethod(getInstance)
 eServiceCenter_swigregister = _enigma.eServiceCenter_swigregister
 eServiceCenter_swigregister(eServiceCenter)
 
 def eServiceCenter_getInstance():
+    """eServiceCenter_getInstance()"""
     return _enigma.eServiceCenter_getInstance()
-eServiceCenter_getInstance = _enigma.eServiceCenter_getInstance
 
 HTTP_TIMEOUT = _enigma.HTTP_TIMEOUT
 class eGstMsgContainer(object):
@@ -1738,7 +2884,69 @@ class ePoint(object):
     __repr__ = _swig_repr
 
     def __init__(self, *args):
+        """
+        __init__(ePoint self) -> ePoint
+        __init__(ePoint self, int xpos, int ypos) -> ePoint
+        """
         _enigma.ePoint_swiginit(self, _enigma.new_ePoint(*args))
+
+    def isNull(self):
+        """isNull(ePoint self) -> bool"""
+        return _enigma.ePoint_isNull(self)
+
+
+    def x(self):
+        """x(ePoint self) -> int"""
+        return _enigma.ePoint_x(self)
+
+
+    def y(self):
+        """y(ePoint self) -> int"""
+        return _enigma.ePoint_y(self)
+
+
+    def setX(self, x):
+        """setX(ePoint self, int x)"""
+        return _enigma.ePoint_setX(self, x)
+
+
+    def setY(self, y):
+        """setY(ePoint self, int y)"""
+        return _enigma.ePoint_setY(self, y)
+
+
+    def manhattanLength(self):
+        """manhattanLength(ePoint self) -> int"""
+        return _enigma.ePoint_manhattanLength(self)
+
+
+    def rx(self):
+        """rx(ePoint self) -> int &"""
+        return _enigma.ePoint_rx(self)
+
+
+    def ry(self):
+        """ry(ePoint self) -> int &"""
+        return _enigma.ePoint_ry(self)
+
+
+    def __iadd__(self, p):
+        """__iadd__(ePoint self, ePoint p) -> ePoint"""
+        return _enigma.ePoint___iadd__(self, p)
+
+
+    def __isub__(self, p):
+        """__isub__(ePoint self, ePoint p) -> ePoint"""
+        return _enigma.ePoint___isub__(self, p)
+
+
+    def __imul__(self, *args):
+        """
+        __imul__(ePoint self, int c) -> ePoint
+        __imul__(ePoint self, double c) -> ePoint
+        """
+        return _enigma.ePoint___imul__(self, *args)
+
 
     def __itruediv__(self, *args):
         return _enigma.ePoint___itruediv__(self, *args)
@@ -1765,9 +2973,329 @@ class eRect(object):
     __repr__ = _swig_repr
 
     def __init__(self, *args):
+        """
+        __init__(eRect self) -> eRect
+        __init__(eRect self, ePoint topleft, ePoint bottomright) -> eRect
+        __init__(eRect self, ePoint topleft, eSize size) -> eRect
+        __init__(eRect self, eSize size) -> eRect
+        __init__(eRect self, int width, int height) -> eRect
+        __init__(eRect self, int left, int top, int width, int height) -> eRect
+        """
         _enigma.eRect_swiginit(self, _enigma.new_eRect(*args))
-    emptyRect = staticmethod(_enigma.eRect_emptyRect)
-    invalidRect = staticmethod(_enigma.eRect_invalidRect)
+
+    def empty(self):
+        """empty(eRect self) -> bool"""
+        return _enigma.eRect_empty(self)
+
+
+    def valid(self):
+        """valid(eRect self) -> bool"""
+        return _enigma.eRect_valid(self)
+
+
+    def normalize(self):
+        """normalize(eRect self) -> eRect"""
+        return _enigma.eRect_normalize(self)
+
+
+    def left(self):
+        """left(eRect self) -> int"""
+        return _enigma.eRect_left(self)
+
+
+    def top(self):
+        """top(eRect self) -> int"""
+        return _enigma.eRect_top(self)
+
+
+    def right(self):
+        """right(eRect self) -> int"""
+        return _enigma.eRect_right(self)
+
+
+    def bottom(self):
+        """bottom(eRect self) -> int"""
+        return _enigma.eRect_bottom(self)
+
+
+    def rLeft(self):
+        """rLeft(eRect self) -> int &"""
+        return _enigma.eRect_rLeft(self)
+
+
+    def rTop(self):
+        """rTop(eRect self) -> int &"""
+        return _enigma.eRect_rTop(self)
+
+
+    def rRight(self):
+        """rRight(eRect self) -> int &"""
+        return _enigma.eRect_rRight(self)
+
+
+    def rBottom(self):
+        """rBottom(eRect self) -> int &"""
+        return _enigma.eRect_rBottom(self)
+
+
+    def x(self):
+        """x(eRect self) -> int"""
+        return _enigma.eRect_x(self)
+
+
+    def y(self):
+        """y(eRect self) -> int"""
+        return _enigma.eRect_y(self)
+
+
+    def setLeft(self, pos):
+        """setLeft(eRect self, int pos)"""
+        return _enigma.eRect_setLeft(self, pos)
+
+
+    def setTop(self, pos):
+        """setTop(eRect self, int pos)"""
+        return _enigma.eRect_setTop(self, pos)
+
+
+    def setRight(self, pos):
+        """setRight(eRect self, int pos)"""
+        return _enigma.eRect_setRight(self, pos)
+
+
+    def setBottom(self, pos):
+        """setBottom(eRect self, int pos)"""
+        return _enigma.eRect_setBottom(self, pos)
+
+
+    def setX(self, x):
+        """setX(eRect self, int x)"""
+        return _enigma.eRect_setX(self, x)
+
+
+    def setY(self, y):
+        """setY(eRect self, int y)"""
+        return _enigma.eRect_setY(self, y)
+
+
+    def topLeft(self):
+        """topLeft(eRect self) -> ePoint"""
+        return _enigma.eRect_topLeft(self)
+
+
+    def bottomRight(self):
+        """bottomRight(eRect self) -> ePoint"""
+        return _enigma.eRect_bottomRight(self)
+
+
+    def topRight(self):
+        """topRight(eRect self) -> ePoint"""
+        return _enigma.eRect_topRight(self)
+
+
+    def bottomLeft(self):
+        """bottomLeft(eRect self) -> ePoint"""
+        return _enigma.eRect_bottomLeft(self)
+
+
+    def topLeft1(self):
+        """topLeft1(eRect self) -> ePoint"""
+        return _enigma.eRect_topLeft1(self)
+
+
+    def bottomRight1(self):
+        """bottomRight1(eRect self) -> ePoint"""
+        return _enigma.eRect_bottomRight1(self)
+
+
+    def topRight1(self):
+        """topRight1(eRect self) -> ePoint"""
+        return _enigma.eRect_topRight1(self)
+
+
+    def bottomLeft1(self):
+        """bottomLeft1(eRect self) -> ePoint"""
+        return _enigma.eRect_bottomLeft1(self)
+
+
+    def center(self):
+        """center(eRect self) -> ePoint"""
+        return _enigma.eRect_center(self)
+
+
+    def rect(self, x, y, w, h):
+        """rect(eRect self, int * x, int * y, int * w, int * h)"""
+        return _enigma.eRect_rect(self, x, y, w, h)
+
+
+    def coords(self, x1, y1, x2, y2):
+        """coords(eRect self, int * x1, int * y1, int * x2, int * y2)"""
+        return _enigma.eRect_coords(self, x1, y1, x2, y2)
+
+
+    def moveTopLeft(self, p):
+        """moveTopLeft(eRect self, ePoint p)"""
+        return _enigma.eRect_moveTopLeft(self, p)
+
+
+    def moveBottomRight(self, p):
+        """moveBottomRight(eRect self, ePoint p)"""
+        return _enigma.eRect_moveBottomRight(self, p)
+
+
+    def moveTopRight(self, p):
+        """moveTopRight(eRect self, ePoint p)"""
+        return _enigma.eRect_moveTopRight(self, p)
+
+
+    def moveBottomLeft(self, p):
+        """moveBottomLeft(eRect self, ePoint p)"""
+        return _enigma.eRect_moveBottomLeft(self, p)
+
+
+    def moveCenter(self, p):
+        """moveCenter(eRect self, ePoint p)"""
+        return _enigma.eRect_moveCenter(self, p)
+
+
+    def moveBy(self, *args):
+        """
+        moveBy(eRect self, int dx, int dy)
+        moveBy(eRect self, ePoint r)
+        """
+        return _enigma.eRect_moveBy(self, *args)
+
+
+    def setRect(self, x, y, w, h):
+        """setRect(eRect self, int x, int y, int w, int h)"""
+        return _enigma.eRect_setRect(self, x, y, w, h)
+
+
+    def setCoords(self, x1, y1, x2, y2):
+        """setCoords(eRect self, int x1, int y1, int x2, int y2)"""
+        return _enigma.eRect_setCoords(self, x1, y1, x2, y2)
+
+
+    def size(self):
+        """size(eRect self) -> eSize"""
+        return _enigma.eRect_size(self)
+
+
+    def width(self):
+        """width(eRect self) -> int"""
+        return _enigma.eRect_width(self)
+
+
+    def height(self):
+        """height(eRect self) -> int"""
+        return _enigma.eRect_height(self)
+
+
+    def setWidth(self, w):
+        """setWidth(eRect self, int w)"""
+        return _enigma.eRect_setWidth(self, w)
+
+
+    def setHeight(self, h):
+        """setHeight(eRect self, int h)"""
+        return _enigma.eRect_setHeight(self, h)
+
+
+    def setSize(self, s):
+        """setSize(eRect self, eSize s)"""
+        return _enigma.eRect_setSize(self, s)
+
+
+    def setEmpty(self):
+        """setEmpty(eRect self)"""
+        return _enigma.eRect_setEmpty(self)
+
+
+    def __or__(self, r):
+        """__or__(eRect self, eRect r) -> eRect"""
+        return _enigma.eRect___or__(self, r)
+
+
+    def __and__(self, r):
+        """__and__(eRect self, eRect r) -> eRect"""
+        return _enigma.eRect___and__(self, r)
+
+
+    def __ior__(self, r):
+        """__ior__(eRect self, eRect r) -> eRect"""
+        return _enigma.eRect___ior__(self, r)
+
+
+    def __iand__(self, r):
+        """__iand__(eRect self, eRect r) -> eRect"""
+        return _enigma.eRect___iand__(self, r)
+
+
+    def contains(self, *args):
+        """
+        contains(eRect self, ePoint p) -> bool
+        contains(eRect self, int x, int y) -> bool
+        contains(eRect self, eRect r) -> bool
+        """
+        return _enigma.eRect_contains(self, *args)
+
+
+    def unite(self, r):
+        """unite(eRect self, eRect r) -> eRect"""
+        return _enigma.eRect_unite(self, r)
+
+
+    def intersect(self, r):
+        """intersect(eRect self, eRect r) -> eRect"""
+        return _enigma.eRect_intersect(self, r)
+
+
+    def intersects(self, r):
+        """intersects(eRect self, eRect r) -> bool"""
+        return _enigma.eRect_intersects(self, r)
+
+
+    def scaleToCenterOf(self, other):
+        """scaleToCenterOf(eRect self, eRect other)"""
+        return _enigma.eRect_scaleToCenterOf(self, other)
+
+
+    def scaleToWidthOf(self, other):
+        """scaleToWidthOf(eRect self, eRect other)"""
+        return _enigma.eRect_scaleToWidthOf(self, other)
+
+
+    def scaleToHeightOf(self, other):
+        """scaleToHeightOf(eRect self, eRect other)"""
+        return _enigma.eRect_scaleToHeightOf(self, other)
+
+
+    def scaleToFill(self, other):
+        """scaleToFill(eRect self, eRect other)"""
+        return _enigma.eRect_scaleToFill(self, other)
+
+
+    def centerIn(self, other):
+        """centerIn(eRect self, eRect other)"""
+        return _enigma.eRect_centerIn(self, other)
+
+
+    def emptyRect():
+        """emptyRect() -> eRect"""
+        return _enigma.eRect_emptyRect()
+
+    emptyRect = staticmethod(emptyRect)
+
+    def invalidRect():
+        """invalidRect() -> eRect"""
+        return _enigma.eRect_invalidRect()
+
+    invalidRect = staticmethod(invalidRect)
+
+    def scale(self, x_n, x_d, y_n, y_d):
+        """scale(eRect self, int x_n, int x_d, int y_n, int y_d)"""
+        return _enigma.eRect_scale(self, x_n, x_d, y_n, y_d)
+
     __swig_destroy__ = _enigma.delete_eRect
 eRect.empty = new_instancemethod(_enigma.eRect_empty, None, eRect)
 eRect.valid = new_instancemethod(_enigma.eRect_valid, None, eRect)
@@ -1832,19 +3360,109 @@ eRect_swigregister = _enigma.eRect_swigregister
 eRect_swigregister(eRect)
 
 def eRect_emptyRect():
+    """eRect_emptyRect() -> eRect"""
     return _enigma.eRect_emptyRect()
-eRect_emptyRect = _enigma.eRect_emptyRect
 
 def eRect_invalidRect():
+    """eRect_invalidRect() -> eRect"""
     return _enigma.eRect_invalidRect()
-eRect_invalidRect = _enigma.eRect_invalidRect
 
 class eSize(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
     def __init__(self, *args):
+        """
+        __init__(eSize self) -> eSize
+        __init__(eSize self, int w, int h) -> eSize
+        """
         _enigma.eSize_swiginit(self, _enigma.new_eSize(*args))
+
+    def isNull(self):
+        """isNull(eSize self) -> bool"""
+        return _enigma.eSize_isNull(self)
+
+
+    def isEmpty(self):
+        """isEmpty(eSize self) -> bool"""
+        return _enigma.eSize_isEmpty(self)
+
+
+    def isValid(self):
+        """isValid(eSize self) -> bool"""
+        return _enigma.eSize_isValid(self)
+
+
+    def width(self):
+        """width(eSize self) -> int"""
+        return _enigma.eSize_width(self)
+
+
+    def height(self):
+        """height(eSize self) -> int"""
+        return _enigma.eSize_height(self)
+
+
+    def setWidth(self, w):
+        """setWidth(eSize self, int w)"""
+        return _enigma.eSize_setWidth(self, w)
+
+
+    def setHeight(self, h):
+        """setHeight(eSize self, int h)"""
+        return _enigma.eSize_setHeight(self, h)
+
+
+    def transpose(self):
+        """transpose(eSize self)"""
+        return _enigma.eSize_transpose(self)
+
+
+    def scale(self, *args):
+        """
+        scale(eSize self, eSize dst, eSize aspect) -> eSize
+        scale(eSize self, eSize dst) -> eSize
+        """
+        return _enigma.eSize_scale(self, *args)
+
+
+    def expandedTo(self, arg2):
+        """expandedTo(eSize self, eSize arg2) -> eSize"""
+        return _enigma.eSize_expandedTo(self, arg2)
+
+
+    def boundedTo(self, arg2):
+        """boundedTo(eSize self, eSize arg2) -> eSize"""
+        return _enigma.eSize_boundedTo(self, arg2)
+
+
+    def rwidth(self):
+        """rwidth(eSize self) -> int &"""
+        return _enigma.eSize_rwidth(self)
+
+
+    def rheight(self):
+        """rheight(eSize self) -> int &"""
+        return _enigma.eSize_rheight(self)
+
+
+    def __iadd__(self, arg2):
+        """__iadd__(eSize self, eSize arg2) -> eSize"""
+        return _enigma.eSize___iadd__(self, arg2)
+
+
+    def __isub__(self, arg2):
+        """__isub__(eSize self, eSize arg2) -> eSize"""
+        return _enigma.eSize___isub__(self, arg2)
+
+
+    def __imul__(self, *args):
+        """
+        __imul__(eSize self, int c) -> eSize
+        __imul__(eSize self, double c) -> eSize
+        """
+        return _enigma.eSize___imul__(self, *args)
+
 
     def __itruediv__(self, *args):
         return _enigma.eSize___itruediv__(self, *args)
@@ -1876,8 +3494,85 @@ class eMatrix(object):
     __repr__ = _swig_repr
 
     def __init__(self, *args):
+        """
+        __init__(eMatrix self) -> eMatrix
+        __init__(eMatrix self, unsigned int rows, unsigned int columns) -> eMatrix
+        __init__(eMatrix self, eMatrix B) -> eMatrix
+        """
         _enigma.eMatrix_swiginit(self, _enigma.new_eMatrix(*args))
     __swig_destroy__ = _enigma.delete_eMatrix
+
+    def __call__(self, *args):
+        """
+        __call__(eMatrix self, unsigned int i, unsigned int j) -> float
+        __call__(eMatrix self, unsigned int i, unsigned int j) -> float const &
+        """
+        return _enigma.eMatrix___call__(self, *args)
+
+
+    def __eq__(self, B):
+        """__eq__(eMatrix self, eMatrix B) -> bool"""
+        return _enigma.eMatrix___eq__(self, B)
+
+
+    def __ne__(self, B):
+        """__ne__(eMatrix self, eMatrix B) -> bool"""
+        return _enigma.eMatrix___ne__(self, B)
+
+
+    def __imul__(self, *args):
+        """
+        __imul__(eMatrix self, eMatrix B) -> eMatrix
+        __imul__(eMatrix self, float scalar) -> eMatrix
+        """
+        return _enigma.eMatrix___imul__(self, *args)
+
+
+    def __mul__(self, *args):
+        """
+        __mul__(eMatrix self, eMatrix B) -> eMatrix
+        __mul__(eMatrix self, float scalar) -> eMatrix
+        """
+        return _enigma.eMatrix___mul__(self, *args)
+
+
+    def __iadd__(self, B):
+        """__iadd__(eMatrix self, eMatrix B) -> eMatrix"""
+        return _enigma.eMatrix___iadd__(self, B)
+
+
+    def __add__(self, B):
+        """__add__(eMatrix self, eMatrix B) -> eMatrix"""
+        return _enigma.eMatrix___add__(self, B)
+
+
+    def __isub__(self, B):
+        """__isub__(eMatrix self, eMatrix B) -> eMatrix"""
+        return _enigma.eMatrix___isub__(self, B)
+
+
+    def __sub__(self, B):
+        """__sub__(eMatrix self, eMatrix B) -> eMatrix"""
+        return _enigma.eMatrix___sub__(self, B)
+
+
+    def rows(self):
+        """rows(eMatrix self) -> unsigned int"""
+        return _enigma.eMatrix_rows(self)
+
+
+    def columns(self):
+        """columns(eMatrix self) -> unsigned int"""
+        return _enigma.eMatrix_columns(self)
+
+
+    def initialize(self, rows, columns, a=None):
+        """
+        initialize(eMatrix self, unsigned int rows, unsigned int columns, float * a=None)
+        initialize(eMatrix self, unsigned int rows, unsigned int columns)
+        """
+        return _enigma.eMatrix_initialize(self, rows, columns, a)
+
 eMatrix.__call__ = new_instancemethod(_enigma.eMatrix___call__, None, eMatrix)
 eMatrix.__eq__ = new_instancemethod(_enigma.eMatrix___eq__, None, eMatrix)
 eMatrix.__ne__ = new_instancemethod(_enigma.eMatrix___ne__, None, eMatrix)
@@ -1900,6 +3595,10 @@ class eSquareMatrix(eMatrix):
     IdentityMatrix = _enigma.eSquareMatrix_IdentityMatrix
 
     def __init__(self, *args):
+        """
+        __init__(eSquareMatrix self, unsigned int order, enum eSquareMatrix::MatrixType type) -> eSquareMatrix
+        __init__(eSquareMatrix self, unsigned int order) -> eSquareMatrix
+        """
         _enigma.eSquareMatrix_swiginit(self, _enigma.new_eSquareMatrix(*args))
     __swig_destroy__ = _enigma.delete_eSquareMatrix
 eSquareMatrix_swigregister = _enigma.eSquareMatrix_swigregister
@@ -1910,14 +3609,83 @@ class eMatrix4x4(eSquareMatrix):
     __repr__ = _swig_repr
 
     def __init__(self, *args):
+        """
+        __init__(eMatrix4x4 self, enum eSquareMatrix::MatrixType type) -> eMatrix4x4
+        __init__(eMatrix4x4 self) -> eMatrix4x4
+        __init__(eMatrix4x4 self, eMatrix B) -> eMatrix4x4
+        """
         _enigma.eMatrix4x4_swiginit(self, _enigma.new_eMatrix4x4(*args))
-    identity = staticmethod(_enigma.eMatrix4x4_identity)
-    orthographic = staticmethod(_enigma.eMatrix4x4_orthographic)
-    perspective = staticmethod(_enigma.eMatrix4x4_perspective)
-    rotateX = staticmethod(_enigma.eMatrix4x4_rotateX)
-    rotateY = staticmethod(_enigma.eMatrix4x4_rotateY)
-    rotateZ = staticmethod(_enigma.eMatrix4x4_rotateZ)
-    scale = staticmethod(_enigma.eMatrix4x4_scale)
+
+    def __call__(self, *args):
+        """
+        __call__(eMatrix4x4 self, unsigned int i, unsigned int j) -> float
+        __call__(eMatrix4x4 self, unsigned int i, unsigned int j) -> float const &
+        """
+        return _enigma.eMatrix4x4___call__(self, *args)
+
+
+    def __imul__(self, *args):
+        """
+        __imul__(eMatrix4x4 self, eMatrix4x4 B) -> eMatrix4x4
+        __imul__(eMatrix4x4 self, float scalar) -> eMatrix4x4
+        """
+        return _enigma.eMatrix4x4___imul__(self, *args)
+
+
+    def __mul__(self, *args):
+        """
+        __mul__(eMatrix4x4 self, eMatrix4x4 B) -> eMatrix4x4
+        __mul__(eMatrix4x4 self, float scalar) -> eMatrix4x4
+        """
+        return _enigma.eMatrix4x4___mul__(self, *args)
+
+
+    def identity():
+        """identity() -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_identity()
+
+    identity = staticmethod(identity)
+
+    def orthographic(left, right, top, bottom, near, far):
+        """orthographic(float left, float right, float top, float bottom, float near, float far) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_orthographic(left, right, top, bottom, near, far)
+
+    orthographic = staticmethod(orthographic)
+
+    def perspective(angle, near, far, aspect):
+        """perspective(float angle, float near, float far, float aspect) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_perspective(angle, near, far, aspect)
+
+    perspective = staticmethod(perspective)
+
+    def rotateX(deg):
+        """rotateX(float deg) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_rotateX(deg)
+
+    rotateX = staticmethod(rotateX)
+
+    def rotateY(deg):
+        """rotateY(float deg) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_rotateY(deg)
+
+    rotateY = staticmethod(rotateY)
+
+    def rotateZ(deg):
+        """rotateZ(float deg) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_rotateZ(deg)
+
+    rotateZ = staticmethod(rotateZ)
+
+    def scale(x, y, z):
+        """scale(float x, float y, float z) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_scale(x, y, z)
+
+    scale = staticmethod(scale)
+
+    def translate(self, x, y, z):
+        """translate(eMatrix4x4 self, float x, float y, float z) -> eMatrix4x4"""
+        return _enigma.eMatrix4x4_translate(self, x, y, z)
+
     __swig_destroy__ = _enigma.delete_eMatrix4x4
 eMatrix4x4.__call__ = new_instancemethod(_enigma.eMatrix4x4___call__, None, eMatrix4x4)
 eMatrix4x4.__imul__ = new_instancemethod(_enigma.eMatrix4x4___imul__, None, eMatrix4x4)
@@ -1927,39 +3695,56 @@ eMatrix4x4_swigregister = _enigma.eMatrix4x4_swigregister
 eMatrix4x4_swigregister(eMatrix4x4)
 
 def eMatrix4x4_identity():
+    """eMatrix4x4_identity() -> eMatrix4x4"""
     return _enigma.eMatrix4x4_identity()
-eMatrix4x4_identity = _enigma.eMatrix4x4_identity
 
 def eMatrix4x4_orthographic(left, right, top, bottom, near, far):
+    """eMatrix4x4_orthographic(float left, float right, float top, float bottom, float near, float far) -> eMatrix4x4"""
     return _enigma.eMatrix4x4_orthographic(left, right, top, bottom, near, far)
-eMatrix4x4_orthographic = _enigma.eMatrix4x4_orthographic
 
 def eMatrix4x4_perspective(angle, near, far, aspect):
+    """eMatrix4x4_perspective(float angle, float near, float far, float aspect) -> eMatrix4x4"""
     return _enigma.eMatrix4x4_perspective(angle, near, far, aspect)
-eMatrix4x4_perspective = _enigma.eMatrix4x4_perspective
 
 def eMatrix4x4_rotateX(deg):
+    """eMatrix4x4_rotateX(float deg) -> eMatrix4x4"""
     return _enigma.eMatrix4x4_rotateX(deg)
-eMatrix4x4_rotateX = _enigma.eMatrix4x4_rotateX
 
 def eMatrix4x4_rotateY(deg):
+    """eMatrix4x4_rotateY(float deg) -> eMatrix4x4"""
     return _enigma.eMatrix4x4_rotateY(deg)
-eMatrix4x4_rotateY = _enigma.eMatrix4x4_rotateY
 
 def eMatrix4x4_rotateZ(deg):
+    """eMatrix4x4_rotateZ(float deg) -> eMatrix4x4"""
     return _enigma.eMatrix4x4_rotateZ(deg)
-eMatrix4x4_rotateZ = _enigma.eMatrix4x4_rotateZ
 
 def eMatrix4x4_scale(x, y, z):
+    """eMatrix4x4_scale(float x, float y, float z) -> eMatrix4x4"""
     return _enigma.eMatrix4x4_scale(x, y, z)
-eMatrix4x4_scale = _enigma.eMatrix4x4_scale
 
 class eMatrix3d(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
     def __init__(self, rows, columns, planes):
+        """__init__(eMatrix3d self, unsigned int rows, unsigned int columns, unsigned int planes) -> eMatrix3d"""
         _enigma.eMatrix3d_swiginit(self, _enigma.new_eMatrix3d(rows, columns, planes))
+
+    def __call__(self, *args):
+        """
+        __call__(eMatrix3d self, unsigned int i, unsigned int j, unsigned int k) -> float
+        __call__(eMatrix3d self, unsigned int i, unsigned int j, unsigned int k) -> float const &
+        """
+        return _enigma.eMatrix3d___call__(self, *args)
+
+
+    def at(self, *args):
+        """
+        at(eMatrix3d self, size_t n) -> eMatrix
+        at(eMatrix3d self, size_t n) -> eMatrix
+        """
+        return _enigma.eMatrix3d_at(self, *args)
+
     __swig_destroy__ = _enigma.delete_eMatrix3d
 eMatrix3d.__call__ = new_instancemethod(_enigma.eMatrix3d___call__, None, eMatrix3d)
 eMatrix3d.at = new_instancemethod(_enigma.eMatrix3d_at, None, eMatrix3d)
@@ -1971,7 +3756,24 @@ class eMatrix3d4x4(eMatrix3d):
     __repr__ = _swig_repr
 
     def __init__(self, planes):
+        """__init__(eMatrix3d4x4 self, unsigned int planes) -> eMatrix3d4x4"""
         _enigma.eMatrix3d4x4_swiginit(self, _enigma.new_eMatrix3d4x4(planes))
+
+    def __call__(self, *args):
+        """
+        __call__(eMatrix3d4x4 self, unsigned int i, unsigned int j, unsigned int k) -> float
+        __call__(eMatrix3d4x4 self, unsigned int i, unsigned int j, unsigned int k) -> float const &
+        """
+        return _enigma.eMatrix3d4x4___call__(self, *args)
+
+
+    def at(self, *args):
+        """
+        at(eMatrix3d4x4 self, size_t n) -> eMatrix4x4
+        at(eMatrix3d4x4 self, size_t n) -> eMatrix4x4
+        """
+        return _enigma.eMatrix3d4x4_at(self, *args)
+
     __swig_destroy__ = _enigma.delete_eMatrix3d4x4
 eMatrix3d4x4.__call__ = new_instancemethod(_enigma.eMatrix3d4x4___call__, None, eMatrix3d4x4)
 eMatrix3d4x4.at = new_instancemethod(_enigma.eMatrix3d4x4_at, None, eMatrix3d4x4)
@@ -1987,9 +3789,67 @@ class gRGBA(object):
     a = _swig_property(_enigma.gRGBA_a_get, _enigma.gRGBA_a_set)
 
     def __init__(self, *args):
+        """
+        __init__(gRGBA self, unsigned int r, unsigned int g, unsigned int b, unsigned int a=0xff) -> gRGBA
+        __init__(gRGBA self, unsigned int r, unsigned int g, unsigned int b) -> gRGBA
+        __init__(gRGBA self) -> gRGBA
+        """
         _enigma.gRGBA_swiginit(self, _enigma.new_gRGBA(*args))
-    fromArgb = staticmethod(_enigma.gRGBA_fromArgb)
-    premultiplyChannel = staticmethod(_enigma.gRGBA_premultiplyChannel)
+
+    def argb(self):
+        """argb(gRGBA self) -> unsigned int"""
+        return _enigma.gRGBA_argb(self)
+
+
+    def fromArgb(c):
+        """fromArgb(unsigned int c) -> gRGBA"""
+        return _enigma.gRGBA_fromArgb(c)
+
+    fromArgb = staticmethod(fromArgb)
+
+    def __lt__(self, c):
+        """__lt__(gRGBA self, gRGBA c) -> bool"""
+        return _enigma.gRGBA___lt__(self, c)
+
+
+    def __eq__(self, c):
+        """__eq__(gRGBA self, gRGBA c) -> bool"""
+        return _enigma.gRGBA___eq__(self, c)
+
+
+    def __ne__(self, c):
+        """__ne__(gRGBA self, gRGBA c) -> bool"""
+        return _enigma.gRGBA___ne__(self, c)
+
+
+    def premultiplyChannel(c, a):
+        """premultiplyChannel(unsigned long c, unsigned long a) -> unsigned long"""
+        return _enigma.gRGBA_premultiplyChannel(c, a)
+
+    premultiplyChannel = staticmethod(premultiplyChannel)
+
+    def premultiplyAlpha(self):
+        """premultiplyAlpha(gRGBA self) -> gRGBA"""
+        return _enigma.gRGBA_premultiplyAlpha(self)
+
+
+    def set(self, *args):
+        """
+        set(gRGBA self, unsigned int _r, unsigned int _g, unsigned int _b)
+        set(gRGBA self, unsigned int _r, unsigned int _g, unsigned int _b, unsigned int _a)
+        """
+        return _enigma.gRGBA_set(self, *args)
+
+
+    def pixel(self, fmt):
+        """pixel(gRGBA self, gPixelFormat fmt) -> unsigned int"""
+        return _enigma.gRGBA_pixel(self, fmt)
+
+
+    def fromPixel(self, fmt, pixel):
+        """fromPixel(gRGBA self, gPixelFormat fmt, unsigned int pixel)"""
+        return _enigma.gRGBA_fromPixel(self, fmt, pixel)
+
     __swig_destroy__ = _enigma.delete_gRGBA
 gRGBA.argb = new_instancemethod(_enigma.gRGBA_argb, None, gRGBA)
 gRGBA.__lt__ = new_instancemethod(_enigma.gRGBA___lt__, None, gRGBA)
@@ -2003,12 +3863,12 @@ gRGBA_swigregister = _enigma.gRGBA_swigregister
 gRGBA_swigregister(gRGBA)
 
 def gRGBA_fromArgb(c):
+    """gRGBA_fromArgb(unsigned int c) -> gRGBA"""
     return _enigma.gRGBA_fromArgb(c)
-gRGBA_fromArgb = _enigma.gRGBA_fromArgb
 
 def gRGBA_premultiplyChannel(c, a):
+    """gRGBA_premultiplyChannel(unsigned long c, unsigned long a) -> unsigned long"""
     return _enigma.gRGBA_premultiplyChannel(c, a)
-gRGBA_premultiplyChannel = _enigma.gRGBA_premultiplyChannel
 
 class gRGB(gRGBA):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -2016,7 +3876,18 @@ class gRGB(gRGBA):
     a = _swig_property(_enigma.gRGB_a_get, _enigma.gRGB_a_set)
 
     def __init__(self, *args):
+        """
+        __init__(gRGB self, int _r, int _g, int _b, int _a=0) -> gRGB
+        __init__(gRGB self, int _r, int _g, int _b) -> gRGB
+        __init__(gRGB self, unsigned int val) -> gRGB
+        __init__(gRGB self) -> gRGB
+        """
         _enigma.gRGB_swiginit(self, _enigma.new_gRGB(*args))
+
+    def argb(self):
+        """argb(gRGB self) -> unsigned int"""
+        return _enigma.gRGB_argb(self)
+
     __swig_destroy__ = _enigma.delete_gRGB
 gRGB.argb = new_instancemethod(_enigma.gRGB_argb, None, gRGB)
 gRGB_swigregister = _enigma.gRGB_swigregister
@@ -2828,8 +4699,192 @@ class eWidget(object):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eWidget self, eWidget parent) -> eWidget"""
         _enigma.eWidget_swiginit(self, _enigma.new_eWidget(parent))
     __swig_destroy__ = _enigma.delete_eWidget
+
+    def move(self, pos):
+        """move(eWidget self, ePoint pos)"""
+        return _enigma.eWidget_move(self, pos)
+
+
+    def resize(self, size):
+        """resize(eWidget self, eSize size)"""
+        return _enigma.eWidget_resize(self, size)
+
+
+    def position(self):
+        """position(eWidget self) -> ePoint"""
+        return _enigma.eWidget_position(self)
+
+
+    def size(self):
+        """size(eWidget self) -> eSize"""
+        return _enigma.eWidget_size(self)
+
+
+    def csize(self):
+        """csize(eWidget self) -> eSize"""
+        return _enigma.eWidget_csize(self)
+
+
+    def parent(self):
+        """parent(eWidget self) -> eWidget"""
+        return _enigma.eWidget_parent(self)
+
+
+    def parentSize(self):
+        """parentSize(eWidget self) -> eSize"""
+        return _enigma.eWidget_parentSize(self)
+
+
+    def parentCsize(self):
+        """parentCsize(eWidget self) -> eSize"""
+        return _enigma.eWidget_parentCsize(self)
+
+
+    def invalidate(self, *args):
+        """
+        invalidate(eWidget self, gRegion const & region)
+        invalidate(eWidget self)
+        """
+        return _enigma.eWidget_invalidate(self, *args)
+
+
+    def invalidateForAnimation(self):
+        """invalidateForAnimation(eWidget self)"""
+        return _enigma.eWidget_invalidateForAnimation(self)
+
+
+    def child(self):
+        """child(eWidget self) -> eWidget"""
+        return _enigma.eWidget_child(self)
+
+
+    def show(self):
+        """show(eWidget self)"""
+        return _enigma.eWidget_show(self)
+
+
+    def hide(self):
+        """hide(eWidget self)"""
+        return _enigma.eWidget_hide(self)
+
+
+    def doHide(self):
+        """doHide(eWidget self)"""
+        return _enigma.eWidget_doHide(self)
+
+
+    def destruct(self):
+        """destruct(eWidget self)"""
+        return _enigma.eWidget_destruct(self)
+
+
+    def getStyle(self, OUTPUT):
+        """getStyle(eWidget self, eWindowStylePtr OUTPUT)"""
+        return _enigma.eWidget_getStyle(self, OUTPUT)
+
+
+    def setStyle(self, style):
+        """setStyle(eWidget self, eWindowStyle * style)"""
+        return _enigma.eWidget_setStyle(self, style)
+
+
+    def setBackgroundColor(self, col):
+        """setBackgroundColor(eWidget self, gRGB col)"""
+        return _enigma.eWidget_setBackgroundColor(self, col)
+
+
+    def clearBackgroundColor(self):
+        """clearBackgroundColor(eWidget self)"""
+        return _enigma.eWidget_clearBackgroundColor(self)
+
+
+    def setZPosition(self, z):
+        """setZPosition(eWidget self, int z)"""
+        return _enigma.eWidget_setZPosition(self, z)
+
+
+    def setTransparent(self, transp):
+        """setTransparent(eWidget self, int transp)"""
+        return _enigma.eWidget_setTransparent(self, transp)
+
+
+    def isVisible(self):
+        """isVisible(eWidget self) -> int"""
+        return _enigma.eWidget_isVisible(self)
+
+
+    def isFading(self):
+        """isFading(eWidget self) -> bool const"""
+        return _enigma.eWidget_isFading(self)
+
+
+    def disable(self):
+        """disable(eWidget self)"""
+        return _enigma.eWidget_disable(self)
+
+
+    def enable(self):
+        """enable(eWidget self)"""
+        return _enigma.eWidget_enable(self)
+
+
+    def isEnabled(self):
+        """isEnabled(eWidget self) -> bool"""
+        return _enigma.eWidget_isEnabled(self)
+
+
+    def onAnimationFinished(self):
+        """onAnimationFinished(eWidget self)"""
+        return _enigma.eWidget_onAnimationFinished(self)
+
+
+    def signalHideAnimationFinished(self):
+        """signalHideAnimationFinished(eWidget self)"""
+        return _enigma.eWidget_signalHideAnimationFinished(self)
+
+
+    def canAnimate(self):
+        """canAnimate(eWidget self) -> bool"""
+        return _enigma.eWidget_canAnimate(self)
+
+
+    def isFinishedAnimating(self):
+        """isFinishedAnimating(eWidget self) -> bool"""
+        return _enigma.eWidget_isFinishedAnimating(self)
+
+
+    def setParentTitle(self, title):
+        """setParentTitle(eWidget self, std::string const & title)"""
+        return _enigma.eWidget_setParentTitle(self, title)
+
+
+    def setShowHideAnimation(self, key):
+        """setShowHideAnimation(eWidget self, std::string const & key) -> bool"""
+        return _enigma.eWidget_setShowHideAnimation(self, key)
+
+
+    def setPulsate(self, enabled, duration=1000, arg4=0.3, to=1.0):
+        """
+        setPulsate(eWidget self, bool enabled, int64_t duration=1000, float arg4=0.3, float to=1.0)
+        setPulsate(eWidget self, bool enabled, int64_t duration=1000, float arg4=0.3)
+        setPulsate(eWidget self, bool enabled, int64_t duration=1000)
+        setPulsate(eWidget self, bool enabled)
+        """
+        return _enigma.eWidget_setPulsate(self, enabled, duration, arg4, to)
+
+
+    def isTransparent(self):
+        """isTransparent(eWidget self) -> int"""
+        return _enigma.eWidget_isTransparent(self)
+
+
+    def getAbsolutePosition(self):
+        """getAbsolutePosition(eWidget self) -> ePoint"""
+        return _enigma.eWidget_getAbsolutePosition(self)
+
     hideAnimationFinished = _swig_property(_enigma.eWidget_hideAnimationFinished_get, _enigma.eWidget_hideAnimationFinished_set)
     showAnimationFinished = _swig_property(_enigma.eWidget_showAnimationFinished_get, _enigma.eWidget_showAnimationFinished_set)
     m_clip_region = _swig_property(_enigma.eWidget_m_clip_region_get, _enigma.eWidget_m_clip_region_set)
@@ -2848,6 +4903,30 @@ class eWidget(object):
     evtFocusGot = _enigma.eWidget_evtFocusGot
     evtFocusLost = _enigma.eWidget_evtFocusLost
     evtUserWidget = _enigma.eWidget_evtUserWidget
+
+    def event(self, event, data=None, data2=None):
+        """
+        event(eWidget self, int event, void * data=None, void * data2=None) -> int
+        event(eWidget self, int event, void * data=None) -> int
+        event(eWidget self, int event) -> int
+        """
+        return _enigma.eWidget_event(self, event, data, data2)
+
+
+    def setFocus(self, focus):
+        """setFocus(eWidget self, eWidget focus)"""
+        return _enigma.eWidget_setFocus(self, focus)
+
+
+    def setPositionNotifyChild(self, n):
+        """setPositionNotifyChild(eWidget self, int n)"""
+        return _enigma.eWidget_setPositionNotifyChild(self, n)
+
+
+    def notifyShowHide(self):
+        """notifyShowHide(eWidget self)"""
+        return _enigma.eWidget_notifyShowHide(self)
+
 eWidget.move = new_instancemethod(_enigma.eWidget_move, None, eWidget)
 eWidget.resize = new_instancemethod(_enigma.eWidget_resize, None, eWidget)
 eWidget.position = new_instancemethod(_enigma.eWidget_position, None, eWidget)
@@ -2899,8 +4978,32 @@ class eAnimatedWidget(eWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eAnimatedWidget self, eWidget parent) -> eAnimatedWidget"""
         _enigma.eAnimatedWidget_swiginit(self, _enigma.new_eAnimatedWidget(parent))
     __swig_destroy__ = _enigma.delete_eAnimatedWidget
+
+    def setAlphatest(self, flag):
+        """setAlphatest(eAnimatedWidget self, int flag)"""
+        return _enigma.eAnimatedWidget_setAlphatest(self, flag)
+
+
+    def doBlit(self, *args):
+        """
+        doBlit(eAnimatedWidget self, gPainter & painter, gPixmapPtr m_pixmap, eRect scaleDest, bool reverse)
+        doBlit(eAnimatedWidget self, gPainter & painter)
+        """
+        return _enigma.eAnimatedWidget_doBlit(self, *args)
+
+
+    def prepareForChangeAnimation(self):
+        """prepareForChangeAnimation(eAnimatedWidget self) -> bool"""
+        return _enigma.eAnimatedWidget_prepareForChangeAnimation(self)
+
+
+    def setDefaultAnimationEnabled(self, enabled):
+        """setDefaultAnimationEnabled(eAnimatedWidget self, bool enabled)"""
+        return _enigma.eAnimatedWidget_setDefaultAnimationEnabled(self, enabled)
+
 eAnimatedWidget.setAlphatest = new_instancemethod(_enigma.eAnimatedWidget_setAlphatest, None, eAnimatedWidget)
 eAnimatedWidget.doBlit = new_instancemethod(_enigma.eAnimatedWidget_doBlit, None, eAnimatedWidget)
 eAnimatedWidget.prepareForChangeAnimation = new_instancemethod(_enigma.eAnimatedWidget_prepareForChangeAnimation, None, eAnimatedWidget)
@@ -2913,7 +5016,31 @@ class eLabel(eAnimatedWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent, markedPos=-1):
+        """
+        __init__(eLabel self, eWidget parent, int markedPos=-1) -> eLabel
+        __init__(eLabel self, eWidget parent) -> eLabel
+        """
         _enigma.eLabel_swiginit(self, _enigma.new_eLabel(parent, markedPos))
+
+    def setText(self, string):
+        """setText(eLabel self, std::string const & string)"""
+        return _enigma.eLabel_setText(self, string)
+
+
+    def setMarkedPos(self, markedPos):
+        """setMarkedPos(eLabel self, int markedPos)"""
+        return _enigma.eLabel_setMarkedPos(self, markedPos)
+
+
+    def setFont(self, font):
+        """setFont(eLabel self, gFont font)"""
+        return _enigma.eLabel_setFont(self, font)
+
+
+    def getFont(self):
+        """getFont(eLabel self) -> gFont"""
+        return _enigma.eLabel_getFont(self)
+
     alignLeft = _enigma.eLabel_alignLeft
     alignTop = _enigma.eLabel_alignTop
     alignCenter = _enigma.eLabel_alignCenter
@@ -2922,6 +5049,56 @@ class eLabel(eAnimatedWidget):
     alignBlock = _enigma.eLabel_alignBlock
     alignCenterOrBottom = _enigma.eLabel_alignCenterOrBottom
     alignCenterOrRight = _enigma.eLabel_alignCenterOrRight
+
+    def setVAlign(self, align):
+        """setVAlign(eLabel self, int align)"""
+        return _enigma.eLabel_setVAlign(self, align)
+
+
+    def setHAlign(self, align):
+        """setHAlign(eLabel self, int align)"""
+        return _enigma.eLabel_setHAlign(self, align)
+
+
+    def setForegroundColor(self, col):
+        """setForegroundColor(eLabel self, gRGB col)"""
+        return _enigma.eLabel_setForegroundColor(self, col)
+
+
+    def setShadowColor(self, col):
+        """setShadowColor(eLabel self, gRGB col)"""
+        return _enigma.eLabel_setShadowColor(self, col)
+
+
+    def setShadowOffset(self, offset):
+        """setShadowOffset(eLabel self, ePoint offset)"""
+        return _enigma.eLabel_setShadowOffset(self, offset)
+
+
+    def setNoWrap(self, nowrap):
+        """setNoWrap(eLabel self, int nowrap)"""
+        return _enigma.eLabel_setNoWrap(self, nowrap)
+
+
+    def clearForegroundColor(self):
+        """clearForegroundColor(eLabel self)"""
+        return _enigma.eLabel_clearForegroundColor(self)
+
+
+    def setCornerRadius(self, value):
+        """setCornerRadius(eLabel self, unsigned int value)"""
+        return _enigma.eLabel_setCornerRadius(self, value)
+
+
+    def setPadding(self, value):
+        """setPadding(eLabel self, ePoint value)"""
+        return _enigma.eLabel_setPadding(self, value)
+
+
+    def calculateSize(self):
+        """calculateSize(eLabel self) -> eSize"""
+        return _enigma.eLabel_calculateSize(self)
+
     __swig_destroy__ = _enigma.delete_eLabel
 eLabel.setText = new_instancemethod(_enigma.eLabel_setText, None, eLabel)
 eLabel.setMarkedPos = new_instancemethod(_enigma.eLabel_setMarkedPos, None, eLabel)
@@ -2945,7 +5122,69 @@ class ePixmap(eAnimatedWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(ePixmap self, eWidget parent) -> ePixmap"""
         _enigma.ePixmap_swiginit(self, _enigma.new_ePixmap(parent))
+
+    def setPixmap(self, pixmap):
+        """setPixmap(ePixmap self, gPixmapPtr pixmap)"""
+        return _enigma.ePixmap_setPixmap(self, pixmap)
+
+
+    def setPixmapFromFile(self, filename):
+        """setPixmapFromFile(ePixmap self, char const * filename) -> bool"""
+        return _enigma.ePixmap_setPixmapFromFile(self, filename)
+
+
+    def setPixmapFromUI(self, *args):
+        """
+        setPixmapFromUI(ePixmap self, eSize size, int desktop=0) -> bool
+        setPixmapFromUI(ePixmap self, eSize size) -> bool
+        setPixmapFromUI(ePixmap self) -> bool
+        """
+        return _enigma.ePixmap_setPixmapFromUI(self, *args)
+
+
+    def setPixmapFromScreen(self, *args):
+        """
+        setPixmapFromScreen(ePixmap self, eSize size) -> bool
+        setPixmapFromScreen(ePixmap self) -> bool
+        """
+        return _enigma.ePixmap_setPixmapFromScreen(self, *args)
+
+
+    def setPixmapFromVideo(self, *args):
+        """
+        setPixmapFromVideo(ePixmap self, unsigned int decoder=0, eSize size) -> bool
+        setPixmapFromVideo(ePixmap self, unsigned int decoder=0) -> bool
+        setPixmapFromVideo(ePixmap self) -> bool
+        """
+        return _enigma.ePixmap_setPixmapFromVideo(self, *args)
+
+
+    def setScale(self, scale):
+        """setScale(ePixmap self, int scale)"""
+        return _enigma.ePixmap_setScale(self, scale)
+
+
+    def setScaleDest(self, rect):
+        """setScaleDest(ePixmap self, eRect rect)"""
+        return _enigma.ePixmap_setScaleDest(self, rect)
+
+
+    def setBorderWidth(self, pixel):
+        """setBorderWidth(ePixmap self, int pixel)"""
+        return _enigma.ePixmap_setBorderWidth(self, pixel)
+
+
+    def setBorderColor(self, color):
+        """setBorderColor(ePixmap self, gRGB color)"""
+        return _enigma.ePixmap_setBorderColor(self, color)
+
+
+    def setGradient(self, arg2, to, direction):
+        """setGradient(ePixmap self, gRGBA arg2, gRGBA to, int direction)"""
+        return _enigma.ePixmap_setGradient(self, arg2, to, direction)
+
     GRADIENT_HORIZONTAL = _enigma.ePixmap_GRADIENT_HORIZONTAL
     GRADIENT_VERTICAL = _enigma.ePixmap_GRADIENT_VERTICAL
     GRADIENT_HORIZONTAL_CENTERED = _enigma.ePixmap_GRADIENT_HORIZONTAL_CENTERED
@@ -2960,6 +5199,14 @@ class ePixmap(eAnimatedWidget):
     SCALE_TYPE_HEIGHT = _enigma.ePixmap_SCALE_TYPE_HEIGHT
     SCALE_TYPE_STRETCH = _enigma.ePixmap_SCALE_TYPE_STRETCH
     SCALE_TYPE_FILL = _enigma.ePixmap_SCALE_TYPE_FILL
+
+    def save(self, *args):
+        """
+        save(ePixmap self, enum ePixmap::FileFormat fmt, char const * filename) -> bool
+        save(ePixmap self, enum ePixmap::FileFormat fmt) -> BufferPtr
+        """
+        return _enigma.ePixmap_save(self, *args)
+
     __swig_destroy__ = _enigma.delete_ePixmap
 ePixmap.setPixmap = new_instancemethod(_enigma.ePixmap_setPixmap, None, ePixmap)
 ePixmap.setPixmapFromFile = new_instancemethod(_enigma.ePixmap_setPixmapFromFile, None, ePixmap)
@@ -2980,7 +5227,33 @@ class eCanvas(ePixmap):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eCanvas self, eWidget parent) -> eCanvas"""
         _enigma.eCanvas_swiginit(self, _enigma.new_eCanvas(parent))
+
+    def prepareForChangeAnimation(self):
+        """prepareForChangeAnimation(eCanvas self) -> bool"""
+        return _enigma.eCanvas_prepareForChangeAnimation(self)
+
+
+    def setSize(self, size):
+        """setSize(eCanvas self, eSize size)"""
+        return _enigma.eCanvas_setSize(self, size)
+
+
+    def clear(self, color):
+        """clear(eCanvas self, gRGBA color)"""
+        return _enigma.eCanvas_clear(self, color)
+
+
+    def fillRect(self, rect, color):
+        """fillRect(eCanvas self, eRect rect, gRGBA color)"""
+        return _enigma.eCanvas_fillRect(self, rect, color)
+
+
+    def writeText(self, where, fg, bg, font, string, flags):
+        """writeText(eCanvas self, eRect where, gRGBA fg, gRGBA bg, gFont font, char const * string, int flags)"""
+        return _enigma.eCanvas_writeText(self, where, fg, bg, font, string, flags)
+
     __swig_destroy__ = _enigma.delete_eCanvas
 eCanvas.prepareForChangeAnimation = new_instancemethod(_enigma.eCanvas_prepareForChangeAnimation, None, eCanvas)
 eCanvas.setSize = new_instancemethod(_enigma.eCanvas_setSize, None, eCanvas)
@@ -2995,8 +5268,14 @@ class eButton(eLabel):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eButton self, eWidget parent) -> eButton"""
         _enigma.eButton_swiginit(self, _enigma.new_eButton(parent))
     selected = _swig_property(_enigma.eButton_selected_get, _enigma.eButton_selected_set)
+
+    def push(self):
+        """push(eButton self)"""
+        return _enigma.eButton_push(self)
+
     __swig_destroy__ = _enigma.delete_eButton
 eButton.push = new_instancemethod(_enigma.eButton_push, None, eButton)
 eButton_swigregister = _enigma.eButton_swigregister
@@ -3058,9 +5337,99 @@ class eSlider(eWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eSlider self, eWidget parent) -> eSlider"""
         _enigma.eSlider_swiginit(self, _enigma.new_eSlider(parent))
+
+    def setValue(self, val):
+        """setValue(eSlider self, int val)"""
+        return _enigma.eSlider_setValue(self, val)
+
+
+    def setStartEnd(self, start, end):
+        """setStartEnd(eSlider self, int start, int end)"""
+        return _enigma.eSlider_setStartEnd(self, start, end)
+
+
+    def setRange(self, min, max):
+        """setRange(eSlider self, int min, int max)"""
+        return _enigma.eSlider_setRange(self, min, max)
+
     orHorizontal = _enigma.eSlider_orHorizontal
     orVertical = _enigma.eSlider_orVertical
+
+    def setOrientation(self, orientation, swapped=0, reset=False):
+        """
+        setOrientation(eSlider self, int orientation, int swapped=0, bool reset=False)
+        setOrientation(eSlider self, int orientation, int swapped=0)
+        setOrientation(eSlider self, int orientation)
+        """
+        return _enigma.eSlider_setOrientation(self, orientation, swapped, reset)
+
+
+    def setBorderWidth(self, pixel):
+        """setBorderWidth(eSlider self, int pixel)"""
+        return _enigma.eSlider_setBorderWidth(self, pixel)
+
+
+    def setBorderColor(self, color):
+        """setBorderColor(eSlider self, gRGB color)"""
+        return _enigma.eSlider_setBorderColor(self, color)
+
+
+    def setPixmap(self, pixmap):
+        """setPixmap(eSlider self, gPixmapPtr pixmap)"""
+        return _enigma.eSlider_setPixmap(self, pixmap)
+
+
+    def setValuePixmap(self, pixmap):
+        """setValuePixmap(eSlider self, gPixmapPtr pixmap)"""
+        return _enigma.eSlider_setValuePixmap(self, pixmap)
+
+
+    def setBackgroundPixmap(self, pixmap):
+        """setBackgroundPixmap(eSlider self, gPixmapPtr pixmap)"""
+        return _enigma.eSlider_setBackgroundPixmap(self, pixmap)
+
+
+    def setBackgroundPixmapTopHeight(self, value):
+        """setBackgroundPixmapTopHeight(eSlider self, int value)"""
+        return _enigma.eSlider_setBackgroundPixmapTopHeight(self, value)
+
+
+    def setBackgroundPixmapBottomHeight(self, value):
+        """setBackgroundPixmapBottomHeight(eSlider self, int value)"""
+        return _enigma.eSlider_setBackgroundPixmapBottomHeight(self, value)
+
+
+    def setValuePixmapTopHeight(self, value):
+        """setValuePixmapTopHeight(eSlider self, int value)"""
+        return _enigma.eSlider_setValuePixmapTopHeight(self, value)
+
+
+    def setValuePixmapBottomHeight(self, value):
+        """setValuePixmapBottomHeight(eSlider self, int value)"""
+        return _enigma.eSlider_setValuePixmapBottomHeight(self, value)
+
+
+    def clearProperties(self):
+        """clearProperties(eSlider self)"""
+        return _enigma.eSlider_clearProperties(self)
+
+
+    def updateScrollLabelProperties(self, arg2, arg3):
+        """updateScrollLabelProperties(eSlider self, int & arg2, int & arg3)"""
+        return _enigma.eSlider_updateScrollLabelProperties(self, arg2, arg3)
+
+
+    def setBackgroundColor(self, color):
+        """setBackgroundColor(eSlider self, gRGB color)"""
+        return _enigma.eSlider_setBackgroundColor(self, color)
+
+
+    def setForegroundColor(self, color):
+        """setForegroundColor(eSlider self, gRGB color)"""
+        return _enigma.eSlider_setForegroundColor(self, color)
+
     __swig_destroy__ = _enigma.delete_eSlider
 eSlider.setValue = new_instancemethod(_enigma.eSlider_setValue, None, eSlider)
 eSlider.setStartEnd = new_instancemethod(_enigma.eSlider_setStartEnd, None, eSlider)
@@ -3087,8 +5456,49 @@ class ePositionGauge(eWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(ePositionGauge self, eWidget parent) -> ePositionGauge"""
         _enigma.ePositionGauge_swiginit(self, _enigma.new_ePositionGauge(parent))
     __swig_destroy__ = _enigma.delete_ePositionGauge
+
+    def setLength(self, len):
+        """setLength(ePositionGauge self, pts_t const & len)"""
+        return _enigma.ePositionGauge_setLength(self, len)
+
+
+    def setPosition(self, pos):
+        """setPosition(ePositionGauge self, pts_t const & pos)"""
+        return _enigma.ePositionGauge_setPosition(self, pos)
+
+
+    def setInColor(self, color):
+        """setInColor(ePositionGauge self, gRGB color)"""
+        return _enigma.ePositionGauge_setInColor(self, color)
+
+
+    def setPointer(self, which, pixmap, center):
+        """setPointer(ePositionGauge self, int which, gPixmapPtr pixmap, ePoint center)"""
+        return _enigma.ePositionGauge_setPointer(self, which, pixmap, center)
+
+
+    def setInOutList(self, list):
+        """setInOutList(ePositionGauge self, std::list< std::pair< pts_t,unsigned int >,std::allocator< std::pair< pts_t,unsigned int > > > list)"""
+        return _enigma.ePositionGauge_setInOutList(self, list)
+
+
+    def setForegroundColor(self, col):
+        """setForegroundColor(ePositionGauge self, gRGB col)"""
+        return _enigma.ePositionGauge_setForegroundColor(self, col)
+
+
+    def enableSeekPointer(self, enable):
+        """enableSeekPointer(ePositionGauge self, int enable)"""
+        return _enigma.ePositionGauge_enableSeekPointer(self, enable)
+
+
+    def setSeekPosition(self, pos):
+        """setSeekPosition(ePositionGauge self, pts_t const & pos)"""
+        return _enigma.ePositionGauge_setSeekPosition(self, pos)
+
 ePositionGauge.setLength = new_instancemethod(_enigma.ePositionGauge_setLength, None, ePositionGauge)
 ePositionGauge.setPosition = new_instancemethod(_enigma.ePositionGauge_setPosition, None, ePositionGauge)
 ePositionGauge.setInColor = new_instancemethod(_enigma.ePositionGauge_setInColor, None, ePositionGauge)
@@ -3106,13 +5516,170 @@ class eWidgetDesktop(object):
     __repr__ = _swig_repr
 
     def __init__(self, screen):
+        """__init__(eWidgetDesktop self, eSize screen) -> eWidgetDesktop"""
         _enigma.eWidgetDesktop_swiginit(self, _enigma.new_eWidgetDesktop(screen))
     __swig_destroy__ = _enigma.delete_eWidgetDesktop
+
+    def addRootWidget(self, root):
+        """addRootWidget(eWidgetDesktop self, eWidget root)"""
+        return _enigma.eWidgetDesktop_addRootWidget(self, root)
+
+
+    def removeRootWidget(self, root):
+        """removeRootWidget(eWidgetDesktop self, eWidget root)"""
+        return _enigma.eWidgetDesktop_removeRootWidget(self, root)
+
+
+    def movedWidget(self, root):
+        """movedWidget(eWidgetDesktop self, eWidget root) -> bool"""
+        return _enigma.eWidgetDesktop_movedWidget(self, root)
+
+
+    def recalcClipRegions(self, root):
+        """recalcClipRegions(eWidgetDesktop self, eWidget root)"""
+        return _enigma.eWidgetDesktop_recalcClipRegions(self, root)
+
+
+    def invalidate(self, region, widget=None):
+        """
+        invalidate(eWidgetDesktop self, gRegion const & region, eWidget widget=None)
+        invalidate(eWidgetDesktop self, gRegion const & region)
+        """
+        return _enigma.eWidgetDesktop_invalidate(self, region, widget)
+
+
+    def requireNotify(self):
+        """requireNotify(eWidgetDesktop self)"""
+        return _enigma.eWidgetDesktop_requireNotify(self)
+
+
+    def paint(self):
+        """paint(eWidgetDesktop self)"""
+        return _enigma.eWidgetDesktop_paint(self)
+
+
+    def setDC(self, dc):
+        """setDC(eWidgetDesktop self, gDC * dc)"""
+        return _enigma.eWidgetDesktop_setDC(self, dc)
+
+
+    def setBackgroundColor(self, col):
+        """setBackgroundColor(eWidgetDesktop self, gRGBA col)"""
+        return _enigma.eWidgetDesktop_setBackgroundColor(self, col)
+
+
+    def setPalette(self, pm):
+        """setPalette(eWidgetDesktop self, gPixmapPtr pm)"""
+        return _enigma.eWidgetDesktop_setPalette(self, pm)
+
+
+    def setRedrawTask(self, ml):
+        """setRedrawTask(eWidgetDesktop self, eMainloop ml)"""
+        return _enigma.eWidgetDesktop_setRedrawTask(self, ml)
+
+
+    def makeCompatiblePixmap(self, *args):
+        """
+        makeCompatiblePixmap(eWidgetDesktop self, gPixmapPtr pm)
+        makeCompatiblePixmap(eWidgetDesktop self, gPixmap & pm)
+        """
+        return _enigma.eWidgetDesktop_makeCompatiblePixmap(self, *args)
+
+
+    def pixelFormat(self):
+        """pixelFormat(eWidgetDesktop self) -> gPixelFormat"""
+        return _enigma.eWidgetDesktop_pixelFormat(self)
+
     cmImmediate = _enigma.eWidgetDesktop_cmImmediate
     cmBuffered = _enigma.eWidgetDesktop_cmBuffered
+
+    def compositionMode(self):
+        """compositionMode(eWidgetDesktop self) -> int"""
+        return _enigma.eWidgetDesktop_compositionMode(self)
+
+
+    def setCompositionMode(self, mode):
+        """setCompositionMode(eWidgetDesktop self, int mode)"""
+        return _enigma.eWidgetDesktop_setCompositionMode(self, mode)
+
     off = _enigma.eWidgetDesktop_off
     sbs = _enigma.eWidgetDesktop_sbs
     tab = _enigma.eWidgetDesktop_tab
+
+    def get3dMode(self):
+        """get3dMode(eWidgetDesktop self) -> int"""
+        return _enigma.eWidgetDesktop_get3dMode(self)
+
+
+    def set3dMode(self, mode):
+        """set3dMode(eWidgetDesktop self, int mode)"""
+        return _enigma.eWidgetDesktop_set3dMode(self, mode)
+
+
+    def set3dOffset(self, offset):
+        """set3dOffset(eWidgetDesktop self, int offset)"""
+        return _enigma.eWidgetDesktop_set3dOffset(self, offset)
+
+
+    def getStyleID(self):
+        """getStyleID(eWidgetDesktop self) -> int"""
+        return _enigma.eWidgetDesktop_getStyleID(self)
+
+
+    def setStyleID(self, id):
+        """setStyleID(eWidgetDesktop self, int id)"""
+        return _enigma.eWidgetDesktop_setStyleID(self, id)
+
+
+    def resize(self, size):
+        """resize(eWidgetDesktop self, eSize size)"""
+        return _enigma.eWidgetDesktop_resize(self, size)
+
+
+    def size(self):
+        """size(eWidgetDesktop self) -> eSize"""
+        return _enigma.eWidgetDesktop_size(self)
+
+
+    def isDimmable(self):
+        """isDimmable(eWidgetDesktop self) -> bool"""
+        return _enigma.eWidgetDesktop_isDimmable(self)
+
+
+    def createScreenshot(self, pm):
+        """createScreenshot(eWidgetDesktop self, gPixmapPtr pm)"""
+        return _enigma.eWidgetDesktop_createScreenshot(self, pm)
+
+
+    def setFrameTime(self, ms):
+        """setFrameTime(eWidgetDesktop self, int ms)"""
+        return _enigma.eWidgetDesktop_setFrameTime(self, ms)
+
+
+    def isAnimationsEnabled(self):
+        """isAnimationsEnabled(eWidgetDesktop self) -> bool"""
+        return _enigma.eWidgetDesktop_isAnimationsEnabled(self)
+
+
+    def setAnimationsEnabled(self, enabled):
+        """setAnimationsEnabled(eWidgetDesktop self, bool enabled)"""
+        return _enigma.eWidgetDesktop_setAnimationsEnabled(self, enabled)
+
+
+    def isWidgetAnimationsEnabled(self):
+        """isWidgetAnimationsEnabled(eWidgetDesktop self) -> bool"""
+        return _enigma.eWidgetDesktop_isWidgetAnimationsEnabled(self)
+
+
+    def setWidgetAnimationsEnabled(self, enabled):
+        """setWidgetAnimationsEnabled(eWidgetDesktop self, bool enabled)"""
+        return _enigma.eWidgetDesktop_setWidgetAnimationsEnabled(self, enabled)
+
+
+    def flags(self):
+        """flags(eWidgetDesktop self) -> int"""
+        return _enigma.eWidgetDesktop_flags(self)
+
 eWidgetDesktop.addRootWidget = new_instancemethod(_enigma.eWidgetDesktop_addRootWidget, None, eWidgetDesktop)
 eWidgetDesktop.removeRootWidget = new_instancemethod(_enigma.eWidgetDesktop_removeRootWidget, None, eWidgetDesktop)
 eWidgetDesktop.movedWidget = new_instancemethod(_enigma.eWidgetDesktop_movedWidget, None, eWidgetDesktop)
@@ -3373,6 +5940,26 @@ class eListbox(eWidget):
         """
         return _enigma.eListbox_getSelectionRect(self, zoomed)
 
+
+    def itemHeight(self):
+        """itemHeight(eListbox self) -> int"""
+        return _enigma.eListbox_itemHeight(self)
+
+
+    def itemWidth(self):
+        """itemWidth(eListbox self) -> int"""
+        return _enigma.eListbox_itemWidth(self)
+
+
+    def currentPage(self):
+        """currentPage(eListbox self) -> int"""
+        return _enigma.eListbox_currentPage(self)
+
+
+    def totalPages(self):
+        """totalPages(eListbox self) -> int"""
+        return _enigma.eListbox_totalPages(self)
+
 eListbox.setScrollbarMode = new_instancemethod(_enigma.eListbox_setScrollbarMode, None, eListbox)
 eListbox.setupScrollbar = new_instancemethod(_enigma.eListbox_setupScrollbar, None, eListbox)
 eListbox.setWrapAround = new_instancemethod(_enigma.eListbox_setWrapAround, None, eListbox)
@@ -3409,6 +5996,10 @@ eListbox.resetScrollbarProperties = new_instancemethod(_enigma.eListbox_resetScr
 eListbox.getEntryTop = new_instancemethod(_enigma.eListbox_getEntryTop, None, eListbox)
 eListbox.getVisibleItemCount = new_instancemethod(_enigma.eListbox_getVisibleItemCount, None, eListbox)
 eListbox.getSelectionRect = new_instancemethod(_enigma.eListbox_getSelectionRect, None, eListbox)
+eListbox.itemHeight = new_instancemethod(_enigma.eListbox_itemHeight, None, eListbox)
+eListbox.itemWidth = new_instancemethod(_enigma.eListbox_itemWidth, None, eListbox)
+eListbox.currentPage = new_instancemethod(_enigma.eListbox_currentPage, None, eListbox)
+eListbox.totalPages = new_instancemethod(_enigma.eListbox_totalPages, None, eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 
@@ -3421,12 +6012,66 @@ class eListboxPythonStringContent(iListboxContent):
     __repr__ = _swig_repr
 
     def __init__(self, default_item_height=0):
+        """
+        __init__(eListboxPythonStringContent self, int default_item_height=0) -> eListboxPythonStringContent
+        __init__(eListboxPythonStringContent self) -> eListboxPythonStringContent
+        """
         _enigma.eListboxPythonStringContent_swiginit(self, _enigma.new_eListboxPythonStringContent(default_item_height))
     __swig_destroy__ = _enigma.delete_eListboxPythonStringContent
-    setItemHeight = staticmethod(_enigma.eListboxPythonStringContent_setItemHeight)
-    setFont = staticmethod(_enigma.eListboxPythonStringContent_setFont)
-    setLeftOffset = staticmethod(_enigma.eListboxPythonStringContent_setLeftOffset)
-    setRightOffset = staticmethod(_enigma.eListboxPythonStringContent_setRightOffset)
+
+    def setItemHeight(height):
+        """setItemHeight(int height)"""
+        return _enigma.eListboxPythonStringContent_setItemHeight(height)
+
+    setItemHeight = staticmethod(setItemHeight)
+
+    def setFont(fnt):
+        """setFont(gFont fnt)"""
+        return _enigma.eListboxPythonStringContent_setFont(fnt)
+
+    setFont = staticmethod(setFont)
+
+    def setLeftOffset(offset):
+        """setLeftOffset(int offset)"""
+        return _enigma.eListboxPythonStringContent_setLeftOffset(offset)
+
+    setLeftOffset = staticmethod(setLeftOffset)
+
+    def setRightOffset(offset):
+        """setRightOffset(int offset)"""
+        return _enigma.eListboxPythonStringContent_setRightOffset(offset)
+
+    setRightOffset = staticmethod(setRightOffset)
+
+    def setList(self, list):
+        """setList(eListboxPythonStringContent self, PyObject * list)"""
+        return _enigma.eListboxPythonStringContent_setList(self, list)
+
+
+    def getCurrentSelection(self):
+        """getCurrentSelection(eListboxPythonStringContent self) -> PyObject *"""
+        return _enigma.eListboxPythonStringContent_getCurrentSelection(self)
+
+
+    def getCurrentSelectionIndex(self):
+        """getCurrentSelectionIndex(eListboxPythonStringContent self) -> int"""
+        return _enigma.eListboxPythonStringContent_getCurrentSelectionIndex(self)
+
+
+    def invalidateEntry(self, index):
+        """invalidateEntry(eListboxPythonStringContent self, int index)"""
+        return _enigma.eListboxPythonStringContent_invalidateEntry(self, index)
+
+
+    def invalidate(self):
+        """invalidate(eListboxPythonStringContent self)"""
+        return _enigma.eListboxPythonStringContent_invalidate(self)
+
+
+    def getItemSize(self):
+        """getItemSize(eListboxPythonStringContent self) -> eSize"""
+        return _enigma.eListboxPythonStringContent_getItemSize(self)
+
 eListboxPythonStringContent.setList = new_instancemethod(_enigma.eListboxPythonStringContent_setList, None, eListboxPythonStringContent)
 eListboxPythonStringContent.getCurrentSelection = new_instancemethod(_enigma.eListboxPythonStringContent_getCurrentSelection, None, eListboxPythonStringContent)
 eListboxPythonStringContent.getCurrentSelectionIndex = new_instancemethod(_enigma.eListboxPythonStringContent_getCurrentSelectionIndex, None, eListboxPythonStringContent)
@@ -3437,30 +6082,71 @@ eListboxPythonStringContent_swigregister = _enigma.eListboxPythonStringContent_s
 eListboxPythonStringContent_swigregister(eListboxPythonStringContent)
 
 def eListboxPythonStringContent_setItemHeight(height):
+    """eListboxPythonStringContent_setItemHeight(int height)"""
     return _enigma.eListboxPythonStringContent_setItemHeight(height)
-eListboxPythonStringContent_setItemHeight = _enigma.eListboxPythonStringContent_setItemHeight
 
 def eListboxPythonStringContent_setFont(fnt):
+    """eListboxPythonStringContent_setFont(gFont fnt)"""
     return _enigma.eListboxPythonStringContent_setFont(fnt)
-eListboxPythonStringContent_setFont = _enigma.eListboxPythonStringContent_setFont
 
 def eListboxPythonStringContent_setLeftOffset(offset):
+    """eListboxPythonStringContent_setLeftOffset(int offset)"""
     return _enigma.eListboxPythonStringContent_setLeftOffset(offset)
-eListboxPythonStringContent_setLeftOffset = _enigma.eListboxPythonStringContent_setLeftOffset
 
 def eListboxPythonStringContent_setRightOffset(offset):
+    """eListboxPythonStringContent_setRightOffset(int offset)"""
     return _enigma.eListboxPythonStringContent_setRightOffset(offset)
-eListboxPythonStringContent_setRightOffset = _enigma.eListboxPythonStringContent_setRightOffset
 
 class eListboxPythonConfigContent(eListboxPythonStringContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
-    setItemHeight = staticmethod(_enigma.eListboxPythonConfigContent_setItemHeight)
-    setValueFont = staticmethod(_enigma.eListboxPythonConfigContent_setValueFont)
-    setDescriptionFont = staticmethod(_enigma.eListboxPythonConfigContent_setDescriptionFont)
+
+    def setItemHeight(height):
+        """setItemHeight(int height)"""
+        return _enigma.eListboxPythonConfigContent_setItemHeight(height)
+
+    setItemHeight = staticmethod(setItemHeight)
+
+    def setValueFont(fnt):
+        """setValueFont(gFont fnt)"""
+        return _enigma.eListboxPythonConfigContent_setValueFont(fnt)
+
+    setValueFont = staticmethod(setValueFont)
+
+    def setDescriptionFont(fnt):
+        """setDescriptionFont(gFont fnt)"""
+        return _enigma.eListboxPythonConfigContent_setDescriptionFont(fnt)
+
+    setDescriptionFont = staticmethod(setDescriptionFont)
 
     def __init__(self):
+        """__init__(eListboxPythonConfigContent self) -> eListboxPythonConfigContent"""
         _enigma.eListboxPythonConfigContent_swiginit(self, _enigma.new_eListboxPythonConfigContent())
+
+    def paint(self, painter, style, offset, selected):
+        """paint(eListboxPythonConfigContent self, gPainter & painter, eWindowStyle & style, ePoint offset, int selected)"""
+        return _enigma.eListboxPythonConfigContent_paint(self, painter, style, offset, selected)
+
+
+    def setSeparation(self, sep):
+        """setSeparation(eListboxPythonConfigContent self, int sep)"""
+        return _enigma.eListboxPythonConfigContent_setSeparation(self, sep)
+
+
+    def setSeperation(self, sep):
+        """setSeperation(eListboxPythonConfigContent self, int sep)"""
+        return _enigma.eListboxPythonConfigContent_setSeperation(self, sep)
+
+
+    def setDividerHeight(self, height):
+        """setDividerHeight(eListboxPythonConfigContent self, int height)"""
+        return _enigma.eListboxPythonConfigContent_setDividerHeight(self, height)
+
+
+    def currentCursorSelectable(self):
+        """currentCursorSelectable(eListboxPythonConfigContent self) -> int"""
+        return _enigma.eListboxPythonConfigContent_currentCursorSelectable(self)
+
     __swig_destroy__ = _enigma.delete_eListboxPythonConfigContent
 eListboxPythonConfigContent.paint = new_instancemethod(_enigma.eListboxPythonConfigContent_paint, None, eListboxPythonConfigContent)
 eListboxPythonConfigContent.setSeparation = new_instancemethod(_enigma.eListboxPythonConfigContent_setSeparation, None, eListboxPythonConfigContent)
@@ -3471,22 +6157,23 @@ eListboxPythonConfigContent_swigregister = _enigma.eListboxPythonConfigContent_s
 eListboxPythonConfigContent_swigregister(eListboxPythonConfigContent)
 
 def eListboxPythonConfigContent_setItemHeight(height):
+    """eListboxPythonConfigContent_setItemHeight(int height)"""
     return _enigma.eListboxPythonConfigContent_setItemHeight(height)
-eListboxPythonConfigContent_setItemHeight = _enigma.eListboxPythonConfigContent_setItemHeight
 
 def eListboxPythonConfigContent_setValueFont(fnt):
+    """eListboxPythonConfigContent_setValueFont(gFont fnt)"""
     return _enigma.eListboxPythonConfigContent_setValueFont(fnt)
-eListboxPythonConfigContent_setValueFont = _enigma.eListboxPythonConfigContent_setValueFont
 
 def eListboxPythonConfigContent_setDescriptionFont(fnt):
+    """eListboxPythonConfigContent_setDescriptionFont(gFont fnt)"""
     return _enigma.eListboxPythonConfigContent_setDescriptionFont(fnt)
-eListboxPythonConfigContent_setDescriptionFont = _enigma.eListboxPythonConfigContent_setDescriptionFont
 
 class eListboxPythonMultiContent(eListboxPythonStringContent):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eListboxPythonMultiContent self) -> eListboxPythonMultiContent"""
         _enigma.eListboxPythonMultiContent_swiginit(self, _enigma.new_eListboxPythonMultiContent())
     __swig_destroy__ = _enigma.delete_eListboxPythonMultiContent
     TYPE_TEXT = _enigma.eListboxPythonMultiContent_TYPE_TEXT
@@ -3496,6 +6183,92 @@ class eListboxPythonMultiContent(eListboxPythonStringContent):
     TYPE_PIXMAP_ALPHABLEND = _enigma.eListboxPythonMultiContent_TYPE_PIXMAP_ALPHABLEND
     TYPE_PROGRESS_PIXMAP = _enigma.eListboxPythonMultiContent_TYPE_PROGRESS_PIXMAP
     TYPE_TEXT_ALPHABLEND = _enigma.eListboxPythonMultiContent_TYPE_TEXT_ALPHABLEND
+
+    def paint(self, painter, style, offset, selected):
+        """paint(eListboxPythonMultiContent self, gPainter & painter, eWindowStyle & style, ePoint offset, int selected)"""
+        return _enigma.eListboxPythonMultiContent_paint(self, painter, style, offset, selected)
+
+
+    def currentCursorSelectable(self):
+        """currentCursorSelectable(eListboxPythonMultiContent self) -> int"""
+        return _enigma.eListboxPythonMultiContent_currentCursorSelectable(self)
+
+
+    def setList(self, list):
+        """setList(eListboxPythonMultiContent self, PyObject * list)"""
+        return _enigma.eListboxPythonMultiContent_setList(self, list)
+
+
+    def setFont(self, fnt, font):
+        """setFont(eListboxPythonMultiContent self, int fnt, gFont font)"""
+        return _enigma.eListboxPythonMultiContent_setFont(self, fnt, font)
+
+
+    def setBuildFunc(self, func, add_selected_param=False):
+        """
+        setBuildFunc(eListboxPythonMultiContent self, PyObject * func, bool add_selected_param=False)
+        setBuildFunc(eListboxPythonMultiContent self, PyObject * func)
+        """
+        return _enigma.eListboxPythonMultiContent_setBuildFunc(self, func, add_selected_param)
+
+
+    def setSelectableFunc(self, func):
+        """setSelectableFunc(eListboxPythonMultiContent self, PyObject * func)"""
+        return _enigma.eListboxPythonMultiContent_setSelectableFunc(self, func)
+
+
+    def setItemHeight(self, height):
+        """setItemHeight(eListboxPythonMultiContent self, int height)"""
+        return _enigma.eListboxPythonMultiContent_setItemHeight(self, height)
+
+
+    def setItemWidth(self, width):
+        """setItemWidth(eListboxPythonMultiContent self, int width)"""
+        return _enigma.eListboxPythonMultiContent_setItemWidth(self, width)
+
+
+    def getItemWidth(self):
+        """getItemWidth(eListboxPythonMultiContent self) -> int"""
+        return _enigma.eListboxPythonMultiContent_getItemWidth(self)
+
+
+    def setSelectionEnable(self, selectionenabled):
+        """setSelectionEnable(eListboxPythonMultiContent self, int selectionenabled)"""
+        return _enigma.eListboxPythonMultiContent_setSelectionEnable(self, selectionenabled)
+
+
+    def moveSelection(self, direction):
+        """moveSelection(eListboxPythonMultiContent self, int direction)"""
+        return _enigma.eListboxPythonMultiContent_moveSelection(self, direction)
+
+
+    def setSelectionClip(self, rect, update=False):
+        """
+        setSelectionClip(eListboxPythonMultiContent self, eRect rect, bool update=False)
+        setSelectionClip(eListboxPythonMultiContent self, eRect rect)
+        """
+        return _enigma.eListboxPythonMultiContent_setSelectionClip(self, rect, update)
+
+
+    def updateClip(self, arg2):
+        """updateClip(eListboxPythonMultiContent self, gRegion & arg2)"""
+        return _enigma.eListboxPythonMultiContent_updateClip(self, arg2)
+
+
+    def entryRemoved(self, idx):
+        """entryRemoved(eListboxPythonMultiContent self, int idx)"""
+        return _enigma.eListboxPythonMultiContent_entryRemoved(self, idx)
+
+
+    def setTemplate(self, tmplate):
+        """setTemplate(eListboxPythonMultiContent self, PyObject * tmplate)"""
+        return _enigma.eListboxPythonMultiContent_setTemplate(self, tmplate)
+
+
+    def refresh(self):
+        """refresh(eListboxPythonMultiContent self)"""
+        return _enigma.eListboxPythonMultiContent_refresh(self)
+
 eListboxPythonMultiContent.paint = new_instancemethod(_enigma.eListboxPythonMultiContent_paint, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.currentCursorSelectable = new_instancemethod(_enigma.eListboxPythonMultiContent_currentCursorSelectable, None, eListboxPythonMultiContent)
 eListboxPythonMultiContent.setList = new_instancemethod(_enigma.eListboxPythonMultiContent_setList, None, eListboxPythonMultiContent)
@@ -3563,6 +6336,21 @@ class eWindowStylePtr(object):
     def __init__(self, *args):
         _enigma.eWindowStylePtr_swiginit(self, _enigma.new_eWindowStylePtr(*args))
     __swig_destroy__ = _enigma.delete_eWindowStylePtr
+
+    def getColor(self, what, color):
+        """getColor(eWindowStylePtr self, int what, gRGBA color) -> RESULT"""
+        return _enigma.eWindowStylePtr_getColor(self, what, color)
+
+
+    def getListFontSize(self, what):
+        """getListFontSize(eWindowStylePtr self, int what) -> int"""
+        return _enigma.eWindowStylePtr_getListFontSize(self, what)
+
+
+    def getListFontFace(self, what):
+        """getListFontFace(eWindowStylePtr self, int what) -> std::string const"""
+        return _enigma.eWindowStylePtr_getListFontFace(self, what)
+
 eWindowStylePtr.__ref__ = new_instancemethod(_enigma.eWindowStylePtr___ref__, None, eWindowStylePtr)
 eWindowStylePtr.getPtrString = new_instancemethod(_enigma.eWindowStylePtr_getPtrString, None, eWindowStylePtr)
 eWindowStylePtr.__deref__ = new_instancemethod(_enigma.eWindowStylePtr___deref__, None, eWindowStylePtr)
@@ -3597,7 +6385,13 @@ class eWindowStyleSkinned(object):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eWindowStyleSkinned self) -> eWindowStyleSkinned"""
         _enigma.eWindowStyleSkinned_swiginit(self, _enigma.new_eWindowStyleSkinned())
+
+    def setStyle(self, painter, what):
+        """setStyle(eWindowStyleSkinned self, gPainter & painter, int what)"""
+        return _enigma.eWindowStyleSkinned_setStyle(self, painter, what)
+
     bsWindow = _enigma.eWindowStyleSkinned_bsWindow
     bsButton = _enigma.eWindowStyleSkinned_bsButton
     bsListboxEntry = _enigma.eWindowStyleSkinned_bsListboxEntry
@@ -3621,6 +6415,16 @@ class eWindowStyleSkinned(object):
     bpiBottomLeft = _enigma.eWindowStyleSkinned_bpiBottomLeft
     bpiBottom = _enigma.eWindowStyleSkinned_bpiBottom
     bpiBottomRight = _enigma.eWindowStyleSkinned_bpiBottomRight
+
+    def setPixmap(self, bs, bp, pixmap):
+        """setPixmap(eWindowStyleSkinned self, int bs, int bp, gPixmapPtr pixmap)"""
+        return _enigma.eWindowStyleSkinned_setPixmap(self, bs, bp, pixmap)
+
+
+    def setColorBorder(self, bs, bp, color, size):
+        """setColorBorder(eWindowStyleSkinned self, int bs, int bp, gRGB color, int size)"""
+        return _enigma.eWindowStyleSkinned_setColorBorder(self, bs, bp, color, size)
+
     colBackground = _enigma.eWindowStyleSkinned_colBackground
     colLabelForeground = _enigma.eWindowStyleSkinned_colLabelForeground
     colListboxBackground = _enigma.eWindowStyleSkinned_colListboxBackground
@@ -3642,6 +6446,41 @@ class eWindowStyleSkinned(object):
     listFontBigger = _enigma.eWindowStyleSkinned_listFontBigger
     listFontKeyboard = _enigma.eWindowStyleSkinned_listFontKeyboard
     listFontMax = _enigma.eWindowStyleSkinned_listFontMax
+
+    def setColor(self, what, back):
+        """setColor(eWindowStyleSkinned self, int what, gRGBA back)"""
+        return _enigma.eWindowStyleSkinned_setColor(self, what, back)
+
+
+    def getColor(self, what, color):
+        """getColor(eWindowStyleSkinned self, int what, gRGBA color) -> RESULT"""
+        return _enigma.eWindowStyleSkinned_getColor(self, what, color)
+
+
+    def setTitleOffset(self, offset):
+        """setTitleOffset(eWindowStyleSkinned self, eSize offset)"""
+        return _enigma.eWindowStyleSkinned_setTitleOffset(self, offset)
+
+
+    def setTitleFont(self, fnt):
+        """setTitleFont(eWindowStyleSkinned self, gFont fnt)"""
+        return _enigma.eWindowStyleSkinned_setTitleFont(self, fnt)
+
+
+    def setListFont(self, what, size, face):
+        """setListFont(eWindowStyleSkinned self, int what, int size, std::string const & face)"""
+        return _enigma.eWindowStyleSkinned_setListFont(self, what, size, face)
+
+
+    def getListFontSize(self, what):
+        """getListFontSize(eWindowStyleSkinned self, int what) -> int"""
+        return _enigma.eWindowStyleSkinned_getListFontSize(self, what)
+
+
+    def getListFontFace(self, what):
+        """getListFontFace(eWindowStyleSkinned self, int what) -> std::string const"""
+        return _enigma.eWindowStyleSkinned_getListFontFace(self, what)
+
     __swig_destroy__ = _enigma.delete_eWindowStyleSkinned
 eWindowStyleSkinned.setStyle = new_instancemethod(_enigma.eWindowStyleSkinned_setStyle, None, eWindowStyleSkinned)
 eWindowStyleSkinned.setPixmap = new_instancemethod(_enigma.eWindowStyleSkinned_setPixmap, None, eWindowStyleSkinned)
@@ -3661,7 +6500,69 @@ class eWindowStyleScrollbar(object):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eWindowStyleScrollbar self) -> eWindowStyleScrollbar"""
         _enigma.eWindowStyleScrollbar_swiginit(self, _enigma.new_eWindowStyleScrollbar())
+
+    def getColor(self, what, color):
+        """getColor(eWindowStyleScrollbar self, int what, gRGBA color) -> RESULT"""
+        return _enigma.eWindowStyleScrollbar_getColor(self, what, color)
+
+
+    def getListFontSize(self, what):
+        """getListFontSize(eWindowStyleScrollbar self, int what) -> int"""
+        return _enigma.eWindowStyleScrollbar_getListFontSize(self, what)
+
+
+    def getListFontFace(self, what):
+        """getListFontFace(eWindowStyleScrollbar self, int what) -> std::string const"""
+        return _enigma.eWindowStyleScrollbar_getListFontFace(self, what)
+
+
+    def setBackgroundPixmap(self, *args):
+        """
+        setBackgroundPixmap(eWindowStyleScrollbar self, gPixmap * pixmap)
+        setBackgroundPixmap(eWindowStyleScrollbar self, gPixmapPtr pixmap)
+        """
+        return _enigma.eWindowStyleScrollbar_setBackgroundPixmap(self, *args)
+
+
+    def setValuePixmap(self, *args):
+        """
+        setValuePixmap(eWindowStyleScrollbar self, gPixmap * pixmap)
+        setValuePixmap(eWindowStyleScrollbar self, gPixmapPtr pixmap)
+        """
+        return _enigma.eWindowStyleScrollbar_setValuePixmap(self, *args)
+
+
+    def setBackgroundPixmapTopHeight(self, value):
+        """setBackgroundPixmapTopHeight(eWindowStyleScrollbar self, int value)"""
+        return _enigma.eWindowStyleScrollbar_setBackgroundPixmapTopHeight(self, value)
+
+
+    def setBackgroundPixmapBottomHeight(self, value):
+        """setBackgroundPixmapBottomHeight(eWindowStyleScrollbar self, int value)"""
+        return _enigma.eWindowStyleScrollbar_setBackgroundPixmapBottomHeight(self, value)
+
+
+    def setValuePixmapTopHeight(self, value):
+        """setValuePixmapTopHeight(eWindowStyleScrollbar self, int value)"""
+        return _enigma.eWindowStyleScrollbar_setValuePixmapTopHeight(self, value)
+
+
+    def setValuePixmapBottomHeight(self, value):
+        """setValuePixmapBottomHeight(eWindowStyleScrollbar self, int value)"""
+        return _enigma.eWindowStyleScrollbar_setValuePixmapBottomHeight(self, value)
+
+
+    def setScrollbarWidth(self, value):
+        """setScrollbarWidth(eWindowStyleScrollbar self, int value)"""
+        return _enigma.eWindowStyleScrollbar_setScrollbarWidth(self, value)
+
+
+    def setScrollbarBorderWidth(self, value):
+        """setScrollbarBorderWidth(eWindowStyleScrollbar self, int value)"""
+        return _enigma.eWindowStyleScrollbar_setScrollbarBorderWidth(self, value)
+
     __swig_destroy__ = _enigma.delete_eWindowStyleScrollbar
 eWindowStyleScrollbar.getColor = new_instancemethod(_enigma.eWindowStyleScrollbar_getColor, None, eWindowStyleScrollbar)
 eWindowStyleScrollbar.getListFontSize = new_instancemethod(_enigma.eWindowStyleScrollbar_getListFontSize, None, eWindowStyleScrollbar)
@@ -3682,8 +6583,19 @@ class eVideoWidget(eWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eVideoWidget self, eWidget parent) -> eVideoWidget"""
         _enigma.eVideoWidget_swiginit(self, _enigma.new_eVideoWidget(parent))
     __swig_destroy__ = _enigma.delete_eVideoWidget
+
+    def setDecoder(self, target):
+        """setDecoder(eVideoWidget self, int target)"""
+        return _enigma.eVideoWidget_setDecoder(self, target)
+
+
+    def setFBSize(self, size):
+        """setFBSize(eVideoWidget self, eSize size)"""
+        return _enigma.eVideoWidget_setFBSize(self, size)
+
 eVideoWidget.setDecoder = new_instancemethod(_enigma.eVideoWidget_setDecoder, None, eVideoWidget)
 eVideoWidget.setFBSize = new_instancemethod(_enigma.eVideoWidget_setFBSize, None, eVideoWidget)
 eVideoWidget_swigregister = _enigma.eVideoWidget_swigregister
@@ -3694,13 +6606,46 @@ class eSubtitleWidget(eWidget):
     __repr__ = _swig_repr
 
     def __init__(self, parent):
+        """__init__(eSubtitleWidget self, eWidget parent) -> eSubtitleWidget"""
         _enigma.eSubtitleWidget_swiginit(self, _enigma.new_eSubtitleWidget(parent))
+
+    def setPage(self, *args):
+        """
+        setPage(eSubtitleWidget self, eDVBTeletextSubtitlePage const & p)
+        setPage(eSubtitleWidget self, eDVBSubtitlePage const & p)
+        setPage(eSubtitleWidget self, eTextSubtitlePage const & p)
+        """
+        return _enigma.eSubtitleWidget_setPage(self, *args)
+
+
+    def clearPage(self):
+        """clearPage(eSubtitleWidget self)"""
+        return _enigma.eSubtitleWidget_clearPage(self)
+
+
+    def setPixmap(self, *args):
+        """
+        setPixmap(eSubtitleWidget self, gPixmapPtr pixmap, gRegion changed, eRect dest)
+        setPixmap(eSubtitleWidget self, gPixmapPtr pixmap, gRegion changed)
+        """
+        return _enigma.eSubtitleWidget_setPixmap(self, *args)
+
+
+    def setFullscreenPixmap(self, pixmap, changed):
+        """setFullscreenPixmap(eSubtitleWidget self, gPixmapPtr pixmap, gRegion changed)"""
+        return _enigma.eSubtitleWidget_setFullscreenPixmap(self, pixmap, changed)
+
     Subtitle_TTX = _enigma.eSubtitleWidget_Subtitle_TTX
     Subtitle_Regular = _enigma.eSubtitleWidget_Subtitle_Regular
     Subtitle_Bold = _enigma.eSubtitleWidget_Subtitle_Bold
     Subtitle_Italic = _enigma.eSubtitleWidget_Subtitle_Italic
     Subtitle_MAX = _enigma.eSubtitleWidget_Subtitle_MAX
-    setFontStyle = staticmethod(_enigma.eSubtitleWidget_setFontStyle)
+
+    def setFontStyle(face, font, autoColor, col, shadowCol, shadowOffset):
+        """setFontStyle(eSubtitleWidget::subfont_t face, gFont font, int autoColor, gRGB col, gRGB shadowCol, ePoint shadowOffset)"""
+        return _enigma.eSubtitleWidget_setFontStyle(face, font, autoColor, col, shadowCol, shadowOffset)
+
+    setFontStyle = staticmethod(setFontStyle)
     __swig_destroy__ = _enigma.delete_eSubtitleWidget
 eSubtitleWidget.setPage = new_instancemethod(_enigma.eSubtitleWidget_setPage, None, eSubtitleWidget)
 eSubtitleWidget.clearPage = new_instancemethod(_enigma.eSubtitleWidget_clearPage, None, eSubtitleWidget)
@@ -3710,8 +6655,8 @@ eSubtitleWidget_swigregister = _enigma.eSubtitleWidget_swigregister
 eSubtitleWidget_swigregister(eSubtitleWidget)
 
 def eSubtitleWidget_setFontStyle(face, font, autoColor, col, shadowCol, shadowOffset):
+    """eSubtitleWidget_setFontStyle(eSubtitleWidget::subfont_t face, gFont font, int autoColor, gRGB col, gRGB shadowCol, ePoint shadowOffset)"""
     return _enigma.eSubtitleWidget_setFontStyle(face, font, autoColor, col, shadowCol, shadowOffset)
-eSubtitleWidget_setFontStyle = _enigma.eSubtitleWidget_setFontStyle
 
 class Teletext(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -3721,7 +6666,51 @@ class Teletext(object):
     MODE_LOWER_HALF = _enigma.Teletext_MODE_LOWER_HALF
 
     def __init__(self):
+        """__init__(Teletext self) -> Teletext"""
         _enigma.Teletext_swiginit(self, _enigma.new_Teletext())
+
+    def show(self, *args):
+        """
+        show(Teletext self, eWidget parent, ePoint position, eSize size)
+        show(Teletext self, eWidget parent, ePoint position)
+        show(Teletext self, eWidget parent)
+        """
+        return _enigma.Teletext_show(self, *args)
+
+
+    def hide(self):
+        """hide(Teletext self)"""
+        return _enigma.Teletext_hide(self)
+
+
+    def update(self, *args):
+        """
+        update(Teletext self, int x, int y, int width, int height, Teletext::text_mode_t mode, scalefilter_t scalefilter)
+        update(Teletext self, int x, int y, int width, int height, Teletext::text_mode_t mode)
+        update(Teletext self, int x, int y, int width, int height)
+        """
+        return _enigma.Teletext_update(self, *args)
+
+
+    def getRenderBufferOffset(self):
+        """getRenderBufferOffset(Teletext self) -> unsigned int"""
+        return _enigma.Teletext_getRenderBufferOffset(self)
+
+
+    def getRenderBufferStride(self):
+        """getRenderBufferStride(Teletext self) -> unsigned short"""
+        return _enigma.Teletext_getRenderBufferStride(self)
+
+
+    def getRenderBufferFD(self):
+        """getRenderBufferFD(Teletext self) -> int"""
+        return _enigma.Teletext_getRenderBufferFD(self)
+
+
+    def getTextPidsAndName(self, root):
+        """getTextPidsAndName(Teletext self, eServiceReference root) -> std::list< std::tuple< std::string,std::string,int >,std::allocator< std::tuple< std::string,std::string,int > > >"""
+        return _enigma.Teletext_getTextPidsAndName(self, root)
+
     __swig_destroy__ = _enigma.delete_Teletext
 Teletext.show = new_instancemethod(_enigma.Teletext_show, None, Teletext)
 Teletext.hide = new_instancemethod(_enigma.Teletext_hide, None, Teletext)
@@ -3738,7 +6727,114 @@ class eListboxServiceContent(eListboxPythonMultiContent):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eListboxServiceContent self) -> eListboxServiceContent"""
         _enigma.eListboxServiceContent_swiginit(self, _enigma.new_eListboxServiceContent())
+
+    def addService(self, ref, beforeCurrent=False):
+        """
+        addService(eListboxServiceContent self, eServiceReference ref, bool beforeCurrent=False)
+        addService(eListboxServiceContent self, eServiceReference ref)
+        """
+        return _enigma.eListboxServiceContent_addService(self, ref, beforeCurrent)
+
+
+    def removeCurrent(self):
+        """removeCurrent(eListboxServiceContent self)"""
+        return _enigma.eListboxServiceContent_removeCurrent(self)
+
+
+    def FillFinished(self):
+        """FillFinished(eListboxServiceContent self)"""
+        return _enigma.eListboxServiceContent_FillFinished(self)
+
+
+    def setRoot(self, ref, justSet=False):
+        """
+        setRoot(eListboxServiceContent self, eServiceReference ref, bool justSet=False)
+        setRoot(eListboxServiceContent self, eServiceReference ref)
+        """
+        return _enigma.eListboxServiceContent_setRoot(self, ref, justSet)
+
+
+    def getCurrent(self, ref):
+        """getCurrent(eListboxServiceContent self, eServiceReference ref)"""
+        return _enigma.eListboxServiceContent_getCurrent(self, ref)
+
+
+    def getNextBeginningWithChar(self, c):
+        """getNextBeginningWithChar(eListboxServiceContent self, char c) -> int"""
+        return _enigma.eListboxServiceContent_getNextBeginningWithChar(self, c)
+
+
+    def getPrevMarkerPos(self):
+        """getPrevMarkerPos(eListboxServiceContent self) -> int"""
+        return _enigma.eListboxServiceContent_getPrevMarkerPos(self)
+
+
+    def getNextMarkerPos(self):
+        """getNextMarkerPos(eListboxServiceContent self) -> int"""
+        return _enigma.eListboxServiceContent_getNextMarkerPos(self)
+
+
+    def initMarked(self):
+        """initMarked(eListboxServiceContent self)"""
+        return _enigma.eListboxServiceContent_initMarked(self)
+
+
+    def addMarked(self, ref):
+        """addMarked(eListboxServiceContent self, eServiceReference ref)"""
+        return _enigma.eListboxServiceContent_addMarked(self, ref)
+
+
+    def removeMarked(self, ref):
+        """removeMarked(eListboxServiceContent self, eServiceReference ref)"""
+        return _enigma.eListboxServiceContent_removeMarked(self, ref)
+
+
+    def isMarked(self, ref):
+        """isMarked(eListboxServiceContent self, eServiceReference ref) -> int"""
+        return _enigma.eListboxServiceContent_isMarked(self, ref)
+
+
+    def markedQueryStart(self):
+        """markedQueryStart(eListboxServiceContent self)"""
+        return _enigma.eListboxServiceContent_markedQueryStart(self)
+
+
+    def markedQueryNext(self, ref):
+        """markedQueryNext(eListboxServiceContent self, eServiceReference ref) -> int"""
+        return _enigma.eListboxServiceContent_markedQueryNext(self, ref)
+
+
+    def lookupService(self, ref):
+        """lookupService(eListboxServiceContent self, eServiceReference ref) -> int"""
+        return _enigma.eListboxServiceContent_lookupService(self, ref)
+
+
+    def setCurrent(self, ref):
+        """setCurrent(eListboxServiceContent self, eServiceReference ref)"""
+        return _enigma.eListboxServiceContent_setCurrent(self, ref)
+
+
+    def sort(self):
+        """sort(eListboxServiceContent self)"""
+        return _enigma.eListboxServiceContent_sort(self)
+
+
+    def setCurrentMarked(self, arg2):
+        """setCurrentMarked(eListboxServiceContent self, bool arg2) -> int"""
+        return _enigma.eListboxServiceContent_setCurrentMarked(self, arg2)
+
+
+    def isCurrentMarked(self):
+        """isCurrentMarked(eListboxServiceContent self) -> bool"""
+        return _enigma.eListboxServiceContent_isCurrentMarked(self)
+
+
+    def getNumMarkersBeforeCurrent(self):
+        """getNumMarkersBeforeCurrent(eListboxServiceContent self) -> int"""
+        return _enigma.eListboxServiceContent_getNumMarkersBeforeCurrent(self)
+
     __swig_destroy__ = _enigma.delete_eListboxServiceContent
 eListboxServiceContent.addService = new_instancemethod(_enigma.eListboxServiceContent_addService, None, eListboxServiceContent)
 eListboxServiceContent.removeCurrent = new_instancemethod(_enigma.eListboxServiceContent_removeCurrent, None, eListboxServiceContent)
@@ -3770,8 +6866,57 @@ class pNavigation(iObject):
     m_record_event = _swig_property(_enigma.pNavigation_m_record_event_get, _enigma.pNavigation_m_record_event_set)
 
     def __init__(self):
+        """__init__(pNavigation self) -> pNavigation"""
         _enigma.pNavigation_swiginit(self, _enigma.new_pNavigation())
-    getInstance = staticmethod(_enigma.pNavigation_getInstance)
+
+    def playService(self, service):
+        """playService(pNavigation self, eServiceReference service) -> RESULT"""
+        return _enigma.pNavigation_playService(self, service)
+
+
+    def stopService(self):
+        """stopService(pNavigation self) -> RESULT"""
+        return _enigma.pNavigation_stopService(self)
+
+
+    def pause(self, p):
+        """pause(pNavigation self, int p) -> RESULT"""
+        return _enigma.pNavigation_pause(self, p)
+
+
+    def getCurrentService(self):
+        """getCurrentService(pNavigation self)"""
+        return _enigma.pNavigation_getCurrentService(self)
+
+
+    def getCurrentServiceReference(self):
+        """getCurrentServiceReference(pNavigation self)"""
+        return _enigma.pNavigation_getCurrentServiceReference(self)
+
+
+    def recordService(self, ref, simulate):
+        """recordService(pNavigation self, eServiceReference ref, bool simulate)"""
+        return _enigma.pNavigation_recordService(self, ref, simulate)
+
+
+    def stopRecordService(self, service):
+        """stopRecordService(pNavigation self, iRecordableServicePtr service) -> RESULT"""
+        return _enigma.pNavigation_stopRecordService(self, service)
+
+
+    def getRecordings(self, simulate=False):
+        """
+        getRecordings(pNavigation self, bool simulate=False) -> std::list< ePtr< iRecordableService >,std::allocator< ePtr< iRecordableService > > >
+        getRecordings(pNavigation self) -> std::list< ePtr< iRecordableService >,std::allocator< ePtr< iRecordableService > > >
+        """
+        return _enigma.pNavigation_getRecordings(self, simulate)
+
+
+    def getInstance():
+        """getInstance() -> pNavigation"""
+        return _enigma.pNavigation_getInstance()
+
+    getInstance = staticmethod(getInstance)
     __swig_destroy__ = _enigma.delete_pNavigation
 pNavigation.playService = new_instancemethod(_enigma.pNavigation_playService, None, pNavigation)
 pNavigation.stopService = new_instancemethod(_enigma.pNavigation_stopService, None, pNavigation)
@@ -3785,8 +6930,8 @@ pNavigation_swigregister = _enigma.pNavigation_swigregister
 pNavigation_swigregister(pNavigation)
 
 def pNavigation_getInstance():
+    """pNavigation_getInstance() -> pNavigation"""
     return _enigma.pNavigation_getInstance()
-pNavigation_getInstance = _enigma.pNavigation_getInstance
 
 class eActionSlot(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -3854,6 +6999,10 @@ class gFont(iObject):
     __swig_destroy__ = _enigma.delete_gFont
 
     def __init__(self, *args):
+        """
+        __init__(gFont self, std::string const & family, int pointSize) -> gFont
+        __init__(gFont self) -> gFont
+        """
         _enigma.gFont_swiginit(self, _enigma.new_gFont(*args))
 gFont_swigregister = _enigma.gFont_swigregister
 gFont_swigregister(gFont)
@@ -4157,6 +7306,7 @@ class eDVBFrontendParametersSatellite(object):
     pls_code = _swig_property(_enigma.eDVBFrontendParametersSatellite_pls_code_get, _enigma.eDVBFrontendParametersSatellite_pls_code_set)
 
     def __init__(self):
+        """__init__(eDVBFrontendParametersSatellite self) -> eDVBFrontendParametersSatellite"""
         _enigma.eDVBFrontendParametersSatellite_swiginit(self, _enigma.new_eDVBFrontendParametersSatellite())
     __swig_destroy__ = _enigma.delete_eDVBFrontendParametersSatellite
 eDVBFrontendParametersSatellite_swigregister = _enigma.eDVBFrontendParametersSatellite_swigregister
@@ -4189,6 +7339,7 @@ class eDVBFrontendParametersCable(object):
     fec_inner = _swig_property(_enigma.eDVBFrontendParametersCable_fec_inner_get, _enigma.eDVBFrontendParametersCable_fec_inner_set)
 
     def __init__(self):
+        """__init__(eDVBFrontendParametersCable self) -> eDVBFrontendParametersCable"""
         _enigma.eDVBFrontendParametersCable_swiginit(self, _enigma.new_eDVBFrontendParametersCable())
     __swig_destroy__ = _enigma.delete_eDVBFrontendParametersCable
 eDVBFrontendParametersCable_swigregister = _enigma.eDVBFrontendParametersCable_swigregister
@@ -4258,6 +7409,7 @@ class eDVBFrontendParametersTerrestrial(object):
     plp_id = _swig_property(_enigma.eDVBFrontendParametersTerrestrial_plp_id_get, _enigma.eDVBFrontendParametersTerrestrial_plp_id_set)
 
     def __init__(self):
+        """__init__(eDVBFrontendParametersTerrestrial self) -> eDVBFrontendParametersTerrestrial"""
         _enigma.eDVBFrontendParametersTerrestrial_swiginit(self, _enigma.new_eDVBFrontendParametersTerrestrial())
     __swig_destroy__ = _enigma.delete_eDVBFrontendParametersTerrestrial
 eDVBFrontendParametersTerrestrial_swigregister = _enigma.eDVBFrontendParametersTerrestrial_swigregister
@@ -4320,6 +7472,7 @@ class eDVBDiseqcCommand(object):
     __repr__ = _swig_repr
 
     def __init__(self):
+        """__init__(eDVBDiseqcCommand self) -> eDVBDiseqcCommand"""
         _enigma.eDVBDiseqcCommand_swiginit(self, _enigma.new_eDVBDiseqcCommand())
     __swig_destroy__ = _enigma.delete_eDVBDiseqcCommand
 eDVBDiseqcCommand.setCommandString = new_instancemethod(_enigma.eDVBDiseqcCommand_setCommandString, None, eDVBDiseqcCommand)
@@ -4775,8 +7928,37 @@ class eInputDeviceManager(iObject):
         """
         return _enigma.eInputDeviceManager_setLedColor(self, *args)
 
+
+    def setLedColorIr(self, *args):
+        """
+        setLedColorIr(eInputDeviceManager self, uint32_t rgb)
+        setLedColorIr(eInputDeviceManager self, eManagedInputDevicePtr device, uint32_t rgb)
+        """
+        return _enigma.eInputDeviceManager_setLedColorIr(self, *args)
+
+
+    def setIrProtocol(self, device, isRepeat, irProtocol):
+        """setIrProtocol(eInputDeviceManager self, eManagedInputDevicePtr device, bool isRepeat, IrProtocol irProtocol)"""
+        return _enigma.eInputDeviceManager_setIrProtocol(self, device, isRepeat, irProtocol)
+
+
+    def setIrKey(self, device, irKey):
+        """setIrKey(eInputDeviceManager self, eManagedInputDevicePtr device, IrKey irKey)"""
+        return _enigma.eInputDeviceManager_setIrKey(self, device, irKey)
+
+
+    def resetIr(self, device):
+        """resetIr(eInputDeviceManager self, eManagedInputDevicePtr device)"""
+        return _enigma.eInputDeviceManager_resetIr(self, device)
+
+
+    def getIrKeyCount(self, device):
+        """getIrKeyCount(eInputDeviceManager self, eManagedInputDevicePtr device)"""
+        return _enigma.eInputDeviceManager_getIrKeyCount(self, device)
+
     deviceStateChanged = _swig_property(_enigma.eInputDeviceManager_deviceStateChanged_get, _enigma.eInputDeviceManager_deviceStateChanged_set)
     unboundRemoteKeyPressed = _swig_property(_enigma.eInputDeviceManager_unboundRemoteKeyPressed_get, _enigma.eInputDeviceManager_unboundRemoteKeyPressed_set)
+    irKeyCount = _swig_property(_enigma.eInputDeviceManager_irKeyCount_get, _enigma.eInputDeviceManager_irKeyCount_set)
     batteryLow = _swig_property(_enigma.eInputDeviceManager_batteryLow_get, _enigma.eInputDeviceManager_batteryLow_set)
     deviceListChanged = _swig_property(_enigma.eInputDeviceManager_deviceListChanged_get, _enigma.eInputDeviceManager_deviceListChanged_set)
 eInputDeviceManager.start = new_instancemethod(_enigma.eInputDeviceManager_start, None, eInputDeviceManager)
@@ -4793,6 +7975,11 @@ eInputDeviceManager.connectDevice = new_instancemethod(_enigma.eInputDeviceManag
 eInputDeviceManager.disconnectDevice = new_instancemethod(_enigma.eInputDeviceManager_disconnectDevice, None, eInputDeviceManager)
 eInputDeviceManager.vibrate = new_instancemethod(_enigma.eInputDeviceManager_vibrate, None, eInputDeviceManager)
 eInputDeviceManager.setLedColor = new_instancemethod(_enigma.eInputDeviceManager_setLedColor, None, eInputDeviceManager)
+eInputDeviceManager.setLedColorIr = new_instancemethod(_enigma.eInputDeviceManager_setLedColorIr, None, eInputDeviceManager)
+eInputDeviceManager.setIrProtocol = new_instancemethod(_enigma.eInputDeviceManager_setIrProtocol, None, eInputDeviceManager)
+eInputDeviceManager.setIrKey = new_instancemethod(_enigma.eInputDeviceManager_setIrKey, None, eInputDeviceManager)
+eInputDeviceManager.resetIr = new_instancemethod(_enigma.eInputDeviceManager_resetIr, None, eInputDeviceManager)
+eInputDeviceManager.getIrKeyCount = new_instancemethod(_enigma.eInputDeviceManager_getIrKeyCount, None, eInputDeviceManager)
 eInputDeviceManager_swigregister = _enigma.eInputDeviceManager_swigregister
 eInputDeviceManager_swigregister(eInputDeviceManager)
 
@@ -4844,6 +8031,96 @@ eManagedInputDevicePtrList.reverse = new_instancemethod(_enigma.eManagedInputDev
 eManagedInputDevicePtrList_swigregister = _enigma.eManagedInputDevicePtrList_swigregister
 eManagedInputDevicePtrList_swigregister(eManagedInputDevicePtrList)
 
+class IrProtocol(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    carrier_period = _swig_property(_enigma.IrProtocol_carrier_period_get, _enigma.IrProtocol_carrier_period_set)
+    carrier_low = _swig_property(_enigma.IrProtocol_carrier_low_get, _enigma.IrProtocol_carrier_low_set)
+    toggle_mask = _swig_property(_enigma.IrProtocol_toggle_mask_get, _enigma.IrProtocol_toggle_mask_set)
+    startbits = _swig_property(_enigma.IrProtocol_startbits_get, _enigma.IrProtocol_startbits_set)
+    start_ontime = _swig_property(_enigma.IrProtocol_start_ontime_get, _enigma.IrProtocol_start_ontime_set)
+    start_totaltime = _swig_property(_enigma.IrProtocol_start_totaltime_get, _enigma.IrProtocol_start_totaltime_set)
+    one_ontime = _swig_property(_enigma.IrProtocol_one_ontime_get, _enigma.IrProtocol_one_ontime_set)
+    one_totaltime = _swig_property(_enigma.IrProtocol_one_totaltime_get, _enigma.IrProtocol_one_totaltime_set)
+    zero_ontime = _swig_property(_enigma.IrProtocol_zero_ontime_get, _enigma.IrProtocol_zero_ontime_set)
+    zero_totaltime = _swig_property(_enigma.IrProtocol_zero_totaltime_get, _enigma.IrProtocol_zero_totaltime_set)
+    stopbits = _swig_property(_enigma.IrProtocol_stopbits_get, _enigma.IrProtocol_stopbits_set)
+    stop_ontime = _swig_property(_enigma.IrProtocol_stop_ontime_get, _enigma.IrProtocol_stop_ontime_set)
+    stop_totaltime = _swig_property(_enigma.IrProtocol_stop_totaltime_get, _enigma.IrProtocol_stop_totaltime_set)
+    repeat_ms = _swig_property(_enigma.IrProtocol_repeat_ms_get, _enigma.IrProtocol_repeat_ms_set)
+    repeat_id = _swig_property(_enigma.IrProtocol_repeat_id_get, _enigma.IrProtocol_repeat_id_set)
+    IR_PROTO_NEC = _enigma.IrProtocol_IR_PROTO_NEC
+    IR_PROTO_SIRC = _enigma.IrProtocol_IR_PROTO_SIRC
+    IR_PROTO_JVC = _enigma.IrProtocol_IR_PROTO_JVC
+    IR_PROTO_RC5 = _enigma.IrProtocol_IR_PROTO_RC5
+    IR_PROTO_REP_NEC = _enigma.IrProtocol_IR_PROTO_REP_NEC
+    IR_PROTO_REP_JVC = _enigma.IrProtocol_IR_PROTO_REP_JVC
+    IR_PROTO_CUSTOM = _enigma.IrProtocol_IR_PROTO_CUSTOM
+    IR_PROTO_REP_CUSTOM = _enigma.IrProtocol_IR_PROTO_REP_CUSTOM
+
+    def __init__(self, carr_period, carr_low, tggl_mask, strtbits, start_on, start_total, one_on, one_total, zero_on, zero_total, stopbts, stop_on, stop_total, repeat_millis, repeat_proto_id):
+        """__init__(IrProtocol self, uint16_t carr_period, uint16_t carr_low, uint32_t tggl_mask, uint8_t strtbits, uint16_t start_on, uint16_t start_total, uint16_t one_on, uint16_t one_total, uint16_t zero_on, uint16_t zero_total, uint8_t stopbts, uint16_t stop_on, uint16_t stop_total, uint8_t repeat_millis, uint8_t repeat_proto_id) -> IrProtocol"""
+        _enigma.IrProtocol_swiginit(self, _enigma.new_IrProtocol(carr_period, carr_low, tggl_mask, strtbits, start_on, start_total, one_on, one_total, zero_on, zero_total, stopbts, stop_on, stop_total, repeat_millis, repeat_proto_id))
+    __swig_destroy__ = _enigma.delete_IrProtocol
+IrProtocol_swigregister = _enigma.IrProtocol_swigregister
+IrProtocol_swigregister(IrProtocol)
+
+class IrKey(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+    CODE_POWER = _enigma.IrKey_CODE_POWER
+    CODE_MODE = _enigma.IrKey_CODE_MODE
+    CODE_MUTE = _enigma.IrKey_CODE_MUTE
+    CODE_1 = _enigma.IrKey_CODE_1
+    CODE_2 = _enigma.IrKey_CODE_2
+    CODE_3 = _enigma.IrKey_CODE_3
+    CODE_4 = _enigma.IrKey_CODE_4
+    CODE_5 = _enigma.IrKey_CODE_5
+    CODE_6 = _enigma.IrKey_CODE_6
+    CODE_7 = _enigma.IrKey_CODE_7
+    CODE_8 = _enigma.IrKey_CODE_8
+    CODE_9 = _enigma.IrKey_CODE_9
+    CODE_0 = _enigma.IrKey_CODE_0
+    CODE_REWIND = _enigma.IrKey_CODE_REWIND
+    CODE_FASTFORWARD = _enigma.IrKey_CODE_FASTFORWARD
+    CODE_VOLUMEUP = _enigma.IrKey_CODE_VOLUMEUP
+    CODE_VOLUMEDOWN = _enigma.IrKey_CODE_VOLUMEDOWN
+    CODE_EXIT = _enigma.IrKey_CODE_EXIT
+    CODE_CHANNELUP = _enigma.IrKey_CODE_CHANNELUP
+    CODE_CHANNELDOWN = _enigma.IrKey_CODE_CHANNELDOWN
+    CODE_INFO = _enigma.IrKey_CODE_INFO
+    CODE_MENU = _enigma.IrKey_CODE_MENU
+    CODE_AUDIO = _enigma.IrKey_CODE_AUDIO
+    CODE_VIDEO = _enigma.IrKey_CODE_VIDEO
+    CODE_UP = _enigma.IrKey_CODE_UP
+    CODE_DOWN = _enigma.IrKey_CODE_DOWN
+    CODE_LEFT = _enigma.IrKey_CODE_LEFT
+    CODE_RIGHT = _enigma.IrKey_CODE_RIGHT
+    CODE_OK = _enigma.IrKey_CODE_OK
+    CODE_RED = _enigma.IrKey_CODE_RED
+    CODE_GREEN = _enigma.IrKey_CODE_GREEN
+    CODE_YELLOW = _enigma.IrKey_CODE_YELLOW
+    CODE_BLUE = _enigma.IrKey_CODE_BLUE
+    CODE_PREVIOUSSONG = _enigma.IrKey_CODE_PREVIOUSSONG
+    CODE_PLAY = _enigma.IrKey_CODE_PLAY
+    CODE_STOP = _enigma.IrKey_CODE_STOP
+    CODE_NEXSONG = _enigma.IrKey_CODE_NEXSONG
+    CODE_TEXT = _enigma.IrKey_CODE_TEXT
+    CODE_RECORD = _enigma.IrKey_CODE_RECORD
+    keycode = _swig_property(_enigma.IrKey_keycode_get, _enigma.IrKey_keycode_set)
+    protocol_id = _swig_property(_enigma.IrKey_protocol_id_get, _enigma.IrKey_protocol_id_set)
+    make_msg = _swig_property(_enigma.IrKey_make_msg_get, _enigma.IrKey_make_msg_set)
+    make_len = _swig_property(_enigma.IrKey_make_len_get, _enigma.IrKey_make_len_set)
+    break_msg = _swig_property(_enigma.IrKey_break_msg_get, _enigma.IrKey_break_msg_set)
+    break_len = _swig_property(_enigma.IrKey_break_len_get, _enigma.IrKey_break_len_set)
+
+    def __init__(self, keycode, proto_id, make_message, make_message_len, break_message, break_message_len):
+        """__init__(IrKey self, int32_t keycode, uint8_t proto_id, uint32_t make_message, uint8_t make_message_len, uint32_t break_message, uint8_t break_message_len) -> IrKey"""
+        _enigma.IrKey_swiginit(self, _enigma.new_IrKey(keycode, proto_id, make_message, make_message_len, break_message, break_message_len))
+    __swig_destroy__ = _enigma.delete_IrKey
+IrKey_swigregister = _enigma.IrKey_swigregister
+IrKey_swigregister(IrKey)
+
 class eManagedInputDevice(iObject):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
@@ -4869,6 +8146,11 @@ class eManagedInputDevice(iObject):
     def shortName(self):
         """shortName(eManagedInputDevice self) -> std::string const"""
         return _enigma.eManagedInputDevice_shortName(self)
+
+
+    def version(self):
+        """version(eManagedInputDevice self) -> std::string const"""
+        return _enigma.eManagedInputDevice_version(self)
 
 
     def batteryLevel(self):
@@ -4906,6 +8188,14 @@ class eManagedInputDevice(iObject):
         return _enigma.eManagedInputDevice_ready(self)
 
 
+    def checkVersion(self, major, minor=0):
+        """
+        checkVersion(eManagedInputDevice self, uint32_t major, uint32_t minor=0) -> int
+        checkVersion(eManagedInputDevice self, uint32_t major) -> int
+        """
+        return _enigma.eManagedInputDevice_checkVersion(self, major, minor)
+
+
     def connect(self):
         """connect(eManagedInputDevice self)"""
         return _enigma.eManagedInputDevice_connect(self)
@@ -4925,9 +8215,35 @@ class eManagedInputDevice(iObject):
         """setLedColor(eManagedInputDevice self, uint32_t color)"""
         return _enigma.eManagedInputDevice_setLedColor(self, color)
 
+
+    def setLedColorIr(self, color):
+        """setLedColorIr(eManagedInputDevice self, uint32_t color)"""
+        return _enigma.eManagedInputDevice_setLedColorIr(self, color)
+
+
+    def setIrProtocol(self, isRepeat, protocolData):
+        """setIrProtocol(eManagedInputDevice self, bool isRepeat, IrProtocol protocolData)"""
+        return _enigma.eManagedInputDevice_setIrProtocol(self, isRepeat, protocolData)
+
+
+    def setIrKey(self, keyData):
+        """setIrKey(eManagedInputDevice self, IrKey keyData)"""
+        return _enigma.eManagedInputDevice_setIrKey(self, keyData)
+
+
+    def resetIr(self):
+        """resetIr(eManagedInputDevice self)"""
+        return _enigma.eManagedInputDevice_resetIr(self)
+
+
+    def getIrKeyCount(self):
+        """getIrKeyCount(eManagedInputDevice self)"""
+        return _enigma.eManagedInputDevice_getIrKeyCount(self)
+
 eManagedInputDevice.address = new_instancemethod(_enigma.eManagedInputDevice_address, None, eManagedInputDevice)
 eManagedInputDevice.name = new_instancemethod(_enigma.eManagedInputDevice_name, None, eManagedInputDevice)
 eManagedInputDevice.shortName = new_instancemethod(_enigma.eManagedInputDevice_shortName, None, eManagedInputDevice)
+eManagedInputDevice.version = new_instancemethod(_enigma.eManagedInputDevice_version, None, eManagedInputDevice)
 eManagedInputDevice.batteryLevel = new_instancemethod(_enigma.eManagedInputDevice_batteryLevel, None, eManagedInputDevice)
 eManagedInputDevice.rssi = new_instancemethod(_enigma.eManagedInputDevice_rssi, None, eManagedInputDevice)
 eManagedInputDevice.encrypted = new_instancemethod(_enigma.eManagedInputDevice_encrypted, None, eManagedInputDevice)
@@ -4935,10 +8251,16 @@ eManagedInputDevice.state = new_instancemethod(_enigma.eManagedInputDevice_state
 eManagedInputDevice.connected = new_instancemethod(_enigma.eManagedInputDevice_connected, None, eManagedInputDevice)
 eManagedInputDevice.bound = new_instancemethod(_enigma.eManagedInputDevice_bound, None, eManagedInputDevice)
 eManagedInputDevice.ready = new_instancemethod(_enigma.eManagedInputDevice_ready, None, eManagedInputDevice)
+eManagedInputDevice.checkVersion = new_instancemethod(_enigma.eManagedInputDevice_checkVersion, None, eManagedInputDevice)
 eManagedInputDevice.connect = new_instancemethod(_enigma.eManagedInputDevice_connect, None, eManagedInputDevice)
 eManagedInputDevice.disconnect = new_instancemethod(_enigma.eManagedInputDevice_disconnect, None, eManagedInputDevice)
 eManagedInputDevice.vibrate = new_instancemethod(_enigma.eManagedInputDevice_vibrate, None, eManagedInputDevice)
 eManagedInputDevice.setLedColor = new_instancemethod(_enigma.eManagedInputDevice_setLedColor, None, eManagedInputDevice)
+eManagedInputDevice.setLedColorIr = new_instancemethod(_enigma.eManagedInputDevice_setLedColorIr, None, eManagedInputDevice)
+eManagedInputDevice.setIrProtocol = new_instancemethod(_enigma.eManagedInputDevice_setIrProtocol, None, eManagedInputDevice)
+eManagedInputDevice.setIrKey = new_instancemethod(_enigma.eManagedInputDevice_setIrKey, None, eManagedInputDevice)
+eManagedInputDevice.resetIr = new_instancemethod(_enigma.eManagedInputDevice_resetIr, None, eManagedInputDevice)
+eManagedInputDevice.getIrKeyCount = new_instancemethod(_enigma.eManagedInputDevice_getIrKeyCount, None, eManagedInputDevice)
 eManagedInputDevice_swigregister = _enigma.eManagedInputDevice_swigregister
 eManagedInputDevice_swigregister(eManagedInputDevice)
 
@@ -4963,6 +8285,11 @@ class eManagedInputDevicePtr(object):
     def shortName(self):
         """shortName(eManagedInputDevicePtr self) -> std::string const"""
         return _enigma.eManagedInputDevicePtr_shortName(self)
+
+
+    def version(self):
+        """version(eManagedInputDevicePtr self) -> std::string const"""
+        return _enigma.eManagedInputDevicePtr_version(self)
 
 
     def batteryLevel(self):
@@ -5000,6 +8327,14 @@ class eManagedInputDevicePtr(object):
         return _enigma.eManagedInputDevicePtr_ready(self)
 
 
+    def checkVersion(self, major, minor=0):
+        """
+        checkVersion(eManagedInputDevicePtr self, uint32_t major, uint32_t minor=0) -> int
+        checkVersion(eManagedInputDevicePtr self, uint32_t major) -> int
+        """
+        return _enigma.eManagedInputDevicePtr_checkVersion(self, major, minor)
+
+
     def connect(self):
         """connect(eManagedInputDevicePtr self)"""
         return _enigma.eManagedInputDevicePtr_connect(self)
@@ -5019,12 +8354,38 @@ class eManagedInputDevicePtr(object):
         """setLedColor(eManagedInputDevicePtr self, uint32_t color)"""
         return _enigma.eManagedInputDevicePtr_setLedColor(self, color)
 
+
+    def setLedColorIr(self, color):
+        """setLedColorIr(eManagedInputDevicePtr self, uint32_t color)"""
+        return _enigma.eManagedInputDevicePtr_setLedColorIr(self, color)
+
+
+    def setIrProtocol(self, isRepeat, protocolData):
+        """setIrProtocol(eManagedInputDevicePtr self, bool isRepeat, IrProtocol protocolData)"""
+        return _enigma.eManagedInputDevicePtr_setIrProtocol(self, isRepeat, protocolData)
+
+
+    def setIrKey(self, keyData):
+        """setIrKey(eManagedInputDevicePtr self, IrKey keyData)"""
+        return _enigma.eManagedInputDevicePtr_setIrKey(self, keyData)
+
+
+    def resetIr(self):
+        """resetIr(eManagedInputDevicePtr self)"""
+        return _enigma.eManagedInputDevicePtr_resetIr(self)
+
+
+    def getIrKeyCount(self):
+        """getIrKeyCount(eManagedInputDevicePtr self)"""
+        return _enigma.eManagedInputDevicePtr_getIrKeyCount(self)
+
 eManagedInputDevicePtr.__ref__ = new_instancemethod(_enigma.eManagedInputDevicePtr___ref__, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.getPtrString = new_instancemethod(_enigma.eManagedInputDevicePtr_getPtrString, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.__deref__ = new_instancemethod(_enigma.eManagedInputDevicePtr___deref__, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.address = new_instancemethod(_enigma.eManagedInputDevicePtr_address, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.name = new_instancemethod(_enigma.eManagedInputDevicePtr_name, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.shortName = new_instancemethod(_enigma.eManagedInputDevicePtr_shortName, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.version = new_instancemethod(_enigma.eManagedInputDevicePtr_version, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.batteryLevel = new_instancemethod(_enigma.eManagedInputDevicePtr_batteryLevel, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.rssi = new_instancemethod(_enigma.eManagedInputDevicePtr_rssi, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.encrypted = new_instancemethod(_enigma.eManagedInputDevicePtr_encrypted, None, eManagedInputDevicePtr)
@@ -5032,10 +8393,16 @@ eManagedInputDevicePtr.state = new_instancemethod(_enigma.eManagedInputDevicePtr
 eManagedInputDevicePtr.connected = new_instancemethod(_enigma.eManagedInputDevicePtr_connected, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.bound = new_instancemethod(_enigma.eManagedInputDevicePtr_bound, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.ready = new_instancemethod(_enigma.eManagedInputDevicePtr_ready, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.checkVersion = new_instancemethod(_enigma.eManagedInputDevicePtr_checkVersion, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.connect = new_instancemethod(_enigma.eManagedInputDevicePtr_connect, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.disconnect = new_instancemethod(_enigma.eManagedInputDevicePtr_disconnect, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.vibrate = new_instancemethod(_enigma.eManagedInputDevicePtr_vibrate, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.setLedColor = new_instancemethod(_enigma.eManagedInputDevicePtr_setLedColor, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.setLedColorIr = new_instancemethod(_enigma.eManagedInputDevicePtr_setLedColorIr, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.setIrProtocol = new_instancemethod(_enigma.eManagedInputDevicePtr_setIrProtocol, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.setIrKey = new_instancemethod(_enigma.eManagedInputDevicePtr_setIrKey, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.resetIr = new_instancemethod(_enigma.eManagedInputDevicePtr_resetIr, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.getIrKeyCount = new_instancemethod(_enigma.eManagedInputDevicePtr_getIrKeyCount, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr_swigregister = _enigma.eManagedInputDevicePtr_swigregister
 eManagedInputDevicePtr_swigregister(eManagedInputDevicePtr)
 
@@ -7279,6 +10646,7 @@ class eVideoMode(object):
     value = _swig_property(_enigma.eVideoMode_value_get, _enigma.eVideoMode_value_set)
 
     def __init__(self):
+        """__init__(_eVideoMode self) -> eVideoMode"""
         _enigma.eVideoMode_swiginit(self, _enigma.new_eVideoMode())
     __swig_destroy__ = _enigma.delete_eVideoMode
 eVideoMode_swigregister = _enigma.eVideoMode_swigregister
@@ -7291,6 +10659,7 @@ class eVideoPort(object):
     modesPreferred = _swig_property(_enigma.eVideoPort_modesPreferred_get, _enigma.eVideoPort_modesPreferred_set)
 
     def __init__(self):
+        """__init__(_eVideoPort self) -> eVideoPort"""
         _enigma.eVideoPort_swiginit(self, _enigma.new_eVideoPort())
     __swig_destroy__ = _enigma.delete_eVideoPort
 eVideoPort_swigregister = _enigma.eVideoPort_swigregister
@@ -7304,6 +10673,7 @@ class ePropertyRange(object):
     defaultValue = _swig_property(_enigma.ePropertyRange_defaultValue_get, _enigma.ePropertyRange_defaultValue_set)
 
     def __init__(self):
+        """__init__(_ePropertyRange self) -> ePropertyRange"""
         _enigma.ePropertyRange_swiginit(self, _enigma.new_ePropertyRange())
     __swig_destroy__ = _enigma.delete_ePropertyRange
 ePropertyRange_swigregister = _enigma.ePropertyRange_swigregister
@@ -8313,6 +11683,36 @@ class eMMI_UI(object):
     def __init__(self, *args, **kwargs):
         raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
+
+    def getState(self, slot):
+        """getState(eMMI_UI self, int slot) -> int"""
+        return _enigma.eMMI_UI_getState(self, slot)
+
+
+    def setState(self, slot, state):
+        """setState(eMMI_UI self, int slot, int state)"""
+        return _enigma.eMMI_UI_setState(self, slot, state)
+
+
+    def getAppName(self, slot):
+        """getAppName(eMMI_UI self, int slot) -> std::string"""
+        return _enigma.eMMI_UI_getAppName(self, slot)
+
+
+    def setAppName(self, slot, name):
+        """setAppName(eMMI_UI self, int slot, char const * name)"""
+        return _enigma.eMMI_UI_setAppName(self, slot, name)
+
+
+    def availableMMI(self, slot):
+        """availableMMI(eMMI_UI self, int slot) -> int"""
+        return _enigma.eMMI_UI_availableMMI(self, slot)
+
+
+    def getMMIScreen(self, slot):
+        """getMMIScreen(eMMI_UI self, int slot) -> std::list< boost::any,std::allocator< boost::any > > &"""
+        return _enigma.eMMI_UI_getMMIScreen(self, slot)
+
 eMMI_UI.getState = new_instancemethod(_enigma.eMMI_UI_getState, None, eMMI_UI)
 eMMI_UI.setState = new_instancemethod(_enigma.eMMI_UI_setState, None, eMMI_UI)
 eMMI_UI.getAppName = new_instancemethod(_enigma.eMMI_UI_getAppName, None, eMMI_UI)
@@ -8354,7 +11754,57 @@ class eDVBCI_UI(eMMI_UI):
     rateNormal = _enigma.eDVBCI_UI_rateNormal
     rateHigh = _enigma.eDVBCI_UI_rateHigh
     ciStateChanged = _swig_property(_enigma.eDVBCI_UI_ciStateChanged_get, _enigma.eDVBCI_UI_ciStateChanged_set)
-    getInstance = staticmethod(_enigma.eDVBCI_UI_getInstance)
+
+    def getInstance():
+        """getInstance() -> eDVBCI_UI"""
+        return _enigma.eDVBCI_UI_getInstance()
+
+    getInstance = staticmethod(getInstance)
+
+    def setInit(self, slot):
+        """setInit(eDVBCI_UI self, int slot)"""
+        return _enigma.eDVBCI_UI_setInit(self, slot)
+
+
+    def setReset(self, slot):
+        """setReset(eDVBCI_UI self, int slot)"""
+        return _enigma.eDVBCI_UI_setReset(self, slot)
+
+
+    def startMMI(self, slot):
+        """startMMI(eDVBCI_UI self, int slot) -> int"""
+        return _enigma.eDVBCI_UI_startMMI(self, slot)
+
+
+    def stopMMI(self, slot):
+        """stopMMI(eDVBCI_UI self, int slot) -> int"""
+        return _enigma.eDVBCI_UI_stopMMI(self, slot)
+
+
+    def getMMIState(self, slot):
+        """getMMIState(eDVBCI_UI self, int slot) -> int"""
+        return _enigma.eDVBCI_UI_getMMIState(self, slot)
+
+
+    def answerMenu(self, slot, answer):
+        """answerMenu(eDVBCI_UI self, int slot, int answer) -> int"""
+        return _enigma.eDVBCI_UI_answerMenu(self, slot, answer)
+
+
+    def answerEnq(self, slot, val):
+        """answerEnq(eDVBCI_UI self, int slot, char * val) -> int"""
+        return _enigma.eDVBCI_UI_answerEnq(self, slot, val)
+
+
+    def cancelEnq(self, slot):
+        """cancelEnq(eDVBCI_UI self, int slot) -> int"""
+        return _enigma.eDVBCI_UI_cancelEnq(self, slot)
+
+
+    def setClockRate(self, slot, rate):
+        """setClockRate(eDVBCI_UI self, int slot, int rate) -> int"""
+        return _enigma.eDVBCI_UI_setClockRate(self, slot, rate)
+
     __swig_destroy__ = _enigma.delete_eDVBCI_UI
 eDVBCI_UI.setInit = new_instancemethod(_enigma.eDVBCI_UI_setInit, None, eDVBCI_UI)
 eDVBCI_UI.setReset = new_instancemethod(_enigma.eDVBCI_UI_setReset, None, eDVBCI_UI)
@@ -8369,8 +11819,8 @@ eDVBCI_UI_swigregister = _enigma.eDVBCI_UI_swigregister
 eDVBCI_UI_swigregister(eDVBCI_UI)
 
 def eDVBCI_UI_getInstance():
+    """eDVBCI_UI_getInstance() -> eDVBCI_UI"""
     return _enigma.eDVBCI_UI_getInstance()
-eDVBCI_UI_getInstance = _enigma.eDVBCI_UI_getInstance
 
 class eDVBDB(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -8406,11 +11856,52 @@ class ePicLoad(iObject):
     PictureData = _swig_property(_enigma.ePicLoad_PictureData_get, _enigma.ePicLoad_PictureData_set)
 
     def __init__(self):
+        """__init__(ePicLoad self) -> ePicLoad"""
         _enigma.ePicLoad_swiginit(self, _enigma.new_ePicLoad())
     __swig_destroy__ = _enigma.delete_ePicLoad
+
+    def startDecode(self, filename, async=True):
+        """
+        startDecode(ePicLoad self, char const * filename, bool async=True) -> RESULT
+        startDecode(ePicLoad self, char const * filename) -> RESULT
+        """
+        return _enigma.ePicLoad_startDecode(self, filename, async)
+
+
+    def getThumbnail(self, filename):
+        """getThumbnail(ePicLoad self, char const * filename) -> RESULT"""
+        return _enigma.ePicLoad_getThumbnail(self, filename)
+
+
+    def setPara(self, arg2):
+        """setPara(std::tuple(int maxX, int maxY, int aspectX, int aspectY, int useCache, int scaleMode, std::string backgroundColor) -> RESULT"""
+        return _enigma.ePicLoad_setPara(self, arg2)
+
+
+    def setParameters(self, *args):
+        """
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio, bool useCache=False, int scaleMode, uint32_t backgroundColor=0xFF000000) -> RESULT
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio, bool useCache=False, int scaleMode) -> RESULT
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio, bool useCache=False) -> RESULT
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio) -> RESULT
+        setParameters(ePicLoad self, eSize size) -> RESULT
+        """
+        return _enigma.ePicLoad_setParameters(self, *args)
+
+
+    def getInfo(self, filename):
+        """getInfo(ePicLoad self, char const * filename) -> StringList"""
+        return _enigma.ePicLoad_getInfo(self, filename)
+
+
+    def getData(self):
+        """getData(ePicLoad self)"""
+        return _enigma.ePicLoad_getData(self)
+
 ePicLoad.startDecode = new_instancemethod(_enigma.ePicLoad_startDecode, None, ePicLoad)
 ePicLoad.getThumbnail = new_instancemethod(_enigma.ePicLoad_getThumbnail, None, ePicLoad)
 ePicLoad.setPara = new_instancemethod(_enigma.ePicLoad_setPara, None, ePicLoad)
+ePicLoad.setParameters = new_instancemethod(_enigma.ePicLoad_setParameters, None, ePicLoad)
 ePicLoad.getInfo = new_instancemethod(_enigma.ePicLoad_getInfo, None, ePicLoad)
 ePicLoad.getData = new_instancemethod(_enigma.ePicLoad_getData, None, ePicLoad)
 ePicLoad_swigregister = _enigma.ePicLoad_swigregister
@@ -8418,21 +11909,32 @@ ePicLoad_swigregister(ePicLoad)
 
 
 def loadPic(*args):
+    """
+    loadPic(std::string const & filename, int x, int y, int aspect, int resize_mode=0, int rotate=0, int background=0, std::string const & cachefile)
+    loadPic(std::string const & filename, int x, int y, int aspect, int resize_mode=0, int rotate=0, int background=0)
+    loadPic(std::string const & filename, int x, int y, int aspect, int resize_mode=0, int rotate=0)
+    loadPic(std::string const & filename, int x, int y, int aspect, int resize_mode=0)
+    loadPic(std::string const & filename, int x, int y, int aspect)
+    """
     return _enigma.loadPic(*args)
-loadPic = _enigma.loadPic
 class cecAddr(object):
+    """Proxy of C++ cecAddr class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     phys = _swig_property(_enigma.cecAddr_phys_get, _enigma.cecAddr_phys_set)
     log = _swig_property(_enigma.cecAddr_log_get, _enigma.cecAddr_log_set)
 
     def __init__(self):
+        """__init__(cecAddr self) -> cecAddr"""
         _enigma.cecAddr_swiginit(self, _enigma.new_cecAddr())
     __swig_destroy__ = _enigma.delete_cecAddr
 cecAddr_swigregister = _enigma.cecAddr_swigregister
 cecAddr_swigregister(cecAddr)
 
 class cecMessage(object):
+    """Proxy of C++ cecMessage class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     dest = _swig_property(_enigma.cecMessage_dest_get, _enigma.cecMessage_dest_set)
@@ -8440,12 +11942,15 @@ class cecMessage(object):
     len = _swig_property(_enigma.cecMessage_len_get, _enigma.cecMessage_len_set)
 
     def __init__(self):
+        """__init__(cecMessage self) -> cecMessage"""
         _enigma.cecMessage_swiginit(self, _enigma.new_cecMessage())
     __swig_destroy__ = _enigma.delete_cecMessage
 cecMessage_swigregister = _enigma.cecMessage_swigregister
 cecMessage_swigregister(cecMessage)
 
 class eCec(object):
+    """Proxy of C++ eCec class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     MSG_FEATURE_ABORT = _enigma.eCec_MSG_FEATURE_ABORT
@@ -8873,12 +12378,38 @@ def eCec_convert(value, len, data):
     return _enigma.eCec_convert(value, len, data)
 
 class eCecDevice(iObject):
+    """Proxy of C++ eCecDevice class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
     def __init__(self, *args):
+        """
+        __init__(eCecDevice self, uint8_t laddr) -> eCecDevice
+        __init__(eCecDevice self) -> eCecDevice
+        """
         _enigma.eCecDevice_swiginit(self, _enigma.new_eCecDevice(*args))
     __swig_destroy__ = _enigma.delete_eCecDevice
+
+    def logicalAddress(self):
+        """logicalAddress(eCecDevice self) -> uint8_t"""
+        return _enigma.eCecDevice_logicalAddress(self)
+
+
+    def vendor(self):
+        """vendor(eCecDevice self) -> uint32_t"""
+        return _enigma.eCecDevice_vendor(self)
+
+
+    def readableVendor(self):
+        """readableVendor(eCecDevice self) -> std::string"""
+        return _enigma.eCecDevice_readableVendor(self)
+
+
+    def deviceName(self):
+        """deviceName(eCecDevice self) -> std::string"""
+        return _enigma.eCecDevice_deviceName(self)
+
 eCecDevice.logicalAddress = new_instancemethod(_enigma.eCecDevice_logicalAddress, None, eCecDevice)
 eCecDevice.vendor = new_instancemethod(_enigma.eCecDevice_vendor, None, eCecDevice)
 eCecDevice.readableVendor = new_instancemethod(_enigma.eCecDevice_readableVendor, None, eCecDevice)
@@ -8887,12 +12418,54 @@ eCecDevice_swigregister = _enigma.eCecDevice_swigregister
 eCecDevice_swigregister(eCecDevice)
 
 class eCecDevicePtr(object):
+    """Proxy of C++ ePtr<(eCecDevice)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def __ref__(self):
+        """__ref__(eCecDevicePtr self) -> eCecDevice"""
+        return _enigma.eCecDevicePtr___ref__(self)
+
+
     def __init__(self, *args):
+        """
+        __init__(ePtr<(eCecDevice)> self) -> eCecDevicePtr
+        __init__(ePtr<(eCecDevice)> self, eCecDevice c) -> eCecDevicePtr
+        __init__(ePtr<(eCecDevice)> self, eCecDevicePtr c) -> eCecDevicePtr
+        """
         _enigma.eCecDevicePtr_swiginit(self, _enigma.new_eCecDevicePtr(*args))
     __swig_destroy__ = _enigma.delete_eCecDevicePtr
+
+    def getPtrString(self):
+        """getPtrString(eCecDevicePtr self) -> char *"""
+        return _enigma.eCecDevicePtr_getPtrString(self)
+
+
+    def __deref__(self):
+        """__deref__(eCecDevicePtr self) -> eCecDevice"""
+        return _enigma.eCecDevicePtr___deref__(self)
+
+
+    def logicalAddress(self):
+        """logicalAddress(eCecDevicePtr self) -> uint8_t"""
+        return _enigma.eCecDevicePtr_logicalAddress(self)
+
+
+    def vendor(self):
+        """vendor(eCecDevicePtr self) -> uint32_t"""
+        return _enigma.eCecDevicePtr_vendor(self)
+
+
+    def readableVendor(self):
+        """readableVendor(eCecDevicePtr self) -> std::string"""
+        return _enigma.eCecDevicePtr_readableVendor(self)
+
+
+    def deviceName(self):
+        """deviceName(eCecDevicePtr self) -> std::string"""
+        return _enigma.eCecDevicePtr_deviceName(self)
+
 eCecDevicePtr.__ref__ = new_instancemethod(_enigma.eCecDevicePtr___ref__, None, eCecDevicePtr)
 eCecDevicePtr.getPtrString = new_instancemethod(_enigma.eCecDevicePtr_getPtrString, None, eCecDevicePtr)
 eCecDevicePtr.__deref__ = new_instancemethod(_enigma.eCecDevicePtr___deref__, None, eCecDevicePtr)
@@ -8904,13 +12477,198 @@ eCecDevicePtr_swigregister = _enigma.eCecDevicePtr_swigregister
 eCecDevicePtr_swigregister(eCecDevicePtr)
 
 class eCecDevicePtrVector(object):
+    """Proxy of C++ std::vector<(ePtr<(eCecDevice)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(eCecDevicePtrVector self) -> SwigPyIterator"""
+        return _enigma.eCecDevicePtrVector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(eCecDevicePtrVector self) -> bool"""
+        return _enigma.eCecDevicePtrVector___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(eCecDevicePtrVector self) -> bool"""
+        return _enigma.eCecDevicePtrVector___bool__(self)
+
+
+    def __len__(self):
+        """__len__(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::size_type"""
+        return _enigma.eCecDevicePtrVector___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i, std::vector< ePtr< eCecDevice > >::difference_type j) -> eCecDevicePtrVector"""
+        return _enigma.eCecDevicePtrVector___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i, std::vector< ePtr< eCecDevice > >::difference_type j)
+        __setslice__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i, std::vector< ePtr< eCecDevice > >::difference_type j, eCecDevicePtrVector v)
+        """
+        return _enigma.eCecDevicePtrVector___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i, std::vector< ePtr< eCecDevice > >::difference_type j)"""
+        return _enigma.eCecDevicePtrVector___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i)
+        __delitem__(eCecDevicePtrVector self, PySliceObject * slice)
+        """
+        return _enigma.eCecDevicePtrVector___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(eCecDevicePtrVector self, PySliceObject * slice) -> eCecDevicePtrVector
+        __getitem__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i) -> eCecDevicePtr
+        """
+        return _enigma.eCecDevicePtrVector___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(eCecDevicePtrVector self, PySliceObject * slice, eCecDevicePtrVector v)
+        __setitem__(eCecDevicePtrVector self, PySliceObject * slice)
+        __setitem__(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::difference_type i, eCecDevicePtr x)
+        """
+        return _enigma.eCecDevicePtrVector___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(eCecDevicePtrVector self) -> eCecDevicePtr"""
+        return _enigma.eCecDevicePtrVector_pop(self)
+
+
+    def append(self, x):
+        """append(eCecDevicePtrVector self, eCecDevicePtr x)"""
+        return _enigma.eCecDevicePtrVector_append(self, x)
+
+
+    def empty(self):
+        """empty(eCecDevicePtrVector self) -> bool"""
+        return _enigma.eCecDevicePtrVector_empty(self)
+
+
+    def size(self):
+        """size(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::size_type"""
+        return _enigma.eCecDevicePtrVector_size(self)
+
+
+    def swap(self, v):
+        """swap(eCecDevicePtrVector self, eCecDevicePtrVector v)"""
+        return _enigma.eCecDevicePtrVector_swap(self, v)
+
+
+    def begin(self):
+        """begin(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::iterator"""
+        return _enigma.eCecDevicePtrVector_begin(self)
+
+
+    def end(self):
+        """end(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::iterator"""
+        return _enigma.eCecDevicePtrVector_end(self)
+
+
+    def rbegin(self):
+        """rbegin(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::reverse_iterator"""
+        return _enigma.eCecDevicePtrVector_rbegin(self)
+
+
+    def rend(self):
+        """rend(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::reverse_iterator"""
+        return _enigma.eCecDevicePtrVector_rend(self)
+
+
+    def clear(self):
+        """clear(eCecDevicePtrVector self)"""
+        return _enigma.eCecDevicePtrVector_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::allocator_type"""
+        return _enigma.eCecDevicePtrVector_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(eCecDevicePtrVector self)"""
+        return _enigma.eCecDevicePtrVector_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::iterator pos) -> std::vector< ePtr< eCecDevice > >::iterator
+        erase(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::iterator first, std::vector< ePtr< eCecDevice > >::iterator last) -> std::vector< ePtr< eCecDevice > >::iterator
+        """
+        return _enigma.eCecDevicePtrVector_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::vector<(ePtr<(eCecDevice)>)> self) -> eCecDevicePtrVector
+        __init__(std::vector<(ePtr<(eCecDevice)>)> self, eCecDevicePtrVector arg2) -> eCecDevicePtrVector
+        __init__(std::vector<(ePtr<(eCecDevice)>)> self, std::vector< ePtr< eCecDevice > >::size_type size) -> eCecDevicePtrVector
+        __init__(std::vector<(ePtr<(eCecDevice)>)> self, std::vector< ePtr< eCecDevice > >::size_type size, eCecDevicePtr value) -> eCecDevicePtrVector
+        """
         _enigma.eCecDevicePtrVector_swiginit(self, _enigma.new_eCecDevicePtrVector(*args))
+
+    def push_back(self, x):
+        """push_back(eCecDevicePtrVector self, eCecDevicePtr x)"""
+        return _enigma.eCecDevicePtrVector_push_back(self, x)
+
+
+    def front(self):
+        """front(eCecDevicePtrVector self) -> eCecDevicePtr"""
+        return _enigma.eCecDevicePtrVector_front(self)
+
+
+    def back(self):
+        """back(eCecDevicePtrVector self) -> eCecDevicePtr"""
+        return _enigma.eCecDevicePtrVector_back(self)
+
+
+    def assign(self, n, x):
+        """assign(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::size_type n, eCecDevicePtr x)"""
+        return _enigma.eCecDevicePtrVector_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::size_type new_size)
+        resize(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::size_type new_size, eCecDevicePtr x)
+        """
+        return _enigma.eCecDevicePtrVector_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::iterator pos, eCecDevicePtr x) -> std::vector< ePtr< eCecDevice > >::iterator
+        insert(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::iterator pos, std::vector< ePtr< eCecDevice > >::size_type n, eCecDevicePtr x)
+        """
+        return _enigma.eCecDevicePtrVector_insert(self, *args)
+
+
+    def reserve(self, n):
+        """reserve(eCecDevicePtrVector self, std::vector< ePtr< eCecDevice > >::size_type n)"""
+        return _enigma.eCecDevicePtrVector_reserve(self, n)
+
+
+    def capacity(self):
+        """capacity(eCecDevicePtrVector self) -> std::vector< ePtr< eCecDevice > >::size_type"""
+        return _enigma.eCecDevicePtrVector_capacity(self)
+
     __swig_destroy__ = _enigma.delete_eCecDevicePtrVector
 eCecDevicePtrVector.iterator = new_instancemethod(_enigma.eCecDevicePtrVector_iterator, None, eCecDevicePtrVector)
 eCecDevicePtrVector.__nonzero__ = new_instancemethod(_enigma.eCecDevicePtrVector___nonzero__, None, eCecDevicePtrVector)
@@ -8948,6 +12706,8 @@ eCecDevicePtrVector_swigregister(eCecDevicePtrVector)
 
 HBBTV_USER_AGENT = _enigma.HBBTV_USER_AGENT
 class eHbbtv(object):
+    """Proxy of C++ eHbbtv class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
     def __init__(self, *args, **kwargs):
@@ -8987,7 +12747,50 @@ class eHbbtv(object):
     STREAM_ERROR_CORRUPT = _enigma.eHbbtv_STREAM_ERROR_CORRUPT
     STREAM_ERROR_UNAVAILABLE = _enigma.eHbbtv_STREAM_ERROR_UNAVAILABLE
     STREAM_ERROR_UNAVAILABLE_POS = _enigma.eHbbtv_STREAM_ERROR_UNAVAILABLE_POS
-    getInstance = staticmethod(_enigma.eHbbtv_getInstance)
+
+    def getInstance():
+        """getInstance() -> eHbbtv"""
+        return _enigma.eHbbtv_getInstance()
+
+    getInstance = staticmethod(getInstance)
+
+    def setAitSignalsEnabled(self, enabled):
+        """setAitSignalsEnabled(eHbbtv self, bool enabled)"""
+        return _enigma.eHbbtv_setAitSignalsEnabled(self, enabled)
+
+
+    def setServiceList(self, sref):
+        """setServiceList(eHbbtv self, std::string sref)"""
+        return _enigma.eHbbtv_setServiceList(self, sref)
+
+
+    def setStreamState(self, *args):
+        """
+        setStreamState(eHbbtv self, int state, int error)
+        setStreamState(eHbbtv self, int state)
+        """
+        return _enigma.eHbbtv_setStreamState(self, *args)
+
+
+    def getApplication(self, id):
+        """getApplication(eHbbtv self, std::string const & id) -> eOipfApplication"""
+        return _enigma.eHbbtv_getApplication(self, id)
+
+
+    def resolveApplicationLocator(self, dvbUrl):
+        """resolveApplicationLocator(eHbbtv self, std::string const & dvbUrl) -> std::string const"""
+        return _enigma.eHbbtv_resolveApplicationLocator(self, dvbUrl)
+
+
+    def getApplicationIdsAndName(self):
+        """getApplicationIdsAndName(eHbbtv self) -> std::list< std::pair< std::string,std::string >,std::allocator< std::pair< std::string,std::string > > >"""
+        return _enigma.eHbbtv_getApplicationIdsAndName(self)
+
+
+    def pageLoadFinished(self):
+        """pageLoadFinished(eHbbtv self)"""
+        return _enigma.eHbbtv_pageLoadFinished(self)
+
     playServiceRequest = _swig_property(_enigma.eHbbtv_playServiceRequest_get, _enigma.eHbbtv_playServiceRequest_set)
     playStreamRequest = _swig_property(_enigma.eHbbtv_playStreamRequest_get, _enigma.eHbbtv_playStreamRequest_set)
     pauseStreamRequest = _swig_property(_enigma.eHbbtv_pauseStreamRequest_get, _enigma.eHbbtv_pauseStreamRequest_set)
@@ -9014,10 +12817,12 @@ eHbbtv_swigregister = _enigma.eHbbtv_swigregister
 eHbbtv_swigregister(eHbbtv)
 
 def eHbbtv_getInstance():
+    """eHbbtv_getInstance() -> eHbbtv"""
     return _enigma.eHbbtv_getInstance()
-eHbbtv_getInstance = _enigma.eHbbtv_getInstance
 
 class eOipfApplication(object):
+    """Proxy of C++ eOipfApplication class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
     def __init__(self, *args, **kwargs):
@@ -9036,7 +12841,77 @@ class eOipfApplication(object):
     VISIBILITY_NOT_VISIBLE_USERS = _enigma.eOipfApplication_VISIBILITY_NOT_VISIBLE_USERS
     VISIBILITY_VISIBLE_ALL = _enigma.eOipfApplication_VISIBILITY_VISIBLE_ALL
     __swig_destroy__ = _enigma.delete_eOipfApplication
-    getById = staticmethod(_enigma.eOipfApplication_getById)
+
+    def getById(id):
+        """getById(std::string const & id) -> eOipfApplication"""
+        return _enigma.eOipfApplication_getById(id)
+
+    getById = staticmethod(getById)
+
+    def isValid(self):
+        """isValid(eOipfApplication self) -> bool"""
+        return _enigma.eOipfApplication_isValid(self)
+
+
+    def getOrganisationId(self):
+        """getOrganisationId(eOipfApplication self) -> uint32_t"""
+        return _enigma.eOipfApplication_getOrganisationId(self)
+
+
+    def getApplicationId(self):
+        """getApplicationId(eOipfApplication self) -> uint16_t"""
+        return _enigma.eOipfApplication_getApplicationId(self)
+
+
+    def getApplicationProfile(self):
+        """getApplicationProfile(eOipfApplication self) -> uint16_t"""
+        return _enigma.eOipfApplication_getApplicationProfile(self)
+
+
+    def getPriority(self):
+        """getPriority(eOipfApplication self) -> uint8_t"""
+        return _enigma.eOipfApplication_getPriority(self)
+
+
+    def getUsageType(self):
+        """getUsageType(eOipfApplication self) -> uint8_t"""
+        return _enigma.eOipfApplication_getUsageType(self)
+
+
+    def getControlCode(self):
+        """getControlCode(eOipfApplication self) -> uint8_t"""
+        return _enigma.eOipfApplication_getControlCode(self)
+
+
+    def getServiceBoundFlag(self):
+        """getServiceBoundFlag(eOipfApplication self) -> uint8_t"""
+        return _enigma.eOipfApplication_getServiceBoundFlag(self)
+
+
+    def getVisibility(self):
+        """getVisibility(eOipfApplication self) -> uint8_t"""
+        return _enigma.eOipfApplication_getVisibility(self)
+
+
+    def getId(self):
+        """getId(eOipfApplication self) -> std::string const &"""
+        return _enigma.eOipfApplication_getId(self)
+
+
+    def getName(self):
+        """getName(eOipfApplication self) -> std::string const &"""
+        return _enigma.eOipfApplication_getName(self)
+
+
+    def getInitialPath(self):
+        """getInitialPath(eOipfApplication self) -> std::string const &"""
+        return _enigma.eOipfApplication_getInitialPath(self)
+
+
+    def getUrlBase(self):
+        """getUrlBase(eOipfApplication self) -> std::string const &"""
+        return _enigma.eOipfApplication_getUrlBase(self)
+
 eOipfApplication.isValid = new_instancemethod(_enigma.eOipfApplication_isValid, None, eOipfApplication)
 eOipfApplication.getOrganisationId = new_instancemethod(_enigma.eOipfApplication_getOrganisationId, None, eOipfApplication)
 eOipfApplication.getApplicationId = new_instancemethod(_enigma.eOipfApplication_getApplicationId, None, eOipfApplication)
@@ -9054,14 +12929,36 @@ eOipfApplication_swigregister = _enigma.eOipfApplication_swigregister
 eOipfApplication_swigregister(eOipfApplication)
 
 def eOipfApplication_getById(id):
+    """eOipfApplication_getById(std::string const & id) -> eOipfApplication"""
     return _enigma.eOipfApplication_getById(id)
-eOipfApplication_getById = _enigma.eOipfApplication_getById
 
 class PseudoDict(object):
+    """Proxy of C++ std::map<(std::string,boost::any)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(PseudoDict self) -> SwigPyIterator"""
+        return _enigma.PseudoDict_iterator(self)
+
     def __iter__(self):
         return self.iterator()
+
+    def __nonzero__(self):
+        """__nonzero__(PseudoDict self) -> bool"""
+        return _enigma.PseudoDict___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(PseudoDict self) -> bool"""
+        return _enigma.PseudoDict___bool__(self)
+
+
+    def __len__(self):
+        """__len__(PseudoDict self) -> std::map< std::string,boost::any >::size_type"""
+        return _enigma.PseudoDict___len__(self)
+
     def __iter__(self):
         return self.key_iterator()
     def iterkeys(self):
@@ -9071,8 +12968,145 @@ class PseudoDict(object):
     def iteritems(self):
         return self.iterator()
 
+    def __getitem__(self, key):
+        """__getitem__(PseudoDict self, std::map< std::string,boost::any >::key_type const & key) -> std::map< std::string,boost::any >::mapped_type const &"""
+        return _enigma.PseudoDict___getitem__(self, key)
+
+
+    def __delitem__(self, key):
+        """__delitem__(PseudoDict self, std::map< std::string,boost::any >::key_type const & key)"""
+        return _enigma.PseudoDict___delitem__(self, key)
+
+
+    def has_key(self, key):
+        """has_key(PseudoDict self, std::map< std::string,boost::any >::key_type const & key) -> bool"""
+        return _enigma.PseudoDict_has_key(self, key)
+
+
+    def keys(self):
+        """keys(PseudoDict self) -> PyObject *"""
+        return _enigma.PseudoDict_keys(self)
+
+
+    def values(self):
+        """values(PseudoDict self) -> PyObject *"""
+        return _enigma.PseudoDict_values(self)
+
+
+    def items(self):
+        """items(PseudoDict self) -> PyObject *"""
+        return _enigma.PseudoDict_items(self)
+
+
+    def __contains__(self, key):
+        """__contains__(PseudoDict self, std::map< std::string,boost::any >::key_type const & key) -> bool"""
+        return _enigma.PseudoDict___contains__(self, key)
+
+
+    def key_iterator(self):
+        """key_iterator(PseudoDict self) -> SwigPyIterator"""
+        return _enigma.PseudoDict_key_iterator(self)
+
+
+    def value_iterator(self):
+        """value_iterator(PseudoDict self) -> SwigPyIterator"""
+        return _enigma.PseudoDict_value_iterator(self)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(PseudoDict self, std::map< std::string,boost::any >::key_type const & key)
+        __setitem__(PseudoDict self, std::map< std::string,boost::any >::key_type const & key, std::map< std::string,boost::any >::mapped_type const & x)
+        """
+        return _enigma.PseudoDict___setitem__(self, *args)
+
+
+    def asdict(self):
+        """asdict(PseudoDict self) -> PyObject *"""
+        return _enigma.PseudoDict_asdict(self)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::map<(std::string,boost::any)> self, std::less< std::string > const & arg2) -> PseudoDict
+        __init__(std::map<(std::string,boost::any)> self) -> PseudoDict
+        __init__(std::map<(std::string,boost::any)> self, PseudoDict arg2) -> PseudoDict
+        """
         _enigma.PseudoDict_swiginit(self, _enigma.new_PseudoDict(*args))
+
+    def empty(self):
+        """empty(PseudoDict self) -> bool"""
+        return _enigma.PseudoDict_empty(self)
+
+
+    def size(self):
+        """size(PseudoDict self) -> std::map< std::string,boost::any >::size_type"""
+        return _enigma.PseudoDict_size(self)
+
+
+    def swap(self, v):
+        """swap(PseudoDict self, PseudoDict v)"""
+        return _enigma.PseudoDict_swap(self, v)
+
+
+    def begin(self):
+        """begin(PseudoDict self) -> std::map< std::string,boost::any >::iterator"""
+        return _enigma.PseudoDict_begin(self)
+
+
+    def end(self):
+        """end(PseudoDict self) -> std::map< std::string,boost::any >::iterator"""
+        return _enigma.PseudoDict_end(self)
+
+
+    def rbegin(self):
+        """rbegin(PseudoDict self) -> std::map< std::string,boost::any >::reverse_iterator"""
+        return _enigma.PseudoDict_rbegin(self)
+
+
+    def rend(self):
+        """rend(PseudoDict self) -> std::map< std::string,boost::any >::reverse_iterator"""
+        return _enigma.PseudoDict_rend(self)
+
+
+    def clear(self):
+        """clear(PseudoDict self)"""
+        return _enigma.PseudoDict_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(PseudoDict self) -> std::map< std::string,boost::any >::allocator_type"""
+        return _enigma.PseudoDict_get_allocator(self)
+
+
+    def count(self, x):
+        """count(PseudoDict self, std::map< std::string,boost::any >::key_type const & x) -> std::map< std::string,boost::any >::size_type"""
+        return _enigma.PseudoDict_count(self, x)
+
+
+    def erase(self, *args):
+        """
+        erase(PseudoDict self, std::map< std::string,boost::any >::key_type const & x) -> std::map< std::string,boost::any >::size_type
+        erase(PseudoDict self, std::map< std::string,boost::any >::iterator position)
+        erase(PseudoDict self, std::map< std::string,boost::any >::iterator first, std::map< std::string,boost::any >::iterator last)
+        """
+        return _enigma.PseudoDict_erase(self, *args)
+
+
+    def find(self, x):
+        """find(PseudoDict self, std::map< std::string,boost::any >::key_type const & x) -> std::map< std::string,boost::any >::iterator"""
+        return _enigma.PseudoDict_find(self, x)
+
+
+    def lower_bound(self, x):
+        """lower_bound(PseudoDict self, std::map< std::string,boost::any >::key_type const & x) -> std::map< std::string,boost::any >::iterator"""
+        return _enigma.PseudoDict_lower_bound(self, x)
+
+
+    def upper_bound(self, x):
+        """upper_bound(PseudoDict self, std::map< std::string,boost::any >::key_type const & x) -> std::map< std::string,boost::any >::iterator"""
+        return _enigma.PseudoDict_upper_bound(self, x)
+
 
     def get(self, key, default=None):
         if self.has_key(key):
@@ -9112,13 +13146,203 @@ PseudoDict_swigregister = _enigma.PseudoDict_swigregister
 PseudoDict_swigregister(PseudoDict)
 
 class StringList(object):
+    """Proxy of C++ std::list<(std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(StringList self) -> SwigPyIterator"""
+        return _enigma.StringList_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(StringList self) -> bool"""
+        return _enigma.StringList___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(StringList self) -> bool"""
+        return _enigma.StringList___bool__(self)
+
+
+    def __len__(self):
+        """__len__(StringList self) -> std::list< std::string >::size_type"""
+        return _enigma.StringList___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(StringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j) -> StringList"""
+        return _enigma.StringList___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(StringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j)
+        __setslice__(StringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j, StringList v)
+        """
+        return _enigma.StringList___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(StringList self, std::list< std::string >::difference_type i, std::list< std::string >::difference_type j)"""
+        return _enigma.StringList___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(StringList self, std::list< std::string >::difference_type i)
+        __delitem__(StringList self, PySliceObject * slice)
+        """
+        return _enigma.StringList___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(StringList self, PySliceObject * slice) -> StringList
+        __getitem__(StringList self, std::list< std::string >::difference_type i) -> std::list< std::string >::value_type const &
+        """
+        return _enigma.StringList___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(StringList self, PySliceObject * slice, StringList v)
+        __setitem__(StringList self, PySliceObject * slice)
+        __setitem__(StringList self, std::list< std::string >::difference_type i, std::list< std::string >::value_type const & x)
+        """
+        return _enigma.StringList___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(StringList self) -> std::list< std::string >::value_type"""
+        return _enigma.StringList_pop(self)
+
+
+    def append(self, x):
+        """append(StringList self, std::list< std::string >::value_type const & x)"""
+        return _enigma.StringList_append(self, x)
+
+
+    def empty(self):
+        """empty(StringList self) -> bool"""
+        return _enigma.StringList_empty(self)
+
+
+    def size(self):
+        """size(StringList self) -> std::list< std::string >::size_type"""
+        return _enigma.StringList_size(self)
+
+
+    def swap(self, v):
+        """swap(StringList self, StringList v)"""
+        return _enigma.StringList_swap(self, v)
+
+
+    def begin(self):
+        """begin(StringList self) -> std::list< std::string >::iterator"""
+        return _enigma.StringList_begin(self)
+
+
+    def end(self):
+        """end(StringList self) -> std::list< std::string >::iterator"""
+        return _enigma.StringList_end(self)
+
+
+    def rbegin(self):
+        """rbegin(StringList self) -> std::list< std::string >::reverse_iterator"""
+        return _enigma.StringList_rbegin(self)
+
+
+    def rend(self):
+        """rend(StringList self) -> std::list< std::string >::reverse_iterator"""
+        return _enigma.StringList_rend(self)
+
+
+    def clear(self):
+        """clear(StringList self)"""
+        return _enigma.StringList_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(StringList self) -> std::list< std::string >::allocator_type"""
+        return _enigma.StringList_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(StringList self)"""
+        return _enigma.StringList_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(StringList self, std::list< std::string >::iterator pos) -> std::list< std::string >::iterator
+        erase(StringList self, std::list< std::string >::iterator first, std::list< std::string >::iterator last) -> std::list< std::string >::iterator
+        """
+        return _enigma.StringList_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::list<(std::string)> self) -> StringList
+        __init__(std::list<(std::string)> self, StringList arg2) -> StringList
+        __init__(std::list<(std::string)> self, std::list< std::string >::size_type size) -> StringList
+        __init__(std::list<(std::string)> self, std::list< std::string >::size_type size, std::list< std::string >::value_type const & value) -> StringList
+        """
         _enigma.StringList_swiginit(self, _enigma.new_StringList(*args))
+
+    def push_back(self, x):
+        """push_back(StringList self, std::list< std::string >::value_type const & x)"""
+        return _enigma.StringList_push_back(self, x)
+
+
+    def front(self):
+        """front(StringList self) -> std::list< std::string >::value_type const &"""
+        return _enigma.StringList_front(self)
+
+
+    def back(self):
+        """back(StringList self) -> std::list< std::string >::value_type const &"""
+        return _enigma.StringList_back(self)
+
+
+    def assign(self, n, x):
+        """assign(StringList self, std::list< std::string >::size_type n, std::list< std::string >::value_type const & x)"""
+        return _enigma.StringList_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(StringList self, std::list< std::string >::size_type new_size)
+        resize(StringList self, std::list< std::string >::size_type new_size, std::list< std::string >::value_type const & x)
+        """
+        return _enigma.StringList_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(StringList self, std::list< std::string >::iterator pos, std::list< std::string >::value_type const & x) -> std::list< std::string >::iterator
+        insert(StringList self, std::list< std::string >::iterator pos, std::list< std::string >::size_type n, std::list< std::string >::value_type const & x)
+        """
+        return _enigma.StringList_insert(self, *args)
+
+
+    def pop_front(self):
+        """pop_front(StringList self)"""
+        return _enigma.StringList_pop_front(self)
+
+
+    def push_front(self, x):
+        """push_front(StringList self, std::list< std::string >::value_type const & x)"""
+        return _enigma.StringList_push_front(self, x)
+
+
+    def reverse(self):
+        """reverse(StringList self)"""
+        return _enigma.StringList_reverse(self)
+
     __swig_destroy__ = _enigma.delete_StringList
 StringList.iterator = new_instancemethod(_enigma.StringList_iterator, None, StringList)
 StringList.__nonzero__ = new_instancemethod(_enigma.StringList___nonzero__, None, StringList)
@@ -9156,13 +13380,144 @@ StringList_swigregister = _enigma.StringList_swigregister
 StringList_swigregister(StringList)
 
 class StringSet(object):
+    """Proxy of C++ std::set<(std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(StringSet self) -> SwigPyIterator"""
+        return _enigma.StringSet_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(StringSet self) -> bool"""
+        return _enigma.StringSet___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(StringSet self) -> bool"""
+        return _enigma.StringSet___bool__(self)
+
+
+    def __len__(self):
+        """__len__(StringSet self) -> std::set< std::string >::size_type"""
+        return _enigma.StringSet___len__(self)
+
+
+    def append(self, x):
+        """append(StringSet self, std::set< std::string >::value_type x)"""
+        return _enigma.StringSet_append(self, x)
+
+
+    def __contains__(self, x):
+        """__contains__(StringSet self, std::set< std::string >::value_type x) -> bool"""
+        return _enigma.StringSet___contains__(self, x)
+
+
+    def __getitem__(self, i):
+        """__getitem__(StringSet self, std::set< std::string >::difference_type i) -> std::set< std::string >::value_type"""
+        return _enigma.StringSet___getitem__(self, i)
+
+
+    def add(self, x):
+        """add(StringSet self, std::set< std::string >::value_type x)"""
+        return _enigma.StringSet_add(self, x)
+
+
+    def discard(self, x):
+        """discard(StringSet self, std::set< std::string >::value_type x)"""
+        return _enigma.StringSet_discard(self, x)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::set<(std::string)> self, std::less< std::string > const & arg2) -> StringSet
+        __init__(std::set<(std::string)> self) -> StringSet
+        __init__(std::set<(std::string)> self, StringSet arg2) -> StringSet
+        """
         _enigma.StringSet_swiginit(self, _enigma.new_StringSet(*args))
+
+    def empty(self):
+        """empty(StringSet self) -> bool"""
+        return _enigma.StringSet_empty(self)
+
+
+    def size(self):
+        """size(StringSet self) -> std::set< std::string >::size_type"""
+        return _enigma.StringSet_size(self)
+
+
+    def clear(self):
+        """clear(StringSet self)"""
+        return _enigma.StringSet_clear(self)
+
+
+    def swap(self, v):
+        """swap(StringSet self, StringSet v)"""
+        return _enigma.StringSet_swap(self, v)
+
+
+    def count(self, x):
+        """count(StringSet self, std::set< std::string >::key_type const & x) -> std::set< std::string >::size_type"""
+        return _enigma.StringSet_count(self, x)
+
+
+    def begin(self):
+        """begin(StringSet self) -> std::set< std::string >::iterator"""
+        return _enigma.StringSet_begin(self)
+
+
+    def end(self):
+        """end(StringSet self) -> std::set< std::string >::iterator"""
+        return _enigma.StringSet_end(self)
+
+
+    def rbegin(self):
+        """rbegin(StringSet self) -> std::set< std::string >::reverse_iterator"""
+        return _enigma.StringSet_rbegin(self)
+
+
+    def rend(self):
+        """rend(StringSet self) -> std::set< std::string >::reverse_iterator"""
+        return _enigma.StringSet_rend(self)
+
+
+    def erase(self, *args):
+        """
+        erase(StringSet self, std::set< std::string >::key_type const & x) -> std::set< std::string >::size_type
+        erase(StringSet self, std::set< std::string >::iterator pos)
+        erase(StringSet self, std::set< std::string >::iterator first, std::set< std::string >::iterator last)
+        """
+        return _enigma.StringSet_erase(self, *args)
+
+
+    def find(self, x):
+        """find(StringSet self, std::set< std::string >::key_type const & x) -> std::set< std::string >::iterator"""
+        return _enigma.StringSet_find(self, x)
+
+
+    def lower_bound(self, x):
+        """lower_bound(StringSet self, std::set< std::string >::key_type const & x) -> std::set< std::string >::iterator"""
+        return _enigma.StringSet_lower_bound(self, x)
+
+
+    def upper_bound(self, x):
+        """upper_bound(StringSet self, std::set< std::string >::key_type const & x) -> std::set< std::string >::iterator"""
+        return _enigma.StringSet_upper_bound(self, x)
+
+
+    def equal_range(self, x):
+        """equal_range(StringSet self, std::set< std::string >::key_type const & x) -> std::pair< std::set< std::string >::iterator,std::set< std::string >::iterator >"""
+        return _enigma.StringSet_equal_range(self, x)
+
+
+    def insert(self, __x):
+        """insert(StringSet self, std::set< std::string >::value_type const & __x) -> std::pair< std::set< std::string >::iterator,bool >"""
+        return _enigma.StringSet_insert(self, __x)
+
     __swig_destroy__ = _enigma.delete_StringSet
 StringSet.iterator = new_instancemethod(_enigma.StringSet_iterator, None, StringSet)
 StringSet.__nonzero__ = new_instancemethod(_enigma.StringSet___nonzero__, None, StringSet)
@@ -9192,10 +13547,32 @@ StringSet_swigregister = _enigma.StringSet_swigregister
 StringSet_swigregister(StringSet)
 
 class StringMap(object):
+    """Proxy of C++ std::map<(std::string,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(StringMap self) -> SwigPyIterator"""
+        return _enigma.StringMap_iterator(self)
+
     def __iter__(self):
         return self.iterator()
+
+    def __nonzero__(self):
+        """__nonzero__(StringMap self) -> bool"""
+        return _enigma.StringMap___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(StringMap self) -> bool"""
+        return _enigma.StringMap___bool__(self)
+
+
+    def __len__(self):
+        """__len__(StringMap self) -> std::map< std::string,std::string >::size_type"""
+        return _enigma.StringMap___len__(self)
+
     def __iter__(self):
         return self.key_iterator()
     def iterkeys(self):
@@ -9205,8 +13582,145 @@ class StringMap(object):
     def iteritems(self):
         return self.iterator()
 
+    def __getitem__(self, key):
+        """__getitem__(StringMap self, std::map< std::string,std::string >::key_type const & key) -> std::map< std::string,std::string >::mapped_type const &"""
+        return _enigma.StringMap___getitem__(self, key)
+
+
+    def __delitem__(self, key):
+        """__delitem__(StringMap self, std::map< std::string,std::string >::key_type const & key)"""
+        return _enigma.StringMap___delitem__(self, key)
+
+
+    def has_key(self, key):
+        """has_key(StringMap self, std::map< std::string,std::string >::key_type const & key) -> bool"""
+        return _enigma.StringMap_has_key(self, key)
+
+
+    def keys(self):
+        """keys(StringMap self) -> PyObject *"""
+        return _enigma.StringMap_keys(self)
+
+
+    def values(self):
+        """values(StringMap self) -> PyObject *"""
+        return _enigma.StringMap_values(self)
+
+
+    def items(self):
+        """items(StringMap self) -> PyObject *"""
+        return _enigma.StringMap_items(self)
+
+
+    def __contains__(self, key):
+        """__contains__(StringMap self, std::map< std::string,std::string >::key_type const & key) -> bool"""
+        return _enigma.StringMap___contains__(self, key)
+
+
+    def key_iterator(self):
+        """key_iterator(StringMap self) -> SwigPyIterator"""
+        return _enigma.StringMap_key_iterator(self)
+
+
+    def value_iterator(self):
+        """value_iterator(StringMap self) -> SwigPyIterator"""
+        return _enigma.StringMap_value_iterator(self)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(StringMap self, std::map< std::string,std::string >::key_type const & key)
+        __setitem__(StringMap self, std::map< std::string,std::string >::key_type const & key, std::map< std::string,std::string >::mapped_type const & x)
+        """
+        return _enigma.StringMap___setitem__(self, *args)
+
+
+    def asdict(self):
+        """asdict(StringMap self) -> PyObject *"""
+        return _enigma.StringMap_asdict(self)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::map<(std::string,std::string)> self, std::less< std::string > const & arg2) -> StringMap
+        __init__(std::map<(std::string,std::string)> self) -> StringMap
+        __init__(std::map<(std::string,std::string)> self, StringMap arg2) -> StringMap
+        """
         _enigma.StringMap_swiginit(self, _enigma.new_StringMap(*args))
+
+    def empty(self):
+        """empty(StringMap self) -> bool"""
+        return _enigma.StringMap_empty(self)
+
+
+    def size(self):
+        """size(StringMap self) -> std::map< std::string,std::string >::size_type"""
+        return _enigma.StringMap_size(self)
+
+
+    def swap(self, v):
+        """swap(StringMap self, StringMap v)"""
+        return _enigma.StringMap_swap(self, v)
+
+
+    def begin(self):
+        """begin(StringMap self) -> std::map< std::string,std::string >::iterator"""
+        return _enigma.StringMap_begin(self)
+
+
+    def end(self):
+        """end(StringMap self) -> std::map< std::string,std::string >::iterator"""
+        return _enigma.StringMap_end(self)
+
+
+    def rbegin(self):
+        """rbegin(StringMap self) -> std::map< std::string,std::string >::reverse_iterator"""
+        return _enigma.StringMap_rbegin(self)
+
+
+    def rend(self):
+        """rend(StringMap self) -> std::map< std::string,std::string >::reverse_iterator"""
+        return _enigma.StringMap_rend(self)
+
+
+    def clear(self):
+        """clear(StringMap self)"""
+        return _enigma.StringMap_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(StringMap self) -> std::map< std::string,std::string >::allocator_type"""
+        return _enigma.StringMap_get_allocator(self)
+
+
+    def count(self, x):
+        """count(StringMap self, std::map< std::string,std::string >::key_type const & x) -> std::map< std::string,std::string >::size_type"""
+        return _enigma.StringMap_count(self, x)
+
+
+    def erase(self, *args):
+        """
+        erase(StringMap self, std::map< std::string,std::string >::key_type const & x) -> std::map< std::string,std::string >::size_type
+        erase(StringMap self, std::map< std::string,std::string >::iterator position)
+        erase(StringMap self, std::map< std::string,std::string >::iterator first, std::map< std::string,std::string >::iterator last)
+        """
+        return _enigma.StringMap_erase(self, *args)
+
+
+    def find(self, x):
+        """find(StringMap self, std::map< std::string,std::string >::key_type const & x) -> std::map< std::string,std::string >::iterator"""
+        return _enigma.StringMap_find(self, x)
+
+
+    def lower_bound(self, x):
+        """lower_bound(StringMap self, std::map< std::string,std::string >::key_type const & x) -> std::map< std::string,std::string >::iterator"""
+        return _enigma.StringMap_lower_bound(self, x)
+
+
+    def upper_bound(self, x):
+        """upper_bound(StringMap self, std::map< std::string,std::string >::key_type const & x) -> std::map< std::string,std::string >::iterator"""
+        return _enigma.StringMap_upper_bound(self, x)
+
 
     def get(self, key, default=None):
         if self.has_key(key):
@@ -9246,13 +13760,198 @@ StringMap_swigregister = _enigma.StringMap_swigregister
 StringMap_swigregister(StringMap)
 
 class StringMapVector(object):
+    """Proxy of C++ std::vector<(std::map<(std::string,std::string)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(StringMapVector self) -> SwigPyIterator"""
+        return _enigma.StringMapVector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(StringMapVector self) -> bool"""
+        return _enigma.StringMapVector___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(StringMapVector self) -> bool"""
+        return _enigma.StringMapVector___bool__(self)
+
+
+    def __len__(self):
+        """__len__(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::size_type"""
+        return _enigma.StringMapVector___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i, std::vector< std::map< std::string,std::string > >::difference_type j) -> StringMapVector"""
+        return _enigma.StringMapVector___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i, std::vector< std::map< std::string,std::string > >::difference_type j)
+        __setslice__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i, std::vector< std::map< std::string,std::string > >::difference_type j, StringMapVector v)
+        """
+        return _enigma.StringMapVector___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i, std::vector< std::map< std::string,std::string > >::difference_type j)"""
+        return _enigma.StringMapVector___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i)
+        __delitem__(StringMapVector self, PySliceObject * slice)
+        """
+        return _enigma.StringMapVector___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(StringMapVector self, PySliceObject * slice) -> StringMapVector
+        __getitem__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i) -> StringMap
+        """
+        return _enigma.StringMapVector___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(StringMapVector self, PySliceObject * slice, StringMapVector v)
+        __setitem__(StringMapVector self, PySliceObject * slice)
+        __setitem__(StringMapVector self, std::vector< std::map< std::string,std::string > >::difference_type i, StringMap x)
+        """
+        return _enigma.StringMapVector___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(StringMapVector self) -> StringMap"""
+        return _enigma.StringMapVector_pop(self)
+
+
+    def append(self, x):
+        """append(StringMapVector self, StringMap x)"""
+        return _enigma.StringMapVector_append(self, x)
+
+
+    def empty(self):
+        """empty(StringMapVector self) -> bool"""
+        return _enigma.StringMapVector_empty(self)
+
+
+    def size(self):
+        """size(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::size_type"""
+        return _enigma.StringMapVector_size(self)
+
+
+    def swap(self, v):
+        """swap(StringMapVector self, StringMapVector v)"""
+        return _enigma.StringMapVector_swap(self, v)
+
+
+    def begin(self):
+        """begin(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::iterator"""
+        return _enigma.StringMapVector_begin(self)
+
+
+    def end(self):
+        """end(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::iterator"""
+        return _enigma.StringMapVector_end(self)
+
+
+    def rbegin(self):
+        """rbegin(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::reverse_iterator"""
+        return _enigma.StringMapVector_rbegin(self)
+
+
+    def rend(self):
+        """rend(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::reverse_iterator"""
+        return _enigma.StringMapVector_rend(self)
+
+
+    def clear(self):
+        """clear(StringMapVector self)"""
+        return _enigma.StringMapVector_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::allocator_type"""
+        return _enigma.StringMapVector_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(StringMapVector self)"""
+        return _enigma.StringMapVector_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(StringMapVector self, std::vector< std::map< std::string,std::string > >::iterator pos) -> std::vector< std::map< std::string,std::string > >::iterator
+        erase(StringMapVector self, std::vector< std::map< std::string,std::string > >::iterator first, std::vector< std::map< std::string,std::string > >::iterator last) -> std::vector< std::map< std::string,std::string > >::iterator
+        """
+        return _enigma.StringMapVector_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::vector<(std::map<(std::string,std::string)>)> self) -> StringMapVector
+        __init__(std::vector<(std::map<(std::string,std::string)>)> self, StringMapVector arg2) -> StringMapVector
+        __init__(std::vector<(std::map<(std::string,std::string)>)> self, std::vector< std::map< std::string,std::string > >::size_type size) -> StringMapVector
+        __init__(std::vector<(std::map<(std::string,std::string)>)> self, std::vector< std::map< std::string,std::string > >::size_type size, StringMap value) -> StringMapVector
+        """
         _enigma.StringMapVector_swiginit(self, _enigma.new_StringMapVector(*args))
+
+    def push_back(self, x):
+        """push_back(StringMapVector self, StringMap x)"""
+        return _enigma.StringMapVector_push_back(self, x)
+
+
+    def front(self):
+        """front(StringMapVector self) -> StringMap"""
+        return _enigma.StringMapVector_front(self)
+
+
+    def back(self):
+        """back(StringMapVector self) -> StringMap"""
+        return _enigma.StringMapVector_back(self)
+
+
+    def assign(self, n, x):
+        """assign(StringMapVector self, std::vector< std::map< std::string,std::string > >::size_type n, StringMap x)"""
+        return _enigma.StringMapVector_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(StringMapVector self, std::vector< std::map< std::string,std::string > >::size_type new_size)
+        resize(StringMapVector self, std::vector< std::map< std::string,std::string > >::size_type new_size, StringMap x)
+        """
+        return _enigma.StringMapVector_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(StringMapVector self, std::vector< std::map< std::string,std::string > >::iterator pos, StringMap x) -> std::vector< std::map< std::string,std::string > >::iterator
+        insert(StringMapVector self, std::vector< std::map< std::string,std::string > >::iterator pos, std::vector< std::map< std::string,std::string > >::size_type n, StringMap x)
+        """
+        return _enigma.StringMapVector_insert(self, *args)
+
+
+    def reserve(self, n):
+        """reserve(StringMapVector self, std::vector< std::map< std::string,std::string > >::size_type n)"""
+        return _enigma.StringMapVector_reserve(self, n)
+
+
+    def capacity(self):
+        """capacity(StringMapVector self) -> std::vector< std::map< std::string,std::string > >::size_type"""
+        return _enigma.StringMapVector_capacity(self)
+
     __swig_destroy__ = _enigma.delete_StringMapVector
 StringMapVector.iterator = new_instancemethod(_enigma.StringMapVector_iterator, None, StringMapVector)
 StringMapVector.__nonzero__ = new_instancemethod(_enigma.StringMapVector___nonzero__, None, StringMapVector)
@@ -9289,13 +13988,198 @@ StringMapVector_swigregister = _enigma.StringMapVector_swigregister
 StringMapVector_swigregister(StringMapVector)
 
 class StringVector(object):
+    """Proxy of C++ std::vector<(std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(StringVector self) -> SwigPyIterator"""
+        return _enigma.StringVector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(StringVector self) -> bool"""
+        return _enigma.StringVector___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(StringVector self) -> bool"""
+        return _enigma.StringVector___bool__(self)
+
+
+    def __len__(self):
+        """__len__(StringVector self) -> std::vector< std::string >::size_type"""
+        return _enigma.StringVector___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(StringVector self, std::vector< std::string >::difference_type i, std::vector< std::string >::difference_type j) -> StringVector"""
+        return _enigma.StringVector___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(StringVector self, std::vector< std::string >::difference_type i, std::vector< std::string >::difference_type j)
+        __setslice__(StringVector self, std::vector< std::string >::difference_type i, std::vector< std::string >::difference_type j, StringVector v)
+        """
+        return _enigma.StringVector___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(StringVector self, std::vector< std::string >::difference_type i, std::vector< std::string >::difference_type j)"""
+        return _enigma.StringVector___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(StringVector self, std::vector< std::string >::difference_type i)
+        __delitem__(StringVector self, PySliceObject * slice)
+        """
+        return _enigma.StringVector___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(StringVector self, PySliceObject * slice) -> StringVector
+        __getitem__(StringVector self, std::vector< std::string >::difference_type i) -> std::vector< std::string >::value_type const &
+        """
+        return _enigma.StringVector___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(StringVector self, PySliceObject * slice, StringVector v)
+        __setitem__(StringVector self, PySliceObject * slice)
+        __setitem__(StringVector self, std::vector< std::string >::difference_type i, std::vector< std::string >::value_type const & x)
+        """
+        return _enigma.StringVector___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(StringVector self) -> std::vector< std::string >::value_type"""
+        return _enigma.StringVector_pop(self)
+
+
+    def append(self, x):
+        """append(StringVector self, std::vector< std::string >::value_type const & x)"""
+        return _enigma.StringVector_append(self, x)
+
+
+    def empty(self):
+        """empty(StringVector self) -> bool"""
+        return _enigma.StringVector_empty(self)
+
+
+    def size(self):
+        """size(StringVector self) -> std::vector< std::string >::size_type"""
+        return _enigma.StringVector_size(self)
+
+
+    def swap(self, v):
+        """swap(StringVector self, StringVector v)"""
+        return _enigma.StringVector_swap(self, v)
+
+
+    def begin(self):
+        """begin(StringVector self) -> std::vector< std::string >::iterator"""
+        return _enigma.StringVector_begin(self)
+
+
+    def end(self):
+        """end(StringVector self) -> std::vector< std::string >::iterator"""
+        return _enigma.StringVector_end(self)
+
+
+    def rbegin(self):
+        """rbegin(StringVector self) -> std::vector< std::string >::reverse_iterator"""
+        return _enigma.StringVector_rbegin(self)
+
+
+    def rend(self):
+        """rend(StringVector self) -> std::vector< std::string >::reverse_iterator"""
+        return _enigma.StringVector_rend(self)
+
+
+    def clear(self):
+        """clear(StringVector self)"""
+        return _enigma.StringVector_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(StringVector self) -> std::vector< std::string >::allocator_type"""
+        return _enigma.StringVector_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(StringVector self)"""
+        return _enigma.StringVector_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(StringVector self, std::vector< std::string >::iterator pos) -> std::vector< std::string >::iterator
+        erase(StringVector self, std::vector< std::string >::iterator first, std::vector< std::string >::iterator last) -> std::vector< std::string >::iterator
+        """
+        return _enigma.StringVector_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::vector<(std::string)> self) -> StringVector
+        __init__(std::vector<(std::string)> self, StringVector arg2) -> StringVector
+        __init__(std::vector<(std::string)> self, std::vector< std::string >::size_type size) -> StringVector
+        __init__(std::vector<(std::string)> self, std::vector< std::string >::size_type size, std::vector< std::string >::value_type const & value) -> StringVector
+        """
         _enigma.StringVector_swiginit(self, _enigma.new_StringVector(*args))
+
+    def push_back(self, x):
+        """push_back(StringVector self, std::vector< std::string >::value_type const & x)"""
+        return _enigma.StringVector_push_back(self, x)
+
+
+    def front(self):
+        """front(StringVector self) -> std::vector< std::string >::value_type const &"""
+        return _enigma.StringVector_front(self)
+
+
+    def back(self):
+        """back(StringVector self) -> std::vector< std::string >::value_type const &"""
+        return _enigma.StringVector_back(self)
+
+
+    def assign(self, n, x):
+        """assign(StringVector self, std::vector< std::string >::size_type n, std::vector< std::string >::value_type const & x)"""
+        return _enigma.StringVector_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(StringVector self, std::vector< std::string >::size_type new_size)
+        resize(StringVector self, std::vector< std::string >::size_type new_size, std::vector< std::string >::value_type const & x)
+        """
+        return _enigma.StringVector_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(StringVector self, std::vector< std::string >::iterator pos, std::vector< std::string >::value_type const & x) -> std::vector< std::string >::iterator
+        insert(StringVector self, std::vector< std::string >::iterator pos, std::vector< std::string >::size_type n, std::vector< std::string >::value_type const & x)
+        """
+        return _enigma.StringVector_insert(self, *args)
+
+
+    def reserve(self, n):
+        """reserve(StringVector self, std::vector< std::string >::size_type n)"""
+        return _enigma.StringVector_reserve(self, n)
+
+
+    def capacity(self):
+        """capacity(StringVector self) -> std::vector< std::string >::size_type"""
+        return _enigma.StringVector_capacity(self)
+
     __swig_destroy__ = _enigma.delete_StringVector
 StringVector.iterator = new_instancemethod(_enigma.StringVector_iterator, None, StringVector)
 StringVector.__nonzero__ = new_instancemethod(_enigma.StringVector___nonzero__, None, StringVector)
@@ -9332,13 +14216,203 @@ StringVector_swigregister = _enigma.StringVector_swigregister
 StringVector_swigregister(StringVector)
 
 class IntList(object):
+    """Proxy of C++ std::list<(int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(IntList self) -> SwigPyIterator"""
+        return _enigma.IntList_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(IntList self) -> bool"""
+        return _enigma.IntList___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(IntList self) -> bool"""
+        return _enigma.IntList___bool__(self)
+
+
+    def __len__(self):
+        """__len__(IntList self) -> std::list< int >::size_type"""
+        return _enigma.IntList___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(IntList self, std::list< int >::difference_type i, std::list< int >::difference_type j) -> IntList"""
+        return _enigma.IntList___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(IntList self, std::list< int >::difference_type i, std::list< int >::difference_type j)
+        __setslice__(IntList self, std::list< int >::difference_type i, std::list< int >::difference_type j, IntList v)
+        """
+        return _enigma.IntList___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(IntList self, std::list< int >::difference_type i, std::list< int >::difference_type j)"""
+        return _enigma.IntList___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(IntList self, std::list< int >::difference_type i)
+        __delitem__(IntList self, PySliceObject * slice)
+        """
+        return _enigma.IntList___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(IntList self, PySliceObject * slice) -> IntList
+        __getitem__(IntList self, std::list< int >::difference_type i) -> std::list< int >::value_type const &
+        """
+        return _enigma.IntList___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(IntList self, PySliceObject * slice, IntList v)
+        __setitem__(IntList self, PySliceObject * slice)
+        __setitem__(IntList self, std::list< int >::difference_type i, std::list< int >::value_type const & x)
+        """
+        return _enigma.IntList___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(IntList self) -> std::list< int >::value_type"""
+        return _enigma.IntList_pop(self)
+
+
+    def append(self, x):
+        """append(IntList self, std::list< int >::value_type const & x)"""
+        return _enigma.IntList_append(self, x)
+
+
+    def empty(self):
+        """empty(IntList self) -> bool"""
+        return _enigma.IntList_empty(self)
+
+
+    def size(self):
+        """size(IntList self) -> std::list< int >::size_type"""
+        return _enigma.IntList_size(self)
+
+
+    def swap(self, v):
+        """swap(IntList self, IntList v)"""
+        return _enigma.IntList_swap(self, v)
+
+
+    def begin(self):
+        """begin(IntList self) -> std::list< int >::iterator"""
+        return _enigma.IntList_begin(self)
+
+
+    def end(self):
+        """end(IntList self) -> std::list< int >::iterator"""
+        return _enigma.IntList_end(self)
+
+
+    def rbegin(self):
+        """rbegin(IntList self) -> std::list< int >::reverse_iterator"""
+        return _enigma.IntList_rbegin(self)
+
+
+    def rend(self):
+        """rend(IntList self) -> std::list< int >::reverse_iterator"""
+        return _enigma.IntList_rend(self)
+
+
+    def clear(self):
+        """clear(IntList self)"""
+        return _enigma.IntList_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(IntList self) -> std::list< int >::allocator_type"""
+        return _enigma.IntList_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(IntList self)"""
+        return _enigma.IntList_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(IntList self, std::list< int >::iterator pos) -> std::list< int >::iterator
+        erase(IntList self, std::list< int >::iterator first, std::list< int >::iterator last) -> std::list< int >::iterator
+        """
+        return _enigma.IntList_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::list<(int)> self) -> IntList
+        __init__(std::list<(int)> self, IntList arg2) -> IntList
+        __init__(std::list<(int)> self, std::list< int >::size_type size) -> IntList
+        __init__(std::list<(int)> self, std::list< int >::size_type size, std::list< int >::value_type const & value) -> IntList
+        """
         _enigma.IntList_swiginit(self, _enigma.new_IntList(*args))
+
+    def push_back(self, x):
+        """push_back(IntList self, std::list< int >::value_type const & x)"""
+        return _enigma.IntList_push_back(self, x)
+
+
+    def front(self):
+        """front(IntList self) -> std::list< int >::value_type const &"""
+        return _enigma.IntList_front(self)
+
+
+    def back(self):
+        """back(IntList self) -> std::list< int >::value_type const &"""
+        return _enigma.IntList_back(self)
+
+
+    def assign(self, n, x):
+        """assign(IntList self, std::list< int >::size_type n, std::list< int >::value_type const & x)"""
+        return _enigma.IntList_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(IntList self, std::list< int >::size_type new_size)
+        resize(IntList self, std::list< int >::size_type new_size, std::list< int >::value_type const & x)
+        """
+        return _enigma.IntList_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(IntList self, std::list< int >::iterator pos, std::list< int >::value_type const & x) -> std::list< int >::iterator
+        insert(IntList self, std::list< int >::iterator pos, std::list< int >::size_type n, std::list< int >::value_type const & x)
+        """
+        return _enigma.IntList_insert(self, *args)
+
+
+    def pop_front(self):
+        """pop_front(IntList self)"""
+        return _enigma.IntList_pop_front(self)
+
+
+    def push_front(self, x):
+        """push_front(IntList self, std::list< int >::value_type const & x)"""
+        return _enigma.IntList_push_front(self, x)
+
+
+    def reverse(self):
+        """reverse(IntList self)"""
+        return _enigma.IntList_reverse(self)
+
     __swig_destroy__ = _enigma.delete_IntList
 IntList.iterator = new_instancemethod(_enigma.IntList_iterator, None, IntList)
 IntList.__nonzero__ = new_instancemethod(_enigma.IntList___nonzero__, None, IntList)
@@ -9376,13 +14450,198 @@ IntList_swigregister = _enigma.IntList_swigregister
 IntList_swigregister(IntList)
 
 class IntVector(object):
+    """Proxy of C++ std::vector<(int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(IntVector self) -> SwigPyIterator"""
+        return _enigma.IntVector_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(IntVector self) -> bool"""
+        return _enigma.IntVector___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(IntVector self) -> bool"""
+        return _enigma.IntVector___bool__(self)
+
+
+    def __len__(self):
+        """__len__(IntVector self) -> std::vector< int >::size_type"""
+        return _enigma.IntVector___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(IntVector self, std::vector< int >::difference_type i, std::vector< int >::difference_type j) -> IntVector"""
+        return _enigma.IntVector___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(IntVector self, std::vector< int >::difference_type i, std::vector< int >::difference_type j)
+        __setslice__(IntVector self, std::vector< int >::difference_type i, std::vector< int >::difference_type j, IntVector v)
+        """
+        return _enigma.IntVector___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(IntVector self, std::vector< int >::difference_type i, std::vector< int >::difference_type j)"""
+        return _enigma.IntVector___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(IntVector self, std::vector< int >::difference_type i)
+        __delitem__(IntVector self, PySliceObject * slice)
+        """
+        return _enigma.IntVector___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(IntVector self, PySliceObject * slice) -> IntVector
+        __getitem__(IntVector self, std::vector< int >::difference_type i) -> std::vector< int >::value_type const &
+        """
+        return _enigma.IntVector___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(IntVector self, PySliceObject * slice, IntVector v)
+        __setitem__(IntVector self, PySliceObject * slice)
+        __setitem__(IntVector self, std::vector< int >::difference_type i, std::vector< int >::value_type const & x)
+        """
+        return _enigma.IntVector___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(IntVector self) -> std::vector< int >::value_type"""
+        return _enigma.IntVector_pop(self)
+
+
+    def append(self, x):
+        """append(IntVector self, std::vector< int >::value_type const & x)"""
+        return _enigma.IntVector_append(self, x)
+
+
+    def empty(self):
+        """empty(IntVector self) -> bool"""
+        return _enigma.IntVector_empty(self)
+
+
+    def size(self):
+        """size(IntVector self) -> std::vector< int >::size_type"""
+        return _enigma.IntVector_size(self)
+
+
+    def swap(self, v):
+        """swap(IntVector self, IntVector v)"""
+        return _enigma.IntVector_swap(self, v)
+
+
+    def begin(self):
+        """begin(IntVector self) -> std::vector< int >::iterator"""
+        return _enigma.IntVector_begin(self)
+
+
+    def end(self):
+        """end(IntVector self) -> std::vector< int >::iterator"""
+        return _enigma.IntVector_end(self)
+
+
+    def rbegin(self):
+        """rbegin(IntVector self) -> std::vector< int >::reverse_iterator"""
+        return _enigma.IntVector_rbegin(self)
+
+
+    def rend(self):
+        """rend(IntVector self) -> std::vector< int >::reverse_iterator"""
+        return _enigma.IntVector_rend(self)
+
+
+    def clear(self):
+        """clear(IntVector self)"""
+        return _enigma.IntVector_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(IntVector self) -> std::vector< int >::allocator_type"""
+        return _enigma.IntVector_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(IntVector self)"""
+        return _enigma.IntVector_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(IntVector self, std::vector< int >::iterator pos) -> std::vector< int >::iterator
+        erase(IntVector self, std::vector< int >::iterator first, std::vector< int >::iterator last) -> std::vector< int >::iterator
+        """
+        return _enigma.IntVector_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::vector<(int)> self) -> IntVector
+        __init__(std::vector<(int)> self, IntVector arg2) -> IntVector
+        __init__(std::vector<(int)> self, std::vector< int >::size_type size) -> IntVector
+        __init__(std::vector<(int)> self, std::vector< int >::size_type size, std::vector< int >::value_type const & value) -> IntVector
+        """
         _enigma.IntVector_swiginit(self, _enigma.new_IntVector(*args))
+
+    def push_back(self, x):
+        """push_back(IntVector self, std::vector< int >::value_type const & x)"""
+        return _enigma.IntVector_push_back(self, x)
+
+
+    def front(self):
+        """front(IntVector self) -> std::vector< int >::value_type const &"""
+        return _enigma.IntVector_front(self)
+
+
+    def back(self):
+        """back(IntVector self) -> std::vector< int >::value_type const &"""
+        return _enigma.IntVector_back(self)
+
+
+    def assign(self, n, x):
+        """assign(IntVector self, std::vector< int >::size_type n, std::vector< int >::value_type const & x)"""
+        return _enigma.IntVector_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(IntVector self, std::vector< int >::size_type new_size)
+        resize(IntVector self, std::vector< int >::size_type new_size, std::vector< int >::value_type const & x)
+        """
+        return _enigma.IntVector_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(IntVector self, std::vector< int >::iterator pos, std::vector< int >::value_type const & x) -> std::vector< int >::iterator
+        insert(IntVector self, std::vector< int >::iterator pos, std::vector< int >::size_type n, std::vector< int >::value_type const & x)
+        """
+        return _enigma.IntVector_insert(self, *args)
+
+
+    def reserve(self, n):
+        """reserve(IntVector self, std::vector< int >::size_type n)"""
+        return _enigma.IntVector_reserve(self, n)
+
+
+    def capacity(self):
+        """capacity(IntVector self) -> std::vector< int >::size_type"""
+        return _enigma.IntVector_capacity(self)
+
     __swig_destroy__ = _enigma.delete_IntVector
 IntVector.iterator = new_instancemethod(_enigma.IntVector_iterator, None, IntVector)
 IntVector.__nonzero__ = new_instancemethod(_enigma.IntVector___nonzero__, None, IntVector)
@@ -9419,10 +14678,32 @@ IntVector_swigregister = _enigma.IntVector_swigregister
 IntVector_swigregister(IntVector)
 
 class WindowAnimationSetMap(object):
+    """Proxy of C++ std::map<(std::string,ePtr<(eWindowAnimationSet)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(WindowAnimationSetMap self) -> SwigPyIterator"""
+        return _enigma.WindowAnimationSetMap_iterator(self)
+
     def __iter__(self):
         return self.iterator()
+
+    def __nonzero__(self):
+        """__nonzero__(WindowAnimationSetMap self) -> bool"""
+        return _enigma.WindowAnimationSetMap___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(WindowAnimationSetMap self) -> bool"""
+        return _enigma.WindowAnimationSetMap___bool__(self)
+
+
+    def __len__(self):
+        """__len__(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::size_type"""
+        return _enigma.WindowAnimationSetMap___len__(self)
+
     def __iter__(self):
         return self.key_iterator()
     def iterkeys(self):
@@ -9432,8 +14713,145 @@ class WindowAnimationSetMap(object):
     def iteritems(self):
         return self.iterator()
 
+    def __getitem__(self, key):
+        """__getitem__(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & key) -> eWindowAnimationSet"""
+        return _enigma.WindowAnimationSetMap___getitem__(self, key)
+
+
+    def __delitem__(self, key):
+        """__delitem__(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & key)"""
+        return _enigma.WindowAnimationSetMap___delitem__(self, key)
+
+
+    def has_key(self, key):
+        """has_key(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & key) -> bool"""
+        return _enigma.WindowAnimationSetMap_has_key(self, key)
+
+
+    def keys(self):
+        """keys(WindowAnimationSetMap self) -> PyObject *"""
+        return _enigma.WindowAnimationSetMap_keys(self)
+
+
+    def values(self):
+        """values(WindowAnimationSetMap self) -> PyObject *"""
+        return _enigma.WindowAnimationSetMap_values(self)
+
+
+    def items(self):
+        """items(WindowAnimationSetMap self) -> PyObject *"""
+        return _enigma.WindowAnimationSetMap_items(self)
+
+
+    def __contains__(self, key):
+        """__contains__(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & key) -> bool"""
+        return _enigma.WindowAnimationSetMap___contains__(self, key)
+
+
+    def key_iterator(self):
+        """key_iterator(WindowAnimationSetMap self) -> SwigPyIterator"""
+        return _enigma.WindowAnimationSetMap_key_iterator(self)
+
+
+    def value_iterator(self):
+        """value_iterator(WindowAnimationSetMap self) -> SwigPyIterator"""
+        return _enigma.WindowAnimationSetMap_value_iterator(self)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & key)
+        __setitem__(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & key, eWindowAnimationSet x)
+        """
+        return _enigma.WindowAnimationSetMap___setitem__(self, *args)
+
+
+    def asdict(self):
+        """asdict(WindowAnimationSetMap self) -> PyObject *"""
+        return _enigma.WindowAnimationSetMap_asdict(self)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::map<(std::string,ePtr<(eWindowAnimationSet)>)> self, std::less< std::string > const & arg2) -> WindowAnimationSetMap
+        __init__(std::map<(std::string,ePtr<(eWindowAnimationSet)>)> self) -> WindowAnimationSetMap
+        __init__(std::map<(std::string,ePtr<(eWindowAnimationSet)>)> self, WindowAnimationSetMap arg2) -> WindowAnimationSetMap
+        """
         _enigma.WindowAnimationSetMap_swiginit(self, _enigma.new_WindowAnimationSetMap(*args))
+
+    def empty(self):
+        """empty(WindowAnimationSetMap self) -> bool"""
+        return _enigma.WindowAnimationSetMap_empty(self)
+
+
+    def size(self):
+        """size(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::size_type"""
+        return _enigma.WindowAnimationSetMap_size(self)
+
+
+    def swap(self, v):
+        """swap(WindowAnimationSetMap self, WindowAnimationSetMap v)"""
+        return _enigma.WindowAnimationSetMap_swap(self, v)
+
+
+    def begin(self):
+        """begin(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::iterator"""
+        return _enigma.WindowAnimationSetMap_begin(self)
+
+
+    def end(self):
+        """end(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::iterator"""
+        return _enigma.WindowAnimationSetMap_end(self)
+
+
+    def rbegin(self):
+        """rbegin(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::reverse_iterator"""
+        return _enigma.WindowAnimationSetMap_rbegin(self)
+
+
+    def rend(self):
+        """rend(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::reverse_iterator"""
+        return _enigma.WindowAnimationSetMap_rend(self)
+
+
+    def clear(self):
+        """clear(WindowAnimationSetMap self)"""
+        return _enigma.WindowAnimationSetMap_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(WindowAnimationSetMap self) -> std::map< std::string,ePtr< eWindowAnimationSet > >::allocator_type"""
+        return _enigma.WindowAnimationSetMap_get_allocator(self)
+
+
+    def count(self, x):
+        """count(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & x) -> std::map< std::string,ePtr< eWindowAnimationSet > >::size_type"""
+        return _enigma.WindowAnimationSetMap_count(self, x)
+
+
+    def erase(self, *args):
+        """
+        erase(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & x) -> std::map< std::string,ePtr< eWindowAnimationSet > >::size_type
+        erase(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::iterator position)
+        erase(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::iterator first, std::map< std::string,ePtr< eWindowAnimationSet > >::iterator last)
+        """
+        return _enigma.WindowAnimationSetMap_erase(self, *args)
+
+
+    def find(self, x):
+        """find(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & x) -> std::map< std::string,ePtr< eWindowAnimationSet > >::iterator"""
+        return _enigma.WindowAnimationSetMap_find(self, x)
+
+
+    def lower_bound(self, x):
+        """lower_bound(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & x) -> std::map< std::string,ePtr< eWindowAnimationSet > >::iterator"""
+        return _enigma.WindowAnimationSetMap_lower_bound(self, x)
+
+
+    def upper_bound(self, x):
+        """upper_bound(WindowAnimationSetMap self, std::map< std::string,ePtr< eWindowAnimationSet > >::key_type const & x) -> std::map< std::string,ePtr< eWindowAnimationSet > >::iterator"""
+        return _enigma.WindowAnimationSetMap_upper_bound(self, x)
+
     __swig_destroy__ = _enigma.delete_WindowAnimationSetMap
 WindowAnimationSetMap.iterator = new_instancemethod(_enigma.WindowAnimationSetMap_iterator, None, WindowAnimationSetMap)
 WindowAnimationSetMap.__nonzero__ = new_instancemethod(_enigma.WindowAnimationSetMap___nonzero__, None, WindowAnimationSetMap)
@@ -9468,13 +14886,203 @@ WindowAnimationSetMap_swigregister = _enigma.WindowAnimationSetMap_swigregister
 WindowAnimationSetMap_swigregister(WindowAnimationSetMap)
 
 class eVideoModes(object):
+    """Proxy of C++ std::list<(eVideoMode)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(eVideoModes self) -> SwigPyIterator"""
+        return _enigma.eVideoModes_iterator(self)
+
     def __iter__(self):
         return self.iterator()
 
+    def __nonzero__(self):
+        """__nonzero__(eVideoModes self) -> bool"""
+        return _enigma.eVideoModes___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(eVideoModes self) -> bool"""
+        return _enigma.eVideoModes___bool__(self)
+
+
+    def __len__(self):
+        """__len__(eVideoModes self) -> std::list< _eVideoMode >::size_type"""
+        return _enigma.eVideoModes___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(eVideoModes self, std::list< _eVideoMode >::difference_type i, std::list< _eVideoMode >::difference_type j) -> eVideoModes"""
+        return _enigma.eVideoModes___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(eVideoModes self, std::list< _eVideoMode >::difference_type i, std::list< _eVideoMode >::difference_type j)
+        __setslice__(eVideoModes self, std::list< _eVideoMode >::difference_type i, std::list< _eVideoMode >::difference_type j, eVideoModes v)
+        """
+        return _enigma.eVideoModes___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(eVideoModes self, std::list< _eVideoMode >::difference_type i, std::list< _eVideoMode >::difference_type j)"""
+        return _enigma.eVideoModes___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(eVideoModes self, std::list< _eVideoMode >::difference_type i)
+        __delitem__(eVideoModes self, PySliceObject * slice)
+        """
+        return _enigma.eVideoModes___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(eVideoModes self, PySliceObject * slice) -> eVideoModes
+        __getitem__(eVideoModes self, std::list< _eVideoMode >::difference_type i) -> eVideoMode
+        """
+        return _enigma.eVideoModes___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(eVideoModes self, PySliceObject * slice, eVideoModes v)
+        __setitem__(eVideoModes self, PySliceObject * slice)
+        __setitem__(eVideoModes self, std::list< _eVideoMode >::difference_type i, eVideoMode x)
+        """
+        return _enigma.eVideoModes___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(eVideoModes self) -> eVideoMode"""
+        return _enigma.eVideoModes_pop(self)
+
+
+    def append(self, x):
+        """append(eVideoModes self, eVideoMode x)"""
+        return _enigma.eVideoModes_append(self, x)
+
+
+    def empty(self):
+        """empty(eVideoModes self) -> bool"""
+        return _enigma.eVideoModes_empty(self)
+
+
+    def size(self):
+        """size(eVideoModes self) -> std::list< _eVideoMode >::size_type"""
+        return _enigma.eVideoModes_size(self)
+
+
+    def swap(self, v):
+        """swap(eVideoModes self, eVideoModes v)"""
+        return _enigma.eVideoModes_swap(self, v)
+
+
+    def begin(self):
+        """begin(eVideoModes self) -> std::list< _eVideoMode >::iterator"""
+        return _enigma.eVideoModes_begin(self)
+
+
+    def end(self):
+        """end(eVideoModes self) -> std::list< _eVideoMode >::iterator"""
+        return _enigma.eVideoModes_end(self)
+
+
+    def rbegin(self):
+        """rbegin(eVideoModes self) -> std::list< _eVideoMode >::reverse_iterator"""
+        return _enigma.eVideoModes_rbegin(self)
+
+
+    def rend(self):
+        """rend(eVideoModes self) -> std::list< _eVideoMode >::reverse_iterator"""
+        return _enigma.eVideoModes_rend(self)
+
+
+    def clear(self):
+        """clear(eVideoModes self)"""
+        return _enigma.eVideoModes_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(eVideoModes self) -> std::list< _eVideoMode >::allocator_type"""
+        return _enigma.eVideoModes_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(eVideoModes self)"""
+        return _enigma.eVideoModes_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(eVideoModes self, std::list< _eVideoMode >::iterator pos) -> std::list< _eVideoMode >::iterator
+        erase(eVideoModes self, std::list< _eVideoMode >::iterator first, std::list< _eVideoMode >::iterator last) -> std::list< _eVideoMode >::iterator
+        """
+        return _enigma.eVideoModes_erase(self, *args)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::list<(eVideoMode)> self) -> eVideoModes
+        __init__(std::list<(eVideoMode)> self, eVideoModes arg2) -> eVideoModes
+        __init__(std::list<(eVideoMode)> self, std::list< _eVideoMode >::size_type size) -> eVideoModes
+        __init__(std::list<(eVideoMode)> self, std::list< _eVideoMode >::size_type size, eVideoMode value) -> eVideoModes
+        """
         _enigma.eVideoModes_swiginit(self, _enigma.new_eVideoModes(*args))
+
+    def push_back(self, x):
+        """push_back(eVideoModes self, eVideoMode x)"""
+        return _enigma.eVideoModes_push_back(self, x)
+
+
+    def front(self):
+        """front(eVideoModes self) -> eVideoMode"""
+        return _enigma.eVideoModes_front(self)
+
+
+    def back(self):
+        """back(eVideoModes self) -> eVideoMode"""
+        return _enigma.eVideoModes_back(self)
+
+
+    def assign(self, n, x):
+        """assign(eVideoModes self, std::list< _eVideoMode >::size_type n, eVideoMode x)"""
+        return _enigma.eVideoModes_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(eVideoModes self, std::list< _eVideoMode >::size_type new_size)
+        resize(eVideoModes self, std::list< _eVideoMode >::size_type new_size, eVideoMode x)
+        """
+        return _enigma.eVideoModes_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(eVideoModes self, std::list< _eVideoMode >::iterator pos, eVideoMode x) -> std::list< _eVideoMode >::iterator
+        insert(eVideoModes self, std::list< _eVideoMode >::iterator pos, std::list< _eVideoMode >::size_type n, eVideoMode x)
+        """
+        return _enigma.eVideoModes_insert(self, *args)
+
+
+    def pop_front(self):
+        """pop_front(eVideoModes self)"""
+        return _enigma.eVideoModes_pop_front(self)
+
+
+    def push_front(self, x):
+        """push_front(eVideoModes self, eVideoMode x)"""
+        return _enigma.eVideoModes_push_front(self, x)
+
+
+    def reverse(self):
+        """reverse(eVideoModes self)"""
+        return _enigma.eVideoModes_reverse(self)
+
     __swig_destroy__ = _enigma.delete_eVideoModes
 eVideoModes.iterator = new_instancemethod(_enigma.eVideoModes_iterator, None, eVideoModes)
 eVideoModes.__nonzero__ = new_instancemethod(_enigma.eVideoModes___nonzero__, None, eVideoModes)
@@ -9512,10 +15120,32 @@ eVideoModes_swigregister = _enigma.eVideoModes_swigregister
 eVideoModes_swigregister(eVideoModes)
 
 class eVideoPorts(object):
+    """Proxy of C++ std::map<(std::string,eVideoPort)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(eVideoPorts self) -> SwigPyIterator"""
+        return _enigma.eVideoPorts_iterator(self)
+
     def __iter__(self):
         return self.iterator()
+
+    def __nonzero__(self):
+        """__nonzero__(eVideoPorts self) -> bool"""
+        return _enigma.eVideoPorts___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(eVideoPorts self) -> bool"""
+        return _enigma.eVideoPorts___bool__(self)
+
+
+    def __len__(self):
+        """__len__(eVideoPorts self) -> std::map< std::string,_eVideoPort >::size_type"""
+        return _enigma.eVideoPorts___len__(self)
+
     def __iter__(self):
         return self.key_iterator()
     def iterkeys(self):
@@ -9525,8 +15155,145 @@ class eVideoPorts(object):
     def iteritems(self):
         return self.iterator()
 
+    def __getitem__(self, key):
+        """__getitem__(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & key) -> eVideoPort"""
+        return _enigma.eVideoPorts___getitem__(self, key)
+
+
+    def __delitem__(self, key):
+        """__delitem__(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & key)"""
+        return _enigma.eVideoPorts___delitem__(self, key)
+
+
+    def has_key(self, key):
+        """has_key(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & key) -> bool"""
+        return _enigma.eVideoPorts_has_key(self, key)
+
+
+    def keys(self):
+        """keys(eVideoPorts self) -> PyObject *"""
+        return _enigma.eVideoPorts_keys(self)
+
+
+    def values(self):
+        """values(eVideoPorts self) -> PyObject *"""
+        return _enigma.eVideoPorts_values(self)
+
+
+    def items(self):
+        """items(eVideoPorts self) -> PyObject *"""
+        return _enigma.eVideoPorts_items(self)
+
+
+    def __contains__(self, key):
+        """__contains__(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & key) -> bool"""
+        return _enigma.eVideoPorts___contains__(self, key)
+
+
+    def key_iterator(self):
+        """key_iterator(eVideoPorts self) -> SwigPyIterator"""
+        return _enigma.eVideoPorts_key_iterator(self)
+
+
+    def value_iterator(self):
+        """value_iterator(eVideoPorts self) -> SwigPyIterator"""
+        return _enigma.eVideoPorts_value_iterator(self)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & key)
+        __setitem__(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & key, eVideoPort x)
+        """
+        return _enigma.eVideoPorts___setitem__(self, *args)
+
+
+    def asdict(self):
+        """asdict(eVideoPorts self) -> PyObject *"""
+        return _enigma.eVideoPorts_asdict(self)
+
+
     def __init__(self, *args):
+        """
+        __init__(std::map<(std::string,eVideoPort)> self, std::less< std::string > const & arg2) -> eVideoPorts
+        __init__(std::map<(std::string,eVideoPort)> self) -> eVideoPorts
+        __init__(std::map<(std::string,eVideoPort)> self, eVideoPorts arg2) -> eVideoPorts
+        """
         _enigma.eVideoPorts_swiginit(self, _enigma.new_eVideoPorts(*args))
+
+    def empty(self):
+        """empty(eVideoPorts self) -> bool"""
+        return _enigma.eVideoPorts_empty(self)
+
+
+    def size(self):
+        """size(eVideoPorts self) -> std::map< std::string,_eVideoPort >::size_type"""
+        return _enigma.eVideoPorts_size(self)
+
+
+    def swap(self, v):
+        """swap(eVideoPorts self, eVideoPorts v)"""
+        return _enigma.eVideoPorts_swap(self, v)
+
+
+    def begin(self):
+        """begin(eVideoPorts self) -> std::map< std::string,_eVideoPort >::iterator"""
+        return _enigma.eVideoPorts_begin(self)
+
+
+    def end(self):
+        """end(eVideoPorts self) -> std::map< std::string,_eVideoPort >::iterator"""
+        return _enigma.eVideoPorts_end(self)
+
+
+    def rbegin(self):
+        """rbegin(eVideoPorts self) -> std::map< std::string,_eVideoPort >::reverse_iterator"""
+        return _enigma.eVideoPorts_rbegin(self)
+
+
+    def rend(self):
+        """rend(eVideoPorts self) -> std::map< std::string,_eVideoPort >::reverse_iterator"""
+        return _enigma.eVideoPorts_rend(self)
+
+
+    def clear(self):
+        """clear(eVideoPorts self)"""
+        return _enigma.eVideoPorts_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(eVideoPorts self) -> std::map< std::string,_eVideoPort >::allocator_type"""
+        return _enigma.eVideoPorts_get_allocator(self)
+
+
+    def count(self, x):
+        """count(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & x) -> std::map< std::string,_eVideoPort >::size_type"""
+        return _enigma.eVideoPorts_count(self, x)
+
+
+    def erase(self, *args):
+        """
+        erase(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & x) -> std::map< std::string,_eVideoPort >::size_type
+        erase(eVideoPorts self, std::map< std::string,_eVideoPort >::iterator position)
+        erase(eVideoPorts self, std::map< std::string,_eVideoPort >::iterator first, std::map< std::string,_eVideoPort >::iterator last)
+        """
+        return _enigma.eVideoPorts_erase(self, *args)
+
+
+    def find(self, x):
+        """find(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & x) -> std::map< std::string,_eVideoPort >::iterator"""
+        return _enigma.eVideoPorts_find(self, x)
+
+
+    def lower_bound(self, x):
+        """lower_bound(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & x) -> std::map< std::string,_eVideoPort >::iterator"""
+        return _enigma.eVideoPorts_lower_bound(self, x)
+
+
+    def upper_bound(self, x):
+        """upper_bound(eVideoPorts self, std::map< std::string,_eVideoPort >::key_type const & x) -> std::map< std::string,_eVideoPort >::iterator"""
+        return _enigma.eVideoPorts_upper_bound(self, x)
+
     __swig_destroy__ = _enigma.delete_eVideoPorts
 eVideoPorts.iterator = new_instancemethod(_enigma.eVideoPorts_iterator, None, eVideoPorts)
 eVideoPorts.__nonzero__ = new_instancemethod(_enigma.eVideoPorts___nonzero__, None, eVideoPorts)
@@ -9695,20 +15462,31 @@ def eServiceReference_create(refstr):
     return eServiceReference(refstr)
 
 class eSlot(object):
+    """Proxy of C++ eSlot class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
     __swig_destroy__ = _enigma.delete_eSlot
 
     def __init__(self):
+        """__init__(eSlot self) -> eSlot"""
         _enigma.eSlot_swiginit(self, _enigma.new_eSlot())
 eSlot_swigregister = _enigma.eSlot_swigregister
 eSlot_swigregister(eSlot)
 
 class eSlot0X(eSlot):
+    """Proxy of C++ eSlot0<(void)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self):
+        """cb_func(eSlot0X self)"""
+        return _enigma.eSlot0X_cb_func(self)
+
+
     def __init__(self):
+        """__init__(eSlot0<(void)> self) -> eSlot0X"""
         if self.__class__ == eSlot0X:
             _self = None
         else:
@@ -9724,8 +15502,15 @@ eSlot0X_swigregister = _enigma.eSlot0X_swigregister
 eSlot0X_swigregister(eSlot0X)
 
 class eSignal0X(object):
+    """Proxy of C++ eSignal0<(void)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal0X self, eSlot0X slot)"""
+        return _enigma.eSignal0X_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot0X(eSlot0X):
@@ -9737,6 +15522,7 @@ class eSignal0X(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal0<(void)> self) -> eSignal0X"""
         _enigma.eSignal0X_swiginit(self, _enigma.new_eSignal0X())
     __swig_destroy__ = _enigma.delete_eSignal0X
 eSignal0X.connect2 = new_instancemethod(_enigma.eSignal0X_connect2, None, eSignal0X)
@@ -9744,10 +15530,18 @@ eSignal0X_swigregister = _enigma.eSignal0X_swigregister
 eSignal0X_swigregister(eSignal0X)
 
 class eSlot1Any(eSlot):
+    """Proxy of C++ eSlot1<(void,boost::any)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1Any self, boost::any arg0)"""
+        return _enigma.eSlot1Any_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,boost::any)> self) -> eSlot1Any"""
         if self.__class__ == eSlot1Any:
             _self = None
         else:
@@ -9763,8 +15557,15 @@ eSlot1Any_swigregister = _enigma.eSlot1Any_swigregister
 eSlot1Any_swigregister(eSlot1Any)
 
 class eSignal1Any(object):
+    """Proxy of C++ eSignal1<(void,boost::any)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1Any self, eSlot1Any slot)"""
+        return _enigma.eSignal1Any_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1Any(eSlot1Any):
@@ -9776,6 +15577,7 @@ class eSignal1Any(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,boost::any)> self) -> eSignal1Any"""
         _enigma.eSignal1Any_swiginit(self, _enigma.new_eSignal1Any())
     __swig_destroy__ = _enigma.delete_eSignal1Any
 eSignal1Any.connect2 = new_instancemethod(_enigma.eSignal1Any_connect2, None, eSignal1Any)
@@ -9783,10 +15585,18 @@ eSignal1Any_swigregister = _enigma.eSignal1Any_swigregister
 eSignal1Any_swigregister(eSignal1Any)
 
 class eSlot1I(eSlot):
+    """Proxy of C++ eSlot1<(void,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1I self, int arg0)"""
+        return _enigma.eSlot1I_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,int)> self) -> eSlot1I"""
         if self.__class__ == eSlot1I:
             _self = None
         else:
@@ -9802,8 +15612,15 @@ eSlot1I_swigregister = _enigma.eSlot1I_swigregister
 eSlot1I_swigregister(eSlot1I)
 
 class eSignal1I(object):
+    """Proxy of C++ eSignal1<(void,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1I self, eSlot1I slot)"""
+        return _enigma.eSignal1I_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1I(eSlot1I):
@@ -9815,6 +15632,7 @@ class eSignal1I(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,int)> self) -> eSignal1I"""
         _enigma.eSignal1I_swiginit(self, _enigma.new_eSignal1I())
     __swig_destroy__ = _enigma.delete_eSignal1I
 eSignal1I.connect2 = new_instancemethod(_enigma.eSignal1I_connect2, None, eSignal1I)
@@ -9822,10 +15640,18 @@ eSignal1I_swigregister = _enigma.eSignal1I_swigregister
 eSignal1I_swigregister(eSignal1I)
 
 class eSlot1CStr(eSlot):
+    """Proxy of C++ eSlot1<(void,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1CStr self, char const * arg0)"""
+        return _enigma.eSlot1CStr_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,p.q(const).char)> self) -> eSlot1CStr"""
         if self.__class__ == eSlot1CStr:
             _self = None
         else:
@@ -9841,8 +15667,15 @@ eSlot1CStr_swigregister = _enigma.eSlot1CStr_swigregister
 eSlot1CStr_swigregister(eSlot1CStr)
 
 class eSignal1CStr(object):
+    """Proxy of C++ eSignal1<(void,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1CStr self, eSlot1CStr slot)"""
+        return _enigma.eSignal1CStr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1CStr(eSlot1CStr):
@@ -9854,6 +15687,7 @@ class eSignal1CStr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,p.q(const).char)> self) -> eSignal1CStr"""
         _enigma.eSignal1CStr_swiginit(self, _enigma.new_eSignal1CStr())
     __swig_destroy__ = _enigma.delete_eSignal1CStr
 eSignal1CStr.connect2 = new_instancemethod(_enigma.eSignal1CStr_connect2, None, eSignal1CStr)
@@ -9861,10 +15695,18 @@ eSignal1CStr_swigregister = _enigma.eSignal1CStr_swigregister
 eSignal1CStr_swigregister(eSignal1CStr)
 
 class eSlot1LL(eSlot):
+    """Proxy of C++ eSlot1<(void,long long)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1LL self, long long arg0)"""
+        return _enigma.eSlot1LL_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,long long)> self) -> eSlot1LL"""
         if self.__class__ == eSlot1LL:
             _self = None
         else:
@@ -9880,8 +15722,15 @@ eSlot1LL_swigregister = _enigma.eSlot1LL_swigregister
 eSlot1LL_swigregister(eSlot1LL)
 
 class eSignal1LL(object):
+    """Proxy of C++ eSignal1<(void,long long)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1LL self, eSlot1LL slot)"""
+        return _enigma.eSignal1LL_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1LL(eSlot1LL):
@@ -9893,6 +15742,7 @@ class eSignal1LL(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,long long)> self) -> eSignal1LL"""
         _enigma.eSignal1LL_swiginit(self, _enigma.new_eSignal1LL())
     __swig_destroy__ = _enigma.delete_eSignal1LL
 eSignal1LL.connect2 = new_instancemethod(_enigma.eSignal1LL_connect2, None, eSignal1LL)
@@ -9900,10 +15750,18 @@ eSignal1LL_swigregister = _enigma.eSignal1LL_swigregister
 eSignal1LL_swigregister(eSignal1LL)
 
 class eSlot1CStrRCStr(eSlot):
+    """Proxy of C++ eSlot1<(p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1CStrRCStr self, char const * arg0) -> char const *"""
+        return _enigma.eSlot1CStrRCStr_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(p.q(const).char,p.q(const).char)> self) -> eSlot1CStrRCStr"""
         if self.__class__ == eSlot1CStrRCStr:
             _self = None
         else:
@@ -9919,8 +15777,15 @@ eSlot1CStrRCStr_swigregister = _enigma.eSlot1CStrRCStr_swigregister
 eSlot1CStrRCStr_swigregister(eSlot1CStrRCStr)
 
 class eSignal1CStrRCStr(object):
+    """Proxy of C++ eSignal1<(p.q(const).char,p.q(const).char)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1CStrRCStr self, eSlot1CStrRCStr slot)"""
+        return _enigma.eSignal1CStrRCStr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1CStrRCStr(eSlot1CStrRCStr):
@@ -9932,6 +15797,7 @@ class eSignal1CStrRCStr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(p.q(const).char,p.q(const).char)> self) -> eSignal1CStrRCStr"""
         _enigma.eSignal1CStrRCStr_swiginit(self, _enigma.new_eSignal1CStrRCStr())
     __swig_destroy__ = _enigma.delete_eSignal1CStrRCStr
 eSignal1CStrRCStr.connect2 = new_instancemethod(_enigma.eSignal1CStrRCStr_connect2, None, eSignal1CStrRCStr)
@@ -9939,10 +15805,18 @@ eSignal1CStrRCStr_swigregister = _enigma.eSignal1CStrRCStr_swigregister
 eSignal1CStrRCStr_swigregister(eSignal1CStrRCStr)
 
 class eSlot1iDvbFrontendPtr(eSlot):
+    """Proxy of C++ eSlot1<(void,p.iDVBFrontend)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1iDvbFrontendPtr self, iDVBFrontend * arg0)"""
+        return _enigma.eSlot1iDvbFrontendPtr_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,p.iDVBFrontend)> self) -> eSlot1iDvbFrontendPtr"""
         if self.__class__ == eSlot1iDvbFrontendPtr:
             _self = None
         else:
@@ -9958,8 +15832,15 @@ eSlot1iDvbFrontendPtr_swigregister = _enigma.eSlot1iDvbFrontendPtr_swigregister
 eSlot1iDvbFrontendPtr_swigregister(eSlot1iDvbFrontendPtr)
 
 class eSignal1iDvbFrontendPtr(object):
+    """Proxy of C++ eSignal1<(void,p.iDVBFrontend)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1iDvbFrontendPtr self, eSlot1iDvbFrontendPtr slot)"""
+        return _enigma.eSignal1iDvbFrontendPtr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1iDvbFrontendPtr(eSlot1iDvbFrontendPtr):
@@ -9971,6 +15852,7 @@ class eSignal1iDvbFrontendPtr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,p.iDVBFrontend)> self) -> eSignal1iDvbFrontendPtr"""
         _enigma.eSignal1iDvbFrontendPtr_swiginit(self, _enigma.new_eSignal1iDvbFrontendPtr())
     __swig_destroy__ = _enigma.delete_eSignal1iDvbFrontendPtr
 eSignal1iDvbFrontendPtr.connect2 = new_instancemethod(_enigma.eSignal1iDvbFrontendPtr_connect2, None, eSignal1iDvbFrontendPtr)
@@ -9978,10 +15860,18 @@ eSignal1iDvbFrontendPtr_swigregister = _enigma.eSignal1iDvbFrontendPtr_swigregis
 eSignal1iDvbFrontendPtr_swigregister(eSignal1iDvbFrontendPtr)
 
 class eSlot3IIIRetI(eSlot):
+    """Proxy of C++ eSlot3<(int,int,int,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2):
+        """cb_func(eSlot3IIIRetI self, int arg0, int arg1, int arg2) -> int"""
+        return _enigma.eSlot3IIIRetI_cb_func(self, arg0, arg1, arg2)
+
+
     def __init__(self):
+        """__init__(eSlot3<(int,int,int,int)> self) -> eSlot3IIIRetI"""
         if self.__class__ == eSlot3IIIRetI:
             _self = None
         else:
@@ -9997,8 +15887,15 @@ eSlot3IIIRetI_swigregister = _enigma.eSlot3IIIRetI_swigregister
 eSlot3IIIRetI_swigregister(eSlot3IIIRetI)
 
 class eSignal3IIIRetI(object):
+    """Proxy of C++ eSignal3<(int,int,int,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal3IIIRetI self, eSlot3IIIRetI slot)"""
+        return _enigma.eSignal3IIIRetI_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot3IIIRetI(eSlot3IIIRetI):
@@ -10010,6 +15907,7 @@ class eSignal3IIIRetI(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal3<(int,int,int,int)> self) -> eSignal3IIIRetI"""
         _enigma.eSignal3IIIRetI_swiginit(self, _enigma.new_eSignal3IIIRetI())
     __swig_destroy__ = _enigma.delete_eSignal3IIIRetI
 eSignal3IIIRetI.connect2 = new_instancemethod(_enigma.eSignal3IIIRetI_connect2, None, eSignal3IIIRetI)
@@ -10017,10 +15915,18 @@ eSignal3IIIRetI_swigregister = _enigma.eSignal3IIIRetI_swigregister
 eSignal3IIIRetI_swigregister(eSignal3IIIRetI)
 
 class eSlot2IRecordableServicePtrInt(eSlot):
+    """Proxy of C++ eSlot2<(void,r.ePtr<(iRecordableService)>,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2IRecordableServicePtrInt self, iRecordableServicePtr arg0, int arg1)"""
+        return _enigma.eSlot2IRecordableServicePtrInt_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,r.ePtr<(iRecordableService)>,int)> self) -> eSlot2IRecordableServicePtrInt"""
         if self.__class__ == eSlot2IRecordableServicePtrInt:
             _self = None
         else:
@@ -10036,8 +15942,15 @@ eSlot2IRecordableServicePtrInt_swigregister = _enigma.eSlot2IRecordableServicePt
 eSlot2IRecordableServicePtrInt_swigregister(eSlot2IRecordableServicePtrInt)
 
 class eSignal2IRecordableServicePtrInt(object):
+    """Proxy of C++ eSignal2<(void,r.ePtr<(iRecordableService)>,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2IRecordableServicePtrInt self, eSlot2IRecordableServicePtrInt slot)"""
+        return _enigma.eSignal2IRecordableServicePtrInt_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2IRecordableServicePtrInt(eSlot2IRecordableServicePtrInt):
@@ -10049,6 +15962,7 @@ class eSignal2IRecordableServicePtrInt(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,r.ePtr<(iRecordableService)>,int)> self) -> eSignal2IRecordableServicePtrInt"""
         _enigma.eSignal2IRecordableServicePtrInt_swiginit(self, _enigma.new_eSignal2IRecordableServicePtrInt())
     __swig_destroy__ = _enigma.delete_eSignal2IRecordableServicePtrInt
 eSignal2IRecordableServicePtrInt.connect2 = new_instancemethod(_enigma.eSignal2IRecordableServicePtrInt_connect2, None, eSignal2IRecordableServicePtrInt)
@@ -10056,10 +15970,18 @@ eSignal2IRecordableServicePtrInt_swigregister = _enigma.eSignal2IRecordableServi
 eSignal2IRecordableServicePtrInt_swigregister(eSignal2IRecordableServicePtrInt)
 
 class eSlot2IntInt(eSlot):
+    """Proxy of C++ eSlot2<(void,int,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2IntInt self, int arg0, int arg1)"""
+        return _enigma.eSlot2IntInt_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,int,int)> self) -> eSlot2IntInt"""
         if self.__class__ == eSlot2IntInt:
             _self = None
         else:
@@ -10075,8 +15997,15 @@ eSlot2IntInt_swigregister = _enigma.eSlot2IntInt_swigregister
 eSlot2IntInt_swigregister(eSlot2IntInt)
 
 class eSignal2IntInt(object):
+    """Proxy of C++ eSignal2<(void,int,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2IntInt self, eSlot2IntInt slot)"""
+        return _enigma.eSignal2IntInt_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2IntInt(eSlot2IntInt):
@@ -10088,6 +16017,7 @@ class eSignal2IntInt(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,int,int)> self) -> eSignal2IntInt"""
         _enigma.eSignal2IntInt_swiginit(self, _enigma.new_eSignal2IntInt())
     __swig_destroy__ = _enigma.delete_eSignal2IntInt
 eSignal2IntInt.connect2 = new_instancemethod(_enigma.eSignal2IntInt_connect2, None, eSignal2IntInt)
@@ -10095,10 +16025,18 @@ eSignal2IntInt_swigregister = _enigma.eSignal2IntInt_swigregister
 eSignal2IntInt_swigregister(eSignal2IntInt)
 
 class eSlot2IntIntList(eSlot):
+    """Proxy of C++ eSlot2<(void,int,std::list<(int)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2IntIntList self, int arg0, IntList arg1)"""
+        return _enigma.eSlot2IntIntList_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,int,std::list<(int)>)> self) -> eSlot2IntIntList"""
         if self.__class__ == eSlot2IntIntList:
             _self = None
         else:
@@ -10114,8 +16052,15 @@ eSlot2IntIntList_swigregister = _enigma.eSlot2IntIntList_swigregister
 eSlot2IntIntList_swigregister(eSlot2IntIntList)
 
 class eSignal2IntIntList(object):
+    """Proxy of C++ eSignal2<(void,int,std::list<(int)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2IntIntList self, eSlot2IntIntList slot)"""
+        return _enigma.eSignal2IntIntList_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2IntIntList(eSlot2IntIntList):
@@ -10127,6 +16072,7 @@ class eSignal2IntIntList(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,int,std::list<(int)>)> self) -> eSignal2IntIntList"""
         _enigma.eSignal2IntIntList_swiginit(self, _enigma.new_eSignal2IntIntList())
     __swig_destroy__ = _enigma.delete_eSignal2IntIntList
 eSignal2IntIntList.connect2 = new_instancemethod(_enigma.eSignal2IntIntList_connect2, None, eSignal2IntIntList)
@@ -10134,10 +16080,18 @@ eSignal2IntIntList_swigregister = _enigma.eSignal2IntIntList_swigregister
 eSignal2IntIntList_swigregister(eSignal2IntIntList)
 
 class eSlot3IntIntIntList(eSlot):
+    """Proxy of C++ eSlot3<(void,int,int,std::list<(int)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2):
+        """cb_func(eSlot3IntIntIntList self, int arg0, int arg1, IntList arg2)"""
+        return _enigma.eSlot3IntIntIntList_cb_func(self, arg0, arg1, arg2)
+
+
     def __init__(self):
+        """__init__(eSlot3<(void,int,int,std::list<(int)>)> self) -> eSlot3IntIntIntList"""
         if self.__class__ == eSlot3IntIntIntList:
             _self = None
         else:
@@ -10153,8 +16107,15 @@ eSlot3IntIntIntList_swigregister = _enigma.eSlot3IntIntIntList_swigregister
 eSlot3IntIntIntList_swigregister(eSlot3IntIntIntList)
 
 class eSignal3IntIntIntList(object):
+    """Proxy of C++ eSignal3<(void,int,int,std::list<(int)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal3IntIntIntList self, eSlot3IntIntIntList slot)"""
+        return _enigma.eSignal3IntIntIntList_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot3IntIntIntList(eSlot3IntIntIntList):
@@ -10166,6 +16127,7 @@ class eSignal3IntIntIntList(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal3<(void,int,int,std::list<(int)>)> self) -> eSignal3IntIntIntList"""
         _enigma.eSignal3IntIntIntList_swiginit(self, _enigma.new_eSignal3IntIntIntList())
     __swig_destroy__ = _enigma.delete_eSignal3IntIntIntList
 eSignal3IntIntIntList.connect2 = new_instancemethod(_enigma.eSignal3IntIntIntList_connect2, None, eSignal3IntIntIntList)
@@ -10173,10 +16135,18 @@ eSignal3IntIntIntList_swigregister = _enigma.eSignal3IntIntIntList_swigregister
 eSignal3IntIntIntList_swigregister(eSignal3IntIntIntList)
 
 class eSlot1StrMap(eSlot):
+    """Proxy of C++ eSlot1<(void,stringMap)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1StrMap self, StringMap arg0)"""
+        return _enigma.eSlot1StrMap_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,stringMap)> self) -> eSlot1StrMap"""
         if self.__class__ == eSlot1StrMap:
             _self = None
         else:
@@ -10192,8 +16162,15 @@ eSlot1StrMap_swigregister = _enigma.eSlot1StrMap_swigregister
 eSlot1StrMap_swigregister(eSlot1StrMap)
 
 class eSignal1StrMap(object):
+    """Proxy of C++ eSignal1<(void,stringMap)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1StrMap self, eSlot1StrMap slot)"""
+        return _enigma.eSignal1StrMap_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1StrMap(eSlot1StrMap):
@@ -10205,6 +16182,7 @@ class eSignal1StrMap(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,stringMap)> self) -> eSignal1StrMap"""
         _enigma.eSignal1StrMap_swiginit(self, _enigma.new_eSignal1StrMap())
     __swig_destroy__ = _enigma.delete_eSignal1StrMap
 eSignal1StrMap.connect2 = new_instancemethod(_enigma.eSignal1StrMap_connect2, None, eSignal1StrMap)
@@ -10212,10 +16190,18 @@ eSignal1StrMap_swigregister = _enigma.eSignal1StrMap_swigregister
 eSignal1StrMap_swigregister(eSignal1StrMap)
 
 class eSlot2StrMapBool(eSlot):
+    """Proxy of C++ eSlot2<(void,stringMap,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2StrMapBool self, StringMap arg0, bool arg1)"""
+        return _enigma.eSlot2StrMapBool_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,stringMap,bool)> self) -> eSlot2StrMapBool"""
         if self.__class__ == eSlot2StrMapBool:
             _self = None
         else:
@@ -10231,8 +16217,15 @@ eSlot2StrMapBool_swigregister = _enigma.eSlot2StrMapBool_swigregister
 eSlot2StrMapBool_swigregister(eSlot2StrMapBool)
 
 class eSignal2StrMapBool(object):
+    """Proxy of C++ eSignal2<(void,stringMap,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2StrMapBool self, eSlot2StrMapBool slot)"""
+        return _enigma.eSignal2StrMapBool_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2StrMapBool(eSlot2StrMapBool):
@@ -10244,6 +16237,7 @@ class eSignal2StrMapBool(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,stringMap,bool)> self) -> eSignal2StrMapBool"""
         _enigma.eSignal2StrMapBool_swiginit(self, _enigma.new_eSignal2StrMapBool())
     __swig_destroy__ = _enigma.delete_eSignal2StrMapBool
 eSignal2StrMapBool.connect2 = new_instancemethod(_enigma.eSignal2StrMapBool_connect2, None, eSignal2StrMapBool)
@@ -10251,10 +16245,18 @@ eSignal2StrMapBool_swigregister = _enigma.eSignal2StrMapBool_swigregister
 eSignal2StrMapBool_swigregister(eSignal2StrMapBool)
 
 class eSlot2StrMapStrSet(eSlot):
+    """Proxy of C++ eSlot2<(void,stringMap,stringSet)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2StrMapStrSet self, StringMap arg0, StringSet arg1)"""
+        return _enigma.eSlot2StrMapStrSet_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,stringMap,stringSet)> self) -> eSlot2StrMapStrSet"""
         if self.__class__ == eSlot2StrMapStrSet:
             _self = None
         else:
@@ -10270,8 +16272,15 @@ eSlot2StrMapStrSet_swigregister = _enigma.eSlot2StrMapStrSet_swigregister
 eSlot2StrMapStrSet_swigregister(eSlot2StrMapStrSet)
 
 class eSignal2StrMapStrSet(object):
+    """Proxy of C++ eSignal2<(void,stringMap,stringSet)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2StrMapStrSet self, eSlot2StrMapStrSet slot)"""
+        return _enigma.eSignal2StrMapStrSet_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2StrMapStrSet(eSlot2StrMapStrSet):
@@ -10283,6 +16292,7 @@ class eSignal2StrMapStrSet(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,stringMap,stringSet)> self) -> eSignal2StrMapStrSet"""
         _enigma.eSignal2StrMapStrSet_swiginit(self, _enigma.new_eSignal2StrMapStrSet())
     __swig_destroy__ = _enigma.delete_eSignal2StrMapStrSet
 eSignal2StrMapStrSet.connect2 = new_instancemethod(_enigma.eSignal2StrMapStrSet_connect2, None, eSignal2StrMapStrSet)
@@ -10290,10 +16300,18 @@ eSignal2StrMapStrSet_swigregister = _enigma.eSignal2StrMapStrSet_swigregister
 eSignal2StrMapStrSet_swigregister(eSignal2StrMapStrSet)
 
 class eSlot2StrMapStrMapVector(eSlot):
+    """Proxy of C++ eSlot2<(void,stringMap,stringMapVector)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2StrMapStrMapVector self, StringMap arg0, StringMapVector arg1)"""
+        return _enigma.eSlot2StrMapStrMapVector_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,stringMap,stringMapVector)> self) -> eSlot2StrMapStrMapVector"""
         if self.__class__ == eSlot2StrMapStrMapVector:
             _self = None
         else:
@@ -10309,8 +16327,15 @@ eSlot2StrMapStrMapVector_swigregister = _enigma.eSlot2StrMapStrMapVector_swigreg
 eSlot2StrMapStrMapVector_swigregister(eSlot2StrMapStrMapVector)
 
 class eSignal2StrMapStrMapVector(object):
+    """Proxy of C++ eSignal2<(void,stringMap,stringMapVector)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2StrMapStrMapVector self, eSlot2StrMapStrMapVector slot)"""
+        return _enigma.eSignal2StrMapStrMapVector_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2StrMapStrMapVector(eSlot2StrMapStrMapVector):
@@ -10322,6 +16347,7 @@ class eSignal2StrMapStrMapVector(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,stringMap,stringMapVector)> self) -> eSignal2StrMapStrMapVector"""
         _enigma.eSignal2StrMapStrMapVector_swiginit(self, _enigma.new_eSignal2StrMapStrMapVector())
     __swig_destroy__ = _enigma.delete_eSignal2StrMapStrMapVector
 eSignal2StrMapStrMapVector.connect2 = new_instancemethod(_enigma.eSignal2StrMapStrMapVector_connect2, None, eSignal2StrMapStrMapVector)
@@ -10329,10 +16355,18 @@ eSignal2StrMapStrMapVector_swigregister = _enigma.eSignal2StrMapStrMapVector_swi
 eSignal2StrMapStrMapVector_swigregister(eSignal2StrMapStrMapVector)
 
 class eSlot3StrMapLLLL(eSlot):
+    """Proxy of C++ eSlot3<(void,stringMap,long long,long long)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2):
+        """cb_func(eSlot3StrMapLLLL self, StringMap arg0, long long arg1, long long arg2)"""
+        return _enigma.eSlot3StrMapLLLL_cb_func(self, arg0, arg1, arg2)
+
+
     def __init__(self):
+        """__init__(eSlot3<(void,stringMap,long long,long long)> self) -> eSlot3StrMapLLLL"""
         if self.__class__ == eSlot3StrMapLLLL:
             _self = None
         else:
@@ -10348,8 +16382,15 @@ eSlot3StrMapLLLL_swigregister = _enigma.eSlot3StrMapLLLL_swigregister
 eSlot3StrMapLLLL_swigregister(eSlot3StrMapLLLL)
 
 class eSignal3StrMapLLLL(object):
+    """Proxy of C++ eSignal3<(void,stringMap,long long,long long)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal3StrMapLLLL self, eSlot3StrMapLLLL slot)"""
+        return _enigma.eSignal3StrMapLLLL_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot3StrMapLLLL(eSlot3StrMapLLLL):
@@ -10361,6 +16402,7 @@ class eSignal3StrMapLLLL(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal3<(void,stringMap,long long,long long)> self) -> eSignal3StrMapLLLL"""
         _enigma.eSignal3StrMapLLLL_swiginit(self, _enigma.new_eSignal3StrMapLLLL())
     __swig_destroy__ = _enigma.delete_eSignal3StrMapLLLL
 eSignal3StrMapLLLL.connect2 = new_instancemethod(_enigma.eSignal3StrMapLLLL_connect2, None, eSignal3StrMapLLLL)
@@ -10368,10 +16410,18 @@ eSignal3StrMapLLLL_swigregister = _enigma.eSignal3StrMapLLLL_swigregister
 eSignal3StrMapLLLL_swigregister(eSignal3StrMapLLLL)
 
 class eSlot3StrMapStrMapVectorStrList(eSlot):
+    """Proxy of C++ eSlot3<(void,stringMap,stringMapVector,stringList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2):
+        """cb_func(eSlot3StrMapStrMapVectorStrList self, StringMap arg0, StringMapVector arg1, StringList arg2)"""
+        return _enigma.eSlot3StrMapStrMapVectorStrList_cb_func(self, arg0, arg1, arg2)
+
+
     def __init__(self):
+        """__init__(eSlot3<(void,stringMap,stringMapVector,stringList)> self) -> eSlot3StrMapStrMapVectorStrList"""
         if self.__class__ == eSlot3StrMapStrMapVectorStrList:
             _self = None
         else:
@@ -10387,8 +16437,15 @@ eSlot3StrMapStrMapVectorStrList_swigregister = _enigma.eSlot3StrMapStrMapVectorS
 eSlot3StrMapStrMapVectorStrList_swigregister(eSlot3StrMapStrMapVectorStrList)
 
 class eSignal3StrMapStrMapVectorStrList(object):
+    """Proxy of C++ eSignal3<(void,stringMap,stringMapVector,stringList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal3StrMapStrMapVectorStrList self, eSlot3StrMapStrMapVectorStrList slot)"""
+        return _enigma.eSignal3StrMapStrMapVectorStrList_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot3StrMapStrMapVectorStrList(eSlot3StrMapStrMapVectorStrList):
@@ -10400,6 +16457,7 @@ class eSignal3StrMapStrMapVectorStrList(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal3<(void,stringMap,stringMapVector,stringList)> self) -> eSignal3StrMapStrMapVectorStrList"""
         _enigma.eSignal3StrMapStrMapVectorStrList_swiginit(self, _enigma.new_eSignal3StrMapStrMapVectorStrList())
     __swig_destroy__ = _enigma.delete_eSignal3StrMapStrMapVectorStrList
 eSignal3StrMapStrMapVectorStrList.connect2 = new_instancemethod(_enigma.eSignal3StrMapStrMapVectorStrList_connect2, None, eSignal3StrMapStrMapVectorStrList)
@@ -10407,10 +16465,18 @@ eSignal3StrMapStrMapVectorStrList_swigregister = _enigma.eSignal3StrMapStrMapVec
 eSignal3StrMapStrMapVectorStrList_swigregister(eSignal3StrMapStrMapVectorStrList)
 
 class eSlot2IntAny(eSlot):
+    """Proxy of C++ eSlot2<(void,int,boost::any)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2IntAny self, int arg0, boost::any arg1)"""
+        return _enigma.eSlot2IntAny_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,int,boost::any)> self) -> eSlot2IntAny"""
         if self.__class__ == eSlot2IntAny:
             _self = None
         else:
@@ -10426,8 +16492,15 @@ eSlot2IntAny_swigregister = _enigma.eSlot2IntAny_swigregister
 eSlot2IntAny_swigregister(eSlot2IntAny)
 
 class eSignal2IntAny(object):
+    """Proxy of C++ eSignal2<(void,int,boost::any)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2IntAny self, eSlot2IntAny slot)"""
+        return _enigma.eSignal2IntAny_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2IntAny(eSlot2IntAny):
@@ -10439,6 +16512,7 @@ class eSignal2IntAny(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,int,boost::any)> self) -> eSignal2IntAny"""
         _enigma.eSignal2IntAny_swiginit(self, _enigma.new_eSignal2IntAny())
     __swig_destroy__ = _enigma.delete_eSignal2IntAny
 eSignal2IntAny.connect2 = new_instancemethod(_enigma.eSignal2IntAny_connect2, None, eSignal2IntAny)
@@ -10446,10 +16520,18 @@ eSignal2IntAny_swigregister = _enigma.eSignal2IntAny_swigregister
 eSignal2IntAny_swigregister(eSignal2IntAny)
 
 class eSlot4StrUInt64UInt64UInt64(eSlot):
+    """Proxy of C++ eSlot4<(void,std::string,uint64_t,uint64_t,uint64_t)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3):
+        """cb_func(eSlot4StrUInt64UInt64UInt64 self, std::string arg0, unsigned long arg1, unsigned long arg2, unsigned long arg3)"""
+        return _enigma.eSlot4StrUInt64UInt64UInt64_cb_func(self, arg0, arg1, arg2, arg3)
+
+
     def __init__(self):
+        """__init__(eSlot4<(void,std::string,uint64_t,uint64_t,uint64_t)> self) -> eSlot4StrUInt64UInt64UInt64"""
         if self.__class__ == eSlot4StrUInt64UInt64UInt64:
             _self = None
         else:
@@ -10465,8 +16547,15 @@ eSlot4StrUInt64UInt64UInt64_swigregister = _enigma.eSlot4StrUInt64UInt64UInt64_s
 eSlot4StrUInt64UInt64UInt64_swigregister(eSlot4StrUInt64UInt64UInt64)
 
 class eSignal4StrUInt64UInt64UInt64(object):
+    """Proxy of C++ eSignal4<(void,std::string,uint64_t,uint64_t,uint64_t)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal4StrUInt64UInt64UInt64 self, eSlot4StrUInt64UInt64UInt64 slot)"""
+        return _enigma.eSignal4StrUInt64UInt64UInt64_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot4StrUInt64UInt64UInt64(eSlot4StrUInt64UInt64UInt64):
@@ -10478,6 +16567,7 @@ class eSignal4StrUInt64UInt64UInt64(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal4<(void,std::string,uint64_t,uint64_t,uint64_t)> self) -> eSignal4StrUInt64UInt64UInt64"""
         _enigma.eSignal4StrUInt64UInt64UInt64_swiginit(self, _enigma.new_eSignal4StrUInt64UInt64UInt64())
     __swig_destroy__ = _enigma.delete_eSignal4StrUInt64UInt64UInt64
 eSignal4StrUInt64UInt64UInt64.connect2 = new_instancemethod(_enigma.eSignal4StrUInt64UInt64UInt64_connect2, None, eSignal4StrUInt64UInt64UInt64)
@@ -10485,10 +16575,18 @@ eSignal4StrUInt64UInt64UInt64_swigregister = _enigma.eSignal4StrUInt64UInt64UInt
 eSignal4StrUInt64UInt64UInt64_swigregister(eSignal4StrUInt64UInt64UInt64)
 
 class eSlot4UInt64UInt64UInt64IntList(eSlot):
+    """Proxy of C++ eSlot4<(void,uint64_t,uint64_t,uint64_t,intList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3):
+        """cb_func(eSlot4UInt64UInt64UInt64IntList self, unsigned long arg0, unsigned long arg1, unsigned long arg2, IntList arg3)"""
+        return _enigma.eSlot4UInt64UInt64UInt64IntList_cb_func(self, arg0, arg1, arg2, arg3)
+
+
     def __init__(self):
+        """__init__(eSlot4<(void,uint64_t,uint64_t,uint64_t,intList)> self) -> eSlot4UInt64UInt64UInt64IntList"""
         if self.__class__ == eSlot4UInt64UInt64UInt64IntList:
             _self = None
         else:
@@ -10504,8 +16602,15 @@ eSlot4UInt64UInt64UInt64IntList_swigregister = _enigma.eSlot4UInt64UInt64UInt64I
 eSlot4UInt64UInt64UInt64IntList_swigregister(eSlot4UInt64UInt64UInt64IntList)
 
 class eSignal4UInt64UInt64UInt64IntList(object):
+    """Proxy of C++ eSignal4<(void,uint64_t,uint64_t,uint64_t,intList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal4UInt64UInt64UInt64IntList self, eSlot4UInt64UInt64UInt64IntList slot)"""
+        return _enigma.eSignal4UInt64UInt64UInt64IntList_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot4UInt64UInt64UInt64IntList(eSlot4UInt64UInt64UInt64IntList):
@@ -10517,6 +16622,7 @@ class eSignal4UInt64UInt64UInt64IntList(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal4<(void,uint64_t,uint64_t,uint64_t,intList)> self) -> eSignal4UInt64UInt64UInt64IntList"""
         _enigma.eSignal4UInt64UInt64UInt64IntList_swiginit(self, _enigma.new_eSignal4UInt64UInt64UInt64IntList())
     __swig_destroy__ = _enigma.delete_eSignal4UInt64UInt64UInt64IntList
 eSignal4UInt64UInt64UInt64IntList.connect2 = new_instancemethod(_enigma.eSignal4UInt64UInt64UInt64IntList_connect2, None, eSignal4UInt64UInt64UInt64IntList)
@@ -10524,10 +16630,18 @@ eSignal4UInt64UInt64UInt64IntList_swigregister = _enigma.eSignal4UInt64UInt64UIn
 eSignal4UInt64UInt64UInt64IntList_swigregister(eSignal4UInt64UInt64UInt64IntList)
 
 class eSlot5CStrUInt64UInt64UInt64Int(eSlot):
+    """Proxy of C++ eSlot5<(void,std::string,uint64_t,uint64_t,uint64_t,intList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3, arg4):
+        """cb_func(eSlot5CStrUInt64UInt64UInt64Int self, std::string arg0, unsigned long arg1, unsigned long arg2, unsigned long arg3, IntList arg4)"""
+        return _enigma.eSlot5CStrUInt64UInt64UInt64Int_cb_func(self, arg0, arg1, arg2, arg3, arg4)
+
+
     def __init__(self):
+        """__init__(eSlot5<(void,std::string,uint64_t,uint64_t,uint64_t,intList)> self) -> eSlot5CStrUInt64UInt64UInt64Int"""
         if self.__class__ == eSlot5CStrUInt64UInt64UInt64Int:
             _self = None
         else:
@@ -10543,8 +16657,15 @@ eSlot5CStrUInt64UInt64UInt64Int_swigregister = _enigma.eSlot5CStrUInt64UInt64UIn
 eSlot5CStrUInt64UInt64UInt64Int_swigregister(eSlot5CStrUInt64UInt64UInt64Int)
 
 class eSignal5CStrUInt64UInt64UInt64Int(object):
+    """Proxy of C++ eSignal5<(void,std::string,uint64_t,uint64_t,uint64_t,intList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal5CStrUInt64UInt64UInt64Int self, eSlot5CStrUInt64UInt64UInt64Int slot)"""
+        return _enigma.eSignal5CStrUInt64UInt64UInt64Int_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot5CStrUInt64UInt64UInt64Int(eSlot5CStrUInt64UInt64UInt64Int):
@@ -10556,6 +16677,7 @@ class eSignal5CStrUInt64UInt64UInt64Int(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal5<(void,std::string,uint64_t,uint64_t,uint64_t,intList)> self) -> eSignal5CStrUInt64UInt64UInt64Int"""
         _enigma.eSignal5CStrUInt64UInt64UInt64Int_swiginit(self, _enigma.new_eSignal5CStrUInt64UInt64UInt64Int())
     __swig_destroy__ = _enigma.delete_eSignal5CStrUInt64UInt64UInt64Int
 eSignal5CStrUInt64UInt64UInt64Int.connect2 = new_instancemethod(_enigma.eSignal5CStrUInt64UInt64UInt64Int_connect2, None, eSignal5CStrUInt64UInt64UInt64Int)
@@ -10563,10 +16685,18 @@ eSignal5CStrUInt64UInt64UInt64Int_swigregister = _enigma.eSignal5CStrUInt64UInt6
 eSignal5CStrUInt64UInt64UInt64Int_swigregister(eSignal5CStrUInt64UInt64UInt64Int)
 
 class eSlot1Bool(eSlot):
+    """Proxy of C++ eSlot1<(void,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1Bool self, bool arg0)"""
+        return _enigma.eSlot1Bool_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,bool)> self) -> eSlot1Bool"""
         if self.__class__ == eSlot1Bool:
             _self = None
         else:
@@ -10582,8 +16712,15 @@ eSlot1Bool_swigregister = _enigma.eSlot1Bool_swigregister
 eSlot1Bool_swigregister(eSlot1Bool)
 
 class eSignal1Bool(object):
+    """Proxy of C++ eSignal1<(void,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1Bool self, eSlot1Bool slot)"""
+        return _enigma.eSignal1Bool_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1Bool(eSlot1Bool):
@@ -10595,6 +16732,7 @@ class eSignal1Bool(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,bool)> self) -> eSignal1Bool"""
         _enigma.eSignal1Bool_swiginit(self, _enigma.new_eSignal1Bool())
     __swig_destroy__ = _enigma.delete_eSignal1Bool
 eSignal1Bool.connect2 = new_instancemethod(_enigma.eSignal1Bool_connect2, None, eSignal1Bool)
@@ -10602,10 +16740,18 @@ eSignal1Bool_swigregister = _enigma.eSignal1Bool_swigregister
 eSignal1Bool_swigregister(eSignal1Bool)
 
 class eSlot1Str(eSlot):
+    """Proxy of C++ eSlot1<(void,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1Str self, std::string arg0)"""
+        return _enigma.eSlot1Str_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,std::string)> self) -> eSlot1Str"""
         if self.__class__ == eSlot1Str:
             _self = None
         else:
@@ -10621,8 +16767,15 @@ eSlot1Str_swigregister = _enigma.eSlot1Str_swigregister
 eSlot1Str_swigregister(eSlot1Str)
 
 class eSignal1Str(object):
+    """Proxy of C++ eSignal1<(void,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1Str self, eSlot1Str slot)"""
+        return _enigma.eSignal1Str_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1Str(eSlot1Str):
@@ -10634,6 +16787,7 @@ class eSignal1Str(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,std::string)> self) -> eSignal1Str"""
         _enigma.eSignal1Str_swiginit(self, _enigma.new_eSignal1Str())
     __swig_destroy__ = _enigma.delete_eSignal1Str
 eSignal1Str.connect2 = new_instancemethod(_enigma.eSignal1Str_connect2, None, eSignal1Str)
@@ -10641,10 +16795,18 @@ eSignal1Str_swigregister = _enigma.eSignal1Str_swigregister
 eSignal1Str_swigregister(eSignal1Str)
 
 class eSlot1NetworkService(eSlot):
+    """Proxy of C++ eSlot1<(void,ePtr<(eNetworkService)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1NetworkService self, eNetworkServicePtr arg0)"""
+        return _enigma.eSlot1NetworkService_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,ePtr<(eNetworkService)>)> self) -> eSlot1NetworkService"""
         if self.__class__ == eSlot1NetworkService:
             _self = None
         else:
@@ -10660,8 +16822,15 @@ eSlot1NetworkService_swigregister = _enigma.eSlot1NetworkService_swigregister
 eSlot1NetworkService_swigregister(eSlot1NetworkService)
 
 class eSignal1NetworkService(object):
+    """Proxy of C++ eSignal1<(void,ePtr<(eNetworkService)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1NetworkService self, eSlot1NetworkService slot)"""
+        return _enigma.eSignal1NetworkService_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1NetworkService(eSlot1NetworkService):
@@ -10673,6 +16842,7 @@ class eSignal1NetworkService(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,ePtr<(eNetworkService)>)> self) -> eSignal1NetworkService"""
         _enigma.eSignal1NetworkService_swiginit(self, _enigma.new_eSignal1NetworkService())
     __swig_destroy__ = _enigma.delete_eSignal1NetworkService
 eSignal1NetworkService.connect2 = new_instancemethod(_enigma.eSignal1NetworkService_connect2, None, eSignal1NetworkService)
@@ -10680,10 +16850,18 @@ eSignal1NetworkService_swigregister = _enigma.eSignal1NetworkService_swigregiste
 eSignal1NetworkService_swigregister(eSignal1NetworkService)
 
 class eSlot1StringList(eSlot):
+    """Proxy of C++ eSlot1<(void,stringList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1StringList self, StringList arg0)"""
+        return _enigma.eSlot1StringList_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,stringList)> self) -> eSlot1StringList"""
         if self.__class__ == eSlot1StringList:
             _self = None
         else:
@@ -10699,8 +16877,15 @@ eSlot1StringList_swigregister = _enigma.eSlot1StringList_swigregister
 eSlot1StringList_swigregister(eSlot1StringList)
 
 class eSignal1StringList(object):
+    """Proxy of C++ eSignal1<(void,stringList)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1StringList self, eSlot1StringList slot)"""
+        return _enigma.eSignal1StringList_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1StringList(eSlot1StringList):
@@ -10712,6 +16897,7 @@ class eSignal1StringList(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,stringList)> self) -> eSignal1StringList"""
         _enigma.eSignal1StringList_swiginit(self, _enigma.new_eSignal1StringList())
     __swig_destroy__ = _enigma.delete_eSignal1StringList
 eSignal1StringList.connect2 = new_instancemethod(_enigma.eSignal1StringList_connect2, None, eSignal1StringList)
@@ -10719,10 +16905,18 @@ eSignal1StringList_swigregister = _enigma.eSignal1StringList_swigregister
 eSignal1StringList_swigregister(eSignal1StringList)
 
 class eSlot2StrMapStrAny(eSlot):
+    """Proxy of C++ eSlot2<(void,std::string,std::map<(std::string,boost::any)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2StrMapStrAny self, std::string arg0, PseudoDict arg1)"""
+        return _enigma.eSlot2StrMapStrAny_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,std::string,std::map<(std::string,boost::any)>)> self) -> eSlot2StrMapStrAny"""
         if self.__class__ == eSlot2StrMapStrAny:
             _self = None
         else:
@@ -10738,8 +16932,15 @@ eSlot2StrMapStrAny_swigregister = _enigma.eSlot2StrMapStrAny_swigregister
 eSlot2StrMapStrAny_swigregister(eSlot2StrMapStrAny)
 
 class eSignal2StrMapStrAny(object):
+    """Proxy of C++ eSignal2<(void,std::string,std::map<(std::string,boost::any)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2StrMapStrAny self, eSlot2StrMapStrAny slot)"""
+        return _enigma.eSignal2StrMapStrAny_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2StrMapStrAny(eSlot2StrMapStrAny):
@@ -10751,6 +16952,7 @@ class eSignal2StrMapStrAny(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,std::string,std::map<(std::string,boost::any)>)> self) -> eSignal2StrMapStrAny"""
         _enigma.eSignal2StrMapStrAny_swiginit(self, _enigma.new_eSignal2StrMapStrAny())
     __swig_destroy__ = _enigma.delete_eSignal2StrMapStrAny
 eSignal2StrMapStrAny.connect2 = new_instancemethod(_enigma.eSignal2StrMapStrAny_connect2, None, eSignal2StrMapStrAny)
@@ -10758,10 +16960,18 @@ eSignal2StrMapStrAny_swigregister = _enigma.eSignal2StrMapStrAny_swigregister
 eSignal2StrMapStrAny_swigregister(eSignal2StrMapStrAny)
 
 class eSlot2StrStr(eSlot):
+    """Proxy of C++ eSlot2<(void,std::string,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2StrStr self, std::string arg0, std::string arg1)"""
+        return _enigma.eSlot2StrStr_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,std::string,std::string)> self) -> eSlot2StrStr"""
         if self.__class__ == eSlot2StrStr:
             _self = None
         else:
@@ -10777,8 +16987,15 @@ eSlot2StrStr_swigregister = _enigma.eSlot2StrStr_swigregister
 eSlot2StrStr_swigregister(eSlot2StrStr)
 
 class eSignal2StrStr(object):
+    """Proxy of C++ eSignal2<(void,std::string,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2StrStr self, eSlot2StrStr slot)"""
+        return _enigma.eSignal2StrStr_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2StrStr(eSlot2StrStr):
@@ -10790,6 +17007,7 @@ class eSignal2StrStr(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,std::string,std::string)> self) -> eSignal2StrStr"""
         _enigma.eSignal2StrStr_swiginit(self, _enigma.new_eSignal2StrStr())
     __swig_destroy__ = _enigma.delete_eSignal2StrStr
 eSignal2StrStr.connect2 = new_instancemethod(_enigma.eSignal2StrStr_connect2, None, eSignal2StrStr)
@@ -10797,10 +17015,18 @@ eSignal2StrStr_swigregister = _enigma.eSignal2StrStr_swigregister
 eSignal2StrStr_swigregister(eSignal2StrStr)
 
 class eSlot1UInt(eSlot):
+    """Proxy of C++ eSlot1<(void,uint)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1UInt self, uint arg0)"""
+        return _enigma.eSlot1UInt_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,uint)> self) -> eSlot1UInt"""
         if self.__class__ == eSlot1UInt:
             _self = None
         else:
@@ -10816,8 +17042,15 @@ eSlot1UInt_swigregister = _enigma.eSlot1UInt_swigregister
 eSlot1UInt_swigregister(eSlot1UInt)
 
 class eSignal1UInt(object):
+    """Proxy of C++ eSignal1<(void,uint)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1UInt self, eSlot1UInt slot)"""
+        return _enigma.eSignal1UInt_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1UInt(eSlot1UInt):
@@ -10829,6 +17062,7 @@ class eSignal1UInt(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,uint)> self) -> eSignal1UInt"""
         _enigma.eSignal1UInt_swiginit(self, _enigma.new_eSignal1UInt())
     __swig_destroy__ = _enigma.delete_eSignal1UInt
 eSignal1UInt.connect2 = new_instancemethod(_enigma.eSignal1UInt_connect2, None, eSignal1UInt)
@@ -10836,10 +17070,18 @@ eSignal1UInt_swigregister = _enigma.eSignal1UInt_swigregister
 eSignal1UInt_swigregister(eSignal1UInt)
 
 class eSlot1MapStrAny(eSlot):
+    """Proxy of C++ eSlot1<(void,std::map<(std::string,boost::any)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1MapStrAny self, PseudoDict arg0)"""
+        return _enigma.eSlot1MapStrAny_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,std::map<(std::string,boost::any)>)> self) -> eSlot1MapStrAny"""
         if self.__class__ == eSlot1MapStrAny:
             _self = None
         else:
@@ -10855,8 +17097,15 @@ eSlot1MapStrAny_swigregister = _enigma.eSlot1MapStrAny_swigregister
 eSlot1MapStrAny_swigregister(eSlot1MapStrAny)
 
 class eSignal1MapStrAny(object):
+    """Proxy of C++ eSignal1<(void,std::map<(std::string,boost::any)>)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1MapStrAny self, eSlot1MapStrAny slot)"""
+        return _enigma.eSignal1MapStrAny_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1MapStrAny(eSlot1MapStrAny):
@@ -10868,6 +17117,7 @@ class eSignal1MapStrAny(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,std::map<(std::string,boost::any)>)> self) -> eSignal1MapStrAny"""
         _enigma.eSignal1MapStrAny_swiginit(self, _enigma.new_eSignal1MapStrAny())
     __swig_destroy__ = _enigma.delete_eSignal1MapStrAny
 eSignal1MapStrAny.connect2 = new_instancemethod(_enigma.eSignal1MapStrAny_connect2, None, eSignal1MapStrAny)
@@ -10875,10 +17125,18 @@ eSignal1MapStrAny_swigregister = _enigma.eSignal1MapStrAny_swigregister
 eSignal1MapStrAny_swigregister(eSignal1MapStrAny)
 
 class eSlot1UInt32(eSlot):
+    """Proxy of C++ eSlot1<(void,uint32_t)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0):
+        """cb_func(eSlot1UInt32 self, unsigned int arg0)"""
+        return _enigma.eSlot1UInt32_cb_func(self, arg0)
+
+
     def __init__(self):
+        """__init__(eSlot1<(void,uint32_t)> self) -> eSlot1UInt32"""
         if self.__class__ == eSlot1UInt32:
             _self = None
         else:
@@ -10894,8 +17152,15 @@ eSlot1UInt32_swigregister = _enigma.eSlot1UInt32_swigregister
 eSlot1UInt32_swigregister(eSlot1UInt32)
 
 class eSignal1UInt32(object):
+    """Proxy of C++ eSignal1<(void,uint32_t)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1UInt32 self, eSlot1UInt32 slot)"""
+        return _enigma.eSignal1UInt32_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot1UInt32(eSlot1UInt32):
@@ -10907,6 +17172,7 @@ class eSignal1UInt32(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal1<(void,uint32_t)> self) -> eSignal1UInt32"""
         _enigma.eSignal1UInt32_swiginit(self, _enigma.new_eSignal1UInt32())
     __swig_destroy__ = _enigma.delete_eSignal1UInt32
 eSignal1UInt32.connect2 = new_instancemethod(_enigma.eSignal1UInt32_connect2, None, eSignal1UInt32)
@@ -10914,10 +17180,18 @@ eSignal1UInt32_swigregister = _enigma.eSignal1UInt32_swigregister
 eSignal1UInt32_swigregister(eSignal1UInt32)
 
 class eSlot2IntString(eSlot):
+    """Proxy of C++ eSlot2<(void,int,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2IntString self, int arg0, std::string arg1)"""
+        return _enigma.eSlot2IntString_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,int,std::string)> self) -> eSlot2IntString"""
         if self.__class__ == eSlot2IntString:
             _self = None
         else:
@@ -10933,8 +17207,15 @@ eSlot2IntString_swigregister = _enigma.eSlot2IntString_swigregister
 eSlot2IntString_swigregister(eSlot2IntString)
 
 class eSignal2IntString(object):
+    """Proxy of C++ eSignal2<(void,int,std::string)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2IntString self, eSlot2IntString slot)"""
+        return _enigma.eSignal2IntString_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2IntString(eSlot2IntString):
@@ -10946,6 +17227,7 @@ class eSignal2IntString(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,int,std::string)> self) -> eSignal2IntString"""
         _enigma.eSignal2IntString_swiginit(self, _enigma.new_eSignal2IntString())
     __swig_destroy__ = _enigma.delete_eSignal2IntString
 eSignal2IntString.connect2 = new_instancemethod(_enigma.eSignal2IntString_connect2, None, eSignal2IntString)
@@ -10953,10 +17235,18 @@ eSignal2IntString_swigregister = _enigma.eSignal2IntString_swigregister
 eSignal2IntString_swigregister(eSignal2IntString)
 
 class eSlot2FileWatchEvent(eSlot):
+    """Proxy of C++ eSlot2<(void,p.eFileWatch,eFileEvent)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2FileWatchEvent self, eFileWatch arg0, eFileEvent arg1)"""
+        return _enigma.eSlot2FileWatchEvent_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,p.eFileWatch,eFileEvent)> self) -> eSlot2FileWatchEvent"""
         if self.__class__ == eSlot2FileWatchEvent:
             _self = None
         else:
@@ -10972,8 +17262,15 @@ eSlot2FileWatchEvent_swigregister = _enigma.eSlot2FileWatchEvent_swigregister
 eSlot2FileWatchEvent_swigregister(eSlot2FileWatchEvent)
 
 class eSignal2FileWatchEvent(object):
+    """Proxy of C++ eSignal2<(void,p.eFileWatch,eFileEvent)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2FileWatchEvent self, eSlot2FileWatchEvent slot)"""
+        return _enigma.eSignal2FileWatchEvent_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2FileWatchEvent(eSlot2FileWatchEvent):
@@ -10985,6 +17282,7 @@ class eSignal2FileWatchEvent(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,p.eFileWatch,eFileEvent)> self) -> eSignal2FileWatchEvent"""
         _enigma.eSignal2FileWatchEvent_swiginit(self, _enigma.new_eSignal2FileWatchEvent())
     __swig_destroy__ = _enigma.delete_eSignal2FileWatchEvent
 eSignal2FileWatchEvent.connect2 = new_instancemethod(_enigma.eSignal2FileWatchEvent_connect2, None, eSignal2FileWatchEvent)
@@ -10992,10 +17290,18 @@ eSignal2FileWatchEvent_swigregister = _enigma.eSignal2FileWatchEvent_swigregiste
 eSignal2FileWatchEvent_swigregister(eSignal2FileWatchEvent)
 
 class eSlot2ConstStrBool(eSlot):
+    """Proxy of C++ eSlot2<(void,q(const).std::string,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2ConstStrBool self, std::string const arg0, bool arg1)"""
+        return _enigma.eSlot2ConstStrBool_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,q(const).std::string,bool)> self) -> eSlot2ConstStrBool"""
         if self.__class__ == eSlot2ConstStrBool:
             _self = None
         else:
@@ -11011,8 +17317,15 @@ eSlot2ConstStrBool_swigregister = _enigma.eSlot2ConstStrBool_swigregister
 eSlot2ConstStrBool_swigregister(eSlot2ConstStrBool)
 
 class eSignal2ConstStrBool(object):
+    """Proxy of C++ eSignal2<(void,q(const).std::string,bool)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2ConstStrBool self, eSlot2ConstStrBool slot)"""
+        return _enigma.eSignal2ConstStrBool_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2ConstStrBool(eSlot2ConstStrBool):
@@ -11024,6 +17337,7 @@ class eSignal2ConstStrBool(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,q(const).std::string,bool)> self) -> eSignal2ConstStrBool"""
         _enigma.eSignal2ConstStrBool_swiginit(self, _enigma.new_eSignal2ConstStrBool())
     __swig_destroy__ = _enigma.delete_eSignal2ConstStrBool
 eSignal2ConstStrBool.connect2 = new_instancemethod(_enigma.eSignal2ConstStrBool_connect2, None, eSignal2ConstStrBool)
@@ -11031,10 +17345,18 @@ eSignal2ConstStrBool_swigregister = _enigma.eSignal2ConstStrBool_swigregister
 eSignal2ConstStrBool_swigregister(eSignal2ConstStrBool)
 
 class eSlot2ConstStrInt(eSlot):
+    """Proxy of C++ eSlot2<(void,q(const).std::string,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1):
+        """cb_func(eSlot2ConstStrInt self, std::string const arg0, int arg1)"""
+        return _enigma.eSlot2ConstStrInt_cb_func(self, arg0, arg1)
+
+
     def __init__(self):
+        """__init__(eSlot2<(void,q(const).std::string,int)> self) -> eSlot2ConstStrInt"""
         if self.__class__ == eSlot2ConstStrInt:
             _self = None
         else:
@@ -11050,8 +17372,15 @@ eSlot2ConstStrInt_swigregister = _enigma.eSlot2ConstStrInt_swigregister
 eSlot2ConstStrInt_swigregister(eSlot2ConstStrInt)
 
 class eSignal2ConstStrInt(object):
+    """Proxy of C++ eSignal2<(void,q(const).std::string,int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal2ConstStrInt self, eSlot2ConstStrInt slot)"""
+        return _enigma.eSignal2ConstStrInt_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot2ConstStrInt(eSlot2ConstStrInt):
@@ -11063,6 +17392,7 @@ class eSignal2ConstStrInt(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal2<(void,q(const).std::string,int)> self) -> eSignal2ConstStrInt"""
         _enigma.eSignal2ConstStrInt_swiginit(self, _enigma.new_eSignal2ConstStrInt())
     __swig_destroy__ = _enigma.delete_eSignal2ConstStrInt
 eSignal2ConstStrInt.connect2 = new_instancemethod(_enigma.eSignal2ConstStrInt_connect2, None, eSignal2ConstStrInt)
@@ -11070,10 +17400,18 @@ eSignal2ConstStrInt_swigregister = _enigma.eSignal2ConstStrInt_swigregister
 eSignal2ConstStrInt_swigregister(eSignal2ConstStrInt)
 
 class eSlot4UIntUIntUIntUInt(eSlot):
+    """Proxy of C++ eSlot4<(void,unsigned int,unsigned int,unsigned int,unsigned int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
+    def cb_func(self, arg0, arg1, arg2, arg3):
+        """cb_func(eSlot4UIntUIntUIntUInt self, unsigned int arg0, unsigned int arg1, unsigned int arg2, unsigned int arg3)"""
+        return _enigma.eSlot4UIntUIntUIntUInt_cb_func(self, arg0, arg1, arg2, arg3)
+
+
     def __init__(self):
+        """__init__(eSlot4<(void,unsigned int,unsigned int,unsigned int,unsigned int)> self) -> eSlot4UIntUIntUIntUInt"""
         if self.__class__ == eSlot4UIntUIntUIntUInt:
             _self = None
         else:
@@ -11089,8 +17427,15 @@ eSlot4UIntUIntUIntUInt_swigregister = _enigma.eSlot4UIntUIntUIntUInt_swigregiste
 eSlot4UIntUIntUIntUInt_swigregister(eSlot4UIntUIntUIntUInt)
 
 class eSignal4UIntUIntUIntUInt(object):
+    """Proxy of C++ eSignal4<(void,unsigned int,unsigned int,unsigned int,unsigned int)> class."""
+
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal4UIntUIntUIntUInt self, eSlot4UIntUIntUIntUInt slot)"""
+        return _enigma.eSignal4UIntUIntUIntUInt_connect2(self, slot)
+
 
     def connect(self, func):
         class ePythonSlot4UIntUIntUIntUInt(eSlot4UIntUIntUIntUInt):
@@ -11102,6 +17447,7 @@ class eSignal4UIntUIntUIntUInt(object):
         return slot
 
     def __init__(self):
+        """__init__(eSignal4<(void,unsigned int,unsigned int,unsigned int,unsigned int)> self) -> eSignal4UIntUIntUIntUInt"""
         _enigma.eSignal4UIntUIntUIntUInt_swiginit(self, _enigma.new_eSignal4UIntUIntUIntUInt())
     __swig_destroy__ = _enigma.delete_eSignal4UIntUIntUIntUInt
 eSignal4UIntUIntUIntUInt.connect2 = new_instancemethod(_enigma.eSignal4UIntUIntUIntUInt_connect2, None, eSignal4UIntUIntUIntUInt)
@@ -11110,39 +17456,42 @@ eSignal4UIntUIntUIntUInt_swigregister(eSignal4UIntUIntUIntUInt)
 
 
 def getBestPlayableServiceReference(bouquet_ref, ignore, simulate=False):
+    """
+    getBestPlayableServiceReference(eServiceReference bouquet_ref, eServiceReference ignore, bool simulate=False) -> PyObject
+    getBestPlayableServiceReference(eServiceReference bouquet_ref, eServiceReference ignore) -> PyObject *
+    """
     return _enigma.getBestPlayableServiceReference(bouquet_ref, ignore, simulate)
-getBestPlayableServiceReference = _enigma.getBestPlayableServiceReference
 
 def setTunerTypePriorityOrder(arg1):
+    """setTunerTypePriorityOrder(int arg1)"""
     return _enigma.setTunerTypePriorityOrder(arg1)
-setTunerTypePriorityOrder = _enigma.setTunerTypePriorityOrder
 
 def getExitCode():
+    """getExitCode() -> int"""
     return _enigma.getExitCode()
-getExitCode = _enigma.getExitCode
 
 def addFont(filename, alias, scale_factor, is_replacement):
+    """addFont(char const * filename, char const * alias, int scale_factor, int is_replacement)"""
     return _enigma.addFont(filename, alias, scale_factor, is_replacement)
-addFont = _enigma.addFont
 
 def getPrevAsciiCode():
+    """getPrevAsciiCode() -> int"""
     return _enigma.getPrevAsciiCode()
-getPrevAsciiCode = _enigma.getPrevAsciiCode
 
 def runMainloop():
+    """runMainloop()"""
     return _enigma.runMainloop()
-runMainloop = _enigma.runMainloop
 
 def quitMainloop(exit_code):
+    """quitMainloop(int exit_code)"""
     return _enigma.quitMainloop(exit_code)
-quitMainloop = _enigma.quitMainloop
 
 def getEnigmaVersionString():
+    """getEnigmaVersionString() -> char const *"""
     return _enigma.getEnigmaVersionString()
-getEnigmaVersionString = _enigma.getEnigmaVersionString
 
 def dump_malloc_stats():
+    """dump_malloc_stats()"""
     return _enigma.dump_malloc_stats()
-dump_malloc_stats = _enigma.dump_malloc_stats
 
 
