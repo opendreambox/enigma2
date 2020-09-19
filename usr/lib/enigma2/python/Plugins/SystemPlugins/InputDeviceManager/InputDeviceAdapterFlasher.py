@@ -2,13 +2,12 @@ from enigma import eConsoleAppContainer, eEnv, eInputDeviceManager
 from Tools.Log import Log
 from Screens.MessageBox import MessageBox
 from Tools.Directories import fileExists
-from Components.config import config
 
 from Tools.HardwareInfo import HardwareInfo
 
 class InputDeviceAdapterFlasher(MessageBox):
 	FLASHER_BINARY = eEnv.resolve("${sbindir}/flash-nrf52")
-	NRF_AS_FRONTPROCESSOR_DEVICES = ["one"]
+	NRF_AS_FRONTPROCESSOR_DEVICES = ["one", "two"]
 
 	def __init__(self, session):
 		self._isFrontProcessor = HardwareInfo().get_device_name() in self.NRF_AS_FRONTPROCESSOR_DEVICES
@@ -33,6 +32,9 @@ class InputDeviceAdapterFlasher(MessageBox):
 		self.onShow.append(self.__onShow)
 		self.onClose.append(self.__onClose)
 
+		self.blockFlashed = 0
+		self.blocksVerified = 0
+
 		self._flashFirmware()
 
 	def __onShow(self):
@@ -51,17 +53,30 @@ class InputDeviceAdapterFlasher(MessageBox):
 	def _onData(self, data):
 		Log.i(data)
 		pre = _("Working...")
+		isVerifying = False
+		isFlashing = False
+
 		if data.strip().startswith("flashing"):
 			pre = _("Flashing firmware...")
+			isFlashing = True
 		elif data.strip().startswith("verifying"):
 			pre = _("Verifying firmware...")
+			isVerifying = True
 
 		if self._isFrontProcessor:
 			pre += _("\n\nDO NOT TURN OFF YOUR DREAMBOX!")
-#
-		Log.w(config.usage.setup_level.index)
-		if pre and config.usage.setup_level.index >= 2:
-			text = "%s\n\n%s" %(pre, data)
+		if pre:
+			if isFlashing or isVerifying:
+				splitted = data.split(" ")
+				address = splitted[3]
+				if isFlashing:
+					self.blockFlashed += 1
+					text = _("%s\n\n%03d blocks written (%s)") %(pre, self.blockFlashed, address)
+				elif isVerifying:
+					self.blocksVerified += 1
+					text = _("%s\n\n%03d blocks written\n%03d blocks verified (%s)") %(pre, self.blockFlashed, self.blocksVerified, address)
+			else:
+				 text = "%s\n\n%s" %(pre, data)
 		else:
 			text = pre
 		self["Text"].setText(text)

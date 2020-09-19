@@ -199,10 +199,11 @@ class DisplayHardware:
 	def setMode(self, port_value, mode_value, rate_value):
 		if(rate_value == self.rateIndexToKey(eDisplayManager.RATE_AUTO)):
 			contentFramerate = self._displayManager.getCurrentContentFramerate()
-			if contentFramerate != 0:
-				groupedModes = self.getGroupedModeList(config.av.videoport.value, True)
-				currentModeRates = [ mode.rate for mode in groupedModes[config.av.videomode[config.av.videoport.value].value] ]
 
+			groupedModes = self.getGroupedModeList(config.av.videoport.value, True)
+			currentModeRates = [ mode.rate for mode in groupedModes[config.av.videomode[config.av.videoport.value].value] ]
+
+			if contentFramerate != 0:
 				if contentFramerate in [ eDisplayManager.RATE_25HZ, eDisplayManager.RATE_50HZ]:
 					if eDisplayManager.RATE_50HZ in currentModeRates:
 						rate_value = self.rateIndexToKey(eDisplayManager.RATE_50HZ)
@@ -219,8 +220,12 @@ class DisplayHardware:
 					elif eDisplayManager.RATE_50HZ in currentModeRates:
 						rate_value = self.rateIndexToKey(eDisplayManager.RATE_50HZ)
 			else:
-				print("Couldnt get content framerate, fallback to 50 hz")
-				rate_value = self.rateIndexToKey(eDisplayManager.RATE_50HZ) # 50hz default
+				fallbackFramerate = self.rateIndexToKey(eDisplayManager.RATE_25HZ) # 25 hz default
+				if currentModeRates:
+					fallbackFramerate = self.rateIndexToKey(currentModeRates[0]) # use highest available frame rate
+
+				print("Couldn't get content framerate, fallback to: %s" % (fallbackFramerate))
+				rate_value = fallbackFramerate
 
 		newMode = self.getCurrentModeByValue(port_value, mode_value, rate_value)
 		activeMode = self._displayManager.getCurrentMode()

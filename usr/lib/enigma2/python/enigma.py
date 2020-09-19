@@ -12320,6 +12320,16 @@ class eCec(object):
         """getKnownDevices(eCec self) -> eCecDevicePtrVector"""
         return _enigma.eCec_getKnownDevices(self)
 
+
+    def physicalAddress(self):
+        """physicalAddress(eCec self) -> IntList"""
+        return _enigma.eCec_physicalAddress(self)
+
+
+    def logicalAddress(self):
+        """logicalAddress(eCec self) -> int"""
+        return _enigma.eCec_logicalAddress(self)
+
     ready = _swig_property(_enigma.eCec_ready_get, _enigma.eCec_ready_set)
     receivedStandby = _swig_property(_enigma.eCec_receivedStandby_get, _enigma.eCec_receivedStandby_set)
     isNowActive = _swig_property(_enigma.eCec_isNowActive_get, _enigma.eCec_isNowActive_set)
@@ -12358,6 +12368,8 @@ eCec.handleExternal = new_instancemethod(_enigma.eCec_handleExternal, None, eCec
 eCec.sendMsg = new_instancemethod(_enigma.eCec_sendMsg, None, eCec)
 eCec.requireAddress = new_instancemethod(_enigma.eCec_requireAddress, None, eCec)
 eCec.getKnownDevices = new_instancemethod(_enigma.eCec_getKnownDevices, None, eCec)
+eCec.physicalAddress = new_instancemethod(_enigma.eCec_physicalAddress, None, eCec)
+eCec.logicalAddress = new_instancemethod(_enigma.eCec_logicalAddress, None, eCec)
 eCec_swigregister = _enigma.eCec_swigregister
 eCec_swigregister(eCec)
 

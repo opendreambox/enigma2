@@ -7,9 +7,11 @@ from Components.Label import Label
 from Screens.InputDeviceSetup import AdvancedInputDeviceSetup
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from Tools.DreamboxHardware import getFPVersion
 from Tools.Log import Log
 
 from .InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpdateChecker
+from .InputDeviceUpdateHandlerBase import InputDeviceUpdateHandlerBase
 from .InputDeviceIRProg import InputDeviceIRProg
 
 class InputDeviceManagementBase(object):
@@ -89,10 +91,11 @@ class InputDeviceManagementBase(object):
 	def _onUnboundRemoteKeyPressed(self, address, key):
 		pass
 
-class InputDeviceManagement(Screen, InputDeviceManagementBase):
+class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdateHandlerBase):
 	def __init__(self, session):
 		Screen.__init__(self, session, windowTitle=_("Input devices"))
 		InputDeviceManagementBase.__init__(self)
+		InputDeviceUpdateHandlerBase.__init__(self)
 		self["description"] = StaticText("")
 		self["list"] = self._list
 		self["inputActions"] = ActionMap(["OkCancelActions", "ColorActions"],
@@ -134,10 +137,11 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 		self.session.open(AdvancedInputDeviceSetup)
 
 	def _onUpdateAvailable(self):
+		text = self._fpUpdateText()
 		self.session.openWithCallback(
-			self._flashInputDeviceAdapterFirmware,
+			self._onUpdateAnswer,
 			MessageBox,
-			_("There is a new firmware for your bluetooth remote reciver available. Update now?"),
+			text,
 			type=MessageBox.TYPE_YESNO,
 			windowTitle=_("Update Bluetooth Receiver Firmware?"))
 
@@ -145,7 +149,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 	def _checkAdapter(self):
 		if self.available() and not self.responding():
 			self.session.openWithCallback(
-				self._flashInputDeviceAdapterFirmware,
+				self._onUpdateAnswer,
 				MessageBox,
 				_("Your Dreambox bluetooth receiver has no firmware installed.\nInstall the latest firmware now?"),
 				type=MessageBox.TYPE_YESNO,
@@ -196,12 +200,3 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase):
 				self._list.index = index
 				break
 			index += 1
-
-	def _flashInputDeviceAdapterFirmware(self, answer):
-		if answer:
-			self.session.openWithCallback(self._onAdapterFlashFinished, InputDeviceAdapterFlasher)
-
-	def _onAdapterFlashFinished(self, result):
-		if not result:
-			self["description"].setText(_("Flashing failed! Adapter has no firmware. Sorry!"))
-		Log.w("%s" %(result))

@@ -1,3 +1,4 @@
+
 <skin>
 	<output id="0">
 		<resolution xres="1280" yres="720" bpp="32"/>
@@ -263,8 +264,20 @@
 			<convert type="EventTime">Progress</convert>
 		</widget>
 	<!-- Service name -->
-		<widget source="session.CurrentService" render="Label" position="290,10" size="500,27" font="Regular;24" valign="top" noWrap="1" backgroundColor="#263c59" transparent="1">
+		<widget source="session.CurrentService" render="Label" position="290,10" size="400,27" font="Regular;24" valign="top" noWrap="1" backgroundColor="#263c59" transparent="1">
 			<convert type="ServiceName">Name</convert>
+		</widget>
+	<!-- BLE Remote Battery State -->
+		<eLabel text="BLE" position="720,1" size="50,22" font="Regular;17" backgroundColor="#263c59" transparent="1" />
+		<widget source="session.InputDevice" render="Progress" position="770,1" pixmap="skin_default/signal.svg" backgroundColor="#13243c" size="25,17" borderWidth="0" zPosition="1">
+			<convert type="InputDeviceInfo">rssi</convert>
+			<convert type="SegmentedProgress">4</convert>
+		</widget>
+		<eLabel text="BAT" position="720,22" size="50,22" font="Regular;17" noWrap="1" backgroundColor="#263c59" transparent="1"/>
+		<eLabel position="770,25" size="25,12" backgroundColor="grey"/> <!-- battery body -->
+		<eLabel position="796,27" size="3,6" backgroundColor="grey"/> <!-- battery pole -->
+		<widget source="session.InputDevice" render="Progress" position="772,27" size="21,8" borderWidth="0" zPosition="1">
+			<convert type="InputDeviceInfo"/>
 		</widget>
 	<!-- Signal Quality -->
 		<eLabel text="SNR:" position="820,1" size="50,22" font="Regular;17" backgroundColor="#263c59" transparent="1"/>

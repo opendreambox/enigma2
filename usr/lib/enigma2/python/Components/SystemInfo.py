@@ -36,4 +36,9 @@ except:
 
 device_name = HardwareInfo().device_name
 SystemInfo["HaveTouchSensor"] = device_name in ('dm520', 'dm525', 'dm900', 'dm920')
-SystemInfo["DefaultDisplayBrightness"] = device_name in ('dm900', 'dm920') and 8 or 5
+brightnessLut = {
+	'dm900' : 8,
+	'dm920' : 8,
+	'two' : 6,
+}
+SystemInfo["DefaultDisplayBrightness"] = brightnessLut.get(device_name, 5)

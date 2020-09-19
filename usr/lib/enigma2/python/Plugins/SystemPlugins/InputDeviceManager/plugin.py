@@ -1,10 +1,12 @@
 from __future__ import absolute_import
+from Plugins.SystemPlugins.InputDeviceManager.InputDeviceUpdateHandlerBase import InputDeviceUpdateHandlerBase
 from enigma import eInputDeviceManager, eManagedInputDevice
 from Plugins.Plugin import PluginDescriptor
 from Tools.Notifications import AddNotificationWithCallback
 from Screens.MessageBox import MessageBox
 from Components.config import config
 from Tools.Directories import createDir, fileExists
+from Tools.DreamboxHardware import getFPVersion
 from Tools.Log import Log
 import time
 
@@ -15,10 +17,11 @@ from twisted.internet import reactor
 global inputDeviceWatcher
 inputDeviceWatcher = None
 
-class InputDeviceWatcher(object):
+class InputDeviceWatcher(InputDeviceUpdateHandlerBase):
 	BATTERY_LOG_DIR = "/var/lib/enigma2"
 
 	def __init__(self, session):
+		InputDeviceUpdateHandlerBase.__init__(self)
 		self.session = session
 		self._updateChecker = InputDeviceUpdateChecker()
 		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
@@ -74,11 +77,8 @@ class InputDeviceWatcher(object):
 			self.session.open(InputDeviceManagement)
 
 	def _onUpdateAvailable(self):
-		AddNotificationWithCallback(self._onUpdateAnswer, MessageBox, _("There is a new firmware for your frontprocessor available. Update now?"), type=MessageBox.TYPE_YESNO, windowTitle=_("New Firmware"))
-
-	def _onUpdateAnswer(self, answer):
-		if answer:
-			self.session.open(InputDeviceAdapterFlasher)
+		text = self._fpUpdateText()
+		AddNotificationWithCallback(self._onUpdateAnswer, MessageBox, text, type=MessageBox.TYPE_YESNO, windowTitle=_("New Firmware"))
 
 def idm_setup(session, **kwargs):
 	session.open(InputDeviceManagement)

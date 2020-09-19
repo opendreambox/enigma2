@@ -1583,7 +1583,7 @@ class UnicableProducts(object):
 				scr=[]
 				lscr = []
 				format = product.get("format", "EN50494").upper()
-				if format in ('JESS', 'UNICABLE2', 'SCD2', 'EN50607', 'EN 50607', 'UNISEQC'):
+				if format in ('JESS', 'UNICABLE2', 'SCD2', 'EN50607', 'EN 50607'):
 					format = "EN50607"
 				else:
 					format = "EN50494"

@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+
 try:
 	import twisted.python.runtime
 	twisted.python.runtime.platform.supportsThreads = lambda: True
@@ -312,7 +313,8 @@ class Session:
 		self.screen = SessionGlobals(self)
 
 		self.shutdown = False
-
+		from Components.FrontPanelLed import frontPanelLed
+		frontPanelLed.init(self)
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_SESSIONSTART):
 			p(reason=0, session=self)
 
@@ -688,9 +690,11 @@ def runScreenTest():
 
 	profile("RunReactor")
 	profile_final()
+	from Components.FrontPanelLed import FrontPanelLed
 	runReactor()
 
 	session.shutdown = True
+	FrontPanelLed.shutdown()
 	while session.current_dialog:
 		if not isinstance(session.current_dialog, Screens.InfoBar.InfoBar):
 			session.current_dialog.callback = None

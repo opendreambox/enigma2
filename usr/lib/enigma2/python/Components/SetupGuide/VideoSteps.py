@@ -18,6 +18,7 @@ class VideoStepBase(SetupListStep):
 		self._timer = eTimer()
 		self.__nextTimer_conn = self._timer.timeout.connect(self._next)
 		self._hdmiChangedSigConn = eDisplayManager.getInstance().hdmiChanged.connect(self.hdmiChanged)
+		self.active = False
 
 	def _next(self):
 		#temporarily enable list wrapAround for automatic rotation
@@ -30,23 +31,28 @@ class VideoStepBase(SetupListStep):
 		self._timer.startLongTimer(self.NEXT_ITEM_TIMEOUT)
 
 	def prepare(self):
+		self.active = True
 		self._portSelect(self.PORT_HDMI)
 		self._timer.startLongTimer(self.NEXT_ITEM_TIMEOUT)
 		return True
 
 	def hdmiChanged(self):
 		self._portSelect(self.PORT_HDMI)
-		self._timer.startLongTimer(self.NEXT_ITEM_TIMEOUT)
+		if self.active:
+			self._list.list = self.listContent
+			self._timer.startLongTimer(self.NEXT_ITEM_TIMEOUT)
 
 	def onOk(self):
 		self._timer.stop()
 		config.av.videomode[self.port].value = self.mode
 		config.av.videorate[self.mode].value = self.rate
 		config.av.save()
+		self.active = False
 		return True
 
 	def cancel(self):
 		self._timer.stop()
+		self.active = False
 		SetupListStep.cancel(self)
 
 	def buildfunc(self, key, text):

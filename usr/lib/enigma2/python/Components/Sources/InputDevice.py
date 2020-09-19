@@ -7,25 +7,26 @@ class InputDevice(Source):
 		Source.__init__(self)
 		ipdm = eInputDeviceManager.getInstance()
 		if ipdm:
-			self.__deviceListChanged_conn = ipdm.deviceStateChanged.connect(self._onDeviceStateChanged)
+			self.__deviceListChanged_conn = ipdm.deviceListChanged.connect(self._onDevicesChanged)
+			self.__deviceStateChanged_conn = ipdm.deviceStateChanged.connect(self._onDevicesChanged)
 
-	def _onDeviceStateChanged(self, device, newstate):
+	@property
+	def range(self):
+		return 100
+
+	def _onDevicesChanged(self, *args):
 		self.changed((self.CHANGED_ALL,))
 
 	def _getFirst(self):
 		ipdm = eInputDeviceManager.getInstance()
-		if not ipdm:
-			return None
-		connected = ipdm.getConnectedDevices()
-		for dev in connected:
+		for dev in ipdm.getConnectedDevices():
 			if dev.ready():
 				return dev
 		return None
 
 	@cached
 	def isConnected(self):
-		dev = self._getFirst()
-		return dev and dev.ready()
+		return self._getFirst() != None
 	boolean = property(isConnected)
 
 	@cached
@@ -35,7 +36,6 @@ class InputDevice(Source):
 			return 0
 		return remote.batteryLevel()
 	batteryLevel = property(getBatteryLevel)
-
 
 	@cached
 	def getRSSI(self):

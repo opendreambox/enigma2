@@ -47,15 +47,10 @@ def InitLcd():
 		def setLCDinverted(configElement):
 			ilcd.setInverted(configElement.value);
 
-		standby_default = 0
-
 		ilcd = LCD()
 
 		config.lcd.contrast = ConfigNothing()
-		if ilcd.isOled():
-			standby_default = 1
-
-		config.lcd.standby = ConfigSlider(default=standby_default, limits=(0, 10))
+		config.lcd.standby = ConfigSlider(default=1, limits=(0, 10))
 		config.lcd.standby.addNotifier(setLCDbright);
 		config.lcd.standby.apply = lambda : setLCDbright(config.lcd.standby)
 

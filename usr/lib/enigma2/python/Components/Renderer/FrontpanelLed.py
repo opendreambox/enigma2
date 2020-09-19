@@ -1,5 +1,7 @@
 from Components.Element import Element
-
+from Tools.Directories import fileExists
+from Tools.Log import Log
+from Components.FrontPanelLed import FrontPanelLed as FPL
 # this is not a GUI renderer.
 class FrontpanelLed(Element):
 	def __init__(self, which = 0, patterns = [(20, 0, 0xffffffff),(20, 0x55555555, 0x84fc8c04)], boolean = True):
@@ -10,10 +12,13 @@ class FrontpanelLed(Element):
 
 	def changed(self, *args, **kwargs):
 		if self.boolean:
-			val = self.source.boolean and 0 or 1
+			val = 1 if self.source.boolean else 0
 		else:
 			val = self.source.value
-	
+
+		if fileExists(FPL.COLOR_PATH): #new API
+			return
+
 		(speed, pattern, pattern_4bit) = self.patterns[val]
 
 		try:
