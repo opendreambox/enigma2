@@ -111,9 +111,9 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdate
 		self["key_green"] = Label()
 		self["key_yellow"] = Label(_("Rescan"))
 		self["key_blue"] = Label(_("Advanced"))
-		self._updateChecker = InputDeviceUpdateChecker()
-		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
-		self._updateChecker.check()
+#		self._updateChecker = InputDeviceUpdateChecker()
+#		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
+#		self._updateChecker.check()
 		self._list.onSelectionChanged.append(self.__onSelectionChanged)
 		self._devices = []
 		self._reload()

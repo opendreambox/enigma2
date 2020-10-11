@@ -98,11 +98,13 @@
 			<item level="0" text="Brightness">config.lcd.bright</item>
 			<item level="0" text="Contrast">config.lcd.contrast</item>
 			<item level="0" text="Idle Mode">config.lcd.standby</item>
+		</setup>
+		<setup key="led" title="LED Setup" requires="FrontpanelLEDColorControl">
 			<item level="0" text="LED"></item>
 			<item level="0" text="Color">config.fp.led.default_color</item>
 			<item level="0" text="Brightness">config.fp.led.default_brightness</item>
-			<item level="0" text="Standby Color">config.fp.led.standby_color</item>
-			<item level="0" text="Standby Brightness">config.fp.led.standby_brightness</item>
+			<item level="0" text="Idle Color">config.fp.led.standby_color</item>
+			<item level="0" text="Idle Brightness">config.fp.led.standby_brightness</item>
 			<item level="0" text="Shutdown Color">config.fp.led.shutdown_color</item>
 		</setup>
 		<setup key="satconfig" title="Sat / Dish Setup">

@@ -272,6 +272,7 @@ struct eDVBSatelliteLNBParameters
 	int SatCR_mode;
 	int SatCR_pin;
 	unsigned int SatCRvco;
+	int PowerOnDelay; // some Unicable LNBs need long time to powerup after voltage enable...
 /*
 	int old_frequency;
 	int old_polarisation;
@@ -348,6 +349,8 @@ public:
 	RESULT setLNBIncreasedVoltage(bool onoff);
 	RESULT setLNBPrio(int prio);
 	RESULT setLNBNum(int LNBNum);
+	RESULT setLNBTunerInput(int index);
+	RESULT getLNBTunerInput();
 /* DiSEqC Specific Parameters */
 	RESULT setDiSEqCMode(int diseqcmode);
 	RESULT setToneburst(int toneburst);
@@ -372,19 +375,17 @@ public:
 	RESULT setLNBSatCRpin(int SatCRpin);
 	RESULT setLNBSatCRpositions(int SatCR_positions);
 	RESULT setLNBSatCRmode(int mode);
-	RESULT setLNBTunerInput(int index);
 	RESULT getLNBSatCR();
 	RESULT getLNBSatCRvco();
 	RESULT getLNBSatCRpin();
 	RESULT getLNBSatCRpositions();
 	RESULT getLNBSatCRmode();
-	RESULT getLNBTunerInput();
+	RESULT setLNBPowerOnDelay(int ms);
 /* Satellite Specific Parameters */
 	RESULT addSatellite(int orbital_position);
 	RESULT setVoltageMode(int mode);
 	RESULT setToneMode(int mode);
 	RESULT setRotorPosNum(int rotor_pos_num);
-/* Tuner Specific Parameters */
 	RESULT setTunerLinked(int from, int to, int which=3); // bitmask of 1 = normal, 2 = simulate
 	RESULT setTunerDepends(int from, int to);
 	void setSlotNotLinked(int tuner_no); // not used anymore... is a NOP

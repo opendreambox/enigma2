@@ -34,6 +34,8 @@ try:
 except:
 	SystemInfo["NetworkManager"] = False
 
+SystemInfo["FrontpanelLEDColorControl"] = fileExists("/proc/stb/fp/led_color")
+
 device_name = HardwareInfo().device_name
 SystemInfo["HaveTouchSensor"] = device_name in ('dm520', 'dm525', 'dm900', 'dm920')
 brightnessLut = {

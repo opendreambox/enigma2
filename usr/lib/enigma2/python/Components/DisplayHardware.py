@@ -11,9 +11,10 @@ class DisplayHardware:
 		DisplayHardware.instance = self
 		self.initHardware()
 		self.initConfig()
-		self.setConfiguredMode()
+		self.setMode(*self.getConfiguredMode())
 		self.setupNotifiers()
 		self._contentFramerateChangedSigConn = self._displayManager.contentFramerateChanged.connect(self.contentFramerateChanged)
+		self._contentPtsValidSigConn = self._displayManager.contentPtsValid.connect(self.contentPtsValid)
 		self._hdmiChangedSigConn = self._displayManager.hdmiChanged.connect(self.hdmiChanged)
 
 	def initHardware(self):
@@ -144,33 +145,35 @@ class DisplayHardware:
 		if not have_sync_mode_switch:
 			config.av.sync_mode = ConfigNothing()
 
-	def setConfiguredMode(self):
-		currentPort = config.av.videoport.value
-		currentMode = config.av.videomode[config.av.videoport.value].value
-		if currentMode == "":
+	def getConfiguredMode(self):
+		port = config.av.videoport.value
+		mode = config.av.videomode[config.av.videoport.value].value
+		if not mode:
 			# sometimes the preferred modes aren't ready when setConfiguredMode is called by hdmiChanged
 			# -> ignore and wait until hdmiChanged is called again (i.e. when the preferred modes are existant)
-			return
-		currentRate = config.av.videorate[currentMode].value
-		self.setMode(currentPort, currentMode, currentRate)
+			return (None, None, None)
+
+		rate = config.av.videorate[mode].value
+
+		return (port, mode, rate)
 
 	def contentFramerateChanged(self, contentFramerate):
-		currentPort = config.av.videoport.value
-		currentMode = config.av.videomode[config.av.videoport.value].value
-		if currentMode == "":
-			return
-		currentRate = config.av.videorate[currentMode].value
-		if currentRate != self.rateIndexToKey(eDisplayManager.RATE_AUTO):
-			return
+		(port, mode, rate) = self.getConfiguredMode()
 
-		self.setMode(currentPort, currentMode, currentRate)
+		if rate != self.rateIndexToKey(eDisplayManager.RATE_AUTO):
+			return # skip if there's a manually set framerate
+
+		self.setMode(port, mode, rate)
+
+	def contentPtsValid(self):
+		self.setMode(*self.getConfiguredMode())
 
 	def hdmiChanged(self):
 		from Screens.Standby import inStandby
 		if inStandby is None:
 			self.initHardware()
 			self.initConfig()
-			self.setConfiguredMode()
+			self.setMode(*self.getConfiguredMode())
 
 	def getAvailablePortNames(self):
 		return [name for (name, port) in self.availablePorts.items()]
@@ -197,6 +200,10 @@ class DisplayHardware:
 					return mode
 
 	def setMode(self, port_value, mode_value, rate_value):
+		if not port_value or not mode_value or not rate_value:
+			print("can't set new display mode (port, mode, rate) => ", port_value, mode_value, rate_value)
+			return
+
 		if(rate_value == self.rateIndexToKey(eDisplayManager.RATE_AUTO)):
 			contentFramerate = self._displayManager.getCurrentContentFramerate()
 
@@ -220,12 +227,19 @@ class DisplayHardware:
 					elif eDisplayManager.RATE_50HZ in currentModeRates:
 						rate_value = self.rateIndexToKey(eDisplayManager.RATE_50HZ)
 			else:
-				fallbackFramerate = self.rateIndexToKey(eDisplayManager.RATE_25HZ) # 25 hz default
-				if currentModeRates:
-					fallbackFramerate = self.rateIndexToKey(currentModeRates[0]) # use highest available frame rate
+				# no content available (wizard, boot, no service, etc.)
+				currentMode = self._displayManager.getCurrentMode()
+				if currentMode.name != mode_value:
+					# set a new mode
+					fallbackFramerate = self.rateIndexToKey(eDisplayManager.RATE_25HZ) # 25 hz default
+					if currentModeRates:
+						fallbackFramerate = self.rateIndexToKey(currentModeRates[0]) # use highest available frame rate
 
-				print("Couldn't get content framerate, fallback to: %s" % (fallbackFramerate))
-				rate_value = fallbackFramerate
+					print("Couldn't get content framerate, fallback to: %s" % (fallbackFramerate))
+					rate_value = fallbackFramerate
+				else:
+					print("Couldn't get content framerate, keep current mode")
+					return
 
 		newMode = self.getCurrentModeByValue(port_value, mode_value, rate_value)
 		activeMode = self._displayManager.getCurrentMode()

@@ -23,9 +23,9 @@ class InputDeviceWatcher(InputDeviceUpdateHandlerBase):
 	def __init__(self, session):
 		InputDeviceUpdateHandlerBase.__init__(self)
 		self.session = session
-		self._updateChecker = InputDeviceUpdateChecker()
-		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
-		self._updateChecker.check()
+#		self._updateChecker = InputDeviceUpdateChecker()
+#		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
+#		self._updateChecker.check()
 		self._dm = eInputDeviceManager.getInstance()
 		self.__deviceStateChanged_conn = self._dm.deviceStateChanged.connect(self._onDeviceStateChanged)
 		self.__deviceListChanged_conn = None

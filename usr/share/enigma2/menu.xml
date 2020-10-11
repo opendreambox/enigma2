@@ -44,6 +44,7 @@
 				<item weight="10" level="0" text= "Animations" entryID="animation_setup" description="Setup UI animations"><screen module="AnimationSetup" screen="AnimationSetup" /></item>
 				<item weight="20" level="0" entryID="av_setup" description="Fine tuning for your Audio and Video settings."><setup id="avsetup"/></item>
 				<item weight="30" requires="Display" entryID="display_setup" description="Configure your frontpanel OLED or LCD display."><setup level="1" id="lcd" /></item>
+				<item weight="40" requires="FrontpanelLEDColorControl" entryID="led_setup" description="Configure your frontpanel LED."><setup level="1" id="led" /></item>
 			</menu>
 
 			<menu weight="40" level="0" text="Devices" entryID="devices_selection" description="Storage, Common Interface, Input, ...">
