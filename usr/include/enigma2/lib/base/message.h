@@ -77,10 +77,10 @@ public:
 	{
 		eMessagePump::send(&msg, sizeof(msg));
 	}
-	eFixedMessagePump(eMainloop *context, int mt)
+	eFixedMessagePump(eMainloop *context, int mt, bool start_now=true)
 		:eMessagePump(mt)
 	{
-		sn=eSocketNotifier::create(context, getOutputFD(), eSocketNotifier::Read);
+		sn=eSocketNotifier::create(context, getOutputFD(), eSocketNotifier::Read, start_now);
 		if (ismt)
 			CONNECT(sn->activated, eFixedMessagePump<T>::do_recv_mt);
 		else
@@ -88,6 +88,7 @@ public:
 	}
 	void start() { if (sn) sn->start(); }
 	void stop() { if (sn) sn->stop(); }
+	bool running() const { return sn && sn->isRunning(); }
 };
 #endif
 

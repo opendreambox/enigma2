@@ -275,6 +275,28 @@ struct eServiceReferenceDVB: public eServiceReference
 		}
 		return false;
 	}
+
+	class equal
+	{
+	public:
+		bool operator()(const eServiceReferenceDVB &a, const eServiceReferenceDVB &b) const
+		{
+			return !a.compareDVB(b);
+		}
+	};
+
+};
+
+struct hash_eServiceReferenceDVB
+{
+	inline size_t operator()( const eServiceReferenceDVB &x) const
+	{
+#if __SIZEOF_POINTER__ == 8
+		return (((uint64_t)x.data[4] & 0xFFFF0000) << 32) | (((uint64_t)x.data[3] & 0xFFFF) << 32) | ((x.data[2] & 0xFFFF) << 16) | (x.data[1] & 0xFFFF);
+#else
+		return (x.data[3] << 16) | x.data[2];
+#endif
+	}
 };
 
 class CompareService
@@ -675,15 +697,19 @@ public:
 
 class iDVBSectionReader;
 class iDVBPESReader;
+class iDVBTSReader;
 class iDVBTSRecorder;
 class iTSMPEGDecoder;
+class iDVBTSWriter;
 
 class iDVBDemux: public iObject
 {
 public:
 	virtual RESULT createSectionReader(eMainloop *context, ePtr<iDVBSectionReader> &reader)=0;
 	virtual RESULT createPESReader(eMainloop *context, ePtr<iDVBPESReader> &reader)=0;
+	virtual RESULT createTSReader(eMainloop *context, ePtr<iDVBTSReader> &reader)=0;
 	virtual RESULT createTSRecorder(ePtr<iDVBTSRecorder> &recorder)=0;
+	virtual RESULT createTSWriter(ePtr<iDVBTSWriter> &writer)=0;
 	virtual RESULT getMPEGDecoder(ePtr<iTSMPEGDecoder> &reader, int decoder_id=0)=0;
 	virtual RESULT getSTC(pts_t &pts, int num=0)=0;
 	virtual RESULT getCADemuxID(uint8_t &id)=0;

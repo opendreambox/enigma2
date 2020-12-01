@@ -261,7 +261,7 @@ class eDVBChannel: public iDVBPVRChannel, public iFilePushScatterGather, public 
 	DECLARE_REF(eDVBChannel);
 	friend class eDVBResourceManager;
 public:
-	eDVBChannel(eDVBResourceManager *mgr, eDVBAllocatedFrontend *frontend);
+	eDVBChannel(eDVBResourceManager *mgr, eDVBAllocatedFrontend *frontend, const ePtr<iDVBTSWriter> &ts_wr=ePtr<iDVBTSWriter>());
 	virtual ~eDVBChannel();
 
 		/* only for managed channels - effectively tunes to the channelid. should not be used... */
@@ -296,6 +296,8 @@ public:
 
 	RESULT requestTsidOnid(eSlot1<void, int> &cb_func);
 	int reserveDemux();
+
+	ePtr<iDVBTSWriter> &getTSWriter() { return m_ts_writer; }
 private:
 	ePtr<eDVBAllocatedFrontend> m_frontend;
 	ePtr<eDVBAllocatedDemux> m_demux, m_decoder_demux;
@@ -346,6 +348,7 @@ private:
 
 	ePtr<eConnection> m_conn_sourceEvent;
 	void onSourceEvent(int, std::string);
+	ePtr<iDVBTSWriter> m_ts_writer;
 };
 #endif // SWIG
 

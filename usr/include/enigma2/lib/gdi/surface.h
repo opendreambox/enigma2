@@ -5,12 +5,12 @@
 
 #define __SURFACE_H_INSIDE__ 1
 
+#include <lib/base/ebase.h>
 #include <lib/gdi/erect.h>
 #include <lib/gdi/esize.h>
 #include <lib/gdi/palette.h>
 #include <lib/gdi/scalefilter.h>
 #include <lib/gdi/surface_flags.h>
-#include <map>
 
 #undef __SURFACE_H_INSIDE__
 
@@ -28,7 +28,7 @@ class gSurface
 	bool m_valid;
 	int m_fd;
 	unsigned long m_offset;
-	std::map<void *, std::pair<unsigned long, unsigned long> > m_maps;
+	FastHashMap<void *, std::pair<unsigned long, unsigned long> > m_maps;
 
 	void *map(unsigned int flags, unsigned int *pstride, unsigned long offset, unsigned long len);
 	void unmap(void *mem, unsigned long offset, unsigned long len);

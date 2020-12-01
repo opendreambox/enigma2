@@ -13,6 +13,7 @@ class CurrentService(PerServiceBase, Source):
 				iPlayableService.evEnd: self.serviceEvent,
 				# FIXME: we should check 'interesting_events'
 				# which is not always provided.
+				iPlayableService.evSubtitleListChanged : self.serviceEvent,
 				iPlayableService.evUpdatedInfo: self.serviceEvent,
 				iPlayableService.evUpdatedEventInfo: self.serviceEvent,
 				iPlayableService.evCuesheetChanged: self.serviceEvent,

@@ -102,9 +102,13 @@ class Timezones(object):
 		self._regions = OrderedDict()
 		self._defaultCountry = "en"
 		self._geoIpZone = "Europe/Berlin"
-		self.loadFinished = False
 		self.onReady = []
+		self.onGeoIpReady = []
 		self.reload()
+
+	@property
+	def loadFinished(self):
+		return True
 
 	def checkUpgrade(self):
 		if config.misc.firstrun.value:
@@ -132,8 +136,7 @@ class Timezones(object):
 		if data:
 			self._geoIpZone = data.timezone
 			self._defaultCountry = data.country_code.lower()
-		self.loadFinished = True
-		for fnc in self.onReady:
+		for fnc in self.onGeoIpReady:
 			fnc()
 
 	@property
@@ -156,7 +159,6 @@ class Timezones(object):
 		return self._regions.get(region, [])
 
 	def reload(self):
-		self.loadFinished = False
 		GeoIPLookup(self._onGeoIpData)
 		self.timezones = []
 		self._lut = {}
@@ -171,6 +173,8 @@ class Timezones(object):
 			self._regions[timezone.region] = region
 			self._lut[key] = timezone
 			self.timezones.append([timezone.name, timezone.key])
+		for fnc in self.onReady:
+			fnc()
 
 	def activateTimezone(self, zone):
 		Log.i(zone)

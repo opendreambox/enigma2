@@ -2,6 +2,7 @@
 #define __elock_h
 
 #include <pthread.h>
+#include <lib/base/sigc.h>
 
 class singleLock
 {
@@ -77,6 +78,48 @@ public:
 	}
 };
 
+class eSpinLock
+{
+	pthread_spinlock_t m_lock;
+public:
+	eSpinLock()
+	{
+		pthread_spin_init(&m_lock, 0);
+	}
+	~eSpinLock() __attribute__ ((always_inline))
+	{
+		pthread_spin_destroy(&m_lock);
+	}
+
+	void lock() __attribute__ ((always_inline))
+	{
+		pthread_spin_lock(&m_lock);
+	}
+	bool tryLock() __attribute__ ((always_inline))
+	{
+		return pthread_spin_trylock(&m_lock) == 0;
+	}
+	void unlock() __attribute__ ((always_inline))
+	{
+		pthread_spin_unlock(&m_lock);
+	}
+};
+
+class eSpinLocker
+{
+	eSpinLock &m_lock;
+public:
+	eSpinLocker(eSpinLock &m) __attribute__ ((always_inline))
+		: m_lock(m)
+	{
+		m_lock.lock();
+	}
+	~eSpinLocker() __attribute__ ((always_inline))
+	{
+		m_lock.unlock();
+	}
+};
+
 /* FIXME: rename to eMutex */
 class eSingleLock
 {
@@ -137,10 +180,12 @@ class eLock
 	int m_counter, m_max;
 public:
 	void lock(int res);
+	void lock(int res, const sigc::slot<bool> &abort_wait_cond);
+	void recheck_cond() { pthread_cond_signal(&m_cond); }
 	void unlock(int res);
-	int lock_count();
 	int trylock(int res, bool force=false);
 	int counter() const { return m_counter; }
+	void setMax(int max) { m_max = max; }
 	int max() const { return m_max; }
 
 	eLock(int max);

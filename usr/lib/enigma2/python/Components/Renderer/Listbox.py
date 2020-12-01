@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from Components.Renderer.Renderer import Renderer
+from Components.Sources.Source import Source
 from enigma import eListbox, ePoint
 
 # the listbox renderer is the listbox, but no listbox content.
@@ -26,6 +27,15 @@ class Listbox(Renderer, object):
 		self.__margin = ePoint(0,0)
 		self.__selectionZoom = 1.0
 
+	@property
+	def rootSource(self):
+		source = self.source
+		while hasattr(source, "source"):
+			if not source.source:
+				break
+			source = source.source
+		return source
+
 	GUI_WIDGET = eListbox
 
 	def contentChanged(self):
@@ -45,8 +55,8 @@ class Listbox(Renderer, object):
 
 	mode = property(lambda self: self.__mode, setMode)
 
-	def setMargin(self, leftRight, topBottom):
-		self.__margin = ePoint(leftRight, topBottom)
+	def setMargin(self, margin):
+		self.__margin = margin
 		if self.instance:
 			self.instance.setMargin(self.__margin)
 
@@ -86,6 +96,14 @@ class Listbox(Renderer, object):
 				self.selectionZoom = float(value)
 		self.scrollbarMode = self.scrollbarMode # trigger
 		self.backlogMode = self.backlogMode # trigger
+		if self.rootSource:
+			source = self.rootSource
+			if hasattr(source, "setMode"):
+				source.setMode(self.mode, False)
+			if hasattr(source, "setMargin"):
+				source.setMargin(self.margin, False)
+			if hasattr(source, "setSelectionZoom"):
+				source.setSelectionZoom(self.selectionZoom, False)
 
 	def preWidgetRemove(self, instance):
 		instance.setContent(None)
@@ -167,18 +185,19 @@ class Listbox(Renderer, object):
 		return 0
 
 	def changed(self, what):
-		if hasattr(self.source, "mode"):
-			self.mode = self.source.mode
-		if hasattr(self.source, "margin"):
-			self.margin = self.source.margin
-		if hasattr(self.source, "selectionZoom"):
-			self.selectionZoom = self.source.selectionZoom
-		if hasattr(self.source, "selectionEnabled"):
-			self.selection_enabled = self.source.selectionEnabled
-		if hasattr(self.source, "scrollbarMode"):
-			self.scrollbarMode = self.source.scrollbarMode
-		if hasattr(self.source, "backlogMode"):
-			self.backlogMode = self.source.backlogMode
+		source = self.rootSource
+		if hasattr(source, "mode"):
+			self.mode = source.mode
+		if hasattr(source, "margin"):
+			self.margin = source.margin
+		if hasattr(source, "selectionZoom"):
+			self.selectionZoom = source.selectionZoom
+		if hasattr(source, "selectionEnabled"):
+			self.selection_enabled = source.selectionEnabled
+		if hasattr(source, "scrollbarMode"):
+			self.scrollbarMode = source.scrollbarMode
+		if hasattr(source, "backlogMode"):
+			self.backlogMode = source.backlogMode
 		if len(what) > 1 and isinstance(what[1], str) and what[1] == "style":
 			return
 		elif len(what) > 1 and isinstance(what[1], str) and what[1] == "hide":

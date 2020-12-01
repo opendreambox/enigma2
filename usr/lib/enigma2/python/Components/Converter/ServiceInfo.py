@@ -50,7 +50,7 @@ class ServiceInfo(Converter, object):
 				"Sid": (self.SID, (iPlayableService.evUpdatedInfo,)),
 				"Framerate": (self.FRAMERATE, (iPlayableService.evVideoSizeChanged, iPlayableService.evVideoFramerateChanged)),
 				"TransferBPS": (self.TRANSFERBPS, (iPlayableService.evUpdatedInfo,)),
-				"HasSubtitles": (self.HAS_SUBTITLES, (iPlayableService.evUpdatedInfo,)),
+				"HasSubtitles": (self.HAS_SUBTITLES, (iPlayableService.evUpdatedInfo, iPlayableService.evSubtitleListChanged)),
 			}[type]
 		self.need_wa = iPlayableService.evVideoSizeChanged in self.interesting_events
 

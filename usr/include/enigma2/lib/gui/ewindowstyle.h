@@ -5,6 +5,7 @@ class eWindow;
 class eSize;
 class gFont;
 
+#include <lib/base/ebase.h>
 #include <lib/base/object.h>
 
 class eWindowStyle_ENUMS
@@ -85,7 +86,7 @@ public:
 	void setStyle(int style_id, eWindowStyle *style);
 private:
 	static eWindowStyleManager *m_instance;
-	std::map<int, ePtr<eWindowStyle> > m_current_style;
+	FastHashMap<int, ePtr<eWindowStyle> > m_current_style;
 };
 SWIG_TEMPLATE_TYPEDEF(ePtr<eWindowStyleManager>, eWindowStyleManager);
 SWIG_EXTEND(ePtr<eWindowStyleManager>,

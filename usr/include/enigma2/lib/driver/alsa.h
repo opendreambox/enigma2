@@ -27,7 +27,7 @@ public:
 	int stop();
 #ifndef SWIG
 	int pause(int state);
-	int start(unsigned int rate, unsigned int channels, unsigned int bits, const sigc::slot<int64_t> &get_stc, const sigc::slot<void> &buffer_consumed);
+	int start(unsigned int rate, unsigned int channels, unsigned int bits, const sigc::slot<int64_t> &get_stc, const sigc::slot<void> &buffer_consumed, const sigc::slot<void> &buffer_underrun);
 	int pushData(uint8_t *data, int size, int64_t pts);
 	uint64_t fifoFillClockTicks() const;
 	int fifoFill() const;

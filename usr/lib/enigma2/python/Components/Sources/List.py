@@ -137,24 +137,25 @@ to generate HTML."""
 
 	selection_enabled = property(lambda self: self.__selection_enabled, setSelectionEnabled)
 
-	def setMode(self, mode):
+	def setMode(self, mode, emitChange=True):
 		if self.__mode != mode:
 			self.__mode = mode
-			self.changed((self.CHANGED_SPECIFIC, "mode"))
+			if emitChange:
+				self.changed((self.CHANGED_SPECIFIC, "mode"))
 
 	mode = property(lambda self: self.__mode, setMode)
 
-	def setMargin(self, margin):
-		if self.__margin != margin:
-			self.__margin = margin
-			self.changed(self.CHANGED_SPECIFIC, "margin")
+	def setMargin(self, margin, emitChange=True):
+		self.__margin = margin
+		if emitChange:
+			self.changed((self.CHANGED_SPECIFIC, "margin"))
 
 	margin = property(lambda self: self.__margin, setMargin)
 
-	def setSelectionZoom(self, zoom):
-		if self.__selectionZoom != zoom:
-			self.__selectionZoom = zoom
-			self.changed(self.CHANGED_SPECIFIC, "selectionZoom")
+	def setSelectionZoom(self, zoom, emitChange=True):
+		self.__selectionZoom = zoom
+		if emitChange:
+			self.changed((self.CHANGED_SPECIFIC, "selectionZoom"))
 
 	selectionZoom = property(lambda self: self.__selectionZoom, setSelectionZoom)
 

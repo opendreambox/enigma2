@@ -83,12 +83,15 @@ public:
 	iStream() :	m_valid(false) {}
 	virtual ~iStream() {}
 
+	virtual void init() = 0;
+
 	virtual std::vector<StreamInfo> &getStreams() = 0;
 	virtual void deleteStream(int index) = 0;
 	virtual bool selectStream(int index, const StreamRestrictions &restrictions = StreamRestrictions()) = 0;
 
 	virtual bool isLive() = 0;
 	virtual bool isReady() = 0;
+	virtual void rebuffer() = 0;
 	virtual int64_t getDuration() = 0;
 	virtual bool seek(int64_t pts, int index = -1) = 0;
 	virtual bool getVideoFrames(std::vector<RawData> &rawData) = 0;
@@ -100,6 +103,7 @@ public:
 	eSignal0<void> ready; // emit when buffer is okay for the first time
 	eSignal1<void, int> seekDone;
 	eSignal0<void> videoEOS;
+	eSignal0<void> audioEOS;
 
 protected:
 	mutable std::mutex m_mtx;

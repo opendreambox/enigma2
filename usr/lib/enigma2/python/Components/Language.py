@@ -21,7 +21,7 @@ class Language:
 		self.addLanguage(_("English"), "en", "EN", "en_GB")
 		self.addLanguage(_("German"), "de", "DE")
 		self.addLanguage(_("Arabic"), "ar", "AE")
-		self.addLanguage(_("Brazilian Portuguese"), "pt_BR", "BR", "pt_BR")
+		self.addLanguage(_("Brazilian Portuguese"), "pt", "BR", "pt_BR")
 		self.addLanguage(_("Catalan"), "ca", "AD")
 		self.addLanguage(_("Croatian"), "hr", "HR")
 		self.addLanguage(_("Czech"), "cs", "CZ")
@@ -49,7 +49,7 @@ class Language:
 		self.addLanguage(_("Swedish"), "sv", "SE")
 		self.addLanguage(_("Turkish"), "tr", "TR", "tr_CY")
 		self.addLanguage(_("Ukrainian"), "uk", "UA")
-		self.addLanguage(_("Frisian"), "fy", "NL", "fy_NL") # there is no separate country for frisian
+		self.addLanguage(_("Frisian"), "fy", "FY", "fy_NL")
 
 		self.callbacks = []
 

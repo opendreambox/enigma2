@@ -95,7 +95,7 @@ public:
 		public:					\
 			void AddRef(); 			\
 			void Release();			\
-			int RefCount() { return ref; } \
+			int RefCount() const { return ref; } \
 		protected:				\
 			void Delete();			\
 		private:				\

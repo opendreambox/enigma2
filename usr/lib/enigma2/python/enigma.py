@@ -202,6 +202,9 @@ class iObject(object):
 iObject_swigregister = _enigma.iObject_swigregister
 iObject_swigregister(iObject)
 
+HASH_MAP_INCLUDE = _enigma.HASH_MAP_INCLUDE
+HASH_SET_INCLUDE = _enigma.HASH_SET_INCLUDE
+USE_FAST_HASH = _enigma.USE_FAST_HASH
 class eMainloop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
@@ -2575,6 +2578,11 @@ class eStreamProcessor(object):
         return _enigma.eStreamProcessor_getName(self)
 
 
+    def valid(self):
+        """valid(eStreamProcessor self) -> bool"""
+        return _enigma.eStreamProcessor_valid(self)
+
+
     def start(self):
         """start(eStreamProcessor self)"""
         return _enigma.eStreamProcessor_start(self)
@@ -2598,6 +2606,11 @@ class eStreamProcessor(object):
     def seekDone(self, status):
         """seekDone(eStreamProcessor self, int status)"""
         return _enigma.eStreamProcessor_seekDone(self, status)
+
+
+    def flush(self):
+        """flush(eStreamProcessor self)"""
+        return _enigma.eStreamProcessor_flush(self)
 
 
     def canProcess(self, streamInfos):
@@ -2651,6 +2664,41 @@ class eStreamProcessor(object):
         return _enigma.eStreamProcessor_getActiveAudioIndex(self)
 
 
+    def getActiveAudioCodec(self):
+        """getActiveAudioCodec(eStreamProcessor self) -> int"""
+        return _enigma.eStreamProcessor_getActiveAudioCodec(self)
+
+
+    def getWidth(self, width):
+        """getWidth(eStreamProcessor self, int & width) -> bool"""
+        return _enigma.eStreamProcessor_getWidth(self, width)
+
+
+    def getHeight(self, height):
+        """getHeight(eStreamProcessor self, int & height) -> bool"""
+        return _enigma.eStreamProcessor_getHeight(self, height)
+
+
+    def getAspect(self, aspect):
+        """getAspect(eStreamProcessor self, int & aspect) -> bool"""
+        return _enigma.eStreamProcessor_getAspect(self, aspect)
+
+
+    def getFramerate(self, framerate):
+        """getFramerate(eStreamProcessor self, int & framerate) -> bool"""
+        return _enigma.eStreamProcessor_getFramerate(self, framerate)
+
+
+    def getProgressive(self, progressive):
+        """getProgressive(eStreamProcessor self, int & progressive) -> bool"""
+        return _enigma.eStreamProcessor_getProgressive(self, progressive)
+
+
+    def isEOS(self):
+        """isEOS(eStreamProcessor self) -> bool"""
+        return _enigma.eStreamProcessor_isEOS(self)
+
+
     def getVideoFrames(self, frames):
         """getVideoFrames(eStreamProcessor self, std::vector< RawData,std::allocator< RawData > > & frames) -> bool"""
         return _enigma.eStreamProcessor_getVideoFrames(self, frames)
@@ -2672,19 +2720,26 @@ class eStreamProcessor(object):
         return _enigma.eStreamProcessor_addProcessor(processor)
 
     addProcessor = staticmethod(addProcessor)
+    streamStarted = _swig_property(_enigma.eStreamProcessor_streamStarted_get, _enigma.eStreamProcessor_streamStarted_set)
     formatChanged = _swig_property(_enigma.eStreamProcessor_formatChanged_get, _enigma.eStreamProcessor_formatChanged_set)
     framerateChanged = _swig_property(_enigma.eStreamProcessor_framerateChanged_get, _enigma.eStreamProcessor_framerateChanged_set)
     progressiveChanged = _swig_property(_enigma.eStreamProcessor_progressiveChanged_get, _enigma.eStreamProcessor_progressiveChanged_set)
+    videoPtsValid = _swig_property(_enigma.eStreamProcessor_videoPtsValid_get, _enigma.eStreamProcessor_videoPtsValid_set)
+    lastVideoConsumed = _swig_property(_enigma.eStreamProcessor_lastVideoConsumed_get, _enigma.eStreamProcessor_lastVideoConsumed_set)
+    lastAudioConsumed = _swig_property(_enigma.eStreamProcessor_lastAudioConsumed_get, _enigma.eStreamProcessor_lastAudioConsumed_set)
+    audioCodecChanged = _swig_property(_enigma.eStreamProcessor_audioCodecChanged_get, _enigma.eStreamProcessor_audioCodecChanged_set)
     def __disown__(self):
         self.this.disown()
         _enigma.disown_eStreamProcessor(self)
         return weakref_proxy(self)
 eStreamProcessor.getName = new_instancemethod(_enigma.eStreamProcessor_getName, None, eStreamProcessor)
+eStreamProcessor.valid = new_instancemethod(_enigma.eStreamProcessor_valid, None, eStreamProcessor)
 eStreamProcessor.start = new_instancemethod(_enigma.eStreamProcessor_start, None, eStreamProcessor)
 eStreamProcessor.stop = new_instancemethod(_enigma.eStreamProcessor_stop, None, eStreamProcessor)
 eStreamProcessor.pause = new_instancemethod(_enigma.eStreamProcessor_pause, None, eStreamProcessor)
 eStreamProcessor.resume = new_instancemethod(_enigma.eStreamProcessor_resume, None, eStreamProcessor)
 eStreamProcessor.seekDone = new_instancemethod(_enigma.eStreamProcessor_seekDone, None, eStreamProcessor)
+eStreamProcessor.flush = new_instancemethod(_enigma.eStreamProcessor_flush, None, eStreamProcessor)
 eStreamProcessor.canProcess = new_instancemethod(_enigma.eStreamProcessor_canProcess, None, eStreamProcessor)
 eStreamProcessor.parsed = new_instancemethod(_enigma.eStreamProcessor_parsed, None, eStreamProcessor)
 eStreamProcessor.ready = new_instancemethod(_enigma.eStreamProcessor_ready, None, eStreamProcessor)
@@ -2694,6 +2749,13 @@ eStreamProcessor.selectAudioStream = new_instancemethod(_enigma.eStreamProcessor
 eStreamProcessor.deleteStream = new_instancemethod(_enigma.eStreamProcessor_deleteStream, None, eStreamProcessor)
 eStreamProcessor.getActiveVideoIndex = new_instancemethod(_enigma.eStreamProcessor_getActiveVideoIndex, None, eStreamProcessor)
 eStreamProcessor.getActiveAudioIndex = new_instancemethod(_enigma.eStreamProcessor_getActiveAudioIndex, None, eStreamProcessor)
+eStreamProcessor.getActiveAudioCodec = new_instancemethod(_enigma.eStreamProcessor_getActiveAudioCodec, None, eStreamProcessor)
+eStreamProcessor.getWidth = new_instancemethod(_enigma.eStreamProcessor_getWidth, None, eStreamProcessor)
+eStreamProcessor.getHeight = new_instancemethod(_enigma.eStreamProcessor_getHeight, None, eStreamProcessor)
+eStreamProcessor.getAspect = new_instancemethod(_enigma.eStreamProcessor_getAspect, None, eStreamProcessor)
+eStreamProcessor.getFramerate = new_instancemethod(_enigma.eStreamProcessor_getFramerate, None, eStreamProcessor)
+eStreamProcessor.getProgressive = new_instancemethod(_enigma.eStreamProcessor_getProgressive, None, eStreamProcessor)
+eStreamProcessor.isEOS = new_instancemethod(_enigma.eStreamProcessor_isEOS, None, eStreamProcessor)
 eStreamProcessor.getVideoFrames = new_instancemethod(_enigma.eStreamProcessor_getVideoFrames, None, eStreamProcessor)
 eStreamProcessor.getAudioPackets = new_instancemethod(_enigma.eStreamProcessor_getAudioPackets, None, eStreamProcessor)
 eStreamProcessor_swigregister = _enigma.eStreamProcessor_swigregister
@@ -11870,6 +11932,14 @@ class ePicLoad(iObject):
         return _enigma.ePicLoad_startDecode(self, filename, async)
 
 
+    def startDecodeBuffer(self, picbuf, n, async=True):
+        """
+        startDecodeBuffer(ePicLoad self, unsigned char const * picbuf, size_t n, bool async=True) -> RESULT
+        startDecodeBuffer(ePicLoad self, unsigned char const * picbuf, size_t n) -> RESULT
+        """
+        return _enigma.ePicLoad_startDecodeBuffer(self, picbuf, n, async)
+
+
     def getThumbnail(self, filename):
         """getThumbnail(ePicLoad self, char const * filename) -> RESULT"""
         return _enigma.ePicLoad_getThumbnail(self, filename)
@@ -11901,6 +11971,7 @@ class ePicLoad(iObject):
         return _enigma.ePicLoad_getData(self)
 
 ePicLoad.startDecode = new_instancemethod(_enigma.ePicLoad_startDecode, None, ePicLoad)
+ePicLoad.startDecodeBuffer = new_instancemethod(_enigma.ePicLoad_startDecodeBuffer, None, ePicLoad)
 ePicLoad.getThumbnail = new_instancemethod(_enigma.ePicLoad_getThumbnail, None, ePicLoad)
 ePicLoad.setPara = new_instancemethod(_enigma.ePicLoad_setPara, None, ePicLoad)
 ePicLoad.setParameters = new_instancemethod(_enigma.ePicLoad_setParameters, None, ePicLoad)

@@ -252,7 +252,7 @@ class VirtualKeyBoard(Screen, NumericalTextInput):
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"ň", u"ď", u"'"],
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"?", u"\\", u"Č", u"Ř", u"Š", u"Ž", u"Ú", u"Á", u"É", u"OK"]]
-			self.nextLang = 'en_EN'
+			self.nextLang = 'en_GB'
 		else:
 			self.keys_list = [
 				[u"EXIT", u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9", u"0", u"BACKSPACE"],
@@ -266,7 +266,7 @@ class VirtualKeyBoard(Screen, NumericalTextInput):
 				[u"A", u"S", u"D", u"F", u"G", u"H", u"J", u"K", u"L", u"'", u"?"],
 				[u">", u"Y", u"X", u"C", u"V", u"B", u"N", u"M", u";", u":", u"_", u"CLEAR"],
 				[u"SHIFT", u"SPACE", u"OK"]]
-			self.lang = 'en_EN'
+			self.lang = 'en_GB'
 			self.nextLang = 'de_DE'		
 		self["country"].setText(self.lang)
 

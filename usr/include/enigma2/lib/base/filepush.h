@@ -15,8 +15,11 @@ public:
 	virtual ~iFilePushScatterGather() {}
 };
 
+class iDVBTSWriter;
+
 class eFilePushThread: public eThread, public sigc::trackable
 {
+	ePtr<iDVBTSWriter> m_dmx_writer;
 public:
 	eFilePushThread(int prio_class=IOPRIO_CLASS_BE, int prio_level=5, int blocksize=188);
 	virtual ~eFilePushThread();
@@ -28,6 +31,7 @@ public:
 	virtual void start(int sourcefd, int destfd);
 	virtual int start(const char *filename, int destfd);
 	virtual void start(ePtr<iTsSource> &source, int destfd);
+	virtual void start(ePtr<iTsSource> &source, ePtr<iDVBTSWriter> &dst_demux);
 
 	void pause();
 	void resume();

@@ -16,6 +16,14 @@ class eHTTPRequest
 {
 	DECLARE_REF(eHTTPRequest);
 public:
+	enum class Status
+	{
+		OK,
+		CANCELLED,
+		TIMEOUT,
+		ERROR
+	};
+
 	eHTTPRequest(const std::string &url, sigc::slot<void, ePtr<eHTTPRequest>> doneCallback, const std::vector<std::string> &headers = std::vector<std::string>());
 	~eHTTPRequest();
 
@@ -35,6 +43,10 @@ public:
 	size_t headerCallback(void *contents, size_t size, size_t nmemb);
 
 	bool finished() const { return m_finished; }
+
+	Status getStatus() const { return m_status; }
+	void setStatus(Status status) { m_status = status; }
+
 	const std::vector<uint8_t> &getData() { return m_data; }
 	const std::map<std::string, std::string> &getResponseHeaders() { return m_responseHeaders; }
 	long getResponseCode() { return m_responseCode; }
@@ -56,6 +68,7 @@ private:
 	std::string m_url;
 	std::vector<std::string> m_headers;
 	bool m_finished;
+	Status m_status;
 	std::vector<uint8_t> m_data;
 	sigc::slot<void, ePtr<eHTTPRequest>> m_doneCallback;
 	std::map<std::string, std::string> m_responseHeaders;

@@ -17,6 +17,79 @@
 #include <lib/base/esignal.h>
 #include <lib/python/swig.h>
 
+#define xxinclude(s) xinclude(s)
+#define xinclude(s) #s
+
+#if defined(__GXX_EXPERIMENTAL_CXX0X__)
+	#define HASH_MAP_INCLUDE xxinclude(unordered_map)
+	#define HASH_SET_INCLUDE xxinclude(unordered_set)
+#else
+	#define HASH_MAP_INCLUDE xxinclude(ext/hash_map)
+	#define HASH_SET_INCLUDE xxinclude(ext/hash_set)
+#endif
+
+#if defined(__GXX_EXPERIMENTAL_CXX0X__)
+	#define HASH_MULTIMAP std::unordered_multimap
+	#define HASH_MAP std::unordered_map
+	#define HASH_SET std::unordered_set
+#elif __GNUC_PREREQ(3,1)
+	#define HASH_MULTIMAP __gnu_cxx::hash_multimap
+	#define HASH_MAP __gnu_cxx::hash_map
+	#define HASH_SET __gnu_cxx::hash_set
+#else // for older gcc use following
+	#define HASH_MULTIMAP std::hash_multimap
+	#define HASH_MAP std::hash_map
+	#define HASH_SET std::hash_set
+#endif
+
+#include HASH_MAP_INCLUDE
+#include HASH_SET_INCLUDE
+
+#define USE_FAST_HASH 1
+
+#if USE_FAST_HASH
+
+template <class T>
+struct PerfectHash
+{
+	static_assert(sizeof(T) <= sizeof(size_t), "PerfectHash size check failed");
+	size_t operator()(const T &x) const { return (size_t)x; };
+};
+
+template <class T>
+struct AlwaysEqual
+{
+	bool operator()(const T &a, const T &b) const { return true; };
+};
+
+template <class K, class V>
+class FastHashMap: public HASH_MAP<K,V,PerfectHash<K>,AlwaysEqual<K>>
+{};
+
+template <class K, class V>
+class FastHashMultiMap: public HASH_MULTIMAP<K,V,PerfectHash<K>,AlwaysEqual<K>>
+{};
+
+template <class K>
+class FastHashSet: public HASH_SET<K,PerfectHash<K>,AlwaysEqual<K>>
+{};
+
+#else
+
+template <class K, class V>
+class FastHashMap: public HASH_MAP<K,V>
+{};
+
+template <class K, class V>
+class FastHashMultiMap: public HASH_MULTIMAP<K,V>
+{};
+
+template <class K>
+class FastHashSet: public HASH_SET<K>
+{};
+
+#endif
+
 class eMainloop;
 class MainloopList;
 
@@ -235,7 +308,7 @@ public:
 
 	void start();
 	void stop();
-	bool isRunning() { return state; }
+	bool isRunning() const { return state; }
 
 	int getFD() { return fd; }
 	int getRequested() { return requested; }
@@ -304,8 +377,8 @@ public:
 class eMainloop_native: public eMainloop
 {
 protected:
-	std::multimap<int, eSocketNotifier*> m_notifiers;
-	std::multimap<int, eSocketNotifier*> m_notifiers_new;
+	HASH_MULTIMAP<int, eSocketNotifier*> m_notifiers;
+	HASH_MULTIMAP<int, eSocketNotifier*> m_notifiers_new;
 
 	ePtrList<eTimer> m_timers;
 	ePtrList<eTimer> m_timers_new;

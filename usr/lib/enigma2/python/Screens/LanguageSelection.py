@@ -14,7 +14,7 @@ from Components.Timezones import timezones
 from Tools.Log import Log
 
 def _cached(x, lang=None):
-	return LANG_TEXT.get(lang or config.osd.language.value, {}).get(x, "")
+	return LANG_TEXT.get(lang or config.osd.language.value, {}).get(x, LANG_TEXT.get("en_GB").get(x, x))
 
 from Screens.Rc import Rc
 
@@ -44,12 +44,12 @@ class LanguageSelectionBase(object):
 	def _getLanguageList(self, lang):
 		languageList = language.getLanguageList()
 		if not languageList: # no language available => display only english
-			langList = [ LanguageEntryComponent("en", _cached("en_EN", lang), "en_EN", self._png_cache) ]
+			langList = [ LanguageEntryComponent("en", _cached("en_GB", lang), "en_GB", self._png_cache) ]
 		else:
 			langList = []
 			defaultCountry = timezones.defaultCountry
 			for x in languageList:
-				entry = LanguageEntryComponent(fileName = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3], lang), index = x[0], png_cache = self._png_cache)
+				entry = LanguageEntryComponent(fileName = x[1][2].lower(), name = _cached(x[1][3], lang), index = x[0], png_cache = self._png_cache)
 				defaults = []
 				if x[1][2] == defaultCountry:
 					defaults.append(entry)

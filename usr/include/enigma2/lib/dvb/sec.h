@@ -1,6 +1,7 @@
 #ifndef __dvb_sec_h
 #define __dvb_sec_h
 
+#include <lib/base/ebase.h>
 #include <lib/dvb/idvb.h>
 #include <lib/base/stl_types.h>
 #include <list>
@@ -255,7 +256,7 @@ struct eDVBSatelliteLNBParameters
 
 	bool m_increased_voltage; // use increased voltage ( 14/18V )
 
-	std::map<int, eDVBSatelliteSwitchParameters> m_satellites;
+	FastHashMap<int, eDVBSatelliteSwitchParameters> m_satellites;
 	eDVBSatelliteDiseqcParameters m_diseqc_parameters;
 	eDVBSatelliteRotorParameters m_rotor_parameters;
 
@@ -319,7 +320,7 @@ private:
 	static eDVBSatelliteEquipmentControl *instance;
 	eDVBSatelliteLNBParameters m_lnbs[512]; // at the moment we have max 2 FBC Tuners.. a 8 channels... max 32 LNB per channel
 	int m_lnbidx; // current index for set parameters
-	std::map<int, eDVBSatelliteSwitchParameters>::iterator m_curSat;
+	FastHashMap<int, eDVBSatelliteSwitchParameters>::iterator m_curSat;
 	eSmartPtrList<eDVBRegisteredFrontend> &m_avail_frontends, &m_avail_simulate_frontends;
 	int m_rotorMoving;
 	int m_unused; // was m_not_linked_slot_mask

@@ -9,6 +9,7 @@ class DreamboxModel(Converter):
 		"dm920"  : "DM920 ultraHD",
 		"dm7080" : "DM7080 HD",
 		"one" : "Dreambox One UltraHD"
+		"two" : "Dreambox Two UltraHD"
 	}
 
 	def __init__(self, arguments):

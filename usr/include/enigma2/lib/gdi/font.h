@@ -18,9 +18,8 @@ typedef FTC_SBitCache FTC_SBit_Cache;
 #include <lib/gdi/epoint.h>
 #include <lib/gdi/erect.h>
 #include <string>
-#include <lib/base/object.h> 
-
-#include <set>
+#include <lib/base/object.h>
+#include <lib/base/ebase.h>
 
 class FontRenderClass;
 class eFont;
@@ -141,7 +140,7 @@ private:
 	int use_kerning;
 	int previous;
 	static std::string replacement_facename;
-	static std::set<int> forced_replaces;
+	static FastHashSet<int> forced_replaces;
 
 	eRect area;
 	ePoint cursor;
