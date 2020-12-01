@@ -29,7 +29,7 @@ class HdmiCec:
 	config.cec.sendpower = ConfigOnOff(default=True)
 	config.cec.enable_avr = ConfigOnOff(default=True)
 	config.cec.avr_power_explicit = ConfigOnOff(default=False)
-	config.cec.receivepower = ConfigOnOff(default=True)
+	config.cec.receivepower = ConfigOnOff(default=False)
 	config.cec.enable_vendor_quirks = ConfigOnOff(default=True)
 	config.cec.enable_experimental_vendor_quirks = ConfigOnOff(default=False)
 	config.cec.receive_remotekeys = ConfigOnOff(default=True)

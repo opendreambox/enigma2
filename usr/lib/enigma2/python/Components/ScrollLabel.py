@@ -25,7 +25,7 @@ class ScrollLabel(HTMLComponent, GUIComponent):
 			if attrib.find("transparent") != -1 or attrib.find("backgroundColor") != -1:
 				widget_attribs.append((attrib,value))
 		skin.applyAllAttributes(self.instance, desktop, widget_attribs, parent.scale)
-		skin.applyAllAttributes(self.scrollbar, desktop, scrollbar_attribs+widget_attribs, parent.scale)
+		skin.applyAllAttributes(self.scrollbar, desktop, scrollbar_attribs, parent.scale)
 
 		s = self.long_text.size()
 		self.instance.move(self.long_text.position())

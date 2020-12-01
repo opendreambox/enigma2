@@ -275,6 +275,28 @@ struct eServiceReferenceDVB: public eServiceReference
 		}
 		return false;
 	}
+
+	class equal
+	{
+	public:
+		bool operator()(const eServiceReferenceDVB &a, const eServiceReferenceDVB &b) const
+		{
+			return !a.compareDVB(b);
+		}
+	};
+
+};
+
+struct hash_eServiceReferenceDVB
+{
+	inline size_t operator()( const eServiceReferenceDVB &x) const
+	{
+#if __SIZEOF_POINTER__ == 8
+		return (((uint64_t)x.data[4] & 0xFFFF0000) << 32) | (((uint64_t)x.data[3] & 0xFFFF) << 32) | ((x.data[2] & 0xFFFF) << 16) | (x.data[1] & 0xFFFF);
+#else
+		return (x.data[3] << 16) | x.data[2];
+#endif
+	}
 };
 
 class CompareService

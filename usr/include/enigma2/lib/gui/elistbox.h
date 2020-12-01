@@ -167,6 +167,13 @@ public:
 	int getEntryTop();
 	int getVisibleItemCount();
 	const eRect getSelectionRect(bool zoomed=false);
+
+	int itemHeight();
+	int itemWidth();
+
+	int currentPage();
+	int totalPages();
+
 #ifndef SWIG
 	struct eListboxStyle *getLocalStyle(void);
 
@@ -180,9 +187,6 @@ public:
 	void entryReset(bool cursorHome=true);
 
 	void invalidate(const gRegion &region = gRegion::invalidRegion());
-
-	int itemHeight();
-	int itemWidth();
 
 protected:
 	int event(int event, void *data=0, void *data2=0);

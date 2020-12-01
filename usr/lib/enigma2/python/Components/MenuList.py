@@ -82,3 +82,27 @@ class MenuList(HTMLComponent, GUIComponent):
 	def selectionEnabled(self, enabled):
 		if self.instance is not None:
 			self.instance.setSelectionEnable(enabled)
+
+	@property
+	def currentPage(self):
+		if self.instance:
+			return self.instance.currentPage()
+		return 0
+
+	@property
+	def totalPages(self):
+		if self.instance:
+			return self.instance.totalPages()
+		return 0
+
+	@property
+	def itemWidth(self):
+		if self.instance:
+			return self.instance.itemWidth()
+		return 0
+
+	@property
+	def itemHeight(self):
+		if self.instance:
+			return self.instance.itemHeight()
+		return 0

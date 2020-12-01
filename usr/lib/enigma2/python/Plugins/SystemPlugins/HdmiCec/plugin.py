@@ -55,6 +55,7 @@ class Cec(object):
 				self.session.open(Standby)
 
 	def __receivedNowActive(self):
+		self._skip_next_poweroff_message = False
 		if config.cec.receivepower.value:
 			from Screens.Standby import inStandby
 			if inStandby != None:
@@ -63,6 +64,7 @@ class Cec(object):
 			self._skip_next_poweron_message = True
 
 	def powerOn(self, forceOtp=False):
+		self._skip_next_poweroff_message = False
 		if self._skip_next_poweron_message:
 			self._skip_next_poweron_message = False
 			return

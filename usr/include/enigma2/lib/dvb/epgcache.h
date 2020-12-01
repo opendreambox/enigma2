@@ -9,13 +9,6 @@
 #include <vector>
 #include <list>
 #include <queue>
-#if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#include <unordered_map>
-#include <unordered_set>
-#else
-#include <ext/hash_map>
-#include <ext/hash_set>
-#endif
 
 #include <errno.h>
 #include <features.h>
@@ -98,6 +91,12 @@ struct uniqueEPGKey
 	};
 };
 
+#if __SIZEOF_POINTER__ == 8 && USE_FAST_HASH
+#define EQUAL_uniqueEPGKey AlwaysEqual<uniqueEPGKey>
+#else
+#define EQUAL_uniqueEPGKey uniqueEPGKey::equal
+#endif
+
 //eventMap is sorted by event_id
 #define eventMap std::map<__u16, cacheData*>
 //timeMap is sorted by beginTime
@@ -110,36 +109,20 @@ struct hash_uniqueEPGKey
 {
 	inline size_t operator()( const uniqueEPGKey &x) const
 	{
+#if __SIZEOF_POINTER__ == 8 && USE_FAST_HASH
+		return ((uint64_t)x.dvbnamespace << 32) | (((uint64_t)x.onid & 0xFFFF) << 32) | ((x.tsid & 0xFFFF) << 16) | x.sid;
+#else
 		return (x.onid << 16) | x.tsid;
+#endif
 	}
 };
 
-#define tidMap std::set<__u32>
-#if defined(__GXX_EXPERIMENTAL_CXX0X__)
-	#define eventCache std::unordered_map<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, uniqueEPGKey::equal>
-	#ifdef ENABLE_PRIVATE_EPG
-		#define contentTimeMap std::unordered_map<time_t, std::pair<time_t, __u16> >
-		#define contentMap std::unordered_map<int, contentTimeMap >
-		#define contentMaps std::unordered_map<uniqueEPGKey, contentMap, hash_uniqueEPGKey, uniqueEPGKey::equal >
-	#endif
-	#define pulledDBDataMap std::unordered_map<uniqueEPGKey, std::pair<std::set<uint32_t>, std::set<uint32_t> >, hash_uniqueEPGKey, uniqueEPGKey::equal>
-#elif __GNUC_PREREQ(3,1)
-	#define eventCache __gnu_cxx::hash_map<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, uniqueEPGKey::equal>
-	#ifdef ENABLE_PRIVATE_EPG
-		#define contentTimeMap __gnu_cxx::hash_map<time_t, std::pair<time_t, __u16> >
-		#define contentMap __gnu_cxx::hash_map<int, contentTimeMap >
-		#define contentMaps __gnu_cxx::hash_map<uniqueEPGKey, contentMap, hash_uniqueEPGKey, uniqueEPGKey::equal >
-	#endif
-	#define pulledDBDataMap __gnu_cxx::hash_map<uniqueEPGKey, std::pair<std::set<int>, std::set<int> >, hash_uniqueEPGKey, uniqueEPGKey::equal>
-#else // for older gcc use following
-	#define eventCache std::hash_map<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, uniqueEPGKey::equal >
-	#ifdef ENABLE_PRIVATE_EPG
-		#define contentTimeMap std::hash_map<time_t, std::pair<time_t, __u16> >
-		#define contentMap std::hash_map<int, contentTimeMap >
-		#define contentMaps std::hash_map<uniqueEPGKey, contentMap, hash_uniqueEPGKey, uniqueEPGKey::equal>
-	#endif
-	#define pulledDBDataMap std::hash_map<uniqueEPGKey, std::pair<std::set<int>, std::set<int> >, hash_uniqueEPGKey, uniqueEPGKey::equal>
-#endif
+#define tidMap FastHashSet<__u32>
+#define eventCache HASH_MAP<uniqueEPGKey, std::pair<eventMap, timeMap>, hash_uniqueEPGKey, EQUAL_uniqueEPGKey >
+#define contentTimeMap std::map<time_t, std::pair<time_t, __u16> >
+#define contentMap std::map<int, contentTimeMap >
+#define contentMaps HASH_MAP<uniqueEPGKey, contentMap, hash_uniqueEPGKey, EQUAL_uniqueEPGKey >
+#define pulledDBDataMap HASH_MAP<uniqueEPGKey, std::pair<FastHashSet<uint32_t>, FastHashSet<uint32_t> >, hash_uniqueEPGKey, EQUAL_uniqueEPGKey >
 
 #define descriptorPair std::pair<int,__u8*>
 #define descriptorMap std::map<__u32, descriptorPair >
@@ -183,7 +166,7 @@ class EPGDBThread: public eMainloop_native, private eThread, public Object
 	std::queue<struct Message> m_queue;
 	int m_running;
 
-	std::map<uniqueEPGKey, int> m_locked_services;
+	HASH_MAP<uniqueEPGKey, int, hash_uniqueEPGKey, EQUAL_uniqueEPGKey > m_locked_services;
 
 	void gotMessage(const Message &message);
 	void thread();
@@ -251,8 +234,8 @@ class eEPGCache: public iObject, public eMainloop_native, private eThread, publi
 		ePtr<eConnection> m_stateChangedConn, m_NowNextConn, m_ScheduleConn, m_ScheduleOtherConn, m_ViasatConn;
 		ePtr<iDVBSectionReader> m_NowNextReader, m_ScheduleReader, m_ScheduleOtherReader, m_ViasatReader;
 		tidMap seenSections[4], calcedSections[4];
-		std::set<uniqueEPGKey> m_seen_services;
-		std::set<uniqueEPGKey> m_skipped_services;
+		HASH_SET<uniqueEPGKey, hash_uniqueEPGKey, EQUAL_uniqueEPGKey> m_seen_services;
+		HASH_SET<uniqueEPGKey, hash_uniqueEPGKey, EQUAL_uniqueEPGKey> m_skipped_services;
 #ifdef ENABLE_PRIVATE_EPG
 		ePtr<eTimer> startPrivateTimer;
 		int m_PrevVersion;
@@ -260,7 +243,7 @@ class eEPGCache: public iObject, public eMainloop_native, private eThread, publi
 		uniqueEPGKey m_PrivateService;
 		ePtr<eConnection> m_PrivateConn;
 		ePtr<iDVBSectionReader> m_PrivateReader;
-		std::set<__u8> seenPrivateSections;
+		FastHashSet<__u8> seenPrivateSections;
 		void readPrivateData(const __u8 *data, int len);
 		void startPrivateReader();
 #endif
@@ -268,7 +251,7 @@ class eEPGCache: public iObject, public eMainloop_native, private eThread, publi
 		std::vector<mhw_channel_name_t> m_channels;
 		std::map<__u8, mhw_theme_name_t> m_themes;
 		std::map<__u32, mhw_title_t> m_titles;
-		std::multimap<__u32, __u32> m_program_ids;
+		FastHashMultiMap<__u32, __u32> m_program_ids;
 		ePtr<eConnection> m_MHWConn, m_MHWConn2;
 		ePtr<iDVBSectionReader> m_MHWReader, m_MHWReader2;
 		eDVBSectionFilterMask m_MHWFilterMask, m_MHWFilterMask2;

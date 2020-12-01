@@ -304,6 +304,15 @@ class iObject(object):
 iObject_swigregister = _enigma.iObject_swigregister
 iObject_swigregister(iObject)
 
+
+_enigma.HASH_MAP_INCLUDE_swigconstant(_enigma)
+HASH_MAP_INCLUDE = _enigma.HASH_MAP_INCLUDE
+
+_enigma.HASH_SET_INCLUDE_swigconstant(_enigma)
+HASH_SET_INCLUDE = _enigma.HASH_SET_INCLUDE
+
+_enigma.USE_FAST_HASH_swigconstant(_enigma)
+USE_FAST_HASH = _enigma.USE_FAST_HASH
 class eMainloop(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
 
@@ -3376,6 +3385,26 @@ class eListbox(eWidget):
         """
         return _enigma.eListbox_getSelectionRect(self, zoomed)
 
+
+    def itemHeight(self):
+        """itemHeight(eListbox self) -> int"""
+        return _enigma.eListbox_itemHeight(self)
+
+
+    def itemWidth(self):
+        """itemWidth(eListbox self) -> int"""
+        return _enigma.eListbox_itemWidth(self)
+
+
+    def currentPage(self):
+        """currentPage(eListbox self) -> int"""
+        return _enigma.eListbox_currentPage(self)
+
+
+    def totalPages(self):
+        """totalPages(eListbox self) -> int"""
+        return _enigma.eListbox_totalPages(self)
+
 eListbox.setScrollbarMode = new_instancemethod(_enigma.eListbox_setScrollbarMode, None, eListbox)
 eListbox.setupScrollbar = new_instancemethod(_enigma.eListbox_setupScrollbar, None, eListbox)
 eListbox.setWrapAround = new_instancemethod(_enigma.eListbox_setWrapAround, None, eListbox)
@@ -3412,6 +3441,10 @@ eListbox.resetScrollbarProperties = new_instancemethod(_enigma.eListbox_resetScr
 eListbox.getEntryTop = new_instancemethod(_enigma.eListbox_getEntryTop, None, eListbox)
 eListbox.getVisibleItemCount = new_instancemethod(_enigma.eListbox_getVisibleItemCount, None, eListbox)
 eListbox.getSelectionRect = new_instancemethod(_enigma.eListbox_getSelectionRect, None, eListbox)
+eListbox.itemHeight = new_instancemethod(_enigma.eListbox_itemHeight, None, eListbox)
+eListbox.itemWidth = new_instancemethod(_enigma.eListbox_itemWidth, None, eListbox)
+eListbox.currentPage = new_instancemethod(_enigma.eListbox_currentPage, None, eListbox)
+eListbox.totalPages = new_instancemethod(_enigma.eListbox_totalPages, None, eListbox)
 eListbox_swigregister = _enigma.eListbox_swigregister
 eListbox_swigregister(eListbox)
 
@@ -4021,6 +4054,8 @@ eDVBSatelliteEquipmentControl.setLNBThreshold = new_instancemethod(_enigma.eDVBS
 eDVBSatelliteEquipmentControl.setLNBIncreasedVoltage = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBIncreasedVoltage, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBPrio = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBPrio, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBNum = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBNum, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.setLNBTunerInput = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBTunerInput, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.getLNBTunerInput = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBTunerInput, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setDiSEqCMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setDiSEqCMode, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setToneburst = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setToneburst, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setRepeats = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setRepeats, None, eDVBSatelliteEquipmentControl)
@@ -4042,13 +4077,12 @@ eDVBSatelliteEquipmentControl.setLNBSatCRvco = new_instancemethod(_enigma.eDVBSa
 eDVBSatelliteEquipmentControl.setLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRpositions = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRpositions, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setLNBSatCRmode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBSatCRmode, None, eDVBSatelliteEquipmentControl)
-eDVBSatelliteEquipmentControl.setLNBTunerInput = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBTunerInput, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCR = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCR, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRvco = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRvco, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRpin = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRpin, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRpositions = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRpositions, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.getLNBSatCRmode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBSatCRmode, None, eDVBSatelliteEquipmentControl)
-eDVBSatelliteEquipmentControl.getLNBTunerInput = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_getLNBTunerInput, None, eDVBSatelliteEquipmentControl)
+eDVBSatelliteEquipmentControl.setLNBPowerOnDelay = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setLNBPowerOnDelay, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.addSatellite = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_addSatellite, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setVoltageMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setVoltageMode, None, eDVBSatelliteEquipmentControl)
 eDVBSatelliteEquipmentControl.setToneMode = new_instancemethod(_enigma.eDVBSatelliteEquipmentControl_setToneMode, None, eDVBSatelliteEquipmentControl)
@@ -7404,11 +7438,61 @@ class ePicLoad(iObject):
     PictureData = _swig_property(_enigma.ePicLoad_PictureData_get, _enigma.ePicLoad_PictureData_set)
 
     def __init__(self):
+        """__init__(ePicLoad self) -> ePicLoad"""
         _enigma.ePicLoad_swiginit(self, _enigma.new_ePicLoad())
     __swig_destroy__ = _enigma.delete_ePicLoad
+
+    def startDecode(self, filename, async=True):
+        """
+        startDecode(ePicLoad self, char const * filename, bool async=True) -> RESULT
+        startDecode(ePicLoad self, char const * filename) -> RESULT
+        """
+        return _enigma.ePicLoad_startDecode(self, filename, async)
+
+
+    def startDecodeBuffer(self, picbuf, n, async=True):
+        """
+        startDecodeBuffer(ePicLoad self, unsigned char const * picbuf, size_t n, bool async=True) -> RESULT
+        startDecodeBuffer(ePicLoad self, unsigned char const * picbuf, size_t n) -> RESULT
+        """
+        return _enigma.ePicLoad_startDecodeBuffer(self, picbuf, n, async)
+
+
+    def getThumbnail(self, filename):
+        """getThumbnail(ePicLoad self, char const * filename) -> RESULT"""
+        return _enigma.ePicLoad_getThumbnail(self, filename)
+
+
+    def setPara(self, arg2):
+        """setPara(std::tuple(int maxX, int maxY, int aspectX, int aspectY, int useCache, int scaleMode, std::string backgroundColor) -> RESULT"""
+        return _enigma.ePicLoad_setPara(self, arg2)
+
+
+    def setParameters(self, *args):
+        """
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio, bool useCache=False, int scaleMode, uint32_t backgroundColor=0xFF000000) -> RESULT
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio, bool useCache=False, int scaleMode) -> RESULT
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio, bool useCache=False) -> RESULT
+        setParameters(ePicLoad self, eSize size, eSize aspectRatio) -> RESULT
+        setParameters(ePicLoad self, eSize size) -> RESULT
+        """
+        return _enigma.ePicLoad_setParameters(self, *args)
+
+
+    def getInfo(self, filename):
+        """getInfo(ePicLoad self, char const * filename) -> StringList"""
+        return _enigma.ePicLoad_getInfo(self, filename)
+
+
+    def getData(self):
+        """getData(ePicLoad self)"""
+        return _enigma.ePicLoad_getData(self)
+
 ePicLoad.startDecode = new_instancemethod(_enigma.ePicLoad_startDecode, None, ePicLoad)
+ePicLoad.startDecodeBuffer = new_instancemethod(_enigma.ePicLoad_startDecodeBuffer, None, ePicLoad)
 ePicLoad.getThumbnail = new_instancemethod(_enigma.ePicLoad_getThumbnail, None, ePicLoad)
 ePicLoad.setPara = new_instancemethod(_enigma.ePicLoad_setPara, None, ePicLoad)
+ePicLoad.setParameters = new_instancemethod(_enigma.ePicLoad_setParameters, None, ePicLoad)
 ePicLoad.getInfo = new_instancemethod(_enigma.ePicLoad_getInfo, None, ePicLoad)
 ePicLoad.getData = new_instancemethod(_enigma.ePicLoad_getData, None, ePicLoad)
 ePicLoad_swigregister = _enigma.ePicLoad_swigregister
@@ -7484,6 +7568,9 @@ class eCec(object):
     MSG_VERSION = _enigma.eCec_MSG_VERSION
     MSG_GET_CEC_VERSION = _enigma.eCec_MSG_GET_CEC_VERSION
     MSG_VENDOR_COMMAND_WITH_ID = _enigma.eCec_MSG_VENDOR_COMMAND_WITH_ID
+    MSG_GIVE_DECK_STATUS = _enigma.eCec_MSG_GIVE_DECK_STATUS
+    MSG_DECK_STATUS = _enigma.eCec_MSG_DECK_STATUS
+    MSG_DECK_CONTROL = _enigma.eCec_MSG_DECK_CONTROL
     ABORT_REASON_UNRECOGNIZED_OPCODE = _enigma.eCec_ABORT_REASON_UNRECOGNIZED_OPCODE
     ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND = _enigma.eCec_ABORT_REASON_NOT_IN_CORRECT_MODE_TO_RESPOND
     ABORT_REASON_CANNOT_PROVIDE_SOURCE = _enigma.eCec_ABORT_REASON_CANNOT_PROVIDE_SOURCE
@@ -7602,6 +7689,21 @@ class eCec(object):
     POWER_STATE_TRANSITION_STANDBY_TO_ON = _enigma.eCec_POWER_STATE_TRANSITION_STANDBY_TO_ON
     POWER_STATE_TRANSITION_ON_TO_STANDBY = _enigma.eCec_POWER_STATE_TRANSITION_ON_TO_STANDBY
     POWER_STATE_UNKNOWN = _enigma.eCec_POWER_STATE_UNKNOWN
+    DECK_INFO_PLAY = _enigma.eCec_DECK_INFO_PLAY
+    DECK_INFO_RECORD = _enigma.eCec_DECK_INFO_RECORD
+    DECK_INFO_PLAY_REVERSE = _enigma.eCec_DECK_INFO_PLAY_REVERSE
+    DECK_INFO_STILL = _enigma.eCec_DECK_INFO_STILL
+    DECK_INFO_SLOW = _enigma.eCec_DECK_INFO_SLOW
+    DECK_INFO_SLOW_REVERSE = _enigma.eCec_DECK_INFO_SLOW_REVERSE
+    DECK_INFO_FFW = _enigma.eCec_DECK_INFO_FFW
+    DECK_INFO_RWD = _enigma.eCec_DECK_INFO_RWD
+    DECK_INFO_NO_MEDIA = _enigma.eCec_DECK_INFO_NO_MEDIA
+    DECK_INFO_STOP = _enigma.eCec_DECK_INFO_STOP
+    DECK_INFO_SKIP_FWD = _enigma.eCec_DECK_INFO_SKIP_FWD
+    DECK_INFO_SKIP_RWD = _enigma.eCec_DECK_INFO_SKIP_RWD
+    DECK_INFO_INDEX_SEARCH_FWD = _enigma.eCec_DECK_INFO_INDEX_SEARCH_FWD
+    DECK_INFO_INDEX_SEARCH_REVERSE = _enigma.eCec_DECK_INFO_INDEX_SEARCH_REVERSE
+    DECK_INFO_OTHER_STATE = _enigma.eCec_DECK_INFO_OTHER_STATE
 
     def vendor(id):
         """vendor(uint32_t id) -> std::string const"""

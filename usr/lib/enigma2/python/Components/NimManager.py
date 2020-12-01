@@ -431,6 +431,7 @@ class SecConfigure:
 						sec.setLNBLOFL(manufacturer.lofl[0].value * 1000)
 						sec.setLNBLOFH(manufacturer.lofh[0].value * 1000)
 						sec.setLNBThreshold(manufacturer.loft[0].value * 1000)
+						sec.setLNBPowerOnDelay(manufacturer.poweron_delay.value)
 
 					if currLnb.unicable.value == "unicable_user":
 						sec.setLNBLOFL(currLnb.lofl.value * 1000)
@@ -440,6 +441,7 @@ class SecConfigure:
 						sec.setLNBSatCRvco(currLnb.satcrvcouser[currLnb.satcruser.index].value*1000)
 						sec.setLNBSatCRpositions(1) # HACK
 						sec.setLNBSatCRmode(currLnb.satcruser_mode.index)
+						sec.setLNBPowerOnDelay(0)
 					elif currLnb.unicable.value == "unicable_matrix":
 						setupUnicable(currLnb.unicableMatrix.manufacturer, currLnb.unicableMatrix, scr_idx)
 					elif currLnb.unicable.value == "unicable_lnb":
@@ -1484,11 +1486,13 @@ class UnicableProducts(object):
 			configElement = ConfigSubsection()
 			configElement.product = ConfigText() if products is None else ConfigSelection(choices = productKeys, default = productKeys[0])
 			configElement.mode = ConfigInteger(default=0)
+			configElement.poweron_delay = ConfigInteger(default=0, limits=(0,5000))
 			configElement.vco = ConfigSubList()
 			configElement.positions = ConfigSubList()
 			configElement.lofl = ConfigSubList()
 			configElement.lofh = ConfigSubList()
 			configElement.loft = ConfigSubList()
+
 			if products is None:
 				return configElement
 		else:
@@ -1510,6 +1514,7 @@ class UnicableProducts(object):
 		lof_tuple = vcolist[len(vcolist)-1]
 
 		configElement.mode.value = 1 if lof_tuple[4] == "EN50607" else 0
+		configElement.poweron_delay.value = lof_tuple[5]
 
 		for cnt in range(1,1+len(vcolist)-1):
 			vcofreq = int(vcolist[cnt-1])
@@ -1580,7 +1585,8 @@ class UnicableProducts(object):
 				scr=[]
 				lscr = []
 				format = product.get("format", "EN50494").upper()
-				if format in ('JESS', 'UNICABLE2', 'SCD2', 'EN50607', 'EN 50607', 'UniSEqC'):
+				poweron_delay = product.get("bootuptime",0)
+				if format in ('JESS', 'UNICABLE2', 'SCD2', 'EN50607', 'EN 50607'):
 					format = "EN50607"
 				else:
 					format = "EN50494"
@@ -1597,6 +1603,7 @@ class UnicableProducts(object):
 				lof.append(int(product.get("lofh",10600)))
 				lof.append(int(product.get("threshold",11700)))
 				lof.append(format)
+				lof.append(poweron_delay)
 				scr.append(tuple(lof))
 				m.update({product.get("name"):tuple(scr)})
 			productDict.update({manufacturer.get("name"):m})

@@ -9,7 +9,7 @@ from Components.Pixmap import Pixmap
 from Components.language_cache import LANG_TEXT
 
 def _cached(x, lang=None):
-	return LANG_TEXT.get(lang or config.osd.language.value, {}).get(x, "")
+	return LANG_TEXT.get(lang or config.osd.language.value, {}).get(x, LANG_TEXT.get("en_GB").get(x, x))
 
 from Screens.Rc import Rc
 
@@ -38,7 +38,6 @@ class LanguageSelection(Screen):
 		self["languages"].onSelectionChanged.append(self.changed)
 
 		self.png_cache = { }
-
 		self.updateList()
 		self.onLayoutFinish.append(self.selectActiveLanguage)
 
@@ -48,7 +47,7 @@ class LanguageSelection(Screen):
 			"cancel": self.cancel,
 		}, -1)
 
-	 # called from external Components/SetupDevices.py!!
+	# called from external Components/SetupDevices.py!!
 	def selectActiveLanguage(self, listname = "languages"):
 		activeLanguage = language.getActiveLanguage()
 		pos = 0
@@ -84,9 +83,9 @@ class LanguageSelection(Screen):
 
 		languageList = language.getLanguageList()
 		if not languageList: # no language available => display only english
-			list = [ LanguageEntryComponent("en", _cached("en_EN", lang), "en_EN", self.png_cache) ]
+			list = [ LanguageEntryComponent("en", _cached("en_GB", lang), "en_GB", self.png_cache) ]
 		else:
-			list = [ LanguageEntryComponent(file = x[1][2].lower(), name = _cached("%s_%s" % x[1][1:3], lang), index = x[0], png_cache = self.png_cache) for x in languageList]
+			list = [ LanguageEntryComponent(file = x[1][2].lower(), name = _cached(x[1][3], lang), index = x[0], png_cache = self.png_cache) for x in languageList]
 		self.multicontentlist = list
 
 		if first_time:
@@ -94,7 +93,6 @@ class LanguageSelection(Screen):
 		else:
 			self[listname].updateList(list)
 		print "done"
-
 		return lang
 
 	def changed(self):
