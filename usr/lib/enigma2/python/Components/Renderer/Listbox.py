@@ -81,7 +81,6 @@ class Listbox(Renderer, object):
 		for (attrib, value) in self.skinAttributes:
 			if attrib == "scrollbarMode":
 				self.__scrollbarMode = value
-				break
 			elif attrib == "mode":
 				mode = {
 					'vertical' : eListbox.layoutVertical,
