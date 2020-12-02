@@ -39,7 +39,7 @@ class TemplatedMultiContent(StringList):
 				index += 1
 
 		# if only template changed, don't reload list
-		if what[0] == self.CHANGED_SPECIFIC and what[1] in ("style", "buildfunc", "selection_enabled"):
+		if what[0] == self.CHANGED_SPECIFIC and what[1] in ("style", "buildfunc", "selection_enabled", "mode", "margin", "selectionZoom"):
 			pass
 		elif self.source is not None:
 			self.content.setList(self.source.list)
