@@ -158,15 +158,22 @@ class DisplayHardware:
 		return (port, mode, rate)
 
 	def contentFramerateChanged(self, contentFramerate):
-		(port, mode, rate) = self.getConfiguredMode()
+		try:
+			autores_enabled = config.plugins.autoresolution.enable.value
+		except:
+			autores_enabled = False
 
-		if rate != self.rateIndexToKey(eDisplayManager.RATE_AUTO):
-			return # skip if there's a manually set framerate
+		if not autores_enabled:
+			(port, mode, rate) = self.getConfiguredMode()
 
-		self.setMode(port, mode, rate)
+			if rate != self.rateIndexToKey(eDisplayManager.RATE_AUTO):
+				return # skip if there's a manually set framerate
+
+			self.setMode(port, mode, rate)
 
 	def contentPtsValid(self):
 		self.setMode(*self.getConfiguredMode())
+		self._contentPtsValidSigConn = None # it's only needed one time after e2 start...
 
 	def hdmiChanged(self):
 		from Screens.Standby import inStandby
