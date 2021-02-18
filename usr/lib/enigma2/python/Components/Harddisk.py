@@ -11,7 +11,6 @@ from Tools.IO import runPipe, saveFile
 from Components.SystemInfo import SystemInfo
 from Components.Console import Console
 from Components.config import config, configfile, ConfigYesNo, ConfigText, ConfigSubDict, ConfigSubsection, ConfigBoolean
-import subprocess
 
 class Util:
 	@staticmethod
@@ -795,6 +794,7 @@ class HarddiskManager:
 		config.storage_options = ConfigSubsection()
 		config.storage_options.default_device = ConfigText(default = "<undefined>")
 		config.storage = ConfigSubDict()
+		self._rootfsBlockDevice = self._getRootfsBlockDevice()
 		self.hdd = [ ]
 		self.cd = ""
 		self.partitions = [ ]
@@ -818,9 +818,29 @@ class HarddiskManager:
 		self.setupConfigEntries(initial_call = True)
 		self.mountDreamboxData()
 
+	def _getRootfsBlockDevice(self):
+		dev = stat("/").st_dev
+		major = dev >> 8
+		minor = dev & 255
+		uevent = "/sys/dev/block/{}:{}/uevent".format(major, minor)
+		if fileExists(uevent):
+			with open(uevent, "r") as f:
+				for line in f:
+					k, v = line.split("=", 1)
+					if k == "DEVNAME":
+						blkdev = v.rstrip()
+						return path.basename(path.dirname(path.realpath("/sys/class/block/" + blkdev)))
+		return None
+
 	def __isBlacklisted(self, blkdev, data):
 		name = blkdev.name().rstrip('0123456789')
+		if self._rootfsBlockDevice and blkdev.name().startswith(self._rootfsBlockDevice):
+			Log.i("This is part of the rootfs blockdevice - blacklisting!")
+			return True
 		major = int(data.get('MAJOR', '0'))
+		if major == 179 and int(data.get("removable", 0)) == 1:
+			Log.i("Blockdevice {} is removable and not blacklisted!".format(blkdev.name()))
+			return False
 		return name in ['zram'] or major in (1, 7, 9, 31, 179) # ram, loop, md, mtdblock, mmcblk
 
 	def __callDeviceNotifier(self, device, reason):

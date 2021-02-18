@@ -49,7 +49,7 @@ class TunerInfo(GUIComponent):
 			return 0
 		if val < 2500:
 			return (int)(log(val)//log(2))
-		return val*100/65535
+		return val*100//65535
 
 	def update(self):
 		if self.type == self.SNR_DB:

@@ -58,6 +58,7 @@ public:
 
 	static const std::vector<eStreamProcessor*> &getProcessors();
 	static void addProcessor(eStreamProcessor* processor);
+	static eSignal1<void, eStreamProcessor*> processorAdded;
 
 	eSignal1<void, bool> streamStarted; // emitted when buffer is ready after first start or seek
 

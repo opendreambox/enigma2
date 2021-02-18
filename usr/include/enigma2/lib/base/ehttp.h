@@ -11,6 +11,7 @@
 #include <queue>
 #include <stdint.h>
 #include <mutex>
+#include <atomic>
 
 class eHTTPRequest
 {
@@ -63,7 +64,7 @@ public:
 
 private:
 	bool m_valid;
-	bool m_cancelled;
+	std::atomic<bool> m_cancelled;
 	CURL *m_curl;
 	std::string m_url;
 	std::vector<std::string> m_headers;

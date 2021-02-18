@@ -1,0 +1,15 @@
+<default>
+	<prerequisites>
+		<tag type="Multimedia" />
+		<tag type="Network" />
+	</prerequisites>
+	<info>
+		<author>Dream Property GmbH</author>
+		<name>Streaming Client</name>
+		<packagename>enigma2-plugin-systemplugins-streamservices</packagename>
+		<shortdescription>Configuration Utility for the Dreambox Stream Services</shortdescription>
+	</info>
+	<files type="package"> <!-- without version, without .ipk -->
+		<file type="package" name="enigma2-plugin-systemplugins-streamservices" />
+	</files>
+</default>

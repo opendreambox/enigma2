@@ -2710,7 +2710,7 @@ class eStreamProcessor(object):
 
 
     def getProcessors():
-        """getProcessors() -> std::vector< eStreamProcessor *,std::allocator< eStreamProcessor * > > const &"""
+        """getProcessors() -> eStreamProcessors"""
         return _enigma.eStreamProcessor_getProcessors()
 
     getProcessors = staticmethod(getProcessors)
@@ -2720,6 +2720,7 @@ class eStreamProcessor(object):
         return _enigma.eStreamProcessor_addProcessor(processor)
 
     addProcessor = staticmethod(addProcessor)
+    processorAdded = _swig_property(_enigma.eStreamProcessor_processorAdded_get, _enigma.eStreamProcessor_processorAdded_set)
     streamStarted = _swig_property(_enigma.eStreamProcessor_streamStarted_get, _enigma.eStreamProcessor_streamStarted_set)
     formatChanged = _swig_property(_enigma.eStreamProcessor_formatChanged_get, _enigma.eStreamProcessor_formatChanged_set)
     framerateChanged = _swig_property(_enigma.eStreamProcessor_framerateChanged_get, _enigma.eStreamProcessor_framerateChanged_set)
@@ -2762,7 +2763,7 @@ eStreamProcessor_swigregister = _enigma.eStreamProcessor_swigregister
 eStreamProcessor_swigregister(eStreamProcessor)
 
 def eStreamProcessor_getProcessors():
-    """eStreamProcessor_getProcessors() -> std::vector< eStreamProcessor *,std::allocator< eStreamProcessor * > > const &"""
+    """eStreamProcessor_getProcessors() -> eStreamProcessors"""
     return _enigma.eStreamProcessor_getProcessors()
 
 def eStreamProcessor_addProcessor(processor):
@@ -15412,6 +15413,234 @@ eVideoPorts.upper_bound = new_instancemethod(_enigma.eVideoPorts_upper_bound, No
 eVideoPorts_swigregister = _enigma.eVideoPorts_swigregister
 eVideoPorts_swigregister(eVideoPorts)
 
+class eStreamProcessors(object):
+    """Proxy of C++ std::vector<(p.eStreamProcessor)> class."""
+
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def iterator(self):
+        """iterator(eStreamProcessors self) -> SwigPyIterator"""
+        return _enigma.eStreamProcessors_iterator(self)
+
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self):
+        """__nonzero__(eStreamProcessors self) -> bool"""
+        return _enigma.eStreamProcessors___nonzero__(self)
+
+
+    def __bool__(self):
+        """__bool__(eStreamProcessors self) -> bool"""
+        return _enigma.eStreamProcessors___bool__(self)
+
+
+    def __len__(self):
+        """__len__(eStreamProcessors self) -> std::vector< eStreamProcessor * >::size_type"""
+        return _enigma.eStreamProcessors___len__(self)
+
+
+    def __getslice__(self, i, j):
+        """__getslice__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i, std::vector< eStreamProcessor * >::difference_type j) -> eStreamProcessors"""
+        return _enigma.eStreamProcessors___getslice__(self, i, j)
+
+
+    def __setslice__(self, *args):
+        """
+        __setslice__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i, std::vector< eStreamProcessor * >::difference_type j)
+        __setslice__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i, std::vector< eStreamProcessor * >::difference_type j, eStreamProcessors v)
+        """
+        return _enigma.eStreamProcessors___setslice__(self, *args)
+
+
+    def __delslice__(self, i, j):
+        """__delslice__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i, std::vector< eStreamProcessor * >::difference_type j)"""
+        return _enigma.eStreamProcessors___delslice__(self, i, j)
+
+
+    def __delitem__(self, *args):
+        """
+        __delitem__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i)
+        __delitem__(eStreamProcessors self, PySliceObject * slice)
+        """
+        return _enigma.eStreamProcessors___delitem__(self, *args)
+
+
+    def __getitem__(self, *args):
+        """
+        __getitem__(eStreamProcessors self, PySliceObject * slice) -> eStreamProcessors
+        __getitem__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i) -> eStreamProcessor
+        """
+        return _enigma.eStreamProcessors___getitem__(self, *args)
+
+
+    def __setitem__(self, *args):
+        """
+        __setitem__(eStreamProcessors self, PySliceObject * slice, eStreamProcessors v)
+        __setitem__(eStreamProcessors self, PySliceObject * slice)
+        __setitem__(eStreamProcessors self, std::vector< eStreamProcessor * >::difference_type i, eStreamProcessor x)
+        """
+        return _enigma.eStreamProcessors___setitem__(self, *args)
+
+
+    def pop(self):
+        """pop(eStreamProcessors self) -> eStreamProcessor"""
+        return _enigma.eStreamProcessors_pop(self)
+
+
+    def append(self, x):
+        """append(eStreamProcessors self, eStreamProcessor x)"""
+        return _enigma.eStreamProcessors_append(self, x)
+
+
+    def empty(self):
+        """empty(eStreamProcessors self) -> bool"""
+        return _enigma.eStreamProcessors_empty(self)
+
+
+    def size(self):
+        """size(eStreamProcessors self) -> std::vector< eStreamProcessor * >::size_type"""
+        return _enigma.eStreamProcessors_size(self)
+
+
+    def swap(self, v):
+        """swap(eStreamProcessors self, eStreamProcessors v)"""
+        return _enigma.eStreamProcessors_swap(self, v)
+
+
+    def begin(self):
+        """begin(eStreamProcessors self) -> std::vector< eStreamProcessor * >::iterator"""
+        return _enigma.eStreamProcessors_begin(self)
+
+
+    def end(self):
+        """end(eStreamProcessors self) -> std::vector< eStreamProcessor * >::iterator"""
+        return _enigma.eStreamProcessors_end(self)
+
+
+    def rbegin(self):
+        """rbegin(eStreamProcessors self) -> std::vector< eStreamProcessor * >::reverse_iterator"""
+        return _enigma.eStreamProcessors_rbegin(self)
+
+
+    def rend(self):
+        """rend(eStreamProcessors self) -> std::vector< eStreamProcessor * >::reverse_iterator"""
+        return _enigma.eStreamProcessors_rend(self)
+
+
+    def clear(self):
+        """clear(eStreamProcessors self)"""
+        return _enigma.eStreamProcessors_clear(self)
+
+
+    def get_allocator(self):
+        """get_allocator(eStreamProcessors self) -> std::vector< eStreamProcessor * >::allocator_type"""
+        return _enigma.eStreamProcessors_get_allocator(self)
+
+
+    def pop_back(self):
+        """pop_back(eStreamProcessors self)"""
+        return _enigma.eStreamProcessors_pop_back(self)
+
+
+    def erase(self, *args):
+        """
+        erase(eStreamProcessors self, std::vector< eStreamProcessor * >::iterator pos) -> std::vector< eStreamProcessor * >::iterator
+        erase(eStreamProcessors self, std::vector< eStreamProcessor * >::iterator first, std::vector< eStreamProcessor * >::iterator last) -> std::vector< eStreamProcessor * >::iterator
+        """
+        return _enigma.eStreamProcessors_erase(self, *args)
+
+
+    def __init__(self, *args):
+        """
+        __init__(std::vector<(p.eStreamProcessor)> self) -> eStreamProcessors
+        __init__(std::vector<(p.eStreamProcessor)> self, eStreamProcessors arg2) -> eStreamProcessors
+        __init__(std::vector<(p.eStreamProcessor)> self, std::vector< eStreamProcessor * >::size_type size) -> eStreamProcessors
+        __init__(std::vector<(p.eStreamProcessor)> self, std::vector< eStreamProcessor * >::size_type size, eStreamProcessor value) -> eStreamProcessors
+        """
+        _enigma.eStreamProcessors_swiginit(self, _enigma.new_eStreamProcessors(*args))
+
+    def push_back(self, x):
+        """push_back(eStreamProcessors self, eStreamProcessor x)"""
+        return _enigma.eStreamProcessors_push_back(self, x)
+
+
+    def front(self):
+        """front(eStreamProcessors self) -> eStreamProcessor"""
+        return _enigma.eStreamProcessors_front(self)
+
+
+    def back(self):
+        """back(eStreamProcessors self) -> eStreamProcessor"""
+        return _enigma.eStreamProcessors_back(self)
+
+
+    def assign(self, n, x):
+        """assign(eStreamProcessors self, std::vector< eStreamProcessor * >::size_type n, eStreamProcessor x)"""
+        return _enigma.eStreamProcessors_assign(self, n, x)
+
+
+    def resize(self, *args):
+        """
+        resize(eStreamProcessors self, std::vector< eStreamProcessor * >::size_type new_size)
+        resize(eStreamProcessors self, std::vector< eStreamProcessor * >::size_type new_size, eStreamProcessor x)
+        """
+        return _enigma.eStreamProcessors_resize(self, *args)
+
+
+    def insert(self, *args):
+        """
+        insert(eStreamProcessors self, std::vector< eStreamProcessor * >::iterator pos, eStreamProcessor x) -> std::vector< eStreamProcessor * >::iterator
+        insert(eStreamProcessors self, std::vector< eStreamProcessor * >::iterator pos, std::vector< eStreamProcessor * >::size_type n, eStreamProcessor x)
+        """
+        return _enigma.eStreamProcessors_insert(self, *args)
+
+
+    def reserve(self, n):
+        """reserve(eStreamProcessors self, std::vector< eStreamProcessor * >::size_type n)"""
+        return _enigma.eStreamProcessors_reserve(self, n)
+
+
+    def capacity(self):
+        """capacity(eStreamProcessors self) -> std::vector< eStreamProcessor * >::size_type"""
+        return _enigma.eStreamProcessors_capacity(self)
+
+    __swig_destroy__ = _enigma.delete_eStreamProcessors
+eStreamProcessors.iterator = new_instancemethod(_enigma.eStreamProcessors_iterator, None, eStreamProcessors)
+eStreamProcessors.__nonzero__ = new_instancemethod(_enigma.eStreamProcessors___nonzero__, None, eStreamProcessors)
+eStreamProcessors.__bool__ = new_instancemethod(_enigma.eStreamProcessors___bool__, None, eStreamProcessors)
+eStreamProcessors.__len__ = new_instancemethod(_enigma.eStreamProcessors___len__, None, eStreamProcessors)
+eStreamProcessors.__getslice__ = new_instancemethod(_enigma.eStreamProcessors___getslice__, None, eStreamProcessors)
+eStreamProcessors.__setslice__ = new_instancemethod(_enigma.eStreamProcessors___setslice__, None, eStreamProcessors)
+eStreamProcessors.__delslice__ = new_instancemethod(_enigma.eStreamProcessors___delslice__, None, eStreamProcessors)
+eStreamProcessors.__delitem__ = new_instancemethod(_enigma.eStreamProcessors___delitem__, None, eStreamProcessors)
+eStreamProcessors.__getitem__ = new_instancemethod(_enigma.eStreamProcessors___getitem__, None, eStreamProcessors)
+eStreamProcessors.__setitem__ = new_instancemethod(_enigma.eStreamProcessors___setitem__, None, eStreamProcessors)
+eStreamProcessors.pop = new_instancemethod(_enigma.eStreamProcessors_pop, None, eStreamProcessors)
+eStreamProcessors.append = new_instancemethod(_enigma.eStreamProcessors_append, None, eStreamProcessors)
+eStreamProcessors.empty = new_instancemethod(_enigma.eStreamProcessors_empty, None, eStreamProcessors)
+eStreamProcessors.size = new_instancemethod(_enigma.eStreamProcessors_size, None, eStreamProcessors)
+eStreamProcessors.swap = new_instancemethod(_enigma.eStreamProcessors_swap, None, eStreamProcessors)
+eStreamProcessors.begin = new_instancemethod(_enigma.eStreamProcessors_begin, None, eStreamProcessors)
+eStreamProcessors.end = new_instancemethod(_enigma.eStreamProcessors_end, None, eStreamProcessors)
+eStreamProcessors.rbegin = new_instancemethod(_enigma.eStreamProcessors_rbegin, None, eStreamProcessors)
+eStreamProcessors.rend = new_instancemethod(_enigma.eStreamProcessors_rend, None, eStreamProcessors)
+eStreamProcessors.clear = new_instancemethod(_enigma.eStreamProcessors_clear, None, eStreamProcessors)
+eStreamProcessors.get_allocator = new_instancemethod(_enigma.eStreamProcessors_get_allocator, None, eStreamProcessors)
+eStreamProcessors.pop_back = new_instancemethod(_enigma.eStreamProcessors_pop_back, None, eStreamProcessors)
+eStreamProcessors.erase = new_instancemethod(_enigma.eStreamProcessors_erase, None, eStreamProcessors)
+eStreamProcessors.push_back = new_instancemethod(_enigma.eStreamProcessors_push_back, None, eStreamProcessors)
+eStreamProcessors.front = new_instancemethod(_enigma.eStreamProcessors_front, None, eStreamProcessors)
+eStreamProcessors.back = new_instancemethod(_enigma.eStreamProcessors_back, None, eStreamProcessors)
+eStreamProcessors.assign = new_instancemethod(_enigma.eStreamProcessors_assign, None, eStreamProcessors)
+eStreamProcessors.resize = new_instancemethod(_enigma.eStreamProcessors_resize, None, eStreamProcessors)
+eStreamProcessors.insert = new_instancemethod(_enigma.eStreamProcessors_insert, None, eStreamProcessors)
+eStreamProcessors.reserve = new_instancemethod(_enigma.eStreamProcessors_reserve, None, eStreamProcessors)
+eStreamProcessors.capacity = new_instancemethod(_enigma.eStreamProcessors_capacity, None, eStreamProcessors)
+eStreamProcessors_swigregister = _enigma.eStreamProcessors_swigregister
+eStreamProcessors_swigregister(eStreamProcessors)
+
 
 """
 Provides an implementation of a WeakMethodReference
@@ -17538,6 +17767,61 @@ class eSignal4UIntUIntUIntUInt(object):
 eSignal4UIntUIntUIntUInt.connect2 = new_instancemethod(_enigma.eSignal4UIntUIntUIntUInt_connect2, None, eSignal4UIntUIntUIntUInt)
 eSignal4UIntUIntUIntUInt_swigregister = _enigma.eSignal4UIntUIntUIntUInt_swigregister
 eSignal4UIntUIntUIntUInt_swigregister(eSignal4UIntUIntUIntUInt)
+
+class eSlot1ProcessorAddedEvent(eSlot):
+    """Proxy of C++ eSlot1<(void,p.eStreamProcessor)> class."""
+
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def cb_func(self, arg0):
+        """cb_func(eSlot1ProcessorAddedEvent self, eStreamProcessor arg0)"""
+        return _enigma.eSlot1ProcessorAddedEvent_cb_func(self, arg0)
+
+
+    def __init__(self):
+        """__init__(eSlot1<(void,p.eStreamProcessor)> self) -> eSlot1ProcessorAddedEvent"""
+        if self.__class__ == eSlot1ProcessorAddedEvent:
+            _self = None
+        else:
+            _self = self
+        _enigma.eSlot1ProcessorAddedEvent_swiginit(self, _enigma.new_eSlot1ProcessorAddedEvent(_self, ))
+    __swig_destroy__ = _enigma.delete_eSlot1ProcessorAddedEvent
+    def __disown__(self):
+        self.this.disown()
+        _enigma.disown_eSlot1ProcessorAddedEvent(self)
+        return weakref_proxy(self)
+eSlot1ProcessorAddedEvent.cb_func = new_instancemethod(_enigma.eSlot1ProcessorAddedEvent_cb_func, None, eSlot1ProcessorAddedEvent)
+eSlot1ProcessorAddedEvent_swigregister = _enigma.eSlot1ProcessorAddedEvent_swigregister
+eSlot1ProcessorAddedEvent_swigregister(eSlot1ProcessorAddedEvent)
+
+class eSignal1ProcessorAddedEvent(object):
+    """Proxy of C++ eSignal1<(void,p.eStreamProcessor)> class."""
+
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+    __repr__ = _swig_repr
+
+    def connect2(self, slot):
+        """connect2(eSignal1ProcessorAddedEvent self, eSlot1ProcessorAddedEvent slot)"""
+        return _enigma.eSignal1ProcessorAddedEvent_connect2(self, slot)
+
+
+    def connect(self, func):
+        class ePythonSlot1ProcessorAddedEvent(eSlot1ProcessorAddedEvent):
+            def __init__(self, func):
+                eSlot1ProcessorAddedEvent.__init__(self)
+                self.cb_func=func
+        slot = ePythonSlot1ProcessorAddedEvent(WeakMethodReference(func))
+        self.connect2(slot)
+        return slot
+
+    def __init__(self):
+        """__init__(eSignal1<(void,p.eStreamProcessor)> self) -> eSignal1ProcessorAddedEvent"""
+        _enigma.eSignal1ProcessorAddedEvent_swiginit(self, _enigma.new_eSignal1ProcessorAddedEvent())
+    __swig_destroy__ = _enigma.delete_eSignal1ProcessorAddedEvent
+eSignal1ProcessorAddedEvent.connect2 = new_instancemethod(_enigma.eSignal1ProcessorAddedEvent_connect2, None, eSignal1ProcessorAddedEvent)
+eSignal1ProcessorAddedEvent_swigregister = _enigma.eSignal1ProcessorAddedEvent_swigregister
+eSignal1ProcessorAddedEvent_swigregister(eSignal1ProcessorAddedEvent)
 
 
 def getBestPlayableServiceReference(bouquet_ref, ignore, simulate=False):
