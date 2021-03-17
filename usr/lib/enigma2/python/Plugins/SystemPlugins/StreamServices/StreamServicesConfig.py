@@ -67,16 +67,6 @@ class StreamServicesConfig:
 
 
 class StreamServicesConfigScreen(Screen, ConfigListScreen):
-	skin = """
-		<screen name="StreamServicesConfig" position="center,120" size="590,520" title="Stream Services configuration">
-			<ePixmap pixmap="skin_default/buttons/green.png" position="10,5" size="200,40" />
-			<ePixmap pixmap="skin_default/buttons/yellow.png" position="210,5" size="200,40" />
-			<widget source="key_green" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_yellow" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" />
-			<eLabel position="10,50" size="560,1" backgroundColor="grey" />
-			<widget name="config" position="10,55" size="560,450" scrollbarMode="showOnDemand" zPosition="1"/>
-		</screen>"""
-
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		ConfigListScreen.__init__(self, [], session=session)
@@ -94,8 +84,12 @@ class StreamServicesConfigScreen(Screen, ConfigListScreen):
 		self.setTitle(_("Stream Client"))
 
 		config.streamservices.dash.min_buffer_mode.addNotifier(self.dashMinBufferModeChanged)
+		self.onClose.append(self._onClose)
 
 		self._createSetup()
+
+	def _onClose(self):
+		config.streamservices.dash.min_buffer_mode.removeNotifier(self.dashMinBufferModeChanged)
 
 	def _createSetup(self):
 		entries = [

@@ -80,6 +80,77 @@
 		<sub name="Subtitle_Italic" font="Regular;30" foregroundColor="#DCAAAA" shadowColor="#40101010" shadowOffset="3,3"/>
 	<!-- omitting foregroundColor attribute will enable auto-assignment of color -->
 	</subtitles>
+	<layouts>
+		<layout name="2Button">
+		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
+		<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
+		<eLabel	position="10,50" size="800,1" backgroundColor="grey"/>
+			<widget font="Regular;24" halign="right" position="700,15" render="Label" size="110,30" source="global.CurrentTime">
+				<convert type="ClockToText">Default</convert>
+			</widget>
+			<widget font="Regular;24" halign="right" position="510,15" render="Label" size="190,30" source="global.CurrentTime">
+				<convert type="ClockToText">Date</convert>
+			</widget>
+			<eLabel position="10,50" size="800,1" backgroundColor="grey"/>
+		</layout>
+		<layout name="3Button">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40"/>
+			<eLabel position="10,50" size="800,1" backgroundColor="grey"/>
+		</layout>
+		<layout name="Button_Big">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40"/>
+			<widget backgroundColor="background" source="global.CurrentTime" render="Label" position="1130,12" size="60,25" font="Regular;22" halign="right" transparent="1">
+				<convert type="ClockToText">Default</convert>
+			</widget>
+			<widget backgroundColor="background" source="global.CurrentTime" render="Label" position="820,12" size="300,25" font="Regular;22" halign="right" transparent="1">
+				<convert type="ClockToText">Format:%A %d. %B</convert>
+			</widget>
+			<eLabel position="10,50" size="1180,1" backgroundColor="grey"/>
+		</layout>
+		<layout name="Button_Small">
+			<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="200,40"/>
+			<ePixmap pixmap="skin_default/buttons/blue.png" position="610,5" size="200,40"/>
+			<eLabel position="10,50" size="800,1" backgroundColor="grey"/>
+		</layout>
+		<layout name="2Button_source">
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		</layout>
+		<layout name="2Button_name">
+			<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		</layout>
+		<layout name="3Button_source">
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		</layout>
+		<layout name="Button_Small_source">
+			<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget source="key_green" render="Label" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget source="key_yellow" render="Label" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget source="key_blue" render="Label" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		</layout>
+		<layout name="Button_Small_name">
+			<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		</layout>
+		<layout name="Button_Big_name">
+			<widget name="key_red" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_green" position="210,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_yellow" position="410,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+			<widget name="key_blue" position="610,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		</layout>
+	</layouts>
 <!-- About screen -->
 	<screen name="About" position="center,120" size="820,520" title="About">
 		<ePixmap position="10,5" size="300,500" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
@@ -169,7 +240,7 @@
 		<widget name="config" position="10,60" separation="120" size="600,120" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
 <!-- Namezap -->
-	<screen name="NamezapSetup" position="center,center" size="620,180" title=" ">
+	<screen name="NamezapSetup" position="center,center" size="620,180">
 		<ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="200,40"/>
 		<ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="200,40"/>
 		<widget source="key_red" render="Label" position="10,5" size="200,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2"/>
@@ -219,7 +290,7 @@
 		</widget>
 	</screen>
 <!-- Channel selection - Radio -->
-	<screen name="ChannelSelectionRadio" position="center,80" size="1200,610" title=" " zPosition="-1">
+	<screen name="ChannelSelectionRadio" position="center,80" size="1200,610" zPosition="-1">
 		<layout name="Button_Big"/>
 		<layout name="Button_Big_name"/>
 		<widget name="list" position="10,58" size="840,408" enableWrapAround="1" scrollbarMode="showOnDemand" backgroundColor="background" serviceInfoFont="Regular;20" colorServiceDescription="grey" colorServiceDescriptionSelected="#d3d3d9" foregroundColorServiceNotAvail="grey" picServiceEventProgressbar="skin_default/progcl.png" colorEventProgressbarBorder="grey" colorEventProgressbarBorderSelected="white"/>
@@ -1010,7 +1081,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 		<layout name="2Button_source"/>
 		<widget name="config" separation="380" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
 	</screen>
-	<screen name="HbbTVSetup" position="center,120" size="820,520" title=" ">
+	<screen name="HbbTVSetup" position="center,120" size="820,520">
 		<layout name="2Button"/>
 		<layout name="2Button_source"/>
 		<widget name="config" position="10,60" size="800,450" enableWrapAround="1" scrollbarMode="showOnDemand"/>
@@ -1411,7 +1482,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 				}
 			</convert>
 		</widget>
-		<widget source="description" render="Label" position="10,410" size="800,100" font="Regular;22" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+		<widget source="description" render="Label" position="10,410" size="800,100" font="Regular;22" halign="center" valign="center" backgroundColor="#9f1313" transparent="1"/>
 	</screen>
 	<screen name="InputDeviceIRProg" position="center,120" size="820,520" title="Vendor list">
 		<widget source="list" render="Listbox" position="10,10" size="800,470" scrollbarMode="showOnDemand" enableWrapAround="on">
@@ -1429,7 +1500,7 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 			</convert>
 		</widget>
 		<eLabel position="10,480" size="800,1" backgroundColor="grey"/>
-		<widget source="status" render="Label" position="10,490" size="780,25" font="Regular;20" foregroundColor="white" halign="center" valign="center" />
+		<widget source="status" render="Label" position="10,490" size="780,25" font="Regular;20" foregroundColor="white" halign="center" valign="center"/>
 	</screen>
 	<screen name="InputDeviceKeyInfo" position="center,120" size="820,520" title="Key Info">
 		<ePixmap position="4,3" size="260,514" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
@@ -2032,6 +2103,17 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 			<convert type="ClockToText">Default</convert>
 		</widget>
 	</screen>
+	<screen id="3" name="TeleTextSummary" position="0,0" size="400,240">
+		<widget name="page" font="Display;60" foregroundColor="#faff00" halign="center" position="10,5" size="380,65" valign="center"/>
+		<widget name="navi_off" pixmap="skin_default/icons/lock_error.png" position="50,95"  size="40,40"/>
+		<widget name="info_off" pixmap="skin_default/icons/lock_error.png" position="310,95" size="40,40"/>
+		<widget name="navi_on" pixmap="skin_default/icons/selectioncross.png" position="50,95"  size="40,40"/>
+		<widget name="info_on" pixmap="skin_default/icons/selectioncross.png" position="310,95" size="40,40"/>
+		<widget name="tp_count" font="Display;50" halign="center" position="120,90" size="170,52"/>
+		<widget name="navi_txt" font="Display;40" halign="center" position="10,180" size="120,42"/>
+		<widget name="tp_txt" font="Display;40" halign="center" position="145,180" size="120,42"/>
+		<widget name="info_txt" font="Display;40" halign="center" position="270,180" size="120,42"/>
+	</screen>
 	<screen id="3" name="TeleTextMenuSummary" position="0,0" size="400,240">
 		<widget font="Display;60" foregroundColor="#faff00" halign="center" name="SetupTitle" position="10,5" size="380,60"/>
 		<eLabel backgroundColor="white" position="10,75" size="380,1"/>
@@ -2187,6 +2269,17 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 		<widget pixmap="Default-FHD/skin_default/progress.svg" position="0,65" render="Progress" size="240,16" source="session.CurrentService" transparent="1" zPosition="1">
 			<convert type="ServicePosition">Position</convert>
 		</widget>
+	</screen>
+	<screen id="100" name="TeleTextSummary" position="0,0" size="240,80">
+		<widget font="Display;28" foregroundColor="#faff00" halign="center" position="0,0" size="240,28" name="page"/>
+		<widget name="navi_off" pixmap="skin_default/icons/lock_error.png" position="30,25" size="30,30"/>
+		<widget name="info_off" pixmap="skin_default/icons/lock_error.png" position="185,25" size="30,30"/>
+		<widget name="navi_on" pixmap="skin_default/icons/selectioncross.png" position="30,25" size="30,30"/>
+		<widget name="info_on" pixmap="skin_default/icons/selectioncross.png" position="185,25" size="30,30"/>
+		<widget font="Display;28" halign="center" name="tp_count" position="70,26" size="100,28"/>
+		<widget font="Display;28" halign="center" name="navi_txt" position="0,52" size="80,28"/>
+		<widget font="Display;28" halign="center" name="tp_txt" position="80,52" size="80,28"/>
+		<widget font="Display;28" halign="center" name="info_txt" position="160,52" size="80,28"/>
 	</screen>
 	<screen id="100" name="TeleTextMenuSummary" position="0,0" size="240,80">
 		<widget font="Display;32" halign="center" name="SetupEntry" position="0,0" size="240,36"/>
