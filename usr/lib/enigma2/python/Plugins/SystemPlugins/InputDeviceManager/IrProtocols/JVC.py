@@ -10,7 +10,7 @@ class JVC(object):
 	def build(definition):
 		proto = IrProtocol.IR_PROTO_JVC;
 		keys = []
-		for key, cmd in definition["keymap"].iteritems():
+		for key, cmd in definition["keys"].iteritems():
 			keycode = irdb.mapKey(key)
 			if not keycode:
 				continue
