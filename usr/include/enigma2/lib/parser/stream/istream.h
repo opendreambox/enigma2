@@ -85,14 +85,14 @@ public:
 
 	virtual void init() = 0;
 
-	virtual std::vector<StreamInfo> &getStreams() = 0;
+	virtual const std::vector<StreamInfo> &getStreams() const = 0;
 	virtual void deleteStream(int index) = 0;
 	virtual bool selectStream(int index, const StreamRestrictions &restrictions = StreamRestrictions()) = 0;
 
-	virtual bool isLive() = 0;
-	virtual bool isReady() = 0;
+	virtual bool isLive() const = 0;
+	virtual bool isReady() const = 0;
 	virtual void rebuffer() = 0;
-	virtual int64_t getDuration() = 0;
+	virtual int64_t getDuration() const = 0;
 	virtual bool seek(int64_t pts, int index = -1) = 0;
 	virtual bool getVideoFrames(std::vector<RawData> &rawData) = 0;
 	virtual bool getAudioPackets(std::vector<RawData> &rawData) = 0;

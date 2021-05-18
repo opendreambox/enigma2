@@ -19,7 +19,10 @@ enum class StreamRawType
 
 enum StreamRawFlags
 {
-	DISCONTINUITY = 1
+	DISCONTINUITY						= 1,
+	LAST_FRAME_IN_SEGMENT				= 2,
+	LAST_SAMPLE_BEFORE_DISCONTINUITY	= 4,
+	INIT								= 8,
 };
 
 struct RawData

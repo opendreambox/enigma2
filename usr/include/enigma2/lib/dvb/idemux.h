@@ -31,6 +31,8 @@ public:
 	virtual RESULT start()=0;
 	virtual RESULT start(int pid, int type)=0;
 	virtual RESULT stop()=0;
+	virtual RESULT addPID(int pid) = 0;
+	virtual RESULT removePID(int pid) = 0;
 
 	virtual bool paused()=0;
 	virtual void pause()=0;
@@ -42,6 +44,8 @@ public:
 
 	virtual void close() { }; // workaround to close a fd to interrupt a pending read for faster stop response... default a NOP
 	virtual bool closePending() { return false;  }
+
+	virtual ssize_t read(unsigned char *d, int bytes)=0; 	/* for blocking reads.. on create context must be NULL */
 };
 
 class iDVBPESReader: public iObject

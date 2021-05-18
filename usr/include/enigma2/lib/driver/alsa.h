@@ -17,10 +17,17 @@ class eAlsaOutput
 	eAlsaOutput(int type);
 	~eAlsaOutput();
 
+	static int pcm_delay, bitstream_delay;
+	static uint32_t active_pts_offset;
+
 public:
 	enum { HDMI, SPDIF, BTPCM };
 
 	static eAlsaOutput *getInstance(int type = HDMI);
+
+	static void setBitstreamDelay(int delay);
+	static void setPCMDelay(int delay);
+	static uint32_t getActivePTSOffset();
 
 	bool running() const;
 	int close();

@@ -272,6 +272,7 @@ class SetupGuide(Screen):
 		self._nextStep()
 
 	def _nextStep(self):
+		self.list.buildfunc = None
 		self._movingBack = False
 		step = self._stepper.next()
 		if step:
@@ -286,6 +287,7 @@ class SetupGuide(Screen):
 		self._previousStep()
 
 	def _previousStep(self):
+		self.list.buildfunc = None
 		self._movingBack = True
 		step = self._stepper.previous()
 		if step:

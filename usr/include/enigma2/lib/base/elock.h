@@ -1,6 +1,7 @@
 #ifndef __elock_h
 #define __elock_h
 
+#include <sys/syscall.h>
 #include <pthread.h>
 #include <lib/base/sigc.h>
 
@@ -81,8 +82,22 @@ public:
 class eSpinLock
 {
 	pthread_spinlock_t m_lock;
+	pid_t m_owner;
+	unsigned long m_locked;
 public:
+	static pid_t gettid()
+	{
+		static __thread bool tid_read;
+		static __thread pid_t tid;
+		if (!tid_read) {
+			tid_read = true;
+			tid = syscall(SYS_gettid);
+		}
+		return tid;
+	}
+
 	eSpinLock()
+		:m_owner(-1), m_locked(0)
 	{
 		pthread_spin_init(&m_lock, 0);
 	}
@@ -93,7 +108,12 @@ public:
 
 	void lock() __attribute__ ((always_inline))
 	{
-		pthread_spin_lock(&m_lock);
+		pid_t caller = gettid();
+		if (caller != m_owner) {
+			pthread_spin_lock(&m_lock);
+			m_owner = caller;
+		}
+		++m_locked;
 	}
 	bool tryLock() __attribute__ ((always_inline))
 	{
@@ -101,7 +121,12 @@ public:
 	}
 	void unlock() __attribute__ ((always_inline))
 	{
-		pthread_spin_unlock(&m_lock);
+		if (gettid() == m_owner) {
+			if (!--m_locked) {
+				m_owner = -1;
+				pthread_spin_unlock(&m_lock);
+			}
+		}
 	}
 };
 

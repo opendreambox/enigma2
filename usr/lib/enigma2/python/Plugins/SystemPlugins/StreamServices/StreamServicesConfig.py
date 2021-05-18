@@ -1,4 +1,4 @@
-from enigma import eStreamProcessor, cvar
+from enigma import eStreamProcessorFactory, cvar
 
 from Components.ActionMap import ActionMap
 from Components.config import config, configfile, ConfigInteger, ConfigOnOff, ConfigPassword, ConfigSelection, Config, ConfigSubsection, ConfigText, ConfigYesNo, ConfigSubDict
@@ -37,7 +37,7 @@ class StreamServicesConfig:
 		StreamServicesConfig.instance = self
 
 		# there may be added new processors after this constructor.. keep track of them
-		self._processorAddedConn = cvar.eStreamProcessor_processorAdded.connect(self._addProcessor)
+		self._processorAddedConn = cvar.eStreamProcessorFactory_factoryAdded.connect(self._addFactory)
 
 		self._initStreamServicesConfig()
 
@@ -56,11 +56,11 @@ class StreamServicesConfig:
 
 		config.streamservices.processors = ConfigSubDict()
 
-		for processor in eStreamProcessor.getProcessors():
-			self._addProcessor(processor)
+		for factory in eStreamProcessorFactory.getFactories():
+			self._addFactory(factory)
 
-	def _addProcessor(self, processor):
-		procName = processor.getName()
+	def _addFactory(self, factory):
+		procName = factory.getName()
 		config.streamservices.processors[procName] = ConfigSubsection()
 		config.streamservices.processors[procName].limitBandwidth = ConfigInteger(0, [0, 1000])
 		config.streamservices.processors[procName].limitResolution = ConfigInteger(0, [0, 2160])
