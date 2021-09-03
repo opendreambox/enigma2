@@ -553,7 +553,7 @@ self.instance.move(ePoint((1280-wsizex)/2,(720-wsizey)/2))
 <!-- Help menu -->
 	<screen name="HelpMenu" position="center,80" size="1200,610" title="Help">
 		<ePixmap position="4,3" size="260,605" pixmap="skin_default/menu.png" scale="stretch" zPosition="-1"/>
-		<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png" position="55,50" zPosition="10" size="160,500"/>
+		<widget name="rc" pixmaps="skin_default/rc0.png,skin_default/rc1.png,skin_default/rc2.png,skin_default/rc3.png" position="55,50" zPosition="10" size="160,500"/>
 		<widget name="arrowdown" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70"/>
 		<widget name="arrowdown2" pixmap="skin_default/arrowdown.png" position="-100,-100" zPosition="11" size="37,70"/>
 		<widget name="arrowup" pixmap="skin_default/arrowup.png" position="-100,-100" zPosition="11" size="37,70"/>

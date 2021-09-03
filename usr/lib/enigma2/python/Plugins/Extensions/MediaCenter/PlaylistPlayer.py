@@ -16,6 +16,8 @@ from DatabasePlaylist import DatabasePlaylist
 # so here we must inherit from PlayerBase to not break the 
 # previous service handling
 class PlaylistPlayer(Screen, HelpableScreen, PlayerBase):
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
+
 	def __init__(self, session, playlist_string, type):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)

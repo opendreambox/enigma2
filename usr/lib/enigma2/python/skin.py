@@ -797,6 +797,8 @@ class ComponentSizes():
 		for a in attribs.items():
 			if a[0] == "type":
 				key = a[1]
+			elif a[1][0] == "#":
+				values[a[0]] = parseColor(a[1]).argb()
 			else:
 				values[a[0]] = int(a[1])
 		if key:

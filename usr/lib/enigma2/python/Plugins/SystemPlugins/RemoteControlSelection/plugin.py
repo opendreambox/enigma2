@@ -38,7 +38,7 @@ class RemoteControlSelection(Screen):
 			})
 
 		self._pixmaps = []
-		for i in (0, 1, 2):
+		for i in (0, 1, 2, 3):
 			self._pixmaps.append(
 				LoadPixmap(
 					resolveFilename(SCOPE_SKIN, "skin_default/rc%s.png" % (i))
@@ -62,10 +62,10 @@ class RemoteControlSelection(Screen):
 		self.close()
 
 	def setCurrentPixmap(self, index):
-		if index > 2:
+		if index > 3:
 			index = 0
 		if index < 0:
-			index = 2
+			index = 3
 		self._index = index
 		self._pixmap.setPixmap(self._pixmaps[index])
 

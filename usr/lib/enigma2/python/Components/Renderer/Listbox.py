@@ -1,5 +1,5 @@
 from Renderer import Renderer
-from Source import Source
+from Components.Sources.Source import Source
 from enigma import eListbox, ePoint
 
 # the listbox renderer is the listbox, but no listbox content.

@@ -10,7 +10,7 @@ from LCDScreen import MediaRendererLCDScreen
 
 class MediaGUI(Screen):
 	ENABLE_RESUME_SUPPORT = True
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 
 	def __init__(self, session, master):
 		Screen.__init__(self, session)

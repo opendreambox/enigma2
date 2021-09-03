@@ -13,6 +13,7 @@ class MessageBox(Screen):
 	TYPE_ERROR = 3
 
 	IS_DIALOG = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 
 	def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, windowTitle = None, additionalActionMap=None, title = _("Message")):
 		if not windowTitle:

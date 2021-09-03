@@ -17,7 +17,7 @@ class MoviePlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarShowHide,
 				InfoBarExtensions, InfoBarPlugins, InfoBarNotifications,
 				InfoBarGstreamerErrorPopupSupport):
 	ENABLE_RESUME_SUPPORT = True
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 
 	def __init__(self, session, service, restoreService = True, infoCallback = None, getNextService = None, getPrevService = None, stopCallback = None, pauseCallback = None, streamMode = False, askBeforeLeaving=True):
 		Screen.__init__(self, session)

@@ -36,7 +36,7 @@ class NumericalTextInput:
 
 		if self.lang == 'de_DE':
 			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
-			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u" 1.:/-_#") # 1
 			self.mapping.append (u"abcä2ABCÄ") # 2
 			self.mapping.append (u"def3DEF") # 3
 			self.mapping.append (u"ghi4GHI") # 4
@@ -47,7 +47,7 @@ class NumericalTextInput:
 			self.mapping.append (u"wxyz9WXYZ") # 9
 		elif self.lang == 'es_ES':
 			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
-			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u" 1.:/-_#") # 1
 			self.mapping.append (u"abcáà2ABCÁÀ") # 2
 			self.mapping.append (u"deéèf3DEFÉÈ") # 3
 			self.mapping.append (u"ghiíì4GHIÍÌ") # 4
@@ -58,7 +58,7 @@ class NumericalTextInput:
 			self.mapping.append (u"wxyz9WXYZ") # 9
 		if self.lang in ('sv_SE', 'fi_FI'):
 			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
-			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u" 1.:/-_#") # 1
 			self.mapping.append (u"abcåä2ABCÅÄ") # 2
 			self.mapping.append (u"defé3DEFÉ") # 3
 			self.mapping.append (u"ghi4GHI") # 4
@@ -69,7 +69,7 @@ class NumericalTextInput:
 			self.mapping.append (u"wxyz9WXYZ") # 9
 		elif self.lang in ('cs_CZ', 'sk_SK'):
 			self.mapping.append (u"0,?'+\"()@$!=&*") # 0
-			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u" 1.:/-_#") # 1
 			self.mapping.append (u"abc2áäčABCÁÄČ") # 2
 			self.mapping.append (u"def3ďéěDEFĎÉĚ") # 3
 			self.mapping.append (u"ghi4íGHIÍ") # 4
@@ -80,7 +80,7 @@ class NumericalTextInput:
 			self.mapping.append (u"wxyz9ýžWXYZÝŽ") # 9
 		elif self.lang == 'ru_RU':
 			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
-			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u" 1.:/-_#") # 1
 			self.mapping.append (u"abc2ABCабвгАБВГ") # 2
 			self.mapping.append (u"def3DEFдежзДЕЖЗ") # 3
 			self.mapping.append (u"ghi4GHIийклИЙКЛ") # 4
@@ -91,7 +91,7 @@ class NumericalTextInput:
 			self.mapping.append (u"wxyz9WXYZьэюяЬЭЮЯ") # 9
 		else:
 			self.mapping.append (u"0,?!&@=*'+\"()$~") # 0
-			self.mapping.append (u" 1.:/-_") # 1
+			self.mapping.append (u" 1.:/-_#") # 1
 			self.mapping.append (u"abc2ABC") # 2
 			self.mapping.append (u"def3DEF") # 3
 			self.mapping.append (u"ghi4GHI") # 4
