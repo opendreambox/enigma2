@@ -47,7 +47,7 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 	InfoBarPrivateExtensions, InfoBarGstreamerErrorPopupSupport,
 	Screen):
 
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 	instance = None
 
 	def __init__(self, session):
@@ -203,7 +203,7 @@ class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		InfoBarServiceErrorPopupSupport, InfoBarExtensions, InfoBarNotifications, InfoBarPlugins, InfoBarPiP, InfoBarGstreamerErrorPopupSupport):
 
 	ENABLE_RESUME_SUPPORT = True
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 
 	_answerQuit = "quit"
 	_answerList = "movielist"

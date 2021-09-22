@@ -2,13 +2,11 @@ from Components.Sources.Source import Source
 from enigma import eInputDeviceManager
 from Components.Element import cached
 
+from Tools.Log import Log
 class InputDevice(Source):
 	def __init__(self):
 		Source.__init__(self)
-		ipdm = eInputDeviceManager.getInstance()
-		if ipdm:
-			self.__deviceListChanged_conn = ipdm.deviceListChanged.connect(self._onDevicesChanged)
-			self.__deviceStateChanged_conn = ipdm.deviceStateChanged.connect(self._onDevicesChanged)
+		self._ipdm = None
 
 	@property
 	def range(self):
@@ -18,10 +16,15 @@ class InputDevice(Source):
 		self.changed((self.CHANGED_ALL,))
 
 	def _getFirst(self):
-		ipdm = eInputDeviceManager.getInstance()
-		for dev in ipdm.getConnectedDevices():
-			if dev.ready():
+		if not self._ipdm:
+			self._ipdm = eInputDeviceManager.getInstance()
+			self.__deviceListChanged_conn = self._ipdm.deviceListChanged.connect(self._onDevicesChanged)
+			self.__deviceStateChanged_conn = self._ipdm.deviceStateChanged.connect(self._onDevicesChanged)
+		for dev in self._ipdm.getConnectedDevices():
+			if dev.connected():
+				Log.d(dev)
 				return dev
+		Log.d("No connected device found!")
 		return None
 
 	@cached
@@ -29,7 +32,6 @@ class InputDevice(Source):
 		return self._getFirst() != None
 	boolean = property(isConnected)
 
-	@cached
 	def getBatteryLevel(self):
 		remote = self._getFirst()
 		if not remote:
@@ -37,7 +39,6 @@ class InputDevice(Source):
 		return remote.batteryLevel()
 	batteryLevel = property(getBatteryLevel)
 
-	@cached
 	def getRSSI(self):
 		remote = self._getFirst()
 		if not remote:

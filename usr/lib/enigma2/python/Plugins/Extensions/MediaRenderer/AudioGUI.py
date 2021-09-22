@@ -11,7 +11,6 @@ from .MediaGUI import MediaGUI
 
 class AudioGUI(MediaGUI, InfoBarNotifications, InfoBarSeek):
 	ENABLE_RESUME_SUPPORT = True
-	ALLOW_SUSPEND = True
 
 	skin = """
 		<screen name="AudioGUI" position="0,0" size="1280,720" flags="wfNoBorder">

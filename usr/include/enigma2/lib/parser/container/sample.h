@@ -32,7 +32,8 @@ struct RawData
 		pts(0),
 		offset(0),
 		encType(StreamEncryptionType::NONE),
-		flags(0)
+		flags(0),
+		subsampleCount(0)
 	{
 	}
 

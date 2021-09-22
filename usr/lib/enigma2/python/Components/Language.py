@@ -12,7 +12,7 @@ import six
 class Language:
 	def __init__(self):
 		self.currLangObj = gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), codeset="utf-8", names="ngettext")
-		self.activeLanguage = 0
+		self.activeLanguage = "en_EN"
 		self.lang = {}
 		self.langlist = []
 		# FIXME make list dynamically

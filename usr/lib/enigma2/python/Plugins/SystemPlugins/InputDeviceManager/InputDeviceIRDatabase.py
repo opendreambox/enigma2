@@ -26,6 +26,7 @@ class InputDeviceIRDatabase(object):
 		'KEY_MODE' : IrKey.CODE_MODE,
 		'KEY_AUDIO' : IrKey.CODE_AUDIO,
 		'KEY_PVR' : IrKey.CODE_VIDEO,
+		'KEY_VIDEO' : IrKey.CODE_VIDEO,
 		'KEY_TEXT' : IrKey.CODE_TEXT,
 		'KEY_POWER' : IrKey.CODE_POWER,
 		'KEY_VOLUMEUP' : IrKey.CODE_VOLUMEUP,

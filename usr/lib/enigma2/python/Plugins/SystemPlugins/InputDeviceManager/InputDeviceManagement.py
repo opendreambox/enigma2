@@ -1,5 +1,7 @@
 from __future__ import absolute_import
+
 from enigma import eInputDeviceManager
+from Components.config import config
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
@@ -7,12 +9,17 @@ from Components.Label import Label
 from Screens.InputDeviceSetup import AdvancedInputDeviceSetup
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from Screens.SetupGuide import SetupGuide
 from Tools.DreamboxHardware import getFPVersion
 from Tools.Log import Log
+
+from twisted.internet import reactor
 
 from .InputDeviceAdapterFlasher import InputDeviceAdapterFlasher, InputDeviceUpdateChecker
 from .InputDeviceUpdateHandlerBase import InputDeviceUpdateHandlerBase
 from .InputDeviceIRProg import InputDeviceIRProg
+
+#from .InputDeviceDfuUpdate import InputDeviceDfuUpdate
 
 class InputDeviceManagementBase(object):
 	def __init__(self):
@@ -25,10 +32,23 @@ class InputDeviceManagementBase(object):
 
 		self._dm = eInputDeviceManager.getInstance()
 
+		self.__highlightDevice = None
+		self._listFeedbackDisabled = False
+
 		self.__deviceListChanged_conn = self._dm.deviceListChanged.connect(self._devicesChanged)
 		self.__deviceStateChanged_conn = self._dm.deviceStateChanged.connect(self._devicesChanged)
 		self.__unboundRemoteKeyPressed_conn = self._dm.unboundRemoteKeyPressed.connect(self._onUnboundRemoteKeyPressed)
-		self._dm.rescan()
+		self._refresh()
+
+	def _disableListFeedback(self):
+		if config.inputDevices.settings.listboxFeedback.value:
+			config.inputDevices.settings.listboxFeedback.value = False
+			self._listFeedbackDisabled = True
+
+	def _restoreListFeedback(self):
+		if self._listFeedbackDisabled:
+			config.inputDevices.settings.listboxFeedback.value = True
+			self._listFeedbackDisabled = False
 
 	def responding(self):
 		return self._dm.responding()
@@ -47,8 +67,11 @@ class InputDeviceManagementBase(object):
 			index = 0
 		self._devices = self._getInputDevices()
 		self._list.list = self._devices
-		if len(self._devices) > index:
+		if self._getInputDevicesCount() > index:
 			self._list.index = index
+
+	def _refresh(self):
+		self._dm.refresh()
 
 	def _getInputDevicesCount(self):
 		return len(self._devices)
@@ -67,8 +90,10 @@ class InputDeviceManagementBase(object):
 		# A device may be connected but not yet bound right after binding has started!
 		elif device.connected():
 			bound = _("...")
+		name = device.name() or device.shortName()
+		name = _(name) if name else _("DM Remote")
 		return (
-			device.shortName() or _("DM RCU"),
+			name,
 			"%s dBm" %(int(device.rssi()),),
 			device.address(),
 			bound,
@@ -91,6 +116,22 @@ class InputDeviceManagementBase(object):
 	def _onUnboundRemoteKeyPressed(self, address, key):
 		pass
 
+	def _highlight(self):
+		d = self._currentInputDevice
+		if d:
+			if not self.__highlightDevice or d.address() != self.__highlightDevice.address():
+				d.vibrate()
+				reactor.callLater(0.4, d.vibrate)
+
+				col = int(config.inputDevices.settings.connectedColor.value, 0)
+				contrast = 0xffffff - col
+
+				d.setLedColor(contrast)
+				reactor.callLater(0.8, d.setLedColor, col)
+				self.__highlightDevice = d
+		else:
+			self.__highlightDevice = None
+
 class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdateHandlerBase):
 	def __init__(self, session):
 		Screen.__init__(self, session, windowTitle=_("Input devices"))
@@ -102,8 +143,9 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdate
 		actions={
 			"ok" : self._onOk,
 			"cancel" : self.close,
-			"yellow" : self._dm.rescan,
+			"red" : self._dfu,
 			"green" : self._irProg,
+			"yellow" : self._dm.rescan,
 			"blue" : self._advanced,
 		})
 
@@ -111,14 +153,31 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdate
 		self["key_green"] = Label()
 		self["key_yellow"] = Label(_("Rescan"))
 		self["key_blue"] = Label(_("Advanced"))
-#		self._updateChecker = InputDeviceUpdateChecker()
-#		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
-#		self._updateChecker.check()
+		self._updateChecker = InputDeviceUpdateChecker()
+		self._updateChecker.onUpdateAvailable.append(self._onUpdateAvailable)
+		self._updateChecker.check()
 		self._list.onSelectionChanged.append(self.__onSelectionChanged)
 		self._devices = []
 		self._reload()
+		self.onShow.append(self._onShow)
+		self.onHide.append(self._restoreListFeedback)
 		self.onFirstExecBegin.append(self._checkAdapter)
 		self.onLayoutFinish.append(self.__onSelectionChanged)
+
+	def _onShow(self):
+		self._disableListFeedback()
+		self._refresh()
+
+	def _dfu(self):
+		if not self._dm.hasFeature(eInputDeviceManager.FEATURE_DFU_UPDATE):
+			return
+		from .Dfu.DfuGuide import DfuWelcomeStep, DfuUpdateStep, DfuFinishStep
+		steps = [{
+			10 : DfuWelcomeStep,
+			20 : DfuUpdateStep,
+			30 : DfuFinishStep,
+		}]
+		self.session.open(SetupGuide, steps=steps)
 
 	def _updateButtons(self):
 		device = self._currentInputDevice
@@ -126,6 +185,11 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdate
 			self["key_green"].setText(_("IR-Setup"))
 		else:
 			self["key_green"].setText("")
+
+		if self._dm.hasFeature(eInputDeviceManager.FEATURE_DFU_UPDATE):
+			self["key_red"].setText(_("Update"))
+		else:
+			self["key_red"].setText("")
 
 	def _irProg(self):
 		device = self._currentInputDevice
@@ -157,6 +221,7 @@ class InputDeviceManagement(Screen, InputDeviceManagementBase, InputDeviceUpdate
 			return
 
 	def __onSelectionChanged(self):
+		self._highlight()
 		self._updateButtons()
 		if not self.available():
 			self["description"].text = _("No dreambox bluetooth receiver detected! Sorry!")

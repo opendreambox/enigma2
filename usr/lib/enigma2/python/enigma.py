@@ -7931,6 +7931,7 @@ class eInputDeviceManager(iObject):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     FEATURE_UNCONNECTED_KEYPRESS = _enigma.eInputDeviceManager_FEATURE_UNCONNECTED_KEYPRESS
+    FEATURE_DFU_UPDATE = _enigma.eInputDeviceManager_FEATURE_DFU_UPDATE
 
     def getInstance():
         """getInstance() -> eInputDeviceManager"""
@@ -7988,6 +7989,11 @@ class eInputDeviceManager(iObject):
         return _enigma.eInputDeviceManager_rescan(self)
 
 
+    def refresh(self):
+        """refresh(eInputDeviceManager self)"""
+        return _enigma.eInputDeviceManager_refresh(self)
+
+
     def connectDevice(self, device):
         """connectDevice(eInputDeviceManager self, eManagedInputDevicePtr device)"""
         return _enigma.eInputDeviceManager_connectDevice(self, device)
@@ -8041,9 +8047,21 @@ class eInputDeviceManager(iObject):
         """getIrKeyCount(eInputDeviceManager self, eManagedInputDevicePtr device)"""
         return _enigma.eInputDeviceManager_getIrKeyCount(self, device)
 
+
+    def dfu(self, device):
+        """dfu(eInputDeviceManager self, eManagedInputDevicePtr device) -> int"""
+        return _enigma.eInputDeviceManager_dfu(self, device)
+
+
+    def dfuFlash(self, device, bin, data):
+        """dfuFlash(eInputDeviceManager self, eManagedInputDevicePtr device, std::string const & bin, std::string const & data) -> bool"""
+        return _enigma.eInputDeviceManager_dfuFlash(self, device, bin, data)
+
     deviceStateChanged = _swig_property(_enigma.eInputDeviceManager_deviceStateChanged_get, _enigma.eInputDeviceManager_deviceStateChanged_set)
     unboundRemoteKeyPressed = _swig_property(_enigma.eInputDeviceManager_unboundRemoteKeyPressed_get, _enigma.eInputDeviceManager_unboundRemoteKeyPressed_set)
     irKeyCount = _swig_property(_enigma.eInputDeviceManager_irKeyCount_get, _enigma.eInputDeviceManager_irKeyCount_set)
+    dfuEvent = _swig_property(_enigma.eInputDeviceManager_dfuEvent_get, _enigma.eInputDeviceManager_dfuEvent_set)
+    dfuProgress = _swig_property(_enigma.eInputDeviceManager_dfuProgress_get, _enigma.eInputDeviceManager_dfuProgress_set)
     batteryLow = _swig_property(_enigma.eInputDeviceManager_batteryLow_get, _enigma.eInputDeviceManager_batteryLow_set)
     deviceListChanged = _swig_property(_enigma.eInputDeviceManager_deviceListChanged_get, _enigma.eInputDeviceManager_deviceListChanged_set)
 eInputDeviceManager.start = new_instancemethod(_enigma.eInputDeviceManager_start, None, eInputDeviceManager)
@@ -8056,6 +8074,7 @@ eInputDeviceManager.getDevice = new_instancemethod(_enigma.eInputDeviceManager_g
 eInputDeviceManager.getConnectedDevices = new_instancemethod(_enigma.eInputDeviceManager_getConnectedDevices, None, eInputDeviceManager)
 eInputDeviceManager.getAvailableDevices = new_instancemethod(_enigma.eInputDeviceManager_getAvailableDevices, None, eInputDeviceManager)
 eInputDeviceManager.rescan = new_instancemethod(_enigma.eInputDeviceManager_rescan, None, eInputDeviceManager)
+eInputDeviceManager.refresh = new_instancemethod(_enigma.eInputDeviceManager_refresh, None, eInputDeviceManager)
 eInputDeviceManager.connectDevice = new_instancemethod(_enigma.eInputDeviceManager_connectDevice, None, eInputDeviceManager)
 eInputDeviceManager.disconnectDevice = new_instancemethod(_enigma.eInputDeviceManager_disconnectDevice, None, eInputDeviceManager)
 eInputDeviceManager.vibrate = new_instancemethod(_enigma.eInputDeviceManager_vibrate, None, eInputDeviceManager)
@@ -8065,6 +8084,8 @@ eInputDeviceManager.setIrProtocol = new_instancemethod(_enigma.eInputDeviceManag
 eInputDeviceManager.setIrKey = new_instancemethod(_enigma.eInputDeviceManager_setIrKey, None, eInputDeviceManager)
 eInputDeviceManager.resetIr = new_instancemethod(_enigma.eInputDeviceManager_resetIr, None, eInputDeviceManager)
 eInputDeviceManager.getIrKeyCount = new_instancemethod(_enigma.eInputDeviceManager_getIrKeyCount, None, eInputDeviceManager)
+eInputDeviceManager.dfu = new_instancemethod(_enigma.eInputDeviceManager_dfu, None, eInputDeviceManager)
+eInputDeviceManager.dfuFlash = new_instancemethod(_enigma.eInputDeviceManager_dfuFlash, None, eInputDeviceManager)
 eInputDeviceManager_swigregister = _enigma.eInputDeviceManager_swigregister
 eInputDeviceManager_swigregister(eInputDeviceManager)
 
@@ -8115,6 +8136,42 @@ eManagedInputDevicePtrList.push_front = new_instancemethod(_enigma.eManagedInput
 eManagedInputDevicePtrList.reverse = new_instancemethod(_enigma.eManagedInputDevicePtrList_reverse, None, eManagedInputDevicePtrList)
 eManagedInputDevicePtrList_swigregister = _enigma.eManagedInputDevicePtrList_swigregister
 eManagedInputDevicePtrList_swigregister(eManagedInputDevicePtrList)
+
+DFU_BATTERY_MIN = _enigma.DFU_BATTERY_MIN
+class eInputDeviceDfuFlasher(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    DFU_CMD_NONE = _enigma.eInputDeviceDfuFlasher_DFU_CMD_NONE
+    DFU_CMD_CREATE_OBJECT = _enigma.eInputDeviceDfuFlasher_DFU_CMD_CREATE_OBJECT
+    DFU_CMD_SELECT_OBJECT = _enigma.eInputDeviceDfuFlasher_DFU_CMD_SELECT_OBJECT
+    DFU_CMD_CHECKSUM = _enigma.eInputDeviceDfuFlasher_DFU_CMD_CHECKSUM
+    DFU_CMD_EXECUTE = _enigma.eInputDeviceDfuFlasher_DFU_CMD_EXECUTE
+    DFU_CMD_READ_OBJECT = _enigma.eInputDeviceDfuFlasher_DFU_CMD_READ_OBJECT
+    DFU_TAG_RESPONSE = _enigma.eInputDeviceDfuFlasher_DFU_TAG_RESPONSE
+    DFU_LOWBAT = _enigma.eInputDeviceDfuFlasher_DFU_LOWBAT
+    DFU_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_ERROR
+    DFU_SUCCESS = _enigma.eInputDeviceDfuFlasher_DFU_SUCCESS
+    DFU_EVT_BATTERY_LOW = _enigma.eInputDeviceDfuFlasher_DFU_EVT_BATTERY_LOW
+    DFU_EVT_ENABLE_NOTIFY_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_ENABLE_NOTIFY_ERROR
+    DFU_EVT_FILE_INVALID = _enigma.eInputDeviceDfuFlasher_DFU_EVT_FILE_INVALID
+    DFU_EVT_FILE_READ_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_FILE_READ_ERROR
+    DFU_EVT_COMMAND_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_COMMAND_ERROR
+    DFU_EVT_CHECKSUM_INVALID = _enigma.eInputDeviceDfuFlasher_DFU_EVT_CHECKSUM_INVALID
+    DFU_EVT_CHECKSUM_VALID = _enigma.eInputDeviceDfuFlasher_DFU_EVT_CHECKSUM_VALID
+    DFU_EVT_OBJECT_READ_SUCCESS = _enigma.eInputDeviceDfuFlasher_DFU_EVT_OBJECT_READ_SUCCESS
+    DFU_EVT_OBJECT_READ_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_OBJECT_READ_ERROR
+    DFU_EVT_OBJECT_CREATE_SUCCESS = _enigma.eInputDeviceDfuFlasher_DFU_EVT_OBJECT_CREATE_SUCCESS
+    DFU_EVT_OBJECT_CREATE_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_OBJECT_CREATE_ERROR
+    DFU_EVT_EXECUTE_SUCCESS = _enigma.eInputDeviceDfuFlasher_DFU_EVT_EXECUTE_SUCCESS
+    DFU_EVT_EXECUTE_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_EXECUTE_ERROR
+    DFU_EVT_UPLOAD_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_UPLOAD_ERROR
+    DFU_FIRMWARE_TYPE_DAT = _enigma.eInputDeviceDfuFlasher_DFU_FIRMWARE_TYPE_DAT
+    DFU_FIRMWARE_TYPE_BIN = _enigma.eInputDeviceDfuFlasher_DFU_FIRMWARE_TYPE_BIN
+eInputDeviceDfuFlasher_swigregister = _enigma.eInputDeviceDfuFlasher_swigregister
+eInputDeviceDfuFlasher_swigregister(eInputDeviceDfuFlasher)
 
 class IrProtocol(object):
     thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
@@ -8200,7 +8257,7 @@ class IrKey(object):
     break_len = _swig_property(_enigma.IrKey_break_len_get, _enigma.IrKey_break_len_set)
 
     def __init__(self, keycode, proto_id, make_message, make_message_len, break_message, break_message_len):
-        """__init__(IrKey self, int32_t keycode, uint8_t proto_id, uint32_t make_message, uint8_t make_message_len, uint32_t break_message, uint8_t break_message_len) -> IrKey"""
+        """__init__(IrKey self, int32_t keycode, uint8_t proto_id, uint64_t make_message, uint8_t make_message_len, uint64_t break_message, uint8_t break_message_len) -> IrKey"""
         _enigma.IrKey_swiginit(self, _enigma.new_IrKey(keycode, proto_id, make_message, make_message_len, break_message, break_message_len))
     __swig_destroy__ = _enigma.delete_IrKey
 IrKey_swigregister = _enigma.IrKey_swigregister
@@ -8273,6 +8330,11 @@ class eManagedInputDevice(iObject):
         return _enigma.eManagedInputDevice_ready(self)
 
 
+    def isDfu(self):
+        """isDfu(eManagedInputDevice self) -> bool"""
+        return _enigma.eManagedInputDevice_isDfu(self)
+
+
     def checkVersion(self, major, minor=0):
         """
         checkVersion(eManagedInputDevice self, uint32_t major, uint32_t minor=0) -> int
@@ -8325,6 +8387,16 @@ class eManagedInputDevice(iObject):
         """getIrKeyCount(eManagedInputDevice self)"""
         return _enigma.eManagedInputDevice_getIrKeyCount(self)
 
+
+    def dfu(self):
+        """dfu(eManagedInputDevice self) -> int"""
+        return _enigma.eManagedInputDevice_dfu(self)
+
+
+    def dfuFlash(self, dat, bin):
+        """dfuFlash(eManagedInputDevice self, std::string const & dat, std::string const & bin) -> bool"""
+        return _enigma.eManagedInputDevice_dfuFlash(self, dat, bin)
+
 eManagedInputDevice.address = new_instancemethod(_enigma.eManagedInputDevice_address, None, eManagedInputDevice)
 eManagedInputDevice.name = new_instancemethod(_enigma.eManagedInputDevice_name, None, eManagedInputDevice)
 eManagedInputDevice.shortName = new_instancemethod(_enigma.eManagedInputDevice_shortName, None, eManagedInputDevice)
@@ -8336,6 +8408,7 @@ eManagedInputDevice.state = new_instancemethod(_enigma.eManagedInputDevice_state
 eManagedInputDevice.connected = new_instancemethod(_enigma.eManagedInputDevice_connected, None, eManagedInputDevice)
 eManagedInputDevice.bound = new_instancemethod(_enigma.eManagedInputDevice_bound, None, eManagedInputDevice)
 eManagedInputDevice.ready = new_instancemethod(_enigma.eManagedInputDevice_ready, None, eManagedInputDevice)
+eManagedInputDevice.isDfu = new_instancemethod(_enigma.eManagedInputDevice_isDfu, None, eManagedInputDevice)
 eManagedInputDevice.checkVersion = new_instancemethod(_enigma.eManagedInputDevice_checkVersion, None, eManagedInputDevice)
 eManagedInputDevice.connect = new_instancemethod(_enigma.eManagedInputDevice_connect, None, eManagedInputDevice)
 eManagedInputDevice.disconnect = new_instancemethod(_enigma.eManagedInputDevice_disconnect, None, eManagedInputDevice)
@@ -8346,6 +8419,8 @@ eManagedInputDevice.setIrProtocol = new_instancemethod(_enigma.eManagedInputDevi
 eManagedInputDevice.setIrKey = new_instancemethod(_enigma.eManagedInputDevice_setIrKey, None, eManagedInputDevice)
 eManagedInputDevice.resetIr = new_instancemethod(_enigma.eManagedInputDevice_resetIr, None, eManagedInputDevice)
 eManagedInputDevice.getIrKeyCount = new_instancemethod(_enigma.eManagedInputDevice_getIrKeyCount, None, eManagedInputDevice)
+eManagedInputDevice.dfu = new_instancemethod(_enigma.eManagedInputDevice_dfu, None, eManagedInputDevice)
+eManagedInputDevice.dfuFlash = new_instancemethod(_enigma.eManagedInputDevice_dfuFlash, None, eManagedInputDevice)
 eManagedInputDevice_swigregister = _enigma.eManagedInputDevice_swigregister
 eManagedInputDevice_swigregister(eManagedInputDevice)
 
@@ -8412,6 +8487,11 @@ class eManagedInputDevicePtr(object):
         return _enigma.eManagedInputDevicePtr_ready(self)
 
 
+    def isDfu(self):
+        """isDfu(eManagedInputDevicePtr self) -> bool"""
+        return _enigma.eManagedInputDevicePtr_isDfu(self)
+
+
     def checkVersion(self, major, minor=0):
         """
         checkVersion(eManagedInputDevicePtr self, uint32_t major, uint32_t minor=0) -> int
@@ -8464,6 +8544,16 @@ class eManagedInputDevicePtr(object):
         """getIrKeyCount(eManagedInputDevicePtr self)"""
         return _enigma.eManagedInputDevicePtr_getIrKeyCount(self)
 
+
+    def dfu(self):
+        """dfu(eManagedInputDevicePtr self) -> int"""
+        return _enigma.eManagedInputDevicePtr_dfu(self)
+
+
+    def dfuFlash(self, dat, bin):
+        """dfuFlash(eManagedInputDevicePtr self, std::string const & dat, std::string const & bin) -> bool"""
+        return _enigma.eManagedInputDevicePtr_dfuFlash(self, dat, bin)
+
 eManagedInputDevicePtr.__ref__ = new_instancemethod(_enigma.eManagedInputDevicePtr___ref__, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.getPtrString = new_instancemethod(_enigma.eManagedInputDevicePtr_getPtrString, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.__deref__ = new_instancemethod(_enigma.eManagedInputDevicePtr___deref__, None, eManagedInputDevicePtr)
@@ -8478,6 +8568,7 @@ eManagedInputDevicePtr.state = new_instancemethod(_enigma.eManagedInputDevicePtr
 eManagedInputDevicePtr.connected = new_instancemethod(_enigma.eManagedInputDevicePtr_connected, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.bound = new_instancemethod(_enigma.eManagedInputDevicePtr_bound, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.ready = new_instancemethod(_enigma.eManagedInputDevicePtr_ready, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.isDfu = new_instancemethod(_enigma.eManagedInputDevicePtr_isDfu, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.checkVersion = new_instancemethod(_enigma.eManagedInputDevicePtr_checkVersion, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.connect = new_instancemethod(_enigma.eManagedInputDevicePtr_connect, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.disconnect = new_instancemethod(_enigma.eManagedInputDevicePtr_disconnect, None, eManagedInputDevicePtr)
@@ -8488,6 +8579,8 @@ eManagedInputDevicePtr.setIrProtocol = new_instancemethod(_enigma.eManagedInputD
 eManagedInputDevicePtr.setIrKey = new_instancemethod(_enigma.eManagedInputDevicePtr_setIrKey, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.resetIr = new_instancemethod(_enigma.eManagedInputDevicePtr_resetIr, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr.getIrKeyCount = new_instancemethod(_enigma.eManagedInputDevicePtr_getIrKeyCount, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.dfu = new_instancemethod(_enigma.eManagedInputDevicePtr_dfu, None, eManagedInputDevicePtr)
+eManagedInputDevicePtr.dfuFlash = new_instancemethod(_enigma.eManagedInputDevicePtr_dfuFlash, None, eManagedInputDevicePtr)
 eManagedInputDevicePtr_swigregister = _enigma.eManagedInputDevicePtr_swigregister
 eManagedInputDevicePtr_swigregister(eManagedInputDevicePtr)
 

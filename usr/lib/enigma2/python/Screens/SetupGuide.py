@@ -1,5 +1,5 @@
 from Screens.Screen import Screen
-from Components.config import KEY_LEFT, KEY_RIGHT, KEY_0, config, ConfigBoolean
+from Components.config import KEY_LEFT, KEY_RIGHT, KEY_0, KEY_BACKSPACE, KEY_DELETE, config, ConfigBoolean
 from Components.ActionMap import NumberActionMap
 from Components.ConfigList import ConfigList
 from Components.Label import Label
@@ -128,7 +128,9 @@ class SetupGuide(Screen):
 			initialSetupSteps.prepare()
 			for s in initialSetupSteps.steps:
 				self.addSteps(s)
-
+		else:
+			for s in steps:
+				self.addSteps(s)
 		self["actions"] = NumberActionMap(["MenuActions", "SetupActions", "ColorActions"],
 		{
 			"ok": self._ok,
@@ -142,6 +144,8 @@ class SetupGuide(Screen):
 			"green": self.green,
 			"yellow": self.yellow,
 			"blue":self.blue,
+			"deleteForward": self.keyDelete, # >
+			"deleteBackward": self.keyBackspace, # <
 			"1": self.keyNumberGlobal,
 			"2": self.keyNumberGlobal,
 			"3": self.keyNumberGlobal,
@@ -246,6 +250,14 @@ class SetupGuide(Screen):
 	def keyNumberGlobal(self, number):
 		if isinstance(self._currentStep, SetupConfigStep):
 			self.configList.handleKey(KEY_0 + number)
+
+	def keyDelete(self):
+		if isinstance(self._currentStep, SetupConfigStep):
+			self.configList.handleKey(KEY_DELETE)
+
+	def keyBackspace(self):
+		if isinstance(self._currentStep, SetupConfigStep):
+			self.configList.handleKey(KEY_BACKSPACE)
 
 	def up(self):
 		pass

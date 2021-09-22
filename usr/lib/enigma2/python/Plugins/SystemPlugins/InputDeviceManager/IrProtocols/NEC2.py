@@ -1,7 +1,6 @@
 from enigma import IrProtocol, IrKey
 from Tools.Log import Log
 
-from ..InputDeviceIRDatabase import irdb
 from .NEC import NECBase
 
 class NEC2(object):

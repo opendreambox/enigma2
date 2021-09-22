@@ -37,6 +37,7 @@ SCOPE_DEFAULTPARTITION = 14
 SCOPE_DEFAULTPARTITIONMOUNTDIR = 15
 SCOPE_METADIR = 16
 SCOPE_CURRENT_PLUGIN = 17
+SCOPE_RCU_FIRMWARE = 18
 SCOPE_SKIN = SCOPE_DATADIR
 
 PATH_CREATE = 0
@@ -63,6 +64,7 @@ defaultPaths = {
 		SCOPE_DEFAULTPARTITION: ("/dev/mtdblock6", PATH_DONTCREATE),
 		SCOPE_DEFAULTPARTITIONMOUNTDIR: (eEnv.resolve("${datadir}/enigma2/dealer"), PATH_CREATE),
 		SCOPE_METADIR: (eEnv.resolve("${datadir}/meta"), PATH_CREATE),
+		SCOPE_RCU_FIRMWARE: (eEnv.resolve("${datadir}/nrf52-firmware-rcu"), PATH_DONTCREATE),
 	}
 
 FILE_COPY = 0 # copy files from fallback dir to the basedir

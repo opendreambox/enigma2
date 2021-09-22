@@ -5,7 +5,6 @@ from .MediaGUI import MediaGUI
 
 class VideoGUI(MediaGUI, InfoBarNotifications, InfoBarSeek, InfoBarShowHide, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarSubtitleSupport):
 	ENABLE_RESUME_SUPPORT = True
-	ALLOW_SUSPEND = True
 
 	def __init__(self, session, master):
 		MediaGUI.__init__(self, session, master)

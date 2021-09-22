@@ -212,21 +212,17 @@ class ConfigListScreen(object):
 	def handleInputHelpers(self):
 		configElement = self["config"].getCurrent() and self["config"].getCurrent()[1]
 		if configElement:
+			self["VirtualKB"].setEnabled(True)
+			if "VKeyIcon" in self:
+				self["VKeyIcon"].boolean = True
 			if isinstance(configElement, ConfigText) or isinstance(configElement, ConfigPassword):
-				if "VKeyIcon" in self:
-					self["VirtualKB"].setEnabled(True)
-					self["VKeyIcon"].boolean = True
 				if "HelpWindow" in self and configElement.help_window and configElement.help_window.instance:
 					helpwindowpos = self["HelpWindow"].getPosition()
 					from enigma import ePoint
 					configElement.help_window.instance.move(ePoint(helpwindowpos[0],helpwindowpos[1]))
-			else:
-				if "VKeyIcon" in self:
-					self["VirtualKB"].setEnabled(False)
-					self["VKeyIcon"].boolean = False
 		else:
+			self["VirtualKB"].setEnabled(False)
 			if "VKeyIcon" in self:
-				self["VirtualKB"].setEnabled(False)
 				self["VKeyIcon"].boolean = False
 
 	def KeyText(self):

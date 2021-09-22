@@ -5,7 +5,7 @@ from Components.Pixmap import Pixmap
 from Components.Label import Label
 
 class RdsInfoDisplay(Screen):
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 	
 	def __init__(self, session):
 		Screen.__init__(self, session)

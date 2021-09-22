@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from enigma import eInputDeviceManager
+from enigma import eInputDeviceManager, eTimer
 from Screens.Screen import Screen
 from Screens.Rc import Rc
 from Components.Sources.List import List
@@ -25,7 +25,7 @@ from .KeyBindingList import KeyBindingList
 class InputDeviceIRProg(Screen, CharJump):
 	PLUGIN_IMAGES_PATH = "%s/images/" % (os_path.dirname(__file__))
 	SKIN_IMAGES_PATH = resolveFilename(SCOPE_CURRENT_SKIN, config.skin.primary_skin.value.replace("/skin.xml", "/images/"))
-	MAJOR_CODELIST_ITEMS = [ "amp", "tv", "vcr", "sat"]
+	MAJOR_CODELIST_ITEMS = [ "amp", "av ", "tv", "vcr", "sat"]
 
 	def __init__(self, session, remote):
 		Screen.__init__(self, session)
@@ -49,12 +49,20 @@ class InputDeviceIRProg(Screen, CharJump):
 		self._level = 0
 		self._lastLevel = 0
 		self._lastVendor = ""
-		self.__onIrKeycount = eInputDeviceManager.getInstance().irKeyCount.connect(self._onIrKeyCount)
+		self._keysAcknowledged = 0
+		self._keysAckTimer = eTimer()
+		self.__keysAckTimer_connection = self._keysAckTimer.timeout.connect(self._onKeysAckTimeout)
+		self.__onIrKeycount_connection = eInputDeviceManager.getInstance().irKeyCount.connect(self._onIrKeyCount)
 		self.onLayoutFinish.append(self._reload)
 
 	def _onIrKeyCount(self, address, count):
 		if address == self._remote.address():
-			self.session.toastManager.showToast(_("%s IR codes acknowledged!") %(count))
+			self._keysAcknowledged = count
+			self._keysAckTimer.startLongTimer(2)
+
+	def _onKeysAckTimeout(self):
+		self.session.toastManager.showToast(_("%s IR codes acknowledged!") %(self._keysAcknowledged))
+		self._keysAcknowledged = 0
 
 	def _loadPixmap(self, filename, desktop=None):
 		picfile = None
@@ -82,7 +90,7 @@ class InputDeviceIRProg(Screen, CharJump):
 		for x in self["list"].list:
 			val = x[0][0]
 			Log.w(val)
-			if val and val[0].upper() == char and not val.lower() in self.MAJOR_VENDORS:
+			if val and val[0].upper() == char: # and not val.lower() in self.MAJOR_VENDORS:
 				self["list"].setIndex(idx)
 				break
 			idx += 1
@@ -113,10 +121,9 @@ class InputDeviceIRProg(Screen, CharJump):
 					title = _("Unknown")
 				if not len(y["keys"]):
 					Log.w("No known automap-keys for %s" % (title,))
-				subtitle = _("%s mapped keys, %s unmapped keys") % (len(y["keys"]), len(y["keys_unknown"]))
+				subtitle = _("%s mapped keys") % (len(y["keys"]))
 			mlist.append(((x, y), self._vendorPixmap, subtitle, title, pic))
 		if self._level != 0:
-
 			def sortCodelist(x):
 				x = x[0][0]
 				val = "000000"
@@ -125,7 +132,7 @@ class InputDeviceIRProg(Screen, CharJump):
 				for key in items:
 					if x.lower().startswith(key):
 						return val + x
-					val += "000000"
+					val = "{}{}".format(val, "000000")
 				return x
 
 			mlist = sorted(mlist, key=sortCodelist)
@@ -171,7 +178,7 @@ class InputDeviceIRProg(Screen, CharJump):
 				self._remote.setIrProtocol(isRepeat, protocol)
 			for irKey in keys:
 				self._remote.setIrKey(irKey)
-			self._remote.getIrKeyCount()
+		self._remote.getIrKeyCount()
 		self.session.toastManager.showToast(_("%s IR codes sent!") %(len(keys)), 3)
 
 	def _onSelectionChanged(self):

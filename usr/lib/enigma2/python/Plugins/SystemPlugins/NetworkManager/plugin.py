@@ -26,6 +26,13 @@ class NetworkAgent(object):
 		ap( self._nm.userInputCanceled.connect(self._userInputCanceled) )
 		ap( self._nm.errorReported.connect(self._errorReported) )
 
+	def _checkWPSPushButton(self, requestFields):
+		Log.w(requestFields)
+		for key, fields in six.iteritems(requestFields):
+			requirement = fields["Requirement"] == "mandatory"
+			if key == "WPS":
+				return not requirement
+
 	def _errorReported(self, svcpath, error):
 		Log.w("Network service %s report an error: %s" %(svcpath, error))
 		service = self._nm.getService(svcpath)
@@ -37,8 +44,8 @@ class NetworkAgent(object):
 
 	def _userInputRequested(self, svcpath):
 		Log.i(svcpath)
-		dialog_values = self._nm.getUserInputRequestFields()
-		for key,value in six.iteritems(dialog_values):
+		requestFields = self._nm.getUserInputRequestFields()
+		for key,value in six.iteritems(requestFields):
 			Log.i("%s => %s" %(key, value))
 
 		windowTitle = _("Network")
@@ -46,35 +53,53 @@ class NetworkAgent(object):
 		if svc:
 			windowTitle = svc.name()
 
-		prev = dialog_values.get("PreviousPassphrase", None)
+		prev = requestFields.get("PreviousPassphrase", None)
 		if prev:
-			del dialog_values["PreviousPassphrase"]
-		#filter WPS until it's fixed
-		wps = dialog_values.get("WPS", None)
-		if wps:
-			del dialog_values["WPS"]
+			del requestFields["PreviousPassphrase"]
 
-		input_config = []
-		if len(dialog_values) > 0:
-			for key, value in six.iteritems(dialog_values):
-				input_config.append( self._createInputConfig(key, value, prev) ),
-			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=windowTitle, config=input_config)
+
+		self._requestFields = requestFields
+		self._prev = prev
+		self._windowTitle = windowTitle
+		if len(requestFields) > 0:
+			if self._checkWPSPushButton(requestFields):
+				text = _("This WiFi supports connecting using the WPS Push-Button Method!\nDo you want to connect using WPS Push-Button")
+				self.session.openWithCallback(self._onWPSPushButtonChoice, MessageBox, text, type=MessageBox.TYPE_YESNO, windowTitle=_("Connect with WPS Push-Button?"))
+				return
+			self._requestUserInput()
 		else:
 			self._nm.sendUserReply(StringMap()) #Cancel
 
-	def _createInputConfig(self, key, request_part, previousPassphrase):
-			requirement = request_part["Requirement"] == "mandatory"
+	def _onWPSPushButtonChoice(self, choice):
+		if choice:
+			self._nm.sendUserReply(StringMap({"WPS" : ""}))
+		else:
+			self._requestUserInput()
+
+	def _requestUserInput(self):
+		input_config = []
+		requestFields = self._requestFields
+		if len(requestFields) > 0:
+			for key, value in six.iteritems(requestFields):
+				cfg = self._createInputConfig(key, value, self._prev)
+				input_config.append(cfg)
+			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=self._windowTitle, config=input_config)
+		else:
+			self._nm.sendUserReply(StringMap()) #Cancel
+
+	def _createInputConfig(self, key, fields, previousPassphrase):
+			requirement = fields["Requirement"] == "mandatory"
 			val_type = MultiInputBox.TYPE_TEXT
-			if request_part["Type"] == "wpspin":
+			if fields["Type"] == "wpspin":
 				val_type = MultiInputBox.TYPE_PIN
-			if request_part["Type"] in ('psk', 'wep', 'passphrase'):
+			if fields["Type"] in ('psk', 'wep', 'passphrase'):
 				val_type = MultiInputBox.TYPE_PASSWORD
 
 			value = ""
-			if previousPassphrase and request_part["Type"] == previousPassphrase["Type"]:
+			if previousPassphrase and fields["Type"] == previousPassphrase["Type"]:
 				value = str(previousPassphrase["Value"])
 
-			alternatives = request_part.get("Alternates", [])
+			alternatives = fields.get("Alternates", [])
 			return {
 				"key" : key,
 				"value" : value,
@@ -92,6 +117,15 @@ class NetworkAgent(object):
 
 	def _onUserMultiInput(self, values):
 		self._userInputScreen = None
+		if not values:
+			return
+		if "WPS" in values.keys():
+			pin = values["WPS"]
+			if pin != "0":
+				self._nm.sendUserReply(StringMap({ "WPS" : pin}))
+				return
+			else:
+				del values["WPS"]
 		if values:
 			self._nm.sendUserReply(StringMap(values))
 		else:

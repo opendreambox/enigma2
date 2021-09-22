@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from Tools.Log import Log
 
 try:
 	import twisted.python.runtime
@@ -16,6 +17,8 @@ from enigma import ePythonConfigQuery
 from Components.config import configfile
 from Screens.SetupGuide import SetupGuide
 queryFunc_conn = ePythonConfigQuery.getQueryFuncSignal().connect(configfile.getResolvedKey)
+
+from Screens import Standby
 
 def gPixmapPtr_deref(self):
 	print("gPixmapPtr.__deref__() is deprecated please completely remove the \".__deref__()\" call!")
@@ -302,6 +305,7 @@ class Session:
 		self.current_player = None
 		self.current_dialog = None
 		self.next_dialog = None
+		self.dialog_queue = []
 
 		self.dialog_stack = [ ]
 		self.fading_dialogs = [ ]
@@ -335,7 +339,9 @@ class Session:
 
 		if self.next_dialog:
 			dlg = self.next_dialog
-			self.next_dialog = None
+			self.next_dialog = self.dialog_queue.pop() if self.dialog_queue else None
+			if self.next_dialog:
+				Log.w("Deqeuing next dialog: {0}".format(self.next_dialog.__class__))
 			self.pushCurrent()
 			self.current_dialog = dlg
 			self.execBegin()
@@ -448,15 +454,17 @@ class Session:
 		else:
 			self.current_dialog = None
 
-	def execDialog(self, dialog):
-		dialog.isTmp = False
+	def execDialog(self, dialog, isTmp=False):
+		dialog.isTmp = isTmp
 		dialog.callback = None # would cause re-entrancy problems.
 
-		if self.delay_timer.isActive():
-			assert not self.next_dialog
+		if self.delay_timer.isActive() or Standby.inStandby:
+			Log.w("Enqueing {0} for later execution! inStandby={1}".format(dialog.__class__, Standby.inStandby != None))
+			if self.next_dialog:
+				self.dialog_queue.append(self.next_dialog)
 			self.next_dialog = dialog
 		else:
-			self.pushCurrent()
+			self.pushCurrent(is_dialog=getattr(dialog, "e2internal_is_dialog", False))
 			self.current_dialog = dialog
 			self.execBegin()
 
@@ -488,16 +496,12 @@ class Session:
 			custom_animation = kwargs["custom_animation"]
 			del kwargs["custom_animation"]
 
-		self.pushCurrent(is_dialog=is_dialog)
-		dlg = self.current_dialog = self.instantiateDialog(screen, *arguments, **kwargs)
-
-		dlg.isTmp = True
-		dlg.callback = None
+		dialog = self.instantiateDialog(screen, *arguments, **kwargs)
+		dialog.e2internal_is_dialog = is_dialog
 		if custom_animation:
-			dlg.setShowHideAnimation(custom_animation)
-
-		self.execBegin()
-		return dlg
+			dialog.setShowHideAnimation(custom_animation)
+		self.execDialog(dialog, isTmp=True)
+		return dialog
 
 	def close(self, screen, *retval):
 		if not self.in_exec:

@@ -51,7 +51,7 @@ class SetupSummary(Screen):
 
 class Setup(ConfigListScreen, Screen):
 
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 
 	def removeNotifier(self):
 		config.usage.setup_level.removeNotifier(self.levelChanged)

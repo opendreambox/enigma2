@@ -91,7 +91,7 @@ class MediaPixmap(Pixmap):
 		self.picload.startDecode(self.coverArtFileName)
 
 class MediaPlayer(Screen, InfoBarBase, InfoBarSeek, InfoBarAudioSelection, InfoBarCueSheetSupport, InfoBarNotifications, InfoBarSubtitleSupport, HelpableScreen):
-	ALLOW_SUSPEND = True
+	ALLOW_SUSPEND = Screen.SUSPEND_STOPS
 	ENABLE_RESUME_SUPPORT = True
 
 	def __init__(self, session, args = None):
