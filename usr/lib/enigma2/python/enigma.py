@@ -162,18 +162,6 @@ HAVE_GLES2_GL2EXT_H = _enigma.HAVE_GLES2_GL2EXT_H
 _enigma.HAVE_GLES2_GL2_H_swigconstant(_enigma)
 HAVE_GLES2_GL2_H = _enigma.HAVE_GLES2_GL2_H
 
-_enigma.HAVE_GLES3_GL31_H_swigconstant(_enigma)
-HAVE_GLES3_GL31_H = _enigma.HAVE_GLES3_GL31_H
-
-_enigma.HAVE_GLES3_GL32_H_swigconstant(_enigma)
-HAVE_GLES3_GL32_H = _enigma.HAVE_GLES3_GL32_H
-
-_enigma.HAVE_GLES3_GL3EXT_H_swigconstant(_enigma)
-HAVE_GLES3_GL3EXT_H = _enigma.HAVE_GLES3_GL3EXT_H
-
-_enigma.HAVE_GLES3_GL3_H_swigconstant(_enigma)
-HAVE_GLES3_GL3_H = _enigma.HAVE_GLES3_GL3_H
-
 _enigma.HAVE_GST_1_swigconstant(_enigma)
 HAVE_GST_1 = _enigma.HAVE_GST_1
 
@@ -185,9 +173,6 @@ HAVE_LIBSYSTEMD = _enigma.HAVE_LIBSYSTEMD
 
 _enigma.HAVE_LIBTURBOJPEG_swigconstant(_enigma)
 HAVE_LIBTURBOJPEG = _enigma.HAVE_LIBTURBOJPEG
-
-_enigma.HAVE_LIBUNWIND_H_swigconstant(_enigma)
-HAVE_LIBUNWIND_H = _enigma.HAVE_LIBUNWIND_H
 
 _enigma.HAVE_MEMORY_H_swigconstant(_enigma)
 HAVE_MEMORY_H = _enigma.HAVE_MEMORY_H

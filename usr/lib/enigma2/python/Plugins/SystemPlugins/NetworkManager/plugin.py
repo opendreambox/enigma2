@@ -80,7 +80,7 @@ class NetworkAgent(object):
 		if len(requestFields) > 0:
 			for key, value in requestFields.iteritems():
 				input_config.append( self._createInputConfig(key, value, self._prev) ),
-			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=windowTitle, config=input_config)
+			self._userInputScreen = self.session.openWithCallback(self._onUserMultiInput, MultiInputBox, title=_("Input required"), windowTitle=self._windowTitle, config=input_config)
 		else:
 			self._nm.sendUserReply(StringMap()) #Cancel
 
