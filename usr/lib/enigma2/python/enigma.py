@@ -8168,6 +8168,7 @@ class eInputDeviceDfuFlasher(object):
     DFU_EVT_EXECUTE_SUCCESS = _enigma.eInputDeviceDfuFlasher_DFU_EVT_EXECUTE_SUCCESS
     DFU_EVT_EXECUTE_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_EXECUTE_ERROR
     DFU_EVT_UPLOAD_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_UPLOAD_ERROR
+    DFU_EVT_WRITE_CONTROL_ERROR = _enigma.eInputDeviceDfuFlasher_DFU_EVT_WRITE_CONTROL_ERROR
     DFU_FIRMWARE_TYPE_DAT = _enigma.eInputDeviceDfuFlasher_DFU_FIRMWARE_TYPE_DAT
     DFU_FIRMWARE_TYPE_BIN = _enigma.eInputDeviceDfuFlasher_DFU_FIRMWARE_TYPE_BIN
 eInputDeviceDfuFlasher_swigregister = _enigma.eInputDeviceDfuFlasher_swigregister

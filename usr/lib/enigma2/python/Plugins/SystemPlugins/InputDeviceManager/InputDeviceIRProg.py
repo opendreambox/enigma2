@@ -105,18 +105,30 @@ class InputDeviceIRProg(Screen, CharJump):
 		mlist = []
 		for x, y in dlist.items():
 			x = six.ensure_str(x)
-			title = ""
+			title = x
 			subtitle = ""
 			pic = self._seperatorPixmap
 			if self._level == 0:
-				title = x
 				lendev = len(y)
 				if lendev == 1:
 					subtitle = "%s" % (six.ensure_str(y.keys()[0]))
 				else:
 					subtitle = _("%s devices") % (lendev,)
 			else:
-				title = x
+				models = y.get("models", [])
+				sorted_models = []
+				if models:
+					for dev in models:
+						dev = six.ensure_str(dev)
+						append = True
+						for item in self.MAJOR_CODELIST_ITEMS:
+							if dev.lower().startswith(item):
+								append = False
+						if append:
+							sorted_models.append(dev)
+						else:
+							sorted_models.insert(0, dev)
+					title = " / ".join(sorted_models)
 				if title == "":
 					title = _("Unknown")
 				if not len(y["keys"]):

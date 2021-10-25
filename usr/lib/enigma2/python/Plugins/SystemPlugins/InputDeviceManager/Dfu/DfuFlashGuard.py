@@ -103,6 +103,8 @@ class DfuFlashGuard(Screen):
 			self._onFlashRejected(event)
 		elif event == DfuFlash.EVT_INIT_FAIL:
 			self._onInitError(event)
+		elif event == DfuFlash.EVT_DFU_CONTROL_ERROR:
+			self._onWriteControlError(event)
 		elif event == DfuFlash.EVT_UPLOAD_BEGIN:
 			self._onUploadBegin(value)
 		elif event == DfuFlash.EVT_UPLOAD_RESULT:
@@ -207,6 +209,12 @@ class DfuFlashGuard(Screen):
 		text = self._addBatteryRebootHintText(_("Update initialization failed!\n"))
 		self._appendText(text)
 		self.session.openWithCallback(self._onErrorAck, MessageBox,text, type=MessageBox.TYPE_ERROR, windowTitle=_("Init failed!"))
+
+	def _onWriteControlError(self, event):
+		self._enableActions()
+		text = self._addBatteryRebootHintText(_("Control write failed! Code %i\n") %(event,))
+		self._appendText(text)
+		self.session.openWithCallback(self._onErrorAck, MessageBox, text, type=MessageBox.TYPE_ERROR, windowTitle=_("Control write failed!"))
 
 	def _onErrorAck(self, result=None):
 		self.close(False)

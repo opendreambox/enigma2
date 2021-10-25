@@ -49,6 +49,7 @@ class DfuFlash(object):
 	EVT_BL_SKIPPED		= 1 << 20
 	EVT_REBOOT_AWAIT	= 1 << 21
 	EVT_FINISHED		= 1 << 31
+	EVT_DFU_CONTROL_ERROR = 1 << 32
 
 	UPLOAD_RESULT_ERROR = 0
 	UPLOAD_RESULT_SUCCESS = 1
@@ -236,6 +237,9 @@ class DfuFlash(object):
 		elif event == Dfu.DFU_EVT_COMMAND_ERROR:
 			if value == Dfu.DFU_CMD_EXECUTE:
 				self._onDfuExecuteError()
+
+		elif event == Dfu.DFU_EVT_WRITE_CONTROL_ERROR:
+				self.event(self.EVT_DFU_CONTROL_ERROR, value)
 
 		elif event == Dfu.DFU_EVT_EXECUTE_SUCCESS:
 			self.event(self.EVT_UPLOAD_RESULT, self.UPLOAD_RESULT_SUCCESS)

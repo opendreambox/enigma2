@@ -2151,8 +2151,8 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)//2,(720-wsizey)//2)
 
 <!-- Two -->
 	<screen id="100" name="SetupGuideSummary" position="0,0" size="240,80">
-		<widget font="Display;32" halign="center" position="0,0" render="Label" size="240,36" source="title" transparent="1" valign="center"/>
-		<widget font="Display;28" halign="center" position="0,40" render="Label" size="240,40" source="text" transparent="1" valign="center"/>
+		<widget font="Display;32" halign="center" position="0,0" render="Label" size="240,35" source="title" transparent="1" valign="center"/>
+		<widget font="Display;22" halign="center" position="0,38" render="Label" size="240,40" source="text" transparent="1" valign="center"/>
 	</screen>
 	<screen id="100" name="About_summary" position="0,0" size="240,80">
 		<widget font="Display;72" halign="center" position="0,0" render="Label" size="240,80" source="parent.Model" transparent="1" valign="center">

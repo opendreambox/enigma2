@@ -812,6 +812,16 @@ self.instance.move(ePoint((1920-wsizex)/2,(1080-wsizey)/2))
 		<widget font="Regular;30" position="220,765" render="Label" size="200,35" source="untestable_counter"/>
 		<widget font="Regular;30" position="500,630" render="Label" size="660,180" source="CmdText" valign="center"/>
 	</screen>
+	<screen name="DfuFlashGuard" position="center,center" size="840,480" title="DFU Firmware Upgrade">
+		<widget font="Regular;30" name="text" position="10,60" size="820,300" halign="center" valign="center"/>
+		<widget name="log" position="420,17" size="300,35" halign="right" font="Regular;28"/>
+		<ePixmap pixmap="Default-FHD/skin_default/icons/info.svg" position="750,10" size="80,40"/>
+		<widget name="bytes" position="10,380" size="820,35" font="Regular;30"/>
+		<widget source="progress" render="Progress" position="10,430" size="820,40" borderWidth="1"/>
+	</screen>
+	<screen name="DfuLog" position="center,170" size="1200,820">
+		<widget name="log" position="10,10" size="1880,800" font="Regular;30"/>
+	</screen>
 	<screen name="EPGRefreshConfiguration" position="center,170" size="1200,820">
 		<layout name="Button_Small"/>
 		<layout name="Button_Small_source"/>
@@ -3731,6 +3741,52 @@ self.instance.move(ePoint(orgpos.x() + (orgwidth - newwidth)/2,orgpos.y()))
 		<widget backgroundColor="#9f1313" font="Regular;30" halign="center" name="buttonred" position="10,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" transparent="1" valign="center" zPosition="1"/>
 		<widget backgroundColor="#1f771f" font="Regular;30" halign="center" name="buttongreen" position="360,5" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2" size="350,70" transparent="1" valign="center" zPosition="1"/>
 		<widget enableWrapAround="1" name="filelist" position="10,90" scrollbarMode="showOnDemand" size="1180,720"/>
+	</screen>
+<!-- SetupGuide -->
+	<screen name="SetupGuide" position="0,0" size="1920,1080" title="Welcome" flags="wfNoBorder">
+		<widget name="banner" position="0,0" size="450,1080" pixmap="skin_default/wizard.png" scale="fill" />
+		<widget font="Regular;34" halign="right" position="1580,1018" render="Label" size="320,40" source="global.CurrentTime">
+			<convert type="ClockToText">Format:%a %d.%m.  %H:%M</convert>
+		</widget>
+		<widget source="Title" render="Label" position="600,50" size="1220,70" font="Regular;60" halign="center"/>
+		<widget name="text" position="600,150" size="1220,300" font="Regular;30" halign="center" valign="center"/>
+		<widget source="list" render="Listbox" position="600,500" size="1220,450" zPosition="1" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1">
+			<convert type="TemplatedMultiContent">
+				{"templates":
+				{"default":(45,[ MultiContentEntryText(pos=(10,0),size=(1200,45),flags=RT_VALIGN_CENTER,text=0)]),
+				"iconized":(90,[
+				MultiContentEntryText(pos=(75,0),size=(310,50),flags=RT_HALIGN_LEFT|RT_VALIGN_CENTER,text=0),
+				MultiContentEntryPixmap(pos=(5,5),size=(60,40),png=1),]),
+				"networkservice":(90,[
+				MultiContentEntryPixmapAlphaTest(pos=(10,10),size=(80,80),png=1),
+				MultiContentEntryText(pos=(110,4),size=(900,40),font=0,text=3),
+				MultiContentEntryText(pos=(1020,4),size=(180,40),font=0,flags=RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM,text=7),
+				MultiContentEntryText(pos=(1020,46),size=(180,35),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_TOP,text=2),
+				MultiContentEntryText(pos=(110,46),size=(600,35),font=1,flags=RT_VALIGN_CENTER,text=4),
+				MultiContentEntryText(pos=(730,46),size=(250,35),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_CENTER,text=5),
+				MultiContentEntryText(pos=(10,0),size=(900,90),font=0,flags=RT_VALIGN_CENTER,text=6),]),
+				"inputdevice":(90,[
+				MultiContentEntryText(pos=(10,4),size=(500,40),font=0,flags=RT_HALIGN_LEFT,text=0),
+				MultiContentEntryText(pos=(550,4),size=(310,90),font=0,flags=RT_HALIGN_CENTER|RT_VALIGN_CENTER,text=3),
+				MultiContentEntryText(pos=(900,4),size=(300,35),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_CENTER,text=4),
+				MultiContentEntryText(pos=(10,46),size=(500,35),font=1,flags=RT_VALIGN_CENTER,text=2),
+				MultiContentEntryText(pos=(700,46),size=(500,35),font=1,flags=RT_HALIGN_RIGHT|RT_VALIGN_TOP,text=1),]),},
+				"fonts":[gFont("Regular",30),gFont("Regular",28)],"itemHeight":45}
+			</convert>
+		</widget>
+		<widget name="config" position="600,500" size="1220,450" zPosition="1" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1"/>
+		<widget source="green" render="Pixmap" pixmap="Default-FHD/skin_default/buttons/green.svg" position="540,1000" size="300,70">
+			<convert type="ConditionalShowHide"/>
+		</widget>
+		<widget name="green_text" position="540,1000" size="300,70" zPosition="1" font="Regular;30" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="yellow" render="Pixmap" pixmap="Default-FHD/skin_default/buttons/yellow.svg" position="870,1000" size="300,70">
+			<convert type="ConditionalShowHide"/>
+		</widget>
+		<widget name="yellow_text" position="870,1000" size="300,70" zPosition="1" font="Regular;30" halign="center" valign="center" backgroundColor="#a08500" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
+		<widget source="blue" render="Pixmap" pixmap="Default-FHD/skin_default/buttons/blue.svg" position="1200,1000" size="300,70">
+			<convert type="ConditionalShowHide"/>
+		</widget>
+		<widget name="blue_text" position="1200,1000" size="300,70" zPosition="1" font="Regular;30" halign="center" valign="center" backgroundColor="#18188b" transparent="1" foregroundColor="white" shadowColor="black" shadowOffset="-2,-2"/>
 	</screen>
 <!-- ShowClock -->
 	<screen name="ShowClockSetup" position="center,170" size="1200,820">
